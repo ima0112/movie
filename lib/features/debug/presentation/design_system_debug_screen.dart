@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/pako_state.dart';
 
@@ -45,6 +46,10 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Media card'),
           const SizedBox(height: AppSpacing.md),
           const _MediaCardSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Chip'),
+          const SizedBox(height: AppSpacing.md),
+          const _ChipSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -428,6 +433,58 @@ class _Labeled extends StatelessWidget {
         Text(
           label,
           style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+      ],
+    );
+  }
+}
+
+class _ChipSection extends StatelessWidget {
+  const _ChipSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.lg,
+      crossAxisAlignment: WrapCrossAlignment.start,
+      children: [
+        _Labeled(
+          label: 'normal',
+          child: AppChip(label: 'Comedy', onTap: () {}),
+        ),
+        _Labeled(
+          label: 'normal + icon',
+          child: AppChip(
+            label: 'Recent',
+            icon: AppIcons.retry,
+            onTap: () {},
+          ),
+        ),
+        _Labeled(
+          label: 'selected',
+          child: AppChip(
+            label: 'Horror',
+            state: ChipState.selected,
+            onTap: () {},
+          ),
+        ),
+        _Labeled(
+          label: 'selected + icon',
+          child: AppChip(
+            label: 'Filters',
+            state: ChipState.selected,
+            icon: AppIcons.filter,
+            onTap: () {},
+          ),
+        ),
+        _Labeled(
+          label: 'suggestion',
+          child: AppChip(
+            label: 'Add genre',
+            state: ChipState.suggestion,
+            onTap: () {},
+          ),
         ),
       ],
     );
