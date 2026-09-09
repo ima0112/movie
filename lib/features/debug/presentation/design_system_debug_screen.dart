@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../shared/widgets/app_buttons.dart';
 import '../../../shared/widgets/app_chip.dart';
 import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/pako_state.dart';
@@ -55,6 +56,10 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Quiz tile'),
           const SizedBox(height: AppSpacing.md),
           const _QuizTileSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Buttons'),
+          const SizedBox(height: AppSpacing.md),
+          const _ButtonsSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -562,6 +567,69 @@ class _QuizTileSectionState extends State<_QuizTileSection> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ButtonsSection extends StatefulWidget {
+  const _ButtonsSection();
+
+  @override
+  State<_ButtonsSection> createState() => _ButtonsSectionState();
+}
+
+class _ButtonsSectionState extends State<_ButtonsSection> {
+  bool _isFavorite = false;
+  bool _isWatchLater = true;
+  bool _isWatched = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        PrimaryButton(label: 'Get started', onTap: () {}),
+        const SizedBox(height: AppSpacing.sm),
+        const PrimaryButton(label: 'Loading…', isLoading: true),
+        const SizedBox(height: AppSpacing.sm),
+        const PrimaryButton(label: 'Disabled', isDisabled: true),
+        const SizedBox(height: AppSpacing.lg),
+        SecondaryButton(label: 'My Tastes', onTap: () {}),
+        const SizedBox(height: AppSpacing.lg),
+        TextLinkButton(label: 'Another suggestion', onTap: () {}),
+        const SizedBox(height: AppSpacing.lg),
+        DestructiveButton(label: 'Delete My List', onTap: () {}),
+        const SizedBox(height: AppSpacing.xxl),
+        Text(
+          'Icon buttons (tap to toggle)',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            AppIconButton(
+              iconOutline: AppIcons.favorite,
+              iconFill: AppIcons.favoriteFill,
+              isActive: _isFavorite,
+              onTap: () => setState(() => _isFavorite = !_isFavorite),
+            ),
+            const SizedBox(width: AppSpacing.xl),
+            AppIconButton(
+              iconOutline: AppIcons.watchLater,
+              iconFill: AppIcons.watchLaterFill,
+              isActive: _isWatchLater,
+              onTap: () => setState(() => _isWatchLater = !_isWatchLater),
+            ),
+            const SizedBox(width: AppSpacing.xl),
+            AppIconButton(
+              iconOutline: AppIcons.watched,
+              iconFill: AppIcons.watchedFill,
+              isActive: _isWatched,
+              onTap: () => setState(() => _isWatched = !_isWatched),
+            ),
+          ],
         ),
       ],
     );
