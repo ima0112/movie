@@ -29,8 +29,16 @@ class AppIcons {
   static const IconData back = PhosphorIconsRegular.arrowLeft;
   static const IconData close = PhosphorIconsRegular.x;
   static const IconData home = PhosphorIconsRegular.house;
+  static const IconData homeFill = PhosphorIconsFill.house;
+
   static const IconData compass = PhosphorIconsRegular.compass;
+  static const IconData compassFill = PhosphorIconsFill.compass;
+
+  static const IconData list = PhosphorIconsRegular.listBullets;
+  static const IconData listFill = PhosphorIconsFill.listBullets;
+
   static const IconData user = PhosphorIconsRegular.user;
+  static const IconData userFill = PhosphorIconsFill.user;
   static const IconData settings = PhosphorIconsRegular.gear;
   static const IconData stats = PhosphorIconsRegular.chartBar;
   static const IconData qrCode = PhosphorIconsRegular.qrCode;

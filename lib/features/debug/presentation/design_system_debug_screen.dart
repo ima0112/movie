@@ -6,7 +6,11 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/app_buttons.dart';
 import '../../../shared/widgets/app_chip.dart';
+import '../../../shared/widgets/app_tab_bar.dart';
+import '../../../shared/widgets/genre_bar.dart';
+import '../../../shared/widgets/match_fab.dart';
 import '../../../shared/widgets/media_card.dart';
+import '../../../shared/widgets/metric_card.dart';
 import '../../../shared/widgets/pako_state.dart';
 import '../../../shared/widgets/quiz_tile.dart';
 
@@ -60,6 +64,14 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Buttons'),
           const SizedBox(height: AppSpacing.md),
           const _ButtonsSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Tab bar + Match FAB'),
+          const SizedBox(height: AppSpacing.md),
+          const _TabBarSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Metric card + genre bar'),
+          const SizedBox(height: AppSpacing.md),
+          const _StatsSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -631,6 +643,97 @@ class _ButtonsSectionState extends State<_ButtonsSection> {
             ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class _TabBarSection extends StatefulWidget {
+  const _TabBarSection();
+
+  @override
+  State<_TabBarSection> createState() => _TabBarSectionState();
+}
+
+class _TabBarSectionState extends State<_TabBarSection> {
+  AppTab _active = AppTab.discover;
+  bool _hasActiveRoom = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tap a tab, or the Pako button to toggle the active-room dot',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        DecoratedBox(
+          decoration: const BoxDecoration(color: AppColors.surfaceRaised2),
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              AppTabBar(
+                activeTab: _active,
+                onTabSelected: (tab) => setState(() => _active = tab),
+              ),
+              MatchFab(
+                hasActiveRoom: _hasActiveRoom,
+                onTap: () => setState(() => _hasActiveRoom = !_hasActiveRoom),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatsSection extends StatelessWidget {
+  const _StatsSection();
+
+  static const _genreCounts = <(String, int)>[
+    ('Comedy', 42),
+    ('Drama', 35),
+    ('Action', 28),
+    ('Horror', 15),
+    ('Documentary', 6),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final maxCount = _genreCounts.first.$2;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: AppSpacing.md,
+          crossAxisSpacing: AppSpacing.md,
+          childAspectRatio: 1.6,
+          children: const [
+            MetricCard(value: '128', label: 'Movies watched'),
+            MetricCard(value: '312 h', label: 'Hours of movies'),
+            MetricCard(value: '34', label: 'TV shows watched'),
+            MetricCard(value: '≈ 480 h', label: 'Estimated TV hours'),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xxl),
+        Text(
+          'Genres you watch most',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        for (final (label, count) in _genreCounts)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: GenreBar(label: label, count: count, maxCount: maxCount),
+          ),
       ],
     );
   }
