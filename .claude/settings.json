@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub get)",
+      "Bash(flutter pub add:*)",
+      "Bash(flutter analyze)",
+      "Bash(flutter test:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter build:*)",
+      "Bash(dart format:*)",
+      "Bash(dart fix:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(gt status)",
+      "Bash(gt log:*)",
+      "Bash(gt ls:*)",
+      "Bash(gt info:*)",
+      "Bash(gt diff:*)",
+      "Bash(gt create:*)",
+      "Bash(gt modify:*)",
+      "Bash(gt commit:*)",
+      "Bash(gt checkout:*)",
+      "Bash(gt up)",
+      "Bash(gt down)",
+      "Bash(gt top)",
+      "Bash(gt bottom)",
+      "Bash(gt sync)",
+      "Bash(gt restack)",
+      "Bash(gt submit:*)",
+      "Bash(gt pr:*)"
+    ],
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(rm:*)",
+      "Bash(flutter pub remove:*)",
+      "Bash(gt delete:*)",
+      "Bash(gt fold:*)",
+      "Bash(gt squash:*)",
+      "Bash(gt move:*)",
+      "Bash(gt absorb:*)",
+      "Bash(gt reset:*)",
+      "Bash(gt submit --stack)",
+      "Bash(gt repo sync:*)"
+    ]
+  }
+}
