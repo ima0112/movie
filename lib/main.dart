@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'app/di.dart';
 import 'core/theme/app_theme.dart';
 import 'features/debug/presentation/design_system_debug_screen.dart';
 
 void main() {
+  setupDependencies();
   runApp(const PakoTvApp());
 }
 
