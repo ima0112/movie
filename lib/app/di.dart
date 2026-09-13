@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
 
-import '../core/domain/repositories/media_repository.dart';
-import '../features/discover/data/fake_media_repository.dart';
+import 'di.config.dart';
 
 /// The app's single `GetIt` instance.
 ///
@@ -12,10 +12,9 @@ import '../features/discover/data/fake_media_repository.dart';
 /// `GetIt.I<T>()`) — Cubits/Blocs themselves are never registered here.
 final getIt = GetIt.instance;
 
-/// Registers every repository/service as a lazy singleton. Call once,
-/// before `runApp`.
-void setupDependencies() {
-  // TODO: swap for the real `MediaRepositoryImpl` (TMDB) once it exists —
-  // see docs/STRUCTURE.md.
-  getIt.registerLazySingleton<MediaRepository>(() => FakeMediaRepository());
-}
+/// Registers every `@injectable`/`@LazySingleton`-annotated class found
+/// under `lib/`. Call once, before `runApp`. `di.config.dart` is
+/// generated — run `dart run build_runner build
+/// --delete-conflicting-outputs` after adding or changing an annotation.
+@InjectableInit()
+void configureDependencies() => getIt.init();
