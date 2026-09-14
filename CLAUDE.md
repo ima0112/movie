@@ -49,6 +49,7 @@ ask before inventing it.
    of the SCREENS.md inventory it implements (e.g. "implements B1.
    Discover"). If no entry exists yet, don't build it without first adding
    it to that document.
+
 9. **Granular Bloc rebuilds — no exceptions.** A screen-wide `BlocBuilder`
    wrapping the entire widget tree is not acceptable. Every `BlocBuilder`
    must scope to the smallest widget that actually needs to change:
@@ -66,6 +67,61 @@ ask before inventing it.
      writing the `build()` method, and give each one its own narrowly
      scoped builder. If you can't justify why a `BlocBuilder`'s subtree is
      as large as it is, it's too large.
+
+10. **Global vs. screen-local Cubits — decide by lifecycle, not by tree
+    position.** A Cubit is global only if its state must outlive the screen
+    that first needed it AND be read/reacted to by other, unrelated screens.
+    Ask: does this Cubit's lifecycle match a single screen, or does it need
+    to persist and be shared beyond it? If it matches one screen, it's
+    local — even if several screens instantiate the same Cubit class, each
+    gets its own instance via a local `BlocProvider`.
+    - **Global** (provided once, in `app/app.dart`, above `MaterialApp.router`):
+      `TasteProfileCubit`, `UserProfileCubit`, and — once v1.1 exists —
+      `MatchRoomCubit` for the lifetime of an active room.
+    - **NOT global, even though it feels shared**: My List (favorites/watch
+      later/watched). Don't create a library-wide Cubit holding an in-memory
+      copy of the whole list. Instead, `UserLibraryRepository` exposes
+      `Stream`s (see `core/domain/repositories/user_library_repository.dart`)
+      and each screen subscribes locally, scoped to only what it needs (e.g.
+      a single icon subscribes to "is this one id saved?", not to the whole
+      library). This is the same discipline as rule 9, applied to data
+      ownership instead of widget rebuilds.
+    - Every screen-local Cubit is created where its `BlocProvider` is placed
+      (inside that screen's widget), not registered in `di.config.dart` —
+      only repositories/services are registered there.
+11. **File size — one widget, one class, one file.** A private `_buildX()`
+    method inside a giant `build()` does NOT satisfy this rule; the file is
+    still one large blob organized into functions. Any widget with its own
+    layout logic, state, or Bloc subscription gets its own file:
+    - **Soft limit: 150 lines** per presentation file. Hitting this is a
+      signal a sub-widget is hiding inside `build()` and should be
+      extracted.
+    - **Hard limit: 250 lines.** Above this, the file must be decomposed
+      before the PR is acceptable — no exceptions for "it's just one big
+      screen".
+    - Structure: a screen like Discover is `discover_screen.dart` (thin —
+      just assembles sub-widgets and provides the Cubit) plus a
+      `widgets/` subfolder with one file per sub-widget (e.g.
+      `discover_hero.dart`, `discover_section.dart`,
+      `discover_segmented_control.dart`). Domain and data files
+      (entities, repositories, DTOs, mappers) are exempt from the line
+      count but should still be split by single responsibility.
+    - This also serves rule 9: a sub-widget in its own file with its own
+      narrowly-scoped `BlocBuilder`/`BlocSelector` is much harder to get
+      wrong than a method buried inside one giant screen-wide builder.
+12. **PR size — one reviewable unit at a time, stacked with Graphite.**
+    Never deliver a full new screen (entities + repository + Cubit +
+    every sub-widget + the assembled screen) as a single PR. Split the
+    work into a stack of small, dependent branches created with
+    `gt create`, each reviewable in isolation:
+    1. Domain entities + repository interface (no implementation).
+    2. Fake/real repository implementation + Cubit + their unit tests.
+    3. Presentation sub-widgets (one or two per PR if they're substantial;
+       several trivial ones — e.g. a chip variant — can share a PR).
+    4. The screen that assembles everything + route registration.
+    Submit the stack with `gt submit --stack` once it's ready. If asked to
+    "build screen X", default to proposing this breakdown and building it
+    stack-by-stack rather than producing one big diff.
 
 ## Code conventions
 
