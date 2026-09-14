@@ -1,13 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:movies/main.dart';
+import 'package:movies/app/app.dart';
+import 'package:movies/app/di.dart';
 
 void main() {
-  testWidgets('App boots into the design system debug screen', (
+  setUpAll(configureDependencies);
+
+  testWidgets('App boots into Discover (/) via the router', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
 
-    expect(find.text('Design system debug'), findsOneWidget);
+    expect(find.text('PakoTV'), findsOneWidget);
+    expect(find.text('All'), findsOneWidget);
   });
 }

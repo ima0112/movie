@@ -8,7 +8,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../bloc/discover_cubit.dart';
 import '../bloc/saved_ids_cubit.dart';
-import '../widgets/discover_bottom_bar.dart';
 import '../widgets/discover_content_area.dart';
 import '../widgets/discover_halo.dart';
 import '../widgets/discover_segmented_control.dart';
@@ -81,15 +80,15 @@ class _DiscoverViewState extends State<_DiscoverView> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 // Only this part shows a skeleton while loading — the
-                // halo, top bar, segmented control, and bottom bar above
-                // and below it are untouched.
+                // halo, top bar, and segmented control above it are
+                // untouched. The tab bar + Match FAB now live in
+                // `app/root_shell.dart`, shared by all four root tabs.
                 Expanded(child: DiscoverContentArea(segment: _segment)),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: const DiscoverBottomBar(),
     );
   }
 }
