@@ -101,9 +101,10 @@ apagado), no Phosphor.
 | Compartir | `ShareNetwork` |
 | Volver | `ArrowLeft` |
 | Cerrar | `X` |
-| Casa / Descubrir | `House` |
-| Brújula / Explorar | `Compass` |
-| Perfil / Tú | `User` |
+| Casa / Descubrir (inactivo/activo, tab bar) | `House` / `HouseFill` |
+| Brújula / Explorar (inactivo/activo, tab bar) | `Compass` / `CompassFill` |
+| Lista / Mi lista (inactivo/activo, tab bar) | `ListBullets` / `ListBulletsFill` |
+| Perfil / Tú (inactivo/activo, tab bar) | `User` / `UserFill` |
 | Ajustes | `Gear` |
 | Estadísticas | `ChartBar` |
 | Código QR | `QrCode` |
