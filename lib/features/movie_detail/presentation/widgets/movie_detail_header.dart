@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/scrim_back_button.dart';
 import '../cubit/movie_detail_cubit.dart';
 import 'movie_detail_title_block.dart';
 
@@ -27,7 +26,10 @@ class MovieDetailHeader extends StatelessWidget {
   /// D1). `null` until the assembled screen wires real navigation.
   final void Function(Genre genre)? onGenreTap;
 
-  static const double _heightFraction = 0.55;
+  // docs/SCREENS.md D1: "Header (55% of the height)". Public: the
+  // assembled screen needs the same value to know when the title has
+  // "scrolled past the top" and the compact bar should appear.
+  static const double heightFraction = 0.55;
   static const List<double> _fadeStops = [0.6, 1];
 
   @override
@@ -40,7 +42,7 @@ class MovieDetailHeader extends StatelessWidget {
       builder: (context, detail) {
         if (detail == null) return const SizedBox.shrink();
         return SizedBox(
-          height: MediaQuery.sizeOf(context).height * _heightFraction,
+          height: MediaQuery.sizeOf(context).height * heightFraction,
           width: double.infinity,
           child: Stack(
             fit: StackFit.expand,
@@ -56,11 +58,7 @@ class MovieDetailHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              const Positioned(
-                top: AppSpacing.lg,
-                left: AppSpacing.lg,
-                child: _BackButton(),
-              ),
+              const ScrimBackButton(),
               Positioned(
                 left: AppSpacing.xl,
                 right: AppSpacing.xl,
@@ -92,28 +90,6 @@ class _Poster extends StatelessWidget {
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) =>
           const ColoredBox(color: AppColors.surfaceRaised2),
-    );
-  }
-}
-
-/// 60% black circle over the poster — same scrim treatment as
-/// `media_card.dart`'s tags/save button.
-class _BackButton extends StatelessWidget {
-  const _BackButton();
-
-  static const Color _scrim = Color(0x99000000);
-  static const double _diameter = 40;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.pop(),
-      child: Container(
-        width: _diameter,
-        height: _diameter,
-        decoration: const BoxDecoration(color: _scrim, shape: BoxShape.circle),
-        child: const Icon(AppIcons.back, color: AppColors.ink, size: 20),
-      ),
     );
   }
 }

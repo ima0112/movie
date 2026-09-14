@@ -47,7 +47,11 @@ class MovieCastRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: _circleSize + AppSpacing.xxl,
+                // Avatar + gap + two lines of `caption` (name, character)
+                // — `xxl` alone (used for the "See full cast"/crew
+                // spacing elsewhere) isn't tall enough for two lines and
+                // overflowed by ~10px; `xxxl + sm` covers it with margin.
+                height: _circleSize + AppSpacing.xxxl + AppSpacing.sm,
                 child: ListView.separated(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.xl,

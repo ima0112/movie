@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/shared/widgets/media_card.dart';
 
 void main() {
@@ -48,16 +49,17 @@ void main() {
     await tester.pumpWidget(const PakoTvApp());
     await tester.pumpAndSettle();
 
-    // FakeMediaRepository's "Dune: Part Two" has id 1.
+    // FakeMediaRepository's "Dune: Part Two" has id 1, with full D1
+    // sample data — a real trailer proves the right movie loaded.
     await tester.tap(find.text('Dune: Part Two'));
     await tester.pumpAndSettle();
-    expect(find.text('Movie 1'), findsOneWidget);
-    expect(find.byType(BackButton), findsOneWidget);
+    expect(find.text('Trailer'), findsOneWidget);
+    expect(find.byIcon(AppIcons.back), findsOneWidget);
     // The pushed detail hides the tab bar — a pushed screen per
     // docs/SCREENS.md ("every pushed screen... hides the bottom bar").
     expect(find.text('Discover'), findsNothing);
 
-    await tester.tap(find.byType(BackButton));
+    await tester.tap(find.byIcon(AppIcons.back));
     await tester.pumpAndSettle();
     expect(find.text('Dune: Part Two'), findsOneWidget);
     expect(find.text('Discover'), findsOneWidget);
@@ -80,15 +82,18 @@ void main() {
 
       // A carousel card has no title text of its own (docs/SCREENS.md B1:
       // "no title or year underneath"), so find it structurally instead.
+      // Whatever it is (a movie with full sample data, one with the
+      // generic fallback, or — D2 not being implemented yet — a TV show
+      // that ends in an error state) always renders exactly one way back.
       final carouselCard = find.byWidgetPredicate(
         (widget) => widget is MediaCard && widget.size == MediaCardSize.carousel,
       );
       expect(carouselCard, findsWidgets);
       await tester.tap(carouselCard.first);
       await tester.pumpAndSettle();
-      expect(find.textContaining('Movie '), findsOneWidget);
+      expect(find.byIcon(AppIcons.back), findsOneWidget);
 
-      await tester.tap(find.byType(BackButton));
+      await tester.tap(find.byIcon(AppIcons.back));
       await tester.pumpAndSettle();
 
       final scrollOffsetAfter = tester
