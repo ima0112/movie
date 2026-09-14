@@ -117,6 +117,7 @@ apagado), no Phosphor.
 | Grupo | `UsersThree` |
 | Dado (Sorpréndeme) | `Dice5` |
 | Gustos / corazón con persona | `UserCirclePlus` (aprox. "usar mis gustos") |
+| Estrella de valoración (vacía/llena) | `Star` / `StarFill` |
 
 Si falta un concepto al implementar, añádelo a esta tabla antes de elegir el
 icono a ojo, para que quede consistente entre pantallas.

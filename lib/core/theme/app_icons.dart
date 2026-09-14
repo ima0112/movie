@@ -52,4 +52,7 @@ class AppIcons {
   static const IconData group = PhosphorIconsRegular.usersThree;
   static const IconData dice = PhosphorIconsRegular.diceFive;
   static const IconData useMyTastes = PhosphorIconsRegular.userCirclePlus;
+
+  static const IconData star = PhosphorIconsRegular.star;
+  static const IconData starFill = PhosphorIconsFill.star;
 }

@@ -8,6 +8,7 @@ import '../../../shared/widgets/app_buttons.dart';
 import '../../../shared/widgets/app_chip.dart';
 import '../../../shared/widgets/app_tab_bar.dart';
 import '../../../shared/widgets/genre_bar.dart';
+import '../../../shared/widgets/library_row.dart';
 import '../../../shared/widgets/match_fab.dart';
 import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/metric_card.dart';
@@ -72,6 +73,10 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Metric card + genre bar'),
           const SizedBox(height: AppSpacing.md),
           const _StatsSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Library row'),
+          const SizedBox(height: AppSpacing.md),
+          const _LibraryRowSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -734,6 +739,60 @@ class _StatsSection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: GenreBar(label: label, count: count, maxCount: maxCount),
           ),
+      ],
+    );
+  }
+}
+
+class _LibraryRowSection extends StatefulWidget {
+  const _LibraryRowSection();
+
+  @override
+  State<_LibraryRowSection> createState() => _LibraryRowSectionState();
+}
+
+class _LibraryRowSectionState extends State<_LibraryRowSection> {
+  String _lastSwipe = 'none yet';
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const LibraryRow(
+          posterUrl: null,
+          title: 'The Bear',
+          metadata: '2022 · TV Show · 2 seasons',
+          trailing: LibraryRowTrailing.date('Saved yesterday'),
+        ),
+        const Divider(color: AppColors.line, height: AppSpacing.xxl),
+        const LibraryRow(
+          posterUrl: null,
+          title: 'Dune: Part Two',
+          metadata: '2024 · Movie · 2 h 46 min',
+          trailing: LibraryRowTrailing.stars(3),
+        ),
+        const Divider(color: AppColors.line, height: AppSpacing.xxl),
+        const LibraryRow(
+          posterUrl: null,
+          title: 'Season 1',
+          metadata: '2016 · 8 episodes',
+          trailing: LibraryRowTrailing.chevron(),
+        ),
+        const Divider(color: AppColors.line, height: AppSpacing.xxl),
+        Text(
+          'Swipe left (remove) / right (watched) — last: $_lastSwipe',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        LibraryRow(
+          posterUrl: null,
+          title: 'Knives Out',
+          metadata: '2019 · Movie · 2 h 10 min',
+          trailing: const LibraryRowTrailing.date('Saved 3 days ago'),
+          onSwipeLeft: () => setState(() => _lastSwipe = 'left (remove)'),
+          onSwipeRight: () => setState(() => _lastSwipe = 'right (watched)'),
+        ),
       ],
     );
   }
