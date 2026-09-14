@@ -7,6 +7,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../shared/widgets/app_chip.dart';
 import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/pako_state.dart';
+import '../../../shared/widgets/quiz_tile.dart';
 
 /// Debug-only screen that renders every color, text style, and spacing
 /// token so the design system tokens can be checked visually.
@@ -50,6 +51,10 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Chip'),
           const SizedBox(height: AppSpacing.md),
           const _ChipSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Quiz tile'),
+          const SizedBox(height: AppSpacing.md),
+          const _QuizTileSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -484,6 +489,78 @@ class _ChipSection extends StatelessWidget {
             label: 'Add genre',
             state: ChipState.suggestion,
             onTap: () {},
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuizTileSection extends StatefulWidget {
+  const _QuizTileSection();
+
+  @override
+  State<_QuizTileSection> createState() => _QuizTileSectionState();
+}
+
+class _QuizTileSectionState extends State<_QuizTileSection> {
+  bool _toggled = false;
+
+  static const double _tileSize = 96;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.lg,
+      children: [
+        SizedBox(
+          width: _tileSize,
+          child: _Labeled(
+            label: 'tap me (default/selected)',
+            child: SizedBox(
+              width: _tileSize,
+              height: _tileSize,
+              child: QuizTile(
+                icon: AppIcons.compass,
+                label: 'Adventure',
+                state: _toggled
+                    ? QuizTileState.selected
+                    : QuizTileState.normal,
+                onTap: () => setState(() => _toggled = !_toggled),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: _tileSize,
+          child: _Labeled(
+            label: 'selected',
+            child: SizedBox(
+              width: _tileSize,
+              height: _tileSize,
+              child: QuizTile(
+                icon: AppIcons.dice,
+                label: 'Comedy',
+                state: QuizTileState.selected,
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: _tileSize,
+          child: _Labeled(
+            label: 'disabled',
+            child: const SizedBox(
+              width: _tileSize,
+              height: _tileSize,
+              child: QuizTile(
+                icon: AppIcons.hourglass,
+                label: 'Horror',
+                state: QuizTileState.disabled,
+              ),
+            ),
           ),
         ),
       ],
