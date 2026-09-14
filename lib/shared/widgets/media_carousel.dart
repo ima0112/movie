@@ -5,6 +5,19 @@ import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_spacing.dart';
 import 'media_card.dart';
 
+/// "2019 · Mystery, Comedy · Movie" — the hero's metadata line, per
+/// `docs/SCREENS.md` B1. Local to this file: it only reads fields
+/// [MediaItem] already carries, no extra data needed from the caller.
+String _heroMetadata(MediaItem item) {
+  final parts = <String>[
+    if (item.releaseDate != null) '${item.releaseDate!.year}',
+    if (item.genres.isNotEmpty)
+      item.genres.map((genre) => genre.name).join(', '),
+    item.type == MediaType.movie ? 'Movie' : 'TV Show',
+  ];
+  return parts.join(' · ');
+}
+
 /// A horizontal row of poster cards — the section carousels and the
 /// Discover hero.
 ///
@@ -28,18 +41,31 @@ class MediaCarousel extends StatelessWidget {
     required this.items,
     this.showTypeTag = false,
   }) : _isHero = false,
-       onSaveTap = null;
+       onSaveTap = null,
+       saveButtonBuilder = null;
 
   /// The Discover hero: 330×440 cards, snapping, a 24 px peek of the next
   /// card. [onSaveTap] is called with the item whose save button was
-  /// tapped.
-  const MediaCarousel.hero({super.key, required this.items, this.onSaveTap})
-    : _isHero = true,
-      showTypeTag = false;
+  /// tapped — ignored when [saveButtonBuilder] is provided.
+  ///
+  /// [saveButtonBuilder], when provided, replaces the save button
+  /// entirely with whatever widget it returns for that item — use this
+  /// when the button's look needs to react to state this carousel has no
+  /// business knowing about (e.g. a `BlocSelector` watching "is this item
+  /// saved"), without this carousel — or any card other than the one
+  /// whose state actually changed — rebuilding for it.
+  const MediaCarousel.hero({
+    super.key,
+    required this.items,
+    this.onSaveTap,
+    this.saveButtonBuilder,
+  }) : _isHero = true,
+       showTypeTag = false;
 
   final List<MediaItem> items;
   final bool showTypeTag;
   final void Function(MediaItem item)? onSaveTap;
+  final Widget Function(MediaItem item)? saveButtonBuilder;
   final bool _isHero;
 
   // docs/SCREENS.md B1: "24 px peek of the next one".
@@ -93,13 +119,18 @@ class MediaCarousel extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = items[index];
           final onSave = onSaveTap;
+          final buildSaveButton = saveButtonBuilder;
           return Padding(
             padding: const EdgeInsets.only(right: _heroPeek),
             child: MediaCard(
               size: MediaCardSize.hero,
               title: item.title,
               posterUrl: item.posterUrl,
-              onSaveTap: onSave == null ? null : () => onSave(item),
+              metadata: _heroMetadata(item),
+              saveButton: buildSaveButton?.call(item),
+              onSaveTap: buildSaveButton == null && onSave != null
+                  ? () => onSave(item)
+                  : null,
             ),
           );
         },

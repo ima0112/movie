@@ -64,8 +64,9 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   /// The named carousels shown per segment — see `docs/SCREENS.md` B1.
   /// `forYou` and `becauseYouLike` aren't included yet: they need a taste
   /// profile this Cubit has no way to read (no `TasteProfileRepository`
-  /// yet).
-  static const Map<MediaSegment, List<CarouselSection>> _sectionsBySegment = {
+  /// yet). Public so the screen can know which sections a segment has
+  /// (and render their skeletons) before any data has arrived.
+  static const Map<MediaSegment, List<CarouselSection>> sectionsBySegment = {
     MediaSegment.all: [
       CarouselSection.popularThisWeek,
       CarouselSection.watchLater,
@@ -100,7 +101,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     }
 
     final carousels = <CarouselSection, List<MediaItem>>{};
-    for (final section in _sectionsBySegment[segment]!) {
+    for (final section in sectionsBySegment[segment]!) {
       final result = await _mediaRepository.getCarouselSection(
         section,
         type: segment.mediaType,

@@ -42,7 +42,10 @@ class MediaCard extends StatelessWidget {
     this.posterUrl,
     this.showTypeTag = false,
     this.reasonTag,
+    this.metadata,
     this.onSaveTap,
+    this.isSaved = false,
+    this.saveButton,
     this.onTap,
     this.onLongPress,
   });
@@ -63,8 +66,27 @@ class MediaCard extends StatelessWidget {
   /// gets the neutral scrim pill).
   final String? reasonTag;
 
-  /// Hero only. Circular save (Watch later) button, top right.
+  /// Hero only. Gray line under the title, e.g. "2019 · Mystery, Comedy ·
+  /// Movie" — see `docs/SCREENS.md` B1.
+  final String? metadata;
+
+  /// Hero only. Circular save (Watch later) button, top right. Ignored
+  /// when [saveButton] is provided.
   final VoidCallback? onSaveTap;
+
+  /// Whether the built-in save button renders its "already saved" look
+  /// (filled, amber) — see `docs/SCREENS.md` B1 ("amber if already in
+  /// Watch later"). Only affects the button built from [onSaveTap]; has
+  /// no effect when [saveButton] is provided.
+  final bool isSaved;
+
+  /// Hero only. A custom widget for the save-button slot (top right),
+  /// used instead of the built-in one. For when the button's look needs
+  /// to react to something this card doesn't know about — e.g. a
+  /// `BlocSelector` watching whether this item is saved — without making
+  /// this whole card (or its carousel) rebuild for that. Takes priority
+  /// over [onSaveTap]/[isSaved] when provided.
+  final Widget? saveButton;
 
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
@@ -94,7 +116,11 @@ class MediaCard extends StatelessWidget {
                     left: AppSpacing.md,
                     right: AppSpacing.md,
                     bottom: AppSpacing.md,
-                    child: _HeroCaption(title: title, reasonTag: reasonTag),
+                    child: _HeroCaption(
+                      title: title,
+                      reasonTag: reasonTag,
+                      metadata: metadata,
+                    ),
                   ),
                 if (showTypeTag)
                   const Positioned(
@@ -102,11 +128,16 @@ class MediaCard extends StatelessWidget {
                     top: AppSpacing.xs,
                     child: _TvTag(),
                   ),
-                if (_isHero && onSaveTap != null)
+                if (_isHero && (saveButton != null || onSaveTap != null))
                   Positioned(
                     right: AppSpacing.xs,
                     top: AppSpacing.xs,
-                    child: _SaveButton(onTap: onSaveTap!),
+                    child:
+                        saveButton ??
+                        MediaCardSaveButton(
+                          onTap: onSaveTap!,
+                          isSaved: isSaved,
+                        ),
                   ),
               ],
             ),
@@ -159,14 +190,20 @@ class _HeroFade extends StatelessWidget {
 }
 
 class _HeroCaption extends StatelessWidget {
-  const _HeroCaption({required this.title, required this.reasonTag});
+  const _HeroCaption({
+    required this.title,
+    required this.reasonTag,
+    required this.metadata,
+  });
 
   final String title;
   final String? reasonTag;
+  final String? metadata;
 
   @override
   Widget build(BuildContext context) {
     final tag = reasonTag;
+    final meta = metadata;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -184,6 +221,15 @@ class _HeroCaption extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
+        if (meta != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            meta,
+            style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ],
     );
   }
@@ -225,10 +271,21 @@ class _Pill extends StatelessWidget {
   }
 }
 
-class _SaveButton extends StatelessWidget {
-  const _SaveButton({required this.onTap});
+/// The hero's circular save (Watch later) button. Public because a screen
+/// wiring this up to a Cubit needs to drop its own — e.g. `BlocSelector`
+/// wrapped — instance into [MediaCard.saveButton] with the same look.
+class MediaCardSaveButton extends StatelessWidget {
+  const MediaCardSaveButton({
+    super.key,
+    required this.onTap,
+    this.isSaved = false,
+  });
 
   final VoidCallback onTap;
+
+  /// Amber + filled icon when already saved — see `docs/SCREENS.md` B1
+  /// ("amber if already in Watch later").
+  final bool isSaved;
 
   // Literal from docs/SCREENS.md ("Circular save button (36 px)"), not an
   // AppSpacing token — a fixed size of this one component, not a layout
@@ -242,8 +299,15 @@ class _SaveButton extends StatelessWidget {
       child: Container(
         width: _diameter,
         height: _diameter,
-        decoration: const BoxDecoration(color: _scrim, shape: BoxShape.circle),
-        child: Icon(AppIcons.watchLater, size: 20, color: AppColors.ink),
+        decoration: BoxDecoration(
+          color: isSaved ? AppColors.accent : _scrim,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          isSaved ? AppIcons.watchLaterFill : AppIcons.watchLater,
+          size: 20,
+          color: isSaved ? AppColors.onAccent : AppColors.ink,
+        ),
       ),
     );
   }
