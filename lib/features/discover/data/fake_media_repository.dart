@@ -1,3 +1,5 @@
+import 'package:injectable/injectable.dart';
+
 import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_item.dart';
 import '../../../core/domain/entities/media_type.dart';
@@ -9,6 +11,7 @@ import '../../../core/domain/repositories/media_repository.dart';
 /// Lets Discover's presentation layer be built and demoed against
 /// realistic-looking data. Swap for the real `core/data/repositories/
 /// media_repository_impl.dart` once it exists — see `docs/STRUCTURE.md`.
+@LazySingleton(as: MediaRepository)
 class FakeMediaRepository implements MediaRepository {
   static const _delay = Duration(milliseconds: 400);
 

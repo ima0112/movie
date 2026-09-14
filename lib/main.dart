@@ -5,7 +5,7 @@ import 'core/theme/app_theme.dart';
 import 'features/debug/presentation/design_system_debug_screen.dart';
 
 void main() {
-  setupDependencies();
+  configureDependencies();
   runApp(const PakoTvApp());
 }
 
