@@ -49,6 +49,23 @@ ask before inventing it.
    of the SCREENS.md inventory it implements (e.g. "implements B1.
    Discover"). If no entry exists yet, don't build it without first adding
    it to that document.
+9. **Granular Bloc rebuilds — no exceptions.** A screen-wide `BlocBuilder`
+   wrapping the entire widget tree is not acceptable. Every `BlocBuilder`
+   must scope to the smallest widget that actually needs to change:
+   - Prefer several small, local `BlocBuilder`/`BlocSelector` widgets over
+     one wrapping the whole screen. A toggle (favorite/watch later/watched,
+     a chip, a tab) rebuilds only itself, never the carousel, list, or
+     scaffold around it.
+   - Always pass `buildWhen` (or use `BlocSelector`) when a widget only
+     cares about part of the state — e.g. a save button watches a `Set<int>`
+     of saved ids, not the whole `DiscoverState`.
+   - Static structure (app bar, tab bar, layout scaffolding) must never sit
+     inside a `BlocBuilder` at all — build it once, outside.
+   - When implementing a screen, explicitly identify each independently
+     toggleable piece of UI (an icon button, a chip, a single row) before
+     writing the `build()` method, and give each one its own narrowly
+     scoped builder. If you can't justify why a `BlocBuilder`'s subtree is
+     as large as it is, it's too large.
 
 ## Code conventions
 
