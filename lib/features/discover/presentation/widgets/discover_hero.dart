@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../shared/widgets/media_carousel.dart';
@@ -37,6 +39,11 @@ class DiscoverHero extends StatelessWidget {
           items: heroItems,
           saveButtonBuilder: (item) =>
               DiscoverHeroSaveButton(itemId: item.id),
+          // `push`, not `go`: the detail screen's back button should
+          // return to Discover with its scroll position intact, not
+          // replace it in the stack.
+          onItemTap: (item) =>
+              context.push(AppRoutes.movieDetail(item.id)),
         );
       },
     );

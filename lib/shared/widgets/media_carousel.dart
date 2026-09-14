@@ -35,18 +35,23 @@ class MediaCarousel extends StatelessWidget {
   /// A section carousel: 110×165 cards, 12 px gaps, no snap, free scroll.
   /// [showTypeTag] applies only to TV items — movies never get the tag
   /// (see `docs/SCREENS.md` B1: "TV posters carry a small 'TV' pill in
-  /// the corner; movies don't").
+  /// the corner; movies don't"). [onItemTap] is called with the tapped
+  /// item — see `docs/SCREENS.md` B1 ("Tap → detail with Hero
+  /// transition").
   const MediaCarousel.standard({
     super.key,
     required this.items,
     this.showTypeTag = false,
+    this.onItemTap,
   }) : _isHero = false,
        onSaveTap = null,
        saveButtonBuilder = null;
 
   /// The Discover hero: 330×440 cards, snapping, a 24 px peek of the next
   /// card. [onSaveTap] is called with the item whose save button was
-  /// tapped — ignored when [saveButtonBuilder] is provided.
+  /// tapped — ignored when [saveButtonBuilder] is provided. [onItemTap]
+  /// is called with the tapped item (tapping the card itself, not its
+  /// save button).
   ///
   /// [saveButtonBuilder], when provided, replaces the save button
   /// entirely with whatever widget it returns for that item — use this
@@ -59,6 +64,7 @@ class MediaCarousel extends StatelessWidget {
     required this.items,
     this.onSaveTap,
     this.saveButtonBuilder,
+    this.onItemTap,
   }) : _isHero = true,
        showTypeTag = false;
 
@@ -66,6 +72,7 @@ class MediaCarousel extends StatelessWidget {
   final bool showTypeTag;
   final void Function(MediaItem item)? onSaveTap;
   final Widget Function(MediaItem item)? saveButtonBuilder;
+  final void Function(MediaItem item)? onItemTap;
   final bool _isHero;
 
   // docs/SCREENS.md B1: "24 px peek of the next one".
@@ -84,6 +91,7 @@ class MediaCarousel extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
+          final onTap = onItemTap;
           return Padding(
             padding: EdgeInsets.only(left: index == 0 ? 0 : AppSpacing.md),
             child: MediaCard(
@@ -91,6 +99,7 @@ class MediaCarousel extends StatelessWidget {
               title: item.title,
               posterUrl: item.posterUrl,
               showTypeTag: showTypeTag && item.type == MediaType.tvShow,
+              onTap: onTap == null ? null : () => onTap(item),
             ),
           );
         },
@@ -120,6 +129,7 @@ class MediaCarousel extends StatelessWidget {
           final item = items[index];
           final onSave = onSaveTap;
           final buildSaveButton = saveButtonBuilder;
+          final onTap = onItemTap;
           return Padding(
             padding: const EdgeInsets.only(right: _heroPeek),
             child: MediaCard(
@@ -131,6 +141,7 @@ class MediaCarousel extends StatelessWidget {
               onSaveTap: buildSaveButton == null && onSave != null
                   ? () => onSave(item)
                   : null,
+              onTap: onTap == null ? null : () => onTap(item),
             ),
           );
         },

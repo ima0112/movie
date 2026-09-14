@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/shared/widgets/media_card.dart';
 
 void main() {
   setUpAll(configureDependencies);
@@ -40,4 +42,60 @@ void main() {
     await tester.pump();
     expect(find.text('Dune: Part Two'), findsOneWidget);
   });
+
+  testWidgets('tapping the hero card pushes /movie/:id with the right id; '
+      'back returns to Discover', (tester) async {
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+
+    // FakeMediaRepository's "Dune: Part Two" has id 1.
+    await tester.tap(find.text('Dune: Part Two'));
+    await tester.pumpAndSettle();
+    expect(find.text('Movie 1'), findsOneWidget);
+    expect(find.byType(BackButton), findsOneWidget);
+    // The pushed detail hides the tab bar — a pushed screen per
+    // docs/SCREENS.md ("every pushed screen... hides the bottom bar").
+    expect(find.text('Discover'), findsNothing);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('Dune: Part Two'), findsOneWidget);
+    expect(find.text('Discover'), findsOneWidget);
+  });
+
+  testWidgets(
+    'tapping a section-carousel card pushes the detail too; back returns '
+    "to Discover with its scroll position intact (push, not go)",
+    (tester) async {
+      await tester.pumpWidget(const PakoTvApp());
+      await tester.pumpAndSettle();
+
+      final scrollable = find.byType(Scrollable).first;
+      await tester.drag(scrollable, const Offset(0, -700));
+      await tester.pumpAndSettle();
+      final scrollOffsetBefore = tester
+          .state<ScrollableState>(scrollable)
+          .position
+          .pixels;
+
+      // A carousel card has no title text of its own (docs/SCREENS.md B1:
+      // "no title or year underneath"), so find it structurally instead.
+      final carouselCard = find.byWidgetPredicate(
+        (widget) => widget is MediaCard && widget.size == MediaCardSize.carousel,
+      );
+      expect(carouselCard, findsWidgets);
+      await tester.tap(carouselCard.first);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Movie '), findsOneWidget);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+
+      final scrollOffsetAfter = tester
+          .state<ScrollableState>(scrollable)
+          .position
+          .pixels;
+      expect(scrollOffsetAfter, scrollOffsetBefore);
+    },
+  );
 }
