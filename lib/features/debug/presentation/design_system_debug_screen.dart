@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/domain/entities/media_item.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -11,6 +12,7 @@ import '../../../shared/widgets/genre_bar.dart';
 import '../../../shared/widgets/library_row.dart';
 import '../../../shared/widgets/match_fab.dart';
 import '../../../shared/widgets/media_card.dart';
+import '../../../shared/widgets/media_carousel.dart';
 import '../../../shared/widgets/metric_card.dart';
 import '../../../shared/widgets/pako_state.dart';
 import '../../../shared/widgets/quiz_tile.dart';
@@ -82,6 +84,10 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('State views'),
           const SizedBox(height: AppSpacing.md),
           const _StateViewsSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Media carousel'),
+          const SizedBox(height: AppSpacing.md),
+          const _MediaCarouselSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -866,6 +872,98 @@ class _StateViewsSection extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         const OfflineBanner(),
+      ],
+    );
+  }
+}
+
+class _MediaCarouselSection extends StatelessWidget {
+  const _MediaCarouselSection();
+
+  static final _movies = [
+    Movie(
+      id: 1,
+      title: 'Dune: Part Two',
+      posterUrl: null,
+      genres: const [],
+      releaseDate: DateTime(2024, 3, 1),
+      voteAverage: 8.4,
+    ),
+    Movie(
+      id: 2,
+      title: 'Oppenheimer',
+      posterUrl: null,
+      genres: const [],
+      releaseDate: DateTime(2023, 7, 21),
+      voteAverage: 8.2,
+    ),
+    Movie(
+      id: 3,
+      title: 'Poor Things',
+      posterUrl: null,
+      genres: const [],
+      releaseDate: DateTime(2023, 12, 8),
+      voteAverage: 8.0,
+    ),
+    Movie(
+      id: 4,
+      title: 'Knives Out',
+      posterUrl: null,
+      genres: const [],
+      releaseDate: DateTime(2019, 11, 27),
+      voteAverage: 7.9,
+    ),
+  ];
+
+  static final _tvShows = [
+    TvShow(
+      id: 101,
+      title: 'The Bear',
+      posterUrl: null,
+      genres: const [],
+      releaseDate: DateTime(2022, 6, 23),
+      voteAverage: 8.5,
+    ),
+    TvShow(
+      id: 102,
+      title: 'Fallout',
+      posterUrl: null,
+      genres: const [],
+      releaseDate: DateTime(2024, 4, 10),
+      voteAverage: 8.3,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'standard (110×165, no snap, showTypeTag: true)',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        MediaCarousel.standard(
+          items: [..._movies, ..._tvShows],
+          showTypeTag: true,
+        ),
+        const SizedBox(height: AppSpacing.xxl),
+        Text(
+          'hero (330×440, snap, 24px peek — full-bleed, breaks out of the '
+          'screen padding)',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        SizedBox(
+          height: MediaCardSize.hero.height,
+          child: OverflowBox(
+            minWidth: 0,
+            maxWidth: MediaQuery.sizeOf(context).width,
+            alignment: Alignment.centerLeft,
+            child: MediaCarousel.hero(items: _movies, onSaveTap: (item) {}),
+          ),
+        ),
       ],
     );
   }
