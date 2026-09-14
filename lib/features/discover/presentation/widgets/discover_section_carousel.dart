@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
@@ -56,6 +58,11 @@ class DiscoverSectionCarousel extends StatelessWidget {
                       // TV posters carry a "TV" pill only in the mixed
                       // "All" segment — see docs/SCREENS.md B1.
                       showTypeTag: segment == MediaSegment.all,
+                      // `push`, not `go`: the detail screen's back button
+                      // should return to Discover with its scroll
+                      // position intact, not replace it in the stack.
+                      onItemTap: (item) =>
+                          context.push(AppRoutes.movieDetail(item.id)),
                     ),
                   ],
                 ),
