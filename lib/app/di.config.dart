@@ -13,7 +13,7 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:movies/core/domain/repositories/media_repository.dart' as _i245;
-import 'package:movies/features/discover/data/fake_media_repository.dart'
+import 'package:movies/features/discover/data/repositories/fake_media_repository.dart'
     as _i398;
 
 extension GetItInjectableX on _i174.GetIt {

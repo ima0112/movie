@@ -1,10 +1,10 @@
 import 'package:injectable/injectable.dart';
 
-import '../../../core/domain/entities/genre.dart';
-import '../../../core/domain/entities/media_item.dart';
-import '../../../core/domain/entities/media_type.dart';
-import '../../../core/domain/entities/result.dart';
-import '../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/media_item.dart';
+import '../../../../core/domain/entities/media_type.dart';
+import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/repositories/media_repository.dart';
 
 /// Hardcoded stand-in for `MediaRepositoryImpl` (TMDB not wired up yet).
 ///
