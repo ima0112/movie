@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/pako_state.dart';
 
 /// Debug-only screen that renders every color, text style, and spacing
@@ -40,6 +41,10 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Pako'),
           const SizedBox(height: AppSpacing.md),
           const _PakoSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Media card'),
+          const SizedBox(height: AppSpacing.md),
+          const _MediaCardSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -326,6 +331,104 @@ class _PakoSection extends StatelessWidget {
               ],
             ),
           ),
+      ],
+    );
+  }
+}
+
+class _MediaCardSection extends StatelessWidget {
+  const _MediaCardSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Carousel (110×165)',
+          style: AppTextStyles.h3.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            _Labeled(
+              label: 'default',
+              child: MediaCard(
+                size: MediaCardSize.carousel,
+                title: 'Dune: Part Two',
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            _Labeled(
+              label: 'TV tag',
+              child: MediaCard(
+                size: MediaCardSize.carousel,
+                title: 'The Bear',
+                showTypeTag: true,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xxl),
+        Text(
+          'Hero (330×440)',
+          style: AppTextStyles.h3.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _Labeled(
+                label: '"For you" tag + save',
+                child: MediaCard(
+                  size: MediaCardSize.hero,
+                  title: 'Oppenheimer',
+                  reasonTag: 'For you',
+                  onSaveTap: () {},
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              _Labeled(
+                label: 'TV tag + neutral reasonTag',
+                child: MediaCard(
+                  size: MediaCardSize.hero,
+                  title: 'Fallout',
+                  showTypeTag: true,
+                  reasonTag: 'Popular this week',
+                  onSaveTap: () {},
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              _Labeled(
+                label: 'no tag, no save',
+                child: MediaCard(size: MediaCardSize.hero, title: 'Poor Things'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Labeled extends StatelessWidget {
+  const _Labeled({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        child,
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          label,
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
       ],
     );
   }
