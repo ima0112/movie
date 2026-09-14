@@ -34,10 +34,11 @@ ask before inventing it.
    DESIGN_SYSTEM.md). If a value doesn't exist as a token, that's a sign
    it's missing from that document, not a reason to improvise it in the
    widget.
-5. **Icons**: `phosphor_flutter` package, `regular` weight by default and
-   `fill` for active states (favorite, selected tab). Never mix with
-   Material's `Icons.*` or `CupertinoIcons.*`. Pako's icons are custom SVGs
-   in `assets/icons/pako/`, not an icon package.
+5. **Icons**: `remixicon` package, `_line` variant by default and `_fill`
+   for active states (favorite, selected tab). Never mix with Material's
+   `Icons.*` or `CupertinoIcons.*`. Pako's icons are custom SVGs in
+   `assets/icons/pako/`, not an icon package. (Switched from
+   `phosphor_flutter` — see `docs/DESIGN_SYSTEM.md` section 4 for why.)
 6. **One single visual look on iOS and Android** (no Cupertino widgets for
    a native feel). What IS respected underneath: system gestures for
    "back", `HapticFeedback` at the points SCREENS.md specifies, real

@@ -84,40 +84,46 @@ Radios: `radiusSm` 8 · `radiusMd` 12 (pósters, tarjetas, tiles) ·
 
 ## 4. Iconografía
 
-Paquete: **`phosphor_flutter`**, peso `PhosphorIconsRegular` por defecto,
-`PhosphorIconsFill` para estados activos. Tamaños: 24 (filas, acciones,
-barra de tabs), 20 (chips, campos, elementos secundarios), 18 (dentro de
-pills pequeñas). El icono de Match en la barra/FAB es un SVG propio (Pako
-apagado), no Phosphor.
+Paquete: **`remixicon`**, variante `_line` por defecto, `_fill` para
+estados activos. Tamaños: 24 (filas, acciones, barra de tabs), 20 (chips,
+campos, elementos secundarios), 18 (dentro de pills pequeñas). El icono de
+Match en la barra/FAB es un SVG propio (Pako apagado), no RemixIcons.
 
-| Concepto | Icono Phosphor |
+Cambiado desde `phosphor_flutter` (ver `docs/DECISIONS.md`): al subir el
+SDK de Dart/Flutter para poder generar drift, `phosphor_flutter ^2.1.0`
+dejó de compilar (subclasea `IconData`, que el SDK nuevo declaró
+`final class`) y no existe una versión más nueva que lo arregle.
+`remixicon` no subclasea `IconData` y sí mantiene el mismo patrón
+regular/fill para los 8 conceptos que lo necesitan.
+
+| Concepto | Icono RemixIcons |
 |---|---|
-| Buscar | `MagnifyingGlass` |
-| Filtros | `SlidersHorizontal` |
-| Favorito (inactivo/activo) | `Heart` / `HeartFill` |
-| Ver después (inactivo/activo) | `BookmarkSimple` / `BookmarkSimpleFill` |
-| Vista (inactivo/activo) | `Eye` / `EyeFill` |
-| Reproducir / Trailer | `Play` |
-| Compartir | `ShareNetwork` |
-| Volver | `ArrowLeft` |
-| Cerrar | `X` |
-| Casa / Descubrir (inactivo/activo, tab bar) | `House` / `HouseFill` |
-| Brújula / Explorar (inactivo/activo, tab bar) | `Compass` / `CompassFill` |
-| Lista / Mi lista (inactivo/activo, tab bar) | `ListBullets` / `ListBulletsFill` |
-| Perfil / Tú (inactivo/activo, tab bar) | `User` / `UserFill` |
-| Ajustes | `Gear` |
-| Estadísticas | `ChartBar` |
-| Código QR | `QrCode` |
-| Copiar | `Copy` |
-| Reintentar / Buscar otra | `ArrowClockwise` |
-| Check | `Check` |
-| Chevron derecha/abajo | `CaretRight` / `CaretDown` |
-| Info | `Info` |
-| Reloj de espera | `HourglassMedium` |
-| Grupo | `UsersThree` |
-| Dado (Sorpréndeme) | `Dice5` |
-| Gustos / corazón con persona | `UserCirclePlus` (aprox. "usar mis gustos") |
-| Estrella de valoración (vacía/llena) | `Star` / `StarFill` |
+| Buscar | `search_line` |
+| Filtros | `equalizer_line` |
+| Favorito (inactivo/activo) | `heart_line` / `heart_fill` |
+| Ver después (inactivo/activo) | `bookmark_line` / `bookmark_fill` |
+| Vista (inactivo/activo) | `eye_line` / `eye_fill` |
+| Reproducir / Trailer | `play_line` |
+| Compartir | `share_line` |
+| Volver | `arrow_left_line` |
+| Cerrar | `close_line` |
+| Casa / Descubrir (inactivo/activo, tab bar) | `home_line` / `home_fill` |
+| Brújula / Explorar (inactivo/activo, tab bar) | `compass_line` / `compass_fill` |
+| Lista / Mi lista (inactivo/activo, tab bar) | `file_list_line` / `file_list_fill` |
+| Perfil / Tú (inactivo/activo, tab bar) | `user_line` / `user_fill` |
+| Ajustes | `settings_line` |
+| Estadísticas | `bar_chart_line` |
+| Código QR | `qr_code_line` |
+| Copiar | `file_copy_line` |
+| Reintentar / Buscar otra | `refresh_line` |
+| Check | `check_line` |
+| Chevron derecha/abajo | `arrow_right_s_line` / `arrow_down_s_line` |
+| Info | `information_line` |
+| Reloj de espera | `hourglass_line` |
+| Grupo | `team_line` |
+| Dado (Sorpréndeme) | `dice_5_line` |
+| Gustos / corazón con persona | `user_add_line` (aprox. "usar mis gustos") |
+| Estrella de valoración (vacía/llena) | `star_line` / `star_fill` |
 
 Si falta un concepto al implementar, añádelo a esta tabla antes de elegir el
 icono a ojo, para que quede consistente entre pantallas.

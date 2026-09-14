@@ -1,58 +1,58 @@
 import 'package:flutter/widgets.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:remixicon/remixicon.dart';
 
 /// Icon tokens for PakoTV.
 ///
 /// Source of truth: `docs/DESIGN_SYSTEM.md`, section 4 ("Iconografía").
-/// Every icon comes from `phosphor_flutter`, `regular` weight by default
-/// and `fill` for active states — never mix with Material's `Icons.*` or
+/// Every icon comes from `remixicon`, the `_line` variant by default and
+/// `_fill` for active states — never mix with Material's `Icons.*` or
 /// `CupertinoIcons.*`. Pako's icon (the Match FAB) is a custom SVG, not
-/// Phosphor, so it is not part of this class (see `docs/DECISIONS.md`
+/// RemixIcons, so it is not part of this class (see `docs/DECISIONS.md`
 /// section 9).
 class AppIcons {
   const AppIcons._();
 
-  static const IconData search = PhosphorIconsRegular.magnifyingGlass;
-  static const IconData filter = PhosphorIconsRegular.slidersHorizontal;
+  static const IconData search = RemixIcons.search_line;
+  static const IconData filter = RemixIcons.equalizer_line;
 
-  static const IconData favorite = PhosphorIconsRegular.heart;
-  static const IconData favoriteFill = PhosphorIconsFill.heart;
+  static const IconData favorite = RemixIcons.heart_line;
+  static const IconData favoriteFill = RemixIcons.heart_fill;
 
-  static const IconData watchLater = PhosphorIconsRegular.bookmarkSimple;
-  static const IconData watchLaterFill = PhosphorIconsFill.bookmarkSimple;
+  static const IconData watchLater = RemixIcons.bookmark_line;
+  static const IconData watchLaterFill = RemixIcons.bookmark_fill;
 
-  static const IconData watched = PhosphorIconsRegular.eye;
-  static const IconData watchedFill = PhosphorIconsFill.eye;
+  static const IconData watched = RemixIcons.eye_line;
+  static const IconData watchedFill = RemixIcons.eye_fill;
 
-  static const IconData play = PhosphorIconsRegular.play;
-  static const IconData share = PhosphorIconsRegular.shareNetwork;
-  static const IconData back = PhosphorIconsRegular.arrowLeft;
-  static const IconData close = PhosphorIconsRegular.x;
-  static const IconData home = PhosphorIconsRegular.house;
-  static const IconData homeFill = PhosphorIconsFill.house;
+  static const IconData play = RemixIcons.play_line;
+  static const IconData share = RemixIcons.share_line;
+  static const IconData back = RemixIcons.arrow_left_line;
+  static const IconData close = RemixIcons.close_line;
+  static const IconData home = RemixIcons.home_line;
+  static const IconData homeFill = RemixIcons.home_fill;
 
-  static const IconData compass = PhosphorIconsRegular.compass;
-  static const IconData compassFill = PhosphorIconsFill.compass;
+  static const IconData compass = RemixIcons.compass_line;
+  static const IconData compassFill = RemixIcons.compass_fill;
 
-  static const IconData list = PhosphorIconsRegular.listBullets;
-  static const IconData listFill = PhosphorIconsFill.listBullets;
+  static const IconData list = RemixIcons.file_list_line;
+  static const IconData listFill = RemixIcons.file_list_fill;
 
-  static const IconData user = PhosphorIconsRegular.user;
-  static const IconData userFill = PhosphorIconsFill.user;
-  static const IconData settings = PhosphorIconsRegular.gear;
-  static const IconData stats = PhosphorIconsRegular.chartBar;
-  static const IconData qrCode = PhosphorIconsRegular.qrCode;
-  static const IconData copy = PhosphorIconsRegular.copy;
-  static const IconData retry = PhosphorIconsRegular.arrowClockwise;
-  static const IconData check = PhosphorIconsRegular.check;
-  static const IconData chevronRight = PhosphorIconsRegular.caretRight;
-  static const IconData chevronDown = PhosphorIconsRegular.caretDown;
-  static const IconData info = PhosphorIconsRegular.info;
-  static const IconData hourglass = PhosphorIconsRegular.hourglassMedium;
-  static const IconData group = PhosphorIconsRegular.usersThree;
-  static const IconData dice = PhosphorIconsRegular.diceFive;
-  static const IconData useMyTastes = PhosphorIconsRegular.userCirclePlus;
+  static const IconData user = RemixIcons.user_line;
+  static const IconData userFill = RemixIcons.user_fill;
+  static const IconData settings = RemixIcons.settings_line;
+  static const IconData stats = RemixIcons.bar_chart_line;
+  static const IconData qrCode = RemixIcons.qr_code_line;
+  static const IconData copy = RemixIcons.file_copy_line;
+  static const IconData retry = RemixIcons.refresh_line;
+  static const IconData check = RemixIcons.check_line;
+  static const IconData chevronRight = RemixIcons.arrow_right_s_line;
+  static const IconData chevronDown = RemixIcons.arrow_down_s_line;
+  static const IconData info = RemixIcons.information_line;
+  static const IconData hourglass = RemixIcons.hourglass_line;
+  static const IconData group = RemixIcons.team_line;
+  static const IconData dice = RemixIcons.dice_5_line;
+  static const IconData useMyTastes = RemixIcons.user_add_line;
 
-  static const IconData star = PhosphorIconsRegular.star;
-  static const IconData starFill = PhosphorIconsFill.star;
+  static const IconData star = RemixIcons.star_line;
+  static const IconData starFill = RemixIcons.star_fill;
 }
