@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/router.dart';
+import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/features/movie_detail/presentation/widgets/movie_detail_compact_bar.dart';
 
 /// Manual-verification checklist from the task, made automatic and
@@ -11,7 +13,17 @@ import 'package:movies/features/movie_detail/presentation/widgets/movie_detail_c
 /// `tester.tap`/`tester.drag` plus `debugPrintRebuildDirtyWidgets` (as
 /// suggested) is the rigorous equivalent.
 void main() {
-  setUpAll(configureDependencies);
+  setUpAll(() {
+    configureDependencies();
+    // The real DriftUserLibraryRepository needs a native sqlite file via
+    // path_provider, which has no platform channel in `flutter test`'s
+    // host environment — swap in the fast, in-memory test double instead
+    // of exercising real (and here, unavailable) disk I/O.
+    getIt.unregister<UserLibraryRepository>();
+    getIt.registerLazySingleton<UserLibraryRepository>(
+      InMemoryUserLibraryRepository.new,
+    );
+  });
 
   /// FakeMediaRepository's "Dune: Part Two" (id 1) has full D1 sample
   /// data — cast, crew, a trailer, similar, watch providers, and genres.
