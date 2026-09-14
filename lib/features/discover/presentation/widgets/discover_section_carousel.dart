@@ -10,7 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/media_carousel.dart';
-import '../bloc/discover_cubit.dart';
+import '../cubit/discover_cubit.dart';
 import 'discover_section_skeleton.dart';
 
 /// One named carousel (see `docs/SCREENS.md` B1's per-segment section

@@ -129,6 +129,30 @@ test/
 firebase/                         (v1.1) firestore.rules, indexes, rules tests
 ```
 
+## `presentation/` internal layout (applies to every feature)
+
+Every feature's `presentation/` folder follows the same internal shape,
+regardless of feature size:
+
+```
+presentation/
+  <feature>_screen.dart      thin — assembles sub-widgets, provides the Cubit
+  cubit/
+    <feature>_cubit.dart      states live in the same file unless it grows
+                               past rule 11's soft limit (150 lines), in
+                               which case split into <feature>_state.dart
+  widgets/
+    <thing>_a.dart            one sub-widget per file (rule 11)
+    <thing>_b.dart
+```
+
+Name the subfolder `cubit/` (not `bloc/`) when the feature uses a plain
+`Cubit`, matching the flutter_bloc package's own convention — reserve
+`bloc/` only for the rare screen that genuinely needs event-driven `Bloc`
+(see CLAUDE.md's state convention, e.g. the Matcher's room lifecycle).
+
+---
+
 ## Technical decisions the structure assumes
 
 | Topic | Choice | Note |

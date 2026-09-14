@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:movies/features/discover/presentation/bloc/saved_ids_cubit.dart';
+import 'package:movies/features/discover/presentation/cubit/saved_ids_cubit.dart';
 
 void main() {
   group('SavedIdsCubit', () {

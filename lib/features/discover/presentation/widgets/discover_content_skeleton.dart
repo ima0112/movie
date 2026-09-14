@@ -4,7 +4,7 @@ import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/media_card.dart';
 import '../../../../shared/widgets/state_views.dart';
-import '../bloc/discover_cubit.dart';
+import '../cubit/discover_cubit.dart';
 import 'discover_section_skeleton.dart';
 
 /// Skeleton for the whole content area — the hero plus one
