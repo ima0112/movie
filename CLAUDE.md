@@ -16,7 +16,7 @@ ask before inventing it.
 | `docs/DESIGN_SYSTEM.md` | You're about to write ANY widget. Colors, typography, spacing, radii, icons. The single source of truth — never hardcode a hex or a size that already exists as a token. |
 | `docs/SCREENS.md` | You're about to build a specific screen, sheet, or dialog. Has, per screen: access, exact elements, states, and where it navigates to. |
 | `docs/DECISIONS.md` | You need product context, which API to use for what, or a scope decision (what's NOT built and why). |
-| `docs/STRUCTURE.md` | You're about to create a new file and don't know which folder it belongs in, or want to confirm a technical choice (Bloc, get_it, go_router, Dio, drift). |
+| `docs/STRUCTURE.md` | You're about to create a new file and don't know which folder it belongs in, or want to confirm a technical choice (Bloc, get_it/injectable, go_router, Dio, drift). |
 
 ## Architecture rules (non-negotiable)
 
@@ -53,7 +53,15 @@ ask before inventing it.
 ## Code conventions
 
 - State: `flutter_bloc` — one `Cubit` per screen (plain `Bloc` only if the screen has a real event-driven flow, e.g. the Matcher's room lifecycle).
-- DI: `get_it` — repositories and services are `registerLazySingleton` in `app/di.dart`; Cubits/Blocs are NOT registered in GetIt, they're created where the screen is built and pull their dependencies via `GetIt.I<T>()`.
+- DI: `get_it` + `injectable`. Annotate repository/service implementations with
+  `@LazySingleton(as: SomeInterface)` (or `@injectable` for non-singleton
+  services) — never hand-write a `getIt.registerX(...)` call. After adding or
+  changing an annotation, run
+  `dart run build_runner build --delete-conflicting-outputs` to regenerate
+  `app/di.config.dart`. That file is generated — never edit it by hand, and
+  don't hand-roll a registration that duplicates what an annotation already
+  produces. Cubits/Blocs are NOT annotated — they're created where the
+  screen is built and pull dependencies via `getIt<T>()`.
 - Navigation: `go_router`.
 - HTTP: `Dio` with interceptors (bearer, `language`/`region`, logging).
 - Local persistence: `drift` (SQLite).
