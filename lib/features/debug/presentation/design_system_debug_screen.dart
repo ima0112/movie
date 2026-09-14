@@ -14,6 +14,7 @@ import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/metric_card.dart';
 import '../../../shared/widgets/pako_state.dart';
 import '../../../shared/widgets/quiz_tile.dart';
+import '../../../shared/widgets/state_views.dart';
 
 /// Debug-only screen that renders every color, text style, and spacing
 /// token so the design system tokens can be checked visually.
@@ -77,6 +78,10 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Library row'),
           const SizedBox(height: AppSpacing.md),
           const _LibraryRowSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('State views'),
+          const SizedBox(height: AppSpacing.md),
+          const _StateViewsSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -793,6 +798,74 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
           onSwipeLeft: () => setState(() => _lastSwipe = 'left (remove)'),
           onSwipeRight: () => setState(() => _lastSwipe = 'right (watched)'),
         ),
+      ],
+    );
+  }
+}
+
+class _StateViewsSection extends StatelessWidget {
+  const _StateViewsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Skeleton',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            const SkeletonBlock(width: 110, height: 165),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SkeletonBlock(width: 160, height: 16),
+                  const SizedBox(height: AppSpacing.sm),
+                  const SkeletonBlock(width: 100, height: 12),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xxl),
+        Text(
+          'Empty state',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        DecoratedBox(
+          decoration: const BoxDecoration(color: AppColors.surfaceRaised),
+          child: EmptyStateView(
+            title: 'Nothing for later yet',
+            body: 'Save a movie or show and it will show up here.',
+            ctaLabel: 'Explore',
+            onCtaTap: () {},
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xxl),
+        Text(
+          'Error state',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        DecoratedBox(
+          decoration: const BoxDecoration(color: AppColors.surfaceRaised),
+          child: ErrorStateView(
+            title: "Couldn't load",
+            body: 'Check your connection and try again.',
+            onRetry: () {},
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xxl),
+        Text(
+          'Offline banner',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        const OfflineBanner(),
       ],
     );
   }
