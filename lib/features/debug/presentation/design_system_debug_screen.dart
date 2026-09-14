@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../shared/widgets/pako_state.dart';
 
 /// Debug-only screen that renders every color, text style, and spacing
 /// token so the design system tokens can be checked visually.
@@ -30,6 +32,14 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Spacing'),
           const SizedBox(height: AppSpacing.md),
           const _SpacingSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Icons'),
+          const SizedBox(height: AppSpacing.md),
+          const _IconsSection(),
+          const SizedBox(height: AppSpacing.xxxl),
+          _SectionTitle('Pako'),
+          const SizedBox(height: AppSpacing.md),
+          const _PakoSection(),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
@@ -207,6 +217,111 @@ class _SpacingSection extends StatelessWidget {
                   width: value,
                   height: AppSpacing.lg,
                   color: AppColors.accent,
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _IconsSection extends StatelessWidget {
+  const _IconsSection();
+
+  static const _icons = <(String, IconData)>[
+    ('search', AppIcons.search),
+    ('filter', AppIcons.filter),
+    ('favorite', AppIcons.favorite),
+    ('favoriteFill', AppIcons.favoriteFill),
+    ('watchLater', AppIcons.watchLater),
+    ('watchLaterFill', AppIcons.watchLaterFill),
+    ('watched', AppIcons.watched),
+    ('watchedFill', AppIcons.watchedFill),
+    ('play', AppIcons.play),
+    ('share', AppIcons.share),
+    ('back', AppIcons.back),
+    ('close', AppIcons.close),
+    ('home', AppIcons.home),
+    ('compass', AppIcons.compass),
+    ('user', AppIcons.user),
+    ('settings', AppIcons.settings),
+    ('stats', AppIcons.stats),
+    ('qrCode', AppIcons.qrCode),
+    ('copy', AppIcons.copy),
+    ('retry', AppIcons.retry),
+    ('check', AppIcons.check),
+    ('chevronRight', AppIcons.chevronRight),
+    ('chevronDown', AppIcons.chevronDown),
+    ('info', AppIcons.info),
+    ('hourglass', AppIcons.hourglass),
+    ('group', AppIcons.group),
+    ('dice', AppIcons.dice),
+    ('useMyTastes', AppIcons.useMyTastes),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: AppSpacing.lg,
+      runSpacing: AppSpacing.lg,
+      children: [
+        for (final (name, icon) in _icons) _IconSwatch(name, icon),
+      ],
+    );
+  }
+}
+
+class _IconSwatch extends StatelessWidget {
+  const _IconSwatch(this.name, this.icon);
+
+  final String name;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 64,
+      child: Column(
+        children: [
+          Icon(icon, size: 24, color: AppColors.ink),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PakoSection extends StatelessWidget {
+  const _PakoSection();
+
+  static const _moods = <(String, PakoMood)>[
+    ('off', PakoMood.off),
+    ('idle', PakoMood.idle),
+    ('asleep', PakoMood.asleep),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (final (name, mood) in _moods)
+          Padding(
+            padding: const EdgeInsets.only(right: AppSpacing.xxl),
+            child: Column(
+              children: [
+                PakoState(mood: mood, size: 80),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  name,
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.inkMuted,
+                  ),
                 ),
               ],
             ),
