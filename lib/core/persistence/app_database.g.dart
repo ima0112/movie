@@ -159,6 +159,38 @@ class $UserMediaEntriesTable extends UserMediaEntries
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _runtimeMinutesMeta = const VerificationMeta(
+    'runtimeMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> runtimeMinutes = GeneratedColumn<int>(
+    'runtime_minutes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _episodeCountMeta = const VerificationMeta(
+    'episodeCount',
+  );
+  @override
+  late final GeneratedColumn<int> episodeCount = GeneratedColumn<int>(
+    'episode_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _episodeRuntimeMinutesMeta =
+      const VerificationMeta('episodeRuntimeMinutes');
+  @override
+  late final GeneratedColumn<int> episodeRuntimeMinutes = GeneratedColumn<int>(
+    'episode_runtime_minutes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
   );
@@ -186,6 +218,9 @@ class $UserMediaEntriesTable extends UserMediaEntries
     isWatchLater,
     watchedAt,
     rating,
+    runtimeMinutes,
+    episodeCount,
+    episodeRuntimeMinutes,
     updatedAt,
   ];
   @override
@@ -289,6 +324,33 @@ class $UserMediaEntriesTable extends UserMediaEntries
         rating.isAcceptableOrUnknown(data['rating']!, _ratingMeta),
       );
     }
+    if (data.containsKey('runtime_minutes')) {
+      context.handle(
+        _runtimeMinutesMeta,
+        runtimeMinutes.isAcceptableOrUnknown(
+          data['runtime_minutes']!,
+          _runtimeMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('episode_count')) {
+      context.handle(
+        _episodeCountMeta,
+        episodeCount.isAcceptableOrUnknown(
+          data['episode_count']!,
+          _episodeCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('episode_runtime_minutes')) {
+      context.handle(
+        _episodeRuntimeMinutesMeta,
+        episodeRuntimeMinutes.isAcceptableOrUnknown(
+          data['episode_runtime_minutes']!,
+          _episodeRuntimeMinutesMeta,
+        ),
+      );
+    }
     if (data.containsKey('updated_at')) {
       context.handle(
         _updatedAtMeta,
@@ -364,6 +426,18 @@ class $UserMediaEntriesTable extends UserMediaEntries
         DriftSqlType.int,
         data['${effectivePrefix}rating'],
       ),
+      runtimeMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}runtime_minutes'],
+      ),
+      episodeCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}episode_count'],
+      ),
+      episodeRuntimeMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}episode_runtime_minutes'],
+      ),
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -413,6 +487,9 @@ class UserMediaEntryRow extends DataClass
   /// 1–5, only meaningful once [watchedAt] is set — see
   /// `UserMediaEntry.markWatched`.
   final int? rating;
+  final int? runtimeMinutes;
+  final int? episodeCount;
+  final int? episodeRuntimeMinutes;
 
   /// When this row last changed. Lets a future sync step know what to
   /// push without re-sending every row.
@@ -432,6 +509,9 @@ class UserMediaEntryRow extends DataClass
     required this.isWatchLater,
     this.watchedAt,
     this.rating,
+    this.runtimeMinutes,
+    this.episodeCount,
+    this.episodeRuntimeMinutes,
     required this.updatedAt,
   });
   @override
@@ -475,6 +555,15 @@ class UserMediaEntryRow extends DataClass
     if (!nullToAbsent || rating != null) {
       map['rating'] = Variable<int>(rating);
     }
+    if (!nullToAbsent || runtimeMinutes != null) {
+      map['runtime_minutes'] = Variable<int>(runtimeMinutes);
+    }
+    if (!nullToAbsent || episodeCount != null) {
+      map['episode_count'] = Variable<int>(episodeCount);
+    }
+    if (!nullToAbsent || episodeRuntimeMinutes != null) {
+      map['episode_runtime_minutes'] = Variable<int>(episodeRuntimeMinutes);
+    }
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
@@ -513,6 +602,15 @@ class UserMediaEntryRow extends DataClass
       rating: rating == null && nullToAbsent
           ? const Value.absent()
           : Value(rating),
+      runtimeMinutes: runtimeMinutes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(runtimeMinutes),
+      episodeCount: episodeCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(episodeCount),
+      episodeRuntimeMinutes: episodeRuntimeMinutes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(episodeRuntimeMinutes),
       updatedAt: Value(updatedAt),
     );
   }
@@ -539,6 +637,11 @@ class UserMediaEntryRow extends DataClass
       isWatchLater: serializer.fromJson<bool>(json['isWatchLater']),
       watchedAt: serializer.fromJson<DateTime?>(json['watchedAt']),
       rating: serializer.fromJson<int?>(json['rating']),
+      runtimeMinutes: serializer.fromJson<int?>(json['runtimeMinutes']),
+      episodeCount: serializer.fromJson<int?>(json['episodeCount']),
+      episodeRuntimeMinutes: serializer.fromJson<int?>(
+        json['episodeRuntimeMinutes'],
+      ),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
@@ -562,6 +665,9 @@ class UserMediaEntryRow extends DataClass
       'isWatchLater': serializer.toJson<bool>(isWatchLater),
       'watchedAt': serializer.toJson<DateTime?>(watchedAt),
       'rating': serializer.toJson<int?>(rating),
+      'runtimeMinutes': serializer.toJson<int?>(runtimeMinutes),
+      'episodeCount': serializer.toJson<int?>(episodeCount),
+      'episodeRuntimeMinutes': serializer.toJson<int?>(episodeRuntimeMinutes),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
@@ -581,6 +687,9 @@ class UserMediaEntryRow extends DataClass
     bool? isWatchLater,
     Value<DateTime?> watchedAt = const Value.absent(),
     Value<int?> rating = const Value.absent(),
+    Value<int?> runtimeMinutes = const Value.absent(),
+    Value<int?> episodeCount = const Value.absent(),
+    Value<int?> episodeRuntimeMinutes = const Value.absent(),
     DateTime? updatedAt,
   }) => UserMediaEntryRow(
     mediaType: mediaType ?? this.mediaType,
@@ -597,6 +706,13 @@ class UserMediaEntryRow extends DataClass
     isWatchLater: isWatchLater ?? this.isWatchLater,
     watchedAt: watchedAt.present ? watchedAt.value : this.watchedAt,
     rating: rating.present ? rating.value : this.rating,
+    runtimeMinutes: runtimeMinutes.present
+        ? runtimeMinutes.value
+        : this.runtimeMinutes,
+    episodeCount: episodeCount.present ? episodeCount.value : this.episodeCount,
+    episodeRuntimeMinutes: episodeRuntimeMinutes.present
+        ? episodeRuntimeMinutes.value
+        : this.episodeRuntimeMinutes,
     updatedAt: updatedAt ?? this.updatedAt,
   );
   UserMediaEntryRow copyWithCompanion(UserMediaEntriesCompanion data) {
@@ -627,6 +743,15 @@ class UserMediaEntryRow extends DataClass
           : this.isWatchLater,
       watchedAt: data.watchedAt.present ? data.watchedAt.value : this.watchedAt,
       rating: data.rating.present ? data.rating.value : this.rating,
+      runtimeMinutes: data.runtimeMinutes.present
+          ? data.runtimeMinutes.value
+          : this.runtimeMinutes,
+      episodeCount: data.episodeCount.present
+          ? data.episodeCount.value
+          : this.episodeCount,
+      episodeRuntimeMinutes: data.episodeRuntimeMinutes.present
+          ? data.episodeRuntimeMinutes.value
+          : this.episodeRuntimeMinutes,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
@@ -648,6 +773,9 @@ class UserMediaEntryRow extends DataClass
           ..write('isWatchLater: $isWatchLater, ')
           ..write('watchedAt: $watchedAt, ')
           ..write('rating: $rating, ')
+          ..write('runtimeMinutes: $runtimeMinutes, ')
+          ..write('episodeCount: $episodeCount, ')
+          ..write('episodeRuntimeMinutes: $episodeRuntimeMinutes, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
@@ -669,6 +797,9 @@ class UserMediaEntryRow extends DataClass
     isWatchLater,
     watchedAt,
     rating,
+    runtimeMinutes,
+    episodeCount,
+    episodeRuntimeMinutes,
     updatedAt,
   );
   @override
@@ -689,6 +820,9 @@ class UserMediaEntryRow extends DataClass
           other.isWatchLater == this.isWatchLater &&
           other.watchedAt == this.watchedAt &&
           other.rating == this.rating &&
+          other.runtimeMinutes == this.runtimeMinutes &&
+          other.episodeCount == this.episodeCount &&
+          other.episodeRuntimeMinutes == this.episodeRuntimeMinutes &&
           other.updatedAt == this.updatedAt);
 }
 
@@ -707,6 +841,9 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
   final Value<bool> isWatchLater;
   final Value<DateTime?> watchedAt;
   final Value<int?> rating;
+  final Value<int?> runtimeMinutes;
+  final Value<int?> episodeCount;
+  final Value<int?> episodeRuntimeMinutes;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const UserMediaEntriesCompanion({
@@ -724,6 +861,9 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     this.isWatchLater = const Value.absent(),
     this.watchedAt = const Value.absent(),
     this.rating = const Value.absent(),
+    this.runtimeMinutes = const Value.absent(),
+    this.episodeCount = const Value.absent(),
+    this.episodeRuntimeMinutes = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -742,6 +882,9 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     this.isWatchLater = const Value.absent(),
     this.watchedAt = const Value.absent(),
     this.rating = const Value.absent(),
+    this.runtimeMinutes = const Value.absent(),
+    this.episodeCount = const Value.absent(),
+    this.episodeRuntimeMinutes = const Value.absent(),
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
   }) : mediaType = Value(mediaType),
@@ -762,6 +905,9 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     Expression<bool>? isWatchLater,
     Expression<DateTime>? watchedAt,
     Expression<int>? rating,
+    Expression<int>? runtimeMinutes,
+    Expression<int>? episodeCount,
+    Expression<int>? episodeRuntimeMinutes,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
@@ -780,6 +926,10 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
       if (isWatchLater != null) 'is_watch_later': isWatchLater,
       if (watchedAt != null) 'watched_at': watchedAt,
       if (rating != null) 'rating': rating,
+      if (runtimeMinutes != null) 'runtime_minutes': runtimeMinutes,
+      if (episodeCount != null) 'episode_count': episodeCount,
+      if (episodeRuntimeMinutes != null)
+        'episode_runtime_minutes': episodeRuntimeMinutes,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
@@ -800,6 +950,9 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     Value<bool>? isWatchLater,
     Value<DateTime?>? watchedAt,
     Value<int?>? rating,
+    Value<int?>? runtimeMinutes,
+    Value<int?>? episodeCount,
+    Value<int?>? episodeRuntimeMinutes,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
   }) {
@@ -818,6 +971,10 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
       isWatchLater: isWatchLater ?? this.isWatchLater,
       watchedAt: watchedAt ?? this.watchedAt,
       rating: rating ?? this.rating,
+      runtimeMinutes: runtimeMinutes ?? this.runtimeMinutes,
+      episodeCount: episodeCount ?? this.episodeCount,
+      episodeRuntimeMinutes:
+          episodeRuntimeMinutes ?? this.episodeRuntimeMinutes,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
@@ -870,6 +1027,17 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     if (rating.present) {
       map['rating'] = Variable<int>(rating.value);
     }
+    if (runtimeMinutes.present) {
+      map['runtime_minutes'] = Variable<int>(runtimeMinutes.value);
+    }
+    if (episodeCount.present) {
+      map['episode_count'] = Variable<int>(episodeCount.value);
+    }
+    if (episodeRuntimeMinutes.present) {
+      map['episode_runtime_minutes'] = Variable<int>(
+        episodeRuntimeMinutes.value,
+      );
+    }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
@@ -896,6 +1064,9 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
           ..write('isWatchLater: $isWatchLater, ')
           ..write('watchedAt: $watchedAt, ')
           ..write('rating: $rating, ')
+          ..write('runtimeMinutes: $runtimeMinutes, ')
+          ..write('episodeCount: $episodeCount, ')
+          ..write('episodeRuntimeMinutes: $episodeRuntimeMinutes, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -1682,6 +1853,9 @@ typedef $$UserMediaEntriesTableCreateCompanionBuilder =
       Value<bool> isWatchLater,
       Value<DateTime?> watchedAt,
       Value<int?> rating,
+      Value<int?> runtimeMinutes,
+      Value<int?> episodeCount,
+      Value<int?> episodeRuntimeMinutes,
       required DateTime updatedAt,
       Value<int> rowid,
     });
@@ -1701,6 +1875,9 @@ typedef $$UserMediaEntriesTableUpdateCompanionBuilder =
       Value<bool> isWatchLater,
       Value<DateTime?> watchedAt,
       Value<int?> rating,
+      Value<int?> runtimeMinutes,
+      Value<int?> episodeCount,
+      Value<int?> episodeRuntimeMinutes,
       Value<DateTime> updatedAt,
       Value<int> rowid,
     });
@@ -1782,6 +1959,21 @@ class $$UserMediaEntriesTableFilterComposer
 
   ColumnFilters<int> get rating => $composableBuilder(
     column: $table.rating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get runtimeMinutes => $composableBuilder(
+    column: $table.runtimeMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get episodeCount => $composableBuilder(
+    column: $table.episodeCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get episodeRuntimeMinutes => $composableBuilder(
+    column: $table.episodeRuntimeMinutes,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1870,6 +2062,21 @@ class $$UserMediaEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get runtimeMinutes => $composableBuilder(
+    column: $table.runtimeMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get episodeCount => $composableBuilder(
+    column: $table.episodeCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get episodeRuntimeMinutes => $composableBuilder(
+    column: $table.episodeRuntimeMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
@@ -1939,6 +2146,21 @@ class $$UserMediaEntriesTableAnnotationComposer
   GeneratedColumn<int> get rating =>
       $composableBuilder(column: $table.rating, builder: (column) => column);
 
+  GeneratedColumn<int> get runtimeMinutes => $composableBuilder(
+    column: $table.runtimeMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get episodeCount => $composableBuilder(
+    column: $table.episodeCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get episodeRuntimeMinutes => $composableBuilder(
+    column: $table.episodeRuntimeMinutes,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
@@ -1994,6 +2216,9 @@ class $$UserMediaEntriesTableTableManager
                 Value<bool> isWatchLater = const Value.absent(),
                 Value<DateTime?> watchedAt = const Value.absent(),
                 Value<int?> rating = const Value.absent(),
+                Value<int?> runtimeMinutes = const Value.absent(),
+                Value<int?> episodeCount = const Value.absent(),
+                Value<int?> episodeRuntimeMinutes = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserMediaEntriesCompanion(
@@ -2011,6 +2236,9 @@ class $$UserMediaEntriesTableTableManager
                 isWatchLater: isWatchLater,
                 watchedAt: watchedAt,
                 rating: rating,
+                runtimeMinutes: runtimeMinutes,
+                episodeCount: episodeCount,
+                episodeRuntimeMinutes: episodeRuntimeMinutes,
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),
@@ -2030,6 +2258,9 @@ class $$UserMediaEntriesTableTableManager
                 Value<bool> isWatchLater = const Value.absent(),
                 Value<DateTime?> watchedAt = const Value.absent(),
                 Value<int?> rating = const Value.absent(),
+                Value<int?> runtimeMinutes = const Value.absent(),
+                Value<int?> episodeCount = const Value.absent(),
+                Value<int?> episodeRuntimeMinutes = const Value.absent(),
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => UserMediaEntriesCompanion.insert(
@@ -2047,6 +2278,9 @@ class $$UserMediaEntriesTableTableManager
                 isWatchLater: isWatchLater,
                 watchedAt: watchedAt,
                 rating: rating,
+                runtimeMinutes: runtimeMinutes,
+                episodeCount: episodeCount,
+                episodeRuntimeMinutes: episodeRuntimeMinutes,
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),

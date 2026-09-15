@@ -66,6 +66,9 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
               isWatchLater: Value(entry.isWatchLater),
               watchedAt: Value(entry.watchedAt),
               rating: Value(entry.rating),
+              runtimeMinutes: Value(entry.runtimeMinutes),
+              episodeCount: Value(entry.episodeCount),
+              episodeRuntimeMinutes: Value(entry.episodeRuntimeMinutes),
               updatedAt: DateTime.now(),
             ),
           );
@@ -130,6 +133,9 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
       isWatchLater: row.isWatchLater,
       watchedAt: row.watchedAt,
       rating: row.rating,
+      runtimeMinutes: row.runtimeMinutes,
+      episodeCount: row.episodeCount,
+      episodeRuntimeMinutes: row.episodeRuntimeMinutes,
     );
   }
 }
