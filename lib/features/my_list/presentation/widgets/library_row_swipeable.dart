@@ -43,10 +43,12 @@ class LibraryRowSwipeable extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
-  /// Favorites/Watch later swipe-right → H2 (not built yet) — called
-  /// instead of an instant toggle so the caller can navigate there once
-  /// it exists. Ignored in the Watched tab, which toggles Favorite
-  /// directly (no sheet needed for that).
+  /// Favorites/Watch later swipe-right → H2 (`MarkAsWatchedSheet`,
+  /// `shared/widgets/mark_as_watched_sheet.dart`) — called instead of an
+  /// instant toggle so the caller can open it; not wired up from here
+  /// yet (a separate follow-up — this callback is currently unused).
+  /// Ignored in the Watched tab, which toggles Favorite directly (no
+  /// sheet needed for that).
   final VoidCallback? onNeedsMarkWatched;
 
   @override

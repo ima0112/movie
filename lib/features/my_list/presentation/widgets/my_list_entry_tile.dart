@@ -23,9 +23,8 @@ import 'library_row_swipeable.dart';
 /// instead of "Removed" data from the fake repository (`_movies` isn't
 /// where TV shows live). Favorites/Watch later show a chevron instead of
 /// B4's "relative date saved" — `UserMediaEntry` has no such timestamp
-/// yet (only `watchedAt`, Watched-only); Watched shows stars but not
-/// B4's extra short date, since `LibraryRowTrailing` only renders one or
-/// the other.
+/// yet (only `watchedAt`, Watched-only). Watched shows both stars and
+/// date via `LibraryRowTrailing.starsWithDate`.
 class MyListEntryTile extends StatelessWidget {
   const MyListEntryTile({
     super.key,
@@ -56,7 +55,13 @@ class MyListEntryTile extends StatelessWidget {
           title: detail?.item.title ?? _fallbackTitle(),
           metadata: detail == null ? '' : _metadata(detail),
           trailing: tab == LibraryTab.watched
-              ? LibraryRowTrailing.stars(entry.rating ?? 0)
+              ? LibraryRowTrailing.starsWithDate(
+                  rating: entry.rating,
+                  // `watch(tab: .watched)` only ever returns watched
+                  // entries, so `watchedAt` is set — the fallback is
+                  // just defensive, not an expected path.
+                  watchedAt: entry.watchedAt ?? DateTime.now(),
+                )
               : const LibraryRowTrailing.chevron(),
           onTap: entry.key.type == MediaType.movie
               ? () => context.push(AppRoutes.movieDetail(entry.key.tmdbId))

@@ -11,6 +11,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_buttons.dart';
+import '../../../../shared/widgets/mark_as_watched_sheet.dart';
 import '../cubit/movie_detail_cubit.dart';
 import 'movie_action_button.dart';
 
@@ -94,12 +95,11 @@ class MovieActionRow extends StatelessWidget {
                     iconFill: AppIcons.watchedFill,
                     label: 'Watched',
                     isActive: entry?.isWatched ?? false,
-                    // TODO: should open H2 (rating sheet) once it exists —
-                    // this toggles the flag directly in the meantime.
-                    onTap: () => _toggle(
-                      entry,
-                      (e) => e.isWatched ? e.unmarkWatched() : e.markWatched(),
-                    ),
+                    // Always opens H2 first — never upserts directly.
+                    // Re-tapping when already watched still opens H2
+                    // (with current values + "Remove from Watched"),
+                    // per docs/SCREENS.md D1.
+                    onTap: () => _openMarkAsWatchedSheet(context, entry),
                   ),
                 ),
               ],
@@ -117,6 +117,18 @@ class MovieActionRow extends StatelessWidget {
     unawaited(
       userLibraryRepository.upsert(
         transform(entry ?? UserMediaEntry(key: mediaKey)),
+      ),
+    );
+  }
+
+  void _openMarkAsWatchedSheet(BuildContext context, UserMediaEntry? entry) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => MarkAsWatchedSheet(
+        mediaKey: mediaKey,
+        userLibraryRepository: userLibraryRepository,
+        existingEntry: entry,
       ),
     );
   }
