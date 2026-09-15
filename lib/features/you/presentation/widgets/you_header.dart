@@ -7,7 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/pako_state.dart';
+import '../../../../shared/widgets/profile_avatar.dart';
 
 const double _avatarSize = 36;
 
@@ -18,9 +18,10 @@ const double _avatarSize = 36;
 /// with the chosen color (36 px), 'Hi, Daniel' 24/500 (no name: Pako's
 /// silhouette in the circle, 'Hi' and subtitle 'Tap to set your name');
 /// tapping the header edits name and color in a sheet (H10). Gear icon
-/// top right → C6." Both destinations (H10, C6) don't exist yet, so
-/// they're plain callbacks the not-yet-built `you_screen.dart` will
-/// eventually wire to a sheet/route.
+/// top right → C6." [onEditProfile] opens H10 (`EditProfileSheet`,
+/// `shared/widgets/edit_profile_sheet.dart`); C6 doesn't exist yet, so
+/// [onOpenSettings] is a plain callback `you_screen.dart` doesn't wire
+/// to anything real yet.
 ///
 /// Only the initial+name portion subscribes to the global
 /// [UserProfileCubit] — the gear icon is static and must never sit
@@ -54,7 +55,11 @@ class YouHeader extends StatelessWidget {
             child: BlocBuilder<UserProfileCubit, UserProfile?>(
               builder: (context, profile) => Row(
                 children: [
-                  _Avatar(profile: profile),
+                  ProfileAvatar(
+                    displayName: profile?.displayName,
+                    initialColor: profile?.initialColor,
+                    size: _avatarSize,
+                  ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(child: _Greeting(profile: profile)),
                 ],
@@ -67,38 +72,6 @@ class YouHeader extends StatelessWidget {
           icon: const Icon(AppIcons.settings, color: AppColors.ink),
         ),
       ],
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  const _Avatar({required this.profile});
-
-  final UserProfile? profile;
-
-  @override
-  Widget build(BuildContext context) {
-    final profile = this.profile;
-    if (profile == null) {
-      // "Pako's silhouette" — PakoMood.off is the mascot's outline/no-face
-      // rendering (see docs/DECISIONS.md section 9: "Off (outline, no
-      // face) = logo").
-      return const CircleAvatar(
-        radius: _avatarSize / 2,
-        backgroundColor: AppColors.surfaceRaised,
-        child: PakoState(mood: PakoMood.off, size: _avatarSize * 0.7),
-      );
-    }
-    final initial = profile.displayName.isEmpty
-        ? ''
-        : profile.displayName[0].toUpperCase();
-    return CircleAvatar(
-      radius: _avatarSize / 2,
-      backgroundColor: Color(profile.initialColor),
-      child: Text(
-        initial,
-        style: AppTextStyles.h3.copyWith(color: AppColors.onAccent),
-      ),
     );
   }
 }

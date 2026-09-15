@@ -5,6 +5,7 @@ import '../core/domain/entities/media_type.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
+import '../features/you/presentation/screens/you_screen.dart';
 import 'root_shell.dart';
 
 /// Route paths, kept next to the routes that define them so features
@@ -77,8 +78,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/you',
-              // TODO: → B5 (You) once it's built.
-              builder: (context, state) => const _RootPlaceholder(title: 'You'),
+              builder: (context, state) => const YouScreen(),
             ),
           ],
         ),
