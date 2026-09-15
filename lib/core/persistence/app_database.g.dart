@@ -903,17 +903,767 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
   }
 }
 
+class $UserProfileTableTable extends UserProfileTable
+    with TableInfo<$UserProfileTableTable, UserProfileRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserProfileTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _displayNameMeta = const VerificationMeta(
+    'displayName',
+  );
+  @override
+  late final GeneratedColumn<String> displayName = GeneratedColumn<String>(
+    'display_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _initialColorMeta = const VerificationMeta(
+    'initialColor',
+  );
+  @override
+  late final GeneratedColumn<int> initialColor = GeneratedColumn<int>(
+    'initial_color',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    displayName,
+    initialColor,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_profile_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UserProfileRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('display_name')) {
+      context.handle(
+        _displayNameMeta,
+        displayName.isAcceptableOrUnknown(
+          data['display_name']!,
+          _displayNameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_displayNameMeta);
+    }
+    if (data.containsKey('initial_color')) {
+      context.handle(
+        _initialColorMeta,
+        initialColor.isAcceptableOrUnknown(
+          data['initial_color']!,
+          _initialColorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_initialColorMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  UserProfileRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserProfileRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      displayName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}display_name'],
+      )!,
+      initialColor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}initial_color'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $UserProfileTableTable createAlias(String alias) {
+    return $UserProfileTableTable(attachedDatabase, alias);
+  }
+}
+
+class UserProfileRow extends DataClass implements Insertable<UserProfileRow> {
+  final int id;
+  final String displayName;
+
+  /// See `UserProfile.initialColor` — a 32-bit ARGB int, not a color
+  /// name or hex string.
+  final int initialColor;
+  final DateTime updatedAt;
+  const UserProfileRow({
+    required this.id,
+    required this.displayName,
+    required this.initialColor,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['display_name'] = Variable<String>(displayName);
+    map['initial_color'] = Variable<int>(initialColor);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  UserProfileTableCompanion toCompanion(bool nullToAbsent) {
+    return UserProfileTableCompanion(
+      id: Value(id),
+      displayName: Value(displayName),
+      initialColor: Value(initialColor),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory UserProfileRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserProfileRow(
+      id: serializer.fromJson<int>(json['id']),
+      displayName: serializer.fromJson<String>(json['displayName']),
+      initialColor: serializer.fromJson<int>(json['initialColor']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'displayName': serializer.toJson<String>(displayName),
+      'initialColor': serializer.toJson<int>(initialColor),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  UserProfileRow copyWith({
+    int? id,
+    String? displayName,
+    int? initialColor,
+    DateTime? updatedAt,
+  }) => UserProfileRow(
+    id: id ?? this.id,
+    displayName: displayName ?? this.displayName,
+    initialColor: initialColor ?? this.initialColor,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  UserProfileRow copyWithCompanion(UserProfileTableCompanion data) {
+    return UserProfileRow(
+      id: data.id.present ? data.id.value : this.id,
+      displayName: data.displayName.present
+          ? data.displayName.value
+          : this.displayName,
+      initialColor: data.initialColor.present
+          ? data.initialColor.value
+          : this.initialColor,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserProfileRow(')
+          ..write('id: $id, ')
+          ..write('displayName: $displayName, ')
+          ..write('initialColor: $initialColor, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, displayName, initialColor, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserProfileRow &&
+          other.id == this.id &&
+          other.displayName == this.displayName &&
+          other.initialColor == this.initialColor &&
+          other.updatedAt == this.updatedAt);
+}
+
+class UserProfileTableCompanion extends UpdateCompanion<UserProfileRow> {
+  final Value<int> id;
+  final Value<String> displayName;
+  final Value<int> initialColor;
+  final Value<DateTime> updatedAt;
+  const UserProfileTableCompanion({
+    this.id = const Value.absent(),
+    this.displayName = const Value.absent(),
+    this.initialColor = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  UserProfileTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String displayName,
+    required int initialColor,
+    required DateTime updatedAt,
+  }) : displayName = Value(displayName),
+       initialColor = Value(initialColor),
+       updatedAt = Value(updatedAt);
+  static Insertable<UserProfileRow> custom({
+    Expression<int>? id,
+    Expression<String>? displayName,
+    Expression<int>? initialColor,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (displayName != null) 'display_name': displayName,
+      if (initialColor != null) 'initial_color': initialColor,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  UserProfileTableCompanion copyWith({
+    Value<int>? id,
+    Value<String>? displayName,
+    Value<int>? initialColor,
+    Value<DateTime>? updatedAt,
+  }) {
+    return UserProfileTableCompanion(
+      id: id ?? this.id,
+      displayName: displayName ?? this.displayName,
+      initialColor: initialColor ?? this.initialColor,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (displayName.present) {
+      map['display_name'] = Variable<String>(displayName.value);
+    }
+    if (initialColor.present) {
+      map['initial_color'] = Variable<int>(initialColor.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserProfileTableCompanion(')
+          ..write('id: $id, ')
+          ..write('displayName: $displayName, ')
+          ..write('initialColor: $initialColor, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TasteProfileTableTable extends TasteProfileTable
+    with TableInfo<$TasteProfileTableTable, TasteProfileRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TasteProfileTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _likedGenresMeta = const VerificationMeta(
+    'likedGenres',
+  );
+  @override
+  late final GeneratedColumn<String> likedGenres = GeneratedColumn<String>(
+    'liked_genres',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _vetoedGenresMeta = const VerificationMeta(
+    'vetoedGenres',
+  );
+  @override
+  late final GeneratedColumn<String> vetoedGenres = GeneratedColumn<String>(
+    'vetoed_genres',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _likedVibesMeta = const VerificationMeta(
+    'likedVibes',
+  );
+  @override
+  late final GeneratedColumn<String> likedVibes = GeneratedColumn<String>(
+    'liked_vibes',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _yearFromMeta = const VerificationMeta(
+    'yearFrom',
+  );
+  @override
+  late final GeneratedColumn<int> yearFrom = GeneratedColumn<int>(
+    'year_from',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    likedGenres,
+    vetoedGenres,
+    likedVibes,
+    yearFrom,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'taste_profile_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TasteProfileRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('liked_genres')) {
+      context.handle(
+        _likedGenresMeta,
+        likedGenres.isAcceptableOrUnknown(
+          data['liked_genres']!,
+          _likedGenresMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_likedGenresMeta);
+    }
+    if (data.containsKey('vetoed_genres')) {
+      context.handle(
+        _vetoedGenresMeta,
+        vetoedGenres.isAcceptableOrUnknown(
+          data['vetoed_genres']!,
+          _vetoedGenresMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_vetoedGenresMeta);
+    }
+    if (data.containsKey('liked_vibes')) {
+      context.handle(
+        _likedVibesMeta,
+        likedVibes.isAcceptableOrUnknown(data['liked_vibes']!, _likedVibesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_likedVibesMeta);
+    }
+    if (data.containsKey('year_from')) {
+      context.handle(
+        _yearFromMeta,
+        yearFrom.isAcceptableOrUnknown(data['year_from']!, _yearFromMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearFromMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TasteProfileRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TasteProfileRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      likedGenres: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}liked_genres'],
+      )!,
+      vetoedGenres: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vetoed_genres'],
+      )!,
+      likedVibes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}liked_vibes'],
+      )!,
+      yearFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year_from'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $TasteProfileTableTable createAlias(String alias) {
+    return $TasteProfileTableTable(attachedDatabase, alias);
+  }
+}
+
+class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
+  final int id;
+
+  /// `TasteProfile.likedGenres`, serialized as `id:name` pairs joined by
+  /// commas (e.g. `"action:Action,drama:Drama"`) — a genre's `id` alone
+  /// isn't enough to rebuild a `Genre` without a lookup table, and there
+  /// isn't a normalized genre catalog in `core/domain` yet to look it up
+  /// against, so both fields are stored directly.
+  final String likedGenres;
+
+  /// Same `id:name` serialization as [likedGenres].
+  final String vetoedGenres;
+
+  /// `TasteProfile.likedVibes`, comma-joined — vibe names come from
+  /// `assets/vibes.json` and never contain a comma.
+  final String likedVibes;
+  final int yearFrom;
+  final DateTime updatedAt;
+  const TasteProfileRow({
+    required this.id,
+    required this.likedGenres,
+    required this.vetoedGenres,
+    required this.likedVibes,
+    required this.yearFrom,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['liked_genres'] = Variable<String>(likedGenres);
+    map['vetoed_genres'] = Variable<String>(vetoedGenres);
+    map['liked_vibes'] = Variable<String>(likedVibes);
+    map['year_from'] = Variable<int>(yearFrom);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  TasteProfileTableCompanion toCompanion(bool nullToAbsent) {
+    return TasteProfileTableCompanion(
+      id: Value(id),
+      likedGenres: Value(likedGenres),
+      vetoedGenres: Value(vetoedGenres),
+      likedVibes: Value(likedVibes),
+      yearFrom: Value(yearFrom),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory TasteProfileRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TasteProfileRow(
+      id: serializer.fromJson<int>(json['id']),
+      likedGenres: serializer.fromJson<String>(json['likedGenres']),
+      vetoedGenres: serializer.fromJson<String>(json['vetoedGenres']),
+      likedVibes: serializer.fromJson<String>(json['likedVibes']),
+      yearFrom: serializer.fromJson<int>(json['yearFrom']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'likedGenres': serializer.toJson<String>(likedGenres),
+      'vetoedGenres': serializer.toJson<String>(vetoedGenres),
+      'likedVibes': serializer.toJson<String>(likedVibes),
+      'yearFrom': serializer.toJson<int>(yearFrom),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  TasteProfileRow copyWith({
+    int? id,
+    String? likedGenres,
+    String? vetoedGenres,
+    String? likedVibes,
+    int? yearFrom,
+    DateTime? updatedAt,
+  }) => TasteProfileRow(
+    id: id ?? this.id,
+    likedGenres: likedGenres ?? this.likedGenres,
+    vetoedGenres: vetoedGenres ?? this.vetoedGenres,
+    likedVibes: likedVibes ?? this.likedVibes,
+    yearFrom: yearFrom ?? this.yearFrom,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  TasteProfileRow copyWithCompanion(TasteProfileTableCompanion data) {
+    return TasteProfileRow(
+      id: data.id.present ? data.id.value : this.id,
+      likedGenres: data.likedGenres.present
+          ? data.likedGenres.value
+          : this.likedGenres,
+      vetoedGenres: data.vetoedGenres.present
+          ? data.vetoedGenres.value
+          : this.vetoedGenres,
+      likedVibes: data.likedVibes.present
+          ? data.likedVibes.value
+          : this.likedVibes,
+      yearFrom: data.yearFrom.present ? data.yearFrom.value : this.yearFrom,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TasteProfileRow(')
+          ..write('id: $id, ')
+          ..write('likedGenres: $likedGenres, ')
+          ..write('vetoedGenres: $vetoedGenres, ')
+          ..write('likedVibes: $likedVibes, ')
+          ..write('yearFrom: $yearFrom, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    likedGenres,
+    vetoedGenres,
+    likedVibes,
+    yearFrom,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TasteProfileRow &&
+          other.id == this.id &&
+          other.likedGenres == this.likedGenres &&
+          other.vetoedGenres == this.vetoedGenres &&
+          other.likedVibes == this.likedVibes &&
+          other.yearFrom == this.yearFrom &&
+          other.updatedAt == this.updatedAt);
+}
+
+class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
+  final Value<int> id;
+  final Value<String> likedGenres;
+  final Value<String> vetoedGenres;
+  final Value<String> likedVibes;
+  final Value<int> yearFrom;
+  final Value<DateTime> updatedAt;
+  const TasteProfileTableCompanion({
+    this.id = const Value.absent(),
+    this.likedGenres = const Value.absent(),
+    this.vetoedGenres = const Value.absent(),
+    this.likedVibes = const Value.absent(),
+    this.yearFrom = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  TasteProfileTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String likedGenres,
+    required String vetoedGenres,
+    required String likedVibes,
+    required int yearFrom,
+    required DateTime updatedAt,
+  }) : likedGenres = Value(likedGenres),
+       vetoedGenres = Value(vetoedGenres),
+       likedVibes = Value(likedVibes),
+       yearFrom = Value(yearFrom),
+       updatedAt = Value(updatedAt);
+  static Insertable<TasteProfileRow> custom({
+    Expression<int>? id,
+    Expression<String>? likedGenres,
+    Expression<String>? vetoedGenres,
+    Expression<String>? likedVibes,
+    Expression<int>? yearFrom,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (likedGenres != null) 'liked_genres': likedGenres,
+      if (vetoedGenres != null) 'vetoed_genres': vetoedGenres,
+      if (likedVibes != null) 'liked_vibes': likedVibes,
+      if (yearFrom != null) 'year_from': yearFrom,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  TasteProfileTableCompanion copyWith({
+    Value<int>? id,
+    Value<String>? likedGenres,
+    Value<String>? vetoedGenres,
+    Value<String>? likedVibes,
+    Value<int>? yearFrom,
+    Value<DateTime>? updatedAt,
+  }) {
+    return TasteProfileTableCompanion(
+      id: id ?? this.id,
+      likedGenres: likedGenres ?? this.likedGenres,
+      vetoedGenres: vetoedGenres ?? this.vetoedGenres,
+      likedVibes: likedVibes ?? this.likedVibes,
+      yearFrom: yearFrom ?? this.yearFrom,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (likedGenres.present) {
+      map['liked_genres'] = Variable<String>(likedGenres.value);
+    }
+    if (vetoedGenres.present) {
+      map['vetoed_genres'] = Variable<String>(vetoedGenres.value);
+    }
+    if (likedVibes.present) {
+      map['liked_vibes'] = Variable<String>(likedVibes.value);
+    }
+    if (yearFrom.present) {
+      map['year_from'] = Variable<int>(yearFrom.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TasteProfileTableCompanion(')
+          ..write('id: $id, ')
+          ..write('likedGenres: $likedGenres, ')
+          ..write('vetoedGenres: $vetoedGenres, ')
+          ..write('likedVibes: $likedVibes, ')
+          ..write('yearFrom: $yearFrom, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $UserMediaEntriesTable userMediaEntries = $UserMediaEntriesTable(
     this,
   );
+  late final $UserProfileTableTable userProfileTable = $UserProfileTableTable(
+    this,
+  );
+  late final $TasteProfileTableTable tasteProfileTable =
+      $TasteProfileTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [userMediaEntries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    userMediaEntries,
+    userProfileTable,
+    tasteProfileTable,
+  ];
 }
 
 typedef $$UserMediaEntriesTableCreateCompanionBuilder =
@@ -1338,10 +2088,445 @@ typedef $$UserMediaEntriesTableProcessedTableManager =
       UserMediaEntryRow,
       PrefetchHooks Function()
     >;
+typedef $$UserProfileTableTableCreateCompanionBuilder =
+    UserProfileTableCompanion Function({
+      Value<int> id,
+      required String displayName,
+      required int initialColor,
+      required DateTime updatedAt,
+    });
+typedef $$UserProfileTableTableUpdateCompanionBuilder =
+    UserProfileTableCompanion Function({
+      Value<int> id,
+      Value<String> displayName,
+      Value<int> initialColor,
+      Value<DateTime> updatedAt,
+    });
+
+class $$UserProfileTableTableFilterComposer
+    extends Composer<_$AppDatabase, $UserProfileTableTable> {
+  $$UserProfileTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get initialColor => $composableBuilder(
+    column: $table.initialColor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$UserProfileTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserProfileTableTable> {
+  $$UserProfileTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get initialColor => $composableBuilder(
+    column: $table.initialColor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UserProfileTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserProfileTableTable> {
+  $$UserProfileTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get initialColor => $composableBuilder(
+    column: $table.initialColor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$UserProfileTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UserProfileTableTable,
+          UserProfileRow,
+          $$UserProfileTableTableFilterComposer,
+          $$UserProfileTableTableOrderingComposer,
+          $$UserProfileTableTableAnnotationComposer,
+          $$UserProfileTableTableCreateCompanionBuilder,
+          $$UserProfileTableTableUpdateCompanionBuilder,
+          (
+            UserProfileRow,
+            BaseReferences<
+              _$AppDatabase,
+              $UserProfileTableTable,
+              UserProfileRow
+            >,
+          ),
+          UserProfileRow,
+          PrefetchHooks Function()
+        > {
+  $$UserProfileTableTableTableManager(
+    _$AppDatabase db,
+    $UserProfileTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserProfileTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserProfileTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserProfileTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> displayName = const Value.absent(),
+                Value<int> initialColor = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => UserProfileTableCompanion(
+                id: id,
+                displayName: displayName,
+                initialColor: initialColor,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String displayName,
+                required int initialColor,
+                required DateTime updatedAt,
+              }) => UserProfileTableCompanion.insert(
+                id: id,
+                displayName: displayName,
+                initialColor: initialColor,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$UserProfileTableTable, UserProfileRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $UserProfileTableTable,
+                    UserProfileRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$UserProfileTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UserProfileTableTable,
+      UserProfileRow,
+      $$UserProfileTableTableFilterComposer,
+      $$UserProfileTableTableOrderingComposer,
+      $$UserProfileTableTableAnnotationComposer,
+      $$UserProfileTableTableCreateCompanionBuilder,
+      $$UserProfileTableTableUpdateCompanionBuilder,
+      (
+        UserProfileRow,
+        BaseReferences<_$AppDatabase, $UserProfileTableTable, UserProfileRow>,
+      ),
+      UserProfileRow,
+      PrefetchHooks Function()
+    >;
+typedef $$TasteProfileTableTableCreateCompanionBuilder =
+    TasteProfileTableCompanion Function({
+      Value<int> id,
+      required String likedGenres,
+      required String vetoedGenres,
+      required String likedVibes,
+      required int yearFrom,
+      required DateTime updatedAt,
+    });
+typedef $$TasteProfileTableTableUpdateCompanionBuilder =
+    TasteProfileTableCompanion Function({
+      Value<int> id,
+      Value<String> likedGenres,
+      Value<String> vetoedGenres,
+      Value<String> likedVibes,
+      Value<int> yearFrom,
+      Value<DateTime> updatedAt,
+    });
+
+class $$TasteProfileTableTableFilterComposer
+    extends Composer<_$AppDatabase, $TasteProfileTableTable> {
+  $$TasteProfileTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get likedGenres => $composableBuilder(
+    column: $table.likedGenres,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vetoedGenres => $composableBuilder(
+    column: $table.vetoedGenres,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get likedVibes => $composableBuilder(
+    column: $table.likedVibes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get yearFrom => $composableBuilder(
+    column: $table.yearFrom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TasteProfileTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $TasteProfileTableTable> {
+  $$TasteProfileTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get likedGenres => $composableBuilder(
+    column: $table.likedGenres,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get vetoedGenres => $composableBuilder(
+    column: $table.vetoedGenres,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get likedVibes => $composableBuilder(
+    column: $table.likedVibes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get yearFrom => $composableBuilder(
+    column: $table.yearFrom,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TasteProfileTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TasteProfileTableTable> {
+  $$TasteProfileTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get likedGenres => $composableBuilder(
+    column: $table.likedGenres,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get vetoedGenres => $composableBuilder(
+    column: $table.vetoedGenres,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get likedVibes => $composableBuilder(
+    column: $table.likedVibes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get yearFrom =>
+      $composableBuilder(column: $table.yearFrom, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$TasteProfileTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TasteProfileTableTable,
+          TasteProfileRow,
+          $$TasteProfileTableTableFilterComposer,
+          $$TasteProfileTableTableOrderingComposer,
+          $$TasteProfileTableTableAnnotationComposer,
+          $$TasteProfileTableTableCreateCompanionBuilder,
+          $$TasteProfileTableTableUpdateCompanionBuilder,
+          (
+            TasteProfileRow,
+            BaseReferences<
+              _$AppDatabase,
+              $TasteProfileTableTable,
+              TasteProfileRow
+            >,
+          ),
+          TasteProfileRow,
+          PrefetchHooks Function()
+        > {
+  $$TasteProfileTableTableTableManager(
+    _$AppDatabase db,
+    $TasteProfileTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TasteProfileTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TasteProfileTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TasteProfileTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> likedGenres = const Value.absent(),
+                Value<String> vetoedGenres = const Value.absent(),
+                Value<String> likedVibes = const Value.absent(),
+                Value<int> yearFrom = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => TasteProfileTableCompanion(
+                id: id,
+                likedGenres: likedGenres,
+                vetoedGenres: vetoedGenres,
+                likedVibes: likedVibes,
+                yearFrom: yearFrom,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String likedGenres,
+                required String vetoedGenres,
+                required String likedVibes,
+                required int yearFrom,
+                required DateTime updatedAt,
+              }) => TasteProfileTableCompanion.insert(
+                id: id,
+                likedGenres: likedGenres,
+                vetoedGenres: vetoedGenres,
+                likedVibes: likedVibes,
+                yearFrom: yearFrom,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TasteProfileTableTable, TasteProfileRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $TasteProfileTableTable,
+                    TasteProfileRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TasteProfileTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TasteProfileTableTable,
+      TasteProfileRow,
+      $$TasteProfileTableTableFilterComposer,
+      $$TasteProfileTableTableOrderingComposer,
+      $$TasteProfileTableTableAnnotationComposer,
+      $$TasteProfileTableTableCreateCompanionBuilder,
+      $$TasteProfileTableTableUpdateCompanionBuilder,
+      (
+        TasteProfileRow,
+        BaseReferences<_$AppDatabase, $TasteProfileTableTable, TasteProfileRow>,
+      ),
+      TasteProfileRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$UserMediaEntriesTableTableManager get userMediaEntries =>
       $$UserMediaEntriesTableTableManager(_db, _db.userMediaEntries);
+  $$UserProfileTableTableTableManager get userProfileTable =>
+      $$UserProfileTableTableTableManager(_db, _db.userProfileTable);
+  $$TasteProfileTableTableTableManager get tasteProfileTable =>
+      $$TasteProfileTableTableTableManager(_db, _db.tasteProfileTable);
 }
