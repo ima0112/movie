@@ -243,9 +243,72 @@ void main() {
       expect(ranked, hasLength(5));
     });
 
-    test('an empty map (calculateLibraryStats\' current call, until genre '
-        'tracking exists) ranks to an empty list, not an error', () {
+    test('an empty map ranks to an empty list, not an error', () {
       expect(topGenres(const {}), isEmpty);
+    });
+  });
+
+  group('calculateLibraryStats — topGenres', () {
+    test("counts each watched entry's genres once each and ranks them, "
+        'most-watched first', () {
+      final entries = [
+        UserMediaEntry(
+          key: _movie(1),
+          watchedAt: DateTime(2024, 1, 1),
+          genres: const [_action, _drama],
+        ),
+        UserMediaEntry(
+          key: _movie(2),
+          watchedAt: DateTime(2024, 1, 1),
+          genres: const [_action],
+        ),
+        UserMediaEntry(
+          key: _tvShow(1),
+          watchedAt: DateTime(2024, 1, 1),
+          genres: const [_comedy],
+        ),
+        UserMediaEntry(
+          key: _movie(3),
+          watchedAt: DateTime(2024, 1, 1),
+          genres: const [_action, _comedy],
+        ),
+      ];
+      // Action: 3 (movies 1, 2, 3) · Comedy: 2 (tvShow 1, movie 3) ·
+      // Drama: 1 (movie 1).
+
+      final stats = calculateLibraryStats(entries);
+
+      expect(stats.topGenres, [(_action, 3), (_comedy, 2), (_drama, 1)]);
+    });
+
+    test("an unwatched entry's genres never count", () {
+      final entries = [
+        UserMediaEntry(
+          key: _movie(1),
+          isFavorite: true,
+          genres: const [_action],
+        ),
+      ];
+
+      final stats = calculateLibraryStats(entries);
+
+      expect(stats.topGenres, isEmpty);
+    });
+
+    test('an entry with no genres at all (saved before that field existed) '
+        "simply doesn't contribute, rather than breaking the ranking", () {
+      final entries = [
+        UserMediaEntry(key: _movie(1), watchedAt: DateTime(2024, 1, 1)),
+        UserMediaEntry(
+          key: _movie(2),
+          watchedAt: DateTime(2024, 1, 1),
+          genres: const [_drama],
+        ),
+      ];
+
+      final stats = calculateLibraryStats(entries);
+
+      expect(stats.topGenres, [(_drama, 1)]);
     });
   });
 }

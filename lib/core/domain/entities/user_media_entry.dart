@@ -1,3 +1,4 @@
+import 'genre.dart';
 import 'media_key.dart';
 
 /// One row of "My List" — see `docs/DECISIONS.md` section 4 ("My List,
@@ -14,10 +15,12 @@ import 'media_key.dart';
 /// "capture what's on hand at write time" approach the drift table's own
 /// catalog snapshot columns already use (`app_database.dart`). They live
 /// on this domain entity rather than only in the drift row, unlike that
-/// catalog snapshot, because domain-level code (`your_activity_card.dart`
-/// today, Stats/C4 next) actually needs to read them back through
+/// catalog snapshot, because domain-level code (`your_activity_card.dart`,
+/// `LibraryStatsCalculator`) actually needs to read them back through
 /// [UserLibraryRepository.watch] — the untouched catalog columns don't
-/// have a reader yet, these do from the moment they're added.
+/// have a reader yet, these do from the moment they're added. [genres]
+/// is the same idea, populated from whichever `MediaItem`/`MediaDetail`
+/// is on hand at the moment a row is first created or re-saved.
 class UserMediaEntry {
   const UserMediaEntry({
     required this.key,
@@ -28,6 +31,7 @@ class UserMediaEntry {
     this.runtimeMinutes,
     this.episodeCount,
     this.episodeRuntimeMinutes,
+    this.genres = const [],
   }) : assert(
          rating == null || (rating >= 1 && rating <= 5),
          'rating must be 1-5',
@@ -50,8 +54,8 @@ class UserMediaEntry {
   /// that isn't a watched movie, and legitimately `null` even for one
   /// that is — an entry watched before this field existed, or one whose
   /// `MovieDetail` itself had no runtime from TMDB. Callers summing this
-  /// (`your_activity_card.dart`) must treat a missing value as `0`, not
-  /// an error.
+  /// (`your_activity_card.dart`, `LibraryStatsCalculator`) must treat a
+  /// missing value as `0`, not an error.
   final int? runtimeMinutes;
 
   /// `TvShowDetail.numberOfEpisodes` at the moment this entry was marked
@@ -67,6 +71,14 @@ class UserMediaEntry {
   /// always give a per-episode runtime).
   final int? episodeRuntimeMinutes;
 
+  /// `MediaItem.genres` at the moment this entry was created or last
+  /// re-saved (favorited, watch-latered, or marked watched — whichever
+  /// call site had a `MediaItem`/`MediaDetail` on hand). Defaults to
+  /// `[]`, not populated retroactively for rows saved before this field
+  /// existed. Powers C4's "Genres you watch most"
+  /// (`LibraryStatsCalculator.topGenres`).
+  final List<Genre> genres;
+
   bool get isWatched => watchedAt != null;
 
   /// Marks this entry watched. Per `docs/DECISIONS.md` section 4
@@ -76,13 +88,18 @@ class UserMediaEntry {
   ///
   /// Like [rating], the duration fields are a full replace, not merged
   /// with whatever this entry had before — H2 always passes what
-  /// `MediaDetail` has on hand right now.
+  /// `MediaDetail` has on hand right now. [genres] is the one exception:
+  /// it describes the *title*, not the watch event, so a `null` here
+  /// (H2 has no fresher `MediaDetail` than what's already on the entry)
+  /// preserves [this.genres] instead of wiping it — the same way
+  /// [isFavorite] always carries forward below.
   UserMediaEntry markWatched({
     DateTime? watchedAt,
     int? rating,
     int? runtimeMinutes,
     int? episodeCount,
     int? episodeRuntimeMinutes,
+    List<Genre>? genres,
   }) {
     return UserMediaEntry(
       key: key,
@@ -93,16 +110,20 @@ class UserMediaEntry {
       runtimeMinutes: runtimeMinutes,
       episodeCount: episodeCount,
       episodeRuntimeMinutes: episodeRuntimeMinutes,
+      genres: genres ?? this.genres,
     );
   }
 
   /// Clears the "watched" mark, any rating, and the duration snapshot —
-  /// e.g. H2's "Remove from Watched" link.
+  /// e.g. H2's "Remove from Watched" link. [genres] carries forward: it
+  /// describes the title, which hasn't changed just because "watched"
+  /// was cleared — same as [isFavorite]/[isWatchLater] below.
   UserMediaEntry unmarkWatched() {
     return UserMediaEntry(
       key: key,
       isFavorite: isFavorite,
       isWatchLater: isWatchLater,
+      genres: genres,
     );
   }
 
@@ -114,6 +135,7 @@ class UserMediaEntry {
     int? runtimeMinutes,
     int? episodeCount,
     int? episodeRuntimeMinutes,
+    List<Genre>? genres,
   }) {
     return UserMediaEntry(
       key: key,
@@ -125,6 +147,7 @@ class UserMediaEntry {
       episodeCount: episodeCount ?? this.episodeCount,
       episodeRuntimeMinutes:
           episodeRuntimeMinutes ?? this.episodeRuntimeMinutes,
+      genres: genres ?? this.genres,
     );
   }
 
@@ -138,7 +161,8 @@ class UserMediaEntry {
       other.rating == rating &&
       other.runtimeMinutes == runtimeMinutes &&
       other.episodeCount == episodeCount &&
-      other.episodeRuntimeMinutes == episodeRuntimeMinutes;
+      other.episodeRuntimeMinutes == episodeRuntimeMinutes &&
+      _listEquals(other.genres, genres);
 
   @override
   int get hashCode => Object.hash(
@@ -150,6 +174,7 @@ class UserMediaEntry {
     runtimeMinutes,
     episodeCount,
     episodeRuntimeMinutes,
+    Object.hashAll(genres),
   );
 
   @override
@@ -157,5 +182,16 @@ class UserMediaEntry {
       'UserMediaEntry($key, favorite: $isFavorite, '
       'watchLater: $isWatchLater, watchedAt: $watchedAt, rating: $rating, '
       'runtimeMinutes: $runtimeMinutes, episodeCount: $episodeCount, '
-      'episodeRuntimeMinutes: $episodeRuntimeMinutes)';
+      'episodeRuntimeMinutes: $episodeRuntimeMinutes, genres: $genres)';
+}
+
+/// Order-sensitive list content equality — see `LibraryStats`' own copy
+/// of this same small helper for why: no `package:collection` dependency
+/// for just this (CLAUDE.md "don't add one without discussing it").
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

@@ -107,7 +107,12 @@ Each drop is documented as a short ADR in `docs/decisions/`.
 ## 4. My List, Watched, and taste profile
 
 ### `my_list` model
-- Local `user_media` table with `mediaType`, `tmdbId`, and **non-exclusive** flags: `is_favorite`, `is_watch_later`, `watched_at`. An entry can be a favorite and watched at the same time.
+- `UserMediaEntry` (`core/domain/entities/user_media_entry.dart`) — identified by `key` (`MediaKey`: `mediaType` + `tmdbId`), with **non-exclusive** flags `isFavorite`/`isWatchLater` (an entry can be a favorite and watched at the same time) and `watchedAt` (`null` = not watched). No embedded `MediaItem`/`MediaDetail` snapshot — instead a small set of flattened fields, each populated from whichever catalog object a given save site has on hand at write time:
+  - `rating` (1–5, optional, only meaningful once watched).
+  - `runtimeMinutes` — movies only, from `MovieDetail.runtimeMinutes`.
+  - `episodeCount` / `episodeRuntimeMinutes` — TV only, from `TvShowDetail.numberOfEpisodes` / `episodeRuntimeMinutes`.
+  - `genres` — from `MediaItem.genres`; feeds Stats' "Genres you watch most".
+  All four are optional/default-empty: an entry saved before a given field existed, or one whose call site didn't have the richer object (e.g. `MediaDetail`) on hand, simply has it unset — never an error, just missing data those callers must expect. The drift table backing this (`UserMediaEntries`) mirrors these fields directly (plus a handful of still-unmapped, unused catalog-snapshot columns — see `app_database.dart`).
 - Marking as watched automatically removes it from "Watch later".
 - Marking as watched optionally asks for a rating (1–5) and a date.
 - TV shows: marked watched at the whole-show level.

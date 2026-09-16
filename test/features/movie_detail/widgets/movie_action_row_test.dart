@@ -78,5 +78,66 @@ void main() {
         expect(saved!.runtimeMinutes, 166);
       },
     );
+
+    testWidgets(
+      'tapping Favorite on a brand-new entry populates genres from the '
+      'already-loaded MediaDetail',
+      (tester) async {
+        final userLibraryRepository = InMemoryUserLibraryRepository();
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: BlocProvider(
+                create: (_) =>
+                    MovieDetailCubit(FakeMediaRepository())..loadDetail(_dune),
+                child: MovieActionRow(
+                  mediaKey: _dune,
+                  userLibraryRepository: userLibraryRepository,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 500));
+
+        await tester.tap(find.text('Favorite'));
+        await tester.pumpAndSettle();
+
+        // FakeMediaRepository's sample movie (tmdbId 1) has
+        // genres: [_sciFi, _drama].
+        final saved = await userLibraryRepository.watchEntry(_dune).first;
+        expect(saved!.genres.map((g) => g.id), ['sci-fi', 'drama']);
+      },
+    );
+
+    testWidgets('Watched → Save also populates genres from the already-loaded '
+        'MediaDetail', (tester) async {
+      final userLibraryRepository = InMemoryUserLibraryRepository();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BlocProvider(
+              create: (_) =>
+                  MovieDetailCubit(FakeMediaRepository())..loadDetail(_dune),
+              child: MovieActionRow(
+                mediaKey: _dune,
+                userLibraryRepository: userLibraryRepository,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      await tester.tap(find.text('Watched'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      final saved = await userLibraryRepository.watchEntry(_dune).first;
+      expect(saved!.genres.map((g) => g.id), ['sci-fi', 'drama']);
+    });
   });
 }

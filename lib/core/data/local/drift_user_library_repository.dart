@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../domain/entities/genre.dart';
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
@@ -69,6 +70,7 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
               runtimeMinutes: Value(entry.runtimeMinutes),
               episodeCount: Value(entry.episodeCount),
               episodeRuntimeMinutes: Value(entry.episodeRuntimeMinutes),
+              genres: Value(_serializeGenres(entry.genres)),
               updatedAt: DateTime.now(),
             ),
           );
@@ -136,7 +138,27 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
       runtimeMinutes: row.runtimeMinutes,
       episodeCount: row.episodeCount,
       episodeRuntimeMinutes: row.episodeRuntimeMinutes,
+      genres: _deserializeGenres(row.genres),
     );
+  }
+
+  /// `id:name` pairs, comma-joined — same format and reasoning as
+  /// `DriftTasteProfileRepository`'s own genre serialization: a genre's
+  /// `id` alone isn't enough to rebuild a `Genre` without a lookup
+  /// table, and there isn't a normalized genre catalog in `core/domain`
+  /// yet to look it up against, so both fields are stored directly.
+  static String _serializeGenres(List<Genre> genres) =>
+      genres.map((g) => '${g.id}:${g.name}').join(',');
+
+  static List<Genre> _deserializeGenres(String? serialized) {
+    if (serialized == null || serialized.isEmpty) return const [];
+    return serialized.split(',').map((pair) {
+      final separator = pair.indexOf(':');
+      return Genre(
+        id: pair.substring(0, separator),
+        name: pair.substring(separator + 1),
+      );
+    }).toList();
   }
 }
 

@@ -17,15 +17,11 @@ import 'library_stats.dart';
 /// production; tests pass a fixed value so the 12-month window (and the
 /// whole result) is deterministic.
 ///
-/// **Known gap**: [LibraryStats.topGenres] is always empty here —
-/// `UserMediaEntry` doesn't carry genre data anywhere yet (only the
-/// drift table's own unused "genres" snapshot column comes close, and
-/// nothing maps it back into the domain entity). This needs a follow-up
-/// branch that adds genre tracking to `UserMediaEntry`, the same way
-/// `runtimeMinutes` was added, before it can be filled in. [topGenres]
-/// below — the ranking/tie-break algorithm itself — is already built
-/// and tested against synthetic counts so that follow-up only has to
-/// wire real data into it.
+/// [LibraryStats.topGenres] counts each watched entry's
+/// [UserMediaEntry.genres] once per genre it lists. An entry saved
+/// before that field existed simply has `genres: []` and doesn't
+/// contribute — not an error, just an undercount for old data, same as
+/// the duration fields above.
 LibraryStats calculateLibraryStats(
   List<UserMediaEntry> entries, {
   MediaType? filterType,
@@ -58,13 +54,20 @@ LibraryStats calculateLibraryStats(
       ? null
       : ratings.reduce((a, b) => a + b) / ratings.length;
 
+  final genreCounts = <Genre, int>{};
+  for (final entry in watched) {
+    for (final genre in entry.genres) {
+      genreCounts[genre] = (genreCounts[genre] ?? 0) + 1;
+    }
+  }
+
   return LibraryStats(
     moviesWatched: movies.length,
     tvShowsWatched: tvShows.length,
     movieHours: movieMinutes / 60,
     estimatedTvHours: tvMinutes / 60,
     averageRating: averageRating,
-    topGenres: topGenres(const {}),
+    topGenres: topGenres(genreCounts),
     mostWatchedYear: _mostWatchedYear(watched),
     monthlyActivity: _monthlyActivity(watched, effectiveNow),
   );
@@ -73,8 +76,9 @@ LibraryStats calculateLibraryStats(
 /// Ranks genres by watch count, most-watched first — ties broken
 /// alphabetically by name for a stable, deterministic order (rather
 /// than whatever order a `Map` happens to iterate in). Takes raw counts
-/// rather than entries — see this file's own top-of-file note on why
-/// [calculateLibraryStats] always calls this with an empty map today.
+/// rather than entries so it stays independently testable against
+/// synthetic data, decoupled from how [calculateLibraryStats] tallies
+/// [UserMediaEntry.genres].
 List<(Genre, int)> topGenres(Map<Genre, int> counts, {int limit = 5}) {
   final ranked = counts.entries.toList()
     ..sort((a, b) {
