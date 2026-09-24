@@ -1,0 +1,118 @@
+{
+  "vibes": [
+    {
+      "id": "feel_good",
+      "name": "Feel Good",
+      "icon": "vibeFeelGood",
+      "movie": { "genreIds": ["comedy", "family"], "keywordIds": [] },
+      "tv": { "genreIds": ["comedy", "family"], "keywordIds": [] }
+    },
+    {
+      "id": "indie",
+      "name": "Indie",
+      "icon": "vibeIndie",
+      "movie": { "genreIds": ["drama"], "keywordIds": [] },
+      "tv": { "genreIds": ["drama"], "keywordIds": [] }
+    },
+    {
+      "id": "monster",
+      "name": "Monster",
+      "icon": "vibeMonster",
+      "movie": { "genreIds": ["horror", "sci-fi"], "keywordIds": [] },
+      "tv": { "genreIds": ["horror", "sci-fi"], "keywordIds": [] }
+    },
+    {
+      "id": "detective",
+      "name": "Detective",
+      "icon": "vibeDetective",
+      "movie": { "genreIds": ["mystery", "crime"], "keywordIds": [] },
+      "tv": { "genreIds": ["mystery", "crime"], "keywordIds": [] }
+    },
+    {
+      "id": "classic",
+      "name": "Classic",
+      "icon": "vibeClassic",
+      "movie": { "genreIds": [], "keywordIds": [] },
+      "tv": { "genreIds": [], "keywordIds": [] },
+      "maxReleaseYear": 1999,
+      "minVoteAverage": 7.5
+    },
+    {
+      "id": "superhero",
+      "name": "Superhero",
+      "icon": "vibeSuperhero",
+      "movie": { "genreIds": ["action", "adventure"], "keywordIds": [] },
+      "tv": { "genreIds": ["action", "adventure"], "keywordIds": [] }
+    },
+    {
+      "id": "cult",
+      "name": "Cult",
+      "icon": "vibeCult",
+      "movie": { "genreIds": ["horror", "comedy"], "keywordIds": [] },
+      "tv": { "genreIds": ["comedy"], "keywordIds": [] }
+    },
+    {
+      "id": "tearjerker",
+      "name": "Tearjerker",
+      "icon": "vibeTearjerker",
+      "movie": { "genreIds": ["drama"], "keywordIds": [] },
+      "tv": { "genreIds": ["drama"], "keywordIds": [] }
+    },
+    {
+      "id": "sports",
+      "name": "Sports",
+      "icon": "vibeSports",
+      "movie": { "genreIds": ["drama", "documentary"], "keywordIds": [] },
+      "tv": { "genreIds": ["documentary"], "keywordIds": [] }
+    },
+    {
+      "id": "date",
+      "name": "Date Night",
+      "icon": "vibeDate",
+      "movie": { "genreIds": ["romance", "comedy"], "keywordIds": [] },
+      "tv": { "genreIds": ["romance", "comedy"], "keywordIds": [] }
+    },
+    {
+      "id": "future",
+      "name": "Future",
+      "icon": "vibeFuture",
+      "movie": { "genreIds": ["sci-fi"], "keywordIds": [] },
+      "tv": { "genreIds": ["sci-fi"], "keywordIds": [] }
+    },
+    {
+      "id": "explosive",
+      "name": "Explosive",
+      "icon": "vibeExplosive",
+      "movie": { "genreIds": ["action"], "keywordIds": [] },
+      "tv": { "genreIds": ["action"], "keywordIds": [] }
+    },
+    {
+      "id": "gritty",
+      "name": "Gritty",
+      "icon": "vibeGritty",
+      "movie": { "genreIds": ["crime", "thriller"], "keywordIds": [] },
+      "tv": { "genreIds": ["crime"], "keywordIds": [] }
+    },
+    {
+      "id": "true_story",
+      "name": "True Story",
+      "icon": "vibeTrueStory",
+      "movie": { "genreIds": ["drama", "history"], "keywordIds": [] },
+      "tv": { "genreIds": ["documentary", "drama"], "keywordIds": [] }
+    },
+    {
+      "id": "gangster",
+      "name": "Gangster",
+      "icon": "vibeGangster",
+      "movie": { "genreIds": ["crime"], "keywordIds": [] },
+      "tv": { "genreIds": ["crime"], "keywordIds": [] }
+    },
+    {
+      "id": "musical",
+      "name": "Musical",
+      "icon": "vibeMusical",
+      "movie": { "genreIds": ["music"], "keywordIds": [] },
+      "tv": { "genreIds": ["music"], "keywordIds": [] }
+    }
+  ]
+}
