@@ -140,6 +140,21 @@ regular/fill para los 8 conceptos que lo necesitan.
 | Vibe: True Story | `newspaper_line` |
 | Vibe: Gangster | `money_dollar_circle_line` |
 | Vibe: Musical | `music_line` |
+| Género: Action | `boxing_line` |
+| Género: Adventure | `map_line` |
+| Género: Animation | `palette_line` |
+| Género: Comedy | `emotion_laugh_line` |
+| Género: Crime | `police_badge_line` |
+| Género: Documentary | `camera_line` |
+| Género: Drama | `emotion_line` |
+| Género: Family | `parent_line` |
+| Género: History | `ancient_pavilion_line` |
+| Género: Horror | `ghost_line` |
+| Género: Music | `music_2_line` |
+| Género: Mystery | `question_line` |
+| Género: Romance | `hearts_line` |
+| Género: Science Fiction | `aliens_line` |
+| Género: Thriller | `timer_flash_line` |
 
 Si falta un concepto al implementar, añádelo a esta tabla antes de elegir el
 icono a ojo, para que quede consistente entre pantallas.

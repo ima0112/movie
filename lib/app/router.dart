@@ -5,6 +5,7 @@ import '../core/domain/entities/media_type.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
+import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
 import '../features/you/presentation/screens/you_screen.dart';
 import 'root_shell.dart';
@@ -20,6 +21,10 @@ class AppRoutes {
   /// C4 (Stats), pushed from B5's "See stats" link
   /// (`you_screen.dart`'s `onSeeStats`).
   static const String stats = '/stats';
+
+  /// C5 (My Tastes), pushed from B5's My Tastes card
+  /// (`you_screen.dart`'s `MyTastesCard.onTap`).
+  static const String myTastes = '/my-tastes';
 
   /// C1 (Filtered listing), not built yet — see `movie_detail_header.dart`
   /// / `movie_detail_title_block.dart`'s genre taps.
@@ -101,6 +106,11 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.stats,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const StatsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.myTastes,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MyTastesScreen(),
     ),
     GoRoute(
       path: '/genre/:genreId',
