@@ -13,15 +13,30 @@ import '../../core/theme/app_text_styles.dart';
 /// scale — they describe this one component, not a layout token.
 enum MediaCardSize {
   /// 110×165. Carousel rows (3.2 cards visible).
-  carousel(width: 110, height: 165),
+  carousel(width: 110, height: 165, aspectRatio: null),
 
   /// 330×440 (3:4). The Discover hero.
-  hero(width: 330, height: 440);
+  hero(width: 330, height: 440, aspectRatio: null),
 
-  const MediaCardSize({required this.width, required this.height});
+  /// 2:3, fluid — C1's 3-column grid. Unlike [carousel]/[hero], this
+  /// variant has no fixed pixel size of its own — [width]/[height] are
+  /// unused (`0`) and the card instead sizes itself to whatever width
+  /// its `GridView` cell gives it via [aspectRatio].
+  grid(width: 0, height: 0, aspectRatio: 2 / 3);
 
+  const MediaCardSize({
+    required this.width,
+    required this.height,
+    required this.aspectRatio,
+  });
+
+  /// Unused (`0`) for [grid] — see [aspectRatio].
   final double width;
   final double height;
+
+  /// Only set for [grid] — the other two variants size themselves from
+  /// [width]/[height] directly.
+  final double? aspectRatio;
 }
 
 /// Translucent black used to paint tags and buttons over a poster (reason
@@ -95,55 +110,52 @@ class MediaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final poster = ClipRRect(
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      child: GestureDetector(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            _Poster(posterUrl: posterUrl),
+            if (_isHero) const _HeroFade(),
+            if (_isHero)
+              Positioned(
+                left: AppSpacing.md,
+                right: AppSpacing.md,
+                bottom: AppSpacing.md,
+                child: _HeroCaption(
+                  title: title,
+                  reasonTag: reasonTag,
+                  metadata: metadata,
+                ),
+              ),
+            if (showTypeTag)
+              const Positioned(
+                left: AppSpacing.xs,
+                top: AppSpacing.xs,
+                child: _TvTag(),
+              ),
+            if (_isHero && (saveButton != null || onSaveTap != null))
+              Positioned(
+                right: AppSpacing.xs,
+                top: AppSpacing.xs,
+                child:
+                    saveButton ??
+                    MediaCardSaveButton(onTap: onSaveTap!, isSaved: isSaved),
+              ),
+          ],
+        ),
+      ),
+    );
+
     return Semantics(
       label: title,
       image: true,
-      child: SizedBox(
-        width: size.width,
-        height: size.height,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          child: GestureDetector(
-            onTap: onTap,
-            onLongPress: onLongPress,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                _Poster(posterUrl: posterUrl),
-                if (_isHero) const _HeroFade(),
-                if (_isHero)
-                  Positioned(
-                    left: AppSpacing.md,
-                    right: AppSpacing.md,
-                    bottom: AppSpacing.md,
-                    child: _HeroCaption(
-                      title: title,
-                      reasonTag: reasonTag,
-                      metadata: metadata,
-                    ),
-                  ),
-                if (showTypeTag)
-                  const Positioned(
-                    left: AppSpacing.xs,
-                    top: AppSpacing.xs,
-                    child: _TvTag(),
-                  ),
-                if (_isHero && (saveButton != null || onSaveTap != null))
-                  Positioned(
-                    right: AppSpacing.xs,
-                    top: AppSpacing.xs,
-                    child:
-                        saveButton ??
-                        MediaCardSaveButton(
-                          onTap: onSaveTap!,
-                          isSaved: isSaved,
-                        ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      child: size.aspectRatio != null
+          ? AspectRatio(aspectRatio: size.aspectRatio!, child: poster)
+          : SizedBox(width: size.width, height: size.height, child: poster),
     );
   }
 }
