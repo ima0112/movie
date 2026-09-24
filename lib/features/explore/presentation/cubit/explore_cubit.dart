@@ -133,6 +133,16 @@ class ExploreCubit extends Cubit<ExploreState> {
     emit(ExploreAtRest(segment: state.segment));
   }
 
+  /// A "Recent" chip's long-press. Fire-and-forget, same as [_runSearch]'s
+  /// own [SearchHistoryRepository.record] call — [_onHistoryChanged]
+  /// picks up the result via the repository's own stream, no need to
+  /// await or emit anything here directly.
+  void removeRecentSearch(String query) =>
+      unawaited(_searchHistoryRepository.remove(query));
+
+  /// "Clear all".
+  void clearRecentSearches() => unawaited(_searchHistoryRepository.clear());
+
   /// A genre tile tap, "See N results" (H8), or "See all" — → C1.
   void openListing({required DiscoverFilter filter, required String title}) {
     _debounce?.cancel();

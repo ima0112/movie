@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/domain/entities/discover_filter.dart';
-import '../../../../core/domain/entities/genre_catalog.dart';
-import '../../../../core/domain/entities/media_item.dart';
-import '../../../../core/domain/entities/media_type.dart';
-import '../../../../core/domain/entities/result.dart';
-import '../../../../core/domain/repositories/media_repository.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/filter_controls.dart';
+import '../../core/domain/entities/discover_filter.dart';
+import '../../core/domain/entities/genre_catalog.dart';
+import '../../core/domain/entities/media_item.dart';
+import '../../core/domain/entities/media_type.dart';
+import '../../core/domain/entities/result.dart';
+import '../../core/domain/repositories/media_repository.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 import 'discover_range_filters.dart';
 import 'discover_sort_chips.dart';
 import 'explore_filter_actions.dart';
+import 'filter_controls.dart';
 import 'genre_multi_select_chips.dart';
 import 'tv_status_toggle.dart';
 
@@ -30,6 +30,14 @@ import 'tv_status_toggle.dart';
 ///
 /// Not modeled at all: "Hide what I've watched" — see `DiscoverFilter`'s
 /// own doc comment for why.
+///
+/// Promoted from `features/explore/presentation/widgets/` to
+/// `shared/widgets/` (along with its own supporting files:
+/// `discover_range_filters.dart`, `discover_sort_chips.dart`,
+/// `explore_filter_actions.dart`, `genre_multi_select_chips.dart`,
+/// `tv_status_toggle.dart`) once `filtered_list` (C1) became this
+/// widget's second real consumer — H8's own doc line above already
+/// called out both, this just makes the file location match it.
 class ExploreFilterSheet extends StatefulWidget {
   const ExploreFilterSheet({
     super.key,

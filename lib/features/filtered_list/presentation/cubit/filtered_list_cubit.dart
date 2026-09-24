@@ -20,10 +20,34 @@ import 'filtered_list_state.dart';
 /// so a widget test can build the Cubit and control exactly when the
 /// fetch happens.
 class FilteredListCubit extends Cubit<FilteredListState> {
-  FilteredListCubit(this._mediaRepository, DiscoverFilter initialFilter)
-    : super(FilteredListInitial(filter: initialFilter));
+  FilteredListCubit(
+    this._mediaRepository,
+    DiscoverFilter initialFilter, {
+    CarouselSection? collectionSection,
+  }) : // An initializing formal here would force this public parameter
+       // to share `_collectionSection`'s private name, which external
+       // callers couldn't then pass by name.
+       // ignore: prefer_initializing_formals
+       _collectionSection = collectionSection,
+       super(FilteredListInitial(filter: initialFilter));
 
   final MediaRepository _mediaRepository;
+
+  /// Set only when this listing started from a Discover collection
+  /// ("See all") that arrived with no filter touched yet —
+  /// `docs/SCREENS.md` C1's own "Source" line: "'See all' collections
+  /// use their own endpoint until a filter is touched, at which point
+  /// they switch to the equivalent /discover call." [updateFilter]
+  /// clears this the first time it runs, since that's the "a filter is
+  /// touched" moment; every other origin (a B2 genre tile, H8's "See N
+  /// results") already arrives with a real filter, so this stays `null`
+  /// for them from the start. Under today's `FakeMediaRepository`, every
+  /// [CarouselSection] returns the same 10-item pool regardless of which
+  /// one it is (only `becauseYouLike` branches on anything), so this
+  /// makes no visible difference yet — it's here for when a real
+  /// TMDB-backed repository actually has distinct per-collection
+  /// endpoints.
+  CarouselSection? _collectionSection;
 
   /// How many more items [loadMore] reveals per call — C1's "3-column
   /// grid", so 12 is 4 full rows at a time.
@@ -33,7 +57,10 @@ class FilteredListCubit extends Cubit<FilteredListState> {
 
   /// H8 applying a different filter set while C1 is already open (e.g.
   /// "Reset", or changing "sort by") — re-fetches from scratch.
-  Future<void> updateFilter(DiscoverFilter filter) => _fetch(filter);
+  Future<void> updateFilter(DiscoverFilter filter) {
+    _collectionSection = null;
+    return _fetch(filter);
+  }
 
   /// The error state's "Retry".
   Future<void> retry() => _fetch(state.filter);
@@ -41,7 +68,10 @@ class FilteredListCubit extends Cubit<FilteredListState> {
   Future<void> _fetch(DiscoverFilter filter) async {
     emit(FilteredListLoading(filter: filter));
 
-    final result = await _mediaRepository.discover(filter);
+    final section = _collectionSection;
+    final result = section != null
+        ? await _mediaRepository.getCarouselSection(section, type: filter.type)
+        : await _mediaRepository.discover(filter);
     if (isClosed) return;
 
     switch (result) {

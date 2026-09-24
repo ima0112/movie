@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_cubit.dart';
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_state.dart';
@@ -126,6 +127,46 @@ void main() {
       await cubit.retry();
 
       expect(cubit.state, isA<FilteredListLoaded>());
+      await cubit.close();
+    });
+
+    test('with a collectionSection and a still-default filter, load() '
+        'fetches that collection instead of calling discover()', () async {
+      final cubit = FilteredListCubit(
+        FakeMediaRepository(),
+        const DiscoverFilter(type: MediaType.movie),
+        collectionSection: CarouselSection.inTheaters,
+      );
+
+      await cubit.load();
+
+      // FakeMediaRepository.getCarouselSection always succeeds with up to
+      // 10 items — this only proves that endpoint (not discover()) is the
+      // one that ran, not anything about its content.
+      final loaded = cubit.state as FilteredListLoaded;
+      expect(loaded.totalCount, lessThanOrEqualTo(10));
+      await cubit.close();
+    });
+
+    test('updateFilter() clears collectionSection — a filter being '
+        'touched permanently switches to discover(), which (unlike '
+        'getCarouselSection) actually applies minVoteAverage', () async {
+      final cubit = FilteredListCubit(
+        FakeMediaRepository(),
+        const DiscoverFilter(type: MediaType.movie),
+        collectionSection: CarouselSection.inTheaters,
+      );
+      await cubit.load();
+      final unfilteredTotal = (cubit.state as FilteredListLoaded).totalCount;
+
+      await cubit.updateFilter(
+        const DiscoverFilter(type: MediaType.movie, minVoteAverage: 8.5),
+      );
+
+      expect(
+        (cubit.state as FilteredListLoaded).totalCount,
+        lessThan(unfilteredTotal),
+      );
       await cubit.close();
     });
   });

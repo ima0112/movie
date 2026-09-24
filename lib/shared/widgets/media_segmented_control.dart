@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/domain/entities/media_segment.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../core/domain/entities/media_segment.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 
 /// All | Movies | TV Shows. Driven entirely by [segment] and [onSelected]
-/// — `discover_screen.dart` owns the actual selection as local
-/// `setState`, so this widget has no idea `DiscoverCubit` even exists.
-/// That's deliberate: it updates instantly on tap, before `loadDiscover`
-/// even resolves (CLAUDE.md rule 9).
-class DiscoverSegmentedControl extends StatelessWidget {
-  const DiscoverSegmentedControl({
+/// — purely presentational, so it updates instantly on tap regardless of
+/// whether the caller re-fetches synchronously (`DiscoverScreen`'s own
+/// local `setState`) or through a Cubit (`ExploreScreen`'s
+/// `ExploreCubit.selectSegment`) (CLAUDE.md rule 9).
+///
+/// Promoted from `discover_segmented_control.dart` to `shared/widgets/`
+/// once B2 (Explore) needed the exact same control, not just a similar
+/// one — the same "second genuine consumer" bar this codebase already
+/// applies to `ProfileAvatar`/`FilterSectionLabel`/`TypeFilterChips`.
+class MediaSegmentedControl extends StatelessWidget {
+  const MediaSegmentedControl({
     super.key,
     required this.segment,
     required this.onSelected,

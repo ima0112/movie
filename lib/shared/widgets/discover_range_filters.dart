@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
 
 /// H8's three numeric-range controls — year range, minimum rating, and
 /// max runtime (`docs/SCREENS.md` H8). Grouped in one file: each is a

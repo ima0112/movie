@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
@@ -51,7 +52,7 @@ class DiscoverSectionCarousel extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _SectionHeader(section: section),
+                    _SectionHeader(segment: segment, section: section),
                     const SizedBox(height: AppSpacing.md),
                     MediaCarousel.standard(
                       items: items,
@@ -78,8 +79,9 @@ class DiscoverSectionCarousel extends StatelessWidget {
 /// selector of its own, since it never varies independently of that
 /// section's items and is only ever used from there.
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.section});
+  const _SectionHeader({required this.segment, required this.section});
 
+  final MediaSegment segment;
   final CarouselSection section;
 
   @override
@@ -89,8 +91,19 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(_sectionLabel(section), style: AppTextStyles.h2),
         GestureDetector(
-          // TODO: → C1 (Filtered listing) once it and go_router exist.
-          onTap: () {},
+          // C1: "'See all' from B1 (arrives with the collection's name
+          // and no filters)" — `collectionSection` is what lets C1 fetch
+          // this exact collection instead of a plain discover() call
+          // until a filter gets touched (see `FilteredListCubit`'s own
+          // doc comment on that field).
+          onTap: () => context.push(
+            AppRoutes.filteredList,
+            extra: FilteredListRouteArgs(
+              filter: DiscoverFilter(type: segment.mediaType),
+              title: _sectionLabel(section),
+              collectionSection: section,
+            ),
+          ),
           child: Text(
             'See all',
             style: AppTextStyles.body.copyWith(color: AppColors.accent),
