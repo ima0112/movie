@@ -28,6 +28,10 @@ import 'package:movies/core/domain/repositories/user_profile_repository.dart'
 import 'package:movies/core/persistence/app_database.dart' as _i231;
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart'
     as _i661;
+import 'package:movies/features/explore/data/drift_search_history_repository.dart'
+    as _i598;
+import 'package:movies/features/explore/domain/search_history_repository.dart'
+    as _i942;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -37,6 +41,9 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     gh.lazySingleton<_i231.AppDatabase>(() => _i231.AppDatabase());
+    gh.lazySingleton<_i942.SearchHistoryRepository>(
+      () => _i598.DriftSearchHistoryRepository(gh<_i231.AppDatabase>()),
+    );
     gh.lazySingleton<_i762.TasteProfileRepository>(
       () => _i985.DriftTasteProfileRepository(gh<_i231.AppDatabase>()),
     );

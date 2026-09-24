@@ -1,3 +1,4 @@
+import '../entities/discover_filter.dart';
 import '../entities/genre.dart';
 import '../entities/media_detail.dart';
 import '../entities/media_item.dart';
@@ -69,4 +70,19 @@ abstract interface class MediaRepository {
 
   /// D1 (movie) / D2 (TV show) full detail for one catalog item.
   Future<Result<MediaDetail>> detail(MediaKey key);
+
+  /// B2's typing-state `/search/multi` — matches on title.
+  ///
+  /// Movies/TV shows only for now, despite the name: full TMDB "multi"
+  /// search also returns people (`docs/SCREENS.md` B2: "Row = thumbnail
+  /// (circular for people), title, 'Year · Movie/TV Show' or
+  /// 'Department · Person'"), which needs `Person` search wired up
+  /// separately — a later branch's job. The method keeps the
+  /// TMDB-matching name since that's what it'll fully become.
+  Future<Result<List<MediaItem>>> searchMulti(String query);
+
+  /// C1 (Filtered listing) / B2's genre-tile listing — `/discover/
+  /// {movie|tv}` with [filter]'s criteria. `filter.type == null` means
+  /// "All" (`docs/SCREENS.md` C1: "All = both interleaved").
+  Future<Result<List<MediaItem>>> discover(DiscoverFilter filter);
 }

@@ -1,9 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
+import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
+
+const _drama = Genre(id: 'drama', name: 'Drama');
+const _comedy = Genre(id: 'comedy', name: 'Comedy');
+const _sciFi = Genre(id: 'sci-fi', name: 'Science Fiction');
+const _horror = Genre(id: 'horror', name: 'Horror');
 
 void main() {
   group('FakeMediaRepository.detail', () {
@@ -67,6 +75,207 @@ void main() {
       );
 
       expect(result, isA<Failure<MediaDetail>>());
+    });
+  });
+
+  group('FakeMediaRepository.searchMulti', () {
+    final repository = FakeMediaRepository();
+
+    test('matches a title substring, case-insensitively', () async {
+      final result = await repository.searchMulti('dune');
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items.map((i) => i.title), ['Dune: Part Two']);
+    });
+
+    test('matches across both movies and TV shows', () async {
+      final result = await repository.searchMulti('the');
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(
+        items.map((i) => i.title),
+        containsAll(['The Substance', 'The Bear', 'The Boys']),
+      );
+    });
+
+    test('returns nothing for a query matching no title', () async {
+      final result = await repository.searchMulti('xyz-not-a-title');
+
+      expect((result as Success<List<MediaItem>>).value, isEmpty);
+    });
+
+    test('a blank query returns nothing rather than everything', () async {
+      final result = await repository.searchMulti('   ');
+
+      expect((result as Success<List<MediaItem>>).value, isEmpty);
+    });
+  });
+
+  group('FakeMediaRepository.discover', () {
+    final repository = FakeMediaRepository();
+
+    test('type: movie only returns movies; tvShow only TV shows', () async {
+      final movies = await repository.discover(
+        const DiscoverFilter(type: MediaType.movie),
+      );
+      final tvShows = await repository.discover(
+        const DiscoverFilter(type: MediaType.tvShow),
+      );
+
+      expect(
+        (movies as Success<List<MediaItem>>).value.every(
+          (i) => i.type == MediaType.movie,
+        ),
+        isTrue,
+      );
+      expect(
+        (tvShows as Success<List<MediaItem>>).value.every(
+          (i) => i.type == MediaType.tvShow,
+        ),
+        isTrue,
+      );
+    });
+
+    test('type: null (All) interleaves both types', () async {
+      final result = await repository.discover(const DiscoverFilter());
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items.any((i) => i.type == MediaType.movie), isTrue);
+      expect(items.any((i) => i.type == MediaType.tvShow), isTrue);
+    });
+
+    test('withGenres matches any of the given genres (OR), not all', () async {
+      final result = await repository.discover(
+        DiscoverFilter(type: MediaType.movie, withGenres: {_horror}),
+      );
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items.map((i) => i.title), ['The Substance']);
+    });
+
+    test('withoutGenres excludes anything matching any of them', () async {
+      final result = await repository.discover(
+        DiscoverFilter(type: MediaType.movie, withoutGenres: {_drama, _sciFi}),
+      );
+
+      final items = (result as Success<List<MediaItem>>).value;
+      // Every remaining movie has neither Drama nor Science Fiction.
+      expect(
+        items.every(
+          (i) => !i.genres.contains(_drama) && !i.genres.contains(_sciFi),
+        ),
+        isTrue,
+      );
+      expect(items, isNotEmpty);
+    });
+
+    test('yearFrom/yearTo bounds by release year, inclusive', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(
+          type: MediaType.movie,
+          yearFrom: 2023,
+          yearTo: 2023,
+        ),
+      );
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items.every((i) => i.releaseDate!.year == 2023), isTrue);
+      expect(items, isNotEmpty);
+    });
+
+    test('an item with no release date never matches a year bound', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(type: MediaType.movie, yearFrom: 1900),
+      );
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items.any((i) => i.title == 'Untitled Sci-Fi Project'), isFalse);
+    });
+
+    test('minVoteAverage filters out anything rated lower', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(type: MediaType.movie, minVoteAverage: 8.0),
+      );
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items.every((i) => i.voteAverage >= 8.0), isTrue);
+      expect(items, isNotEmpty);
+    });
+
+    test('sortBy: rating orders highest first', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(
+          type: MediaType.movie,
+          sortBy: DiscoverSortBy.rating,
+        ),
+      );
+
+      final ratings = (result as Success<List<MediaItem>>).value
+          .map((i) => i.voteAverage)
+          .toList();
+      expect(ratings, [...ratings]..sort((a, b) => b.compareTo(a)));
+    });
+
+    test('sortBy: title orders alphabetically', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(
+          type: MediaType.movie,
+          sortBy: DiscoverSortBy.title,
+        ),
+      );
+
+      final titles = (result as Success<List<MediaItem>>).value
+          .map((i) => i.title)
+          .toList();
+      expect(titles, [...titles]..sort());
+    });
+
+    test('sortBy: releaseDate orders most recent first', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(
+          type: MediaType.movie,
+          sortBy: DiscoverSortBy.releaseDate,
+        ),
+      );
+
+      final dates = (result as Success<List<MediaItem>>).value
+          .map((i) => i.releaseDate)
+          .toList();
+      for (var i = 1; i < dates.length; i++) {
+        final prev = dates[i - 1] ?? DateTime(0);
+        final curr = dates[i] ?? DateTime(0);
+        expect(prev.isAfter(curr) || prev.isAtSameMomentAs(curr), isTrue);
+      }
+    });
+
+    test('sortBy: popularity keeps the sample data\'s own declared order '
+        '(no dedicated popularity field on MediaItem yet)', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(type: MediaType.movie),
+      );
+
+      final titles = (result as Success<List<MediaItem>>).value
+          .map((i) => i.title)
+          .toList();
+      // Dune: Part Two is declared first in FakeMediaRepository.
+      expect(titles.first, 'Dune: Part Two');
+    });
+
+    test('combining filters narrows further, not either/or', () async {
+      final result = await repository.discover(
+        DiscoverFilter(
+          type: MediaType.movie,
+          withGenres: {_comedy},
+          minVoteAverage: 7.9,
+        ),
+      );
+
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(
+        items.every((i) => i.genres.contains(_comedy) && i.voteAverage >= 7.9),
+        isTrue,
+      );
+      expect(items, isNotEmpty);
     });
   });
 }

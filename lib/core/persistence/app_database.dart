@@ -132,6 +132,27 @@ class TasteProfileTable extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// B2's "Recent" search chips (`docs/SCREENS.md` B2: "'Recent' as chips
+/// (last 10; tap to run, long-press to remove; 'Clear all')"). `query`
+/// itself is the primary key: re-searching an already-present query
+/// just bumps its [searchedAt] in place (`DriftSearchHistoryRepository`
+/// upserts), which is what keeps "most recent" ordering correct without
+/// ever storing a duplicate row.
+///
+/// Registered here (like every other table) so it shares the app's one
+/// `AppDatabase` connection, even though the repository interface and
+/// its drift-backed implementation are feature-private — see
+/// `features/search/domain/search_history_repository.dart`'s own doc
+/// comment for why.
+@DataClassName('SearchHistoryEntryRow')
+class SearchHistoryTable extends Table {
+  TextColumn get query => text()();
+  DateTimeColumn get searchedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {query};
+}
+
 /// The app's single SQLite (drift) database.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/persistence/
@@ -141,7 +162,14 @@ class TasteProfileTable extends Table {
 /// against, just the one connection every repository built on drift
 /// (starting with `DriftUserLibraryRepository`) needs to share.
 @LazySingleton()
-@DriftDatabase(tables: [UserMediaEntries, UserProfileTable, TasteProfileTable])
+@DriftDatabase(
+  tables: [
+    UserMediaEntries,
+    UserProfileTable,
+    TasteProfileTable,
+    SearchHistoryTable,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -152,13 +180,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   /// Bump this whenever a table changes shape. Went to 2 when
-  /// [UserProfileTable] and [TasteProfileTable] were added, and to 3 when
+  /// [UserProfileTable] and [TasteProfileTable] were added, to 3 when
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
-  /// `episodeRuntimeMinutes` columns — [onUpgrade] below adds each
-  /// version's own change in order, never a destructive drop/recreate,
-  /// so nobody's existing My List/profile/tastes data is lost on update.
+  /// `episodeRuntimeMinutes` columns, and to 4 when [SearchHistoryTable]
+  /// was added — [onUpgrade] below adds each version's own change in
+  /// order, never a destructive drop/recreate, so nobody's existing My
+  /// List/profile/tastes/search data is lost on update.
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -175,6 +204,9 @@ class AppDatabase extends _$AppDatabase {
           userMediaEntries,
           userMediaEntries.episodeRuntimeMinutes,
         );
+      }
+      if (from < 4) {
+        await m.createTable(searchHistoryTable);
       }
     },
   );

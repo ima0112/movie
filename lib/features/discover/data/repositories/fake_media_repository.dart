@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_item.dart';
@@ -491,5 +492,87 @@ class FakeMediaRepository implements MediaRepository {
     }
 
     return Success(_movieDetails[key.tmdbId] ?? _genericDetail(movie));
+  }
+
+  @override
+  Future<Result<List<MediaItem>>> searchMulti(String query) async {
+    await Future.delayed(_delay);
+
+    final trimmed = query.trim().toLowerCase();
+    if (trimmed.isEmpty) return const Success([]);
+
+    final items = [
+      ..._movies,
+      ..._tvShows,
+    ].where((item) => item.title.toLowerCase().contains(trimmed)).toList();
+
+    return Success(items);
+  }
+
+  @override
+  Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) async {
+    await Future.delayed(_delay);
+
+    // filter.maxRuntimeMinutes / filter.tvStatus are deliberately never
+    // read here — see DiscoverFilter's own doc comment on each: MediaItem
+    // (what every sample title in this fake actually is) carries neither
+    // a runtime nor a status, only MediaDetail does. A real
+    // MediaRepositoryImpl doesn't have that gap: both become plain TMDB
+    // query parameters (with_runtime.lte, with_status), filtered
+    // server-side with no local field needed at all.
+    Iterable<MediaItem> items = switch (filter.type) {
+      MediaType.movie => _movies,
+      MediaType.tvShow => _tvShows,
+      null => [..._movies, ..._tvShows],
+    };
+
+    if (filter.withGenres.isNotEmpty) {
+      items = items.where(
+        (item) => item.genres.any(filter.withGenres.contains),
+      );
+    }
+    if (filter.withoutGenres.isNotEmpty) {
+      items = items.where(
+        (item) => !item.genres.any(filter.withoutGenres.contains),
+      );
+    }
+    if (filter.yearFrom case final from?) {
+      items = items.where(
+        (item) => item.releaseDate != null && item.releaseDate!.year >= from,
+      );
+    }
+    if (filter.yearTo case final to?) {
+      items = items.where(
+        (item) => item.releaseDate != null && item.releaseDate!.year <= to,
+      );
+    }
+    if (filter.minVoteAverage case final min?) {
+      items = items.where((item) => item.voteAverage >= min);
+    }
+
+    final results = items.toList();
+    final comparator = _comparatorFor(filter.sortBy);
+    // `popularity` has no dedicated comparator: MediaItem carries no
+    // separate popularity score (only voteAverage), so re-sorting by it
+    // would just be a worse "rating" sort wearing a different name.
+    // Keeping the sample lists' own declared order instead — earlier
+    // entries are the more "popular" ones by construction — is the
+    // closer stand-in until a real popularity field exists.
+    if (comparator != null) results.sort(comparator);
+    return Success(results);
+  }
+
+  static int Function(MediaItem, MediaItem)? _comparatorFor(
+    DiscoverSortBy sortBy,
+  ) {
+    return switch (sortBy) {
+      DiscoverSortBy.popularity => null,
+      DiscoverSortBy.rating => (a, b) => b.voteAverage.compareTo(a.voteAverage),
+      DiscoverSortBy.releaseDate =>
+        (a, b) => (b.releaseDate ?? DateTime(0)).compareTo(
+          a.releaseDate ?? DateTime(0),
+        ),
+      DiscoverSortBy.title => (a, b) => a.title.compareTo(b.title),
+    };
   }
 }
