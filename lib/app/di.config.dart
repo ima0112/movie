@@ -32,6 +32,7 @@ import 'package:movies/features/explore/data/drift_search_history_repository.dar
     as _i598;
 import 'package:movies/features/explore/domain/search_history_repository.dart'
     as _i942;
+import 'package:movies/features/match_engine/domain/match_engine.dart' as _i365;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -53,6 +54,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i245.MediaRepository>(() => _i661.FakeMediaRepository());
     gh.lazySingleton<_i166.UserLibraryRepository>(
       () => _i497.DriftUserLibraryRepository(gh<_i231.AppDatabase>()),
+    );
+    gh.lazySingleton<_i365.MatchEngine>(
+      () => _i365.MatchEngineImpl(gh<_i245.MediaRepository>()),
     );
     return this;
   }
