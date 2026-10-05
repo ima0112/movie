@@ -23,17 +23,28 @@ class DiscoverSectionSkeleton extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         SizedBox(
           height: MediaCardSize.carousel.height,
-          child: Row(
-            children: [
-              for (var i = 0; i < _posterCount; i++) ...[
-                if (i > 0) const SizedBox(width: AppSpacing.md),
-                SkeletonBlock(
-                  width: MediaCardSize.carousel.width,
-                  height: MediaCardSize.carousel.height,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                ),
+          // `MediaCardSize.carousel`'s own doc comment: "3.2 cards
+          // visible" — 3 full cards are *meant* to be wider than the
+          // viewport (the real `MediaCarousel.standard` scrolls
+          // horizontally for the same reason), so this needs the same
+          // scrollable wrapper, not a plain Row — a bare Row overflows
+          // on exactly this content on any screen narrower than ~354 px
+          // of carousel width.
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            child: Row(
+              children: [
+                for (var i = 0; i < _posterCount; i++) ...[
+                  if (i > 0) const SizedBox(width: AppSpacing.md),
+                  SkeletonBlock(
+                    width: MediaCardSize.carousel.width,
+                    height: MediaCardSize.carousel.height,
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ],
