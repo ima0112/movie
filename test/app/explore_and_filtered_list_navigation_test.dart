@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
@@ -28,7 +29,7 @@ Finder _exploreTab() =>
 
 void main() {
   setUpAll(() {
-    configureDependencies();
+    configureDependencies(fake.name);
     // Same swap `router_test.dart` makes — the real DriftUserLibraryRepository
     // needs path_provider, unavailable in `flutter test`'s host environment.
     getIt.unregister<UserLibraryRepository>();

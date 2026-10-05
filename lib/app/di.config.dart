@@ -10,6 +10,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
+import 'dart:math' as _i407;
+
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:movies/core/data/local/drift_taste_profile_repository.dart'
@@ -25,6 +27,7 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart'
     as _i166;
 import 'package:movies/core/domain/repositories/user_profile_repository.dart'
     as _i824;
+import 'package:movies/core/network/api_client.dart' as _i152;
 import 'package:movies/core/persistence/app_database.dart' as _i231;
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart'
     as _i661;
@@ -33,6 +36,9 @@ import 'package:movies/features/explore/data/drift_search_history_repository.dar
 import 'package:movies/features/explore/domain/search_history_repository.dart'
     as _i942;
 import 'package:movies/features/match_engine/domain/match_engine.dart' as _i365;
+
+const String _real = 'real';
+const String _fake = 'fake';
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -51,12 +57,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i824.UserProfileRepository>(
       () => _i311.DriftUserProfileRepository(gh<_i231.AppDatabase>()),
     );
-    gh.lazySingleton<_i245.MediaRepository>(() => _i661.FakeMediaRepository());
+    gh.lazySingleton<_i152.ApiClient>(
+      () => _i152.ApiClient(),
+      registerFor: {_real},
+    );
     gh.lazySingleton<_i166.UserLibraryRepository>(
       () => _i497.DriftUserLibraryRepository(gh<_i231.AppDatabase>()),
     );
+    gh.lazySingleton<_i245.MediaRepository>(
+      () => _i661.FakeMediaRepository(),
+      registerFor: {_fake},
+    );
     gh.lazySingleton<_i365.MatchEngine>(
-      () => _i365.MatchEngineImpl(gh<_i245.MediaRepository>()),
+      () => _i365.MatchEngineImpl(
+        gh<_i245.MediaRepository>(),
+        gh<_i407.Random>(),
+      ),
     );
     return this;
   }

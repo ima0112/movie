@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/app/environments.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/presentation/screens/discover_screen.dart';
 
 void main() {
-  setUpAll(configureDependencies);
+  setUpAll(() => configureDependencies(fake.name));
 
   Future<void> pumpDiscoverScreen(WidgetTester tester) async {
     await tester.pumpWidget(

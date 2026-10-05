@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
@@ -9,7 +10,7 @@ import 'package:movies/shared/widgets/media_card.dart';
 
 void main() {
   setUpAll(() {
-    configureDependencies();
+    configureDependencies(fake.name);
     // The real DriftUserLibraryRepository needs a native sqlite file via
     // path_provider, which has no platform channel in `flutter test`'s
     // host environment — swap in the fast, in-memory test double instead

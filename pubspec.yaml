@@ -45,10 +45,13 @@ dependencies:
   drift: ^2.35.0
   drift_flutter: ^0.3.1
   sqlite3: ^3.5.2
+  dio: ^5.9.0
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  json_serializable: ^6.11.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
