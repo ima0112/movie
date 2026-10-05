@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -166,6 +168,78 @@ void main() {
         ['Knives Out', 'Inside Out 2'],
       );
       expect(result.relaxationsApplied, isEmpty);
+    });
+  });
+
+  group('MatchEngine.resolve — MatchOptions.randomizeTop (Surprise me)', () {
+    test('picks the winner at random from the top-N pool (seeded for a '
+        'deterministic pick); every other candidate from that same pool '
+        'becomes an alternative', () async {
+      final seededEngine = MatchEngineImpl(FakeMediaRepository(), Random(42));
+      final catalog = VibeCatalog([
+        vibe('comedy', ['comedy']),
+      ]);
+      // Same 3-candidate pool as the tie-break test: sorted order is
+      // Poor Things, Knives Out, Inside Out 2. Random(42).nextInt(3) == 1
+      // deterministically, so the winner should be the 2nd of the 3
+      // (Knives Out), not the top-scored one.
+      final query = MatchQuery.aggregate(MediaType.movie, [
+        answers('ana', vibeIds: {'comedy'}, yearFrom: 1950),
+      ]);
+
+      final result = await seededEngine.resolve(
+        query,
+        options: MatchOptions(vibeCatalog: catalog, randomizeTop: 5),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.winner.title, 'Knives Out');
+      expect(
+        result.alternatives.map((m) => m.title).toSet(),
+        {'Poor Things', 'Inside Out 2'},
+      );
+    });
+
+    test('a pool smaller than randomizeTop still uses the whole pool, '
+        'not fewer candidates', () async {
+      final seededEngine = MatchEngineImpl(FakeMediaRepository(), Random(42));
+      final catalog = VibeCatalog([
+        vibe('scifi', ['sci-fi']),
+      ]);
+      // Only Dune: Part Two and Furiosa have sci-fi — a 2-candidate pool,
+      // smaller than randomizeTop: 5.
+      final query = MatchQuery.aggregate(MediaType.movie, [
+        answers('ana', vibeIds: {'scifi'}, yearFrom: 1950),
+      ]);
+
+      final result = await seededEngine.resolve(
+        query,
+        options: MatchOptions(vibeCatalog: catalog, randomizeTop: 5),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.alternatives, hasLength(1));
+      expect(
+        {result.winner.title, result.alternatives.single.title},
+        {'Dune: Part Two', 'Furiosa'},
+      );
+    });
+
+    test('randomizeTop: null keeps the deterministic top-scored winner '
+        '(today\'s Matcher behavior, unaffected)', () async {
+      final catalog = VibeCatalog([
+        vibe('comedy', ['comedy']),
+      ]);
+      final query = MatchQuery.aggregate(MediaType.movie, [
+        answers('ana', vibeIds: {'comedy'}, yearFrom: 1950),
+      ]);
+
+      final result = await engine.resolve(
+        query,
+        options: MatchOptions(vibeCatalog: catalog),
+      );
+
+      expect(result!.winner.title, 'Poor Things');
     });
   });
 
