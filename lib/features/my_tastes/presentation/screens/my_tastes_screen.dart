@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/genre_icons.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/my_tastes_cubit.dart';
@@ -14,7 +15,6 @@ import '../cubit/my_tastes_state.dart';
 import '../widgets/taste_genre_grid.dart';
 import '../widgets/taste_vibe_grid.dart';
 import '../widgets/taste_year_slider.dart';
-import 'genre_options.dart';
 
 /// My Tastes (C5) — pushed from B5's My Tastes card.
 ///
