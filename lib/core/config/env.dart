@@ -8,13 +8,15 @@ abstract final class Env {
     defaultValue: 'https://api.themoviedb.org/3',
   );
 
-  /// Fail fast at startup with a readable message instead of a cryptic 401
-  /// on the first request.
+/// When true, the app runs against FakeMediaRepository (no network, no token).
+  static const useFake = bool.fromEnvironment('USE_FAKE');
+
   static void validate() {
     assert(
-      tmdbToken.isNotEmpty,
+      useFake || tmdbToken.isNotEmpty,
       'TMDB_TOKEN is empty. Copy env/dev.example.json to env/dev.json, '
-      'add your token, and run with --dart-define-from-file=env/dev.json',
+      'add your token, and run with --dart-define-from-file=env/dev.json '
+      '(or run with --dart-define=USE_FAKE=true to use fake data).',
     );
   }
 }
