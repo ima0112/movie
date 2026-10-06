@@ -32,36 +32,65 @@ lib/
     domain/
       entities/
         media_type.dart
+        media_segment.dart        All/Movies/TV Shows control; ≠ MediaType (`all` has no catalog equivalent)
         media_item.dart           sealed: Movie | TvShow  (list level)
+        media_key.dart            {type, tmdbId} — My List / Matcher identity
         media_detail.dart         sealed: MovieDetail | TvShowDetail
-        person.dart
-        genre.dart                normalized genre + TMDB mapping
+        video.dart                trailer/teaser; MediaDetail.trailer's own selection ladder lives here
+        watch_providers.dart      flatrate/rent/buy *names* (no logos — WatchProviders carries none yet)
+        season_summary.dart       SeasonSummary + Episode (grouped, rule 13)
+        person.dart               Person, PersonDetail, CastMember/CrewMember, MediaCredit
+        genre.dart                normalized genre; TMDB-id mapping deliberately NOT here — see data/tmdb/tmdb_genre_mapper.dart
+        genre_catalog.dart        the fixed, hand-maintained 15-genre list
+        discover_filter.dart      C1/B2/H8's filter set, translated by data/tmdb/tmdb_discover_params.dart
         user_media_entry.dart
         taste_profile.dart
-        page.dart
-        result.dart               Result<T> | Failure
+        user_profile.dart
+        result.dart               Result<T> | Failure (Failure carries an optional FailureReason)
       repositories/
         media_repository.dart
         user_library_repository.dart
         taste_profile_repository.dart
+        user_profile_repository.dart
     data/
       tmdb/
-        tmdb_dtos.dart            generated (json_serializable) — never leave data/
-        tmdb_mappers.dart         DTO → entity
-        tmdb_media_datasource.dart
+        tmdb_configuration_dto.dart       GET /configuration, cached once by tmdb_configuration_service.dart
+        tmdb_configuration_service.dart
+        tmdb_image_urls.dart              buildTmdbImageUrl + TmdbImagesConfig — the only place that knows TMDB's image-URL shape
+        tmdb_genre_mapper.dart            TMDB numeric id <-> Genre, both directions (not on Genre itself — rule 1)
+        tmdb_discover_params.dart         DiscoverFilter -> /discover query params (pure, unit-tested per field)
+        tmdb_mappers.dart                 list-item DTOs -> MediaItem (Discover's own collections)
+        tmdb_detail_mappers.dart          movie/tv detail DTOs -> MovieDetail/TvShowDetail + Episode
+        tmdb_person_mappers.dart          person detail DTO -> PersonDetail
+        tmdb_media_datasource.dart        every TMDB call this app makes; DTOs (or raw maps for
+                                           the few mixed-media_type endpoints) out, never a domain entity
+        dtos/                             generated (json_serializable) — never leave data/; one
+                                           file per response shape (rule 11), not one tmdb_dtos.dart
       local/
         user_library_local_datasource.dart
         taste_profile_local_datasource.dart
       repositories/
-        media_repository_impl.dart
+        tmdb_media_repository.dart        implements MediaRepository; @real. detail()/getHeroItems()/
+                                           getCarouselSection()/searchMulti()/discover() are real;
+                                           forYou/becauseYouLike degrade to an empty list (need
+                                           TasteProfileRepository + the still-unbuilt
+                                           RecommendationBuilder, F1b)
         user_library_repository_impl.dart
         taste_profile_repository_impl.dart
+      (FakeMediaRepository, @Environment('fake'), lives in
+      features/discover/data/repositories/ — it implements the same
+      MediaRepository but is feature-local, not core/, since nothing
+      outside Discover's own tests constructs it directly)
 
   shared/
     widgets/
       media_card.dart
       media_carousel.dart
-      poster_image.dart           uses /configuration for sizes
+      poster_image.dart           takes a raw posterPath + builds the URL via
+                                   core/data/tmdb/tmdb_image_urls.dart + TmdbConfigurationService;
+                                   NOT yet wired into media_card.dart, whose own posterUrl field
+                                   already holds a pre-resolved URL from the mapper — a deliberate,
+                                   still-open seam (see DECISIONS.md §2's own note)
       skeletons.dart
       state_views.dart            empty / error+retry / offline
       genre_chip.dart
@@ -89,10 +118,14 @@ lib/
         widgets/
     movie_detail/
       presentation/
-    tv_detail/
-      presentation/               seasons on demand
-    person_detail/
-      presentation/
+    tv_detail/                    NOT BUILT YET — no screen exists. Data is ready
+      presentation/               (MediaRepository.detail() for TV, seasons on
+                                   demand via tmdb_detail_mappers.dart's
+                                   episodesFromSeasonDetail); this is purely the
+                                   missing presentation layer. seasons on demand
+    person_detail/                NOT BUILT YET — no screen, no repository (see
+      presentation/               §2's implementation notes in DECISIONS.md).
+                                   The DTO/mapper/datasource call already exist.
     my_list/
       presentation/               favorites / watch later / watched tabs
     stats/
@@ -124,8 +157,9 @@ lib/
         firestore_room_datasource.dart
         match_room_repository_impl.dart
       presentation/               create / join / waiting / group result
-    settings/
-      presentation/
+    settings/                    NOT BUILT YET — F11/F13's mandatory TMDB
+      presentation/               attribution (logo + text) has nowhere to live
+                                   until this exists.
 
 assets/
   vibes.json
@@ -170,11 +204,12 @@ Name the subfolder `cubit/` (not `bloc/`) when the feature uses a plain
 | Topic | Choice | Note |
 |---|---|---|
 | State | `flutter_bloc` | One `Cubit` (or `Bloc` for screens with real event flows) per screen in `presentation/`. |
-| DI | `get_it` + `injectable` | Repositories and services are annotated (`@LazySingleton(as: SomeRepository)`) on their implementation class; `injectable_generator` (via `build_runner`) writes the actual `getIt` registrations into `app/di.config.dart`. `main()` only calls `configureDependencies()`. Cubits/Blocs are NOT annotated/registered — they're created where the screen is built and pull dependencies via `getIt<T>()`. |
+| DI | `get_it` + `injectable` | Repositories and services are annotated (`@LazySingleton(as: SomeRepository)`) on their implementation class; `injectable_generator` (via `build_runner`) writes the actual `getIt` registrations into `app/di.config.dart`. `main()` calls `configureDependencies(String environment)` — `app/environments.dart`'s `fake`/`real` (`fake.name`/`real.name`), picked by `Env.useFake`. A class needing one environment only (e.g. `ApiClient`, every `Tmdb*` class, `@real`; `FakeMediaRepository`, `@Environment('fake')`) carries that annotation alongside `@LazySingleton`. Cubits/Blocs are NOT annotated/registered — they're created where the screen is built and pull dependencies via `getIt<T>()`. |
 | Navigation | go_router | Needed for Matcher deep links (`app://room/K7PM3Q`) and sharing. |
-| HTTP | Dio | Interceptors for bearer auth, `language`/`region`, and logging. |
+| HTTP | Dio | One `ApiClient` (`core/network/api_client.dart`), `@real`-only. Interceptors for bearer auth, `language`/`region` (hardcoded `es-ES`/`ES` — no settings source exists yet), and debug-only logging. `core/network/dio_failure_mapper.dart` is the one place a `DioException` becomes a `Failure`. |
 | Persistence | drift (SQLite), backed by the `sqlite3` package | Typed, migrations, queries for Stats. Use `sqlite3` (≥ 3.6.0) directly — `sqlite3_flutter_libs` is deprecated, do not add it. |
 | Models | Hand-written immutable classes in `domain`; `freezed` optional for DTOs | Keeping the domain free of codegen makes it readable in review. |
-| Serialization | `json_serializable` only in `data/` | |
+| Serialization | `json_serializable` only in `data/` | `createToJson: false` on every TMDB DTO — this app never sends one back. |
+| Pagination | **Not built.** `page.dart`/`Page<T>` (DECISIONS.md §7's own principle) doesn't exist | `MediaRepository`'s list methods return a flat `List<MediaItem>` from TMDB's own first page only (~20 results); `FilteredListCubit`'s "infinite scroll" reveals more of that same already-fetched list client-side, it doesn't request page 2. Fetching further TMDB pages needs this abstraction built first — flagged here instead of silently left to drift further out of sync. |
 
 If you'd rather choose differently on any row (Isar instead of drift, plain get_it instead of injectable), the structure doesn't change — only the contents of `presentation/` and `core/persistence/`.

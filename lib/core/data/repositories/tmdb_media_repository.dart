@@ -145,15 +145,18 @@ class TmdbMediaRepository implements MediaRepository {
         // have yet. TODO: inject UserLibraryRepository and hydrate its
         // watch-later keys here instead of returning empty.
         CarouselSection.watchLater => const <MediaItem>[],
-        CarouselSection.forYou => throw UnimplementedError(
-          // TODO: needs TasteProfileRepository + `/discover` — not
-          // requested by DiscoverCubit yet (see its own doc comment).
-          'forYou needs a taste profile; not wired into Discover yet.',
-        ),
-        CarouselSection.becauseYouLike => throw UnimplementedError(
-          // TODO: same as forYou, plus discover()'s own genre filter.
-          'becauseYouLike needs a taste profile; not wired into Discover yet.',
-        ),
+        // Neither is in DiscoverCubit.sectionsBySegment today (see its
+        // own doc comment) — both need TasteProfileRepository +
+        // RecommendationBuilder (DECISIONS.md F1b, a planned domain
+        // service that doesn't exist yet) to turn a taste profile into
+        // a `/discover` call. An empty list degrades the same way
+        // watchLater does above, rather than crashing a segment that
+        // happens to ask for this section later.
+        // TODO(F1b): inject TasteProfileRepository and RecommendationBuilder,
+        // build a DiscoverFilter from the profile (+ genre, for
+        // becauseYouLike), and call discover() with it.
+        CarouselSection.forYou => const <MediaItem>[],
+        CarouselSection.becauseYouLike => const <MediaItem>[],
       };
       return Success(items.take(10).toList());
     } on DioException catch (e) {
@@ -161,20 +164,21 @@ class TmdbMediaRepository implements MediaRepository {
     }
   }
 
+  // `type: null` never actually reaches either of these —
+  // `CarouselSection.trending`/`.topRated` only appear in
+  // `DiscoverCubit.sectionsBySegment`'s Movies/TV Shows lists, always
+  // with a concrete type — but an empty list (not a throw) is the safe
+  // default if that ever changes, same reasoning as `watchLater` above.
   Future<List<MediaItem>> _trending(MediaType? type) => switch (type) {
     MediaType.movie => _mapMovies(_datasource.trendingMovieWeek),
     MediaType.tvShow => _mapTv(_datasource.trendingTvWeek),
-    null => throw UnimplementedError(
-      'trending has no "All" segment equivalent in DiscoverCubit today.',
-    ),
+    null => Future.value(const <MediaItem>[]),
   };
 
   Future<List<MediaItem>> _topRated(MediaType? type) => switch (type) {
     MediaType.movie => _mapMovies(_datasource.movieTopRated),
     MediaType.tvShow => _mapTv(_datasource.tvTopRated),
-    null => throw UnimplementedError(
-      'topRated has no "All" segment equivalent in DiscoverCubit today.',
-    ),
+    null => Future.value(const <MediaItem>[]),
   };
 
   Future<List<MediaItem>> _mapMovies(

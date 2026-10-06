@@ -58,6 +58,69 @@ Each drop is documented as a short ADR in `docs/decisions/`.
 | Keywords for vibes | `/search/keyword` (resolve IDs once; fix them in the vibes JSON) |
 | Localization | `language` and `region` parameters on every call |
 
+### Implementation notes (`tmdb-network-core` … `tmdb-wrap-up`)
+What actually shipped, and where it diverges from the table above:
+- **Auth, image configuration, localization**: built as specified —
+  `BearerInterceptor`, `TmdbConfigurationService` (caches `/configuration`
+  once, falling back to TMDB's own well-known-stable defaults until
+  that resolves or if it ever fails), `LocaleInterceptor`. `language`/
+  `region` are hardcoded `es-ES`/`ES` everywhere (repositories, the
+  interceptor, the family-mode certification filter) — no Settings
+  screen exists yet to read a real preference from.
+- **"All" home / Movies home / TV shows home**: `/trending/all/week`
+  and all 8 `/movie`/`/tv`/`/trending` list endpoints are live, composing
+  Discover's hero (interleaved, deduped, capped at 8) and carousels.
+  The taste-profile-driven "For you"/"Because you like X" half of "All"
+  home is **not built** — `TmdbMediaRepository.getCarouselSection`
+  returns an empty list for `forYou`/`becauseYouLike` rather than
+  crashing; closing this needs `TasteProfileRepository` injected plus
+  the `RecommendationBuilder` domain service F1b still describes as
+  planned, not yet started.
+- **Genres**: `/genre/movie/list`/`/genre/tv/list` were **not
+  implemented** — this app's genre system is served entirely by the
+  static `GenreCatalog` (15 normalized genres) plus
+  `core/data/tmdb/tmdb_genre_mapper.dart`'s hand-maintained TMDB-id
+  tables (both directions: id→Genre for mapping API responses, Genre→id
+  for building `/discover`'s `with_genres`/`without_genres`). No live
+  fetch is needed for anything this app actually shows today.
+- **Unified search**: live; a `media_type: "person"` entry is dropped
+  (`MediaItem` has no Person case — searching stays movie/TV-only, as
+  `MediaRepository.searchMulti`'s own doc comment already said it would
+  for now).
+- **Explore by genre / engine `/discover`**: live for both `movie` and
+  `tv`, via a pure, independently-tested `DiscoverFilter` → query-params
+  function (`tmdb_discover_params.dart`). `vote_count.gte` is H8's own
+  fixed `100`, not the slider value. Family mode's `certification.lte`
+  filter is implemented but hardcoded to Spain's own "16" threshold
+  (certification scales and tier counts differ per country — a real
+  per-country table is future work once region is actually configurable
+  in Settings).
+- **Movie/TV detail**: live, exactly the `append_to_response` combinations
+  above, one call each. Trailer selection ("official + Trailer + user's
+  language → official → Teaser → first available") ended up as pure
+  logic on `MediaDetail.trailer` itself (needed two new fields on
+  `Video`: `official`, `iso6391`), not something the mapper decides —
+  it's domain-level business logic, not a TMDB-shape concern.
+- **Where to watch**: live, resolved against the hardcoded `'ES'`
+  region. "Data from JustWatch"/"Data from TMDB" attribution is present
+  on D1 (movie detail) — **D2 (TV show detail) has no screen built
+  yet**, so its own copy of this requirement can't be checked until it
+  exists.
+- **Seasons on demand**: `/tv/{id}/season/{n}` → `Episode` mapping is
+  built and tested, but **not wired into `MediaRepository`'s own
+  interface** — there's no consumer yet (D2/H4's season sheet isn't
+  built), so it stayed at the datasource+mapper level rather than
+  inventing an interface method nothing calls.
+- **Person detail**: DTO + mapper (`tmdb_person_mappers.dart`) and the
+  datasource call are built and tested, but **there is no
+  `PersonRepository` and no `person_detail` feature/screen** — same
+  "infra ready, no consumer yet" situation as seasons. `PersonDetail`/
+  `MediaCredit` (the domain entities) already existed from earlier work
+  and are what this mapper fills in.
+- **Keywords for vibes**: untouched by this stack — `/search/keyword`'s
+  "resolve once, fix in the vibes JSON" remains `match_engine`/`vibe`'s
+  own concern, not a runtime call.
+
 ### OMDb (v1.2+)
 `GET /?i={imdb_id}` using the `imdb_id` TMDB returns in the detail. Lazy and cached.
 
@@ -252,7 +315,7 @@ Spark plan (~50k reads / ~20k writes per day; verify when configuring). Guardrai
 - All network calls go through a single `ApiClient` configured with a base URL and per-environment headers. UI and repositories never build TMDB URLs themselves.
 - Custom domain models; TMDB DTOs never reach the UI. Mapping lives in the data layer.
 - Per-environment config via `--dart-define`.
-- Abstracted pagination (`Page<T>`).
+- Abstracted pagination (`Page<T>`) — **not built yet**: `MediaRepository`'s list methods return TMDB's own first page only; see `docs/STRUCTURE.md`'s "Technical decisions" table for why and what closing it needs.
 - These four rules are what makes it possible to insert a BFF later by only changing the base URL.
 
 ### Feature-first structure
@@ -283,7 +346,7 @@ lib/
 `MediaItem` (abstraction over `Movie` and `TvShow`), `Person`, `Genre` (normalized), `Vibe`, `UserMediaEntry`, `TasteProfile`, **`UserProfile { displayName, initialColor }`** (local, with `UserProfileRepository`), `ParticipantAnswers`, `MatchQuery`, `MatchResult`, `MatchRoom`.
 
 ### Repository contracts (to be defined)
-`MediaRepository`, `UserLibraryRepository`, `TasteProfileRepository`, `MatchRoomRepository`.
+`MediaRepository`, `UserLibraryRepository`, `TasteProfileRepository`, `UserProfileRepository`, `MatchRoomRepository`. No `PersonRepository` yet — D3 (person detail) has no screen built, so nothing constructs one; `/person/{id}`'s own DTO/mapper/datasource call already exist (§2's implementation notes) for whenever that feature starts.
 
 ---
 
