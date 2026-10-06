@@ -140,6 +140,14 @@ ask before inventing it.
       and `TvShowDetail` and likely to grow in v1.2; `Video`).
     - When unsure, ask: "will this type ever be imported somewhere that
       doesn't care about the type I grouped it with?" If yes, split it.
+14. **Screen layout checklist.** Every screen is built on `Scaffold`
+    with `SafeArea`; there is never content under the status bar, the
+    notch, or the home indicator. The page's horizontal margin is
+    `AppSpacing.xl`. Any screen with a text field must be scrollable and
+    survive the keyboard. Before calling it done, verify it on an iPhone
+    with a notch, on a small device (iPhone SE or a small Android), with
+    the keyboard open, and at 200% text scale, and state in the PR
+    description which of these you checked.
 
 ## Code conventions
 

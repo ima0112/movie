@@ -81,9 +81,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.surface,
-      child: Stack(
+    // A `Scaffold` ancestor, not just `ColoredBox` — without one, `Text`
+    // (here, `AppWordmark`'s two `TextSpan`s) has no `Material` ancestor
+    // and falls back to Flutter's own debug `DefaultTextStyle`, whose
+    // `decoration` is a double yellow underline. Fixing a single
+    // `Text.decoration` wouldn't cover any other text this screen gains
+    // later — the ancestor is the actual gap (CLAUDE.md rule 14).
+    return Scaffold(
+      backgroundColor: AppColors.surface,
+      body: Stack(
         fit: StackFit.expand,
         children: [
           const Align(alignment: Alignment.topCenter, child: AppHalo()),

@@ -2,13 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/pako_state.dart';
-import '../../../../shared/widgets/profile_avatar.dart';
-import '../../../../shared/widgets/profile_color_picker.dart';
+import 'name_step_form.dart';
+import 'onboarding_scaffold.dart';
 import 'step_transition.dart';
 
 /// Step 1 — `docs/SCREENS.md` A2: "required, no 'Skip'". Mirrors
@@ -87,55 +84,38 @@ class _NameStepState extends State<NameStep> {
 
   @override
   Widget build(BuildContext context) {
-    final hasName = widget.name.trim().isNotEmpty;
+    // docs/SCREENS.md A2: Pako shrinks to 48 px once the keyboard is up,
+    // so it never fights the field/avatar/color-picker for space.
+    final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    final pakoSize = keyboardOpen ? 48.0 : 64.0;
 
     return StepTransition(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          PakoState(mood: _mood, size: 64),
-          const SizedBox(height: AppSpacing.lg),
-          Text("What's your name?", style: AppTextStyles.h1),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            "That's what I'll call you, and how others will see you in "
-            'rooms.',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
-          ),
-          const SizedBox(height: AppSpacing.xxl),
-          TextField(
-            controller: _controller,
-            autofocus: true,
-            style: AppTextStyles.body,
-            decoration: const InputDecoration(hintText: 'Your name'),
-            onChanged: widget.onNameChanged,
-          ),
-          if (hasName) ...[
-            const SizedBox(height: AppSpacing.lg),
-            Row(
-              children: [
-                ProfileAvatar(
-                  displayName: widget.name,
-                  initialColor: widget.initialColor,
-                ),
-                const SizedBox(width: AppSpacing.lg),
-                Expanded(
-                  child: ProfileColorPicker(
-                    selected: widget.initialColor,
-                    onChanged: widget.onColorChanged,
-                  ),
-                ),
-              ],
+      child: OnboardingScaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              // The content can be shorter than the viewport (no
+              // keyboard) or taller (keyboard up) — this sizes to at
+              // least the available height without forcing a second,
+              // nested scrollable inside it.
+              hasScrollBody: false,
+              child: NameStepForm(
+                mood: _mood,
+                pakoSize: pakoSize,
+                name: widget.name,
+                initialColor: widget.initialColor,
+                controller: _controller,
+                onNameChanged: widget.onNameChanged,
+                onColorChanged: widget.onColorChanged,
+              ),
             ),
           ],
-          const SizedBox(height: AppSpacing.xxl),
-          PrimaryButton(
-            label: 'Next',
-            isDisabled: !widget.isValid,
-            onTap: widget.isValid ? widget.onNext : null,
-          ),
-        ],
+        ),
+        footer: PrimaryButton(
+          label: 'Next',
+          isDisabled: !widget.isValid,
+          onTap: widget.isValid ? widget.onNext : null,
+        ),
       ),
     );
   }
