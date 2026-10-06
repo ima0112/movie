@@ -68,4 +68,20 @@ abstract final class TmdbGenreMapper {
     }
     return null;
   }
+
+  /// The reverse of [fromTmdbId] — `tmdb_discover_params.dart`'s own
+  /// `with_genres`/`without_genres` translation. `null` when [genre] has
+  /// no TMDB id for this [type] (nothing in [GenreCatalog.all] maps to
+  /// more than one TMDB id per type, so this is a plain 1:1 lookup, not
+  /// a list).
+  static int? toTmdbId(Genre genre, MediaType type) {
+    final ids = switch (type) {
+      MediaType.movie => _movieIds,
+      MediaType.tvShow => _tvIds,
+    };
+    for (final entry in ids.entries) {
+      if (entry.value == genre.id) return entry.key;
+    }
+    return null;
+  }
 }

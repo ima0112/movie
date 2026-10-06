@@ -5,6 +5,7 @@ import '../../network/api_client.dart';
 import 'dtos/tmdb_movie_detail_dto.dart';
 import 'dtos/tmdb_movie_list_item_dto.dart';
 import 'dtos/tmdb_paged_response_dto.dart';
+import 'dtos/tmdb_person_detail_dto.dart';
 import 'dtos/tmdb_season_detail_dto.dart';
 import 'dtos/tmdb_tv_detail_dto.dart';
 import 'dtos/tmdb_tv_list_item_dto.dart';
@@ -98,6 +99,56 @@ class TmdbMediaDatasource {
       '/tv/$tvId/season/$seasonNumber',
     );
     return TmdbSeasonDetailDto.fromJson(response.data!);
+  }
+
+  /// B2's typing-state results — mixed movie/TV/person entries (TMDB's
+  /// own `media_type`), same shape as [trendingAllWeek]'s own `results`,
+  /// hence the same raw-maps-not-a-typed-DTO treatment.
+  Future<List<Map<String, dynamic>>> searchMulti(String query) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/search/multi',
+      queryParameters: {'query': query},
+    );
+    return List<Map<String, dynamic>>.from(
+      response.data!['results'] as List,
+    );
+  }
+
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> discoverMovie(
+    Map<String, dynamic> params,
+  ) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/discover/movie',
+      queryParameters: params,
+    );
+    return TmdbPagedResponseDto.fromJson(
+      response.data!,
+      (json) => TmdbMovieListItemDto.fromJson(json! as Map<String, dynamic>),
+    );
+  }
+
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> discoverTv(
+    Map<String, dynamic> params,
+  ) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/discover/tv',
+      queryParameters: params,
+    );
+    return TmdbPagedResponseDto.fromJson(
+      response.data!,
+      (json) => TmdbTvListItemDto.fromJson(json! as Map<String, dynamic>),
+    );
+  }
+
+  /// D3 — one call, per `docs/DECISIONS.md` §2.
+  Future<TmdbPersonDetailDto> personDetail(int id) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/person/$id',
+      queryParameters: const {
+        'append_to_response': 'movie_credits,tv_credits',
+      },
+    );
+    return TmdbPersonDetailDto.fromJson(response.data!);
   }
 
   Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> _movies(

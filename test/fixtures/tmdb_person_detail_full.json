@@ -1,0 +1,37 @@
+{
+  "id": 287,
+  "name": "Brad Pitt",
+  "biography": "William Bradley Pitt is an American actor and producer.",
+  "birthday": "1963-12-18",
+  "deathday": null,
+  "place_of_birth": "Shawnee, Oklahoma, USA",
+  "profile_path": "/brad-pitt.jpg",
+  "movie_credits": {
+    "cast": [
+      {
+        "id": 550,
+        "title": "Fight Club",
+        "genre_ids": [18],
+        "poster_path": "/fight-club.jpg",
+        "release_date": "1999-10-15",
+        "vote_average": 8.4,
+        "character": "Tyler Durden"
+      }
+    ],
+    "crew": [
+      {
+        "id": 16869,
+        "title": "Killing Them Softly",
+        "genre_ids": [80],
+        "poster_path": null,
+        "release_date": "2012-09-21",
+        "vote_average": 6.3,
+        "job": "Producer"
+      }
+    ]
+  },
+  "tv_credits": {
+    "cast": [],
+    "crew": []
+  }
+}

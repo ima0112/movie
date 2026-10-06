@@ -13,15 +13,15 @@ import '../../domain/repositories/media_repository.dart';
 import '../../network/dio_failure_mapper.dart';
 import '../tmdb/tmdb_configuration_service.dart';
 import '../tmdb/tmdb_detail_mappers.dart';
+import '../tmdb/tmdb_discover_params.dart';
 import '../tmdb/tmdb_image_urls.dart';
 import '../tmdb/tmdb_mappers.dart';
 import '../tmdb/tmdb_media_datasource.dart';
 
-/// Discover's (B1) and D1/D2's real TMDB-backed [MediaRepository].
-/// [searchMulti]/[discover] stay `UnimplementedError` (their own TODO)
-/// until their own branches land; `getHeroItems`/`getCarouselSection`
-/// only handle the sections Discover's own `DiscoverCubit.
-/// sectionsBySegment` actually requests.
+/// Discover's (B1), D1/D2's, B2's, and C1's real TMDB-backed
+/// [MediaRepository]. `getHeroItems`/`getCarouselSection` only handle
+/// the sections Discover's own `DiscoverCubit.sectionsBySegment`
+/// actually requests.
 @real
 @LazySingleton(as: MediaRepository)
 class TmdbMediaRepository implements MediaRepository {
@@ -79,6 +79,7 @@ class TmdbMediaRepository implements MediaRepository {
         (page) => page.results
             .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig)),
       ),
+      limit: 8,
     );
   }
 
@@ -96,15 +97,19 @@ class TmdbMediaRepository implements MediaRepository {
         (page) => page.results
             .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig)),
       ),
+      limit: 8,
     );
   }
 
-  List<MediaItem> _interleaved(Iterable<Iterable<MediaItem>> sources) {
+  List<MediaItem> _interleaved(
+    Iterable<Iterable<MediaItem>> sources, {
+    required int limit,
+  }) {
     final seenIds = <int>{};
     final result = <MediaItem>[];
     final iterators = sources.map((s) => s.iterator).toList();
     var exhausted = false;
-    while (!exhausted && result.length < 8) {
+    while (!exhausted && result.length < limit) {
       exhausted = true;
       for (final it in iterators) {
         if (!it.moveNext()) continue;
@@ -214,15 +219,57 @@ class TmdbMediaRepository implements MediaRepository {
   }
 
   @override
-  Future<Result<List<MediaItem>>> searchMulti(String query) {
-    // TODO(tmdb-search): /search/multi — a later branch's job.
-    throw UnimplementedError('searchMulti() is not implemented yet.');
+  Future<Result<List<MediaItem>>> searchMulti(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return const Success([]);
+
+    try {
+      final results = await _datasource.searchMulti(trimmed);
+      final items = results
+          .map((json) => mediaItemFromTrendingJson(json, imagesConfig: _imagesConfig))
+          .nonNulls
+          .toList();
+      return Success(items);
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
   }
 
   @override
-  Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) {
-    // TODO(tmdb-discover-filter): /discover/{movie|tv} — a later
-    // branch's job.
-    throw UnimplementedError('discover() is not implemented yet.');
+  Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) async {
+    try {
+      final items = switch (filter.type) {
+        MediaType.movie => await _discoverMovies(filter),
+        MediaType.tvShow => await _discoverTv(filter),
+        // C1: "All = both interleaved" — only the first page of each
+        // (no pagination concept on this interface today; see
+        // tmdb_discover_params.dart's own doc comment).
+        null => _interleaved([
+          (await _discoverMovies(filter)),
+          (await _discoverTv(filter)),
+        ], limit: 40),
+      };
+      return Success(items);
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
+  }
+
+  Future<List<MediaItem>> _discoverMovies(DiscoverFilter filter) async {
+    final page = await _datasource.discoverMovie(
+      discoverQueryParams(filter, type: MediaType.movie, region: _region),
+    );
+    return page.results
+        .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig))
+        .toList();
+  }
+
+  Future<List<MediaItem>> _discoverTv(DiscoverFilter filter) async {
+    final page = await _datasource.discoverTv(
+      discoverQueryParams(filter, type: MediaType.tvShow, region: _region),
+    );
+    return page.results
+        .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig))
+        .toList();
   }
 }
