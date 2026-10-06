@@ -2,8 +2,11 @@ import 'package:injectable/injectable.dart';
 
 import '../../../app/environments.dart';
 import '../../network/api_client.dart';
+import 'dtos/tmdb_movie_detail_dto.dart';
 import 'dtos/tmdb_movie_list_item_dto.dart';
 import 'dtos/tmdb_paged_response_dto.dart';
+import 'dtos/tmdb_season_detail_dto.dart';
+import 'dtos/tmdb_tv_detail_dto.dart';
 import 'dtos/tmdb_tv_list_item_dto.dart';
 
 /// Raw TMDB responses only — DTOs in, DTOs (or, for the one mixed-type
@@ -60,6 +63,42 @@ class TmdbMediaDatasource {
 
   Future<TmdbPagedResponseDto<TmdbTvListItemDto>> trendingTvWeek() =>
       _tv('/trending/tv/week');
+
+  /// One call, per `docs/DECISIONS.md` §2: everything D1 needs
+  /// (`credits`/`videos`/`similar`/`release_dates`/`watch/providers`)
+  /// bundled via `append_to_response`.
+  Future<TmdbMovieDetailDto> movieDetail(int id) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/movie/$id',
+      queryParameters: const {
+        'append_to_response': 'credits,videos,similar,release_dates,'
+            'watch/providers',
+      },
+    );
+    return TmdbMovieDetailDto.fromJson(response.data!);
+  }
+
+  /// Same as [movieDetail], for D2 — `content_ratings` instead of
+  /// `release_dates`.
+  Future<TmdbTvDetailDto> tvDetail(int id) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/tv/$id',
+      queryParameters: const {
+        'append_to_response': 'credits,videos,similar,content_ratings,'
+            'watch/providers',
+      },
+    );
+    return TmdbTvDetailDto.fromJson(response.data!);
+  }
+
+  /// D2's "Seasons" section, fetched on demand per season tapped — never
+  /// bundled into [tvDetail]'s own call (`docs/DECISIONS.md` §2).
+  Future<TmdbSeasonDetailDto> seasonDetail(int tvId, int seasonNumber) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/tv/$tvId/season/$seasonNumber',
+    );
+    return TmdbSeasonDetailDto.fromJson(response.data!);
+  }
 
   Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> _movies(
     String path,

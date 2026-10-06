@@ -1,0 +1,105 @@
+{
+  "adult": false,
+  "backdrop_path": "/tv-backdrop.jpg",
+  "created_by": [
+    {
+      "id": 5001,
+      "credit_id": "abc123",
+      "name": "Jamie Costa",
+      "gender": 2,
+      "profile_path": "/jamie-costa.jpg"
+    }
+  ],
+  "episode_run_time": [52],
+  "first_air_date": "2024-09-12",
+  "genres": [
+    { "id": 10759, "name": "Action & Adventure" },
+    { "id": 18, "name": "Drama" }
+  ],
+  "id": 94997,
+  "in_production": true,
+  "last_air_date": "2026-02-01",
+  "name": "Signal Lost",
+  "number_of_episodes": 24,
+  "origin_country": ["US"],
+  "original_language": "en",
+  "original_name": "Signal Lost",
+  "overview": "A submarine crew loses contact with the surface.",
+  "popularity": 955.2,
+  "poster_path": "/signal-lost.jpg",
+  "seasons": [
+    {
+      "season_number": 1,
+      "name": "Season 1",
+      "episode_count": 12,
+      "poster_path": "/signal-lost-s1.jpg",
+      "air_date": "2024-09-12"
+    },
+    {
+      "season_number": 2,
+      "name": "Season 2",
+      "episode_count": 12,
+      "poster_path": "/signal-lost-s2.jpg",
+      "air_date": "2025-09-18"
+    }
+  ],
+  "status": "Returning Series",
+  "vote_average": 8.3,
+  "vote_count": 2104,
+  "credits": {
+    "cast": [
+      {
+        "id": 2001,
+        "name": "Maya Okafor",
+        "character": "Lt. Reyes",
+        "order": 0,
+        "profile_path": null,
+        "known_for_department": "Acting"
+      }
+    ],
+    "crew": []
+  },
+  "videos": {
+    "results": [
+      {
+        "key": "signal-lost-trailer",
+        "site": "YouTube",
+        "type": "Trailer",
+        "name": "Official Trailer",
+        "official": true,
+        "iso_639_1": "en"
+      }
+    ]
+  },
+  "similar": {
+    "page": 1,
+    "results": [
+      {
+        "id": 777,
+        "name": "Deep Current",
+        "genre_ids": [18],
+        "poster_path": null,
+        "first_air_date": "2023-05-01",
+        "vote_average": 7.1
+      }
+    ],
+    "total_pages": 1,
+    "total_results": 1
+  },
+  "content_ratings": {
+    "results": [
+      { "iso_3166_1": "US", "rating": "TV-14" },
+      { "iso_3166_1": "ES", "rating": "16" }
+    ]
+  },
+  "watch/providers": {
+    "results": {
+      "ES": {
+        "link": "https://www.themoviedb.org/tv/94997-signal-lost/watch?locale=ES",
+        "flatrate": [{ "provider_name": "Netflix" }],
+        "rent": [],
+        "buy": []
+      }
+    }
+  }
+}

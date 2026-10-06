@@ -27,8 +27,8 @@ Movie mediaItemFromMovieDto(
       path: dto.posterPath,
       size: TmdbImageSizes.posterMedium,
     ),
-    genres: _genresFor(dto.genreIds, MediaType.movie),
-    releaseDate: _parseDate(dto.releaseDate),
+    genres: genresFromTmdbIds(dto.genreIds, MediaType.movie),
+    releaseDate: parseTmdbDate(dto.releaseDate),
     voteAverage: dto.voteAverage,
   );
 }
@@ -46,8 +46,8 @@ TvShow mediaItemFromTvDto(
       path: dto.posterPath,
       size: TmdbImageSizes.posterMedium,
     ),
-    genres: _genresFor(dto.genreIds, MediaType.tvShow),
-    releaseDate: _parseDate(dto.firstAirDate),
+    genres: genresFromTmdbIds(dto.genreIds, MediaType.tvShow),
+    releaseDate: parseTmdbDate(dto.firstAirDate),
     voteAverage: dto.voteAverage,
   );
 }
@@ -76,7 +76,9 @@ MediaItem? mediaItemFromTrendingJson(
   };
 }
 
-List<Genre> _genresFor(List<int> tmdbGenreIds, MediaType type) {
+/// Public (not just this file's own concern): `tmdb_detail_mappers.dart`
+/// reuses this for D1/D2's own `genres: [{id, name}]` ids too.
+List<Genre> genresFromTmdbIds(List<int> tmdbGenreIds, MediaType type) {
   return tmdbGenreIds
       .map((id) => TmdbGenreMapper.fromTmdbId(id, type))
       .nonNulls
@@ -85,8 +87,10 @@ List<Genre> _genresFor(List<int> tmdbGenreIds, MediaType type) {
 
 /// `""` (TMDB's own "no date yet" shape for an unreleased title) and any
 /// otherwise-unparseable string both become `null`, matching
-/// [MediaItem.releaseDate]'s own documented contract.
-DateTime? _parseDate(String value) {
+/// [MediaItem.releaseDate]'s own documented contract. Public: reused by
+/// `tmdb_detail_mappers.dart` for every other TMDB date string (release
+/// dates, air dates...).
+DateTime? parseTmdbDate(String value) {
   if (value.isEmpty) return null;
   return DateTime.tryParse(value);
 }

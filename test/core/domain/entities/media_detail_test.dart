@@ -35,23 +35,94 @@ MovieDetail _detail({required List<Video> videos}) {
 
 void main() {
   group('MediaDetail.trailer', () {
-    test('picks the first YouTube video of type Trailer', () {
+    test('tier 1: official + Trailer + user\'s language (es) wins over '
+        'everything else', () {
       final detail = _detail(
         videos: const [
-          Video(key: 'a', site: 'YouTube', type: 'Teaser', name: 'Teaser'),
-          Video(key: 'b', site: 'Vimeo', type: 'Trailer', name: 'Not YouTube'),
-          Video(key: 'c', site: 'YouTube', type: 'Trailer', name: 'Trailer 1'),
-          Video(key: 'd', site: 'YouTube', type: 'Trailer', name: 'Trailer 2'),
+          Video(
+            key: 'a',
+            site: 'YouTube',
+            type: 'Trailer',
+            name: 'Official EN',
+            official: true,
+            iso6391: 'en',
+          ),
+          Video(
+            key: 'b',
+            site: 'YouTube',
+            type: 'Trailer',
+            name: 'Official ES',
+            official: true,
+            iso6391: 'es',
+          ),
         ],
       );
 
-      expect(detail.trailer?.key, 'c');
+      expect(detail.trailer?.key, 'b');
     });
 
-    test('is null when there is no YouTube Trailer', () {
+    test('tier 2: no es-language official Trailer -> any official video', () {
       final detail = _detail(
         videos: const [
-          Video(key: 'a', site: 'YouTube', type: 'Teaser', name: 'Teaser'),
+          Video(
+            key: 'a',
+            site: 'YouTube',
+            type: 'Teaser',
+            name: 'Official Teaser',
+            official: true,
+          ),
+          Video(key: 'b', site: 'YouTube', type: 'Trailer', name: 'Fan-made'),
+        ],
+      );
+
+      expect(detail.trailer?.key, 'a');
+    });
+
+    test('tier 3: nothing official -> a Teaser', () {
+      final detail = _detail(
+        videos: const [
+          Video(key: 'a', site: 'YouTube', type: 'Clip', name: 'Clip'),
+          Video(key: 'b', site: 'YouTube', type: 'Teaser', name: 'Teaser'),
+        ],
+      );
+
+      expect(detail.trailer?.key, 'b');
+    });
+
+    test('tier 4: nothing official and no Teaser -> the first available '
+        'YouTube video', () {
+      final detail = _detail(
+        videos: const [
+          Video(key: 'a', site: 'YouTube', type: 'Clip', name: 'Clip'),
+          Video(key: 'b', site: 'YouTube', type: 'Featurette', name: 'BTS'),
+        ],
+      );
+
+      expect(detail.trailer?.key, 'a');
+    });
+
+    test('a non-YouTube video never wins, at any tier', () {
+      final detail = _detail(
+        videos: const [
+          Video(
+            key: 'a',
+            site: 'Vimeo',
+            type: 'Trailer',
+            name: 'Not YouTube',
+            official: true,
+            iso6391: 'es',
+          ),
+          Video(key: 'b', site: 'YouTube', type: 'Clip', name: 'Clip'),
+        ],
+      );
+
+      expect(detail.trailer?.key, 'b');
+    });
+
+    test('is null when there is no YouTube video at all', () {
+      final detail = _detail(
+        videos: const [
+          Video(key: 'a', site: 'Vimeo', type: 'Trailer', name: 'Not YouTube'),
         ],
       );
 
@@ -82,6 +153,7 @@ void main() {
         firstAirDate: null,
         lastAirDate: null,
         inProduction: false,
+        certification: null,
       );
     }
 
