@@ -9,6 +9,7 @@ import '../features/discover/presentation/screens/discover_screen.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/filtered_list/presentation/screens/filtered_list_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
+import '../features/tv_detail/presentation/screens/tv_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
@@ -187,17 +188,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/tv/:id',
       parentNavigatorKey: _rootNavigatorKey,
-      // TODO: D2 (TV show detail) isn't built yet — MovieDetailContent
-      // specifically casts its loaded MediaDetail to MovieDetail
-      // (`movie_detail_screen.dart`), which would throw for a real
-      // TvShowDetail, so this can't reuse MovieDetailScreen as-is. This
-      // placeholder only proves the routing/navigation round-trip
-      // (pushMediaDetail picking `/tv/:id`, not `/movie/:id`, for a TV
-      // MediaKey) — same scope line the `/genre/:genreId` placeholder
-      // below already draws for C1.
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
-        return _TvDetailPlaceholderScreen(id: id);
+        return TvDetailScreen(tvId: id);
       },
     ),
     GoRoute(
@@ -287,24 +280,6 @@ class _GenreListingPlaceholderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
       body: Center(child: Text('Genre: $genreId ($type)')),
-    );
-  }
-}
-
-/// Stand-in for D2 (TV show detail) — see `/tv/:id`'s own TODO above for
-/// why this can't just reuse [MovieDetailScreen] yet. Same shape as
-/// [_GenreListingPlaceholderScreen]: its own `Scaffold` + back button,
-/// on the root navigator outside [RootShell].
-class _TvDetailPlaceholderScreen extends StatelessWidget {
-  const _TvDetailPlaceholderScreen({required this.id});
-
-  final int id;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(leading: const BackButton()),
-      body: Center(child: Text('TV show: $id')),
     );
   }
 }

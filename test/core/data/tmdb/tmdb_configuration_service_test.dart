@@ -39,7 +39,8 @@ void main() {
       "secure_base_url": "https://image.tmdb.org/t/p/",
       "poster_sizes": ["w92", "w342", "original"],
       "backdrop_sizes": ["w780", "original"],
-      "profile_sizes": ["w185", "original"]
+      "profile_sizes": ["w185", "original"],
+      "still_sizes": ["w300", "original"]
     },
     "change_keys": []
   }

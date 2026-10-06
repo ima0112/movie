@@ -96,6 +96,21 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
     Navigator.of(context).pop();
   }
 
+  /// D1's generic "Mark as watched" doesn't fit a TV show the same way
+  /// a movie — a show can span dozens of episodes, so "watched" reads
+  /// as a claim about having finished it, not just pressed a button.
+  /// Not in `docs/SCREENS.md` yet (H2's own row only says "Title",
+  /// generically) — a direct product decision for D2 from this task,
+  /// kept here rather than invented per-screen copy since this sheet is
+  /// D1/D2's only shared entry point into it.
+  String _heading() {
+    final detail = widget.mediaDetail;
+    if (detail is TvShowDetail) {
+      return 'Have you finished ${detail.item.title}?';
+    }
+    return 'Mark as watched';
+  }
+
   void _remove() {
     unawaited(
       widget.userLibraryRepository.upsert(
@@ -115,7 +130,7 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Mark as watched', style: AppTextStyles.h2),
+            Text(_heading(), style: AppTextStyles.h2),
             const SizedBox(height: AppSpacing.xl),
             Text(
               'Your rating',

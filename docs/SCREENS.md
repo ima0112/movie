@@ -166,11 +166,11 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 ### D2. TV show detail
 - Same as D1 with these changes:
   - Metadata line: "Year–Year · N seasons · M episodes · Rating".
-  - Status pill next to the title: "Airing" (accent) / "Ended" (neutral).
+  - Status pill next to the title: "Airing" (accent) / "Ended" / "Cancelled" (neutral).
   - "Created by": names (→ D3).
-  - "Seasons" section: list of rows (thumbnail, "Season N", year, "X episodes", chevron) → H4.
-  - No runtime; shows "≈ 45 min per episode" instead.
-  - "Where to watch" same as D1 (providers are for the show; inside H4, the season's own providers show if they differ).
+  - "Seasons" section: list of rows (thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
+  - No runtime; shows "≈ 45 min per episode" instead — not on this screen itself (the metadata line above has no runtime slot to begin with), already covered by C4's "Estimated TV hours" (`TvShowDetail.estimatedHours`).
+  - "Where to watch" same as D1 (the show's own providers; a season's own providers, if they ever differ, aren't modeled yet — `MediaRepository.season()`'s `SeasonDetail` has no `watchProviders` field).
 - Exits: D3, H4, H2.
 
 ### D3. Person detail
@@ -284,7 +284,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 | # | Sheet | Opens from | Content |
 |---|---|---|---|
 | H1 | Quick actions | Long-press a card | Thumbnail + title, three rows: Favorite / Watch later / Mark watched |
-| H2 | Mark as watched | "Watched" button in D1/D2, swipe in B4, H1 | Title, 5-star selector (optional), date (today by default, editable), "Save" button, "Remove from Watched" link if it already was |
+| H2 | Mark as watched | "Watched" button in D1/D2, swipe in B4, H1 | Title ("Mark as watched" for a movie, "Have you finished {title}?" for a TV show — asking about a show commits to having finished it, not just pressed a button), 5-star selector (optional), date (today by default, editable), "Save" button, "Remove from Watched" link if it already was |
 | H3 | Full cast | "See all" in D1/D2 | Cast and crew list with an internal search box |
 | H4 | Season N | Season row in D2 | Title, season synopsis, episode list (number, name, runtime, date, still) |
 | H5 | Language | B5 | Single-select list: Español / English |
