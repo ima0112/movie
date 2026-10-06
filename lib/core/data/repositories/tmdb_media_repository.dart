@@ -9,6 +9,7 @@ import '../../domain/entities/media_item.dart';
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
+import '../../domain/entities/season_summary.dart';
 import '../../domain/repositories/media_repository.dart';
 import '../../network/dio_failure_mapper.dart';
 import '../tmdb/tmdb_configuration_service.dart';
@@ -59,7 +60,10 @@ class TmdbMediaRepository implements MediaRepository {
   Future<List<MediaItem>> _allSegmentHero() async {
     final trending = await _datasource.trendingAllWeek();
     return trending
-        .map((json) => mediaItemFromTrendingJson(json, imagesConfig: _imagesConfig))
+        .map(
+          (json) =>
+              mediaItemFromTrendingJson(json, imagesConfig: _imagesConfig),
+        )
         .nonNulls
         .toList();
   }
@@ -76,8 +80,9 @@ class TmdbMediaRepository implements MediaRepository {
     ]);
     return _interleaved(
       sources.map(
-        (page) => page.results
-            .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig)),
+        (page) => page.results.map(
+          (dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig),
+        ),
       ),
       limit: 8,
     );
@@ -94,8 +99,9 @@ class TmdbMediaRepository implements MediaRepository {
     ]);
     return _interleaved(
       sources.map(
-        (page) => page.results
-            .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig)),
+        (page) => page.results.map(
+          (dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig),
+        ),
       ),
       limit: 8,
     );
@@ -132,9 +138,7 @@ class TmdbMediaRepository implements MediaRepository {
         CarouselSection.inTheaters => await _mapMovies(
           _datasource.movieNowPlaying,
         ),
-        CarouselSection.upcoming => await _mapMovies(
-          _datasource.movieUpcoming,
-        ),
+        CarouselSection.upcoming => await _mapMovies(_datasource.movieUpcoming),
         CarouselSection.airingNow => await _mapTv(_datasource.tvOnTheAir),
         CarouselSection.popular => await _mapTv(_datasource.tvPopular),
         CarouselSection.trending => await _trending(type),
@@ -181,9 +185,7 @@ class TmdbMediaRepository implements MediaRepository {
     null => Future.value(const <MediaItem>[]),
   };
 
-  Future<List<MediaItem>> _mapMovies(
-    Future<dynamic> Function() fetch,
-  ) async {
+  Future<List<MediaItem>> _mapMovies(Future<dynamic> Function() fetch) async {
     final page = await fetch();
     return page.results
         .map<MediaItem>(
@@ -223,6 +225,16 @@ class TmdbMediaRepository implements MediaRepository {
   }
 
   @override
+  Future<Result<SeasonDetail>> season(int tvId, int seasonNumber) async {
+    try {
+      final dto = await _datasource.seasonDetail(tvId, seasonNumber);
+      return Success(seasonDetailFromDto(dto));
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
+  }
+
+  @override
   Future<Result<List<MediaItem>>> searchMulti(String query) async {
     final trimmed = query.trim();
     if (trimmed.isEmpty) return const Success([]);
@@ -230,7 +242,10 @@ class TmdbMediaRepository implements MediaRepository {
     try {
       final results = await _datasource.searchMulti(trimmed);
       final items = results
-          .map((json) => mediaItemFromTrendingJson(json, imagesConfig: _imagesConfig))
+          .map(
+            (json) =>
+                mediaItemFromTrendingJson(json, imagesConfig: _imagesConfig),
+          )
           .nonNulls
           .toList();
       return Success(items);

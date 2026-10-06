@@ -39,3 +39,23 @@ final class Episode {
   final DateTime? airDate;
   final int? runtimeMinutes;
 }
+
+/// `MediaRepository.season(tvId, n)`'s own result — H4's "Title, season
+/// synopsis, episode list" (`docs/SCREENS.md` H4). [SeasonSummary] (the
+/// row shown in D2's "Seasons" section, before a season is ever opened)
+/// already carries [seasonNumber]/[name]; this is what H4 fetches once
+/// a specific row is tapped — the season's own synopsis plus its full
+/// [Episode] list, neither of which D2's single `/tv/{id}` call carries.
+final class SeasonDetail {
+  const SeasonDetail({
+    required this.seasonNumber,
+    required this.name,
+    required this.overview,
+    required this.episodes,
+  });
+
+  final int seasonNumber;
+  final String name;
+  final String overview;
+  final List<Episode> episodes;
+}

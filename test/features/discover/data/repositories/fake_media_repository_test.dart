@@ -6,6 +6,7 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 
 const _drama = Genre(id: 'drama', name: 'Drama');
@@ -69,12 +70,89 @@ void main() {
       expect(result, isA<Failure<MediaDetail>>());
     });
 
-    test('fails for a TV show key (D2 not implemented yet)', () async {
+    test(
+      'returns a coherent TvShowDetail for each of the 3 sample ids',
+      () async {
+        for (final id in [101, 103, 106]) {
+          final result = await repository.detail(
+            MediaKey(type: MediaType.tvShow, tmdbId: id),
+          );
+
+          expect(result, isA<Success<MediaDetail>>());
+          final detail = (result as Success<MediaDetail>).value as TvShowDetail;
+
+          expect(detail.item.id, id);
+          expect(detail.overview, isNotEmpty);
+          expect(detail.cast, isNotEmpty);
+          expect(detail.creators, isNotEmpty);
+          expect(detail.seasons, isNotEmpty);
+          expect(detail.watchProviders.hasAny, isTrue);
+        }
+      },
+    );
+
+    test('falls back to an empty-but-valid detail for a TV show with no '
+        'sample data', () async {
       final result = await repository.detail(
-        const MediaKey(type: MediaType.tvShow, tmdbId: 101),
+        const MediaKey(type: MediaType.tvShow, tmdbId: 102), // Fallout
+      );
+
+      final detail = (result as Success<MediaDetail>).value as TvShowDetail;
+
+      expect(detail.item.title, 'Fallout');
+      expect(detail.cast, isEmpty);
+      expect(detail.seasons, isEmpty);
+      expect(detail.watchProviders.hasAny, isFalse);
+    });
+
+    test('fails for an unknown TV show id', () async {
+      final result = await repository.detail(
+        const MediaKey(type: MediaType.tvShow, tmdbId: 999),
       );
 
       expect(result, isA<Failure<MediaDetail>>());
+    });
+  });
+
+  group('FakeMediaRepository.season', () {
+    final repository = FakeMediaRepository();
+
+    test('returns the special season (0) for a show that has one', () async {
+      final result = await repository.season(101, 0); // The Bear
+
+      final season = (result as Success<SeasonDetail>).value;
+      expect(season.name, 'Specials');
+      expect(season.episodes, isNotEmpty);
+    });
+
+    test('returns a regular season for an airing show with several '
+        'seasons', () async {
+      final result = await repository.season(106, 4); // The Boys
+
+      final season = (result as Success<SeasonDetail>).value;
+      expect(season.seasonNumber, 4);
+      expect(season.overview, isNotEmpty);
+      expect(season.episodes, isNotEmpty);
+    });
+
+    test('returns a season for an ended show', () async {
+      final result = await repository.season(103, 1); // True Detective
+
+      final season = (result as Success<SeasonDetail>).value;
+      expect(season.name, 'Season 1');
+      expect(season.episodes.first.name, isNotEmpty);
+    });
+
+    test('fails for a season with no sample data', () async {
+      final result = await repository.season(106, 2); // The Boys S2
+
+      expect(result, isA<Failure<SeasonDetail>>());
+    });
+
+    test('fails for an unknown TV show id', () async {
+      final result = await repository.season(999, 1);
+
+      expect(result, isA<Failure<SeasonDetail>>());
     });
   });
 

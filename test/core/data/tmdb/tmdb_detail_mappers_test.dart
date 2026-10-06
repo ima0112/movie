@@ -30,7 +30,10 @@ void main() {
       final detail = load('tmdb_movie_detail_full.json');
 
       expect(detail.item.title, 'Dune: Part Two');
-      expect(detail.overview, 'Paul Atreides unites with Chani and the Fremen.');
+      expect(
+        detail.overview,
+        'Paul Atreides unites with Chani and the Fremen.',
+      );
       expect(detail.runtimeMinutes, 166);
       expect(detail.releaseDate, DateTime(2024, 3, 1));
       expect(detail.tagline, 'Long live the fighters.');
@@ -53,16 +56,13 @@ void main() {
       expect(detail.similar.single.title, 'John Wick: Chapter 4');
     });
 
-    test(
-      'trailer selection: official + Trailer + user\'s language (es) wins '
-      'over an official-but-English Trailer and an official-but-English '
-      'Teaser',
-      () {
-        final detail = load('tmdb_movie_detail_full.json');
+    test('trailer selection: official + Trailer + user\'s language (es) wins '
+        'over an official-but-English Trailer and an official-but-English '
+        'Teaser', () {
+      final detail = load('tmdb_movie_detail_full.json');
 
-        expect(detail.trailer?.key, 'es-trailer');
-      },
-    );
+      expect(detail.trailer?.key, 'es-trailer');
+    });
 
     test('certification picks the region\'s own first non-empty value, '
         'skipping an empty one that came first', () {
@@ -92,19 +92,16 @@ void main() {
       expect(detail.certification, isNull);
     });
 
-    test(
-      'a movie with providers for other regions but not the user\'s -> '
-      'watchProviders.hasAny is false, not those other regions\' data',
-      () {
-        final detail = load(
-          'tmdb_movie_detail_no_region_providers.json',
-          region: 'ES',
-        );
+    test('a movie with providers for other regions but not the user\'s -> '
+        'watchProviders.hasAny is false, not those other regions\' data', () {
+      final detail = load(
+        'tmdb_movie_detail_no_region_providers.json',
+        region: 'ES',
+      );
 
-        expect(detail.watchProviders.hasAny, isFalse);
-        expect(detail.certification, isNull);
-      },
-    );
+      expect(detail.watchProviders.hasAny, isFalse);
+      expect(detail.certification, isNull);
+    });
 
     test('the same movie DOES have providers for the region they were '
         'actually released in', () {
@@ -202,6 +199,20 @@ void main() {
       expect(second.stillPath, isNull);
       expect(second.airDate, isNull);
       expect(second.runtimeMinutes, isNull);
+    });
+  });
+
+  group('seasonDetailFromDto', () {
+    test('carries the season-level name/overview alongside its episodes', () {
+      final dto = TmdbSeasonDetailDto.fromJson(
+        _loadFixture('tmdb_season_detail.json'),
+      );
+      final season = seasonDetailFromDto(dto);
+
+      expect(season.seasonNumber, 1);
+      expect(season.name, 'Season 1');
+      expect(season.overview, isNotEmpty);
+      expect(season.episodes, hasLength(2));
     });
   });
 }

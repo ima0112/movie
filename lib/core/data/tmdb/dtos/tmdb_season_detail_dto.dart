@@ -10,6 +10,7 @@ class TmdbSeasonDetailDto {
   const TmdbSeasonDetailDto({
     required this.seasonNumber,
     required this.name,
+    required this.overview,
     required this.episodes,
   });
 
@@ -17,6 +18,10 @@ class TmdbSeasonDetailDto {
   final int seasonNumber;
 
   final String name;
+
+  @JsonKey(defaultValue: '')
+  final String overview;
+
   final List<TmdbEpisodeDto> episodes;
 
   factory TmdbSeasonDetailDto.fromJson(Map<String, dynamic> json) =>

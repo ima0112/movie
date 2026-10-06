@@ -56,15 +56,19 @@ void main() {
       await cubit.close();
     });
 
-    test('loadDetail ends in MovieDetailError for a TV show key '
-        '(D2 not implemented yet)', () async {
+    // MovieDetailCubit never actually gets a TV key in practice — D2 uses
+    // its own TvDetailCubit — but the repository call itself is generic,
+    // so this just confirms it doesn't special-case the type.
+    test('loadDetail ends in MovieDetailLoaded for a TV show key too, '
+        'since the repository call itself is type-agnostic', () async {
       final cubit = MovieDetailCubit(FakeMediaRepository());
 
       await cubit.loadDetail(
         const MediaKey(type: MediaType.tvShow, tmdbId: 101),
       );
 
-      expect(cubit.state, isA<MovieDetailError>());
+      final loaded = cubit.state as MovieDetailLoaded;
+      expect(loaded.detail.item.title, 'The Bear');
 
       await cubit.close();
     });
