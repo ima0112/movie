@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
+import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/media_detail/media_detail_compact_bar.dart';
+import '../../../../shared/widgets/media_detail/media_detail_header.dart';
+import '../../../../shared/widgets/media_detail/media_detail_skeleton.dart';
 import '../../../../shared/widgets/scrim_back_button.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/movie_detail_cubit.dart';
-import '../widgets/movie_detail_compact_bar.dart';
 import '../widgets/movie_detail_content.dart';
-import '../widgets/movie_detail_header.dart';
-import '../widgets/movie_detail_skeleton.dart';
 
 /// D1 (Movie detail).
 ///
@@ -61,11 +62,11 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
   }
 
   // The bar appears once the header (55% of the screen, per
-  // MovieDetailHeader.heightFraction) has scrolled past a compact bar's
+  // MediaDetailHeader.heightFraction) has scrolled past a compact bar's
   // worth of space — i.e. the title itself has left the top.
   void _onScroll() {
     final headerHeight =
-        MediaQuery.sizeOf(context).height * MovieDetailHeader.heightFraction;
+        MediaQuery.sizeOf(context).height * MediaDetailHeader.heightFraction;
     _showCompactBar.value =
         _scrollController.offset > headerHeight - kToolbarHeight;
   }
@@ -90,11 +91,11 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
           BlocBuilder<MovieDetailCubit, MovieDetailState>(
             builder: (context, state) {
               return switch (state) {
-                // Skeleton/error have no MovieDetailHeader of their own
+                // Skeleton/error have no MediaDetailHeader of their own
                 // (that's normally where ScrimBackButton lives), so each
                 // gets its own — otherwise there'd be no way back.
                 MovieDetailInitial() || MovieDetailLoading() => const Stack(
-                  children: [MovieDetailSkeleton(), ScrimBackButton()],
+                  children: [MediaDetailSkeleton(), ScrimBackButton()],
                 ),
                 MovieDetailError(:final message) => Stack(
                   children: [
@@ -115,7 +116,8 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
                     const ScrimBackButton(),
                   ],
                 ),
-                MovieDetailLoaded() => MovieDetailContent(
+                MovieDetailLoaded(:final detail) => MovieDetailContent(
+                  detail: detail as MovieDetail,
                   mediaKey: widget.mediaKey,
                   scrollController: _scrollController,
                   similarSectionKey: _similarSectionKey,
@@ -127,7 +129,14 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
             valueListenable: _showCompactBar,
             builder: (context, visible, child) =>
                 visible ? child! : const SizedBox.shrink(),
-            child: const MovieDetailCompactBar(),
+            child: BlocSelector<MovieDetailCubit, MovieDetailState, String?>(
+              selector: (state) => switch (state) {
+                MovieDetailLoaded(:final detail) => detail.item.title,
+                _ => null,
+              },
+              builder: (context, title) =>
+                  MediaDetailCompactBar(title: title ?? ''),
+            ),
           ),
         ],
       ),

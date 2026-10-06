@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/state_views.dart';
-import 'movie_detail_header.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../state_views.dart';
+import 'media_detail_header.dart';
 
-/// D1's loading state: "skeleton with the poster already visible via the
-/// Hero and centered blocks" (SCREENS.md D1) — a header-sized block (the
-/// Hero transition already shows the real poster there) plus a few
-/// centered text-line blocks standing in for title/metadata/rating.
-class MovieDetailSkeleton extends StatelessWidget {
-  const MovieDetailSkeleton({super.key});
+/// D1/D2's loading state: "skeleton with the poster already visible via
+/// the Hero and centered blocks" (`docs/SCREENS.md` D1) — a header-sized
+/// block (the Hero transition already shows the real poster there) plus
+/// a few centered text-line blocks standing in for title/metadata/rating.
+class MediaDetailSkeleton extends StatelessWidget {
+  const MediaDetailSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MovieDetailSkeleton extends StatelessWidget {
           width: width,
           height:
               MediaQuery.sizeOf(context).height *
-              MovieDetailHeader.heightFraction,
+              MediaDetailHeader.heightFraction,
           borderRadius: BorderRadius.zero,
         ),
         const SizedBox(height: AppSpacing.xxl),

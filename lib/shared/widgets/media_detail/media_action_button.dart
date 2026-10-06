@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/app_buttons.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../app_buttons.dart';
 
-/// One [MovieActionRow] icon + its 12 px label (SCREENS.md D1). `caption`
-/// (11 px) is the closest existing `AppTextStyles` token — there's no
-/// dedicated 12 px style yet (CLAUDE.md rule 4). In its own file per rule
-/// 11: `movie_action_row.dart` was over the 150-line target on its own.
-class MovieActionButton extends StatelessWidget {
-  const MovieActionButton({
+/// One [MediaDetailActionRow] icon + its 12 px label — D1/D2 both use
+/// this unchanged (`docs/SCREENS.md`). `caption` (11 px) is the closest
+/// existing `AppTextStyles` token — there's no dedicated 12 px style yet
+/// (CLAUDE.md rule 4). In its own file per rule 11:
+/// `media_detail_action_row.dart` was over the 150-line target on its
+/// own.
+class MediaActionButton extends StatelessWidget {
+  const MediaActionButton({
     super.key,
     required this.iconOutline,
     required this.iconFill,

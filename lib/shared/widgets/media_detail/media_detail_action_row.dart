@@ -1,38 +1,42 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/domain/entities/genre.dart';
-import '../../../../core/domain/entities/media_detail.dart';
-import '../../../../core/domain/entities/media_key.dart';
-import '../../../../core/domain/entities/user_media_entry.dart';
-import '../../../../core/domain/entities/video.dart';
-import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../../../core/theme/app_icons.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/app_buttons.dart';
-import '../../../../shared/widgets/mark_as_watched_sheet.dart';
-import '../cubit/movie_detail_cubit.dart';
-import 'movie_action_button.dart';
+import '../../../core/domain/entities/media_detail.dart';
+import '../../../core/domain/entities/media_key.dart';
+import '../../../core/domain/entities/user_media_entry.dart';
+import '../../../core/domain/entities/video.dart';
+import '../../../core/domain/repositories/user_library_repository.dart';
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../app_buttons.dart';
+import '../mark_as_watched_sheet.dart';
+import 'media_action_button.dart';
 
-/// D1's Trailer button + the Favorite / Watch later / Watched row.
+/// D1/D2's Trailer button + the Favorite / Watch later / Watched row.
 ///
-/// Source of truth: `docs/SCREENS.md` D1. Per CLAUDE.md rule 10,
-/// subscribes directly to `UserLibraryRepository.watchEntry(mediaKey)`
-/// instead of a My-List-wide Cubit. The Trailer button is the exception:
-/// whether one exists comes from [MovieDetailCubit]'s own `BlocSelector`.
-class MovieActionRow extends StatelessWidget {
-  const MovieActionRow({
+/// Source of truth: `docs/SCREENS.md` D1, reused unchanged by D2. Per
+/// CLAUDE.md rule 10, subscribes directly to
+/// `UserLibraryRepository.watchEntry(mediaKey)` instead of a My-List-wide
+/// Cubit. [mediaDetail] (the sealed base, not a movie-specific type)
+/// supplies the trailer (`MediaDetail.trailer`'s own selection ladder
+/// already works for either variant) and the genres a brand-new
+/// `UserMediaEntry` needs — passed in as a plain value rather than read
+/// from any screen-specific Cubit, which is what makes this widget
+/// reusable by D2 without it (or this file) knowing that Cubit exists.
+class MediaDetailActionRow extends StatelessWidget {
+  const MediaDetailActionRow({
     super.key,
     required this.mediaKey,
     required this.userLibraryRepository,
+    required this.mediaDetail,
     this.onPlayTrailer,
     this.onSeeSimilar,
   });
 
   final MediaKey mediaKey;
   final UserLibraryRepository userLibraryRepository;
+  final MediaDetail mediaDetail;
 
   /// No trailer → "See similar" scrolls there instead (SCREENS.md D1);
   /// the assembled screen owns that scroll.
@@ -41,22 +45,15 @@ class MovieActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final trailer = mediaDetail.trailer;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        BlocSelector<MovieDetailCubit, MovieDetailState, Video?>(
-          selector: (state) => switch (state) {
-            MovieDetailLoaded(detail: MovieDetail(:final trailer)) => trailer,
-            _ => null,
-          },
-          builder: (context, trailer) {
-            return PrimaryButton(
-              label: trailer != null ? 'Trailer' : 'See similar',
-              onTap: trailer != null
-                  ? () => onPlayTrailer?.call(trailer)
-                  : onSeeSimilar,
-            );
-          },
+        PrimaryButton(
+          label: trailer != null ? 'Trailer' : 'See similar',
+          onTap: trailer != null
+              ? () => onPlayTrailer?.call(trailer)
+              : onSeeSimilar,
         ),
         const SizedBox(height: AppSpacing.lg),
         StreamBuilder<UserMediaEntry?>(
@@ -66,33 +63,31 @@ class MovieActionRow extends StatelessWidget {
             return Row(
               children: [
                 Expanded(
-                  child: MovieActionButton(
+                  child: MediaActionButton(
                     iconOutline: AppIcons.favorite,
                     iconFill: AppIcons.favoriteFill,
                     label: 'Favorite',
                     isActive: entry?.isFavorite ?? false,
                     onTap: () => _toggle(
-                      context,
                       entry,
                       (e) => e.copyWith(isFavorite: !e.isFavorite),
                     ),
                   ),
                 ),
                 Expanded(
-                  child: MovieActionButton(
+                  child: MediaActionButton(
                     iconOutline: AppIcons.watchLater,
                     iconFill: AppIcons.watchLaterFill,
                     label: 'Watch later',
                     isActive: entry?.isWatchLater ?? false,
                     onTap: () => _toggle(
-                      context,
                       entry,
                       (e) => e.copyWith(isWatchLater: !e.isWatchLater),
                     ),
                   ),
                 ),
                 Expanded(
-                  child: MovieActionButton(
+                  child: MediaActionButton(
                     iconOutline: AppIcons.watched,
                     iconFill: AppIcons.watchedFill,
                     label: 'Watched',
@@ -112,28 +107,14 @@ class MovieActionRow extends StatelessWidget {
   }
 
   void _toggle(
-    BuildContext context,
     UserMediaEntry? entry,
     UserMediaEntry Function(UserMediaEntry) transform,
   ) {
-    // A brand-new row needs genres from MediaDetail; an existing one
-    // already has them, and `transform` never touches genres itself.
     final current =
-        entry ?? UserMediaEntry(key: mediaKey, genres: _currentGenres(context));
+        entry ??
+        UserMediaEntry(key: mediaKey, genres: mediaDetail.item.genres);
     unawaited(userLibraryRepository.upsert(transform(current)));
   }
-
-  /// Never null in practice: D1 only shows this row once loaded.
-  MediaDetail? _currentDetail(BuildContext context) {
-    final state = context.read<MovieDetailCubit>().state;
-    return switch (state) {
-      MovieDetailLoaded(:final detail) => detail,
-      _ => null,
-    };
-  }
-
-  List<Genre> _currentGenres(BuildContext context) =>
-      _currentDetail(context)?.item.genres ?? const [];
 
   void _openMarkAsWatchedSheet(BuildContext context, UserMediaEntry? entry) {
     showModalBottomSheet<void>(
@@ -143,7 +124,7 @@ class MovieActionRow extends StatelessWidget {
         mediaKey: mediaKey,
         userLibraryRepository: userLibraryRepository,
         existingEntry: entry,
-        mediaDetail: _currentDetail(context),
+        mediaDetail: mediaDetail,
       ),
     );
   }
