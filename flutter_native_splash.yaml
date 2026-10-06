@@ -1,0 +1,17 @@
+# docs/SCREENS.md A1: "static native (Pako's logo, off, centered on
+# #0B0B0D)" — the very first frame, shown by the OS before Flutter can
+# draw anything itself. Generated via `dart run
+# flutter_native_splash:create`; the real in-app animation (powers on,
+# wordmark, powers off) is `lib/app/splash_screen.dart`, which takes
+# over as soon as Flutter's first frame is ready.
+flutter_native_splash:
+  color: "0B0B0D"
+  image: assets/icons/pako/pako_off.png
+
+  android_12:
+    color: "0B0B0D"
+    image: assets/icons/pako/pako_off.png
+
+  android: true
+  ios: true
+  web: false

@@ -48,6 +48,12 @@ dependencies:
   dio: ^5.9.0
   json_annotation: ^4.12.0
 
+  # A1 (Splash) — also a dev-time code generator (`dart run
+  # flutter_native_splash:create`, config in flutter_native_splash.yaml),
+  # but `FlutterNativeSplash.remove()` itself is a runtime call from
+  # app/splash_gate.dart, so this is a regular dependency, not dev-only.
+  flutter_native_splash: ^2.4.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
