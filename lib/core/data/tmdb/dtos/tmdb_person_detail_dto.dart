@@ -12,6 +12,7 @@ class TmdbPersonDetailDto {
   const TmdbPersonDetailDto({
     required this.id,
     required this.name,
+    required this.knownForDepartment,
     required this.biography,
     required this.birthday,
     required this.deathday,
@@ -23,6 +24,9 @@ class TmdbPersonDetailDto {
 
   final int id;
   final String name;
+
+  @JsonKey(name: 'known_for_department')
+  final String? knownForDepartment;
 
   @JsonKey(defaultValue: '')
   final String biography;

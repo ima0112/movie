@@ -20,6 +20,7 @@ final class PersonDetail {
   const PersonDetail({
     required this.person,
     required this.biography,
+    required this.biographyIsEnglishFallback,
     required this.birthday,
     required this.deathday,
     required this.placeOfBirth,
@@ -28,6 +29,12 @@ final class PersonDetail {
 
   final Person person;
   final String biography;
+
+  /// `true` when [biography] isn't in the user's own language — TMDB
+  /// had no translation for it, so the repository fell back to the
+  /// English one instead. D3's own "Biography in English" note is
+  /// shown only then.
+  final bool biographyIsEnglishFallback;
   final DateTime? birthday;
   final DateTime? deathday;
   final String? placeOfBirth;

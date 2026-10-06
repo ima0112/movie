@@ -109,12 +109,15 @@ What actually shipped, and where it diverges from the table above:
   built and tested; `MediaRepository.season(tvId, n)` (returning the
   season's own `overview` + its episodes as `SeasonDetail`) was added
   once D2/H4 became real consumers, in the `tv-detail-cubit` branch.
-- **Person detail**: DTO + mapper (`tmdb_person_mappers.dart`) and the
-  datasource call are built and tested, but **there is no
-  `PersonRepository` and no `person_detail` feature/screen** — same
-  "infra ready, no consumer yet" situation as seasons. `PersonDetail`/
-  `MediaCredit` (the domain entities) already existed from earlier work
-  and are what this mapper fills in.
+- **Person detail**: `PersonRepository` + its real (`TmdbPersonRepository`)
+  and fake implementations, `PersonDetailCubit`, and D3's own screen
+  were added in the `person-detail` branch once something finally
+  consumed the DTO/mapper/datasource call built earlier. That same
+  branch added one new wrinkle: when the primary (user-language)
+  biography comes back empty, `TmdbPersonRepository` makes a second,
+  explicit English-language call and `PersonDetail
+  .biographyIsEnglishFallback` flags it, for D3's own "Biography in
+  English" note.
 - **Keywords for vibes**: untouched by this stack — `/search/keyword`'s
   "resolve once, fix in the vibes JSON" remains `match_engine`/`vibe`'s
   own concern, not a runtime call.
@@ -344,7 +347,7 @@ lib/
 `MediaItem` (abstraction over `Movie` and `TvShow`), `Person`, `Genre` (normalized), `Vibe`, `UserMediaEntry`, `TasteProfile`, **`UserProfile { displayName, initialColor }`** (local, with `UserProfileRepository`), `ParticipantAnswers`, `MatchQuery`, `MatchResult`, `MatchRoom`.
 
 ### Repository contracts (to be defined)
-`MediaRepository`, `UserLibraryRepository`, `TasteProfileRepository`, `UserProfileRepository`, `MatchRoomRepository`. No `PersonRepository` yet — D3 (person detail) has no screen built, so nothing constructs one; `/person/{id}`'s own DTO/mapper/datasource call already exist (§2's implementation notes) for whenever that feature starts.
+`MediaRepository`, `UserLibraryRepository`, `TasteProfileRepository`, `UserProfileRepository`, `MatchRoomRepository`, `PersonRepository` (added once D3 was built — see §2's implementation notes).
 
 ---
 

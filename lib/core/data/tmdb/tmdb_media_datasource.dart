@@ -29,9 +29,7 @@ class TmdbMediaDatasource {
     final response = await _apiClient.dio.get<Map<String, dynamic>>(
       '/trending/all/week',
     );
-    return List<Map<String, dynamic>>.from(
-      response.data!['results'] as List,
-    );
+    return List<Map<String, dynamic>>.from(response.data!['results'] as List);
   }
 
   Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieNowPlaying() =>
@@ -72,7 +70,8 @@ class TmdbMediaDatasource {
     final response = await _apiClient.dio.get<Map<String, dynamic>>(
       '/movie/$id',
       queryParameters: const {
-        'append_to_response': 'credits,videos,similar,release_dates,'
+        'append_to_response':
+            'credits,videos,similar,release_dates,'
             'watch/providers',
       },
     );
@@ -85,7 +84,8 @@ class TmdbMediaDatasource {
     final response = await _apiClient.dio.get<Map<String, dynamic>>(
       '/tv/$id',
       queryParameters: const {
-        'append_to_response': 'credits,videos,similar,content_ratings,'
+        'append_to_response':
+            'credits,videos,similar,content_ratings,'
             'watch/providers',
       },
     );
@@ -109,9 +109,7 @@ class TmdbMediaDatasource {
       '/search/multi',
       queryParameters: {'query': query},
     );
-    return List<Map<String, dynamic>>.from(
-      response.data!['results'] as List,
-    );
+    return List<Map<String, dynamic>>.from(response.data!['results'] as List);
   }
 
   Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> discoverMovie(
@@ -140,12 +138,18 @@ class TmdbMediaDatasource {
     );
   }
 
-  /// D3 — one call, per `docs/DECISIONS.md` §2.
-  Future<TmdbPersonDetailDto> personDetail(int id) async {
+  /// D3 — one call, per `docs/DECISIONS.md` §2. [language] overrides
+  /// `LocaleInterceptor`'s own default (it only fills in `language` via
+  /// `putIfAbsent`, so an explicit value here always wins) — used to
+  /// fetch an English-language biography when the user's own language
+  /// has no translation for it (`personDetailFromDto`'s own
+  /// `fallbackBiography`).
+  Future<TmdbPersonDetailDto> personDetail(int id, {String? language}) async {
     final response = await _apiClient.dio.get<Map<String, dynamic>>(
       '/person/$id',
-      queryParameters: const {
+      queryParameters: {
         'append_to_response': 'movie_credits,tv_credits',
+        'language': ?language,
       },
     );
     return TmdbPersonDetailDto.fromJson(response.data!);

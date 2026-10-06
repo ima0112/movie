@@ -10,6 +10,7 @@ TmdbPersonDetailDto _$TmdbPersonDetailDtoFromJson(Map<String, dynamic> json) =>
     TmdbPersonDetailDto(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
+      knownForDepartment: json['known_for_department'] as String?,
       biography: json['biography'] as String? ?? '',
       birthday: json['birthday'] as String? ?? '',
       deathday: json['deathday'] as String? ?? '',

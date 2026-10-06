@@ -9,6 +9,7 @@ import '../features/discover/presentation/screens/discover_screen.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/filtered_list/presentation/screens/filtered_list_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
+import '../features/person_detail/presentation/screens/person_detail_screen.dart';
 import '../features/tv_detail/presentation/screens/tv_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
@@ -30,7 +31,6 @@ class AppRoutes {
 
   static String tvDetail(int id) => '/tv/$id';
 
-  /// D3 (Person detail, not built yet) — see [_PersonDetailPlaceholderScreen].
   static String personDetail(int id) => '/person/$id';
 
   /// C4 (Stats), pushed from B5's "See stats" link
@@ -110,9 +110,8 @@ extension MediaDetailNavigation on BuildContext {
     return push<T>(path);
   }
 
-  /// D3 (Person detail, not built yet) — cast/crew rows and search
-  /// results that are people still need somewhere to push to; see
-  /// [_PersonDetailPlaceholderScreen].
+  /// D3 (Person detail) — cast/crew rows and search results that are
+  /// people push here.
   Future<T?> pushPersonDetail<T>(int personId) =>
       push<T>(AppRoutes.personDetail(personId));
 }
@@ -196,11 +195,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/person/:id',
       parentNavigatorKey: _rootNavigatorKey,
-      // TODO: D3 (Person detail) isn't built yet — same "proves the
-      // route, not the screen" scope as `/tv/:id` above.
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
-        return _PersonDetailPlaceholderScreen(id: id);
+        return PersonDetailScreen(personId: id);
       },
     ),
     GoRoute(
@@ -280,21 +277,6 @@ class _GenreListingPlaceholderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
       body: Center(child: Text('Genre: $genreId ($type)')),
-    );
-  }
-}
-
-/// Stand-in for D3 (Person detail) — see `/person/:id`'s own TODO above.
-class _PersonDetailPlaceholderScreen extends StatelessWidget {
-  const _PersonDetailPlaceholderScreen({required this.id});
-
-  final int id;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(leading: const BackButton()),
-      body: Center(child: Text('Person: $id')),
     );
   }
 }
