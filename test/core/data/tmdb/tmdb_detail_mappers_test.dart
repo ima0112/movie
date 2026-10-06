@@ -50,6 +50,21 @@ void main() {
       expect(detail.crew.single.job, 'Director');
     });
 
+    test('carries each cast member\'s raw profile_path through as-is — '
+        'some have a photo, some (like Zendaya here) don\'t', () {
+      final detail = load('tmdb_movie_detail_full.json');
+
+      final chalamet = detail.cast.firstWhere(
+        (c) => c.person.name == 'Timothée Chalamet',
+      );
+      expect(chalamet.person.profilePath, '/chalamet.jpg');
+
+      final zendaya = detail.cast.firstWhere(
+        (c) => c.person.name == 'Zendaya',
+      );
+      expect(zendaya.person.profilePath, isNull);
+    });
+
     test('maps similar via the same list-item mapper Discover uses', () {
       final detail = load('tmdb_movie_detail_full.json');
 

@@ -173,7 +173,10 @@ class _PersonRow extends StatelessWidget {
               child: SizedBox(
                 width: _avatarSize,
                 height: _avatarSize,
-                child: ProfileImage(profilePath: person.profilePath),
+                child: ProfileImage(
+                  profilePath: person.profilePath,
+                  name: person.name,
+                ),
               ),
             ),
             const SizedBox(width: AppSpacing.md),

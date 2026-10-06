@@ -4,11 +4,18 @@ import '../../../core/domain/entities/person.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../profile_image.dart';
 
 /// One [MediaCastRow] circle: a 64 px avatar, name, and character
 /// (`docs/SCREENS.md` D1, reused unchanged by D2). In its own file per
 /// rule 11: `media_cast_row.dart` was over the 150-line target on its
 /// own.
+///
+/// Uses [ProfileImage] — same widget `person_detail_header.dart` and
+/// `full_cast_sheet.dart` use — rather than painting `profilePath`
+/// straight into `Image.network`, which this file used to do: TMDB's
+/// `profile_path` is a raw path (e.g. `/abc123.jpg`), not a full URL, so
+/// that request always failed and a photo never actually showed.
 class MediaCastCircle extends StatelessWidget {
   const MediaCastCircle({
     super.key,
@@ -33,7 +40,10 @@ class MediaCastCircle extends StatelessWidget {
               child: SizedBox(
                 width: size,
                 height: size,
-                child: _Avatar(profilePath: member.person.profilePath),
+                child: ProfileImage(
+                  profilePath: member.person.profilePath,
+                  name: member.person.name,
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.xs),
@@ -54,24 +64,6 @@ class MediaCastCircle extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  const _Avatar({required this.profilePath});
-
-  final String? profilePath;
-
-  @override
-  Widget build(BuildContext context) {
-    final path = profilePath;
-    if (path == null) return const ColoredBox(color: AppColors.surfaceRaised2);
-    return Image.network(
-      path,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) =>
-          const ColoredBox(color: AppColors.surfaceRaised2),
     );
   }
 }

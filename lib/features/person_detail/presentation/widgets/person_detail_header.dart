@@ -48,7 +48,10 @@ class PersonDetailHeader extends StatelessWidget {
                 child: SizedBox(
                   width: photoSize,
                   height: photoSize,
-                  child: ProfileImage(profilePath: person.profilePath),
+                  child: ProfileImage(
+                    profilePath: person.profilePath,
+                    name: person.name,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
