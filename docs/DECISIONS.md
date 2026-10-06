@@ -350,7 +350,7 @@ lib/
 `MediaItem` (abstraction over `Movie` and `TvShow`), `Person`, `Genre` (normalized), `Vibe`, `UserMediaEntry`, `TasteProfile`, **`UserProfile { displayName, initialColor }`** (local, with `UserProfileRepository`), `ParticipantAnswers`, `MatchQuery`, `MatchResult`, `MatchRoom`.
 
 ### Repository contracts (to be defined)
-`MediaRepository`, `UserLibraryRepository`, `TasteProfileRepository`, `UserProfileRepository`, `MatchRoomRepository`, `PersonRepository` (added once D3 was built — see §2's implementation notes).
+`MediaRepository`, `UserLibraryRepository`, `TasteProfileRepository`, `UserProfileRepository`, `MatchRoomRepository`, `PersonRepository` (added once D3 was built — see §2's implementation notes), `OnboardingRepository` (added in the `onboarding-gate` branch, ahead of A2's own real screen — `app/router.dart`'s top-level `redirect` already sends every route to `/welcome` until it's `true`, and `/welcome` is a placeholder until A2 is built for real).
 
 ---
 

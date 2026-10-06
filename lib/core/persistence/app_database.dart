@@ -132,6 +132,20 @@ class TasteProfileTable extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Whether A2 (Onboarding) has ever been completed on this device — one
+/// row, same single-row convention as [UserProfileTable]. See
+/// `core/domain/repositories/onboarding_repository.dart`'s own doc
+/// comment for why this is its own flag rather than derived from
+/// [UserProfileTable] having a row.
+@DataClassName('OnboardingRow')
+class OnboardingTable extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  BoolColumn get completed => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// B2's "Recent" search chips (`docs/SCREENS.md` B2: "'Recent' as chips
 /// (last 10; tap to run, long-press to remove; 'Clear all')"). `query`
 /// itself is the primary key: re-searching an already-present query
@@ -168,6 +182,7 @@ class SearchHistoryTable extends Table {
     UserProfileTable,
     TasteProfileTable,
     SearchHistoryTable,
+    OnboardingTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -182,12 +197,13 @@ class AppDatabase extends _$AppDatabase {
   /// Bump this whenever a table changes shape. Went to 2 when
   /// [UserProfileTable] and [TasteProfileTable] were added, to 3 when
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
-  /// `episodeRuntimeMinutes` columns, and to 4 when [SearchHistoryTable]
-  /// was added — [onUpgrade] below adds each version's own change in
-  /// order, never a destructive drop/recreate, so nobody's existing My
-  /// List/profile/tastes/search data is lost on update.
+  /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
+  /// was added, and to 5 when [OnboardingTable] was — [onUpgrade] below
+  /// adds each version's own change in order, never a destructive
+  /// drop/recreate, so nobody's existing My List/profile/tastes/search
+  /// data is lost on update.
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -207,6 +223,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 4) {
         await m.createTable(searchHistoryTable);
+      }
+      if (from < 5) {
+        await m.createTable(onboardingTable);
       }
     },
   );

@@ -53,6 +53,11 @@ lib/
         user_library_repository.dart
         taste_profile_repository.dart
         user_profile_repository.dart
+        onboarding_repository.dart   isCompleted is synchronous (not Future<bool>) — see its own
+                                      doc comment: GoRouter's redirect runs on every navigation,
+                                      so an async read there was a real timing hazard, not just
+                                      style. load() (called once in main.dart, before runApp)
+                                      is what keeps it accurate.
     data/
       tmdb/
         tmdb_configuration_dto.dart       GET /configuration, cached once by tmdb_configuration_service.dart
