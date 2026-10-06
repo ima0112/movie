@@ -7,6 +7,7 @@ import '../core/domain/entities/media_type.dart';
 import '../core/domain/repositories/media_repository.dart';
 import '../core/domain/repositories/onboarding_repository.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
+import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'di.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/filtered_list/presentation/screens/filtered_list_screen.dart';
@@ -37,9 +38,7 @@ class AppRoutes {
 
   /// A2 (Onboarding) — the app's own top-level `redirect` sends every
   /// route here until `OnboardingRepository.isCompleted()` is `true`,
-  /// and sends this one route to [DiscoverScreen] once it is. The real
-  /// A2 flow (welcome + 3 steps) isn't built yet — see
-  /// `_WelcomePlaceholderScreen`'s own doc comment.
+  /// and sends this one route to [DiscoverScreen] once it is.
   static const String welcome = '/welcome';
 
   /// C4 (Stats), pushed from B5's "See stats" link
@@ -249,7 +248,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.welcome,
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const _WelcomePlaceholderScreen(),
+      builder: (context, state) => const OnboardingScreen(),
     ),
   ],
 );
@@ -285,32 +284,4 @@ String? _onboardingRedirect(BuildContext context, GoRouterState state) {
   if (!isCompleted && !isWelcome) return AppRoutes.welcome;
   if (isCompleted && isWelcome) return '/';
   return null;
-}
-
-/// Stand-in for A2 (Onboarding) — the real welcome + 3-step flow isn't
-/// built yet (see this session's own audit of `docs/SCREENS.md` A1/A2).
-/// Still needs a real way out, unlike the other placeholders in this
-/// file (`/tv/:id` etc., before their screens existed): without one,
-/// [_onboardingRedirect] would trap every fresh install (and every
-/// test that doesn't explicitly mark onboarding complete) here with no
-/// path forward at all.
-class _WelcomePlaceholderScreen extends StatelessWidget {
-  const _WelcomePlaceholderScreen();
-
-  Future<void> _skip(BuildContext context) async {
-    await getIt<OnboardingRepository>().markCompleted();
-    if (context.mounted) context.go('/');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => _skip(context),
-          child: const Text('Skip for now (placeholder)'),
-        ),
-      ),
-    );
-  }
 }
