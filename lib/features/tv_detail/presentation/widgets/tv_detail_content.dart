@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
+import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
@@ -11,6 +12,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/media_detail/full_cast_sheet.dart';
 import '../../../../shared/widgets/media_detail/media_cast_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_header.dart';
@@ -65,6 +67,18 @@ class TvDetailContent extends StatelessWidget {
     );
   }
 
+  void _openFullCastSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => FullCastSheet(
+        cast: detail.cast,
+        crew: detail.crew,
+        onPersonTap: (person) => context.pushPersonDetail(person.id),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userLibraryRepository = getIt<UserLibraryRepository>();
@@ -80,7 +94,14 @@ class TvDetailContent extends StatelessWidget {
             genres: detail.item.genres,
             statusPill: TvStatusPill(status: detail.status),
             onGenreTap: (genre) => context.push(
-              AppRoutes.genreListing(genre.id, MediaType.tvShow),
+              AppRoutes.filteredList,
+              extra: FilteredListRouteArgs(
+                filter: DiscoverFilter(
+                  type: MediaType.tvShow,
+                  withGenres: {genre},
+                ),
+                title: genre.name,
+              ),
             ),
           ),
         ),
@@ -112,6 +133,15 @@ class TvDetailContent extends StatelessWidget {
         SliverToBoxAdapter(
           child: WhereToWatchSection(
             providers: detail.watchProviders,
+            // Same hardcoded 'ES'/Spain assumption as
+            // TmdbMediaRepository._region and MediaDetail._userLanguage
+            // — no real settings source exists yet.
+            regionName: 'Spain',
+            // TODO(H6): wire this once Settings (B5) actually has a
+            // region picker to open — docs/SCREENS.md H6 ("Region |
+            // B5 | Searchable list of countries") isn't built yet
+            // (no Settings feature/screen exists at all).
+            onRegionTap: null,
             onProviderTap: (link) => ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text('Would open: $link'))),
@@ -128,6 +158,7 @@ class TvDetailContent extends StatelessWidget {
             cast: detail.cast,
             crew: detail.crew,
             onPersonTap: (person) => context.pushPersonDetail(person.id),
+            onSeeFullCastTap: () => _openFullCastSheet(context),
           ),
         ),
         SliverToBoxAdapter(

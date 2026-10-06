@@ -104,7 +104,10 @@ What actually shipped, and where it diverges from the table above:
 - **Where to watch**: live, resolved against the hardcoded `'ES'`
   region. "Data from JustWatch"/"Data from TMDB" attribution is present
   on both D1 (movie detail) and D2 (TV show detail, built in a later
-  branch than this stack — see `tv_detail/`).
+  branch than this stack — see `tv_detail/`). Its own region label
+  ("Spain", in gray) is shown now, but its tap (→ H6) is a documented
+  no-op — H6 (and B5/Settings itself) isn't built, so there's nowhere
+  to push to yet (`where_to_watch_section.dart`'s own `onRegionTap`).
 - **Seasons on demand**: `/tv/{id}/season/{n}` → `Episode` mapping is
   built and tested; `MediaRepository.season(tvId, n)` (returning the
   season's own `overview` + its episodes as `SeasonDetail`) was added
