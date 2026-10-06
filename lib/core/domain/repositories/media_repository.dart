@@ -92,4 +92,14 @@ abstract interface class MediaRepository {
   /// {movie|tv}` with [filter]'s criteria. `filter.type == null` means
   /// "All" (`docs/SCREENS.md` C1: "All = both interleaved").
   Future<Result<List<MediaItem>>> discover(DiscoverFilter filter);
+
+  /// A2 step 0's own poster wall background — deliberately **not**
+  /// `getCarouselSection(CarouselSection.popularThisWeek)`, which is
+  /// shared with B1's own small "Popular this week" carousel and capped
+  /// at 10 items for that context. The wall needs a much bigger, varied
+  /// pool (at least 10 distinct posters per column, so a column's own
+  /// visible tiles — and every other column's — never repeat a poster
+  /// on screen at once), so this combines trending movies and trending
+  /// TV shows for the week instead, deduplicated.
+  Future<Result<List<MediaItem>>> getPosterWallItems();
 }

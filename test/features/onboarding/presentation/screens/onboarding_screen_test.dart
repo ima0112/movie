@@ -26,17 +26,21 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/domain/repositories/user_profile_repository.dart';
 import 'package:movies/features/onboarding/presentation/widgets/poster_wall.dart';
 
-/// Only `getCarouselSection` matters for these tests (the welcome
+/// Only `getPosterWallItems` matters for these tests (the welcome
 /// step's own poster fetch) — every other method is unreachable from
 /// what's pumped here, so it's left unimplemented rather than faked out
 /// in full, same as other narrow test doubles this app already has.
 class _FailingMediaRepository implements MediaRepository {
   @override
+  Future<Result<List<MediaItem>>> getPosterWallItems() async =>
+      const Failure('offline');
+
+  @override
   Future<Result<List<MediaItem>>> getCarouselSection(
     CarouselSection section, {
     MediaType? type,
     Genre? genre,
-  }) async => const Failure('offline');
+  }) => throw UnimplementedError();
 
   @override
   Future<Result<List<MediaItem>>> getHeroItems({MediaType? type}) =>

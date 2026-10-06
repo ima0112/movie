@@ -35,9 +35,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   @override
   void initState() {
     super.initState();
-    _postersFuture = getIt<MediaRepository>().getCarouselSection(
-      CarouselSection.popularThisWeek,
-    );
+    _postersFuture = getIt<MediaRepository>().getPosterWallItems();
   }
 
   Future<void> _finish(BuildContext context) async {
