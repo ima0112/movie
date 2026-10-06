@@ -1,4 +1,5 @@
 import 'genre.dart';
+import 'media_key.dart';
 import 'media_type.dart';
 
 /// A catalog item at list level — carousels, grids, the Discover hero.
@@ -41,6 +42,12 @@ sealed class MediaItem {
     Movie() => MediaType.movie,
     TvShow() => MediaType.tvShow,
   };
+
+  /// This item's own identity as a [MediaKey] — `MediaKey(type: type,
+  /// tmdbId: id)` was already repeated at three call sites
+  /// (`match_engine.dart` x2, `surprise_result_content.dart`) before
+  /// navigation centralization added several more.
+  MediaKey get key => MediaKey(type: type, tmdbId: id);
 
   @override
   bool operator ==(Object other) =>

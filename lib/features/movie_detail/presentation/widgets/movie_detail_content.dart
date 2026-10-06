@@ -120,15 +120,19 @@ class MovieDetailContent extends StatelessWidget {
             tagline: detail.tagline,
           ),
         ),
-        // TODO: onPersonTap/onSeeFullCastTap → D3/H3 once they're built.
+        // TODO: onSeeFullCastTap → H3 once it's built.
         SliverToBoxAdapter(
-          child: MediaCastRow(cast: detail.cast, crew: detail.crew),
+          child: MediaCastRow(
+            cast: detail.cast,
+            crew: detail.crew,
+            onPersonTap: (person) => context.pushPersonDetail(person.id),
+          ),
         ),
         SliverToBoxAdapter(
           key: similarSectionKey,
           child: MediaSimilarSection(
             similar: detail.similar,
-            onItemTap: (item) => context.push(AppRoutes.movieDetail(item.id)),
+            onItemTap: (item) => context.pushMediaDetail(item.key),
           ),
         ),
         const SliverToBoxAdapter(child: _Footer()),

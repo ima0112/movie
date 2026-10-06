@@ -59,11 +59,11 @@ class DiscoverSectionCarousel extends StatelessWidget {
                       // TV posters carry a "TV" pill only in the mixed
                       // "All" segment — see docs/SCREENS.md B1.
                       showTypeTag: segment == MediaSegment.all,
-                      // `push`, not `go`: the detail screen's back button
-                      // should return to Discover with its scroll
-                      // position intact, not replace it in the stack.
-                      onItemTap: (item) =>
-                          context.push(AppRoutes.movieDetail(item.id)),
+                      // `pushMediaDetail` (→ `push`, not `go`): the detail
+                      // screen's back button should return to Discover
+                      // with its scroll position intact, not replace it
+                      // in the stack.
+                      onItemTap: (item) => context.pushMediaDetail(item.key),
                     ),
                   ],
                 ),

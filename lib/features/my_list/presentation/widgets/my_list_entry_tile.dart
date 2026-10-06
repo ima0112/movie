@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_detail.dart';
@@ -63,9 +62,7 @@ class MyListEntryTile extends StatelessWidget {
                   watchedAt: entry.watchedAt ?? DateTime.now(),
                 )
               : const LibraryRowTrailing.chevron(),
-          onTap: entry.key.type == MediaType.movie
-              ? () => context.push(AppRoutes.movieDetail(entry.key.tmdbId))
-              : null,
+          onTap: () => context.pushMediaDetail(entry.key),
         );
       },
     );
