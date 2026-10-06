@@ -10,17 +10,15 @@ import 'package:dio/dio.dart';
 /// plugged in later without reshaping this interceptor; for now they
 /// always resolve to the fixed `es-ES`/`ES` defaults this task asked for.
 class LocaleInterceptor extends Interceptor {
-  LocaleInterceptor({
-    String Function()? language,
-    String Function()? region,
-  }) : _language = language ?? _defaultLanguage,
-       _region = region ?? _defaultRegion;
+  LocaleInterceptor({String Function()? language, String Function()? region})
+    : _language = language ?? _defaultLanguage,
+      _region = region ?? _defaultRegion;
 
   final String Function() _language;
   final String Function() _region;
 
-  static String _defaultLanguage() => 'es-ES';
-  static String _defaultRegion() => 'ES';
+  static String _defaultLanguage() => 'en-US';
+  static String _defaultRegion() => 'US';
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
