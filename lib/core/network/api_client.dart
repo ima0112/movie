@@ -3,6 +3,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../app/environments.dart';
 import '../config/env.dart';
+import '../data/tmdb/tmdb_language_tag.dart';
+import '../domain/repositories/settings_repository.dart';
 import 'interceptors/bearer_interceptor.dart';
 import 'interceptors/locale_interceptor.dart';
 import 'interceptors/tmdb_logging_interceptor.dart';
@@ -18,10 +20,17 @@ import 'interceptors/tmdb_logging_interceptor.dart';
 @real
 @LazySingleton()
 class ApiClient {
-  ApiClient() : dio = Dio(BaseOptions(baseUrl: Env.tmdbBaseUrl)) {
+  ApiClient(SettingsRepository settingsRepository)
+    : dio = Dio(BaseOptions(baseUrl: Env.tmdbBaseUrl)) {
     dio.interceptors.addAll([
       BearerInterceptor(Env.tmdbToken),
-      LocaleInterceptor(),
+      LocaleInterceptor(
+        language: () => tmdbLanguageTag(
+          settingsRepository.current.languageCode,
+          settingsRepository.current.regionCode,
+        ),
+        region: () => settingsRepository.current.regionCode,
+      ),
       TmdbLoggingInterceptor(),
     ]);
   }

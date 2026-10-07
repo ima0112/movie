@@ -81,11 +81,13 @@ Map<String, dynamic> discoverQueryParams(
 
   // docs/DECISIONS.md §4/F9, docs/SCREENS.md's Settings row: "hides
   // titles rated R, NC-17, 18, and TV-MA". TMDB's certification scale
-  // (and tier count) differs per country; '16' is Spain's own
-  // second-highest movie/TV tier (next is '18') — correct for this
-  // app's current hardcoded 'ES' region, but not a general solution.
-  // TODO: once region is configurable (H6), this needs a per-country
-  // threshold table instead of one hardcoded value.
+  // (and tier count) differs per country; '16' is only Spain's own
+  // second-highest movie/TV tier (next is '18') — [region] is no longer
+  // hardcoded (it's the user's own Settings region), but this one fixed
+  // threshold still silently assumes Spain's own tier shape for every
+  // other region. TODO: this needs a per-country threshold table
+  // instead of one hardcoded value — moot today regardless, since
+  // Family mode (the only caller of familyMode: true) is out of v1.0.
   if (familyMode) {
     params['certification_country'] = region;
     params['certification.lte'] = '16';

@@ -11,6 +11,7 @@ import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
 import '../../domain/entities/season_summary.dart';
 import '../../domain/repositories/media_repository.dart';
+import '../../domain/repositories/settings_repository.dart';
 import '../../network/dio_failure_mapper.dart';
 import '../tmdb/tmdb_configuration_service.dart';
 import '../tmdb/tmdb_detail_mappers.dart';
@@ -26,15 +27,21 @@ import '../tmdb/tmdb_media_datasource.dart';
 @real
 @LazySingleton(as: MediaRepository)
 class TmdbMediaRepository implements MediaRepository {
-  TmdbMediaRepository(this._datasource, this._configService);
+  TmdbMediaRepository(
+    this._datasource,
+    this._configService,
+    this._settingsRepository,
+  );
 
   final TmdbMediaDatasource _datasource;
   final TmdbConfigurationService _configService;
+  final SettingsRepository _settingsRepository;
 
-  /// Same hardcoded `'ES'` default as `LocaleInterceptor`'s own region
-  /// query parameter — no real settings source exists yet (see that
-  /// interceptor's own doc comment).
-  static const _region = 'ES';
+  /// The user's own region (F11) — same source `ApiClient`'s
+  /// `LocaleInterceptor` reads, so a detail call's watch
+  /// providers/certification and a `/discover` call's own
+  /// `certification_country` always agree with each other.
+  String get _region => _settingsRepository.current.regionCode;
 
   /// Fire-and-forget, memoized — see `PosterImage`'s own identical use of
   /// `TmdbConfigurationService` for why this doesn't need an `await`.

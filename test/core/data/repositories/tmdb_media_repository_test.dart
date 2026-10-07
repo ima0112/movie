@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/drift_settings_repository.dart';
 import 'package:movies/core/data/repositories/tmdb_media_repository.dart';
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart';
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
@@ -14,7 +16,9 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
+import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/core/network/api_client.dart';
+import 'package:movies/core/persistence/app_database.dart';
 
 /// Routes each request to one of this app's own fixtures by path, so a
 /// single repository test exercises real HTTP + real JSON decoding
@@ -72,14 +76,22 @@ void main() {
   late _FixtureRoutedAdapter adapter;
   late TmdbMediaDatasource datasource;
   late TmdbMediaRepository repository;
+  late SettingsRepository settingsRepository;
 
   setUp(() {
-    final apiClient = ApiClient();
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    settingsRepository = DriftSettingsRepository(db);
+    final apiClient = ApiClient(settingsRepository);
     adapter = _FixtureRoutedAdapter();
     apiClient.dio.httpClientAdapter = adapter;
     datasource = TmdbMediaDatasource(apiClient);
     final configService = TmdbConfigurationService(apiClient);
-    repository = TmdbMediaRepository(datasource, configService);
+    repository = TmdbMediaRepository(
+      datasource,
+      configService,
+      settingsRepository,
+    );
   });
 
   group('getHeroItems', () {

@@ -123,9 +123,10 @@ class MovieDetailContent extends StatelessWidget {
         SliverToBoxAdapter(
           child: WhereToWatchSection(
             providers: detail.watchProviders,
-            // Same hardcoded 'ES'/Spain assumption as
-            // TmdbMediaRepository._region and MediaDetail._userLanguage
-            // — no real settings source exists yet.
+            // Still a hardcoded label, unlike the actual region code
+            // TmdbMediaRepository now reads from SettingsRepository —
+            // there's no country-code-to-name lookup yet to turn that
+            // code into a display name.
             regionName: 'Spain',
             // TODO(H6): wire this once Settings (B5) actually has a
             // region picker to open — docs/SCREENS.md H6 ("Region |
