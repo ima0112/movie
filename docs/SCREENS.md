@@ -139,10 +139,10 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 ### C6. Settings (pushed)
 - Access: gear icon in B5. Back button, no bottom bar.
 - Elements (grouped list; 52 px row, 16 px white label, 15 px gray value, chevron; no icons or group backgrounds; 13 px gray group header):
-  - Preferences: Language ("Español" → H5), Region ("Spain" → H6, with search), Theme ("Dark" → H7), **Family mode** (toggle, off by default; subtitle "Hides titles rated R, NC-17, 18, and TV-MA"; applies `certification.lte` in `/discover` and filters in the match engine).
+  - Preferences: Content language ("Español" → H5), Region ("Spain" → H6, with search). No Theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` for why Family mode specifically was dropped rather than built partially.
   - Data: "Export My List" (JSON → the system share sheet); "Delete My List", "Delete My Tastes" in red → I1 (the dialog states how many items it deletes).
   - About: Version (long-press copies the build number), Source code (GitHub, external link), Licenses (`showLicensePage`), TMDB attribution block with the official logo (the one exception to using a color that isn't ours) and 11 px text.
-- Sheets H5–H7 are lists with an amber check on the active option; tapping applies and closes. Changing the theme does a 300 ms cross-fade.
+- Sheets H5–H6 are lists with an amber check on the active option; tapping applies and closes.
 - No Pako.
 
 ---
@@ -287,7 +287,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 | H2 | Mark as watched | "Watched" button in D1/D2, swipe in B4, H1 | Title ("Mark as watched" for a movie, "Have you finished {title}?" for a TV show — asking about a show commits to having finished it, not just pressed a button), 5-star selector (optional), date (today by default, editable), "Save" button, "Remove from Watched" link if it already was |
 | H3 | Full cast | "See all" in D1/D2 | Cast and crew list with an internal search box |
 | H4 | Season N | Season row in D2 | Title, season synopsis, episode list (number, name, runtime, date, still) |
-| H5 | Language | B5 | Single-select list: Español / English |
+| H5 | Content language | B5 | Single-select list: Español / English |
 | H6 | Region | B5 | Searchable list of countries |
 | H7 | Theme | B5 | Dark / Light / System |
 | H8 | Filters | B2, C1 | Type (All/Movies/TV Shows); multi-select genres; year (range slider 1950–present); minimum rating (0–9 slider, `vote_count.gte=100` fixed); max runtime (movies only); status Airing/Ended (TV shows only); sort by Popularity/Rating/Date/Title; "Hide what I've watched" toggle (client-side). "Reset" and "See N results" (N live) buttons. Only applies to `/discover`, not text search. |

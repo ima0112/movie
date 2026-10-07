@@ -10,17 +10,9 @@ import 'tmdb_genre_mapper.dart';
 /// own; `TmdbMediaRepository.discover` calls this twice (once per type)
 /// and merges, the same pattern `getHeroItems`'s own "All" composition
 /// already uses.
-///
-/// [familyMode] mirrors `docs/DECISIONS.md` §4/F9's Settings toggle —
-/// not a [DiscoverFilter] field itself (Family mode is an app-wide
-/// preference, not a per-screen filter), and always `false` today since
-/// no settings source exists yet (F11 isn't built) — `TmdbMediaRepository
-/// ` passes a hardcoded `false` until it is.
 Map<String, dynamic> discoverQueryParams(
   DiscoverFilter filter, {
   required MediaType type,
-  required String region,
-  bool familyMode = false,
 }) {
   final isMovie = type == MediaType.movie;
   final params = <String, dynamic>{
@@ -77,20 +69,6 @@ Map<String, dynamic> discoverQueryParams(
       DiscoverTvStatus.airing => '0',
       DiscoverTvStatus.ended => '3',
     };
-  }
-
-  // docs/DECISIONS.md §4/F9, docs/SCREENS.md's Settings row: "hides
-  // titles rated R, NC-17, 18, and TV-MA". TMDB's certification scale
-  // (and tier count) differs per country; '16' is only Spain's own
-  // second-highest movie/TV tier (next is '18') — [region] is no longer
-  // hardcoded (it's the user's own Settings region), but this one fixed
-  // threshold still silently assumes Spain's own tier shape for every
-  // other region. TODO: this needs a per-country threshold table
-  // instead of one hardcoded value — moot today regardless, since
-  // Family mode (the only caller of familyMode: true) is out of v1.0.
-  if (familyMode) {
-    params['certification_country'] = region;
-    params['certification.lte'] = '16';
   }
 
   return params;

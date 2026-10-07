@@ -18,6 +18,7 @@ Status: conceptualization closed, no code yet. Date: 2026-09-08.
 ### Store publishing
 - Google Play: one-time $25 registration.
 - App Store: requires the Apple Developer Program ($99/year; verify current price). There is no free path to publish on the App Store. Alternatives if not paying: TestFlight for invited testers, or installing from Xcode on your own device, plus a demo video in the README.
+- **Before publishing**: localize the app's own interface (not just TMDB's content — see F11's own distinction between the two) into at least Spanish and English. v1.0's Settings screen only ever changes which language TMDB's content comes back in; the UI itself (buttons, labels, every screen built so far) stays hardcoded English until this step, which is a pre-launch task, not a per-feature one.
 
 ### Public repo and secrets
 - No API key or Firebase configuration file goes into the repo.
@@ -90,11 +91,8 @@ What actually shipped, and where it diverges from the table above:
 - **Explore by genre / engine `/discover`**: live for both `movie` and
   `tv`, via a pure, independently-tested `DiscoverFilter` → query-params
   function (`tmdb_discover_params.dart`). `vote_count.gte` is H8's own
-  fixed `100`, not the slider value. Family mode's `certification.lte`
-  filter is implemented but hardcoded to Spain's own "16" threshold
-  (certification scales and tier counts differ per country — a real
-  per-country table is future work once region is actually configurable
-  in Settings).
+  fixed `100`, not the slider value. No certification/content-rating
+  filter — see `docs/decisions/family-mode-not-in-v1.md`.
 - **Movie/TV detail**: live, exactly the `append_to_response` combinations
   above, one call each. Trailer selection ("official + Trailer + user's
   language → official → Teaser → first available") ended up as pure
@@ -144,10 +142,10 @@ What actually shipped, and where it diverges from the table above:
 | F6 | Person detail | Photo, biography, filmography (movies and TV). |
 | F7 | My List | Favorites, Watch later, Watched. Both media types. Local persistence, no account. Rows with their own metadata (date saved / stars and date watched), swipe to remove and mark, sort-and-filter sheet. |
 | F8 | Stats | Movies watched and hours; TV shows watched and estimated hours; top genres; most-watched year. |
-| F9 | Onboarding + user profile + taste profile | Welcome → **What's your name? (required: display name and initial color)** → two skippable genre steps. Local `UserProfile { displayName, initialColor }`, editable in You. **No age or gender is asked**: minor protection is handled by the stores (12+/Teen rating declared in the listing), and not collecting age avoids COPPA/GDPR-K obligations. Instead, **Family mode** in Settings (off by default) hides R/NC-17/18/TV-MA titles via `certification.lte`. Tastes always editable in You → My Tastes. |
+| F9 | Onboarding + user profile + taste profile | Welcome → **What's your name? (required: display name and initial color)** → two skippable genre steps. Local `UserProfile { displayName, initialColor }`, editable in You. **No age or gender is asked**: minor protection is handled by the stores (12+/Teen rating declared in the listing), and not collecting age avoids COPPA/GDPR-K obligations. No in-app Family mode toggle in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` (TMDB's `certification` filter only covers `/discover/movie`, not `/discover/tv` or any carousel endpoint, so a toggle could only ever be partially effective). Tastes always editable in You → My Tastes. |
 | F9b | You tab | Header with initial and name, My Tastes card, Your Activity card (4 numbers + link to Stats), Recent Rooms (v1.1). Gear icon → Settings. |
 | F10 | Surprise me | Individual suggestion using the match engine (see §5). |
-| F11 | Settings (screen pushed from You) | Language (es/en), region, dark/light/system theme, Family mode, export My List (JSON), deletions, about + TMDB attribution. |
+| F11 | Settings (screen pushed from You) | Content language (es/en) and region — TMDB's own content only, never the app's own interface language; UI localization is a separate pre-launch step (§1's own "Before publishing" note). Export My List (JSON), deletions, about + TMDB attribution. No theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md`. |
 | F12 | States | Skeleton loaders, empty, error with retry, offline notice. |
 | F13 | TMDB attribution | Mandatory logo and text in Settings and on the store listing. |
 
