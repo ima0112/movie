@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
+import '../../../../core/domain/entities/country.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/season_summary.dart';
+import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/launch/launch_external_link.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -22,6 +24,7 @@ import '../../../../shared/widgets/media_detail/media_detail_header.dart';
 import '../../../../shared/widgets/media_detail/media_similar_section.dart';
 import '../../../../shared/widgets/media_detail/media_synopsis_section.dart';
 import '../../../../shared/widgets/media_detail/where_to_watch_section.dart';
+import '../../../../shared/widgets/region_sheet.dart';
 import 'season_sheet.dart';
 import 'tv_creators_section.dart';
 import 'tv_metadata.dart';
@@ -82,6 +85,22 @@ class TvDetailContent extends StatelessWidget {
     );
   }
 
+  void _openRegionSheet(BuildContext context) {
+    final settingsRepository = getIt<SettingsRepository>();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => RegionSheet(
+        selectedRegionCode: settingsRepository.current.regionCode,
+        onSelected: (code) => unawaited(
+          settingsRepository.save(
+            settingsRepository.current.copyWith(regionCode: code),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userLibraryRepository = getIt<UserLibraryRepository>();
@@ -129,16 +148,10 @@ class TvDetailContent extends StatelessWidget {
         SliverToBoxAdapter(
           child: WhereToWatchSection(
             providers: detail.watchProviders,
-            // Still a hardcoded label, unlike the actual region code
-            // TmdbMediaRepository now reads from SettingsRepository —
-            // there's no country-code-to-name lookup yet to turn that
-            // code into a display name.
-            regionName: 'Spain',
-            // TODO(H6): wire this once Settings (B5) actually has a
-            // region picker to open — docs/SCREENS.md H6 ("Region |
-            // B5 | Searchable list of countries") isn't built yet
-            // (no Settings feature/screen exists at all).
-            onRegionTap: null,
+            regionName: countryName(
+              getIt<SettingsRepository>().current.regionCode,
+            ),
+            onRegionTap: () => _openRegionSheet(context),
             onProviderTap: (link) =>
                 unawaited(launchExternalLink(context, link)),
           ),

@@ -8,6 +8,7 @@ import 'package:movies/core/data/local/drift_settings_repository.dart';
 import 'package:movies/core/data/repositories/tmdb_media_repository.dart';
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart';
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
+import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
@@ -221,6 +222,36 @@ void main() {
       );
       expect((result as Success<MediaDetail>).value.item.title, 'Signal Lost');
     });
+
+    test(
+      'a SettingsRepository region change changes a fresh detail call\'s '
+      '"Where to watch" data — the fixture only has providers for Spain, '
+      'so switching to a region with none makes hasAny false',
+      () async {
+        await settingsRepository.save(
+          const AppSettings(languageCode: 'en', regionCode: 'ES'),
+        );
+        final beforeResult = await repository.detail(
+          const MediaKey(type: MediaType.movie, tmdbId: 693134),
+        );
+        expect(
+          (beforeResult as Success<MediaDetail>).value.watchProviders.hasAny,
+          isTrue,
+        );
+
+        await settingsRepository.save(
+          const AppSettings(languageCode: 'en', regionCode: 'FR'),
+        );
+
+        final afterResult = await repository.detail(
+          const MediaKey(type: MediaType.movie, tmdbId: 693134),
+        );
+        expect(
+          (afterResult as Success<MediaDetail>).value.watchProviders.hasAny,
+          isFalse,
+        );
+      },
+    );
   });
 
   group('season', () {

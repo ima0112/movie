@@ -22,13 +22,11 @@ import '../widgets/your_activity_card.dart';
 /// like every other screen does (`MyListScreen`, `DiscoverScreen`).
 ///
 /// Recent Rooms (v1.1) isn't built — out of v1.0's scope (CLAUDE.md:
-/// "Don't implement anything marked v1.1/v1.2"). C6 (Settings) doesn't
-/// exist yet either, so that one tap target below is a no-op for now,
-/// same as [YouHeader]'s own `onOpenSettings`. C4 (Stats) and C5 (My
-/// Tastes) both do now — their links push per the inventory's
-/// navigation rule (back button, no bottom bar; `AppRoutes.stats`/
-/// `AppRoutes.myTastes` are registered on the root navigator in
-/// `app/router.dart`, the same way `/movie/:id` is).
+/// "Don't implement anything marked v1.1/v1.2"). C6 (Settings), C4
+/// (Stats), and C5 (My Tastes) all push per the inventory's navigation
+/// rule (back button, no bottom bar; `AppRoutes.settings`/
+/// `AppRoutes.stats`/`AppRoutes.myTastes` are registered on the root
+/// navigator in `app/router.dart`, the same way `/movie/:id` is).
 ///
 /// Between-card spacing uses [AppSpacing.xxl], not `xxxl` — that token's
 /// own doc comment ties it specifically to Discover's sections, and this
@@ -54,7 +52,7 @@ class YouScreen extends StatelessWidget {
           children: [
             YouHeader(
               onEditProfile: () => _openEditProfile(context),
-              onOpenSettings: () {},
+              onOpenSettings: () => context.push(AppRoutes.settings),
             ),
             const SizedBox(height: AppSpacing.xxl),
             MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
