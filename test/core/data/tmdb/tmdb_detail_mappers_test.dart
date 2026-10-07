@@ -71,12 +71,32 @@ void main() {
       expect(detail.similar.single.title, 'John Wick: Chapter 4');
     });
 
-    test('trailer selection: official + Trailer + user\'s language (es) wins '
-        'over an official-but-English Trailer and an official-but-English '
+    test('trailer selection: official + Trailer + user\'s language (en) wins '
+        'over an official-but-Spanish Trailer and an official-but-English '
         'Teaser', () {
       final detail = load('tmdb_movie_detail_full.json');
 
-      expect(detail.trailer?.key, 'es-trailer');
+      expect(detail.trailer?.key, 'en-trailer');
+    });
+
+    test('trailer selection: official wins over a non-official Teaser when '
+        'nothing official matches the user\'s language', () {
+      final detail = load('tmdb_movie_detail_trailer_official_non_user_lang.json');
+
+      expect(detail.trailer?.key, 'fr-trailer');
+    });
+
+    test('trailer selection: a Teaser wins when nothing is official', () {
+      final detail = load('tmdb_movie_detail_trailer_teaser_only.json');
+
+      expect(detail.trailer?.key, 'clip-teaser');
+    });
+
+    test('trailer selection: falls back to the first available video when '
+        'nothing is official or a Teaser', () {
+      final detail = load('tmdb_movie_detail_trailer_fallback_only.json');
+
+      expect(detail.trailer?.key, 'first-clip');
     });
 
     test('certification picks the region\'s own first non-empty value, '
