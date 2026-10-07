@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/di.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_halo.dart';
@@ -33,7 +34,7 @@ class DiscoverScreen extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (_) =>
-              DiscoverCubit(getIt<MediaRepository>())
+              DiscoverCubit(getIt<MediaRepository>(), getIt<SettingsRepository>())
                 ..loadDiscover(MediaSegment.all),
         ),
         BlocProvider(create: (_) => SavedIdsCubit()),

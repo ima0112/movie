@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/search_history_repository.dart';
 import '../cubit/explore_cubit.dart';
@@ -29,6 +30,7 @@ class ExploreScreen extends StatelessWidget {
       create: (_) => ExploreCubit(
         getIt<MediaRepository>(),
         getIt<SearchHistoryRepository>(),
+        getIt<SettingsRepository>(),
       ),
       child: const _ExploreView(),
     );
