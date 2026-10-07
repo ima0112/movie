@@ -31,6 +31,13 @@ class _InMemoryTasteProfileRepository implements TasteProfileRepository {
     _controller.add(profile);
     return const Success(null);
   }
+
+  @override
+  Future<Result<void>> delete() async {
+    _profile = null;
+    _controller.add(null);
+    return const Success(null);
+  }
 }
 
 void main() {

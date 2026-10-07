@@ -24,6 +24,7 @@ import 'media_key.dart';
 class UserMediaEntry {
   const UserMediaEntry({
     required this.key,
+    required this.title,
     this.isFavorite = false,
     this.isWatchLater = false,
     this.watchedAt,
@@ -38,6 +39,13 @@ class UserMediaEntry {
        );
 
   final MediaKey key;
+
+  /// `MediaItem.title`/`MediaDetail.item.title` at the moment this entry
+  /// was created or last re-saved — same "capture what's on hand" rule
+  /// as [genres], and for the same reason: "My List" and Export My List
+  /// need to show/write a real title with no network round trip.
+  final String title;
+
   final bool isFavorite;
   final bool isWatchLater;
   final DateTime? watchedAt;
@@ -103,6 +111,7 @@ class UserMediaEntry {
   }) {
     return UserMediaEntry(
       key: key,
+      title: title,
       isFavorite: isFavorite,
       isWatchLater: false,
       watchedAt: watchedAt ?? DateTime.now(),
@@ -115,12 +124,14 @@ class UserMediaEntry {
   }
 
   /// Clears the "watched" mark, any rating, and the duration snapshot —
-  /// e.g. H2's "Remove from Watched" link. [genres] carries forward: it
-  /// describes the title, which hasn't changed just because "watched"
-  /// was cleared — same as [isFavorite]/[isWatchLater] below.
+  /// e.g. H2's "Remove from Watched" link. [genres]/[title] carry
+  /// forward: they describe the title itself, which hasn't changed just
+  /// because "watched" was cleared — same as [isFavorite]/[isWatchLater]
+  /// below.
   UserMediaEntry unmarkWatched() {
     return UserMediaEntry(
       key: key,
+      title: title,
       isFavorite: isFavorite,
       isWatchLater: isWatchLater,
       genres: genres,
@@ -128,6 +139,7 @@ class UserMediaEntry {
   }
 
   UserMediaEntry copyWith({
+    String? title,
     bool? isFavorite,
     bool? isWatchLater,
     DateTime? watchedAt,
@@ -139,6 +151,7 @@ class UserMediaEntry {
   }) {
     return UserMediaEntry(
       key: key,
+      title: title ?? this.title,
       isFavorite: isFavorite ?? this.isFavorite,
       isWatchLater: isWatchLater ?? this.isWatchLater,
       watchedAt: watchedAt ?? this.watchedAt,
@@ -155,6 +168,7 @@ class UserMediaEntry {
   bool operator ==(Object other) =>
       other is UserMediaEntry &&
       other.key == key &&
+      other.title == title &&
       other.isFavorite == isFavorite &&
       other.isWatchLater == isWatchLater &&
       other.watchedAt == watchedAt &&
@@ -167,6 +181,7 @@ class UserMediaEntry {
   @override
   int get hashCode => Object.hash(
     key,
+    title,
     isFavorite,
     isWatchLater,
     watchedAt,
@@ -179,7 +194,7 @@ class UserMediaEntry {
 
   @override
   String toString() =>
-      'UserMediaEntry($key, favorite: $isFavorite, '
+      'UserMediaEntry($key, title: $title, favorite: $isFavorite, '
       'watchLater: $isWatchLater, watchedAt: $watchedAt, rating: $rating, '
       'runtimeMinutes: $runtimeMinutes, episodeCount: $episodeCount, '
       'episodeRuntimeMinutes: $episodeRuntimeMinutes, genres: $genres)';

@@ -13,7 +13,11 @@ void main() {
   group('InMemoryUserLibraryRepository', () {
     test('upsert followed by watchEntry emits the correct value', () async {
       final repository = InMemoryUserLibraryRepository();
-      const entry = UserMediaEntry(key: _dune, isFavorite: true);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _dune,
+        isFavorite: true,
+      );
 
       // Subscribing before the upsert lets `emitsInOrder` see both the
       // initial `null` (nothing saved yet) and the post-upsert value.
@@ -36,7 +40,11 @@ void main() {
     test('a new watchEntry subscriber immediately sees an already-saved '
         'entry, not just future changes', () async {
       final repository = InMemoryUserLibraryRepository();
-      const entry = UserMediaEntry(key: _dune, isFavorite: true);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _dune,
+        isFavorite: true,
+      );
       await repository.upsert(entry);
 
       final first = await repository.watchEntry(_dune).first;
@@ -48,9 +56,16 @@ void main() {
       'marking as watched clears isWatchLater on the emitted entry',
       () async {
         final repository = InMemoryUserLibraryRepository();
-        const inWatchLater = UserMediaEntry(key: _dune, isWatchLater: true);
+        const inWatchLater = UserMediaEntry(
+          title: 'Test Title',
+          key: _dune,
+          isWatchLater: true,
+        );
         await repository.upsert(inWatchLater);
-        expect((await repository.watchEntry(_dune).first)!.isWatchLater, isTrue);
+        expect(
+          (await repository.watchEntry(_dune).first)!.isWatchLater,
+          isTrue,
+        );
 
         final watched = inWatchLater.markWatched(rating: 5);
         await repository.upsert(watched);
@@ -65,15 +80,17 @@ void main() {
     test('watch() filters by tab and type', () async {
       final repository = InMemoryUserLibraryRepository();
       await repository.upsert(
-        const UserMediaEntry(key: _dune, isFavorite: true),
+        const UserMediaEntry(title: 'Test Title', key: _dune, isFavorite: true),
       );
       await repository.upsert(
-        const UserMediaEntry(key: _theBear, isWatchLater: true),
+        const UserMediaEntry(
+          title: 'Test Title',
+          key: _theBear,
+          isWatchLater: true,
+        ),
       );
 
-      final favorites = await repository
-          .watch(tab: LibraryTab.favorites)
-          .first;
+      final favorites = await repository.watch(tab: LibraryTab.favorites).first;
       expect(favorites.map((e) => e.key), [_dune]);
 
       final movies = await repository.watch(type: MediaType.movie).first;
@@ -85,7 +102,9 @@ void main() {
 
     test('remove deletes the entry', () async {
       final repository = InMemoryUserLibraryRepository();
-      await repository.upsert(const UserMediaEntry(key: _dune));
+      await repository.upsert(
+        const UserMediaEntry(title: 'Test Title', key: _dune),
+      );
 
       final result = await repository.remove(_dune);
 
@@ -97,31 +116,41 @@ void main() {
         'recent first', () async {
       final repository = InMemoryUserLibraryRepository();
       await repository.upsert(
-        UserMediaEntry(key: _dune, watchedAt: DateTime(2024, 1, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _dune,
+          watchedAt: DateTime(2024, 1, 1),
+        ),
       );
       await repository.upsert(
         UserMediaEntry(
+          title: 'Test Title',
           key: const MediaKey(type: MediaType.movie, tmdbId: 2),
           watchedAt: DateTime(2024, 6, 1),
         ),
       );
       await repository.upsert(
-        UserMediaEntry(key: _theBear, watchedAt: DateTime(2024, 3, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _theBear,
+          watchedAt: DateTime(2024, 3, 1),
+        ),
       );
 
       final result = await repository.watchedKeys(MediaType.movie);
 
       final keys = (result as Success<List<MediaKey>>).value;
-      expect(keys, [
-        const MediaKey(type: MediaType.movie, tmdbId: 2),
-        _dune,
-      ]);
+      expect(keys, [const MediaKey(type: MediaType.movie, tmdbId: 2), _dune]);
     });
 
     test('all returns every stored entry', () async {
       final repository = InMemoryUserLibraryRepository();
-      await repository.upsert(const UserMediaEntry(key: _dune));
-      await repository.upsert(const UserMediaEntry(key: _theBear));
+      await repository.upsert(
+        const UserMediaEntry(title: 'Test Title', key: _dune),
+      );
+      await repository.upsert(
+        const UserMediaEntry(title: 'Test Title', key: _theBear),
+      );
 
       final result = await repository.all();
 

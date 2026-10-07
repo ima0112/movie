@@ -63,6 +63,7 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
             UserMediaEntriesCompanion.insert(
               mediaType: entry.key.type,
               tmdbId: entry.key.tmdbId,
+              title: Value(entry.title),
               isFavorite: Value(entry.isFavorite),
               isWatchLater: Value(entry.isWatchLater),
               watchedAt: Value(entry.watchedAt),
@@ -89,6 +90,16 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
       return const Success(null);
     } catch (e) {
       return Failure('Could not remove $key: $e');
+    }
+  }
+
+  @override
+  Future<Result<void>> clearAll() async {
+    try {
+      await _db.delete(_db.userMediaEntries).go();
+      return const Success(null);
+    } catch (e) {
+      return Failure('Could not clear My List: $e');
     }
   }
 
@@ -131,6 +142,11 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
   static UserMediaEntry _toEntry(UserMediaEntryRow row) {
     return UserMediaEntry(
       key: row.key,
+      // Defensive only — every upsert() call from this branch onward
+      // always supplies a title; `null` only happens for a column that
+      // was never written at all (this app hasn't shipped, so no real
+      // row like that exists).
+      title: row.title ?? '',
       isFavorite: row.isFavorite,
       isWatchLater: row.isWatchLater,
       watchedAt: row.watchedAt,

@@ -74,7 +74,11 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
 
   void _save() {
     final current =
-        widget.existingEntry ?? UserMediaEntry(key: widget.mediaKey);
+        widget.existingEntry ??
+        UserMediaEntry(
+          key: widget.mediaKey,
+          title: widget.mediaDetail?.item.title ?? '',
+        );
     // Fresh values fall back to `current`'s own — see
     // [durationFieldsFrom]'s doc comment.
     final fresh = durationFieldsFrom(widget.mediaDetail);

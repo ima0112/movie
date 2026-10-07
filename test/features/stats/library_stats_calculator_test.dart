@@ -18,16 +18,19 @@ void main() {
         'separately, over watched entries of each type', () {
       final entries = [
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(1),
           watchedAt: DateTime(2024, 1, 1),
           runtimeMinutes: 120,
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(2),
           watchedAt: DateTime(2024, 1, 1),
           runtimeMinutes: 90,
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _tvShow(1),
           watchedAt: DateTime(2024, 1, 1),
           episodeCount: 10,
@@ -47,6 +50,7 @@ void main() {
       () {
         final entries = [
           UserMediaEntry(
+            title: 'Test Title',
             key: _tvShow(1),
             watchedAt: DateTime(2024, 1, 1),
             episodeCount: 8,
@@ -63,8 +67,16 @@ void main() {
     test('entries with no duration fields at all contribute 0 hours, not an '
         'error — movies and TV shows both', () {
       final entries = [
-        UserMediaEntry(key: _movie(1), watchedAt: DateTime(2024, 1, 1)),
-        UserMediaEntry(key: _tvShow(1), watchedAt: DateTime(2024, 1, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(1),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _tvShow(1),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
       ];
 
       final stats = calculateLibraryStats(entries);
@@ -75,7 +87,12 @@ void main() {
 
     test('unwatched entries never contribute, even with duration data', () {
       final entries = [
-        UserMediaEntry(key: _movie(1), isFavorite: true, runtimeMinutes: 200),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(1),
+          isFavorite: true,
+          runtimeMinutes: 200,
+        ),
       ];
 
       final stats = calculateLibraryStats(entries);
@@ -88,10 +105,26 @@ void main() {
   group('calculateLibraryStats — moviesWatched / tvShowsWatched', () {
     test('counts only watched entries of each type', () {
       final entries = [
-        UserMediaEntry(key: _movie(1), watchedAt: DateTime(2024, 1, 1)),
-        UserMediaEntry(key: _movie(2), isFavorite: true), // not watched
-        UserMediaEntry(key: _tvShow(1), watchedAt: DateTime(2024, 1, 1)),
-        UserMediaEntry(key: _tvShow(2), watchedAt: DateTime(2024, 1, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(1),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(2),
+          isFavorite: true,
+        ), // not watched
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _tvShow(1),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _tvShow(2),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
       ];
 
       final stats = calculateLibraryStats(entries);
@@ -105,11 +138,13 @@ void main() {
     test('a type filter scopes every field to that type only', () {
       final entries = [
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(1),
           watchedAt: DateTime(2024, 1, 1),
           runtimeMinutes: 120,
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _tvShow(1),
           watchedAt: DateTime(2024, 1, 1),
           episodeCount: 10,
@@ -133,16 +168,19 @@ void main() {
     test('averages only ratings that exist, ignoring unrated entries', () {
       final entries = [
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(1),
           watchedAt: DateTime(2024, 1, 1),
           rating: 4,
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(2),
           watchedAt: DateTime(2024, 1, 1),
           rating: 2,
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(3),
           watchedAt: DateTime(2024, 1, 1),
         ), // no rating
@@ -163,10 +201,26 @@ void main() {
   group('calculateLibraryStats — mostWatchedYear', () {
     test('picks the year with the most watched entries', () {
       final entries = [
-        UserMediaEntry(key: _movie(1), watchedAt: DateTime(2023, 5, 1)),
-        UserMediaEntry(key: _movie(2), watchedAt: DateTime(2024, 1, 1)),
-        UserMediaEntry(key: _movie(3), watchedAt: DateTime(2024, 6, 1)),
-        UserMediaEntry(key: _movie(4), watchedAt: DateTime(2024, 11, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(1),
+          watchedAt: DateTime(2023, 5, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(2),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(3),
+          watchedAt: DateTime(2024, 6, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(4),
+          watchedAt: DateTime(2024, 11, 1),
+        ),
       ];
 
       final stats = calculateLibraryStats(entries);
@@ -176,10 +230,26 @@ void main() {
 
     test('a tie between years is broken by the more recent one', () {
       final entries = [
-        UserMediaEntry(key: _movie(1), watchedAt: DateTime(2022, 1, 1)),
-        UserMediaEntry(key: _movie(2), watchedAt: DateTime(2022, 6, 1)),
-        UserMediaEntry(key: _movie(3), watchedAt: DateTime(2024, 1, 1)),
-        UserMediaEntry(key: _movie(4), watchedAt: DateTime(2024, 6, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(1),
+          watchedAt: DateTime(2022, 1, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(2),
+          watchedAt: DateTime(2022, 6, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(3),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(4),
+          watchedAt: DateTime(2024, 6, 1),
+        ),
       ];
 
       final stats = calculateLibraryStats(entries);
@@ -199,12 +269,28 @@ void main() {
       final now = DateTime(2024, 6, 15);
       final entries = [
         // Current month.
-        UserMediaEntry(key: _movie(1), watchedAt: DateTime(2024, 6, 1)),
-        UserMediaEntry(key: _movie(2), watchedAt: DateTime(2024, 6, 10)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(1),
+          watchedAt: DateTime(2024, 6, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(2),
+          watchedAt: DateTime(2024, 6, 10),
+        ),
         // 11 months ago — the oldest month still in the window.
-        UserMediaEntry(key: _movie(3), watchedAt: DateTime(2023, 7, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(3),
+          watchedAt: DateTime(2023, 7, 1),
+        ),
         // Outside the 12-month window entirely.
-        UserMediaEntry(key: _movie(4), watchedAt: DateTime(2023, 1, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(4),
+          watchedAt: DateTime(2023, 1, 1),
+        ),
       ];
 
       final stats = calculateLibraryStats(entries, now: now);
@@ -253,21 +339,25 @@ void main() {
         'most-watched first', () {
       final entries = [
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(1),
           watchedAt: DateTime(2024, 1, 1),
           genres: const [_action, _drama],
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(2),
           watchedAt: DateTime(2024, 1, 1),
           genres: const [_action],
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _tvShow(1),
           watchedAt: DateTime(2024, 1, 1),
           genres: const [_comedy],
         ),
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(3),
           watchedAt: DateTime(2024, 1, 1),
           genres: const [_action, _comedy],
@@ -284,6 +374,7 @@ void main() {
     test("an unwatched entry's genres never count", () {
       final entries = [
         UserMediaEntry(
+          title: 'Test Title',
           key: _movie(1),
           isFavorite: true,
           genres: const [_action],
@@ -298,8 +389,13 @@ void main() {
     test('an entry with no genres at all (saved before that field existed) '
         "simply doesn't contribute, rather than breaking the ranking", () {
       final entries = [
-        UserMediaEntry(key: _movie(1), watchedAt: DateTime(2024, 1, 1)),
         UserMediaEntry(
+          title: 'Test Title',
+          key: _movie(1),
+          watchedAt: DateTime(2024, 1, 1),
+        ),
+        UserMediaEntry(
+          title: 'Test Title',
           key: _movie(2),
           watchedAt: DateTime(2024, 1, 1),
           genres: const [_drama],

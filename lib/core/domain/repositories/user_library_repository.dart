@@ -18,6 +18,10 @@ abstract interface class UserLibraryRepository {
 
   Future<Result<void>> remove(MediaKey key);
 
+  /// "Delete My List" (F11/C6) — every entry, regardless of
+  /// favorite/watch-later/watched state.
+  Future<Result<void>> clearAll();
+
   /// IDs only — used to exclude watched titles in the match engine and to
   /// publish into a Matcher room (capped at [limit], most recent first).
   Future<Result<List<MediaKey>>> watchedKeys(

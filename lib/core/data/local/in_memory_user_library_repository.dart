@@ -71,6 +71,13 @@ class InMemoryUserLibraryRepository implements UserLibraryRepository {
   }
 
   @override
+  Future<Result<void>> clearAll() async {
+    _entries.clear();
+    _changes.add(null);
+    return const Success(null);
+  }
+
+  @override
   Future<Result<List<MediaKey>>> watchedKeys(
     MediaType type, {
     int limit = 500,

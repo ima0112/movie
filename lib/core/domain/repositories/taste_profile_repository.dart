@@ -15,4 +15,10 @@ abstract interface class TasteProfileRepository {
   Stream<TasteProfile?> watch();
 
   Future<Result<void>> save(TasteProfile profile);
+
+  /// "Delete My Tastes" (F11/C6) — back to `null`, same as never having
+  /// built one. Doesn't touch `UserProfile` or the onboarding flag
+  /// (deliberately separate facts — see this interface's own doc
+  /// comment and `OnboardingRepository`'s).
+  Future<Result<void>> delete();
 }

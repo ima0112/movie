@@ -148,6 +148,7 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
         _latestEntry ??
         UserMediaEntry(
           key: widget.mediaKey,
+          title: widget.mediaDetail.item.title,
           genres: widget.mediaDetail.item.genres,
         );
     unawaited(widget.userLibraryRepository.upsert(transform(current)));

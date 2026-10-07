@@ -68,15 +68,14 @@ class SurpriseResultContent extends StatelessWidget {
             // MatchResult so this can show the real figure.
             Text(
               'We broadened the search a bit to find this match.',
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.inkMuted,
-              ),
+              style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
             ),
           ],
           const SizedBox(height: AppSpacing.xl),
           PrimaryButton(
             label: 'Add to Watch later',
-            onTap: () => _addToWatchLater(context, item.key, item.genres),
+            onTap: () =>
+                _addToWatchLater(context, item.key, item.title, item.genres),
           ),
           const SizedBox(height: AppSpacing.md),
           SecondaryButton(
@@ -91,12 +90,20 @@ class SurpriseResultContent extends StatelessWidget {
   Future<void> _addToWatchLater(
     BuildContext context,
     MediaKey key,
+    String title,
     List<Genre> genres,
   ) async {
     final messenger = ScaffoldMessenger.of(context);
     await getIt<UserLibraryRepository>().upsert(
-      UserMediaEntry(key: key, isWatchLater: true, genres: genres),
+      UserMediaEntry(
+        key: key,
+        title: title,
+        isWatchLater: true,
+        genres: genres,
+      ),
     );
-    messenger.showSnackBar(const SnackBar(content: Text('Added to Watch later')));
+    messenger.showSnackBar(
+      const SnackBar(content: Text('Added to Watch later')),
+    );
   }
 }

@@ -53,6 +53,18 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
     }
   }
 
+  @override
+  Future<Result<void>> delete() async {
+    try {
+      await (_db.delete(
+        _db.tasteProfileTable,
+      )..where((row) => row.id.equals(0))).go();
+      return const Success(null);
+    } catch (e) {
+      return Failure('Could not delete taste profile: $e');
+    }
+  }
+
   static TasteProfile _toProfile(TasteProfileRow row) {
     return TasteProfile(
       likedGenres: _deserializeGenres(row.likedGenres),
