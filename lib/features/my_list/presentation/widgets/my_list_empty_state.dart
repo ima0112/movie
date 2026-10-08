@@ -32,7 +32,7 @@ class MyListEmptyState extends StatelessWidget {
     return EmptyStateView(
       title: tab.localizedEmptyHeadline(context.l10n),
       body: otherTabsNote,
-      ctaLabel: 'Explore',
+      ctaLabel: context.l10n.navTabExplore,
       onCtaTap: onExploreTap,
     );
   }
@@ -59,8 +59,8 @@ class MyListFilteredEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateView(
       title: title,
-      body: 'Try adjusting your filters.',
-      ctaLabel: 'See all',
+      body: context.l10n.filteredListEmptyBody,
+      ctaLabel: context.l10n.discoverSeeAll,
       onCtaTap: onSeeAllTap,
     );
   }

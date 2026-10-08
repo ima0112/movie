@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../cubit/my_list_cubit.dart';
 import 'my_list_filter_sheet.dart';
 
@@ -26,7 +27,7 @@ class MyListTopBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('My List', style: AppTextStyles.h2),
+          Text(context.l10n.navTabMyList, style: AppTextStyles.h2),
           BlocSelector<MyListCubit, MyListFilterState, bool>(
             selector: (state) => !state.currentFilter.isDefault,
             builder: (context, isActive) {

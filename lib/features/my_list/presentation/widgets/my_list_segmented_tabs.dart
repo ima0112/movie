@@ -82,7 +82,7 @@ class _Segment extends StatelessWidget {
                     color: isSelected ? AppColors.surface : AppColors.inkMuted,
                   ),
                   child: Text(
-                    '$label ($count)',
+                    context.l10n.myListSegmentLabelWithCount(label, count),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

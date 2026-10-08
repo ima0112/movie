@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 
 /// H9's minimum-rating and hide-watched rows, split out of
 /// `my_list_filter_sheet.dart` per CLAUDE.md rule 11. Pure presentation —
@@ -60,7 +61,7 @@ class HideWatchedFilterRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Hide what I've watched", style: AppTextStyles.body),
+        Text(context.l10n.myListHideWatchedToggle, style: AppTextStyles.body),
         Switch(
           value: hideWatched,
           onChanged: onChanged,

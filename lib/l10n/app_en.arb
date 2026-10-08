@@ -413,5 +413,91 @@
         "type": "int"
       }
     }
+  },
+
+  "libraryRowDateToday": "Today",
+  "libraryRowDateYesterday": "Yesterday",
+  "libraryRowDateDaysAgo": "{count} days ago",
+  "@libraryRowDateDaysAgo": {
+    "description": "LibraryRow's relative watched-date, for 2–6 days ago (docs/SCREENS.md B4's \"short date\"). This control's own switch never produces count == 1 (that's the separate libraryRowDateYesterday branch), so there's deliberately no ICU plural rule here — a locale is still free to inflect {count} itself however it needs within this one template.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "myListUndoAction": "Undo",
+  "@myListUndoAction": {
+    "description": "B4's swipe-to-remove SnackBarAction label, next to the tab-specific myListRemovedFromTab message."
+  },
+  "myListBodyOtherTabsNote": "Explore to add movies and shows here.",
+  "@myListBodyOtherTabsNote": {
+    "description": "B4's empty-state body line when a whole tab has zero entries (MyListEmptyState.otherTabsNote)."
+  },
+  "myListBodyEmptyFilterTitle": "Nothing matches your filters",
+  "@myListBodyEmptyFilterTitle": {
+    "description": "B4's own filtered-empty-state headline when no type filter is active. Deliberately distinct from C1's filteredListEmptyTitle (\"Nothing matches these filters\") — different screen, different exact wording in the existing code, preserved as its own key rather than merged."
+  },
+
+  "myListSeasonsCount": "{count, plural, =1{1 season} other{{count} seasons}}",
+  "@myListSeasonsCount": {
+    "description": "A TV show row's metadata line (B4) — season count.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myListRuntimeHoursMinutes": "{hours} h {minutes} min",
+  "@myListRuntimeHoursMinutes": {
+    "description": "A movie row's metadata line (B4) — runtime, for anything an hour or longer.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "myListRuntimeMinutesOnly": "{minutes} min",
+  "@myListRuntimeMinutesOnly": {
+    "description": "Same as myListRuntimeHoursMinutes, for a runtime under an hour.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+
+  "myListSortRecent": "Recent",
+  "myListSortTitleAz": "Title A–Z",
+  "myListSortTmdbRating": "TMDB rating",
+  "@myListSortTmdbRating": {
+    "description": "B4's sort-by chip — \"TMDB\" stays untranslated in every locale, only \"rating\" translates."
+  },
+  "myListSortMyRating": "My rating",
+  "myListSortDateWatched": "Date watched",
+
+  "myListFilterSheetTitle": "Sort and filter",
+  "commonApply": "Apply",
+  "@commonApply": {
+    "description": "B4's own filter sheet \"Apply\" button — a generic enough verb other sheets may reuse later."
+  },
+
+  "myListHideWatchedToggle": "Hide what I've watched",
+
+  "myListSegmentLabelWithCount": "{label} ({count})",
+  "@myListSegmentLabelWithCount": {
+    "description": "B4's segmented tab label with its own live count, e.g. \"Favorites (12)\". {label} is that LibraryTab's own localized label (LibraryTabLocalization.localizedLabel).",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }
