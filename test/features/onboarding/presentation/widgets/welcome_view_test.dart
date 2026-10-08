@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/features/onboarding/presentation/widgets/welcome_view.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 /// CLAUDE.md rule 14's own checklist, enforced for step 0.
 Widget _wrap(Widget child) {
   return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: MediaQuery(
       data: const MediaQueryData(
         size: Size(390, 844),

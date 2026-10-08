@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/pako_state.dart';
 import 'name_step_form.dart';
@@ -112,7 +113,7 @@ class _NameStepState extends State<NameStep> {
           ],
         ),
         footer: PrimaryButton(
-          label: 'Next',
+          label: context.l10n.commonNext,
           isDisabled: !widget.isValid,
           onTap: widget.isValid ? widget.onNext : null,
         ),

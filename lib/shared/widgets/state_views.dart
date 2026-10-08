@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
 import 'app_buttons.dart';
 import 'pako_state.dart';
 
@@ -218,7 +219,7 @@ class ErrorStateView extends StatelessWidget {
     return _StateLayout(
       title: title,
       body: body,
-      ctaLabel: 'Retry',
+      ctaLabel: context.l10n.commonRetry,
       onCtaTap: onRetry,
     );
   }
@@ -246,7 +247,7 @@ class OfflineBanner extends StatelessWidget {
           vertical: AppSpacing.xs,
         ),
         child: Text(
-          'Offline',
+          context.l10n.offlineBannerMessage,
           textAlign: TextAlign.center,
           style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
         ),

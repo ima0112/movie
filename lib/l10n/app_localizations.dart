@@ -505,6 +505,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No TV shows here'**
   String get myListFilteredEmptyTvShowTitle;
+
+  /// ErrorStateView's fixed CTA label (docs/SCREENS.md G: "Error: same layout with 'Retry'.").
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get commonRetry;
+
+  /// A step/form's "move forward" button — onboarding's NameStep and GenreStep (liked step) both use this exact word.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get commonNext;
+
+  /// OnboardingScaffold's header skip link, shown on any step that allows skipping.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get commonSkip;
+
+  /// No description provided for @navTabDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get navTabDiscover;
+
+  /// No description provided for @navTabExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get navTabExplore;
+
+  /// No description provided for @navTabMyList.
+  ///
+  /// In en, this message translates to:
+  /// **'My List'**
+  String get navTabMyList;
+
+  /// The bottom bar's 4th tab label — also referenced by onboardingTastesSavedSnackbar's own "Edit in You" wording, so keep both in sync if either changes.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get navTabYou;
+
+  /// OfflineBanner's persistent top banner text (docs/SCREENS.md G).
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offlineBannerMessage;
+
+  /// A2's finish() snackbar when saving the onboarding profile fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong — let\'s try again.'**
+  String get onboardingSaveError;
+
+  /// A2's exit snackbar when finish() succeeds and at least one genre was picked (docs/SCREENS.md A2). "You" here is the same word as navTabYou — keep them matching.
+  ///
+  /// In en, this message translates to:
+  /// **'Tastes saved · Edit in You'**
+  String get onboardingTastesSavedSnackbar;
+
+  /// No description provided for @onboardingGenreStep2Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 3'**
+  String get onboardingGenreStep2Label;
+
+  /// No description provided for @onboardingGenreStep3Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3 of 3'**
+  String get onboardingGenreStep3Label;
+
+  /// No description provided for @onboardingGenreStep2Headline.
+  ///
+  /// In en, this message translates to:
+  /// **'What genres do you like?'**
+  String get onboardingGenreStep2Headline;
+
+  /// No description provided for @onboardingGenreStep3Headline.
+  ///
+  /// In en, this message translates to:
+  /// **'And which ones never?'**
+  String get onboardingGenreStep3Headline;
+
+  /// The single word inside onboardingGenreStep3Headline that GenreStepHeadline renders in amber — it's found by a literal substring search (text.indexOf(word)), so a translation MUST keep this exact word as a literal substring of its own translated onboardingGenreStep3Headline, not just a loose paraphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'never'**
+  String get onboardingGenreStep3HighlightWord;
+
+  /// Step 3's own main button label — the flow's last action, distinct from commonNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get onboardingGenreStep3NextLabel;
+
+  /// No description provided for @onboardingNameHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your name?'**
+  String get onboardingNameHeadline;
+
+  /// No description provided for @onboardingNameBody.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s what I\'ll call you, and how others will see you in rooms.'**
+  String get onboardingNameBody;
+
+  /// No description provided for @onboardingNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get onboardingNameHint;
+
+  /// No description provided for @onboardingWelcomeHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, I\'m Pako'**
+  String get onboardingWelcomeHeadline;
+
+  /// No description provided for @onboardingWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll help you find something to watch, alone or with friends.'**
+  String get onboardingWelcomeSubtitle;
+
+  /// No description provided for @onboardingWelcomeGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingWelcomeGetStarted;
+
+  /// Welcome step's attribution caption — "TMDB" stays untranslated in every locale, same as PakoTV's own name.
+  ///
+  /// In en, this message translates to:
+  /// **'Data from TMDB'**
+  String get onboardingWelcomeTmdbAttribution;
 }
 
 class _AppLocalizationsDelegate

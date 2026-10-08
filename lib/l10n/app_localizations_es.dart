@@ -233,4 +233,76 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get myListFilteredEmptyTvShowTitle => 'No hay series aquí';
+
+  @override
+  String get commonRetry => 'Reintentar';
+
+  @override
+  String get commonNext => 'Siguiente';
+
+  @override
+  String get commonSkip => 'Omitir';
+
+  @override
+  String get navTabDiscover => 'Descubrir';
+
+  @override
+  String get navTabExplore => 'Explorar';
+
+  @override
+  String get navTabMyList => 'Mi lista';
+
+  @override
+  String get navTabYou => 'Tú';
+
+  @override
+  String get offlineBannerMessage => 'Sin conexión';
+
+  @override
+  String get onboardingSaveError => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get onboardingTastesSavedSnackbar =>
+      'Gustos guardados · Edítalos en Tú';
+
+  @override
+  String get onboardingGenreStep2Label => 'Paso 2 de 3';
+
+  @override
+  String get onboardingGenreStep3Label => 'Paso 3 de 3';
+
+  @override
+  String get onboardingGenreStep2Headline => '¿Qué géneros te gustan?';
+
+  @override
+  String get onboardingGenreStep3Headline => '¿Y cuáles nunca?';
+
+  @override
+  String get onboardingGenreStep3HighlightWord => 'nunca';
+
+  @override
+  String get onboardingGenreStep3NextLabel => 'Listo';
+
+  @override
+  String get onboardingNameHeadline => '¿Cómo te llamas?';
+
+  @override
+  String get onboardingNameBody =>
+      'Así te llamaré, y así te verán los demás en las salas.';
+
+  @override
+  String get onboardingNameHint => 'Tu nombre';
+
+  @override
+  String get onboardingWelcomeHeadline => 'Hola, soy Pako';
+
+  @override
+  String get onboardingWelcomeSubtitle =>
+      'Te ayudaré a encontrar algo que ver, solo o con amigos.';
+
+  @override
+  String get onboardingWelcomeGetStarted => 'Empezar';
+
+  @override
+  String get onboardingWelcomeTmdbAttribution => 'Datos de TMDB';
 }
