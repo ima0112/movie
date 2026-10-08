@@ -7,6 +7,7 @@ import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/explore_filter_sheet.dart';
 import '../../../../shared/widgets/media_segmented_control.dart';
 import '../cubit/explore_cubit.dart';
@@ -36,7 +37,7 @@ class ExploreHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Explore', style: AppTextStyles.h2),
+              Text(context.l10n.navTabExplore, style: AppTextStyles.h2),
               const SizedBox(height: AppSpacing.md),
               const _ExploreSearchBar(),
             ],
@@ -76,14 +77,14 @@ class _ExploreSearchBar extends StatelessWidget {
   void _openFilterSheet(BuildContext context) {
     final cubit = context.read<ExploreCubit>();
     final segment = cubit.state.segment;
+    final title = context.l10n.exploreDefaultResultsTitle;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (_) => ExploreFilterSheet(
         initialFilter: DiscoverFilter(type: segment.mediaType),
         mediaRepository: getIt<MediaRepository>(),
-        onApply: (filter) =>
-            cubit.openListing(filter: filter, title: 'Results'),
+        onApply: (filter) => cubit.openListing(filter: filter, title: title),
       ),
     );
   }

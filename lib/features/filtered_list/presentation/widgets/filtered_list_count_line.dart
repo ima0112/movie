@@ -22,7 +22,10 @@ class FilteredListCountLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '$count results · ${sortBy.localizedLabel(context.l10n)}',
+      context.l10n.filteredListCountLine(
+        count,
+        sortBy.localizedLabel(context.l10n),
+      ),
       style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
     );
   }

@@ -118,6 +118,8 @@ class _ResultRow extends StatelessWidget {
   static String _metadata(MediaItem item, AppLocalizations l10n) {
     final year = item.releaseDate?.year;
     final typeLabel = item.type.localizedSingular(l10n);
-    return year == null ? typeLabel : '$year · $typeLabel';
+    return year == null
+        ? typeLabel
+        : l10n.exploreResultMetadata(year, typeLabel);
   }
 }

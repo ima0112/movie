@@ -33,18 +33,17 @@ class ExploreContent extends StatelessWidget {
         return switch (state) {
           ExploreAtRest() => _AtRestContent(state: state),
           ExploreSearchLoading() => const ExploreSearchSkeleton(),
-          ExploreSearchLoaded() when state.results.isEmpty =>
-            const EmptyStateView(
-              title: 'No results',
-              body: 'Try another title',
-            ),
+          ExploreSearchLoaded() when state.results.isEmpty => EmptyStateView(
+            title: context.l10n.exploreNoResults,
+            body: context.l10n.exploreTryAnotherTitle,
+          ),
           ExploreSearchLoaded() => SearchResultsList(
             results: state.results,
             segment: state.segment,
             onTap: (item) => context.pushMediaDetail(item.key),
           ),
           ExploreSearchError(:final reason) => ErrorStateView(
-            title: "Couldn't load",
+            title: context.l10n.commonCouldntLoad,
             body: reason.localizedMessage(context.l10n),
             onRetry: () =>
                 context.read<ExploreCubit>().runRecentSearch(state.query),
@@ -76,7 +75,7 @@ class _AtRestContent extends StatelessWidget {
         ),
         if (state.recentSearches.isNotEmpty)
           const SizedBox(height: AppSpacing.xl),
-        Text('Genres', style: AppTextStyles.h3),
+        Text(context.l10n.commonGenres, style: AppTextStyles.h3),
         const SizedBox(height: AppSpacing.md),
         // GenreCatalog isn't segmented by media type yet (see its own doc
         // comment — the TMDB-id-per-type mapping that would make "genres

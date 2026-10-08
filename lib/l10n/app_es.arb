@@ -114,5 +114,49 @@
   "onboardingWelcomeHeadline": "Hola, soy Pako",
   "onboardingWelcomeSubtitle": "Te ayudaré a encontrar algo que ver, solo o con amigos.",
   "onboardingWelcomeGetStarted": "Empezar",
-  "onboardingWelcomeTmdbAttribution": "Datos de TMDB"
+  "onboardingWelcomeTmdbAttribution": "Datos de TMDB",
+
+  "commonCouldntLoad": "No se pudo cargar",
+  "commonReset": "Restablecer",
+  "commonCancel": "Cancelar",
+  "commonClearAll": "Borrar todo",
+  "commonGenres": "Géneros",
+
+  "carouselSectionForYou": "Para ti",
+  "carouselSectionPopularThisWeek": "Popular esta semana",
+  "carouselSectionBecauseYouLike": "Porque te gusta…",
+  "carouselSectionInTheaters": "En cines",
+  "carouselSectionTrending": "Tendencias",
+  "carouselSectionTopRated": "Mejor valoradas",
+  "carouselSectionUpcoming": "Próximamente",
+  "carouselSectionAiringNow": "En emisión ahora",
+  "carouselSectionPopular": "Populares",
+
+  "exploreNoResults": "Sin resultados",
+  "exploreTryAnotherTitle": "Prueba con otro título",
+  "exploreDefaultResultsTitle": "Resultados",
+  "exploreSearchHint": "Películas, series, personas",
+  "exploreRecentSearchesLabel": "Recientes",
+  "exploreResultMetadata": "{year} · {typeLabel}",
+
+  "filteredListYearRangeChip": "{from}–{to}",
+  "filteredListMinRatingChip": "Valoración {rating}+",
+  "filteredListMaxRuntimeChip": "Menos de {minutes} min",
+  "filteredListEmptyTitle": "Nada coincide con estos filtros",
+  "filteredListEmptyBody": "Prueba a ajustar tus filtros.",
+  "filteredListCountLine": "{count, plural, =1{1 resultado} other{{count} resultados}} · {sortLabel}",
+
+  "filterSheetTitle": "Filtros",
+  "filterSheetSectionType": "Tipo",
+  "filterSheetSectionYear": "Año",
+  "filterSheetSectionMinRating": "Valoración mínima",
+  "filterSheetSectionMaxRuntime": "Duración máxima",
+  "filterSheetSectionStatus": "Estado",
+  "filterSheetSectionSortBy": "Ordenar por",
+  "filterSheetSeeResultsLoading": "Ver resultados",
+  "filterSheetSeeResultsCount": "Ver {count, plural, =1{1 resultado} other{{count} resultados}}",
+
+  "discoverRangeFiltersYearRange": "{from} – {to}",
+  "discoverRangeFiltersNoLimit": "Sin límite",
+  "discoverRangeFiltersMinutes": "{value} min"
 }

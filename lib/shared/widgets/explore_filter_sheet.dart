@@ -8,6 +8,7 @@ import '../../core/domain/entities/result.dart';
 import '../../core/domain/repositories/media_repository.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
 import 'discover_range_filters.dart';
 import 'discover_sort_chips.dart';
 import 'explore_filter_actions.dart';
@@ -93,6 +94,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
   Widget build(BuildContext context) {
     final isMovieOnly = _draft.type == MediaType.movie;
     final isTvOnly = _draft.type == MediaType.tvShow;
+    final l10n = context.l10n;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -101,15 +103,15 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Filters', style: AppTextStyles.h2),
+            Text(l10n.filterSheetTitle, style: AppTextStyles.h2),
             const SizedBox(height: AppSpacing.xl),
-            const FilterSectionLabel('Type'),
+            FilterSectionLabel(l10n.filterSheetSectionType),
             TypeFilterChips(
               type: _draft.type,
               onChanged: (type) => _setDraft(_draft.copyWith(type: () => type)),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const FilterSectionLabel('Genres'),
+            FilterSectionLabel(l10n.commonGenres),
             GenreMultiSelectChips(
               genres: GenreCatalog.all,
               selected: _draft.withGenres,
@@ -118,7 +120,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const FilterSectionLabel('Year'),
+            FilterSectionLabel(l10n.filterSheetSectionYear),
             YearRangeFilter(
               yearFrom: _draft.yearFrom,
               yearTo: _draft.yearTo,
@@ -127,7 +129,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const FilterSectionLabel('Minimum rating'),
+            FilterSectionLabel(l10n.filterSheetSectionMinRating),
             MinRatingFilter(
               minVoteAverage: _draft.minVoteAverage,
               onChanged: (value) =>
@@ -135,7 +137,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
             ),
             if (isMovieOnly) ...[
               const SizedBox(height: AppSpacing.lg),
-              const FilterSectionLabel('Max runtime'),
+              FilterSectionLabel(l10n.filterSheetSectionMaxRuntime),
               MaxRuntimeFilter(
                 maxRuntimeMinutes: _draft.maxRuntimeMinutes,
                 onChanged: (value) =>
@@ -144,7 +146,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
             ],
             if (isTvOnly) ...[
               const SizedBox(height: AppSpacing.lg),
-              const FilterSectionLabel('Status'),
+              FilterSectionLabel(l10n.filterSheetSectionStatus),
               TvStatusToggle(
                 status: _draft.tvStatus,
                 onChanged: (status) =>
@@ -152,7 +154,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
               ),
             ],
             const SizedBox(height: AppSpacing.lg),
-            const FilterSectionLabel('Sort by'),
+            FilterSectionLabel(l10n.filterSheetSectionSortBy),
             DiscoverSortChips(
               sortBy: _draft.sortBy,
               onChanged: (sortBy) => _setDraft(_draft.copyWith(sortBy: sortBy)),

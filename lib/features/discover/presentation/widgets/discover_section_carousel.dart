@@ -10,6 +10,7 @@ import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/carousel_section_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 import '../cubit/discover_cubit.dart';
@@ -87,10 +88,11 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final label = section.localizedLabel(context.l10n);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(_sectionLabel(section), style: AppTextStyles.h2),
+        Text(label, style: AppTextStyles.h2),
         GestureDetector(
           // C1: "'See all' from B1 (arrives with the collection's name
           // and no filters)" — `collectionSection` is what lets C1 fetch
@@ -101,7 +103,7 @@ class _SectionHeader extends StatelessWidget {
             AppRoutes.filteredList,
             extra: FilteredListRouteArgs(
               filter: DiscoverFilter(type: segment.mediaType),
-              title: _sectionLabel(section),
+              title: label,
               collectionSection: section,
             ),
           ),
@@ -114,16 +116,3 @@ class _SectionHeader extends StatelessWidget {
     );
   }
 }
-
-String _sectionLabel(CarouselSection section) => switch (section) {
-  CarouselSection.forYou => 'For You',
-  CarouselSection.popularThisWeek => 'Popular this week',
-  CarouselSection.becauseYouLike => 'Because you like…',
-  CarouselSection.watchLater => 'Watch later',
-  CarouselSection.inTheaters => 'In theaters',
-  CarouselSection.trending => 'Trending',
-  CarouselSection.topRated => 'Top rated',
-  CarouselSection.upcoming => 'Upcoming',
-  CarouselSection.airingNow => 'Airing now',
-  CarouselSection.popular => 'Popular',
-};

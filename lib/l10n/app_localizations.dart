@@ -643,6 +643,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Data from TMDB'**
   String get onboardingWelcomeTmdbAttribution;
+
+  /// Shared inline/section error title — Discover's per-section error row, Explore's search error, and C1's own error state all use this exact wording (docs/SCREENS.md B1/B2/C1).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load'**
+  String get commonCouldntLoad;
+
+  /// C1's empty-filtered-state CTA and H8's filter sheet reset button (docs/SCREENS.md C1/H8) — same word, same action, in both places.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get commonReset;
+
+  /// B2's search field "×"/Cancel control (docs/SCREENS.md B2).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
+  /// B2's "Recent" searches chip row clear-all action (docs/SCREENS.md B2).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get commonClearAll;
+
+  /// B2's own "Genres" grid section header and H8's "Genres" filter-sheet section label — same word in both places.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres'**
+  String get commonGenres;
+
+  /// No description provided for @carouselSectionForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For You'**
+  String get carouselSectionForYou;
+
+  /// No description provided for @carouselSectionPopularThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular this week'**
+  String get carouselSectionPopularThisWeek;
+
+  /// B1's "Because you like [genre]" carousel header — shown as a static label today, with no genre actually interpolated in yet (docs/SCREENS.md B1).
+  ///
+  /// In en, this message translates to:
+  /// **'Because you like…'**
+  String get carouselSectionBecauseYouLike;
+
+  /// No description provided for @carouselSectionInTheaters.
+  ///
+  /// In en, this message translates to:
+  /// **'In theaters'**
+  String get carouselSectionInTheaters;
+
+  /// No description provided for @carouselSectionTrending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending'**
+  String get carouselSectionTrending;
+
+  /// No description provided for @carouselSectionTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get carouselSectionTopRated;
+
+  /// No description provided for @carouselSectionUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get carouselSectionUpcoming;
+
+  /// No description provided for @carouselSectionAiringNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Airing now'**
+  String get carouselSectionAiringNow;
+
+  /// CarouselSection.popular — TV Shows segment only (docs/SCREENS.md B1). CarouselSection.watchLater reuses myListTabWatchLater instead of its own key.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get carouselSectionPopular;
+
+  /// No description provided for @exploreNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get exploreNoResults;
+
+  /// No description provided for @exploreTryAnotherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another title'**
+  String get exploreTryAnotherTitle;
+
+  /// C1's page title fallback when B1/B2 open it without a more specific name (docs/SCREENS.md C1: "title ('In theaters' / 'Horror' / 'Results')").
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get exploreDefaultResultsTitle;
+
+  /// No description provided for @exploreSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Movies, TV shows, people'**
+  String get exploreSearchHint;
+
+  /// No description provided for @exploreRecentSearchesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get exploreRecentSearchesLabel;
+
+  /// B2's search result row metadata line (docs/SCREENS.md B2: "'Year · Movie/TV Show'"). {typeLabel} is MediaType's own localized singular (mediaTypeMovieSingular/TvShowSingular).
+  ///
+  /// In en, this message translates to:
+  /// **'{year} · {typeLabel}'**
+  String exploreResultMetadata(int year, String typeLabel);
+
+  /// C1's active-filter chip for a year range, e.g. "1950–2024" (no spaces around the dash — distinct from discoverRangeFiltersYearRange's own spaced dash).
+  ///
+  /// In en, this message translates to:
+  /// **'{from}–{to}'**
+  String filteredListYearRangeChip(int from, int to);
+
+  /// C1's active-filter chip for a minimum-rating filter, e.g. "7.5+ rating". {rating} arrives already formatted to one decimal place.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating}+ rating'**
+  String filteredListMinRatingChip(String rating);
+
+  /// C1's active-filter chip for a max-runtime filter, e.g. "Under 120 min".
+  ///
+  /// In en, this message translates to:
+  /// **'Under {minutes} min'**
+  String filteredListMaxRuntimeChip(int minutes);
+
+  /// C1's empty-filtered-state headline (docs/SCREENS.md C1: "empty ('Nothing matches these filters' + 'Reset')").
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing matches these filters'**
+  String get filteredListEmptyTitle;
+
+  /// No description provided for @filteredListEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your filters.'**
+  String get filteredListEmptyBody;
+
+  /// C1's own count/sort line (docs/SCREENS.md C1: "line '312 results · Popularity'"). {sortLabel} is DiscoverSortBy's own localized label. Deliberately not ICU-pluralized in English — "1 results" is this control's existing (if ungrammatical) behavior, preserved as-is by this mechanical migration; a locale introducing this string for the first time (e.g. Spanish) is free to pluralize correctly since there's no prior behavior of its own to preserve.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} results · {sortLabel}'**
+  String filteredListCountLine(int count, String sortLabel);
+
+  /// No description provided for @filterSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filterSheetTitle;
+
+  /// No description provided for @filterSheetSectionType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get filterSheetSectionType;
+
+  /// No description provided for @filterSheetSectionYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get filterSheetSectionYear;
+
+  /// No description provided for @filterSheetSectionMinRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum rating'**
+  String get filterSheetSectionMinRating;
+
+  /// No description provided for @filterSheetSectionMaxRuntime.
+  ///
+  /// In en, this message translates to:
+  /// **'Max runtime'**
+  String get filterSheetSectionMaxRuntime;
+
+  /// No description provided for @filterSheetSectionStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get filterSheetSectionStatus;
+
+  /// No description provided for @filterSheetSectionSortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get filterSheetSectionSortBy;
+
+  /// H8's "See N results" button while the live count hasn't resolved yet — no number shown (docs/SCREENS.md H8).
+  ///
+  /// In en, this message translates to:
+  /// **'See results'**
+  String get filterSheetSeeResultsLoading;
+
+  /// H8's "See N results" button once the live count has resolved (docs/SCREENS.md H8: "'See N results' (N live)"). Deliberately not ICU-pluralized in English for the same reason as filteredListCountLine — preserves this control's existing behavior exactly.
+  ///
+  /// In en, this message translates to:
+  /// **'See {count} results'**
+  String filterSheetSeeResultsCount(int count);
+
+  /// H8's year-range slider's own live value display, e.g. "1950 – 2024" (spaces around the dash — distinct from filteredListYearRangeChip's own unspaced dash).
+  ///
+  /// In en, this message translates to:
+  /// **'{from} – {to}'**
+  String discoverRangeFiltersYearRange(int from, int to);
+
+  /// A range slider's far end meaning "no upper bound" — matches A2 (onboarding/quiz)'s own wording for the same control, per this file's own cross-reference comment.
+  ///
+  /// In en, this message translates to:
+  /// **'No limit'**
+  String get discoverRangeFiltersNoLimit;
+
+  /// A runtime slider's own live value display, e.g. "120 min".
+  ///
+  /// In en, this message translates to:
+  /// **'{value} min'**
+  String discoverRangeFiltersMinutes(int value);
 }
 
 class _AppLocalizationsDelegate

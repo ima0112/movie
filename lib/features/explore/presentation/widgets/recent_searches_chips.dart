@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/app_chip.dart';
 
@@ -41,9 +42,12 @@ class RecentSearchesChips extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Recent', style: AppTextStyles.h3),
+            Text(
+              context.l10n.exploreRecentSearchesLabel,
+              style: AppTextStyles.h3,
+            ),
             TextLinkButton(
-              label: 'Clear all',
+              label: context.l10n.commonClearAll,
               onTap: onClearAll,
               fullWidth: false,
             ),

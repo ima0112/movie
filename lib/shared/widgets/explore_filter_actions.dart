@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_spacing.dart';
+import '../../l10n/l10n_extension.dart';
 import 'app_buttons.dart';
 
 /// H8's bottom row — "'Reset' and 'See N results' (N live) buttons"
@@ -26,17 +27,20 @@ class ExploreFilterActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Row(
       children: [
         if (showReset) ...[
           Expanded(
-            child: SecondaryButton(label: 'Reset', onTap: onReset),
+            child: SecondaryButton(label: l10n.commonReset, onTap: onReset),
           ),
           const SizedBox(width: AppSpacing.md),
         ],
         Expanded(
           child: PrimaryButton(
-            label: liveCount == null ? 'See results' : 'See $liveCount results',
+            label: liveCount == null
+                ? l10n.filterSheetSeeResultsLoading
+                : l10n.filterSheetSeeResultsCount(liveCount!),
             onTap: onApply,
           ),
         ),

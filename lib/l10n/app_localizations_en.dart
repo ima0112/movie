@@ -304,4 +304,134 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingWelcomeTmdbAttribution => 'Data from TMDB';
+
+  @override
+  String get commonCouldntLoad => 'Couldn\'t load';
+
+  @override
+  String get commonReset => 'Reset';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonClearAll => 'Clear all';
+
+  @override
+  String get commonGenres => 'Genres';
+
+  @override
+  String get carouselSectionForYou => 'For You';
+
+  @override
+  String get carouselSectionPopularThisWeek => 'Popular this week';
+
+  @override
+  String get carouselSectionBecauseYouLike => 'Because you like…';
+
+  @override
+  String get carouselSectionInTheaters => 'In theaters';
+
+  @override
+  String get carouselSectionTrending => 'Trending';
+
+  @override
+  String get carouselSectionTopRated => 'Top rated';
+
+  @override
+  String get carouselSectionUpcoming => 'Upcoming';
+
+  @override
+  String get carouselSectionAiringNow => 'Airing now';
+
+  @override
+  String get carouselSectionPopular => 'Popular';
+
+  @override
+  String get exploreNoResults => 'No results';
+
+  @override
+  String get exploreTryAnotherTitle => 'Try another title';
+
+  @override
+  String get exploreDefaultResultsTitle => 'Results';
+
+  @override
+  String get exploreSearchHint => 'Movies, TV shows, people';
+
+  @override
+  String get exploreRecentSearchesLabel => 'Recent';
+
+  @override
+  String exploreResultMetadata(int year, String typeLabel) {
+    return '$year · $typeLabel';
+  }
+
+  @override
+  String filteredListYearRangeChip(int from, int to) {
+    return '$from–$to';
+  }
+
+  @override
+  String filteredListMinRatingChip(String rating) {
+    return '$rating+ rating';
+  }
+
+  @override
+  String filteredListMaxRuntimeChip(int minutes) {
+    return 'Under $minutes min';
+  }
+
+  @override
+  String get filteredListEmptyTitle => 'Nothing matches these filters';
+
+  @override
+  String get filteredListEmptyBody => 'Try adjusting your filters.';
+
+  @override
+  String filteredListCountLine(int count, String sortLabel) {
+    return '$count results · $sortLabel';
+  }
+
+  @override
+  String get filterSheetTitle => 'Filters';
+
+  @override
+  String get filterSheetSectionType => 'Type';
+
+  @override
+  String get filterSheetSectionYear => 'Year';
+
+  @override
+  String get filterSheetSectionMinRating => 'Minimum rating';
+
+  @override
+  String get filterSheetSectionMaxRuntime => 'Max runtime';
+
+  @override
+  String get filterSheetSectionStatus => 'Status';
+
+  @override
+  String get filterSheetSectionSortBy => 'Sort by';
+
+  @override
+  String get filterSheetSeeResultsLoading => 'See results';
+
+  @override
+  String filterSheetSeeResultsCount(int count) {
+    return 'See $count results';
+  }
+
+  @override
+  String discoverRangeFiltersYearRange(int from, int to) {
+    return '$from – $to';
+  }
+
+  @override
+  String get discoverRangeFiltersNoLimit => 'No limit';
+
+  @override
+  String discoverRangeFiltersMinutes(int value) {
+    return '$value min';
+  }
 }

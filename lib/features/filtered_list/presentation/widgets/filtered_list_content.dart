@@ -36,14 +36,14 @@ class FilteredListContent extends StatelessWidget {
           FilteredListInitial() ||
           FilteredListLoading() => const FilteredListGridSkeleton(),
           FilteredListError(:final reason) => ErrorStateView(
-            title: "Couldn't load",
+            title: context.l10n.commonCouldntLoad,
             body: reason.localizedMessage(context.l10n),
             onRetry: () => context.read<FilteredListCubit>().retry(),
           ),
           FilteredListLoaded() when state.allItems.isEmpty => EmptyStateView(
-            title: 'Nothing matches these filters',
-            body: 'Try adjusting your filters.',
-            ctaLabel: state.filter.isDefault ? null : 'Reset',
+            title: context.l10n.filteredListEmptyTitle,
+            body: context.l10n.filteredListEmptyBody,
+            ctaLabel: state.filter.isDefault ? null : context.l10n.commonReset,
             onCtaTap: () => context.read<FilteredListCubit>().updateFilter(
               const DiscoverFilter(),
             ),
