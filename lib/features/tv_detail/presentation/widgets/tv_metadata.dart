@@ -1,4 +1,5 @@
 import '../../../../core/domain/entities/media_detail.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// D2's own metadata-line formatting — "2022–2024 · 3 seasons · 24
 /// episodes · TV-14" (`docs/SCREENS.md` D2; `media_detail_title_block
@@ -12,7 +13,7 @@ import '../../../../core/domain/entities/media_detail.dart';
 /// token in it, and `TvShowDetail.estimatedHours` already owns that
 /// same "45 min fallback" idea for C4 (Stats) — duplicating it here
 /// would just be a second, inconsistent place for the same number.
-String tvMetadataLine(TvShowDetail detail) {
+String tvMetadataLine(TvShowDetail detail, AppLocalizations l10n) {
   final firstYear = detail.firstAirDate?.year;
   final lastYear = detail.lastAirDate?.year;
   final yearRange = switch (firstYear) {
@@ -24,9 +25,8 @@ String tvMetadataLine(TvShowDetail detail) {
   final episodeCount = detail.numberOfEpisodes;
   return [
     ?yearRange,
-    if (seasonCount > 0) '$seasonCount season${seasonCount == 1 ? '' : 's'}',
-    if (episodeCount > 0)
-      '$episodeCount episode${episodeCount == 1 ? '' : 's'}',
+    if (seasonCount > 0) l10n.myListSeasonsCount(seasonCount),
+    if (episodeCount > 0) l10n.tvEpisodeCount(episodeCount),
     ?detail.certification,
   ].join(' · ');
 }

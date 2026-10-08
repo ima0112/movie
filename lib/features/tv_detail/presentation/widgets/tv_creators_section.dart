@@ -4,6 +4,7 @@ import '../../../../core/domain/entities/person.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 
 /// D2's "'Created by': names (→ D3)" (`docs/SCREENS.md` D2) — tappable
 /// names separated by "·", the same convention
@@ -34,7 +35,7 @@ class TvCreatorsSection extends StatelessWidget {
       child: Wrap(
         children: [
           Text(
-            'Created by ',
+            context.l10n.tvCreatedByLabel,
             style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
           ),
           for (var i = 0; i < creators.length; i++) ...[

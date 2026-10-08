@@ -98,7 +98,7 @@ class _TvDetailViewState extends State<_TvDetailView> {
                   children: [
                     Center(
                       child: ErrorStateView(
-                        title: "Couldn't load",
+                        title: context.l10n.commonCouldntLoad,
                         body: reason.localizedMessage(context.l10n),
                         onRetry: () => context.read<TvDetailCubit>().loadDetail(
                           widget.mediaKey,

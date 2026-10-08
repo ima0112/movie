@@ -1141,6 +1141,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{hours} h'**
   String statsHoursValue(String hours);
+
+  /// The tap-to-expand link at the end of a folded synopsis/biography (docs/SCREENS.md D1: "Synopsis folded to 4 lines with an amber 'Read more'") — shared by D1/D2's synopsis, D3's biography, and H4's episode overview.
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get commonReadMore;
+
+  /// D2's "Seasons" row and H4's own title both show a season's episode count (docs/SCREENS.md D2).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 episode} other{{count} episodes}}'**
+  String tvEpisodeCount(int count);
+
+  /// D2's creator credit (docs/SCREENS.md D2: "'Created by': names (→ D3)") — trailing space is deliberate, it precedes the first tappable name with no separator of its own.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by '**
+  String get tvCreatedByLabel;
+
+  /// No description provided for @tvSeasonsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seasons'**
+  String get tvSeasonsSectionTitle;
+
+  /// D2's "Seasons" row and H4's own title, for season 0 specifically — shown instead of "Season 0".
+  ///
+  /// In en, this message translates to:
+  /// **'Specials'**
+  String get tvSpecialsLabel;
+
+  /// D2's "Seasons" row and H4's own title, for any season other than 0 (see tvSpecialsLabel).
+  ///
+  /// In en, this message translates to:
+  /// **'Season {number}'**
+  String tvSeasonLabel(int number);
+
+  /// H4's own episode row — number + title (docs/SCREENS.md H4).
+  ///
+  /// In en, this message translates to:
+  /// **'{number}. {name}'**
+  String tvEpisodeRowTitle(int number, String name);
+
+  /// H4's episode row air date, for an episode with no air date yet ("To Be Announced").
+  ///
+  /// In en, this message translates to:
+  /// **'TBA'**
+  String get tvEpisodeTba;
 }
 
 class _AppLocalizationsDelegate

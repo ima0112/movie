@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/tv_creators_section.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 const _storer = Person(
   id: 1,
@@ -20,8 +21,10 @@ void main() {
   group('TvCreatorsSection', () {
     testWidgets('renders nothing when there are no creators', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvCreatorsSection(creators: [])),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: TvCreatorsSection(creators: const [])),
         ),
       );
 
@@ -30,8 +33,10 @@ void main() {
 
     testWidgets('one creator renders without a separator', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvCreatorsSection(creators: [_storer])),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: TvCreatorsSection(creators: const [_storer])),
         ),
       );
 
@@ -42,8 +47,12 @@ void main() {
 
     testWidgets('multiple creators separated by "·"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvCreatorsSection(creators: [_storer, _kripke])),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: TvCreatorsSection(creators: const [_storer, _kripke]),
+          ),
         ),
       );
 
@@ -58,6 +67,8 @@ void main() {
       Person? tapped;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: TvCreatorsSection(
               creators: const [_storer],

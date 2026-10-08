@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/tv_seasons_section.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 const _specials = SeasonSummary(
   seasonNumber: 0,
@@ -36,8 +37,10 @@ void main() {
   group('TvSeasonsSection', () {
     testWidgets('renders nothing when there are no seasons', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvSeasonsSection(seasons: [])),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: TvSeasonsSection(seasons: const [])),
         ),
       );
 
@@ -47,9 +50,13 @@ void main() {
     testWidgets('a non-empty specials season sorts after every regular '
         'season, labeled "Specials"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
-            body: TvSeasonsSection(seasons: [_specials, _season1, _season2]),
+            body: TvSeasonsSection(
+              seasons: const [_specials, _season1, _season2],
+            ),
           ),
         ),
       );
@@ -67,9 +74,11 @@ void main() {
     testWidgets('an empty specials season (no episodes) is dropped '
         'entirely', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
-            body: TvSeasonsSection(seasons: [_season1, _emptySpecials]),
+            body: TvSeasonsSection(seasons: const [_season1, _emptySpecials]),
           ),
         ),
       );
@@ -84,6 +93,8 @@ void main() {
       SeasonSummary? tapped;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: TvSeasonsSection(
               seasons: const [_season1],

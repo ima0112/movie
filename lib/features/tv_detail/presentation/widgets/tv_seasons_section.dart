@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/poster_image.dart';
 
 /// D2's "Seasons" section — `docs/SCREENS.md` D2: "list of rows
@@ -36,7 +37,7 @@ class TvSeasonsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Seasons', style: AppTextStyles.h2),
+          Text(context.l10n.tvSeasonsSectionTitle, style: AppTextStyles.h2),
           const SizedBox(height: AppSpacing.sm),
           for (final season in ordered)
             _SeasonRow(season: season, onTap: () => onSeasonTap?.call(season)),
@@ -65,12 +66,12 @@ class _SeasonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final label = season.seasonNumber == 0
-        ? 'Specials'
-        : 'Season ${season.seasonNumber}';
+        ? l10n.tvSpecialsLabel
+        : l10n.tvSeasonLabel(season.seasonNumber);
     final year = season.airDate?.year;
-    final episodeLabel =
-        '${season.episodeCount} episode${season.episodeCount == 1 ? '' : 's'}';
+    final episodeLabel = l10n.tvEpisodeCount(season.episodeCount);
     final metadata = [if (year != null) '$year', episodeLabel].join(' · ');
 
     return GestureDetector(

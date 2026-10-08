@@ -217,5 +217,15 @@
   "myTastesVibesLikeTitle": "Vibes que te gustan",
   "myTastesHowFarBackLabel": "Hasta cuándo",
 
-  "statsHoursValue": "{hours} h"
+  "statsHoursValue": "{hours} h",
+
+  "commonReadMore": "Leer más",
+
+  "tvEpisodeCount": "{count, plural, =1{1 episodio} other{{count} episodios}}",
+  "tvCreatedByLabel": "Creada por ",
+  "tvSeasonsSectionTitle": "Temporadas",
+  "tvSpecialsLabel": "Especiales",
+  "tvSeasonLabel": "Temporada {number}",
+  "tvEpisodeRowTitle": "{number}. {name}",
+  "tvEpisodeTba": "Por confirmar"
 }

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/season_episode_row.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 final _aired = Episode(
   episodeNumber: 1,
@@ -20,6 +21,8 @@ void main() {
     testWidgets('shows the episode number and title together', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: SeasonEpisodeRow(episode: _aired)),
         ),
       );
@@ -32,6 +35,8 @@ void main() {
     ) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: SeasonEpisodeRow(episode: _aired)),
         ),
       );
@@ -52,6 +57,8 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: SeasonEpisodeRow(episode: future)),
         ),
       );
@@ -72,6 +79,8 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: SeasonEpisodeRow(episode: noDate)),
         ),
       );
@@ -84,6 +93,8 @@ void main() {
     ) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: SeasonEpisodeRow(episode: _aired)),
         ),
       );

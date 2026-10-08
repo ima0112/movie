@@ -108,7 +108,7 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
                     // centers it explicitly.
                     Center(
                       child: ErrorStateView(
-                        title: "Couldn't load",
+                        title: context.l10n.commonCouldntLoad,
                         body: reason.localizedMessage(context.l10n),
                         onRetry: () => context
                             .read<MovieDetailCubit>()

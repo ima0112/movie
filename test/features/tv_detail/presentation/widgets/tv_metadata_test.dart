@@ -4,6 +4,7 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/tv_metadata.dart';
+import 'package:movies/l10n/app_localizations_en.dart';
 
 TvShowDetail _show({
   DateTime? firstAirDate,
@@ -57,6 +58,8 @@ const _season2 = SeasonSummary(
 );
 
 void main() {
+  final l10n = AppLocalizationsEn();
+
   group('tvMetadataLine', () {
     test('a multi-year, multi-season show joins year range, seasons, '
         'episodes, and certification', () {
@@ -68,6 +71,7 @@ void main() {
           numberOfEpisodes: 18,
           certification: 'TV-MA',
         ),
+        l10n,
       );
 
       expect(line, '2022–2024 · 2 seasons · 18 episodes · TV-MA');
@@ -82,6 +86,7 @@ void main() {
           seasons: [_season1],
           numberOfEpisodes: 8,
         ),
+        l10n,
       );
 
       expect(line, startsWith('2024 ·'));
@@ -94,6 +99,7 @@ void main() {
           seasons: [_season1],
           numberOfEpisodes: 1,
         ),
+        l10n,
       );
 
       expect(line, contains('1 season ·'));
@@ -101,7 +107,7 @@ void main() {
     });
 
     test('omits whatever field has no data, with no stray separators', () {
-      final line = tvMetadataLine(_show());
+      final line = tvMetadataLine(_show(), l10n);
 
       expect(line, '');
     });

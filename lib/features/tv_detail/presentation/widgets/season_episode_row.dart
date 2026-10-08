@@ -4,6 +4,7 @@ import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/still_image.dart';
 
 /// One H4 episode row — `docs/SCREENS.md` H4: "episode list (number,
@@ -32,6 +33,7 @@ class _SeasonEpisodeRowState extends State<SeasonEpisodeRow> {
     final episode = widget.episode;
     final airDate = episode.airDate;
     final hasAired = airDate == null || !airDate.isAfter(DateTime.now());
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
@@ -47,14 +49,14 @@ class _SeasonEpisodeRowState extends State<SeasonEpisodeRow> {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '${episode.episodeNumber}. ${episode.name}',
+            l10n.tvEpisodeRowTitle(episode.episodeNumber, episode.name),
             style: AppTextStyles.h3,
           ),
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
               Text(
-                airDate == null ? 'TBA' : _formatDate(airDate),
+                airDate == null ? l10n.tvEpisodeTba : _formatDate(airDate),
                 style: AppTextStyles.bodySm.copyWith(
                   color: hasAired ? AppColors.inkMuted : AppColors.accent,
                 ),
@@ -67,7 +69,7 @@ class _SeasonEpisodeRowState extends State<SeasonEpisodeRow> {
                   ),
                 ),
                 Text(
-                  '${episode.runtimeMinutes} min',
+                  l10n.myListRuntimeMinutesOnly(episode.runtimeMinutes!),
                   style: AppTextStyles.bodySm.copyWith(
                     color: AppColors.inkMuted,
                   ),
@@ -88,7 +90,7 @@ class _SeasonEpisodeRowState extends State<SeasonEpisodeRow> {
               GestureDetector(
                 onTap: () => setState(() => _expanded = true),
                 child: Text(
-                  'Read more',
+                  l10n.commonReadMore,
                   style: AppTextStyles.bodySm.copyWith(color: AppColors.accent),
                 ),
               ),

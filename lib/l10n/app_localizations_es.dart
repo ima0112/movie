@@ -618,4 +618,40 @@ class AppLocalizationsEs extends AppLocalizations {
   String statsHoursValue(String hours) {
     return '$hours h';
   }
+
+  @override
+  String get commonReadMore => 'Leer más';
+
+  @override
+  String tvEpisodeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count episodios',
+      one: '1 episodio',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tvCreatedByLabel => 'Creada por ';
+
+  @override
+  String get tvSeasonsSectionTitle => 'Temporadas';
+
+  @override
+  String get tvSpecialsLabel => 'Especiales';
+
+  @override
+  String tvSeasonLabel(int number) {
+    return 'Temporada $number';
+  }
+
+  @override
+  String tvEpisodeRowTitle(int number, String name) {
+    return '$number. $name';
+  }
+
+  @override
+  String get tvEpisodeTba => 'Por confirmar';
 }
