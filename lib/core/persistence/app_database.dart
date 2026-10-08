@@ -41,10 +41,9 @@ class UserMediaEntries extends Table {
   TextColumn get posterPath => text().nullable()();
   TextColumn get backdropPath => text().nullable()();
 
-  /// `UserMediaEntry.genres`, serialized as `id:name` pairs joined by
-  /// commas (same format as `TasteProfileTable.likedGenres`, for the
-  /// same reason — a genre's `id` alone isn't enough to rebuild a
-  /// `Genre` without a lookup table this codebase doesn't have yet).
+  /// `UserMediaEntry.genres`, serialized as comma-joined ids (same
+  /// format as `TasteProfileTable.likedGenres`) — never a display name
+  /// (CLAUDE.md rule 15); `GenreCatalog.byId` rebuilds each `Genre`.
   /// Mapped both ways by `DriftUserLibraryRepository` — the one column
   /// in this "catalog snapshot" block that isn't just sitting unused.
   TextColumn get genres => text().nullable()();
@@ -112,18 +111,17 @@ class UserProfileTable extends Table {
 class TasteProfileTable extends Table {
   IntColumn get id => integer().withDefault(const Constant(0))();
 
-  /// `TasteProfile.likedGenres`, serialized as `id:name` pairs joined by
-  /// commas (e.g. `"action:Action,drama:Drama"`) — a genre's `id` alone
-  /// isn't enough to rebuild a `Genre` without a lookup table, and there
-  /// isn't a normalized genre catalog in `core/domain` yet to look it up
-  /// against, so both fields are stored directly.
+  /// `TasteProfile.likedGenres`, serialized as comma-joined ids (e.g.
+  /// `"action,drama"`) — never a display name (CLAUDE.md rule 15);
+  /// `GenreCatalog.byId` rebuilds each `Genre`.
   TextColumn get likedGenres => text()();
 
-  /// Same `id:name` serialization as [likedGenres].
+  /// Same id-only serialization as [likedGenres].
   TextColumn get vetoedGenres => text()();
 
-  /// `TasteProfile.likedVibes`, comma-joined — vibe names come from
-  /// `assets/vibes.json` and never contain a comma.
+  /// `TasteProfile.likedVibes`, comma-joined — [Vibe] ids from
+  /// `assets/vibes.json` (never a display name, CLAUDE.md rule 15), and
+  /// none of them contain a comma.
   TextColumn get likedVibes => text()();
   IntColumn get yearFrom => integer()();
   DateTimeColumn get updatedAt => dateTime()();

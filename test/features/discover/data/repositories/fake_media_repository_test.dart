@@ -9,10 +9,10 @@ import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 
-const _drama = Genre(id: 'drama', name: 'Drama');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
-const _sciFi = Genre(id: 'sci-fi', name: 'Science Fiction');
-const _horror = Genre(id: 'horror', name: 'Horror');
+const _drama = Genre(id: 'drama');
+const _comedy = Genre(id: 'comedy');
+const _sciFi = Genre(id: 'sci-fi');
+const _horror = Genre(id: 'horror');
 
 void main() {
   group('FakeMediaRepository.detail', () {

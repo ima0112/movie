@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/features/person_detail/presentation/widgets/person_filmography_section.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 Movie _movie(int id, String title, {DateTime? releaseDate}) => Movie(
   id: id,
@@ -18,6 +19,8 @@ void main() {
     testWidgets('no "As director" chip for cast-only credits', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonFilmographySection(
               credits: [
@@ -38,6 +41,8 @@ void main() {
         'credits exist', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonFilmographySection(
               credits: [
@@ -62,6 +67,8 @@ void main() {
         'credits', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonFilmographySection(
               credits: [
@@ -100,6 +107,8 @@ void main() {
     testWidgets('groups rows under a year header', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonFilmographySection(
               credits: [

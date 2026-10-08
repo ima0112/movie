@@ -6,6 +6,8 @@ import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/failure_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/season_cubit.dart';
 import 'season_episode_row.dart';
@@ -72,10 +74,10 @@ class _SeasonSheetView extends StatelessWidget {
                     return switch (state) {
                       SeasonInitial() ||
                       SeasonLoading() => const _SeasonSkeleton(),
-                      SeasonError(:final message) => Center(
+                      SeasonError(:final reason) => Center(
                         child: ErrorStateView(
                           title: "Couldn't load",
-                          body: message,
+                          body: reason.localizedMessage(context.l10n),
                         ),
                       ),
                       SeasonLoaded(:final season) => ListView(

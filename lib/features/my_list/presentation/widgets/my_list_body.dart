@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../cubit/my_list_cubit.dart';
 import 'my_list_empty_state.dart';
 import 'my_list_entry_tile.dart';
@@ -57,7 +60,7 @@ class MyListBody extends StatelessWidget {
                       onExploreTap: () => context.go('/explore'),
                     )
                   : MyListFilteredEmptyState(
-                      title: _filteredEmptyTitle(filter),
+                      title: _filteredEmptyTitle(filter, context.l10n),
                       onSeeAllTap: () =>
                           context.read<MyListCubit>().resetCurrentTab(),
                     );
@@ -81,10 +84,12 @@ class MyListBody extends StatelessWidget {
     );
   }
 
-  static String _filteredEmptyTitle(TabFilter filter) => switch (filter.type) {
-    null => 'Nothing matches your filters',
-    final type => 'No ${type.name == 'movie' ? 'movies' : 'TV shows'} here',
-  };
+  static String _filteredEmptyTitle(TabFilter filter, AppLocalizations l10n) =>
+      switch (filter.type) {
+        null => 'Nothing matches your filters',
+        MediaType.movie => l10n.myListFilteredEmptyMovieTitle,
+        MediaType.tvShow => l10n.myListFilteredEmptyTvShowTitle,
+      };
 
   static List<UserMediaEntry> _applyFilter(
     List<UserMediaEntry> entries,

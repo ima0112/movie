@@ -4,6 +4,7 @@ import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/season_sheet.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 const _theBearSeason1 = SeasonSummary(
   seasonNumber: 1,
@@ -34,8 +35,10 @@ void main() {
     testWidgets('shows the season title immediately, then its episodes '
         'once loaded', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: SeasonSheet(tvId: 101, seasonSummary: _theBearSeason1),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SeasonSheet(tvId: 101, seasonSummary: _theBearSeason1),
         ),
       );
 
@@ -55,8 +58,10 @@ void main() {
     testWidgets('a specials season titles itself "Specials", not '
         '"Season 0"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: SeasonSheet(tvId: 101, seasonSummary: _theBearSpecials),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SeasonSheet(tvId: 101, seasonSummary: _theBearSpecials),
         ),
       );
       await tester.pumpAndSettle();
@@ -69,8 +74,10 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: SeasonSheet(tvId: 101, seasonSummary: _missingSeason),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SeasonSheet(tvId: 101, seasonSummary: _missingSeason),
         ),
       );
       await tester.pumpAndSettle();

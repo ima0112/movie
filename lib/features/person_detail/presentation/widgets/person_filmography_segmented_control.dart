@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/filmography_segment_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import 'filmography_grouping.dart';
 
 /// D3's filmography filter — same visual shape as the shared
@@ -23,13 +25,6 @@ class PersonFilmographySegmentedControl extends StatelessWidget {
   final ValueChanged<FilmographySegment> onSelected;
 
   static const Duration _crossFade = Duration(milliseconds: 200);
-
-  static const _labels = {
-    FilmographySegment.all: 'All',
-    FilmographySegment.movies: 'Movies',
-    FilmographySegment.tvShows: 'TV Shows',
-    FilmographySegment.asDirector: 'As director',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +60,7 @@ class PersonFilmographySegmentedControl extends StatelessWidget {
                         ? AppColors.surface
                         : AppColors.inkMuted,
                   ),
-                  child: Text(_labels[value]!),
+                  child: Text(value.localizedLabel(context.l10n)),
                 ),
               ),
             ),

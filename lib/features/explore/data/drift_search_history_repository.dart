@@ -83,8 +83,8 @@ class DriftSearchHistoryRepository implements SearchHistoryRepository {
           );
       await _trimToLimit();
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not record search "$trimmed": $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -95,8 +95,8 @@ class DriftSearchHistoryRepository implements SearchHistoryRepository {
         _db.searchHistoryTable,
       )..where((row) => row.query.equals(query))).go();
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not remove "$query": $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -105,8 +105,8 @@ class DriftSearchHistoryRepository implements SearchHistoryRepository {
     try {
       await _db.delete(_db.searchHistoryTable).go();
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not clear search history: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 

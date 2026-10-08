@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/genre.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../l10n/genre_localization.dart';
+import '../../l10n/l10n_extension.dart';
 import 'app_chip.dart';
 
 /// H8: "multi-select genres" (`docs/SCREENS.md` H8) — plain flowing
@@ -31,7 +33,7 @@ class GenreMultiSelectChips extends StatelessWidget {
       children: [
         for (final genre in genres)
           AppChip(
-            label: genre.name,
+            label: genre.localizedName(context.l10n),
             state: selected.contains(genre)
                 ? ChipState.selected
                 : ChipState.normal,

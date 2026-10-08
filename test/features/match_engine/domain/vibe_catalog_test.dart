@@ -23,16 +23,15 @@ void main() {
       expect(catalog.all(), hasLength(16));
     });
 
-    test('every vibe has a non-empty id, name, and icon', () {
+    test('every vibe has a non-empty id and icon', () {
       for (final vibe in catalog.all()) {
         expect(vibe.id, isNotEmpty);
-        expect(vibe.name, isNotEmpty);
         expect(vibe.icon, isNotEmpty);
       }
     });
 
     test('byId finds a known vibe and returns null for an unknown one', () {
-      expect(catalog.byId('feel_good')?.name, 'Feel Good');
+      expect(catalog.byId('feel_good')?.id, 'feel_good');
       expect(catalog.byId('does-not-exist'), isNull);
     });
 

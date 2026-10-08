@@ -7,6 +7,9 @@ import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/media_type_localization.dart';
 import '../../../../shared/widgets/library_row.dart';
 import 'library_row_swipeable.dart';
 
@@ -51,8 +54,8 @@ class MyListEntryTile extends StatelessWidget {
           tab: tab,
           userLibraryRepository: userLibraryRepository,
           posterUrl: detail?.item.posterUrl,
-          title: detail?.item.title ?? _fallbackTitle(),
-          metadata: detail == null ? '' : _metadata(detail),
+          title: detail?.item.title ?? _fallbackTitle(context.l10n),
+          metadata: detail == null ? '' : _metadata(detail, context.l10n),
           trailing: tab == LibraryTab.watched
               ? LibraryRowTrailing.starsWithDate(
                   rating: entry.rating,
@@ -68,20 +71,17 @@ class MyListEntryTile extends StatelessWidget {
     );
   }
 
-  String _fallbackTitle() => switch (entry.key.type) {
-    MediaType.movie => 'Movie #${entry.key.tmdbId}',
-    MediaType.tvShow => 'TV show #${entry.key.tmdbId}',
+  String _fallbackTitle(AppLocalizations l10n) => switch (entry.key.type) {
+    MediaType.movie => l10n.myListFallbackTitleMovie(entry.key.tmdbId),
+    MediaType.tvShow => l10n.myListFallbackTitleTvShow(entry.key.tmdbId),
   };
 
-  static String _metadata(MediaDetail detail) {
+  static String _metadata(MediaDetail detail, AppLocalizations l10n) {
     final year = switch (detail) {
       MovieDetail(:final releaseDate) => releaseDate?.year,
       TvShowDetail(:final firstAirDate) => firstAirDate?.year,
     };
-    final typeLabel = switch (detail) {
-      MovieDetail() => 'Movie',
-      TvShowDetail() => 'TV Show',
-    };
+    final typeLabel = detail.item.type.localizedSingular(l10n);
     final extra = switch (detail) {
       MovieDetail(:final runtimeMinutes) =>
         runtimeMinutes == null ? null : _formatRuntime(runtimeMinutes),

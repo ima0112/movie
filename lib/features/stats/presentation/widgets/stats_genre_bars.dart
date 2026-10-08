@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/genre_bar.dart';
 
 /// C4's "'Genres you watch most': list of 5 horizontal bars with name
@@ -38,7 +40,7 @@ class StatsGenreBars extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: GenreBar(
-              label: genre.name,
+              label: genre.localizedName(context.l10n),
               count: count,
               maxCount: maxCount,
             ),

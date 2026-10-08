@@ -49,8 +49,8 @@ class DriftUserProfileRepository implements UserProfileRepository {
             ),
           );
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not save $profile: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 

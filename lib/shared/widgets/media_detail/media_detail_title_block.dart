@@ -5,6 +5,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/genre_localization.dart';
+import '../../../l10n/l10n_extension.dart';
 
 /// [MediaDetailHeader]'s centered title/metadata/rating/genres block — in
 /// its own file per CLAUDE.md rule 11, `media_detail_header.dart` was
@@ -110,7 +112,7 @@ class _GenresRow extends StatelessWidget {
           GestureDetector(
             onTap: () => onGenreTap?.call(genres[i]),
             child: Text(
-              genres[i].name,
+              genres[i].localizedName(context.l10n),
               style: AppTextStyles.bodySm.copyWith(color: AppColors.accent),
             ),
           ),

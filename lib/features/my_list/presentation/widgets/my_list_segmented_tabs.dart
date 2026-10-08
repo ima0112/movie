@@ -6,6 +6,8 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/library_tab_localization.dart';
 import '../cubit/my_list_cubit.dart';
 
 /// B4's "Segmented Favorites · Watch later · Watched, each with a live
@@ -22,14 +24,9 @@ class MyListSegmentedTabs extends StatelessWidget {
 
   final UserLibraryRepository userLibraryRepository;
 
-  static const _labels = {
-    LibraryTab.favorites: 'Favorites',
-    LibraryTab.watchLater: 'Watch later',
-    LibraryTab.watched: 'Watched',
-  };
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       child: Row(
@@ -38,7 +35,7 @@ class MyListSegmentedTabs extends StatelessWidget {
             Expanded(
               child: _Segment(
                 tab: tab,
-                label: _labels[tab]!,
+                label: tab.localizedLabel(l10n),
                 userLibraryRepository: userLibraryRepository,
               ),
             ),

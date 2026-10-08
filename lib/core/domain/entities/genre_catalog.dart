@@ -19,20 +19,27 @@ class GenreCatalog {
   const GenreCatalog._();
 
   static const List<Genre> all = [
-    Genre(id: 'action', name: 'Action'),
-    Genre(id: 'adventure', name: 'Adventure'),
-    Genre(id: 'animation', name: 'Animation'),
-    Genre(id: 'comedy', name: 'Comedy'),
-    Genre(id: 'crime', name: 'Crime'),
-    Genre(id: 'documentary', name: 'Documentary'),
-    Genre(id: 'drama', name: 'Drama'),
-    Genre(id: 'family', name: 'Family'),
-    Genre(id: 'history', name: 'History'),
-    Genre(id: 'horror', name: 'Horror'),
-    Genre(id: 'music', name: 'Music'),
-    Genre(id: 'mystery', name: 'Mystery'),
-    Genre(id: 'romance', name: 'Romance'),
-    Genre(id: 'sci-fi', name: 'Science Fiction'),
-    Genre(id: 'thriller', name: 'Thriller'),
+    Genre(id: 'action'),
+    Genre(id: 'adventure'),
+    Genre(id: 'animation'),
+    Genre(id: 'comedy'),
+    Genre(id: 'crime'),
+    Genre(id: 'documentary'),
+    Genre(id: 'drama'),
+    Genre(id: 'family'),
+    Genre(id: 'history'),
+    Genre(id: 'horror'),
+    Genre(id: 'music'),
+    Genre(id: 'mystery'),
+    Genre(id: 'romance'),
+    Genre(id: 'sci-fi'),
+    Genre(id: 'thriller'),
   ];
+
+  /// Reconstructs a [Genre] from a persisted [id] — local storage only
+  /// ever keeps the id (CLAUDE.md rule 15), never a display name, so
+  /// loading a saved [Genre] means looking it back up here rather than
+  /// rebuilding it from stored text.
+  static Genre byId(String id) =>
+      all.firstWhere((genre) => genre.id == id, orElse: () => Genre(id: id));
 }

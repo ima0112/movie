@@ -11,6 +11,7 @@ import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/features/my_tastes/presentation/cubit/my_tastes_cubit.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/you/presentation/widgets/my_tastes_card.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 /// Minimal stand-in for [TasteProfileRepository] — one profile, no disk.
 /// Same shape as `edit_profile_sheet_test.dart`'s own
@@ -58,6 +59,8 @@ void main() {
         BlocProvider<TasteProfileCubit>.value(
           value: tasteProfileCubit,
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(body: MyTastesCard(onTap: () {})),
           ),
         ),
@@ -67,7 +70,7 @@ void main() {
       // state, not a genre chip.
       expect(find.text('Build your taste profile'), findsOneWidget);
 
-      const action = Genre(id: 'action', name: 'Action');
+      const action = Genre(id: 'action');
       myTastesCubit.toggleLikedGenre(action);
       await tester.pumpAndSettle();
 

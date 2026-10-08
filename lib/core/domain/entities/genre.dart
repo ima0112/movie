@@ -6,15 +6,18 @@
 /// the TMDB-id mapping lives in `data/tmdb/` (never here — `domain` never
 /// imports networking or DTOs, see the project's CLAUDE.md).
 ///
+/// Carries only [id] — never a display name (CLAUDE.md rule 15:
+/// `domain`/`data` never contain user-facing text). Presentation code
+/// shows a genre via `GenreLocalization.localizedName`
+/// (`lib/l10n/genre_localization.dart`), switching on [id].
+///
 /// Source of truth: `docs/STRUCTURE.md`, `core/domain/entities/genre.dart`
 /// — "normalized genre + TMDB mapping".
 class Genre {
-  const Genre({required this.id, required this.name});
+  const Genre({required this.id});
 
   /// Stable, normalized identifier (e.g. `"action"`) — not a raw TMDB id.
   final String id;
-
-  final String name;
 
   @override
   bool operator ==(Object other) => other is Genre && other.id == id;
@@ -23,5 +26,5 @@ class Genre {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'Genre($id, $name)';
+  String toString() => 'Genre($id)';
 }

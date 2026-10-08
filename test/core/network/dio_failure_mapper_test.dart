@@ -62,12 +62,5 @@ void main() {
 
       expect(failure.reason, FailureReason.unknown);
     });
-
-    test('never lets a raw DioException/status code leak into the message '
-        'as the only content — message is always a readable sentence', () {
-      final failure = mapDioExceptionToFailure<int>(withStatus(404));
-
-      expect(failure.message, isNotEmpty);
-    });
   });
 }

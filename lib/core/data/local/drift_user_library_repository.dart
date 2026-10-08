@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/genre.dart';
+import '../../domain/entities/genre_catalog.dart';
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
@@ -76,8 +77,8 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
             ),
           );
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not save $entry: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -88,8 +89,8 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
         _db.userMediaEntries,
       )..where((row) => _matchesKey(row, key))).go();
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not remove $key: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -98,8 +99,8 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
     try {
       await _db.delete(_db.userMediaEntries).go();
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not clear My List: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -117,8 +118,8 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
         ..limit(limit);
       final rows = await query.get();
       return Success(rows.map((row) => row.key).toList());
-    } catch (e) {
-      return Failure('Could not load watched keys: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -127,8 +128,8 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
     try {
       final rows = await _db.select(_db.userMediaEntries).get();
       return Success(rows.map(_toEntry).toList());
-    } catch (e) {
-      return Failure('Could not load entries: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -158,23 +159,16 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
     );
   }
 
-  /// `id:name` pairs, comma-joined — same format and reasoning as
-  /// `DriftTasteProfileRepository`'s own genre serialization: a genre's
-  /// `id` alone isn't enough to rebuild a `Genre` without a lookup
-  /// table, and there isn't a normalized genre catalog in `core/domain`
-  /// yet to look it up against, so both fields are stored directly.
+  /// Ids only, comma-joined — same format and reasoning as
+  /// `DriftTasteProfileRepository`'s own genre serialization. A display
+  /// name is never persisted (CLAUDE.md rule 15); [_deserializeGenres]
+  /// looks each id back up in [GenreCatalog].
   static String _serializeGenres(List<Genre> genres) =>
-      genres.map((g) => '${g.id}:${g.name}').join(',');
+      genres.map((g) => g.id).join(',');
 
   static List<Genre> _deserializeGenres(String? serialized) {
     if (serialized == null || serialized.isEmpty) return const [];
-    return serialized.split(',').map((pair) {
-      final separator = pair.indexOf(':');
-      return Genre(
-        id: pair.substring(0, separator),
-        name: pair.substring(separator + 1),
-      );
-    }).toList();
+    return serialized.split(',').map(GenreCatalog.byId).toList();
   }
 }
 

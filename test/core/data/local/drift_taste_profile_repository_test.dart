@@ -13,9 +13,9 @@ import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/entities/user_profile.dart';
 import 'package:movies/core/persistence/app_database.dart';
 
-const _action = Genre(id: 'action', name: 'Action');
-const _drama = Genre(id: 'drama', name: 'Drama');
-const _horror = Genre(id: 'horror', name: 'Horror');
+const _action = Genre(id: 'action');
+const _drama = Genre(id: 'drama');
+const _horror = Genre(id: 'horror');
 
 /// A fresh repository over an in-memory database — see
 /// `drift_user_library_repository_test.dart`'s own version of this
@@ -124,49 +124,46 @@ void main() {
         expect(await repository.watch().first, isNull);
       });
 
-      test(
-        '"Delete My Tastes" touches nothing else — My List, the user '
-        'profile, and the onboarding flag all survive untouched',
-        () async {
-          final db = AppDatabase.forTesting(NativeDatabase.memory());
-          addTearDown(db.close);
+      test('"Delete My Tastes" touches nothing else — My List, the user '
+          'profile, and the onboarding flag all survive untouched', () async {
+        final db = AppDatabase.forTesting(NativeDatabase.memory());
+        addTearDown(db.close);
 
-          await DriftUserProfileRepository(db).save(
-            const UserProfile(displayName: 'Daniel', initialColor: 0xFFF2B441),
-          );
-          await DriftOnboardingRepository(db).markCompleted();
-          const key = MediaKey(type: MediaType.movie, tmdbId: 1);
-          await DriftUserLibraryRepository(
-            db,
-          ).upsert(const UserMediaEntry(title: 'Dune', key: key));
-          final tasteProfile = DriftTasteProfileRepository(db);
-          await tasteProfile.save(
-            TasteProfile(
-              likedGenres: {_action},
-              vetoedGenres: const {},
-              likedVibes: const {'Cozy'},
-              yearFrom: 1990,
-              updatedAt: DateTime(2024, 1, 1),
-            ),
-          );
+        await DriftUserProfileRepository(db).save(
+          const UserProfile(displayName: 'Daniel', initialColor: 0xFFF2B441),
+        );
+        await DriftOnboardingRepository(db).markCompleted();
+        const key = MediaKey(type: MediaType.movie, tmdbId: 1);
+        await DriftUserLibraryRepository(
+          db,
+        ).upsert(const UserMediaEntry(title: 'Dune', key: key));
+        final tasteProfile = DriftTasteProfileRepository(db);
+        await tasteProfile.save(
+          TasteProfile(
+            likedGenres: {_action},
+            vetoedGenres: const {},
+            likedVibes: const {'Cozy'},
+            yearFrom: 1990,
+            updatedAt: DateTime(2024, 1, 1),
+          ),
+        );
 
-          final result = await tasteProfile.delete();
+        final result = await tasteProfile.delete();
 
-          expect(result, isA<Success<void>>());
-          expect(await tasteProfile.watch().first, isNull);
-          expect(
-            (await DriftUserLibraryRepository(db).all() as Success).value,
-            hasLength(1),
-          );
-          expect(
-            (await DriftUserProfileRepository(db).watch().first)?.displayName,
-            'Daniel',
-          );
-          final onboarding = DriftOnboardingRepository(db);
-          await onboarding.load();
-          expect(onboarding.isCompleted, isTrue);
-        },
-      );
+        expect(result, isA<Success<void>>());
+        expect(await tasteProfile.watch().first, isNull);
+        expect(
+          (await DriftUserLibraryRepository(db).all() as Success).value,
+          hasLength(1),
+        );
+        expect(
+          (await DriftUserProfileRepository(db).watch().first)?.displayName,
+          'Daniel',
+        );
+        final onboarding = DriftOnboardingRepository(db);
+        await onboarding.load();
+        expect(onboarding.isCompleted, isTrue);
+      });
     });
   });
 }

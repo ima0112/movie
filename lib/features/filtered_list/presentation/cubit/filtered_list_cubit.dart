@@ -83,8 +83,8 @@ class FilteredListCubit extends Cubit<FilteredListState> {
             visibleCount: math.min(pageSize, value.length),
           ),
         );
-      case Failure<List<MediaItem>>(:final message):
-        emit(FilteredListError(filter: filter, message: message));
+      case Failure<List<MediaItem>>(:final reason):
+        emit(FilteredListError(filter: filter, reason: reason));
     }
   }
 

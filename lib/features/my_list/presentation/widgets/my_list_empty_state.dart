@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/library_tab_localization.dart';
 import '../../../../shared/widgets/state_views.dart';
 
 /// B4's empty state: no entries at all for a tab (`docs/SCREENS.md` B4:
@@ -25,16 +27,10 @@ class MyListEmptyState extends StatelessWidget {
   final String otherTabsNote;
   final VoidCallback? onExploreTap;
 
-  static const _headlines = {
-    LibraryTab.favorites: 'No favorites yet',
-    LibraryTab.watchLater: 'Nothing for later yet',
-    LibraryTab.watched: "You haven't marked anything as watched yet",
-  };
-
   @override
   Widget build(BuildContext context) {
     return EmptyStateView(
-      title: _headlines[tab]!,
+      title: tab.localizedEmptyHeadline(context.l10n),
       body: otherTabsNote,
       ctaLabel: 'Explore',
       onCtaTap: onExploreTap,

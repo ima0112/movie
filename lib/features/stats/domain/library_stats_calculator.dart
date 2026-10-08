@@ -73,17 +73,18 @@ LibraryStats calculateLibraryStats(
   );
 }
 
-/// Ranks genres by watch count, most-watched first — ties broken
-/// alphabetically by name for a stable, deterministic order (rather
-/// than whatever order a `Map` happens to iterate in). Takes raw counts
-/// rather than entries so it stays independently testable against
-/// synthetic data, decoupled from how [calculateLibraryStats] tallies
-/// [UserMediaEntry.genres].
+/// Ranks genres by watch count, most-watched first — ties broken by
+/// [Genre.id] for a stable, deterministic order (rather than whatever
+/// order a `Map` happens to iterate in). Domain code — never a display
+/// name (CLAUDE.md rule 15), so the tie-break is the id, not a
+/// locale-dependent name. Takes raw counts rather than entries so it
+/// stays independently testable against synthetic data, decoupled from
+/// how [calculateLibraryStats] tallies [UserMediaEntry.genres].
 List<(Genre, int)> topGenres(Map<Genre, int> counts, {int limit = 5}) {
   final ranked = counts.entries.toList()
     ..sort((a, b) {
       final byCount = b.value.compareTo(a.value);
-      return byCount != 0 ? byCount : a.key.name.compareTo(b.key.name);
+      return byCount != 0 ? byCount : a.key.id.compareTo(b.key.id);
     });
   return ranked.take(limit).map((e) => (e.key, e.value)).toList();
 }

@@ -4,6 +4,8 @@ import '../../core/domain/entities/media_segment.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
+import '../../l10n/media_segment_localization.dart';
 
 /// All | Movies | TV Shows. Driven entirely by [segment] and [onSelected]
 /// — purely presentational, so it updates instantly on tap regardless of
@@ -26,12 +28,6 @@ class MediaSegmentedControl extends StatelessWidget {
   final ValueChanged<MediaSegment> onSelected;
 
   static const Duration _crossFade = Duration(milliseconds: 200);
-
-  static const _labels = {
-    MediaSegment.all: 'All',
-    MediaSegment.movie: 'Movies',
-    MediaSegment.tvShow: 'TV Shows',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +59,7 @@ class MediaSegmentedControl extends StatelessWidget {
                           ? AppColors.surface
                           : AppColors.inkMuted,
                     ),
-                    child: Text(_labels[value]!),
+                    child: Text(value.localizedLabel(context.l10n)),
                   ),
                 ),
               ),

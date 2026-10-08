@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/tv_status_pill.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/app_chip.dart';
 
 void main() {
@@ -8,8 +9,10 @@ void main() {
     testWidgets('"Returning Series" renders as the selected (amber) '
         '"Airing" chip', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvStatusPill(status: 'Returning Series')),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(body: TvStatusPill(status: 'Returning Series')),
         ),
       );
 
@@ -20,8 +23,10 @@ void main() {
 
     testWidgets('"Ended" renders as the neutral "Ended" chip', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvStatusPill(status: 'Ended')),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(body: TvStatusPill(status: 'Ended')),
         ),
       );
 
@@ -34,8 +39,10 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvStatusPill(status: 'Canceled')),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(body: TvStatusPill(status: 'Canceled')),
         ),
       );
 
@@ -47,8 +54,10 @@ void main() {
     testWidgets('an unexpected TMDB status falls back to the "Airing" '
         'treatment', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TvStatusPill(status: 'Pilot')),
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(body: TvStatusPill(status: 'Pilot')),
         ),
       );
 

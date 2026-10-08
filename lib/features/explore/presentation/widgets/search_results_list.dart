@@ -6,6 +6,9 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/media_type_localization.dart';
 
 /// B2's State 2 results list — "Row = thumbnail (circular for people),
 /// title, 'Year · Movie/TV Show' or 'Department · Person'... The
@@ -98,7 +101,7 @@ class _ResultRow extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    _metadata(item),
+                    _metadata(item, context.l10n),
                     style: AppTextStyles.caption.copyWith(
                       color: AppColors.inkMuted,
                     ),
@@ -112,9 +115,9 @@ class _ResultRow extends StatelessWidget {
     );
   }
 
-  static String _metadata(MediaItem item) {
+  static String _metadata(MediaItem item, AppLocalizations l10n) {
     final year = item.releaseDate?.year;
-    final typeLabel = item.type == MediaType.movie ? 'Movie' : 'TV Show';
+    final typeLabel = item.type.localizedSingular(l10n);
     return year == null ? typeLabel : '$year · $typeLabel';
   }
 }

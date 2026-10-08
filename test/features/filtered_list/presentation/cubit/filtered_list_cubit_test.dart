@@ -7,7 +7,7 @@ import 'package:movies/features/discover/data/repositories/fake_media_repository
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_cubit.dart';
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_state.dart';
 
-const _horror = Genre(id: 'horror', name: 'Horror');
+const _horror = Genre(id: 'horror');
 
 void main() {
   group('FilteredListCubit', () {

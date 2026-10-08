@@ -31,7 +31,6 @@ void main() {
   Vibe vibe(String id, List<String> movieGenreIds) {
     return Vibe(
       id: id,
-      name: id,
       icon: 'icon',
       movie: VibeRule(genreIds: movieGenreIds, keywordIds: const []),
       tv: const VibeRule(genreIds: [], keywordIds: []),
@@ -64,13 +63,23 @@ void main() {
 
   group('MatchEngine.resolve — a perfect match', () {
     test('every participant fully satisfied, no relaxation needed', () async {
-      const action = Genre(id: 'action', name: 'Action');
+      const action = Genre(id: 'action');
       final catalog = VibeCatalog([
         vibe('scifi', ['sci-fi']),
       ]);
       final query = MatchQuery.aggregate(MediaType.movie, [
-        answers('ana', vibeIds: {'scifi'}, excludedGenres: {action}, yearFrom: 1950),
-        answers('luis', vibeIds: {'scifi'}, excludedGenres: {action}, yearFrom: 1950),
+        answers(
+          'ana',
+          vibeIds: {'scifi'},
+          excludedGenres: {action},
+          yearFrom: 1950,
+        ),
+        answers(
+          'luis',
+          vibeIds: {'scifi'},
+          excludedGenres: {action},
+          yearFrom: 1950,
+        ),
       ]);
 
       final result = await engine.resolve(
@@ -163,10 +172,10 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.winner.title, 'Poor Things');
-      expect(
-        result.alternatives.map((m) => m.title).toList(),
-        ['Knives Out', 'Inside Out 2'],
-      );
+      expect(result.alternatives.map((m) => m.title).toList(), [
+        'Knives Out',
+        'Inside Out 2',
+      ]);
       expect(result.relaxationsApplied, isEmpty);
     });
   });
@@ -194,10 +203,10 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.winner.title, 'Knives Out');
-      expect(
-        result.alternatives.map((m) => m.title).toSet(),
-        {'Poor Things', 'Inside Out 2'},
-      );
+      expect(result.alternatives.map((m) => m.title).toSet(), {
+        'Poor Things',
+        'Inside Out 2',
+      });
     });
 
     test('a pool smaller than randomizeTop still uses the whole pool, '
@@ -270,10 +279,9 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.winner.title, 'Knives Out');
-      expect(
-        result.alternatives.map((m) => m.title).toList(),
-        ['Inside Out 2'],
-      );
+      expect(result.alternatives.map((m) => m.title).toList(), [
+        'Inside Out 2',
+      ]);
     });
 
     test('a candidate watched by someone who did NOT opt into '
@@ -309,10 +317,10 @@ void main() {
       // longer the winner despite having the highest vote_average.
       expect(result, isNotNull);
       expect(result!.winner.title, 'Knives Out');
-      expect(
-        result.alternatives.map((m) => m.title).toList(),
-        ['Inside Out 2', 'Poor Things'],
-      );
+      expect(result.alternatives.map((m) => m.title).toList(), [
+        'Inside Out 2',
+        'Poor Things',
+      ]);
     });
   });
 }

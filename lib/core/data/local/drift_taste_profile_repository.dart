@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/genre.dart';
+import '../../domain/entities/genre_catalog.dart';
 import '../../domain/entities/result.dart';
 import '../../domain/entities/taste_profile.dart';
 import '../../domain/repositories/taste_profile_repository.dart';
@@ -48,8 +49,8 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
             ),
           );
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not save $profile: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -60,8 +61,8 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
         _db.tasteProfileTable,
       )..where((row) => row.id.equals(0))).go();
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not delete taste profile: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 
@@ -77,19 +78,14 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
     );
   }
 
-  /// `id:name` pairs, comma-joined — see [TasteProfileTable.likedGenres]'
-  /// doc comment for why both fields are stored.
+  /// Ids only, comma-joined — see [TasteProfileTable.likedGenres]'s doc
+  /// comment. A display name is never persisted (CLAUDE.md rule 15);
+  /// [_deserializeGenres] looks each id back up in [GenreCatalog].
   static String _serializeGenres(Set<Genre> genres) =>
-      genres.map((g) => '${g.id}:${g.name}').join(',');
+      genres.map((g) => g.id).join(',');
 
   static Set<Genre> _deserializeGenres(String serialized) {
     if (serialized.isEmpty) return const {};
-    return serialized.split(',').map((pair) {
-      final separator = pair.indexOf(':');
-      return Genre(
-        id: pair.substring(0, separator),
-        name: pair.substring(separator + 1),
-      );
-    }).toSet();
+    return serialized.split(',').map(GenreCatalog.byId).toSet();
   }
 }

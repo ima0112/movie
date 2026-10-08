@@ -30,9 +30,9 @@ final class TvDetailLoaded extends TvDetailState {
 
 /// The load failed.
 final class TvDetailError extends TvDetailState {
-  const TvDetailError(this.message);
+  const TvDetailError(this.reason);
 
-  final String message;
+  final FailureReason reason;
 }
 
 /// Loads a TV show's full detail (D2) for the screen's `MediaKey`.
@@ -58,8 +58,8 @@ class TvDetailCubit extends Cubit<TvDetailState> {
     switch (result) {
       case Success<MediaDetail>(:final value):
         emit(TvDetailLoaded(value));
-      case Failure<MediaDetail>(:final message):
-        emit(TvDetailError(message));
+      case Failure<MediaDetail>(:final reason):
+        emit(TvDetailError(reason));
     }
   }
 }

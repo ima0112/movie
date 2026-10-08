@@ -8,16 +8,15 @@ import 'package:movies/features/match_engine/domain/vibe.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/taste_profile/domain/taste_profile_builder.dart';
 
-const _action = Genre(id: 'action', name: 'Action');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
-const _documentary = Genre(id: 'documentary', name: 'Documentary');
-const _drama = Genre(id: 'drama', name: 'Drama');
-const _horror = Genre(id: 'horror', name: 'Horror');
+const _action = Genre(id: 'action');
+const _comedy = Genre(id: 'comedy');
+const _documentary = Genre(id: 'documentary');
+const _drama = Genre(id: 'drama');
+const _horror = Genre(id: 'horror');
 
 Vibe _vibe(String id, String genreId) {
   return Vibe(
     id: id,
-    name: id,
     icon: 'icon',
     movie: VibeRule(genreIds: [genreId], keywordIds: const []),
     tv: VibeRule(genreIds: [genreId], keywordIds: const []),

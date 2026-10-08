@@ -26,10 +26,12 @@ class TasteProfile {
   /// results and the match engine.
   final Set<Genre> vetoedGenres;
 
-  /// Vibe names from `assets/vibes.json` (`docs/STRUCTURE.md`'s
+  /// Vibe ids from `assets/vibes.json` (`docs/STRUCTURE.md`'s
   /// `vibe_catalog.dart`) — kept as plain strings here rather than a
   /// `Vibe` entity, since that catalog lives in `match_engine`'s own
-  /// domain and `core/domain` can't depend on a feature (rule 1).
+  /// domain and `core/domain` can't depend on a feature (rule 1). Never
+  /// a display name (CLAUDE.md rule 15) — presentation translates an id
+  /// via `VibeLocalization`.
   final Set<String> likedVibes;
 
   /// C5's "How far back" slider — titles released before this year are

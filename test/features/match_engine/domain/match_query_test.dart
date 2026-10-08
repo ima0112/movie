@@ -7,9 +7,9 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/features/match_engine/domain/match_query.dart';
 import 'package:movies/features/match_engine/domain/participant_answers.dart';
 
-const _horror = Genre(id: 'horror', name: 'Horror');
-const _romance = Genre(id: 'romance', name: 'Romance');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
+const _horror = Genre(id: 'horror');
+const _romance = Genre(id: 'romance');
+const _comedy = Genre(id: 'comedy');
 
 ParticipantAnswers _answers(
   String id, {
@@ -103,11 +103,7 @@ void main() {
       ]);
 
       expect(query.excludedGenres, {_horror});
-      expect(query.vibeWeights, {
-        'feel-good': 1,
-        'date-night': 1,
-        'cozy': 1,
-      });
+      expect(query.vibeWeights, {'feel-good': 1, 'date-night': 1, 'cozy': 1});
       expect(query.yearFrom, 1995);
       expect(query.maxRuntimeMinutes, 140);
     });

@@ -75,8 +75,8 @@ class DriftSettingsRepository implements SettingsRepository {
     try {
       await _persist(settings);
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not save settings: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 

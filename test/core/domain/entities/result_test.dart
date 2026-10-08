@@ -14,15 +14,15 @@ void main() {
       expect(matched, 42);
     });
 
-    test('Failure carries its message through pattern matching', () {
-      const Result<int> result = Failure('network error');
+    test('Failure carries its reason through pattern matching', () {
+      const Result<int> result = Failure(FailureReason.network);
 
       final matched = switch (result) {
         Success() => null,
-        Failure(:final message) => message,
+        Failure(:final reason) => reason,
       };
 
-      expect(matched, 'network error');
+      expect(matched, FailureReason.network);
     });
   });
 }

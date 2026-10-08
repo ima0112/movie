@@ -8,7 +8,7 @@ Movie _movie({required int id, double voteAverage = 7}) {
     id: id,
     title: 'Movie $id',
     posterUrl: null,
-    genres: const [Genre(id: 'action', name: 'Action')],
+    genres: const [Genre(id: 'action')],
     releaseDate: DateTime(2024),
     voteAverage: voteAverage,
   );

@@ -28,9 +28,9 @@ final class SeasonLoaded extends SeasonState {
 
 /// The load failed.
 final class SeasonError extends SeasonState {
-  const SeasonError(this.message);
+  const SeasonError(this.reason);
 
-  final String message;
+  final FailureReason reason;
 }
 
 /// Loads one season's full detail (H4) on demand — `docs/SCREENS.md`
@@ -54,8 +54,8 @@ class SeasonCubit extends Cubit<SeasonState> {
     switch (result) {
       case Success<SeasonDetail>(:final value):
         emit(SeasonLoaded(value));
-      case Failure<SeasonDetail>(:final message):
-        emit(SeasonError(message));
+      case Failure<SeasonDetail>(:final reason):
+        emit(SeasonError(reason));
     }
   }
 }

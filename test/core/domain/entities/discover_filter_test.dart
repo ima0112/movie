@@ -3,8 +3,8 @@ import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 
-const _drama = Genre(id: 'drama', name: 'Drama');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
+const _drama = Genre(id: 'drama');
+const _comedy = Genre(id: 'comedy');
 
 void main() {
   group('DiscoverFilter', () {
@@ -80,7 +80,7 @@ void main() {
 
     test('withGenres/withoutGenres/sortBy use the plain "not passed" '
         'form, no wrapper function needed', () {
-      const genre = Genre(id: 'drama', name: 'Drama');
+      const genre = Genre(id: 'drama');
       const original = DiscoverFilter();
 
       final copy = original.copyWith(withGenres: {genre});

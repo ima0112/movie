@@ -7,29 +7,24 @@ import '../domain/entities/result.dart';
 /// `presentation`." Every repository in `data/` that calls
 /// `ApiClient`/`Dio` must catch its [DioException]s and run them through
 /// this, not invent its own mapping — a `DioException` must never
-/// propagate past `data/` itself.
+/// propagate past `data/` itself. Only a [FailureReason] comes out of
+/// this, never a message string (rule 15) — the exception's own detail
+/// (status code, URI, `exception.message`) is real, useful information,
+/// but it's diagnostic, not something to show a user, so it's dropped
+/// here rather than smuggled into `Failure` under a different name.
 Failure<T> mapDioExceptionToFailure<T>(DioException exception) {
   final statusCode = exception.response?.statusCode;
 
   if (statusCode == 404) {
-    return Failure<T>(
-      'Not found: ${exception.requestOptions.uri}',
-      reason: FailureReason.notFound,
-    );
+    return Failure<T>(FailureReason.notFound);
   }
 
   if (statusCode == 429) {
-    return Failure<T>(
-      'Too many requests — try again in a moment.',
-      reason: FailureReason.quota,
-    );
+    return Failure<T>(FailureReason.quota);
   }
 
   if (statusCode != null && statusCode >= 500) {
-    return Failure<T>(
-      'TMDB is having trouble (HTTP $statusCode).',
-      reason: FailureReason.server,
-    );
+    return Failure<T>(FailureReason.server);
   }
 
   switch (exception.type) {
@@ -38,23 +33,14 @@ Failure<T> mapDioExceptionToFailure<T>(DioException exception) {
     case DioExceptionType.sendTimeout:
     case DioExceptionType.receiveTimeout:
     case DioExceptionType.transformTimeout:
-      return Failure<T>(
-        'No connection — check your internet and try again.',
-        reason: FailureReason.network,
-      );
+      return Failure<T>(FailureReason.network);
     case DioExceptionType.badCertificate:
     case DioExceptionType.badResponse:
     case DioExceptionType.cancel:
     case DioExceptionType.unknown:
       if (statusCode != null) {
-        return Failure<T>(
-          'TMDB request failed (HTTP $statusCode).',
-          reason: FailureReason.server,
-        );
+        return Failure<T>(FailureReason.server);
       }
-      return Failure<T>(
-        exception.message ?? 'Something went wrong.',
-        reason: FailureReason.unknown,
-      );
+      return Failure<T>(FailureReason.unknown);
   }
 }

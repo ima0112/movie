@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_chip.dart';
 
 /// D2's status pill next to the title — `docs/SCREENS.md` D2: "Status
@@ -26,10 +27,11 @@ class TvStatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final (label, state) = switch (status) {
-      'Ended' => ('Ended', ChipState.normal),
-      'Canceled' => ('Cancelled', ChipState.normal),
-      _ => ('Airing', ChipState.selected),
+      'Ended' => (l10n.tvStatusEnded, ChipState.normal),
+      'Canceled' => (l10n.tvStatusCancelled, ChipState.normal),
+      _ => (l10n.tvStatusAiring, ChipState.selected),
     };
     return AppChip(label: label, state: state);
   }

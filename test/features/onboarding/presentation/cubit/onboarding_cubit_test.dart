@@ -13,8 +13,8 @@ import 'package:movies/core/domain/repositories/user_profile_repository.dart';
 import 'package:movies/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'package:movies/features/onboarding/presentation/cubit/onboarding_state.dart';
 
-const _action = Genre(id: 'action', name: 'Action');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
+const _action = Genre(id: 'action');
+const _comedy = Genre(id: 'comedy');
 
 /// Minimal test double — no fake/real split exists for this repository
 /// anywhere yet (nothing else needed one before this Cubit), so it
@@ -29,7 +29,7 @@ class _FakeUserProfileRepository implements UserProfileRepository {
 
   @override
   Future<Result<void>> save(UserProfile profile) async {
-    if (shouldFail) return const Failure('save failed');
+    if (shouldFail) return const Failure(FailureReason.storage);
     saved = profile;
     _controller.add(profile);
     return const Success(null);
@@ -46,7 +46,7 @@ class _FakeTasteProfileRepository implements TasteProfileRepository {
 
   @override
   Future<Result<void>> save(TasteProfile profile) async {
-    if (shouldFail) return const Failure('save failed');
+    if (shouldFail) return const Failure(FailureReason.storage);
     saved = profile;
     _controller.add(profile);
     return const Success(null);
