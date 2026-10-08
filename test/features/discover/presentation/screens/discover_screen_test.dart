@@ -5,13 +5,19 @@ import 'package:movies/app/environments.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/presentation/screens/discover_screen.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 void main() {
   setUpAll(() => configureDependencies(fake.name));
 
   Future<void> pumpDiscoverScreen(WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(theme: AppTheme.dark, home: const DiscoverScreen()),
+      MaterialApp(
+        theme: AppTheme.dark,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const DiscoverScreen(),
+      ),
     );
   }
 

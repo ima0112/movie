@@ -1,0 +1,9 @@
+{
+  "@@locale": "es",
+
+  "discoverSeeAll": "Ver todo",
+
+  "settingsAboutVersion": "Versión {version} ({build})",
+
+  "settingsDataDeleteItemCount": "{count, plural, =1{1 elemento} other{{count} elementos}}"
+}

@@ -10,6 +10,7 @@ import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_section_skeleton.dart';
@@ -105,7 +106,7 @@ class _SectionHeader extends StatelessWidget {
             ),
           ),
           child: Text(
-            'See all',
+            context.l10n.discoverSeeAll,
             style: AppTextStyles.body.copyWith(color: AppColors.accent),
           ),
         ),
