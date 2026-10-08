@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/metric_card.dart';
 import '../../domain/library_stats.dart';
 
@@ -23,21 +26,22 @@ class StatsMetricGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: MetricCard(
-                value: '${stats.moviesWatched}',
-                label: 'Movies watched',
+                value: stats.moviesWatched.localizedCount(l10n),
+                label: l10n.statsMoviesWatchedLabel,
               ),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: MetricCard(
-                value: _hours(stats.movieHours),
-                label: 'Hours of movies',
+                value: _hours(stats.movieHours, l10n),
+                label: l10n.statsHoursOfMoviesLabel,
               ),
             ),
           ],
@@ -47,15 +51,15 @@ class StatsMetricGrid extends StatelessWidget {
           children: [
             Expanded(
               child: MetricCard(
-                value: '${stats.tvShowsWatched}',
-                label: 'TV shows watched',
+                value: stats.tvShowsWatched.localizedCount(l10n),
+                label: l10n.statsTvShowsWatchedLabel,
               ),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: MetricCard(
-                value: _hours(stats.estimatedTvHours),
-                label: 'Estimated TV hours',
+                value: _hours(stats.estimatedTvHours, l10n),
+                label: l10n.statsEstimatedTvHoursLabel,
               ),
             ),
           ],
@@ -66,5 +70,6 @@ class StatsMetricGrid extends StatelessWidget {
 
   // MetricCard's own doc comment gives "312 h" as its example format
   // for an hours value — matched here rather than a bare number.
-  static String _hours(double hours) => '${hours.round()} h';
+  static String _hours(double hours, AppLocalizations l10n) =>
+      l10n.statsHoursValue(hours.round().localizedCount(l10n));
 }

@@ -518,4 +518,104 @@ class AppLocalizationsEs extends AppLocalizations {
   String myListSegmentLabelWithCount(String label, int count) {
     return '$label ($count)';
   }
+
+  @override
+  String get myTastesTitle => 'Mis gustos';
+
+  @override
+  String myTastesSummaryVibeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count vibes',
+      one: '1 vibe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String myTastesSummarySinceYear(int year) {
+    return 'desde $year';
+  }
+
+  @override
+  String myTastesSummaryNeverGenre(String genreName) {
+    return 'nunca $genreName';
+  }
+
+  @override
+  String get myTastesInvitationTitle => 'Crea tu perfil de gustos';
+
+  @override
+  String get myTastesInvitationBody =>
+      'Recibe recomendaciones que de verdad encajen con lo que te gusta.';
+
+  @override
+  String get youHeaderGreetingNoProfile => 'Hola';
+
+  @override
+  String get youHeaderTapToSetName => 'Toca para poner tu nombre';
+
+  @override
+  String youHeaderGreetingWithName(String name) {
+    return 'Hola, $name';
+  }
+
+  @override
+  String get yourActivityTitle => 'Tu actividad';
+
+  @override
+  String get yourActivityHoursLabel => 'Horas';
+
+  @override
+  String get yourActivitySeeStats => 'Ver estadísticas';
+
+  @override
+  String get statsTitle => 'Estadísticas';
+
+  @override
+  String get statsActivityStripTitle => 'Actividad de los últimos 12 meses';
+
+  @override
+  String get statsEmptyTitle =>
+      'Marca algo como visto para ver tus estadísticas';
+
+  @override
+  String get statsEmptyBody =>
+      'Tus números aparecerán aquí en cuanto lo hagas.';
+
+  @override
+  String get statsGenreBarsTitle => 'Géneros que más ves';
+
+  @override
+  String get statsMoviesWatchedLabel => 'Películas vistas';
+
+  @override
+  String get statsHoursOfMoviesLabel => 'Horas de películas';
+
+  @override
+  String get statsTvShowsWatchedLabel => 'Series vistas';
+
+  @override
+  String get statsEstimatedTvHoursLabel => 'Horas estimadas de series';
+
+  @override
+  String get myTastesGenresLikeTitle => 'Géneros que te gustan';
+
+  @override
+  String get myTastesGenresNeverTitle => 'Géneros que nunca quieres';
+
+  @override
+  String get myTastesSavedIndicator => 'Guardado';
+
+  @override
+  String get myTastesVibesLikeTitle => 'Vibes que te gustan';
+
+  @override
+  String get myTastesHowFarBackLabel => 'Hasta cuándo';
+
+  @override
+  String statsHoursValue(String hours) {
+    return '$hours h';
+  }
 }

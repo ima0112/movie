@@ -504,4 +504,96 @@ class AppLocalizationsEn extends AppLocalizations {
   String myListSegmentLabelWithCount(String label, int count) {
     return '$label ($count)';
   }
+
+  @override
+  String get myTastesTitle => 'My Tastes';
+
+  @override
+  String myTastesSummaryVibeCount(int count) {
+    return '$count vibes';
+  }
+
+  @override
+  String myTastesSummarySinceYear(int year) {
+    return 'since $year';
+  }
+
+  @override
+  String myTastesSummaryNeverGenre(String genreName) {
+    return 'never $genreName';
+  }
+
+  @override
+  String get myTastesInvitationTitle => 'Build your taste profile';
+
+  @override
+  String get myTastesInvitationBody =>
+      'Get picks that actually match what you like.';
+
+  @override
+  String get youHeaderGreetingNoProfile => 'Hi';
+
+  @override
+  String get youHeaderTapToSetName => 'Tap to set your name';
+
+  @override
+  String youHeaderGreetingWithName(String name) {
+    return 'Hi, $name';
+  }
+
+  @override
+  String get yourActivityTitle => 'Your Activity';
+
+  @override
+  String get yourActivityHoursLabel => 'Hours';
+
+  @override
+  String get yourActivitySeeStats => 'See stats';
+
+  @override
+  String get statsTitle => 'Stats';
+
+  @override
+  String get statsActivityStripTitle => 'Activity over the last 12 months';
+
+  @override
+  String get statsEmptyTitle => 'Mark something as watched to see your stats';
+
+  @override
+  String get statsEmptyBody => 'Your numbers will show up here once you do.';
+
+  @override
+  String get statsGenreBarsTitle => 'Genres you watch most';
+
+  @override
+  String get statsMoviesWatchedLabel => 'Movies watched';
+
+  @override
+  String get statsHoursOfMoviesLabel => 'Hours of movies';
+
+  @override
+  String get statsTvShowsWatchedLabel => 'TV shows watched';
+
+  @override
+  String get statsEstimatedTvHoursLabel => 'Estimated TV hours';
+
+  @override
+  String get myTastesGenresLikeTitle => 'Genres you like';
+
+  @override
+  String get myTastesGenresNeverTitle => 'Genres you never want';
+
+  @override
+  String get myTastesSavedIndicator => 'Saved';
+
+  @override
+  String get myTastesVibesLikeTitle => 'Vibes you like';
+
+  @override
+  String get myTastesHowFarBackLabel => 'How far back';
+
+  @override
+  String statsHoursValue(String hours) {
+    return '$hours h';
+  }
 }

@@ -183,5 +183,39 @@
 
   "myListHideWatchedToggle": "Ocultar lo que he visto",
 
-  "myListSegmentLabelWithCount": "{label} ({count})"
+  "myListSegmentLabelWithCount": "{label} ({count})",
+
+  "myTastesTitle": "Mis gustos",
+  "myTastesSummaryVibeCount": "{count, plural, =1{1 vibe} other{{count} vibes}}",
+  "myTastesSummarySinceYear": "desde {year}",
+  "myTastesSummaryNeverGenre": "nunca {genreName}",
+
+  "myTastesInvitationTitle": "Crea tu perfil de gustos",
+  "myTastesInvitationBody": "Recibe recomendaciones que de verdad encajen con lo que te gusta.",
+
+  "youHeaderGreetingNoProfile": "Hola",
+  "youHeaderTapToSetName": "Toca para poner tu nombre",
+  "youHeaderGreetingWithName": "Hola, {name}",
+
+  "yourActivityTitle": "Tu actividad",
+  "yourActivityHoursLabel": "Horas",
+  "yourActivitySeeStats": "Ver estadísticas",
+
+  "statsTitle": "Estadísticas",
+  "statsActivityStripTitle": "Actividad de los últimos 12 meses",
+  "statsEmptyTitle": "Marca algo como visto para ver tus estadísticas",
+  "statsEmptyBody": "Tus números aparecerán aquí en cuanto lo hagas.",
+  "statsGenreBarsTitle": "Géneros que más ves",
+  "statsMoviesWatchedLabel": "Películas vistas",
+  "statsHoursOfMoviesLabel": "Horas de películas",
+  "statsTvShowsWatchedLabel": "Series vistas",
+  "statsEstimatedTvHoursLabel": "Horas estimadas de series",
+
+  "myTastesGenresLikeTitle": "Géneros que te gustan",
+  "myTastesGenresNeverTitle": "Géneros que nunca quieres",
+  "myTastesSavedIndicator": "Guardado",
+  "myTastesVibesLikeTitle": "Vibes que te gustan",
+  "myTastesHowFarBackLabel": "Hasta cuándo",
+
+  "statsHoursValue": "{hours} h"
 }

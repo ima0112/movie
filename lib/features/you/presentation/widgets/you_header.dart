@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/profile_avatar.dart';
 
 const double _avatarSize = 36;
@@ -84,22 +85,23 @@ class _Greeting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profile = this.profile;
+    final l10n = context.l10n;
     if (profile == null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Hi', style: AppTextStyles.h2),
+          Text(l10n.youHeaderGreetingNoProfile, style: AppTextStyles.h2),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Tap to set your name',
+            l10n.youHeaderTapToSetName,
             style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
           ),
         ],
       );
     }
     return Text(
-      'Hi, ${profile.displayName}',
+      l10n.youHeaderGreetingWithName(profile.displayName),
       style: AppTextStyles.h2,
       overflow: TextOverflow.ellipsis,
     );

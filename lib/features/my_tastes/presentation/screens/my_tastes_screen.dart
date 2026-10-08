@@ -8,6 +8,7 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/genre_icons.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/my_tastes_cubit.dart';
@@ -70,23 +71,24 @@ class _MyTastesView extends StatelessWidget {
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        title: Text('My Tastes', style: AppTextStyles.h2),
+        title: Text(context.l10n.myTastesTitle, style: AppTextStyles.h2),
       ),
       body: BlocBuilder<MyTastesCubit, MyTastesState>(
         builder: (context, state) {
           final cubit = context.read<MyTastesCubit>();
+          final l10n = context.l10n;
           return ListView(
             padding: const EdgeInsets.all(AppSpacing.xl),
             children: [
               TasteGenreGrid(
-                title: 'Genres you like',
+                title: l10n.myTastesGenresLikeTitle,
                 options: genreOptions,
                 selected: state.likedGenres,
                 onToggle: cubit.toggleLikedGenre,
               ),
               const SizedBox(height: AppSpacing.xxl),
               TasteGenreGrid(
-                title: 'Genres you never want',
+                title: l10n.myTastesGenresNeverTitle,
                 options: genreOptions,
                 selected: state.vetoedGenres,
                 onToggle: cubit.toggleVetoedGenre,
@@ -106,7 +108,7 @@ class _MyTastesView extends StatelessWidget {
               Row(
                 children: [
                   TextLinkButton(
-                    label: 'Reset',
+                    label: l10n.commonReset,
                     onTap: cubit.reset,
                     fullWidth: false,
                   ),
@@ -115,7 +117,7 @@ class _MyTastesView extends StatelessWidget {
                     opacity: state.justSaved ? 1 : 0,
                     duration: const Duration(milliseconds: 200),
                     child: Text(
-                      'Saved',
+                      l10n.myTastesSavedIndicator,
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.inkMuted,
                       ),

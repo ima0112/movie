@@ -5,6 +5,7 @@ import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/features/you/presentation/widgets/your_activity_card.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
 const _oppenheimer = MediaKey(type: MediaType.movie, tmdbId: 2);
@@ -17,6 +18,8 @@ Future<void> _pump(
 ) async {
   await tester.pumpWidget(
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: YourActivityCard(
           userLibraryRepository: repository,
@@ -141,28 +144,25 @@ void main() {
       },
     );
 
-    testWidgets(
-      'clearAll() on UserLibraryRepository zeroes an already-mounted '
-      'card\'s numbers, with no restart',
-      (tester) async {
-        final repository = InMemoryUserLibraryRepository();
-        await repository.upsert(
-          UserMediaEntry(
-            title: 'Test Title',
-            key: _dune,
-            watchedAt: DateTime(2024, 1, 1),
-            runtimeMinutes: 166,
-          ),
-        );
-        await _pump(tester, repository);
-        expect(find.text('3'), findsOneWidget);
+    testWidgets('clearAll() on UserLibraryRepository zeroes an already-mounted '
+        'card\'s numbers, with no restart', (tester) async {
+      final repository = InMemoryUserLibraryRepository();
+      await repository.upsert(
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _dune,
+          watchedAt: DateTime(2024, 1, 1),
+          runtimeMinutes: 166,
+        ),
+      );
+      await _pump(tester, repository);
+      expect(find.text('3'), findsOneWidget);
 
-        await repository.clearAll();
-        await tester.pumpAndSettle();
+      await repository.clearAll();
+      await tester.pumpAndSettle();
 
-        expect(find.text('3'), findsNothing);
-        expect(find.text('0'), findsWidgets);
-      },
-    );
+      expect(find.text('3'), findsNothing);
+      expect(find.text('0'), findsWidgets);
+    });
   });
 }

@@ -499,5 +499,82 @@
         "type": "int"
       }
     }
+  },
+
+  "myTastesTitle": "My Tastes",
+  "@myTastesTitle": {
+    "description": "Shared across three spots: MyTastesCard's own header (B5), MyTastesInvitation's button label, and C5's AppBar title — same word, same screen, in all three."
+  },
+  "myTastesSummaryVibeCount": "{count} vibes",
+  "@myTastesSummaryVibeCount": {
+    "description": "MyTastesCard's summary line (docs/SCREENS.md B5: \"3 vibes · since 1990 · never Horror\"), first fragment. Deliberately not ICU-pluralized in English — always says \"vibes\", even at count == 1 — preserving this control's existing behavior exactly; Spanish, which has no prior behavior of its own, pluralizes correctly.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myTastesSummarySinceYear": "since {year}",
+  "@myTastesSummarySinceYear": {
+    "description": "MyTastesCard's summary line, second fragment (docs/SCREENS.md B5).",
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "myTastesSummaryNeverGenre": "never {genreName}",
+  "@myTastesSummaryNeverGenre": {
+    "description": "MyTastesCard's summary line, third (optional) fragment (docs/SCREENS.md B5). {genreName} is that Genre's own localized display name.",
+    "placeholders": {
+      "genreName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "myTastesInvitationTitle": "Build your taste profile",
+  "myTastesInvitationBody": "Get picks that actually match what you like.",
+
+  "youHeaderGreetingNoProfile": "Hi",
+  "youHeaderTapToSetName": "Tap to set your name",
+  "youHeaderGreetingWithName": "Hi, {name}",
+  "@youHeaderGreetingWithName": {
+    "description": "You's header once a profile name exists.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "yourActivityTitle": "Your Activity",
+  "yourActivityHoursLabel": "Hours",
+  "yourActivitySeeStats": "See stats",
+
+  "statsTitle": "Stats",
+  "statsActivityStripTitle": "Activity over the last 12 months",
+  "statsEmptyTitle": "Mark something as watched to see your stats",
+  "statsEmptyBody": "Your numbers will show up here once you do.",
+  "statsGenreBarsTitle": "Genres you watch most",
+  "statsMoviesWatchedLabel": "Movies watched",
+  "statsHoursOfMoviesLabel": "Hours of movies",
+  "statsTvShowsWatchedLabel": "TV shows watched",
+  "statsEstimatedTvHoursLabel": "Estimated TV hours",
+
+  "myTastesGenresLikeTitle": "Genres you like",
+  "myTastesGenresNeverTitle": "Genres you never want",
+  "myTastesSavedIndicator": "Saved",
+  "myTastesVibesLikeTitle": "Vibes you like",
+  "myTastesHowFarBackLabel": "How far back",
+
+  "statsHoursValue": "{hours} h",
+  "@statsHoursValue": {
+    "description": "StatsMetricGrid's own hours-value format, e.g. \"312 h\" (docs/SCREENS.md C4's own example). {hours} is already locale-formatted (LocalizedCount.localizedCount) before being substituted in.",
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
   }
 }
