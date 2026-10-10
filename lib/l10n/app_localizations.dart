@@ -1327,6 +1327,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+{count}'**
   String whereToWatchOverflowChip(int count);
+
+  /// D3's header age line once PersonDetail.deathday is set (docs/SCREENS.md D3).
+  ///
+  /// In en, this message translates to:
+  /// **'Lived {age} years'**
+  String personAgeLivedYears(int age);
+
+  /// D3's header age line while the person is still alive (docs/SCREENS.md D3).
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String personAgeYearsOld(int age);
+
+  /// D3's own note shown above the biography when TMDB has no translation in the user's language.
+  ///
+  /// In en, this message translates to:
+  /// **'Biography in English'**
+  String get personBiographyInEnglish;
+
+  /// D3's filmography year-group header for undated credits (docs/SCREENS.md D3) — FilmographyYearGroup.year is null for this group; domain never carries the label text itself (CLAUDE.md rule 15), only presentation maps null to this string.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get personFilmographyComingSoon;
+
+  /// D3's own carousel header (docs/SCREENS.md D3).
+  ///
+  /// In en, this message translates to:
+  /// **'Known for'**
+  String get personKnownForTitle;
+
+  /// D3's own section header (docs/SCREENS.md D3).
+  ///
+  /// In en, this message translates to:
+  /// **'Filmography'**
+  String get personFilmographyTitle;
 }
 
 class _AppLocalizationsDelegate

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/features/person_detail/presentation/widgets/person_biography_section.dart';
+import 'package:movies/l10n/app_localizations.dart';
 
 void main() {
   group('PersonBiographySection', () {
     testWidgets('renders nothing for an empty biography', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonBiographySection(
               biography: '',
@@ -21,7 +24,9 @@ void main() {
 
     testWidgets('no "Biography in English" note by default', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonBiographySection(
               biography: 'A short bio.',
@@ -37,7 +42,9 @@ void main() {
 
     testWidgets('shows the note when isEnglishFallback is set', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonBiographySection(
               biography: 'A short bio.',
@@ -55,7 +62,9 @@ void main() {
     ) async {
       const bio = 'A short bio.';
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: PersonBiographySection(
               biography: bio,

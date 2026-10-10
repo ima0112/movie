@@ -5,6 +5,7 @@ import '../../../../core/domain/entities/person.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import 'known_for.dart';
 import 'person_age_label.dart';
 import 'person_biography_section.dart';
@@ -44,7 +45,7 @@ class PersonDetailContent extends StatelessWidget {
           key: headerKey,
           child: PersonDetailHeader(
             person: detail.person,
-            ageLabel: personAgeLabel(detail),
+            ageLabel: personAgeLabel(detail, context.l10n),
             placeOfBirth: detail.placeOfBirth,
           ),
         ),
@@ -75,7 +76,7 @@ class _Footer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
       child: Center(
         child: Text(
-          'Data from TMDB',
+          context.l10n.onboardingWelcomeTmdbAttribution,
           style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
         ),
       ),

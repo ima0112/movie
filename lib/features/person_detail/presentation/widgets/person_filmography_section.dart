@@ -4,6 +4,7 @@ import '../../../../core/domain/entities/person.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import 'filmography_grouping.dart';
 import 'person_filmography_row.dart';
 import 'person_filmography_segmented_control.dart';
@@ -41,6 +42,7 @@ class _PersonFilmographySectionState extends State<PersonFilmographySection> {
   Widget build(BuildContext context) {
     if (widget.credits.isEmpty) return const SizedBox.shrink();
 
+    final l10n = context.l10n;
     final showAsDirector = widget.credits.hasBothCastAndCrew;
     final groups = widget.credits.filteredBy(_segment).groupedByYear;
 
@@ -51,7 +53,7 @@ class _PersonFilmographySectionState extends State<PersonFilmographySection> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            child: Text('Filmography', style: AppTextStyles.h2),
+            child: Text(l10n.personFilmographyTitle, style: AppTextStyles.h2),
           ),
           const SizedBox(height: AppSpacing.md),
           PersonFilmographySegmentedControl(
@@ -67,7 +69,9 @@ class _PersonFilmographySectionState extends State<PersonFilmographySection> {
               children: [
                 for (final group in groups) ...[
                   Text(
-                    group.label,
+                    group.year == null
+                        ? l10n.personFilmographyComingSoon
+                        : '${group.year}',
                     style: AppTextStyles.bodySm.copyWith(
                       color: AppColors.inkMuted,
                     ),

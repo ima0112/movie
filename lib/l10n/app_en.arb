@@ -708,5 +708,40 @@
         "type": "int"
       }
     }
+  },
+
+  "personAgeLivedYears": "Lived {age} years",
+  "@personAgeLivedYears": {
+    "description": "D3's header age line once PersonDetail.deathday is set (docs/SCREENS.md D3).",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "personAgeYearsOld": "{age} years old",
+  "@personAgeYearsOld": {
+    "description": "D3's header age line while the person is still alive (docs/SCREENS.md D3).",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "personBiographyInEnglish": "Biography in English",
+  "@personBiographyInEnglish": {
+    "description": "D3's own note shown above the biography when TMDB has no translation in the user's language."
+  },
+  "personFilmographyComingSoon": "Coming soon",
+  "@personFilmographyComingSoon": {
+    "description": "D3's filmography year-group header for undated credits (docs/SCREENS.md D3) — FilmographyYearGroup.year is null for this group; domain never carries the label text itself (CLAUDE.md rule 15), only presentation maps null to this string."
+  },
+  "personKnownForTitle": "Known for",
+  "@personKnownForTitle": {
+    "description": "D3's own carousel header (docs/SCREENS.md D3)."
+  },
+  "personFilmographyTitle": "Filmography",
+  "@personFilmographyTitle": {
+    "description": "D3's own section header (docs/SCREENS.md D3)."
   }
 }
