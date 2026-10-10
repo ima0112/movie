@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/launch/launch_external_link.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/settings_row.dart';
 
 /// C6's About group — `docs/SCREENS.md` C6: "Version (long-press copies
@@ -25,25 +26,26 @@ class _SettingsAboutSectionState extends State<SettingsAboutSection> {
 
   void _copyBuildNumber(String buildNumber) {
     unawaited(Clipboard.setData(ClipboardData(text: buildNumber)));
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Build number copied')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.settingsBuildNumberCopiedSnackbar)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       children: [
-        const SettingsGroupHeader(title: 'About'),
+        SettingsGroupHeader(title: l10n.settingsAboutHeader),
         FutureBuilder<PackageInfo>(
           future: _packageInfo,
           builder: (context, snapshot) {
             final info = snapshot.data;
             return SettingsRow(
-              label: 'Version',
+              label: l10n.settingsVersionLabel,
               value: info == null
                   ? null
-                  : '${info.version} (${info.buildNumber})',
+                  : l10n.settingsAboutVersion(info.version, info.buildNumber),
               showChevron: false,
               onLongPress: info == null
                   ? null
@@ -52,11 +54,11 @@ class _SettingsAboutSectionState extends State<SettingsAboutSection> {
           },
         ),
         SettingsRow(
-          label: 'Source code',
+          label: l10n.settingsSourceCodeLabel,
           onTap: () => unawaited(launchExternalLink(context, _sourceCodeUrl)),
         ),
         SettingsRow(
-          label: 'Licenses',
+          label: l10n.settingsLicensesLabel,
           onTap: () =>
               showLicensePage(context: context, applicationName: 'PakoTV'),
         ),
