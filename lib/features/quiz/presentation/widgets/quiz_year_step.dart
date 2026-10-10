@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/pako_state.dart';
 
 /// E2 step 3 — `docs/SCREENS.md` E2: "How far back do you want to go?":
@@ -39,7 +40,7 @@ class QuizYearStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('How far back do you want to go?', style: AppTextStyles.h1),
+        Text(context.l10n.quizYearStepHeadline, style: AppTextStyles.h1),
         const SizedBox(height: AppSpacing.xl),
         const Center(child: PakoState(mood: PakoMood.idle)),
         const SizedBox(height: AppSpacing.xl),

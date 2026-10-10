@@ -1363,6 +1363,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Filmography'**
   String get personFilmographyTitle;
+
+  /// E2 step 4's own discreet toggle (docs/SCREENS.md E2) — deliberately its own key, not myListHideWatchedToggle ("Hide what I've watched"), since the two controls use different wording in the existing code.
+  ///
+  /// In en, this message translates to:
+  /// **'Exclude what I\'ve already watched'**
+  String get quizExcludeWatchedToggle;
+
+  /// E2 step 1's own headline (docs/SCREENS.md E2).
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to 3 you\'re NOT in the mood for'**
+  String get quizGenreStepHeadline;
+
+  /// E2 steps 1 and 2's own "N of M" counter under each headline (docs/SCREENS.md E2).
+  ///
+  /// In en, this message translates to:
+  /// **'{selected} of {max}'**
+  String quizSelectionCounter(int selected, int max);
+
+  /// E2 step 4's own stepper label (docs/SCREENS.md E2) — reuses discoverRangeFiltersNoLimit for its "No limit" value.
+  ///
+  /// In en, this message translates to:
+  /// **'Max seasons'**
+  String get quizMaxSeasonsLabel;
+
+  /// E2's final-step button, replacing commonNext (docs/SCREENS.md E2: "Final button 'Search'").
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get quizSearchButton;
+
+  /// E2 step 2's own headline (docs/SCREENS.md E2).
+  ///
+  /// In en, this message translates to:
+  /// **'Now pick 3 you ARE in the mood for'**
+  String get quizVibeStepHeadline;
+
+  /// E2 step 3's own headline (docs/SCREENS.md E2).
+  ///
+  /// In en, this message translates to:
+  /// **'How far back do you want to go?'**
+  String get quizYearStepHeadline;
+
+  /// E3's SurpriseError body — no exact copy is given in docs/SCREENS.md for this (E3 only describes the state, "error with 'Retry'"), so this is a plain, generic line.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t find a match. Try again.'**
+  String get surpriseErrorMessage;
+
+  /// E1's own headline (docs/SCREENS.md E1).
+  ///
+  /// In en, this message translates to:
+  /// **'What are you in the mood for today?'**
+  String get chooseTypeHeadline;
+
+  /// No description provided for @surpriseNoMoreSuggestionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s all for now'**
+  String get surpriseNoMoreSuggestionsTitle;
+
+  /// No description provided for @surpriseNoMoreSuggestionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re out of suggestions from this search — try again for a fresh pick.'**
+  String get surpriseNoMoreSuggestionsBody;
+
+  /// No description provided for @surpriseSearchAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Search again'**
+  String get surpriseSearchAgain;
+
+  /// E3's SurpriseError title — distinct from surpriseErrorMessage (the body), even though the wording overlaps in English.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t find a match'**
+  String get surpriseNoMatchTitle;
+
+  /// No description provided for @chooseTypeMovieLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'A movie'**
+  String get chooseTypeMovieLabel;
+
+  /// No description provided for @chooseTypeTvShowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'A TV show'**
+  String get chooseTypeTvShowLabel;
+
+  /// E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states.
+  ///
+  /// In en, this message translates to:
+  /// **'Your suggestion'**
+  String get surpriseYourSuggestionTitle;
+
+  /// No description provided for @surpriseSearchingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching…'**
+  String get surpriseSearchingLabel;
+
+  /// E3's result card link (docs/SCREENS.md E3).
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get surpriseViewDetailsLink;
+
+  /// No description provided for @surpriseSourceProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your tastes'**
+  String get surpriseSourceProfile;
+
+  /// E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — SuggestionSource.quiz shows neither subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your list'**
+  String get surpriseSourceInferredList;
+
+  /// No description provided for @surpriseRelaxedSearchNote.
+  ///
+  /// In en, this message translates to:
+  /// **'We broadened the search a bit to find this match.'**
+  String get surpriseRelaxedSearchNote;
+
+  /// No description provided for @surpriseAddToWatchLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Watch later'**
+  String get surpriseAddToWatchLater;
+
+  /// E3's secondary button (docs/SCREENS.md E3: "Secondary button 'Another suggestion'").
+  ///
+  /// In en, this message translates to:
+  /// **'Another suggestion'**
+  String get surpriseAnotherSuggestion;
+
+  /// No description provided for @surpriseAddedToWatchLaterSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to Watch later'**
+  String get surpriseAddedToWatchLaterSnackbar;
+
+  /// B3's own title (docs/SCREENS.md B3) — "Match" is this app's own feature name, left untranslated in every locale, same class of exception as "PakoTV".
+  ///
+  /// In en, this message translates to:
+  /// **'Match'**
+  String get matchHubTitle;
+
+  /// No description provided for @matchHubSurpriseMeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise me'**
+  String get matchHubSurpriseMeTitle;
+
+  /// No description provided for @matchHubSurpriseMeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A suggestion just for you'**
+  String get matchHubSurpriseMeSubtitle;
+
+  /// B3's second card — "Match" stays untranslated, same reason as matchHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Match with friends'**
+  String get matchHubWithFriendsTitle;
+
+  /// No description provided for @matchHubWithFriendsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decide together in seconds'**
+  String get matchHubWithFriendsSubtitle;
+
+  /// No description provided for @matchHubSoonPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Soon'**
+  String get matchHubSoonPill;
 }
 
 class _AppLocalizationsDelegate

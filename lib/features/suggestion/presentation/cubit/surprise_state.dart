@@ -68,9 +68,11 @@ final class Exhausted extends SurpriseState {
 /// `MatchEngine.resolve` either took longer than `SurpriseCubit`'s own
 /// maximum wait, or genuinely returned `null` (every relaxation step
 /// exhausted, still no candidate) — `SurpriseCubit.retry()` is the
-/// recovery for both, so neither needs its own state.
+/// recovery for both, so neither needs its own state. No message of
+/// its own (CLAUDE.md rule 15: domain/data — and this Cubit, which
+/// never imports Flutter — never carry user-facing text); the one
+/// screen that renders this state supplies the copy itself, via
+/// `context.l10n.surpriseErrorMessage`.
 final class SurpriseError extends SurpriseState {
-  const SurpriseError(this.message);
-
-  final String message;
+  const SurpriseError();
 }

@@ -57,12 +57,6 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   /// continuing to wait on [MatchEngine.resolve].
   static const Duration maxSearchingDuration = Duration(seconds: 8);
 
-  /// No exact copy is given anywhere in `docs/SCREENS.md` for this
-  /// message (E3 only describes the *state* — "error with 'Retry'" —
-  /// not its body text), so this is a plain, generic one rather than an
-  /// invented specific-sounding line.
-  static const String _errorMessage = "Couldn't find a match. Try again.";
-
   int _searchGeneration = 0;
 
   // Remembered so retry() can re-run the exact same search regardless of
@@ -204,7 +198,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     if (generation != _searchGeneration || isClosed) return;
 
     if (result == null) {
-      emit(const SurpriseError(_errorMessage));
+      emit(const SurpriseError());
       return;
     }
 

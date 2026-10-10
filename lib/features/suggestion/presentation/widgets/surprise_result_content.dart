@@ -10,6 +10,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
@@ -35,9 +36,10 @@ class SurpriseResultContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final item = state.current;
+    final l10n = context.l10n;
     final subtitle = switch (state.source) {
-      SuggestionSource.profile => 'Based on your tastes',
-      SuggestionSource.inferredList => 'Based on your list',
+      SuggestionSource.profile => l10n.surpriseSourceProfile,
+      SuggestionSource.inferredList => l10n.surpriseSourceInferredList,
       SuggestionSource.quiz => null,
     };
 
@@ -45,7 +47,7 @@ class SurpriseResultContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Your suggestion', style: AppTextStyles.h1),
+          Text(l10n.surpriseYourSuggestionTitle, style: AppTextStyles.h1),
           if (subtitle != null) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
@@ -67,19 +69,19 @@ class SurpriseResultContent extends StatelessWidget {
             // TODO: thread the final MatchQuery's own yearFrom through
             // MatchResult so this can show the real figure.
             Text(
-              'We broadened the search a bit to find this match.',
+              l10n.surpriseRelaxedSearchNote,
               style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
             ),
           ],
           const SizedBox(height: AppSpacing.xl),
           PrimaryButton(
-            label: 'Add to Watch later',
+            label: l10n.surpriseAddToWatchLater,
             onTap: () =>
                 _addToWatchLater(context, item.key, item.title, item.genres),
           ),
           const SizedBox(height: AppSpacing.md),
           SecondaryButton(
-            label: 'Another suggestion',
+            label: l10n.surpriseAnotherSuggestion,
             onTap: () => context.read<SurpriseCubit>().another(),
           ),
         ],
@@ -94,6 +96,7 @@ class SurpriseResultContent extends StatelessWidget {
     List<Genre> genres,
   ) async {
     final messenger = ScaffoldMessenger.of(context);
+    final message = context.l10n.surpriseAddedToWatchLaterSnackbar;
     await getIt<UserLibraryRepository>().upsert(
       UserMediaEntry(
         key: key,
@@ -102,8 +105,6 @@ class SurpriseResultContent extends StatelessWidget {
         genres: genres,
       ),
     );
-    messenger.showSnackBar(
-      const SnackBar(content: Text('Added to Watch later')),
-    );
+    messenger.showSnackBar(SnackBar(content: Text(message)));
   }
 }

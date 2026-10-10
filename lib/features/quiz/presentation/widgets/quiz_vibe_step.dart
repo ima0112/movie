@@ -4,6 +4,7 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/vibe_tile_grid.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 
@@ -42,10 +43,10 @@ class QuizVibeStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Now pick 3 you ARE in the mood for', style: AppTextStyles.h1),
+        Text(context.l10n.quizVibeStepHeadline, style: AppTextStyles.h1),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          '${selected.length} of $_required',
+          context.l10n.quizSelectionCounter(selected.length, _required),
           style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
         ),
         const SizedBox(height: AppSpacing.lg),

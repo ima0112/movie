@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 
 /// E2 step 4's "'Max seasons' stepper (1–10, 'No limit')"
 /// (`docs/SCREENS.md` E2). No reusable stepper existed yet —
@@ -59,7 +60,7 @@ class MaxSeasonsStepper extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Max seasons', style: AppTextStyles.body),
+        Text(context.l10n.quizMaxSeasonsLabel, style: AppTextStyles.body),
         Row(
           children: [
             IconButton(
@@ -72,7 +73,9 @@ class MaxSeasonsStepper extends StatelessWidget {
             SizedBox(
               width: _valueWidth,
               child: Text(
-                current == null ? 'No limit' : '$current',
+                current == null
+                    ? context.l10n.discoverRangeFiltersNoLimit
+                    : '$current',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.h3,
               ),

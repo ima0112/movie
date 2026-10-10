@@ -7,6 +7,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 
 /// E3's own result card — `docs/SCREENS.md` E3: "White card: large
@@ -97,7 +98,7 @@ class SurpriseResultCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
-                  item.voteAverage.toStringAsFixed(1),
+                  item.voteAverage.localizedRating(context.l10n),
                   style: AppTextStyles.bodySm,
                 ),
               ],
@@ -105,7 +106,7 @@ class SurpriseResultCard extends StatelessWidget {
             if (onViewDetails != null) ...[
               const SizedBox(height: AppSpacing.md),
               TextLinkButton(
-                label: 'View details',
+                label: context.l10n.surpriseViewDetailsLink,
                 onTap: onViewDetails,
                 fullWidth: false,
               ),

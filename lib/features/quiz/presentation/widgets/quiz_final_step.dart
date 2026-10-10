@@ -81,7 +81,7 @@ class QuizFinalStep extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Exclude what I've already watched",
+              context.l10n.quizExcludeWatchedToggle,
               style: AppTextStyles.body,
             ),
             Switch(

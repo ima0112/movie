@@ -5,6 +5,7 @@ import '../../../../app/di.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../match_engine/domain/participant_answers.dart';
 import '../cubit/quiz_cubit.dart';
@@ -35,7 +36,9 @@ class QuizNextButton extends StatelessWidget {
         final (step, isValid) = data;
         final isLastStep = step >= 4;
         return PrimaryButton(
-          label: isLastStep ? 'Search' : 'Next',
+          label: isLastStep
+              ? context.l10n.quizSearchButton
+              : context.l10n.commonNext,
           isDisabled: !isValid,
           onTap: () => _handleTap(context, isLastStep),
         );

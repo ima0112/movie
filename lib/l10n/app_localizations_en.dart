@@ -727,4 +727,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personFilmographyTitle => 'Filmography';
+
+  @override
+  String get quizExcludeWatchedToggle => 'Exclude what I\'ve already watched';
+
+  @override
+  String get quizGenreStepHeadline =>
+      'Pick up to 3 you\'re NOT in the mood for';
+
+  @override
+  String quizSelectionCounter(int selected, int max) {
+    return '$selected of $max';
+  }
+
+  @override
+  String get quizMaxSeasonsLabel => 'Max seasons';
+
+  @override
+  String get quizSearchButton => 'Search';
+
+  @override
+  String get quizVibeStepHeadline => 'Now pick 3 you ARE in the mood for';
+
+  @override
+  String get quizYearStepHeadline => 'How far back do you want to go?';
+
+  @override
+  String get surpriseErrorMessage => 'Couldn\'t find a match. Try again.';
+
+  @override
+  String get chooseTypeHeadline => 'What are you in the mood for today?';
+
+  @override
+  String get surpriseNoMoreSuggestionsTitle => 'That\'s all for now';
+
+  @override
+  String get surpriseNoMoreSuggestionsBody =>
+      'We\'re out of suggestions from this search — try again for a fresh pick.';
+
+  @override
+  String get surpriseSearchAgain => 'Search again';
+
+  @override
+  String get surpriseNoMatchTitle => 'Couldn\'t find a match';
+
+  @override
+  String get chooseTypeMovieLabel => 'A movie';
+
+  @override
+  String get chooseTypeTvShowLabel => 'A TV show';
+
+  @override
+  String get surpriseYourSuggestionTitle => 'Your suggestion';
+
+  @override
+  String get surpriseSearchingLabel => 'Searching…';
+
+  @override
+  String get surpriseViewDetailsLink => 'View details';
+
+  @override
+  String get surpriseSourceProfile => 'Based on your tastes';
+
+  @override
+  String get surpriseSourceInferredList => 'Based on your list';
+
+  @override
+  String get surpriseRelaxedSearchNote =>
+      'We broadened the search a bit to find this match.';
+
+  @override
+  String get surpriseAddToWatchLater => 'Add to Watch later';
+
+  @override
+  String get surpriseAnotherSuggestion => 'Another suggestion';
+
+  @override
+  String get surpriseAddedToWatchLaterSnackbar => 'Added to Watch later';
+
+  @override
+  String get matchHubTitle => 'Match';
+
+  @override
+  String get matchHubSurpriseMeTitle => 'Surprise me';
+
+  @override
+  String get matchHubSurpriseMeSubtitle => 'A suggestion just for you';
+
+  @override
+  String get matchHubWithFriendsTitle => 'Match with friends';
+
+  @override
+  String get matchHubWithFriendsSubtitle => 'Decide together in seconds';
+
+  @override
+  String get matchHubSoonPill => 'Soon';
 }

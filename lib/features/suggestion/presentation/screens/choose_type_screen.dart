@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../match_engine/domain/match_engine.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../../../taste_profile/domain/taste_profile_builder.dart';
@@ -115,10 +116,7 @@ class _ChooseTypeViewState extends State<_ChooseTypeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'What are you in the mood for today?',
-                  style: AppTextStyles.h1,
-                ),
+                Text(context.l10n.chooseTypeHeadline, style: AppTextStyles.h1),
                 const SizedBox(height: AppSpacing.xxl),
                 const ChooseTypeCards(),
               ],
