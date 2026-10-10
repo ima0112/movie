@@ -227,5 +227,36 @@
   "tvSpecialsLabel": "Especiales",
   "tvSeasonLabel": "Temporada {number}",
   "tvEpisodeRowTitle": "{number}. {name}",
-  "tvEpisodeTba": "Por confirmar"
+  "tvEpisodeTba": "Por confirmar",
+
+  "commonNoMatches": "Sin coincidencias",
+  "commonSave": "Guardar",
+
+  "mediaDetailHaveYouFinished": "¿Has terminado {title}?",
+  "mediaDetailMarkAsWatched": "Marcar como visto",
+  "mediaDetailYourRating": "Tu valoración",
+  "mediaDetailRemoveFromWatched": "Quitar de Vistos",
+
+  "regionSheetTitle": "Región",
+  "regionSheetSearchHint": "Buscar países",
+
+  "fullCastSheetTitle": "Reparto completo",
+  "fullCastSheetCastLabel": "Reparto",
+  "fullCastSheetCrewLabel": "Equipo",
+  "fullCastSheetSearchHint": "Buscar en reparto y equipo",
+
+  "mediaSimilarTitle": "Similares",
+
+  "mediaDetailActionTrailer": "Tráiler",
+  "mediaDetailActionSeeSimilar": "Ver similares",
+  "mediaDetailActionFavorite": "Favorito",
+
+  "mediaCastRowSeeFullCast": "Ver reparto completo",
+
+  "whereToWatchTitle": "Dónde ver",
+  "whereToWatchSubscription": "Suscripción",
+  "whereToWatchRent": "Alquiler",
+  "whereToWatchBuy": "Compra",
+  "whereToWatchJustWatchAttribution": "Datos de JustWatch",
+  "whereToWatchOverflowChip": "+{count}"
 }

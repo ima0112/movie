@@ -654,4 +654,77 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tvEpisodeTba => 'Por confirmar';
+
+  @override
+  String get commonNoMatches => 'Sin coincidencias';
+
+  @override
+  String get commonSave => 'Guardar';
+
+  @override
+  String mediaDetailHaveYouFinished(String title) {
+    return '¿Has terminado $title?';
+  }
+
+  @override
+  String get mediaDetailMarkAsWatched => 'Marcar como visto';
+
+  @override
+  String get mediaDetailYourRating => 'Tu valoración';
+
+  @override
+  String get mediaDetailRemoveFromWatched => 'Quitar de Vistos';
+
+  @override
+  String get regionSheetTitle => 'Región';
+
+  @override
+  String get regionSheetSearchHint => 'Buscar países';
+
+  @override
+  String get fullCastSheetTitle => 'Reparto completo';
+
+  @override
+  String get fullCastSheetCastLabel => 'Reparto';
+
+  @override
+  String get fullCastSheetCrewLabel => 'Equipo';
+
+  @override
+  String get fullCastSheetSearchHint => 'Buscar en reparto y equipo';
+
+  @override
+  String get mediaSimilarTitle => 'Similares';
+
+  @override
+  String get mediaDetailActionTrailer => 'Tráiler';
+
+  @override
+  String get mediaDetailActionSeeSimilar => 'Ver similares';
+
+  @override
+  String get mediaDetailActionFavorite => 'Favorito';
+
+  @override
+  String get mediaCastRowSeeFullCast => 'Ver reparto completo';
+
+  @override
+  String get whereToWatchTitle => 'Dónde ver';
+
+  @override
+  String get whereToWatchSubscription => 'Suscripción';
+
+  @override
+  String get whereToWatchRent => 'Alquiler';
+
+  @override
+  String get whereToWatchBuy => 'Compra';
+
+  @override
+  String get whereToWatchJustWatchAttribution => 'Datos de JustWatch';
+
+  @override
+  String whereToWatchOverflowChip(int count) {
+    return '+$count';
+  }
 }

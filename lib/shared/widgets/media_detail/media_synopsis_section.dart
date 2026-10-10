@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/l10n_extension.dart';
 
 /// D1/D2's synopsis: an italic tagline (if present) + the overview
 /// folded to 4 lines with an amber "Read more".
@@ -65,7 +66,7 @@ class _MediaSynopsisSectionState extends State<MediaSynopsisSection> {
             GestureDetector(
               onTap: () => setState(() => _expanded = true),
               child: Text(
-                'Read more',
+                context.l10n.commonReadMore,
                 style: AppTextStyles.bodySm.copyWith(color: AppColors.accent),
               ),
             ),

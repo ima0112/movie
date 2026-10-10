@@ -6,6 +6,7 @@ import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_action_row.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
@@ -33,6 +34,8 @@ void main() {
       final detail = await _loadDuneDetail(tester);
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: MediaDetailActionRow(
               mediaKey: _dune,
@@ -61,6 +64,8 @@ void main() {
         final detail = await _loadDuneDetail(tester);
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: MediaDetailActionRow(
                 mediaKey: _dune,
@@ -92,6 +97,8 @@ void main() {
         final detail = await _loadDuneDetail(tester);
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: MediaDetailActionRow(
                 mediaKey: _dune,
@@ -119,6 +126,8 @@ void main() {
       final detail = await _loadDuneDetail(tester);
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: MediaDetailActionRow(
               mediaKey: _dune,

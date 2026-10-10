@@ -4,6 +4,7 @@ import '../../../core/domain/entities/watch_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../app_chip.dart';
 
 /// D1/D2's "Where to watch" section — Subscription / Rent / Buy rows,
@@ -58,7 +59,7 @@ class WhereToWatchSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Where to watch', style: AppTextStyles.h2),
+              Text(context.l10n.whereToWatchTitle, style: AppTextStyles.h2),
               GestureDetector(
                 onTap: onRegionTap,
                 child: Text(
@@ -73,28 +74,28 @@ class WhereToWatchSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           if (providers.flatrate.isNotEmpty)
             _ProviderRow(
-              label: 'Subscription',
+              label: context.l10n.whereToWatchSubscription,
               providers: providers.flatrate,
               link: providers.link,
               onTap: onProviderTap,
             ),
           if (providers.rent.isNotEmpty)
             _ProviderRow(
-              label: 'Rent',
+              label: context.l10n.whereToWatchRent,
               providers: providers.rent,
               link: providers.link,
               onTap: onProviderTap,
             ),
           if (providers.buy.isNotEmpty)
             _ProviderRow(
-              label: 'Buy',
+              label: context.l10n.whereToWatchBuy,
               providers: providers.buy,
               link: providers.link,
               onTap: onProviderTap,
             ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'Data from JustWatch',
+            context.l10n.whereToWatchJustWatchAttribution,
             style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
           ),
         ],
@@ -140,7 +141,8 @@ class _ProviderRow extends StatelessWidget {
                   label: provider,
                   onTap: link == null ? null : () => onTap?.call(link!),
                 ),
-              if (overflow > 0) AppChip(label: '+$overflow'),
+              if (overflow > 0)
+                AppChip(label: context.l10n.whereToWatchOverflowChip(overflow)),
             ],
           ),
         ],

@@ -632,4 +632,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tvEpisodeTba => 'TBA';
+
+  @override
+  String get commonNoMatches => 'No matches';
+
+  @override
+  String get commonSave => 'Save';
+
+  @override
+  String mediaDetailHaveYouFinished(String title) {
+    return 'Have you finished $title?';
+  }
+
+  @override
+  String get mediaDetailMarkAsWatched => 'Mark as watched';
+
+  @override
+  String get mediaDetailYourRating => 'Your rating';
+
+  @override
+  String get mediaDetailRemoveFromWatched => 'Remove from Watched';
+
+  @override
+  String get regionSheetTitle => 'Region';
+
+  @override
+  String get regionSheetSearchHint => 'Search countries';
+
+  @override
+  String get fullCastSheetTitle => 'Full cast';
+
+  @override
+  String get fullCastSheetCastLabel => 'Cast';
+
+  @override
+  String get fullCastSheetCrewLabel => 'Crew';
+
+  @override
+  String get fullCastSheetSearchHint => 'Search cast and crew';
+
+  @override
+  String get mediaSimilarTitle => 'Similar';
+
+  @override
+  String get mediaDetailActionTrailer => 'Trailer';
+
+  @override
+  String get mediaDetailActionSeeSimilar => 'See similar';
+
+  @override
+  String get mediaDetailActionFavorite => 'Favorite';
+
+  @override
+  String get mediaCastRowSeeFullCast => 'See full cast';
+
+  @override
+  String get whereToWatchTitle => 'Where to watch';
+
+  @override
+  String get whereToWatchSubscription => 'Subscription';
+
+  @override
+  String get whereToWatchRent => 'Rent';
+
+  @override
+  String get whereToWatchBuy => 'Buy';
+
+  @override
+  String get whereToWatchJustWatchAttribution => 'Data from JustWatch';
+
+  @override
+  String whereToWatchOverflowChip(int count) {
+    return '+$count';
+  }
 }

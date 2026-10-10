@@ -9,6 +9,7 @@ import '../../core/domain/repositories/user_library_repository.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
 import 'app_buttons.dart';
 import 'mark_as_watched_date_field.dart';
 import 'media_detail_duration.dart';
@@ -110,9 +111,9 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
   String _heading() {
     final detail = widget.mediaDetail;
     if (detail is TvShowDetail) {
-      return 'Have you finished ${detail.item.title}?';
+      return context.l10n.mediaDetailHaveYouFinished(detail.item.title);
     }
-    return 'Mark as watched';
+    return context.l10n.mediaDetailMarkAsWatched;
   }
 
   void _remove() {
@@ -137,7 +138,7 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
             Text(_heading(), style: AppTextStyles.h2),
             const SizedBox(height: AppSpacing.xl),
             Text(
-              'Your rating',
+              context.l10n.mediaDetailYourRating,
               style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -148,14 +149,14 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
             const SizedBox(height: AppSpacing.lg),
             MarkAsWatchedDateField(date: _date, onTap: _pickDate),
             const SizedBox(height: AppSpacing.xl),
-            PrimaryButton(label: 'Save', onTap: _save),
+            PrimaryButton(label: context.l10n.commonSave, onTap: _save),
             if (isEditingWatched) ...[
               const SizedBox(height: AppSpacing.md),
               Center(
                 child: GestureDetector(
                   onTap: _remove,
                   child: Text(
-                    'Remove from Watched',
+                    context.l10n.mediaDetailRemoveFromWatched,
                     style: AppTextStyles.body.copyWith(color: AppColors.danger),
                   ),
                 ),

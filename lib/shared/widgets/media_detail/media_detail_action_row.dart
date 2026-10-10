@@ -9,6 +9,8 @@ import '../../../core/domain/entities/video.dart';
 import '../../../core/domain/repositories/user_library_repository.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/l10n_extension.dart';
+import '../../../l10n/library_tab_localization.dart';
 import '../app_buttons.dart';
 import '../mark_as_watched_sheet.dart';
 import 'media_action_button.dart';
@@ -90,11 +92,14 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
   @override
   Widget build(BuildContext context) {
     final trailer = widget.mediaDetail.trailer;
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         PrimaryButton(
-          label: trailer != null ? 'Trailer' : 'See similar',
+          label: trailer != null
+              ? l10n.mediaDetailActionTrailer
+              : l10n.mediaDetailActionSeeSimilar,
           onTap: trailer != null
               ? () => widget.onPlayTrailer?.call(trailer)
               : widget.onSeeSimilar,
@@ -108,7 +113,7 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
                 select: (entry) => entry?.isFavorite ?? false,
                 iconOutline: AppIcons.favorite,
                 iconFill: AppIcons.favoriteFill,
-                label: 'Favorite',
+                label: l10n.mediaDetailActionFavorite,
                 onTap: () =>
                     _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
               ),
@@ -119,7 +124,7 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
                 select: (entry) => entry?.isWatchLater ?? false,
                 iconOutline: AppIcons.watchLater,
                 iconFill: AppIcons.watchLaterFill,
-                label: 'Watch later',
+                label: LibraryTab.watchLater.localizedLabel(l10n),
                 onTap: () =>
                     _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
               ),
@@ -130,7 +135,7 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
                 select: (entry) => entry?.isWatched ?? false,
                 iconOutline: AppIcons.watched,
                 iconFill: AppIcons.watchedFill,
-                label: 'Watched',
+                label: LibraryTab.watched.localizedLabel(l10n),
                 // Always opens H2 first, even when re-tapping an
                 // already-watched entry (SCREENS.md D1) — never
                 // upserts directly.
