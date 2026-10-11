@@ -484,6 +484,17 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String myListEpisodesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count episodios',
+      one: '1 episodio',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String myListRuntimeHoursMinutes(int hours, int minutes) {
     return '$hours h $minutes min';
   }
@@ -492,9 +503,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String myListRuntimeMinutesOnly(int minutes) {
     return '$minutes min';
   }
-
-  @override
-  String get myListSortRecent => 'Recientes';
 
   @override
   String get myListSortTitleAz => 'Título A-Z';

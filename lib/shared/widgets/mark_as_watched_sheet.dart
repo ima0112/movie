@@ -83,6 +83,8 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
     // Fresh values fall back to `current`'s own — see
     // [durationFieldsFrom]'s doc comment.
     final fresh = durationFieldsFrom(widget.mediaDetail);
+    final detail = widget.mediaDetail;
+    final snapshot = detail == null ? null : catalogSnapshotFrom(detail.item);
     unawaited(
       widget.userLibraryRepository.upsert(
         current.markWatched(
@@ -92,9 +94,13 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
           episodeCount: fresh.episodeCount ?? current.episodeCount,
           episodeRuntimeMinutes:
               fresh.episodeRuntimeMinutes ?? current.episodeRuntimeMinutes,
-          // markWatched() already falls back to current.genres itself
-          // when this is null, unlike the duration fields above.
-          genres: widget.mediaDetail?.item.genres,
+          // markWatched() already falls back to current's own value for
+          // genres/posterUrl/voteAverage/year when these are null, same
+          // as it does for the duration fields above.
+          genres: detail?.item.genres,
+          posterUrl: snapshot?.posterUrl,
+          voteAverage: snapshot?.voteAverage,
+          year: snapshot?.year,
         ),
       ),
     );

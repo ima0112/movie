@@ -920,6 +920,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 season} other{{count} seasons}}'**
   String myListSeasonsCount(int count);
 
+  /// My List's own TV show row metadata line (B4) — episode count, from UserMediaEntry.episodeCount (the persisted snapshot has no season count).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 episode} other{{count} episodes}}'**
+  String myListEpisodesCount(int count);
+
   /// A movie row's metadata line (B4) — runtime, for anything an hour or longer.
   ///
   /// In en, this message translates to:
@@ -931,12 +937,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes} min'**
   String myListRuntimeMinutesOnly(int minutes);
-
-  /// No description provided for @myListSortRecent.
-  ///
-  /// In en, this message translates to:
-  /// **'Recent'**
-  String get myListSortRecent;
 
   /// No description provided for @myListSortTitleAz.
   ///

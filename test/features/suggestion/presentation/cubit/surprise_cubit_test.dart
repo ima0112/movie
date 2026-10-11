@@ -89,6 +89,19 @@ class _FakeUserLibraryRepository implements UserLibraryRepository {
       const Success(null);
 
   @override
+  Future<Result<void>> updateCatalogSnapshot(
+    MediaKey key, {
+    required String title,
+    required List<Genre> genres,
+    String? posterUrl,
+    double? voteAverage,
+    int? year,
+    int? runtimeMinutes,
+    int? episodeCount,
+    int? episodeRuntimeMinutes,
+  }) async => const Success(null);
+
+  @override
   Future<Result<void>> remove(MediaKey key) async => const Success(null);
 
   @override

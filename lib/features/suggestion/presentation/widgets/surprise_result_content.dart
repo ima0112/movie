@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
-import '../../../../core/domain/entities/genre.dart';
-import '../../../../core/domain/entities/media_key.dart';
+import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -66,8 +65,7 @@ class SurpriseResultContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           PrimaryButton(
             label: l10n.surpriseAddToWatchLater,
-            onTap: () =>
-                _addToWatchLater(context, item.key, item.title, item.genres),
+            onTap: () => _addToWatchLater(context, item),
           ),
           const SizedBox(height: AppSpacing.md),
           SecondaryButton(
@@ -95,20 +93,19 @@ class SurpriseResultContent extends StatelessWidget {
     );
   }
 
-  Future<void> _addToWatchLater(
-    BuildContext context,
-    MediaKey key,
-    String title,
-    List<Genre> genres,
-  ) async {
+  Future<void> _addToWatchLater(BuildContext context, MediaItem item) async {
     final messenger = ScaffoldMessenger.of(context);
     final message = context.l10n.surpriseAddedToWatchLaterSnackbar;
+    final snapshot = catalogSnapshotFrom(item);
     await getIt<UserLibraryRepository>().upsert(
       UserMediaEntry(
-        key: key,
-        title: title,
+        key: item.key,
+        title: snapshot.title,
         isWatchLater: true,
-        genres: genres,
+        genres: snapshot.genres,
+        posterUrl: snapshot.posterUrl,
+        voteAverage: snapshot.voteAverage,
+        year: snapshot.year,
       ),
     );
     messenger.showSnackBar(SnackBar(content: Text(message)));

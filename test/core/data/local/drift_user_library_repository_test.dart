@@ -282,6 +282,112 @@ void main() {
       },
     );
 
+    group('updateCatalogSnapshot', () {
+      test('a no-op when nothing is saved at this key yet — never creates '
+          'a row', () async {
+        final repository = _repository();
+
+        await repository.updateCatalogSnapshot(
+          _dune,
+          title: 'Dune: Part Two',
+          genres: const [_action],
+        );
+
+        expect(await repository.watchEntry(_dune).first, isNull);
+      });
+
+      test('updates only the catalog-snapshot columns, never '
+          'isFavorite/isWatchLater/watchedAt/rating', () async {
+        final repository = _repository();
+        await repository.upsert(
+          UserMediaEntry(
+            title: 'Stale title',
+            key: _dune,
+            isFavorite: true,
+            isWatchLater: true,
+            watchedAt: DateTime(2024, 1, 1),
+            rating: 4,
+          ),
+        );
+
+        await repository.updateCatalogSnapshot(
+          _dune,
+          title: 'Dune: Part Two',
+          genres: const [_action, _drama],
+          posterUrl: 'https://image.tmdb.org/t/p/w342/dune.jpg',
+          voteAverage: 8.4,
+          year: 2024,
+        );
+
+        final entry = await repository.watchEntry(_dune).first;
+        expect(entry!.title, 'Dune: Part Two');
+        expect(entry.genres, [_action, _drama]);
+        expect(entry.posterUrl, 'https://image.tmdb.org/t/p/w342/dune.jpg');
+        expect(entry.voteAverage, 8.4);
+        expect(entry.year, 2024);
+        expect(entry.isFavorite, isTrue);
+        expect(entry.isWatchLater, isTrue);
+        expect(entry.watchedAt, DateTime(2024, 1, 1));
+        expect(entry.rating, 4);
+      });
+
+      test('a null optional field leaves the stored value untouched '
+          'instead of blanking it', () async {
+        final repository = _repository();
+        await repository.upsert(
+          UserMediaEntry(
+            title: 'Dune: Part Two',
+            key: _dune,
+            posterUrl: 'https://image.tmdb.org/t/p/w342/dune.jpg',
+            voteAverage: 8.4,
+            year: 2024,
+          ),
+        );
+
+        // No posterUrl/voteAverage/year passed — "nothing fresher",
+        // not "clear these".
+        await repository.updateCatalogSnapshot(
+          _dune,
+          title: 'Dune: Part Two',
+          genres: const [],
+        );
+
+        final entry = await repository.watchEntry(_dune).first;
+        expect(entry!.posterUrl, 'https://image.tmdb.org/t/p/w342/dune.jpg');
+        expect(entry.voteAverage, 8.4);
+        expect(entry.year, 2024);
+      });
+
+      test('a concurrent favorite toggle is never lost to a simultaneous '
+          'catalog-snapshot refresh, regardless of which lands first',
+          () async {
+        final repository = _repository();
+        await repository.upsert(
+          const UserMediaEntry(title: 'Stale title', key: _dune),
+        );
+
+        await Future.wait([
+          repository.updateCatalogSnapshot(
+            _dune,
+            title: 'Dune: Part Two',
+            genres: const [_action],
+            voteAverage: 8.4,
+            year: 2024,
+          ),
+          repository.upsert(
+            const UserMediaEntry(
+              title: 'Stale title',
+              key: _dune,
+              isFavorite: true,
+            ),
+          ),
+        ]);
+
+        final entry = await repository.watchEntry(_dune).first;
+        expect(entry!.isFavorite, isTrue);
+      });
+    });
+
     group('clearAll', () {
       test('removes every entry', () async {
         final repository = _repository();

@@ -6,7 +6,6 @@ import 'app_localizations.dart';
 /// than its own key — same word in both places.
 extension MyListSortLocalization on MyListSort {
   String localizedLabel(AppLocalizations l10n) => switch (this) {
-    MyListSort.recent => l10n.myListSortRecent,
     MyListSort.titleAZ => l10n.myListSortTitleAz,
     MyListSort.year => l10n.filterSheetSectionYear,
     MyListSort.tmdbRating => l10n.myListSortTmdbRating,

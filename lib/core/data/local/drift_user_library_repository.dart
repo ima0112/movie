@@ -73,9 +73,59 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
               episodeCount: Value(entry.episodeCount),
               episodeRuntimeMinutes: Value(entry.episodeRuntimeMinutes),
               genres: Value(_serializeGenres(entry.genres)),
+              posterPath: Value(entry.posterUrl),
+              voteAverage: Value(entry.voteAverage),
+              year: Value(entry.year),
               updatedAt: DateTime.now(),
             ),
           );
+      return const Success(null);
+    } catch (_) {
+      return Failure(FailureReason.storage);
+    }
+  }
+
+  @override
+  Future<Result<void>> updateCatalogSnapshot(
+    MediaKey key, {
+    required String title,
+    required List<Genre> genres,
+    String? posterUrl,
+    double? voteAverage,
+    int? year,
+    int? runtimeMinutes,
+    int? episodeCount,
+    int? episodeRuntimeMinutes,
+  }) async {
+    try {
+      await (_db.update(
+        _db.userMediaEntries,
+      )..where((row) => _matchesKey(row, key))).write(
+        UserMediaEntriesCompanion(
+          title: Value(title),
+          genres: Value(_serializeGenres(genres)),
+          // `Value.absent()` — not `Value(null)` — for every optional
+          // field below: "nothing fresher" must leave the stored column
+          // untouched, never blank a value this same row already had.
+          posterPath: posterUrl == null
+              ? const Value.absent()
+              : Value(posterUrl),
+          voteAverage: voteAverage == null
+              ? const Value.absent()
+              : Value(voteAverage),
+          year: year == null ? const Value.absent() : Value(year),
+          runtimeMinutes: runtimeMinutes == null
+              ? const Value.absent()
+              : Value(runtimeMinutes),
+          episodeCount: episodeCount == null
+              ? const Value.absent()
+              : Value(episodeCount),
+          episodeRuntimeMinutes: episodeRuntimeMinutes == null
+              ? const Value.absent()
+              : Value(episodeRuntimeMinutes),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
       return const Success(null);
     } catch (_) {
       return Failure(FailureReason.storage);
@@ -156,6 +206,9 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
       episodeCount: row.episodeCount,
       episodeRuntimeMinutes: row.episodeRuntimeMinutes,
       genres: _deserializeGenres(row.genres),
+      posterUrl: row.posterPath,
+      voteAverage: row.voteAverage,
+      year: row.year,
     );
   }
 

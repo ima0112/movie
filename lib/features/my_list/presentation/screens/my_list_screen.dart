@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
-import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -39,7 +38,6 @@ class MyListScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               Expanded(
                 child: MyListBody(
-                  mediaRepository: getIt<MediaRepository>(),
                   userLibraryRepository: getIt<UserLibraryRepository>(),
                 ),
               ),

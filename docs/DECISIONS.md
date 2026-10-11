@@ -182,12 +182,13 @@ What actually shipped, and where it diverges from the table above:
 ## 4. My List, Watched, and taste profile
 
 ### `my_list` model
-- `UserMediaEntry` (`core/domain/entities/user_media_entry.dart`) — identified by `key` (`MediaKey`: `mediaType` + `tmdbId`), with **non-exclusive** flags `isFavorite`/`isWatchLater` (an entry can be a favorite and watched at the same time) and `watchedAt` (`null` = not watched). No embedded `MediaItem`/`MediaDetail` snapshot — instead a small set of flattened fields, each populated from whichever catalog object a given save site has on hand at write time:
+- `UserMediaEntry` (`core/domain/entities/user_media_entry.dart`) — identified by `key` (`MediaKey`: `mediaType` + `tmdbId`), with **non-exclusive** flags `isFavorite`/`isWatchLater` (an entry can be a favorite and watched at the same time) and `watchedAt` (`null` = not watched). No embedded `MediaItem`/`MediaDetail` object — instead a small set of flattened fields, each populated from whichever catalog object a given save site (a My List toggle, Mark as watched, Surprise me's "Add to watch later", or a detail screen's own lazy refresh on reopening) has on hand at write time:
   - `rating` (1–5, optional, only meaningful once watched).
   - `runtimeMinutes` — movies only, from `MovieDetail.runtimeMinutes`.
   - `episodeCount` / `episodeRuntimeMinutes` — TV only, from `TvShowDetail.numberOfEpisodes` / `episodeRuntimeMinutes`.
   - `genres` — from `MediaItem.genres`; feeds Stats' "Genres you watch most".
-  All four are optional/default-empty: an entry saved before a given field existed, or one whose call site didn't have the richer object (e.g. `MediaDetail`) on hand, simply has it unset — never an error, just missing data those callers must expect. The drift table backing this (`UserMediaEntries`) mirrors these fields directly (plus a handful of still-unmapped, unused catalog-snapshot columns — see `app_database.dart`).
+  - `posterUrl` / `voteAverage` / `year` — from `MediaItem.posterUrl` / `.voteAverage` / `.releaseDate?.year`; power My List's offline row (B4) and H9's Year/TMDB rating sort.
+  All are optional/default-empty: an entry saved before a given field existed, or one whose call site didn't have the richer object (e.g. `MediaDetail`) on hand, simply has it unset — never an error, just missing data those callers must expect. The drift table backing this (`UserMediaEntries`) mirrors every one of these directly, plus 3 columns that remain unmapped because `MediaItem`/`MediaDetail` carry none of them at all (`backdropPath`, `voteCount`, `popularity` — see `app_database.dart`, and `docs/TODO_AUDIT.md`'s "Limpieza posterior").
 - Marking as watched automatically removes it from "Watch later".
 - Marking as watched optionally asks for a rating (1–5) and a date.
 - TV shows: marked watched at the whole-show level.

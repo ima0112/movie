@@ -34,7 +34,6 @@ class _MyListFilterSheetState extends State<MyListFilterSheet> {
   bool get _isWatched => _tab == LibraryTab.watched;
 
   static const _baseSorts = [
-    MyListSort.recent,
     MyListSort.titleAZ,
     MyListSort.year,
     MyListSort.tmdbRating,
