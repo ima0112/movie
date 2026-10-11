@@ -1,0 +1,12 @@
+{
+  "indie": ["indie", "independent film"],
+  "tearjerker": ["tearjerker", "grief", "terminal illness"],
+  "sports": ["sports", "sport", "athlete"],
+  "true_story": ["based on true story", "biography", "true story"],
+  "superhero": ["superhero", "based on comic", "comic book"],
+  "gangster": ["gangster", "mafia", "mob"],
+  "gritty": ["neo-noir", "gritty", "crime drama"],
+  "cult": ["cult film", "cult classic"],
+  "monster": ["monster", "creature"],
+  "musical": ["musical", "music"]
+}
