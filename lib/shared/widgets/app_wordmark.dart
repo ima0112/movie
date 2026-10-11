@@ -25,8 +25,15 @@ class AppWordmark extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: [
-          TextSpan(text: 'Pako', style: style.copyWith(color: AppColors.ink)),
-          TextSpan(text: 'TV', style: style.copyWith(color: AppColors.accent)),
+          // CLAUDE.md: never translate "PakoTV"/"Pako"/"TMDB".
+          TextSpan(
+            text: 'Pako', // l10n-exempt: brand-name
+            style: style.copyWith(color: AppColors.ink),
+          ),
+          TextSpan(
+            text: 'TV', // l10n-exempt: brand-name
+            style: style.copyWith(color: AppColors.accent),
+          ),
         ],
       ),
     );

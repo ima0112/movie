@@ -144,26 +144,60 @@ class _StateLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cta = ctaLabel;
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const PakoState(mood: PakoMood.asleep),
-          const SizedBox(height: AppSpacing.lg),
-          Text(title, style: AppTextStyles.h2, textAlign: TextAlign.center),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            body,
-            style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
-            textAlign: TextAlign.center,
+    // A plain Column here overflows once its natural height (icon +
+    // two lines of text + CTA, all scaled up by a large text-scale
+    // factor) exceeds whatever a squeezed parent actually gives it —
+    // e.g. this same layout showing "No results" under Explore's
+    // search field with the keyboard open (CLAUDE.md rule 14: "must...
+    // survive the keyboard"). LayoutBuilder + a scrollable keeps the
+    // normal case looking identical (centered, nothing to scroll) and
+    // only kicks in once the content genuinely doesn't fit.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.hasBoundedHeight
+                  ? (constraints.maxHeight - AppSpacing.xl * 2).clamp(
+                      0.0,
+                      double.infinity,
+                    )
+                  : 0,
+            ),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const PakoState(mood: PakoMood.asleep),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    title,
+                    style: AppTextStyles.h2,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    body,
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (cta != null) ...[
+                    const SizedBox(height: AppSpacing.lg),
+                    SecondaryButton(
+                      label: cta,
+                      onTap: onCtaTap,
+                      fullWidth: false,
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
-          if (cta != null) ...[
-            const SizedBox(height: AppSpacing.lg),
-            SecondaryButton(label: cta, onTap: onCtaTap, fullWidth: false),
-          ],
-        ],
-      ),
+        );
+      },
     );
   }
 }
