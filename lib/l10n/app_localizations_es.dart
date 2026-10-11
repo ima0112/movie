@@ -331,7 +331,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get carouselSectionPopularThisWeek => 'Popular esta semana';
 
   @override
-  String get carouselSectionBecauseYouLike => 'Porque te gusta…';
+  String carouselSectionBecauseYouLike(String title) {
+    return 'Porque te gusta $title';
+  }
 
   @override
   String get carouselSectionInTheaters => 'En cines';

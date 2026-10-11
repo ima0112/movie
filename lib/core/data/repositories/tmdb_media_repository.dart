@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../app/environments.dart';
 import '../../domain/entities/discover_filter.dart';
-import '../../domain/entities/genre.dart';
 import '../../domain/entities/media_detail.dart';
 import '../../domain/entities/media_item.dart';
 import '../../domain/entities/media_key.dart';
@@ -137,7 +136,6 @@ class TmdbMediaRepository implements MediaRepository {
   Future<Result<List<MediaItem>>> getCarouselSection(
     CarouselSection section, {
     MediaType? type,
-    Genre? genre,
   }) async {
     try {
       final items = switch (section) {
@@ -156,20 +154,25 @@ class TmdbMediaRepository implements MediaRepository {
         // have yet. TODO: inject UserLibraryRepository and hydrate its
         // watch-later keys here instead of returning empty.
         CarouselSection.watchLater => const <MediaItem>[],
-        // Neither is in DiscoverCubit.sectionsBySegment today (see its
-        // own doc comment) — both need TasteProfileRepository +
-        // RecommendationBuilder (DECISIONS.md F1b, a planned domain
-        // service that doesn't exist yet) to turn a taste profile into
-        // a `/discover` call. An empty list degrades the same way
-        // watchLater does above, rather than crashing a segment that
-        // happens to ask for this section later.
-        // TODO(F1b): inject TasteProfileRepository and RecommendationBuilder,
-        // build a DiscoverFilter from the profile (+ genre, for
-        // becauseYouLike), and call discover() with it.
-        CarouselSection.forYou => const <MediaItem>[],
-        CarouselSection.becauseYouLike => const <MediaItem>[],
       };
       return Success(items.take(10).toList());
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
+  }
+
+  @override
+  Future<Result<List<MediaItem>>> recommendationsFor(MediaKey seed) async {
+    try {
+      final items = switch (seed.type) {
+        MediaType.movie => await _mapMovies(
+          () => _datasource.movieRecommendations(seed.tmdbId),
+        ),
+        MediaType.tvShow => await _mapTv(
+          () => _datasource.tvRecommendations(seed.tmdbId),
+        ),
+      };
+      return Success(items);
     } on DioException catch (e) {
       return mapDioExceptionToFailure(e);
     }

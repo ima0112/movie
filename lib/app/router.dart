@@ -139,10 +139,22 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
 
+/// Lets `DiscoverScreen` know when it's been returned to from a pushed
+/// detail screen (`RouteAware.didPopNext`) — `RecommendationsCubit`'s
+/// own "refresh on returning to Discover" trigger
+/// (`docs/SCREENS.md` B1). Switching *bottom tabs* away and back
+/// doesn't fire this (`StatefulShellRoute.indexedStack` never pushes/
+/// pops for that); only a real `Navigator.push`/`pop` within Discover's
+/// own branch does, which is exactly what tapping a recommended title
+/// then pressing back is.
+final RouteObserver<PageRoute<void>> discoverRouteObserver =
+    RouteObserver<PageRoute<void>>();
+
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   redirect: _onboardingRedirect,
+  observers: [discoverRouteObserver],
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {

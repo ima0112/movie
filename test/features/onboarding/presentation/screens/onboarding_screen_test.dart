@@ -12,7 +12,6 @@ import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_profile_repository.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
-import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -39,8 +38,11 @@ class _FailingMediaRepository implements MediaRepository {
   Future<Result<List<MediaItem>>> getCarouselSection(
     CarouselSection section, {
     MediaType? type,
-    Genre? genre,
   }) => throw UnimplementedError();
+
+  @override
+  Future<Result<List<MediaItem>>> recommendationsFor(MediaKey seed) =>
+      throw UnimplementedError();
 
   @override
   Future<Result<List<MediaItem>>> getHeroItems({MediaType? type}) =>
@@ -118,9 +120,12 @@ void main() {
     expect(profile, isNotNull);
     expect(profile!.likedGenres.map((g) => g.id), contains('action'));
 
-    // Drains the SnackBar's own pending auto-dismiss Timer so the test
-    // binding's "no pending timers" teardown check doesn't trip.
-    await tester.pump(const Duration(seconds: 5));
+    // Drains the SnackBar's own pending auto-dismiss Timer, and now
+    // also Discover's own RecommendationsCubit ("For you" picked up
+    // the genre just saved above) — pumpAndSettle rather than one
+    // fixed-size pump, since reaching the latter's Timer takes a few
+    // more microtask turns than a single pump(duration) covers.
+    await tester.pumpAndSettle(const Duration(seconds: 1));
   });
 
   testWidgets('a failed poster fetch on welcome (offline) falls back to '

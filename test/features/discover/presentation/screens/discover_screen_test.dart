@@ -2,13 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
+import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
+import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
+import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/presentation/screens/discover_screen.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
 void main() {
-  setUpAll(() => configureDependencies(fake.name));
+  setUpAll(() {
+    configureDependencies(fake.name);
+    // The real DriftUserLibraryRepository/DriftTasteProfileRepository
+    // need a native sqlite file via path_provider, which has no
+    // platform channel in `flutter test`'s host environment —
+    // RecommendationsCubit resolves both on every load.
+    getIt.unregister<UserLibraryRepository>();
+    getIt.registerLazySingleton<UserLibraryRepository>(
+      InMemoryUserLibraryRepository.new,
+    );
+    getIt.unregister<TasteProfileRepository>();
+    getIt.registerLazySingleton<TasteProfileRepository>(
+      InMemoryTasteProfileRepository.new,
+    );
+  });
 
   Future<void> pumpDiscoverScreen(WidgetTester tester) async {
     await tester.pumpWidget(

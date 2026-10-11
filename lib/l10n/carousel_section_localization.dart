@@ -7,9 +7,7 @@ import 'app_localizations.dart';
 /// meaning, in both places.
 extension CarouselSectionLocalization on CarouselSection {
   String localizedLabel(AppLocalizations l10n) => switch (this) {
-    CarouselSection.forYou => l10n.carouselSectionForYou,
     CarouselSection.popularThisWeek => l10n.carouselSectionPopularThisWeek,
-    CarouselSection.becauseYouLike => l10n.carouselSectionBecauseYouLike,
     CarouselSection.watchLater => l10n.myListTabWatchLater,
     CarouselSection.inTheaters => l10n.carouselSectionInTheaters,
     CarouselSection.trending => l10n.carouselSectionTrending,

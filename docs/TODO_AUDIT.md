@@ -14,11 +14,18 @@ Classification key, per CLAUDE.md and `docs/DECISIONS.md` §3:
 - **v1.1 o posterior** — tied to Matcher, OMDb, streaming availability, or
   family mode.
 
-## Bloquea publicar v1.0 (1)
+## Bloquea publicar v1.0 (0)
 
-| Path:Line | TODO | Why |
-|---|---|---|
-| `lib/core/data/repositories/tmdb_media_repository.dart:166` | Build a real `DiscoverFilter` from the `TasteProfile` for `CarouselSection.forYou`/`.becauseYouLike`; both currently return `const <MediaItem>[]`. | F1b ("For you" recommendations) is in DECISIONS.md §3's v1.0 table. Shipping with it silently empty is a functional gap in an advertised v1.0 feature. Now being built (`my-list-sort-fix` branch's own follow-up), ahead of paso 16. |
+None. The one row this bucket had (`tmdb_media_repository.dart:166`,
+F1b's "For you"/"Because you like X") is **retired** — built in the
+`recommendation-builder` branch: `RecommendationBuilder` +
+`RecommendationsCubit` + `MediaRepository.recommendationsFor`.
+`CarouselSection.forYou`/`.becauseYouLike` (and the TODO's own
+`getCarouselSection` branch) were removed entirely rather than filled
+in, since that enum/method's shape didn't fit a feature needing local
+signal (`TasteProfile`/`UserLibraryRepository`) and its own independent
+loading per section — see `docs/DECISIONS.md` §5's own
+"Recommendations" entry.
 
 ## Paso 16 — opcional (13)
 
@@ -54,10 +61,20 @@ or streaming availability. Family mode is mentioned in prose next to one
   needs extending that entity (every TMDB mapper, every carousel/hero
   call site, every test fixture), not just a repository change. Each
   column's own doc comment in `app_database.dart` explains this.
+- **`DiscoverCubit` sigue siendo todo-o-nada para sus propias 8
+  secciones** (`inTheaters`/`trending`/`topRated`/`upcoming`/
+  `airingNow`/`popular`/`popularThisWeek`/`watchLater`) — un fallo en
+  cualquiera de ellas sigue marcando todo el segmento como
+  `DiscoverError`, sin reintento por sección. `RecommendationsCubit`
+  (F1b, `recommendation-builder` branch) resuelve esto para sus propias
+  2 secciones con un Cubit aparte en lugar de tocar ese bucle — revisar
+  tras v1.0 si merece la pena el mismo tratamiento para las otras 8, o
+  si el riesgo real (todas sirven desde el mismo `FakeMediaRepository`/
+  TMDB, rara vez fallan de forma aislada) no lo justifica.
 
 ## Totals
 
-- Bloquea publicar v1.0: **1**
+- Bloquea publicar v1.0: **0**
 - Paso 16 (incl. 2 reclassified): **13**
 - v1.1 o posterior: **0**
-- Total `TODO(...)`: **14**
+- Total `TODO(...)`: **13**

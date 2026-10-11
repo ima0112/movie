@@ -4,8 +4,10 @@ import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
+import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
+import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/shared/widgets/media_card.dart';
@@ -13,15 +15,20 @@ import 'package:movies/shared/widgets/media_card.dart';
 void main() {
   setUpAll(() {
     configureDependencies(fake.name);
-    // The real DriftUserLibraryRepository needs a native sqlite file via
-    // path_provider, which has no platform channel in `flutter test`'s
-    // host environment — swap in the fast, in-memory test double instead
-    // of exercising real (and here, unavailable) disk I/O. Navigating
-    // into a movie detail screen (below) resolves UserLibraryRepository
-    // via MovieActionRow.
+    // The real DriftUserLibraryRepository/DriftTasteProfileRepository
+    // need a native sqlite file via path_provider, which has no
+    // platform channel in `flutter test`'s host environment — swap in
+    // the fast, in-memory test doubles instead of exercising real (and
+    // here, unavailable) disk I/O. Navigating into a movie detail
+    // screen (below) resolves UserLibraryRepository via MovieActionRow;
+    // Discover's own RecommendationsCubit resolves both on every load.
     getIt.unregister<UserLibraryRepository>();
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
+    );
+    getIt.unregister<TasteProfileRepository>();
+    getIt.registerLazySingleton<TasteProfileRepository>(
+      InMemoryTasteProfileRepository.new,
     );
     // Same swap for OnboardingRepository — these tests exercise
     // Discover/tabs/detail navigation, not the onboarding gate itself

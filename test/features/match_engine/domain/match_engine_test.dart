@@ -36,8 +36,11 @@ class _RecordingMediaRepository implements MediaRepository {
   Future<Result<List<MediaItem>>> getCarouselSection(
     CarouselSection section, {
     MediaType? type,
-    Genre? genre,
   }) => throw UnimplementedError();
+
+  @override
+  Future<Result<List<MediaItem>>> recommendationsFor(MediaKey seed) =>
+      throw UnimplementedError();
 
   @override
   Future<Result<List<MediaItem>>> getHeroItems({MediaType? type}) =>

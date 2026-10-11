@@ -23,10 +23,21 @@ class VibeCatalog {
 
   final List<Vibe> _vibes;
 
-  /// Reads and parses `assets/vibes.json` from the real asset bundle.
-  static Future<VibeCatalog> loadFromAssets() async {
-    final source = await rootBundle.loadString('assets/vibes.json');
-    return VibeCatalog.fromJsonString(source);
+  /// Reads and parses `assets/vibes.json` from the real asset bundle —
+  /// memoized process-wide, since the bundled file never changes at
+  /// runtime. Every call site (My Tastes, the quiz, Discover's own
+  /// `RecommendationsCubit`) shares the same resolved `Future` instead
+  /// of each re-reading and re-parsing the same file from scratch —
+  /// cheap in the real app, and avoids a `flutter test` quirk where
+  /// repeated `rootBundle.loadString` calls across sequential
+  /// `testWidgets` in one file can leave the test binding in a state
+  /// that makes an unrelated `pumpAndSettle` hang.
+  static Future<VibeCatalog>? _cached;
+
+  static Future<VibeCatalog> loadFromAssets() {
+    return _cached ??= rootBundle
+        .loadString('assets/vibes.json')
+        .then(VibeCatalog.fromJsonString);
   }
 
   factory VibeCatalog.fromJsonString(String source) =>

@@ -201,6 +201,16 @@ lib/
     suggestion/
       presentation/               Surprise me (E1/E2/E3): SurpriseCubit,
                                    ChooseSource (H11) sheet, result screen
+    recommendations/              B1 F1b — "For you"/"Because you like X"
+      domain/
+        recommendation_builder.dart  pure: forYouFilter/becauseYouLikeSeed/
+                                   excludeLibraryItems/filterAndThreshold
+      presentation/
+        cubit/
+          recommendations_cubit.dart  independent of DiscoverCubit —
+                                   own loading/error/retry per section
+        widgets/
+          recommendation_section_view.dart
     match_hub/                    B3 — the sheet the center tab-bar
       presentation/               button opens (match_hub_sheet.dart,
                                    match_hub_card.dart); Matcher's own

@@ -957,7 +957,6 @@ class FakeMediaRepository implements MediaRepository {
   Future<Result<List<MediaItem>>> getCarouselSection(
     CarouselSection section, {
     MediaType? type,
-    Genre? genre,
   }) async {
     await Future.delayed(_delay);
 
@@ -967,11 +966,22 @@ class FakeMediaRepository implements MediaRepository {
       null => [..._movies, ..._tvShows],
     };
 
-    final items = section == CarouselSection.becauseYouLike && genre != null
-        ? pool.where((item) => item.genres.contains(genre)).toList()
-        : pool;
+    return Success(pool.take(10).toList());
+  }
 
-    return Success(items.take(10).toList());
+  /// A fixed, deterministic pool per type (everything but the seed
+  /// itself) — real `/recommendations` ranking isn't something this
+  /// fake needs to approximate, just a plausible, stable list for
+  /// widget/cubit tests.
+  @override
+  Future<Result<List<MediaItem>>> recommendationsFor(MediaKey seed) async {
+    await Future.delayed(_delay);
+
+    final pool = switch (seed.type) {
+      MediaType.movie => _movies,
+      MediaType.tvShow => _tvShows,
+    };
+    return Success(pool.where((item) => item.id != seed.tmdbId).toList());
   }
 
   @override

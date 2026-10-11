@@ -63,6 +63,20 @@ class TmdbMediaDatasource {
   Future<TmdbPagedResponseDto<TmdbTvListItemDto>> trendingTvWeek() =>
       _tv('/trending/tv/week');
 
+  /// B1's "Because you like X" — `RecommendationBuilder`'s own seed.
+  /// Collaborative-filtering based (TMDB's own description), not the
+  /// genre/keyword `similar` already bundled into [movieDetail]'s
+  /// `append_to_response` — a better fit for "people who liked this
+  /// also liked…", and far cheaper than fetching the full detail just
+  /// to read that field.
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieRecommendations(
+    int id,
+  ) => _movies('/movie/$id/recommendations');
+
+  /// Same as [movieRecommendations], for a TV seed.
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvRecommendations(int id) =>
+      _tv('/tv/$id/recommendations');
+
   /// One call, per `docs/DECISIONS.md` §2: everything D1 needs
   /// (`credits`/`videos`/`similar`/`release_dates`/`watch/providers`)
   /// bundled via `append_to_response`.

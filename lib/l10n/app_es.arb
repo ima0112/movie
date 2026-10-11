@@ -125,7 +125,7 @@
 
   "carouselSectionForYou": "Para ti",
   "carouselSectionPopularThisWeek": "Popular esta semana",
-  "carouselSectionBecauseYouLike": "Porque te gusta…",
+  "carouselSectionBecauseYouLike": "Porque te gusta {title}",
   "carouselSectionInTheaters": "En cines",
   "carouselSectionTrending": "Tendencias",
   "carouselSectionTopRated": "Mejor valoradas",
