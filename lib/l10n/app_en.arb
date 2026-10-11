@@ -810,8 +810,9 @@
   },
   "surpriseSourceProfile": "Based on your tastes",
   "surpriseSourceInferredList": "Based on your list",
-  "@surpriseSourceInferredList": {
-    "description": "E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — SuggestionSource.quiz shows neither subtitle."
+  "surpriseSourceQuiz": "Based on your answers",
+  "@surpriseSourceQuiz": {
+    "description": "E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — one line per SuggestionSource value, including the quiz now."
   },
   "surpriseRelaxedSearchNote": "We broadened the search a bit to find this match.",
   "surpriseAddToWatchLater": "Add to Watch later",
@@ -820,6 +821,18 @@
     "description": "E3's secondary button (docs/SCREENS.md E3: \"Secondary button 'Another suggestion'\")."
   },
   "surpriseAddedToWatchLaterSnackbar": "Added to Watch later",
+  "surpriseChooseSourceTitle": "Find something to watch",
+  "@surpriseChooseSourceTitle": {
+    "description": "H11's own headline (docs/SCREENS.md H11), shown above the subtitle naming where the suggestion would come from."
+  },
+  "surpriseUseMyTastes": "Use my tastes",
+  "@surpriseUseMyTastes": {
+    "description": "H11's primary button (docs/SCREENS.md H11) — launches Surprise me with the already-usable profile/inferred-list signal."
+  },
+  "surpriseAnswerQuizInstead": "Answer the quiz instead",
+  "@surpriseAnswerQuizInstead": {
+    "description": "H11's secondary button, and E3's own link back to E2 for the profile/inferredList sources (docs/SCREENS.md H11, E3) — same copy, same action, two call sites."
+  },
 
   "matchHubTitle": "Match",
   "@matchHubTitle": {

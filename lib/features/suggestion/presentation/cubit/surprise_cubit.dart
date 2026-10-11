@@ -67,14 +67,24 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   ParticipantAnswers? _lastAnswers;
   SuggestionSource? _lastSource;
 
+  /// Set by [chooseType] right before emitting [ChooseSource], read by
+  /// [useMyTastes] once the user actually picks it — built once,
+  /// up front, rather than re-running [TasteProfileBuilder.build] a
+  /// second time from scratch.
+  ParticipantAnswers? _pendingAnswers;
+
   /// E1's "First tap: movie or TV show?" — resolves which of
-  /// `docs/DECISIONS.md`'s 3 cases applies (explicit profile / inferred
-  /// from the list / neither) and either launches the engine directly
-  /// (the first two) or emits [NeedsQuiz] (the third) for the caller to
-  /// react to.
+  /// `docs/DECISIONS.md`'s 3 cases applies (usable profile / inferred
+  /// from the list / neither). The first two no longer launch the
+  /// engine directly: they emit [ChooseSource] so E1 can offer H11
+  /// ("Use my tastes" vs "Answer the quiz instead") first — only the
+  /// third case ([NeedsQuiz]) is still immediate, since there's no
+  /// usable signal to offer a choice about. Doesn't emit [Searching]
+  /// at all: that only starts once [useMyTastes]/[answerWith] actually
+  /// launches a search, not while this is still deciding which case
+  /// applies.
   Future<void> chooseType(MediaType mediaType) async {
     final generation = ++_searchGeneration;
-    emit(Searching(mediaType));
 
     final profile = await _tasteProfileRepository.watch().first;
     final libraryEntries = await _libraryEntries();
@@ -92,15 +102,42 @@ class SurpriseCubit extends Cubit<SurpriseState> {
       return;
     }
 
-    final source = profile != null
+    final source = (profile?.isUsableForSuggestions ?? false)
         ? SuggestionSource.profile
         : SuggestionSource.inferredList;
-    await _search(mediaType, answers, source, generation);
+    _pendingAnswers = answers;
+    emit(ChooseSource(mediaType, source));
+  }
+
+  /// H11's own "Use my tastes" — launches the search [chooseType]
+  /// already built the answers for. A no-op from any state other than
+  /// [ChooseSource]; per that state's own doc comment, [_pendingAnswers]
+  /// is always set by the time this can actually run.
+  Future<void> useMyTastes() async {
+    final current = state;
+    if (current is! ChooseSource) return;
+    final answers = _pendingAnswers;
+    if (answers == null) return;
+
+    final generation = ++_searchGeneration;
+    emit(Searching(current.mediaType));
+    await _search(current.mediaType, answers, current.source, generation);
+  }
+
+  /// H11's own "Answer the quiz instead" — the user had a usable
+  /// signal but chose to answer E2 anyway. A no-op from any state
+  /// other than [ChooseSource].
+  void answerQuizInstead() {
+    final current = state;
+    if (current is! ChooseSource) return;
+    emit(NeedsQuiz(current.mediaType));
   }
 
   /// E2's own `onComplete` callback, once the quiz (opened from
-  /// [NeedsQuiz]) finishes. A no-op from any other state — there's
-  /// nothing to answer if the quiz was never the one asked for.
+  /// [NeedsQuiz] — whether [chooseType] went straight there, or
+  /// [answerQuizInstead] sent it there from [ChooseSource]) finishes.
+  /// A no-op from any other state — there's nothing to answer if the
+  /// quiz was never the one asked for.
   Future<void> answerWith(ParticipantAnswers answers) async {
     final current = state;
     if (current is! NeedsQuiz) return;

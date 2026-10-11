@@ -10,7 +10,8 @@ import '../../match_engine/domain/vibe_catalog.dart';
 /// signal already exists — `docs/DECISIONS.md` section 5 ("Surprise me
 /// (N=1)"):
 ///
-/// 1. An explicit [TasteProfile] exists → used, refined with
+/// 1. An explicit [TasteProfile] exists *and* is
+///    [TasteProfile.isUsableForSuggestions] → used, refined with
 ///    [libraryEntries]' signals (favorites and ≥4-star watches reinforce
 ///    a liked genre's priority when [vibeCatalog] needs to fill in a
 ///    missing vibe; ≤2-star watches deprioritize one — "refinement" only
@@ -19,9 +20,12 @@ import '../../match_engine/domain/vibe_catalog.dart';
 ///    [TasteProfile.likedGenres]/[TasteProfile.vetoedGenres]/
 ///    [TasteProfile.likedVibes] themselves, and an explicit veto always
 ///    wins even if a favorite/high rating contradicts it).
-/// 2. No profile, but [libraryEntries] has at least [minInferredEntries]
-///    rows → a provisional profile is inferred entirely from those same
-///    signals (nothing else to build one from).
+/// 2. No usable profile, but [libraryEntries] has at least
+///    [minInferredEntries] rows → a provisional profile is inferred
+///    entirely from those same signals (nothing else to build one from).
+///    A profile that exists but isn't usable (e.g. only its year slider
+///    was ever touched) falls through to this case exactly like no
+///    profile at all.
 /// 3. Neither → `null` — the caller's signal to open the quiz (E2)
 ///    instead.
 ///
@@ -84,7 +88,7 @@ class TasteProfileBuilder {
     final Set<String> likedVibes;
     final int yearFrom;
 
-    if (profile != null) {
+    if (profile != null && profile.isUsableForSuggestions) {
       likedGenres = profile.likedGenres;
       vetoedGenres = profile.vetoedGenres;
       likedVibes = profile.likedVibes;
@@ -178,11 +182,12 @@ class TasteProfileBuilder {
     }
 
     final vibeIds = Set<String>.of(existingVibes);
-    final rankedGenres = likedGenres.where((g) => !vetoedGenres.contains(g)).toList()
-      ..sort((a, b) {
-        final byAffinity = (affinity[b] ?? 0).compareTo(affinity[a] ?? 0);
-        return byAffinity != 0 ? byAffinity : a.id.compareTo(b.id);
-      });
+    final rankedGenres =
+        likedGenres.where((g) => !vetoedGenres.contains(g)).toList()
+          ..sort((a, b) {
+            final byAffinity = (affinity[b] ?? 0).compareTo(affinity[a] ?? 0);
+            return byAffinity != 0 ? byAffinity : a.id.compareTo(b.id);
+          });
 
     for (final genre in rankedGenres) {
       if (vibeIds.length >= requiredVibeCount) break;

@@ -72,10 +72,15 @@ class _SurpriseResultView extends StatelessWidget {
                   body: context.l10n.surpriseErrorMessage,
                   onRetry: () => context.read<SurpriseCubit>().retry(),
                 ),
-                // ChoosingType/NeedsQuiz never reach E3 — only
-                // ChooseTypeScreen's own BlocListener pushes here, and
-                // only once the Cubit has already moved past both.
-                ChoosingType() || NeedsQuiz() => const SizedBox.shrink(),
+                // ChoosingType/ChooseSource/NeedsQuiz never reach E3 —
+                // only ChooseTypeScreen's own BlocListener pushes here,
+                // and only once the Cubit has already moved past all
+                // three (ChooseSource opens H11 in place instead of
+                // navigating at all — see that listener's own doc
+                // comment).
+                ChoosingType() ||
+                ChooseSource() ||
+                NeedsQuiz() => const SizedBox.shrink(),
               };
             },
           ),

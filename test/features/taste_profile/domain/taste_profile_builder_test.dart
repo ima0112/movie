@@ -138,6 +138,10 @@ void main() {
     test('more than 3 vetoed genres are capped to 3, deterministically '
         'by genre id', () {
       final profile = _profile(
+        // A liked vibe (not a genre, to avoid tangling with the
+        // vetoed set below) just to make the profile usable — this
+        // test is about the veto cap, not about what makes it usable.
+        likedVibes: {'cozy'},
         vetoedGenres: {_action, _comedy, _documentary, _drama, _horror},
       );
 
@@ -152,9 +156,10 @@ void main() {
       expect(result.excludedGenres, {_action, _comedy, _documentary});
     });
 
-    test('a profile with nothing to work with still returns a (thinner) '
-        'ParticipantAnswers, not null and not a crash', () {
-      final profile = _profile();
+    test('a usable profile (liked genres) with nothing else to work '
+        'with still returns a (thinner) ParticipantAnswers, not null '
+        'and not a crash', () {
+      final profile = _profile(likedGenres: {_drama});
 
       final result = TasteProfileBuilder(_vibeCatalog).build(
         profile: profile,
@@ -164,13 +169,13 @@ void main() {
       );
 
       expect(result, isNotNull);
-      expect(result!.vibeIds, isEmpty);
+      expect(result!.vibeIds, {'cozy'}); // drama's own vibe
       expect(result.excludedGenres, isEmpty);
     });
 
     test('watchedKeys collects every watched entry regardless of rating '
         'or favorite status', () {
-      final profile = _profile();
+      final profile = _profile(likedVibes: {'cozy'});
       final libraryEntries = [
         _entry(1, watched: true), // watched, no rating, no favorite
         _entry(2, isFavorite: true), // favorite but never watched
@@ -245,6 +250,131 @@ void main() {
       );
 
       expect(result, isNull);
+    });
+  });
+
+  group('TasteProfileBuilder.build — TasteProfile.isUsableForSuggestions '
+      'gate', () {
+    final libraryOf5 = List.generate(
+      5,
+      (i) => _entry(i, isFavorite: true, genres: [_comedy]),
+    );
+
+    test('a profile with only yearFrom set falls through to the '
+        'inferred-from-library case when there are 5+ entries', () {
+      final profile = _profile(yearFrom: 1950);
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: libraryOf5,
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(result, isNotNull);
+      // The inferred case's own fixed year default, not the unusable
+      // profile's yearFrom (1950) — confirms the profile was ignored
+      // entirely, not partially reused.
+      expect(result!.yearFrom, TasteProfileBuilder.inferredDefaultYearFrom);
+      expect(result.vibeIds, {'laughs'}); // comedy's own vibe
+    });
+
+    test('a profile with only yearFrom set falls all the way to null '
+        '(the quiz) when the library has fewer than 5 entries too', () {
+      final profile = _profile(yearFrom: 1950);
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: const [],
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(result, isNull);
+    });
+
+    test('a profile with only vetoedGenres set — no liked genres or '
+        'vibes — falls through to the library case the same way', () {
+      final profile = _profile(vetoedGenres: {_horror});
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: libraryOf5,
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(result, isNotNull);
+      // The inferred case's own vetoedGenres (always empty — nothing
+      // in UserMediaEntry carries a veto signal), not the unusable
+      // profile's {_horror}.
+      expect(result!.excludedGenres, isEmpty);
+    });
+
+    test('a profile with only vetoedGenres set falls to null with an '
+        'empty library too', () {
+      final profile = _profile(vetoedGenres: {_horror});
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: const [],
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(result, isNull);
+    });
+
+    test('a completely empty profile falls through exactly like no '
+        'profile at all', () {
+      final profile = _profile();
+
+      final withLibrary = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: libraryOf5,
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+      final withoutLibrary = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: const [],
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(withLibrary, isNotNull);
+      expect(withLibrary!.vibeIds, {'laughs'});
+      expect(withoutLibrary, isNull);
+    });
+
+    test('liked genres alone make a profile usable — it wins over the '
+        'library even when there are 5+ entries available', () {
+      final profile = _profile(likedGenres: {_drama});
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: libraryOf5, // all comedy — would infer differently
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(result, isNotNull);
+      expect(result!.vibeIds, {'cozy'}); // drama's vibe, not comedy's
+    });
+
+    test('liked vibes alone make a profile usable — same, wins over '
+        'the library', () {
+      final profile = _profile(likedVibes: {'scary'});
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: libraryOf5,
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(result, isNotNull);
+      expect(result!.vibeIds, contains('scary'));
     });
   });
 

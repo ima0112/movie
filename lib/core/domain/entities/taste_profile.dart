@@ -43,6 +43,22 @@ class TasteProfile {
   /// change marker, not shown in any UI.
   final DateTime updatedAt;
 
+  /// Whether this profile carries enough explicit signal to drive
+  /// Surprise me / the Matcher directly — `TasteProfileBuilder.build`'s
+  /// own "an explicit TasteProfile exists → used" case now gates on
+  /// this instead of a bare non-null check.
+  ///
+  /// [vetoedGenres] alone doesn't count: a veto only narrows what gets
+  /// excluded, it says nothing about what to actually suggest. Neither
+  /// does [yearFrom] alone — every profile always has *some* value
+  /// there (C5's slider has no "unset" position), so it's never a
+  /// meaningful signal on its own. A profile with only one or both of
+  /// those (e.g. only the year slider ever touched) is treated the
+  /// same as no profile at all: it falls through to the inferred-from-
+  /// My-List case, or the quiz.
+  bool get isUsableForSuggestions =>
+      likedGenres.isNotEmpty || likedVibes.isNotEmpty;
+
   @override
   bool operator ==(Object other) =>
       other is TasteProfile &&

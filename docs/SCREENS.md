@@ -191,8 +191,8 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 ### E1. Choose type
 - Access: "Surprise me" card in B3.
 - Elements: headline "What are you in the mood for today?", two large cards "A movie" / "A TV show", each with an icon.
-- Rule: if a taste profile exists, picking a type goes straight to E3 (no quiz). If not, → E2.
-- Exits: E2 or E3.
+- Rule: usable tastes exist (a profile with at least one liked genre or vibe, or — with no such profile — My List has 5+ entries) → picking a type opens H11 to choose between using them or answering the quiz anyway. No usable tastes at all → picking a type goes straight to E2.
+- Exits: H11, E2, or E3.
 
 ### E2. Quiz (1 screen, 4 steps) — shared with the Matcher
 - Access: E1 with no profile, or Matcher F2.
@@ -205,15 +205,15 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 - Exits: E3 (solo) or F3 (group).
 
 ### E3. Surprise me result
-- Access: E1 or E2.
+- Access: E1 (via H11) or E2.
 - Elements:
   - Standard background. Headline "Your suggestion".
-  - If it came from the profile: subtitle "Based on your tastes"; if from the inferred list: "Based on your list".
+  - Subtitle per source: from the profile → "Based on your tastes"; from the inferred list → "Based on your list"; from the quiz → "Based on your answers".
   - White card: large poster, title, "Year · Genres", rating, 2-line synopsis, "View details" link (→ D1/D2).
   - If filters were relaxed: discreet note "We widened the search to 1990".
   - Primary button "Add to Watch later".
   - Secondary button "Another suggestion".
-  - If it came from the quiz and there's no profile: link "Save these answers as my tastes" (→ saves and shows "Saved").
+  - If it came from the profile or the inferred list: link "Answer the quiz instead" (→ E2, same media type; finishing the quiz replaces this screen rather than stacking a second E3 on top).
 - States: loading (card skeleton with "Searching…" text), error with "Retry", offline.
 
 ---
@@ -293,6 +293,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 | H8 | Filters | B2, C1 | Type (All/Movies/TV Shows); multi-select genres; year (range slider 1950–present); minimum rating (0–9 slider, `vote_count.gte=100` fixed); max runtime (movies only); status Airing/Ended (TV shows only); sort by Popularity/Rating/Date/Title; "Hide what I've watched" toggle (client-side). "Reset" and "See N results" (N live) buttons. Only applies to `/discover`, not text search. |
 | H9 | Sort and filter My List | B4 | Type (All/Movies/TV Shows); sort by Recent / Title A–Z / Year / TMDB rating and, in Watched, My rating / Date watched; in Watched, minimum rating (★1–5); in Favorites and Watch later, "Hide what I've watched". Remembers state per tab. "Reset" (only if something's active) and "Apply"; swiping to close discards. |
 | H10 | Edit profile | B5 | Name and initial color (4). Same controls as onboarding step 1. |
+| H11 | Choose source | E1 | Subtitle naming the source ("Based on your tastes" / "Based on your list"); "Use my tastes" (primary) / "Answer the quiz instead" (secondary) |
 
 ## I. Dialogs
 

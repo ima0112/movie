@@ -1478,11 +1478,17 @@ abstract class AppLocalizations {
   /// **'Based on your tastes'**
   String get surpriseSourceProfile;
 
-  /// E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — SuggestionSource.quiz shows neither subtitle.
+  /// No description provided for @surpriseSourceInferredList.
   ///
   /// In en, this message translates to:
   /// **'Based on your list'**
   String get surpriseSourceInferredList;
+
+  /// E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — one line per SuggestionSource value, including the quiz now.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your answers'**
+  String get surpriseSourceQuiz;
 
   /// No description provided for @surpriseRelaxedSearchNote.
   ///
@@ -1507,6 +1513,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added to Watch later'**
   String get surpriseAddedToWatchLaterSnackbar;
+
+  /// H11's own headline (docs/SCREENS.md H11), shown above the subtitle naming where the suggestion would come from.
+  ///
+  /// In en, this message translates to:
+  /// **'Find something to watch'**
+  String get surpriseChooseSourceTitle;
+
+  /// H11's primary button (docs/SCREENS.md H11) — launches Surprise me with the already-usable profile/inferred-list signal.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my tastes'**
+  String get surpriseUseMyTastes;
+
+  /// H11's secondary button, and E3's own link back to E2 for the profile/inferredList sources (docs/SCREENS.md H11, E3) — same copy, same action, two call sites.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer the quiz instead'**
+  String get surpriseAnswerQuizInstead;
 
   /// B3's own title (docs/SCREENS.md B3) — "Match" is this app's own feature name, left untranslated in every locale, same class of exception as "PakoTV".
   ///

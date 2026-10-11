@@ -793,6 +793,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get surpriseSourceInferredList => 'Based on your list';
 
   @override
+  String get surpriseSourceQuiz => 'Based on your answers';
+
+  @override
   String get surpriseRelaxedSearchNote =>
       'We broadened the search a bit to find this match.';
 
@@ -804,6 +807,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get surpriseAddedToWatchLaterSnackbar => 'Added to Watch later';
+
+  @override
+  String get surpriseChooseSourceTitle => 'Find something to watch';
+
+  @override
+  String get surpriseUseMyTastes => 'Use my tastes';
+
+  @override
+  String get surpriseAnswerQuizInstead => 'Answer the quiz instead';
 
   @override
   String get matchHubTitle => 'Match';
