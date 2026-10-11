@@ -32,6 +32,7 @@ class DiscoverFilter {
     this.type,
     this.withGenres = const {},
     this.withoutGenres = const {},
+    this.withKeywords = const {},
     this.yearFrom,
     this.yearTo,
     this.minVoteAverage,
@@ -50,6 +51,15 @@ class DiscoverFilter {
 
   /// Excludes an item matching *any* of these.
   final Set<Genre> withoutGenres;
+
+  /// TMDB keyword ids (numeric, not slugs) — `Vibe.ruleFor`'s own
+  /// `VibeRule.keywordIds`, once a vibe has any. OR semantics, same as
+  /// [withGenres] (TMDB's own `with_keywords` pipe-separated form): an
+  /// item matching *any* of these qualifies. Combines with [withGenres]/
+  /// [withoutGenres] as AND — different `/discover` parameters always
+  /// AND together; only values *within* one parameter choose AND (`,`)
+  /// or OR (`|`).
+  final Set<int> withKeywords;
 
   /// H8: "year (range slider 1950–present)" — inclusive bounds.
   final int? yearFrom;
@@ -91,13 +101,15 @@ class DiscoverFilter {
   /// already nullable, and every one of these needs to support clearing
   /// (H8's own sliders/chips all have an "unset" position). Same idiom
   /// `MyListCubit`'s own `_updateCurrentTab` already uses for `TabFilter`.
-  /// [withGenres]/[withoutGenres]/[sortBy] have no such ambiguity — they
-  /// always hold a real value (an empty `Set`/the default sort), so the
-  /// plain `?? this.x` form is unambiguous for them.
+  /// [withGenres]/[withoutGenres]/[withKeywords]/[sortBy] have no such
+  /// ambiguity — they always hold a real value (an empty `Set`/the
+  /// default sort), so the plain `?? this.x` form is unambiguous for
+  /// them.
   DiscoverFilter copyWith({
     MediaType? Function()? type,
     Set<Genre>? withGenres,
     Set<Genre>? withoutGenres,
+    Set<int>? withKeywords,
     int? Function()? yearFrom,
     int? Function()? yearTo,
     double? Function()? minVoteAverage,
@@ -109,6 +121,7 @@ class DiscoverFilter {
       type: type == null ? this.type : type(),
       withGenres: withGenres ?? this.withGenres,
       withoutGenres: withoutGenres ?? this.withoutGenres,
+      withKeywords: withKeywords ?? this.withKeywords,
       yearFrom: yearFrom == null ? this.yearFrom : yearFrom(),
       yearTo: yearTo == null ? this.yearTo : yearTo(),
       minVoteAverage: minVoteAverage == null
@@ -128,6 +141,7 @@ class DiscoverFilter {
       other.type == type &&
       _setEquals(other.withGenres, withGenres) &&
       _setEquals(other.withoutGenres, withoutGenres) &&
+      _setEquals(other.withKeywords, withKeywords) &&
       other.yearFrom == yearFrom &&
       other.yearTo == yearTo &&
       other.minVoteAverage == minVoteAverage &&
@@ -140,6 +154,7 @@ class DiscoverFilter {
     type,
     Object.hashAllUnordered(withGenres),
     Object.hashAllUnordered(withoutGenres),
+    Object.hashAllUnordered(withKeywords),
     yearFrom,
     yearTo,
     minVoteAverage,
@@ -151,7 +166,8 @@ class DiscoverFilter {
   @override
   String toString() =>
       'DiscoverFilter(type: $type, withGenres: $withGenres, '
-      'withoutGenres: $withoutGenres, yearFrom: $yearFrom, '
+      'withoutGenres: $withoutGenres, withKeywords: $withKeywords, '
+      'yearFrom: $yearFrom, '
       'yearTo: $yearTo, minVoteAverage: $minVoteAverage, '
       'maxRuntimeMinutes: $maxRuntimeMinutes, tvStatus: $tvStatus, '
       'sortBy: $sortBy)';

@@ -1,9 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
+import 'package:movies/core/domain/entities/media_detail.dart';
+import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/season_summary.dart';
+import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/features/match_engine/domain/match_engine.dart';
 import 'package:movies/features/match_engine/domain/match_query.dart';
@@ -11,6 +17,48 @@ import 'package:movies/features/match_engine/domain/participant_answers.dart';
 import 'package:movies/features/match_engine/domain/relaxation.dart';
 import 'package:movies/features/match_engine/domain/vibe.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
+
+/// Records every [DiscoverFilter] `MatchEngineImpl` builds per vibe —
+/// `_filterForVibe` is private, so this is how its output is checked
+/// from outside. Same shape as `onboarding_screen_test.dart`'s own
+/// `_FailingMediaRepository`: implement every `MediaRepository` method,
+/// throw on the ones this test never calls.
+class _RecordingMediaRepository implements MediaRepository {
+  final List<DiscoverFilter> capturedFilters = [];
+
+  @override
+  Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) async {
+    capturedFilters.add(filter);
+    return const Success([]);
+  }
+
+  @override
+  Future<Result<List<MediaItem>>> getCarouselSection(
+    CarouselSection section, {
+    MediaType? type,
+    Genre? genre,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Result<List<MediaItem>>> getHeroItems({MediaType? type}) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Result<List<MediaItem>>> getPosterWallItems() =>
+      throw UnimplementedError();
+
+  @override
+  Future<Result<MediaDetail>> detail(MediaKey key) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Result<SeasonDetail>> season(int tvId, int seasonNumber) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Result<List<MediaItem>>> searchMulti(String query) =>
+      throw UnimplementedError();
+}
 
 /// FakeMediaRepository's sample movies relevant to these tests (see its
 /// own `_movies` list) — spelled out here so every expectation below can
@@ -321,6 +369,65 @@ void main() {
         'Inside Out 2',
         'Poor Things',
       ]);
+    });
+  });
+
+  group('MatchEngine — withKeywords propagation (_filterForVibe)', () {
+    test('a vibe\'s keywordIds reach DiscoverFilter.withKeywords, '
+        'parsed to int, alongside its own genreIds', () async {
+      final repository = _RecordingMediaRepository();
+      final keywordEngine = MatchEngineImpl(repository);
+      final catalog = VibeCatalog([
+        Vibe(
+          id: 'superhero',
+          icon: 'icon',
+          movie: const VibeRule(
+            genreIds: ['action'],
+            keywordIds: ['9715', '849'],
+          ),
+          tv: const VibeRule(genreIds: [], keywordIds: []),
+        ),
+      ]);
+      final query = MatchQuery.aggregate(MediaType.movie, [
+        answers('ana', vibeIds: {'superhero'}, yearFrom: 1950),
+      ]);
+
+      await keywordEngine.resolve(
+        query,
+        options: MatchOptions(vibeCatalog: catalog),
+      );
+
+      // The fake returns no candidates at all, so resolve() churns
+      // through the whole relaxation ladder re-querying every step —
+      // irrelevant here; every one of those calls still carries this
+      // vibe's own rule, so the first is as good as any to check.
+      expect(repository.capturedFilters, isNotEmpty);
+      final filter = repository.capturedFilters.first;
+      expect(filter.withKeywords, {9715, 849});
+      // The keyword filter doesn't replace the genre one — both ride
+      // on the same DiscoverFilter, ANDed together by TMDB (different
+      // parameters always AND; separately, this is still `with_genres`
+      // OR'd internally the same way it always was).
+      expect(filter.withGenres.map((g) => g.id), {'action'});
+    });
+
+    test('no keywordIds -> an empty withKeywords, same as today', () async {
+      final repository = _RecordingMediaRepository();
+      final keywordEngine = MatchEngineImpl(repository);
+      final catalog = VibeCatalog([
+        vibe('comedy', ['comedy']),
+      ]);
+      final query = MatchQuery.aggregate(MediaType.movie, [
+        answers('ana', vibeIds: {'comedy'}, yearFrom: 1950),
+      ]);
+
+      await keywordEngine.resolve(
+        query,
+        options: MatchOptions(vibeCatalog: catalog),
+      );
+
+      expect(repository.capturedFilters, isNotEmpty);
+      expect(repository.capturedFilters.first.withKeywords, isEmpty);
     });
   });
 }

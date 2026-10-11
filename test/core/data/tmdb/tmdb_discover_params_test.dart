@@ -90,6 +90,35 @@ void main() {
     });
   });
 
+  group('discoverQueryParams — withKeywords', () {
+    test('OR semantics -> pipe-separated ids, several of them', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(withKeywords: {1, 2}),
+        type: MediaType.movie,
+      );
+
+      expect(params['with_keywords'], anyOf('1|2', '2|1'));
+    });
+
+    test('a single id has no pipe at all', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(withKeywords: {1}),
+        type: MediaType.movie,
+      );
+
+      expect(params['with_keywords'], '1');
+    });
+
+    test('omitted entirely when empty', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(),
+        type: MediaType.movie,
+      );
+
+      expect(params.containsKey('with_keywords'), isFalse);
+    });
+  });
+
   group('discoverQueryParams — year range', () {
     test('movie uses primary_release_date.gte/lte, Jan 1 / Dec 31', () {
       final params = discoverQueryParams(
@@ -230,5 +259,4 @@ void main() {
       expect(tv['sort_by'], 'name.asc');
     });
   });
-
 }
