@@ -86,6 +86,10 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
 
   static Set<Genre> _deserializeGenres(String serialized) {
     if (serialized.isEmpty) return const {};
-    return serialized.split(',').map(GenreCatalog.byId).toSet();
+    return serialized
+        .split(',')
+        .map(GenreCatalog.byId)
+        .whereType<Genre>()
+        .toSet();
   }
 }

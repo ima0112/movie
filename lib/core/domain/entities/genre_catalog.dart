@@ -40,6 +40,21 @@ class GenreCatalog {
   /// ever keeps the id (CLAUDE.md rule 15), never a display name, so
   /// loading a saved [Genre] means looking it back up here rather than
   /// rebuilding it from stored text.
-  static Genre byId(String id) =>
-      all.firstWhere((genre) => genre.id == id, orElse: () => Genre(id: id));
+  ///
+  /// `null` when [id] isn't one of [all]'s own ids — e.g. a row saved
+  /// by an older build whose catalog has since dropped that genre.
+  /// Callers drop it rather than invent a catch-all bucket, the same
+  /// rule `TmdbGenreMapper.fromTmdbId`'s own doc comment already
+  /// follows for a TMDB id with no equivalent here. Returning a
+  /// `Genre(id: id)` for an unknown id instead (an earlier version of
+  /// this method did) silently manufactures a `Genre` that
+  /// `GenreLocalization.localizedName`'s exhaustive switch has no
+  /// branch for — it round-trips through storage fine and only throws
+  /// later, deep in the UI.
+  static Genre? byId(String id) {
+    for (final genre in all) {
+      if (genre.id == id) return genre;
+    }
+    return null;
+  }
 }
