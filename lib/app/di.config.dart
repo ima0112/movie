@@ -10,8 +10,6 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'dart:math' as _i407;
-
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:movies/core/data/local/drift_onboarding_repository.dart'
@@ -111,18 +109,15 @@ extension GetItInjectableX on _i174.GetIt {
       ),
       registerFor: {_real},
     );
-    gh.lazySingleton<_i365.MatchEngine>(
-      () => _i365.MatchEngineImpl(
-        gh<_i245.MediaRepository>(),
-        gh<_i407.Random>(),
-      ),
-    );
     gh.lazySingleton<_i263.PersonRepository>(
       () => _i496.TmdbPersonRepository(
         gh<_i118.TmdbMediaDatasource>(),
         gh<_i294.TmdbConfigurationService>(),
       ),
       registerFor: {_real},
+    );
+    gh.lazySingleton<_i365.MatchEngine>(
+      () => _i365.MatchEngineImpl(gh<_i245.MediaRepository>()),
     );
     return this;
   }

@@ -110,14 +110,20 @@ abstract interface class MatchEngine {
 /// (wired and honored by `FakeMediaRepository.discover`).
 @LazySingleton(as: MatchEngine)
 class MatchEngineImpl implements MatchEngine {
-  MatchEngineImpl(this._mediaRepository, [Random? random])
-    : _random = random ?? Random();
+  MatchEngineImpl(this._mediaRepository) : _random = Random();
+
+  /// Test-only: a seeded [Random] makes [MatchOptions.randomizeTop]'s
+  /// winner pick reproducible — see this class's own test file. Kept as
+  /// a second, named constructor rather than an extra optional
+  /// parameter on the one above: injectable's generator reflects on
+  /// whichever constructor it uses for DI (the unnamed one, by
+  /// default) and injects `gh<T>()` for every parameter it finds
+  /// there, regardless of nullability — an earlier `[Random? random]`
+  /// on the unnamed constructor made it try (and fail) to resolve a
+  /// `Random` from `GetIt`, which nothing registers.
+  MatchEngineImpl.seeded(this._mediaRepository, this._random);
 
   final MediaRepository _mediaRepository;
-
-  /// Injectable (defaults to a real one) so [MatchOptions.randomizeTop]'s
-  /// winner pick is reproducible in tests — see this class's own test
-  /// file for a seeded instance.
   final Random _random;
 
   /// Relaxation step 3's runtime increase, in minutes. Not a value
