@@ -27,6 +27,7 @@ class GenreCatalog {
     Genre(id: 'documentary'),
     Genre(id: 'drama'),
     Genre(id: 'family'),
+    Genre(id: 'fantasy'),
     Genre(id: 'history'),
     Genre(id: 'horror'),
     Genre(id: 'music'),

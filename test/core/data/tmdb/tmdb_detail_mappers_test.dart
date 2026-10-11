@@ -59,9 +59,7 @@ void main() {
       );
       expect(chalamet.person.profilePath, '/chalamet.jpg');
 
-      final zendaya = detail.cast.firstWhere(
-        (c) => c.person.name == 'Zendaya',
-      );
+      final zendaya = detail.cast.firstWhere((c) => c.person.name == 'Zendaya');
       expect(zendaya.person.profilePath, isNull);
     });
 
@@ -81,7 +79,9 @@ void main() {
 
     test('trailer selection: official wins over a non-official Teaser when '
         'nothing official matches the user\'s language', () {
-      final detail = load('tmdb_movie_detail_trailer_official_non_user_lang.json');
+      final detail = load(
+        'tmdb_movie_detail_trailer_official_non_user_lang.json',
+      );
 
       expect(detail.trailer?.key, 'fr-trailer');
     });
@@ -149,11 +149,11 @@ void main() {
       expect(detail.certification, 'PG');
     });
 
-    test('Fantasy (14, no catalog equivalent) is dropped; Family (10751) '
-        'is kept', () {
+    test('Fantasy (14) and Family (10751) both map — Fantasy has had a '
+        'catalog equivalent since the vibe-keywords-curated branch', () {
       final detail = load('tmdb_movie_detail_no_region_providers.json');
 
-      expect(detail.item.genres.map((g) => g.id), ['family']);
+      expect(detail.item.genres.map((g) => g.id), ['fantasy', 'family']);
     });
   });
 

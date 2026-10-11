@@ -22,6 +22,7 @@
   "genreDocumentary": "Documental",
   "genreDrama": "Drama",
   "genreFamily": "Familiar",
+  "genreFantasy": "Fantasía",
   "genreHistory": "Historia",
   "genreHorror": "Terror",
   "genreMusic": "Música",
@@ -36,7 +37,6 @@
   "vibeDetective": "Detectives",
   "vibeClassic": "Clásico",
   "vibeSuperhero": "Superhéroes",
-  "vibeCult": "Culto",
   "vibeTearjerker": "Lágrimas",
   "vibeSports": "Deportes",
   "vibeDateNight": "Noche romántica",
@@ -46,6 +46,7 @@
   "vibeTrueStory": "Historia real",
   "vibeGangster": "Gánsteres",
   "vibeMusical": "Musical",
+  "vibeFantasy": "Fantasía",
 
   "tvStatusAiring": "En emisión",
   "tvStatusEnded": "Finalizada",

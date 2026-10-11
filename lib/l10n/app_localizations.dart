@@ -200,6 +200,12 @@ abstract class AppLocalizations {
   /// **'Family'**
   String get genreFamily;
 
+  /// No description provided for @genreFantasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Fantasy'**
+  String get genreFantasy;
+
   /// No description provided for @genreHistory.
   ///
   /// In en, this message translates to:
@@ -278,12 +284,6 @@ abstract class AppLocalizations {
   /// **'Superhero'**
   String get vibeSuperhero;
 
-  /// No description provided for @vibeCult.
-  ///
-  /// In en, this message translates to:
-  /// **'Cult'**
-  String get vibeCult;
-
   /// No description provided for @vibeTearjerker.
   ///
   /// In en, this message translates to:
@@ -337,6 +337,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Musical'**
   String get vibeMusical;
+
+  /// No description provided for @vibeFantasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Fantasy'**
+  String get vibeFantasy;
 
   /// D2's status pill, and DiscoverTvStatus.airing in H8's filter/the TV status toggle.
   ///

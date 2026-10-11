@@ -12,7 +12,11 @@
 // Run with: dart run tool/resolve_vibe_keywords.dart [vibeId ...]
 // (no args = every vibe in tool/vibe_search_terms.json). "classic" is
 // always computed too — it isn't in that file at all (no genres/
-// keywords, just a year+rating cutoff). See tool/README.md.
+// keywords, just a year+rating cutoff).
+//
+// A second mode, `--final-pools`, measures assets/vibes.json exactly
+// as shipped (the real, final rule per vibe/type) instead of
+// candidate-searching — see tool/README.md for both.
 //
 // This script NEVER writes to assets/vibes.json — it only produces a
 // report (gitignored, a scratch artifact) for a human to read and
@@ -45,15 +49,11 @@ const _requestPause = Duration(milliseconds: 300);
 /// any relaxation (`MatchEngineImpl._relaxedVoteCountGte` only lowers
 /// it to 50 on step 4, when nothing matched at all).
 ///
-/// **This is the designed value, not today's actual one.** A
-/// pre-existing, already-documented gap (`MatchEngineImpl`'s own doc
-/// comment, `DiscoverFilter`'s own doc comment) means `DiscoverFilter`
-/// has no `vote_count.gte` field at all — `discoverQueryParams`
-/// hardcodes `100` unconditionally, regardless of `MatchQuery
-/// .voteCountGte` or which relaxation step fired. Every number this
-/// script reports under "≥200" is measuring MatchEngine's *intended*
-/// first-attempt threshold, not the `100` the app actually sends
-/// today.
+/// `DiscoverFilter.minVoteCount`/`MatchEngine._filterForVibe` now wire
+/// this straight through to a real `/discover` call (the
+/// `min-vote-count-filter` branch closed the gap this comment used to
+/// describe) — 200 is genuinely what a real first attempt sends today,
+/// not just `MatchQuery`'s own aspirational default.
 const _matchEngineFirstAttemptVoteCountGte = 200;
 
 /// A crossed (keyword + genre) total below this, at the ≥200
@@ -66,6 +66,11 @@ const _lowVolumeThreshold = 50;
 const _wideSoloThreshold = 500;
 
 Future<void> main(List<String> args) async {
+  if (args.contains('--final-pools')) {
+    await _runFinalPoolsReport(_readTmdbToken());
+    return;
+  }
+
   final token = _readTmdbToken();
   final searchTerms = _readSearchTerms();
   final vibeJsonGenres = _readVibesJsonGenres();
@@ -157,26 +162,26 @@ Future<List<_KeywordCandidate>> _resolveKeywordVibe(
         client,
         token,
         MediaType.movie,
-        keywordId: hit.id,
+        keywordIds: [hit.id],
       );
       final soloTv = await _discoverTotal(
         client,
         token,
         MediaType.tvShow,
-        keywordId: hit.id,
+        keywordIds: [hit.id],
       );
       final crossMovie = await _discoverTotal(
         client,
         token,
         MediaType.movie,
-        keywordId: hit.id,
+        keywordIds: [hit.id],
         genreIds: genres.movieTmdbIds,
       );
       final crossTv = await _discoverTotal(
         client,
         token,
         MediaType.tvShow,
-        keywordId: hit.id,
+        keywordIds: [hit.id],
         genreIds: genres.tvTmdbIds,
       );
 
@@ -315,7 +320,7 @@ Future<_VoteSplitTotal> _discoverTotal(
   HttpClient client,
   String token,
   MediaType type, {
-  int? keywordId,
+  List<int> keywordIds = const [],
   List<int> genreIds = const [],
   DateTime? releaseBefore,
   double? minVoteAverage,
@@ -324,7 +329,7 @@ Future<_VoteSplitTotal> _discoverTotal(
     client,
     token,
     type,
-    keywordId: keywordId,
+    keywordIds: keywordIds,
     genreIds: genreIds,
     releaseBefore: releaseBefore,
     minVoteAverage: minVoteAverage,
@@ -333,7 +338,7 @@ Future<_VoteSplitTotal> _discoverTotal(
     client,
     token,
     type,
-    keywordId: keywordId,
+    keywordIds: keywordIds,
     genreIds: genreIds,
     releaseBefore: releaseBefore,
     minVoteAverage: minVoteAverage,
@@ -346,7 +351,7 @@ Future<int> _discoverTotalOnce(
   HttpClient client,
   String token,
   MediaType type, {
-  int? keywordId,
+  List<int> keywordIds = const [],
   List<int> genreIds = const [],
   DateTime? releaseBefore,
   double? minVoteAverage,
@@ -355,7 +360,10 @@ Future<int> _discoverTotalOnce(
   final path = type == MediaType.movie ? '/discover/movie' : '/discover/tv';
   final query = <String, String>{'include_adult': 'false'};
   if (voteCountGte != null) query['vote_count.gte'] = '$voteCountGte';
-  if (keywordId != null) query['with_keywords'] = '$keywordId';
+  // OR within each parameter (pipe) — same as discoverQueryParams'
+  // own with_genres/with_keywords form; the two parameters still AND
+  // together, same as any real /discover call.
+  if (keywordIds.isNotEmpty) query['with_keywords'] = keywordIds.join('|');
   if (genreIds.isNotEmpty) query['with_genres'] = genreIds.join('|');
   if (releaseBefore != null) {
     final dateField = type == MediaType.movie
@@ -417,6 +425,267 @@ Future<Map<String, dynamic>> _getJson(
     await Future<void>.delayed(_requestPause);
     return jsonDecode(body) as Map<String, dynamic>;
   }
+}
+
+// ---------------------------------------------------------------------------
+// --final-pools — measure assets/vibes.json's own real rules, as
+// shipped, one /discover call per vibe/type that actually has a rule.
+// ---------------------------------------------------------------------------
+
+const _finalPoolsReportPath = 'tool/out/vibe_final_pools_report.md';
+
+/// One vibe's fully-resolved, already-curated rule — straight off
+/// `assets/vibes.json` as shipped, with genres already resolved to
+/// TMDB ids via [TmdbGenreMapper] (the exact same mapping
+/// `MatchEngine._filterForVibe` itself uses, so this can never drift
+/// from what a real search would send).
+class _FinalRule {
+  _FinalRule({
+    required this.genreTmdbIds,
+    required this.keywordIds,
+    required this.maxReleaseYear,
+    required this.minVoteAverage,
+  });
+
+  final List<int> genreTmdbIds;
+  final List<int> keywordIds;
+  final int? maxReleaseYear;
+  final double? minVoteAverage;
+
+  bool get isMeaningful =>
+      genreTmdbIds.isNotEmpty ||
+      keywordIds.isNotEmpty ||
+      maxReleaseYear != null ||
+      minVoteAverage != null;
+}
+
+class _FinalVibe {
+  _FinalVibe({required this.id, required this.movie, required this.tv});
+
+  final String id;
+  final _FinalRule movie;
+  final _FinalRule tv;
+}
+
+List<_FinalVibe> _readFinalVibesJson() {
+  final json =
+      jsonDecode(File(_vibesJsonPath).readAsStringSync())
+          as Map<String, dynamic>;
+  final vibes = json['vibes'] as List;
+
+  _FinalRule ruleFrom(
+    Map<String, dynamic> ruleJson,
+    MediaType type,
+    int? maxReleaseYear,
+    double? minVoteAverage,
+  ) {
+    final genreIds = List<String>.from(ruleJson['genreIds'] as List);
+    final keywordIds = List<String>.from(ruleJson['keywordIds'] as List);
+    return _FinalRule(
+      genreTmdbIds: genreIds
+          .map((g) => TmdbGenreMapper.toTmdbId(Genre(id: g), type))
+          .whereType<int>()
+          .toList(),
+      keywordIds: keywordIds.map(int.parse).toList(),
+      maxReleaseYear: maxReleaseYear,
+      minVoteAverage: minVoteAverage,
+    );
+  }
+
+  return [
+    for (final v in vibes)
+      () {
+        final map = v as Map<String, dynamic>;
+        final maxReleaseYear = map['maxReleaseYear'] as int?;
+        final minVoteAverage = (map['minVoteAverage'] as num?)?.toDouble();
+        return _FinalVibe(
+          id: map['id'] as String,
+          movie: ruleFrom(
+            map['movie'] as Map<String, dynamic>,
+            MediaType.movie,
+            maxReleaseYear,
+            minVoteAverage,
+          ),
+          tv: ruleFrom(
+            map['tv'] as Map<String, dynamic>,
+            MediaType.tvShow,
+            maxReleaseYear,
+            minVoteAverage,
+          ),
+        );
+      }(),
+  ];
+}
+
+class _FinalPoolRow {
+  _FinalPoolRow({
+    required this.vibeId,
+    required this.type,
+    required this.rule,
+    required this.total,
+  });
+
+  final String vibeId;
+  final MediaType type;
+  final _FinalRule? rule; // null = empty rule, never queried
+  final _VoteSplitTotal? total; // null = empty rule, never queried
+}
+
+Future<void> _runFinalPoolsReport(String token) async {
+  final vibes = _readFinalVibesJson();
+  final client = HttpClient();
+  final rows = <_FinalPoolRow>[];
+
+  try {
+    for (final vibe in vibes) {
+      for (final type in MediaType.values) {
+        final rule = type == MediaType.movie ? vibe.movie : vibe.tv;
+        if (!rule.isMeaningful) {
+          print('== ${vibe.id} / ${type.name} == empty rule, not queried');
+          rows.add(
+            _FinalPoolRow(vibeId: vibe.id, type: type, rule: null, total: null),
+          );
+          continue;
+        }
+
+        final total = await _discoverTotal(
+          client,
+          token,
+          type,
+          keywordIds: rule.keywordIds,
+          genreIds: rule.genreTmdbIds,
+          releaseBefore: rule.maxReleaseYear == null
+              ? null
+              : DateTime(rule.maxReleaseYear!, 12, 31),
+          minVoteAverage: rule.minVoteAverage,
+        );
+        print(
+          '== ${vibe.id} / ${type.name} == genres=${rule.genreTmdbIds} '
+          'keywords=${rule.keywordIds} -> $total',
+        );
+        rows.add(
+          _FinalPoolRow(vibeId: vibe.id, type: type, rule: rule, total: total),
+        );
+      }
+    }
+  } finally {
+    client.close(force: true);
+  }
+
+  final report = _buildFinalPoolsReport(rows);
+  final file = File(_finalPoolsReportPath);
+  await file.parent.create(recursive: true);
+  await file.writeAsString(report);
+  print('\nReport written to $_finalPoolsReportPath');
+}
+
+/// The threshold `--final-pools`' own TV rule-emptying rule checks
+/// against (Paso 3 of this branch's task): a TV `≥200` total below
+/// this means that vibe is effectively invisible to the match engine
+/// on TV anyway (too few candidates to ever surface), so its TV rule
+/// gets emptied by hand in `assets/vibes.json` instead of shipping a
+/// vibe that silently never finds anything.
+const _tvEmptyingThreshold = 30;
+
+String _buildFinalPoolsReport(List<_FinalPoolRow> rows) {
+  final buffer = StringBuffer()
+    ..writeln('# Vibe final pools report')
+    ..writeln()
+    ..writeln(
+      'Generated ${DateTime.now().toIso8601String()} by `dart run '
+      'tool/resolve_vibe_keywords.dart --final-pools` — measures '
+      '`assets/vibes.json` exactly as shipped (genres OR\'d, keywords '
+      'OR\'d, both ANDed together when a vibe has both — the same rule '
+      '`MatchEngine._filterForVibe` builds), not a candidate search. '
+      'Never writes to `assets/vibes.json`.',
+    )
+    ..writeln()
+    ..writeln(
+      'Every total is a `raw / ≥200` pair — see '
+      '`vibe_keywords_report_round2.md`\'s own preamble for what each '
+      'side means (≥200 is `MatchEngine`\'s real first-attempt '
+      '`vote_count.gte`, not a raw unfiltered count) and for why a raw '
+      'total of exactly 20001 is TMDB\'s own result cap, not a precise '
+      'figure.',
+    )
+    ..writeln()
+    ..writeln(
+      '— (empty rule) means that vibe/type combination has no genres, '
+      'no keywords, and no year/rating filter — '
+      '`Vibe.isMeaningfulFor` is already `false` for it, so it never '
+      'reaches TMDB at all here either.',
+    )
+    ..writeln()
+    ..writeln(
+      '| Vibe | Type | genreIds (TMDB) | keywordIds | total (raw / ≥200) |',
+    )
+    ..writeln('|---|---|---|---|---|');
+
+  for (final row in rows) {
+    final rule = row.rule;
+    final total = row.total;
+    buffer.writeln(
+      '| ${row.vibeId} | ${row.type.name} | '
+      '${rule == null ? '—' : rule.genreTmdbIds} | '
+      '${rule == null ? '—' : rule.keywordIds} | '
+      '${total?.toString() ?? '— (empty rule)'} |',
+    );
+  }
+  buffer.writeln();
+
+  final belowThreshold = rows.where(
+    (r) =>
+        r.type == MediaType.tvShow &&
+        r.total != null &&
+        r.total!.withMinVotes < _tvEmptyingThreshold,
+  );
+  buffer
+    ..writeln(
+      '## TV rows below $_tvEmptyingThreshold at ≥200 — '
+      'candidates to empty',
+    )
+    ..writeln()
+    ..writeln(
+      belowThreshold.isEmpty
+          ? '_None — every TV rule with a non-empty rule clears '
+                '$_tvEmptyingThreshold at ≥200._'
+          : 'Flagged here, not emptied automatically — this script never '
+                'writes to `assets/vibes.json`.',
+    )
+    ..writeln();
+  for (final row in belowThreshold) {
+    buffer.writeln('- **${row.vibeId}**: tv ≥200 = ${row.total!.withMinVotes}');
+  }
+  buffer.writeln();
+
+  final movieBelowThreshold = rows.where(
+    (r) =>
+        r.type == MediaType.movie &&
+        r.total != null &&
+        r.total!.withMinVotes < _tvEmptyingThreshold,
+  );
+  buffer
+    ..writeln(
+      '## Movie rows below $_tvEmptyingThreshold at ≥200 — '
+      'informational only, nothing emptied',
+    )
+    ..writeln()
+    ..writeln(
+      movieBelowThreshold.isEmpty
+          ? '_None — every movie rule with a non-empty rule clears '
+                '$_tvEmptyingThreshold at ≥200._'
+          : 'Informational only, per this branch\'s own task — movie '
+                'rules are never emptied regardless of this figure.',
+    )
+    ..writeln();
+  for (final row in movieBelowThreshold) {
+    buffer.writeln(
+      '- **${row.vibeId}**: movie ≥200 = ${row.total!.withMinVotes}',
+    );
+  }
+  buffer.writeln();
+
+  return buffer.toString();
 }
 
 // ---------------------------------------------------------------------------

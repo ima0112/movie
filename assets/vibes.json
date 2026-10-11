@@ -11,15 +11,27 @@
       "id": "indie",
       "name": "Indie",
       "icon": "vibeIndie",
-      "movie": { "genreIds": ["drama"], "keywordIds": [] },
-      "tv": { "genreIds": ["drama"], "keywordIds": [] }
+      "movie": {
+        "genreIds": [],
+        "keywordIds": ["281237"],
+        "keywordNotes": { "281237": "independent film" }
+      },
+      "tv": { "genreIds": [], "keywordIds": [] }
     },
     {
       "id": "monster",
       "name": "Monster",
       "icon": "vibeMonster",
-      "movie": { "genreIds": ["horror", "sci-fi"], "keywordIds": [] },
-      "tv": { "genreIds": ["horror", "sci-fi"], "keywordIds": [] }
+      "movie": {
+        "genreIds": ["horror", "sci-fi"],
+        "keywordIds": ["1299", "13031"],
+        "keywordNotes": { "1299": "monster", "13031": "creature" }
+      },
+      "tv": {
+        "genreIds": ["horror", "sci-fi"],
+        "keywordIds": ["1299", "13031"],
+        "keywordNotes": { "1299": "monster", "13031": "creature" }
+      }
     },
     {
       "id": "detective",
@@ -41,36 +53,53 @@
       "id": "superhero",
       "name": "Superhero",
       "icon": "vibeSuperhero",
-      "movie": { "genreIds": ["action", "adventure"], "keywordIds": [] },
-      "tv": { "genreIds": ["action", "adventure"], "keywordIds": [] }
-    },
-    {
-      "id": "cult",
-      "name": "Cult",
-      "icon": "vibeCult",
-      "movie": { "genreIds": ["horror", "comedy"], "keywordIds": [] },
-      "tv": { "genreIds": ["comedy"], "keywordIds": [] }
+      "movie": {
+        "genreIds": [],
+        "keywordIds": ["9715"],
+        "keywordNotes": { "9715": "superhero" }
+      },
+      "tv": {
+        "genreIds": [],
+        "keywordIds": ["9715"],
+        "keywordNotes": { "9715": "superhero" }
+      }
     },
     {
       "id": "tearjerker",
       "name": "Tearjerker",
       "icon": "vibeTearjerker",
-      "movie": { "genreIds": ["drama"], "keywordIds": [] },
-      "tv": { "genreIds": ["drama"], "keywordIds": [] }
+      "movie": {
+        "genreIds": ["drama"],
+        "keywordIds": ["9872", "6564", "156924"],
+        "keywordNotes": {
+          "9872": "grief",
+          "6564": "terminal illness",
+          "156924": "tearjerker"
+        }
+      },
+      "tv": { "genreIds": [], "keywordIds": [] }
     },
     {
       "id": "sports",
       "name": "Sports",
       "icon": "vibeSports",
-      "movie": { "genreIds": ["drama", "documentary"], "keywordIds": [] },
-      "tv": { "genreIds": ["documentary"], "keywordIds": [] }
+      "movie": {
+        "genreIds": [],
+        "keywordIds": ["6075"],
+        "keywordNotes": { "6075": "sports" }
+      },
+      "tv": {
+        "genreIds": [],
+        "keywordIds": ["6075"],
+        "keywordNotes": { "6075": "sports" }
+      }
     },
     {
       "id": "date",
       "name": "Date Night",
       "icon": "vibeDate",
       "movie": { "genreIds": ["romance", "comedy"], "keywordIds": [] },
-      "tv": { "genreIds": ["romance", "comedy"], "keywordIds": [] }
+      "tv": { "genreIds": ["comedy"], "keywordIds": [] }
     },
     {
       "id": "future",
@@ -90,29 +119,60 @@
       "id": "gritty",
       "name": "Gritty",
       "icon": "vibeGritty",
-      "movie": { "genreIds": ["crime", "thriller"], "keywordIds": [] },
-      "tv": { "genreIds": ["crime"], "keywordIds": [] }
+      "movie": {
+        "genreIds": ["crime", "thriller"],
+        "keywordIds": ["207268", "286125"],
+        "keywordNotes": { "207268": "neo-noir", "286125": "gritty" }
+      },
+      "tv": {
+        "genreIds": [],
+        "keywordIds": ["207268", "286125"],
+        "keywordNotes": { "207268": "neo-noir", "286125": "gritty" }
+      }
     },
     {
       "id": "true_story",
       "name": "True Story",
       "icon": "vibeTrueStory",
-      "movie": { "genreIds": ["drama", "history"], "keywordIds": [] },
-      "tv": { "genreIds": ["documentary", "drama"], "keywordIds": [] }
+      "movie": {
+        "genreIds": [],
+        "keywordIds": ["9672", "5565"],
+        "keywordNotes": { "9672": "based on true story", "5565": "biography" }
+      },
+      "tv": {
+        "genreIds": [],
+        "keywordIds": ["9672", "5565"],
+        "keywordNotes": { "9672": "based on true story", "5565": "biography" }
+      }
     },
     {
       "id": "gangster",
       "name": "Gangster",
       "icon": "vibeGangster",
-      "movie": { "genreIds": ["crime"], "keywordIds": [] },
-      "tv": { "genreIds": ["crime"], "keywordIds": [] }
+      "movie": {
+        "genreIds": [],
+        "keywordIds": ["3149", "10391"],
+        "keywordNotes": { "3149": "gangster", "10391": "mafia" }
+      },
+      "tv": { "genreIds": [], "keywordIds": [] }
     },
     {
       "id": "musical",
       "name": "Musical",
       "icon": "vibeMusical",
-      "movie": { "genreIds": ["music"], "keywordIds": [] },
-      "tv": { "genreIds": ["music"], "keywordIds": [] }
+      "movie": {
+        "genreIds": [],
+        "keywordIds": ["4344"],
+        "keywordNotes": { "4344": "musical" }
+      },
+      "tv": { "genreIds": [], "keywordIds": [] }
+    },
+    {
+      "id": "fantasy",
+      "name": "Fantasy",
+      "icon": "vibeFantasy",
+      "movie": { "genreIds": ["fantasy"], "keywordIds": [] },
+      "tv": { "genreIds": [], "keywordIds": [] }
     }
   ]
 }

@@ -64,6 +64,7 @@
   "genreDocumentary": "Documentary",
   "genreDrama": "Drama",
   "genreFamily": "Family",
+  "genreFantasy": "Fantasy",
   "genreHistory": "History",
   "genreHorror": "Horror",
   "genreMusic": "Music",
@@ -78,7 +79,6 @@
   "vibeDetective": "Detective",
   "vibeClassic": "Classic",
   "vibeSuperhero": "Superhero",
-  "vibeCult": "Cult",
   "vibeTearjerker": "Tearjerker",
   "vibeSports": "Sports",
   "vibeDateNight": "Date Night",
@@ -88,6 +88,7 @@
   "vibeTrueStory": "True Story",
   "vibeGangster": "Gangster",
   "vibeMusical": "Musical",
+  "vibeFantasy": "Fantasy",
 
   "tvStatusAiring": "Airing",
   "@tvStatusAiring": {

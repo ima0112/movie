@@ -29,6 +29,15 @@ final _vibeCatalog = VibeCatalog([
   _vibe('scary', 'horror'),
   _vibe('adrenaline', 'action'),
   _vibe('real-life', 'documentary'),
+  // Mirrors the real "indie" vibe: known to the catalog, but an empty
+  // rule for tv (same shape `isMeaningfulFor` gates on) — not simply
+  // absent, which "cult" below covers instead.
+  const Vibe(
+    id: 'indie',
+    icon: 'icon',
+    movie: VibeRule(genreIds: ['drama'], keywordIds: []),
+    tv: VibeRule(genreIds: [], keywordIds: []),
+  ),
 ]);
 
 UserMediaEntry _entry(
@@ -406,6 +415,68 @@ void main() {
       // remaining slots and horror's vibe is left out.
       expect(result!.vibeIds, {'real-life', 'adrenaline', 'laughs'});
       expect(result.vibeIds, isNot(contains('scary')));
+    });
+  });
+
+  group('TasteProfileBuilder.build — discards vibes that don\'t apply '
+      'to the requested type', () {
+    test('likedVibes with indie (empty tv rule) and cult (not in the '
+        'catalog at all) for a tv session: both are dropped, then the '
+        'gap is filled from liked genres as usual', () {
+      final profile = _profile(
+        likedGenres: {_drama, _comedy},
+        likedVibes: {'indie', 'cult'},
+      );
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: const [],
+        mediaType: MediaType.tvShow,
+        participantId: 'me',
+      );
+
+      expect(result, isNotNull);
+      expect(result!.vibeIds, isNot(contains('indie')));
+      expect(result.vibeIds, isNot(contains('cult')));
+      // Filled from likedGenres instead — drama's and comedy's own
+      // vibes, exactly as if indie/cult had never been in the profile.
+      expect(result.vibeIds, {'cozy', 'laughs'});
+    });
+
+    test('the same profile for a movie session keeps indie — its movie '
+        'rule is meaningful — but still drops cult', () {
+      final profile = _profile(likedVibes: {'indie', 'cult'});
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: const [],
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+
+      expect(result, isNotNull);
+      expect(result!.vibeIds, contains('indie'));
+      expect(result.vibeIds, isNot(contains('cult')));
+    });
+
+    test('exactly 3 liked vibes, one of them inapplicable to tv: still '
+        'drops it rather than keeping it via the "already full" fast '
+        'path', () {
+      final profile = _profile(
+        likedGenres: {_drama},
+        likedVibes: {'indie', 'cozy', 'laughs'},
+      );
+
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: profile,
+        libraryEntries: const [],
+        mediaType: MediaType.tvShow,
+        participantId: 'me',
+      );
+
+      expect(result, isNotNull);
+      expect(result!.vibeIds, isNot(contains('indie')));
+      expect(result.vibeIds, {'cozy', 'laughs'});
     });
   });
 }

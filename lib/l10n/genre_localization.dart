@@ -6,9 +6,13 @@ import 'app_localizations.dart';
 /// text, so [Genre] carries only an [Genre.id] and every screen that
 /// shows one calls `genre.localizedName(context.l10n)`.
 ///
-/// Exhaustive over `GenreCatalog.all`'s own ids (no `default`/`_`
-/// branch) so adding a genre to the catalog without adding it here is a
-/// compile error, not a silently blank label.
+/// Covers every `GenreCatalog.all` id — **not actually compile-time
+/// exhaustive**, despite `id` being driven off a fixed catalog: `Genre
+/// .id` is a plain `String` (`core/domain/entities/genre.dart`), so this
+/// is a runtime string switch. The `_ => throw ArgumentError(...)`
+/// below is what catches a genre added to the catalog without a
+/// matching case here — at the first attempt to render its label, not
+/// at compile time. Keep every `GenreCatalog.all` id covered by hand.
 extension GenreLocalization on Genre {
   String localizedName(AppLocalizations l10n) => switch (id) {
     'action' => l10n.genreAction,
@@ -19,6 +23,7 @@ extension GenreLocalization on Genre {
     'documentary' => l10n.genreDocumentary,
     'drama' => l10n.genreDrama,
     'family' => l10n.genreFamily,
+    'fantasy' => l10n.genreFantasy,
     'history' => l10n.genreHistory,
     'horror' => l10n.genreHorror,
     'music' => l10n.genreMusic,

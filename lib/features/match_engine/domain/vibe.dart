@@ -13,13 +13,15 @@ class VibeRule {
 
   /// TMDB keyword ids for this vibe/type, as numeric-string ids (not
   /// slugs — `MatchEngine._filterForVibe` parses each one straight
-  /// into `DiscoverFilter.withKeywords`'s `Set<int>`). **Always empty
-  /// today** — `assets/vibes.json` ships with every `keywordIds` array
-  /// empty; a keyword-resolution script (`docs/DECISIONS.md` §5) is
-  /// expected to fill in only the vibes that actually need one, once a
-  /// real TMDB keyword search backs it. Nothing downstream should
-  /// treat an empty list here as an error — `Vibe.isMeaningfulFor`
-  /// already accounts for a vibe having genres but no keywords yet.
+  /// into `DiscoverFilter.withKeywords`'s `Set<int>`), resolved via
+  /// `tool/resolve_vibe_keywords.dart`'s own report — only the vibes
+  /// that actually needed one got any (a genre-only vibe's own rule
+  /// just has an empty list here; `Vibe.isMeaningfulFor` already
+  /// accounts for that, nothing downstream treats it as an error).
+  /// `assets/vibes.json`'s own rule objects may carry a sibling
+  /// `keywordNotes: {"<id>": "<human name>"}` map purely for a reader's
+  /// benefit — [fromJson] never reads it, same as any other key this
+  /// parser doesn't recognize.
   final List<String> keywordIds;
 
   factory VibeRule.fromJson(Map<String, dynamic> json) {

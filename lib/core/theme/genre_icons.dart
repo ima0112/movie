@@ -28,6 +28,7 @@ const Map<String, IconData> _icons = {
   'documentary': AppIcons.genreDocumentary,
   'drama': AppIcons.genreDrama,
   'family': AppIcons.genreFamily,
+  'fantasy': AppIcons.genreFantasy,
   'history': AppIcons.genreHistory,
   'horror': AppIcons.genreHorror,
   'music': AppIcons.genreMusic,
