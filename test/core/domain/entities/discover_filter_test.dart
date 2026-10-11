@@ -48,6 +48,17 @@ void main() {
       expect(a, isNot(equals(b)));
     });
 
+    test('minVoteCount defaults to 100', () {
+      expect(const DiscoverFilter().minVoteCount, 100);
+    });
+
+    test('a different minVoteCount makes two instances unequal', () {
+      const a = DiscoverFilter();
+      const b = DiscoverFilter(minVoteCount: 50);
+
+      expect(a, isNot(equals(b)));
+    });
+
     test('a different maxRuntimeMinutes or tvStatus makes two instances '
         'unequal too', () {
       const base = DiscoverFilter(type: MediaType.movie);
@@ -112,6 +123,17 @@ void main() {
       final copy = original.copyWith(sortBy: DiscoverSortBy.title);
 
       expect(copy.withKeywords, {1, 2});
+    });
+
+    test('minVoteCount can be overridden, and stays unchanged when not '
+        'passed', () {
+      const original = DiscoverFilter(minVoteCount: 200);
+
+      final overridden = original.copyWith(minVoteCount: 50);
+      final untouched = original.copyWith(sortBy: DiscoverSortBy.title);
+
+      expect(overridden.minVoteCount, 50);
+      expect(untouched.minVoteCount, 200);
     });
   });
 }

@@ -94,23 +94,19 @@ abstract interface class MatchEngine {
 ///   scoring entirely — that's the hard exclusion; [watchedByAnyone] is
 ///   the separate, softer signal that only nudges score.
 ///
-/// **Two fields `MatchQuery` carries but this implementation can't act
-/// on today**, both already-documented, pre-existing gaps in the
-/// underlying contracts, not new ones:
-/// - [MatchQuery.voteCountGte] — `DiscoverFilter` has no `vote_count.gte`
-///   field at all (`MinRatingFilter`'s own doc comment already treats
-///   TMDB's `vote_count.gte` as an implementation-only constant a real
-///   `MediaRepositoryImpl` would send, never exposed on the domain
-///   filter). Relaxation step 4 still produces a new `MatchQuery` with
-///   this field updated (for whenever that changes), but it has no
-///   effect on which candidates come back yet.
-/// - [MatchQuery.maxSeasons] — `MediaItem` (the list-level entity
-///   `discover()` returns) carries no season-count data, and
-///   `DiscoverFilter` has no such field either (H8/C1 never needed one).
-///   Relaxation step 3's TV branch updates the value the same way, with
-///   the same no-op caveat.
+/// **One field `MatchQuery` carries but this implementation still
+/// can't act on**, an already-documented, pre-existing gap in the
+/// underlying contract, not a new one: [MatchQuery.maxSeasons] —
+/// `MediaItem` (the list-level entity `discover()` returns) carries no
+/// season-count data, and `DiscoverFilter` has no such field either
+/// (H8/C1 never needed one). Relaxation step 3's TV branch still
+/// produces a new `MatchQuery` with this field updated (for whenever
+/// that changes), but it has no effect on which candidates come back
+/// yet. [MatchQuery.voteCountGte] is no longer in this category —
+/// [_filterForVibe] passes it straight through to
+/// `DiscoverFilter.minVoteCount` now.
 ///
-/// Neither gap blocks movies (`maxRuntimeMinutes` *is* wired into
+/// This gap doesn't block movies (`maxRuntimeMinutes` *is* wired into
 /// `DiscoverFilter`, though `FakeMediaRepository` specifically can't act
 /// on it either — see that field's own doc comment) or TV's `tvStatus`
 /// (wired and honored by `FakeMediaRepository.discover`).
@@ -236,6 +232,7 @@ class MatchEngineImpl implements MatchEngine {
           : null,
       tvStatus: query.mediaType == MediaType.tvShow ? query.tvStatus : null,
       sortBy: DiscoverSortBy.popularity,
+      minVoteCount: query.voteCountGte,
     );
   }
 

@@ -18,8 +18,12 @@ Map<String, dynamic> discoverQueryParams(
   final params = <String, dynamic>{
     'include_adult': false,
     // H8 (docs/SCREENS.md): "minimum rating (0-9 slider, vote_count.gte
-    // =100 fixed)" — fixed regardless of the slider's own value.
-    'vote_count.gte': 100,
+    // =100 fixed)" — fixed regardless of the slider's own value. Not
+    // hardcoded here anymore: DiscoverFilter.minVoteCount carries it
+    // (default 100, same as before, so Discover/Explore/C1 don't
+    // change), and MatchEngine._filterForVibe is the one real caller
+    // that varies it.
+    'vote_count.gte': filter.minVoteCount,
     'sort_by': _sortBy(filter.sortBy, isMovie),
   };
 

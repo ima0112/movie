@@ -39,6 +39,7 @@ class DiscoverFilter {
     this.maxRuntimeMinutes,
     this.tvStatus,
     this.sortBy = DiscoverSortBy.popularity,
+    this.minVoteCount = 100,
   });
 
   /// `null` = "All" (H8: "Type (All/Movies/TV Shows)"). C1: "All = both
@@ -90,6 +91,17 @@ class DiscoverFilter {
 
   final DiscoverSortBy sortBy;
 
+  /// H8: "minimum rating (0–9 slider, `vote_count.gte=100` fixed)" —
+  /// TMDB's own `vote_count.gte`, a floor on how many votes a title
+  /// needs to even be considered, independent of [minVoteAverage]
+  /// itself. H8's own slider never changes this; the default (`100`)
+  /// is what every ordinary Discover/Explore/C1 call already sent
+  /// before this field existed (`tmdb_discover_params.dart`'s own
+  /// previously-hardcoded constant). `MatchEngine._filterForVibe` is
+  /// the one real caller that *does* vary it — `MatchQuery.voteCountGte`
+  /// (200 on the first attempt, 50 after relaxation step 4).
+  final int minVoteCount;
+
   /// H8's "Reset" only shows "if something's active" — i.e. this isn't
   /// the default.
   bool get isDefault => this == const DiscoverFilter();
@@ -116,6 +128,7 @@ class DiscoverFilter {
     int? Function()? maxRuntimeMinutes,
     DiscoverTvStatus? Function()? tvStatus,
     DiscoverSortBy? sortBy,
+    int? minVoteCount,
   }) {
     return DiscoverFilter(
       type: type == null ? this.type : type(),
@@ -132,6 +145,7 @@ class DiscoverFilter {
           : maxRuntimeMinutes(),
       tvStatus: tvStatus == null ? this.tvStatus : tvStatus(),
       sortBy: sortBy ?? this.sortBy,
+      minVoteCount: minVoteCount ?? this.minVoteCount,
     );
   }
 
@@ -147,7 +161,8 @@ class DiscoverFilter {
       other.minVoteAverage == minVoteAverage &&
       other.maxRuntimeMinutes == maxRuntimeMinutes &&
       other.tvStatus == tvStatus &&
-      other.sortBy == sortBy;
+      other.sortBy == sortBy &&
+      other.minVoteCount == minVoteCount;
 
   @override
   int get hashCode => Object.hash(
@@ -161,6 +176,7 @@ class DiscoverFilter {
     maxRuntimeMinutes,
     tvStatus,
     sortBy,
+    minVoteCount,
   );
 
   @override
@@ -170,7 +186,7 @@ class DiscoverFilter {
       'yearFrom: $yearFrom, '
       'yearTo: $yearTo, minVoteAverage: $minVoteAverage, '
       'maxRuntimeMinutes: $maxRuntimeMinutes, tvStatus: $tvStatus, '
-      'sortBy: $sortBy)';
+      'sortBy: $sortBy, minVoteCount: $minVoteCount)';
 }
 
 /// Order-independent set content equality — same local stand-in for
