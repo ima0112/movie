@@ -1,3 +1,5 @@
+import '../../../core/domain/entities/genre.dart';
+import '../../../core/domain/entities/genre_catalog.dart';
 import '../../../core/domain/entities/media_type.dart';
 
 /// One vibe's genre/keyword targeting for a single media type.
@@ -88,6 +90,21 @@ class Vibe {
     MediaType.movie => movie,
     MediaType.tvShow => tv,
   };
+
+  /// [ruleFor]'s own `genreIds` (normalized `Genre.id` strings) resolved
+  /// into real [Genre]s via [GenreCatalog.byId] — an unknown/stale id is
+  /// dropped, not fabricated (same "drop, don't crash" convention as
+  /// every other `GenreCatalog.byId` call site). Shared by
+  /// `MatchEngine._filterForVibe` and `RecommendationBuilder` so neither
+  /// re-implements this resolution on its own.
+  Set<Genre> genresFor(MediaType type) =>
+      ruleFor(type).genreIds.map(GenreCatalog.byId).whereType<Genre>().toSet();
+
+  /// [ruleFor]'s own `keywordIds` (numeric-string TMDB ids) parsed into
+  /// real `int`s, for `DiscoverFilter.withKeywords`. Same sharing
+  /// reason as [genresFor].
+  Set<int> keywordIdsFor(MediaType type) =>
+      ruleFor(type).keywordIds.map(int.parse).toSet();
 
   /// Whether this vibe actually targets anything for [type] yet —
   /// genres, keywords, or a standalone filter like Classic's. Used by

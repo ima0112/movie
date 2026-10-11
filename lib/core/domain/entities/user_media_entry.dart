@@ -275,6 +275,33 @@ catalogSnapshotFrom(MediaItem item) => (
   year: item.releaseDate?.year,
 );
 
+/// Per-genre affinity from [entries]: +1 for each favorite or ≥4-star
+/// watch touching that genre, -1 for each ≤2-star watch. An entry with
+/// neither signal (unrated, or rated 3) contributes nothing.
+///
+/// Shared by `TasteProfileBuilder` (ranking which liked genre maps to a
+/// filler vibe first) and `RecommendationBuilder` ("Para ti"'s own
+/// library-signal fallback when no usable `TasteProfile` exists —
+/// `docs/DECISIONS.md` section 5/F1b) — pulled out here, in
+/// `core/domain`, rather than left private to either feature, so
+/// neither re-implements it (CLAUDE.md rule 1: a feature's `domain`
+/// only imports `core/domain`, never another feature).
+Map<Genre, int> genreAffinityFrom(List<UserMediaEntry> entries) {
+  final affinity = <Genre, int>{};
+  for (final entry in entries) {
+    final rating = entry.rating;
+    final isBoost = entry.isFavorite || (rating != null && rating >= 4);
+    final isPenalty = rating != null && rating <= 2;
+    if (!isBoost && !isPenalty) continue;
+
+    final delta = isBoost ? 1 : -1;
+    for (final genre in entry.genres) {
+      affinity[genre] = (affinity[genre] ?? 0) + delta;
+    }
+  }
+  return affinity;
+}
+
 /// Order-sensitive list content equality — see `LibraryStats`' own copy
 /// of this same small helper for why: no `package:collection` dependency
 /// for just this (CLAUDE.md "don't add one without discussing it").

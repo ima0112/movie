@@ -3,8 +3,6 @@ import 'dart:math';
 import 'package:injectable/injectable.dart';
 
 import '../../../core/domain/entities/discover_filter.dart';
-import '../../../core/domain/entities/genre.dart';
-import '../../../core/domain/entities/genre_catalog.dart';
 import '../../../core/domain/entities/media_item.dart';
 import '../../../core/domain/entities/media_key.dart';
 import '../../../core/domain/entities/media_type.dart';
@@ -209,18 +207,11 @@ class MatchEngineImpl implements MatchEngine {
   }
 
   DiscoverFilter _filterForVibe(Vibe vibe, MatchQuery query) {
-    final rule = vibe.ruleFor(query.mediaType);
-    final genres = rule.genreIds.map(_genreById).whereType<Genre>().toSet();
-    // VibeRule.keywordIds is a List<String> (vibes.json's own JSON
-    // shape — see its doc comment); a real TMDB keyword id is numeric,
-    // so this parses each one.
-    final keywordIds = rule.keywordIds.map(int.parse).toSet();
-
     return DiscoverFilter(
       type: query.mediaType,
-      withGenres: genres,
+      withGenres: vibe.genresFor(query.mediaType),
       withoutGenres: query.excludedGenres,
-      withKeywords: keywordIds,
+      withKeywords: vibe.keywordIdsFor(query.mediaType),
       yearFrom: query.yearFrom,
       yearTo: vibe.maxReleaseYear,
       minVoteAverage: vibe.minVoteAverage,
@@ -231,13 +222,6 @@ class MatchEngineImpl implements MatchEngine {
       sortBy: DiscoverSortBy.popularity,
       minVoteCount: query.voteCountGte,
     );
-  }
-
-  Genre? _genreById(String id) {
-    for (final genre in GenreCatalog.all) {
-      if (genre.id == id) return genre;
-    }
-    return null;
   }
 
   _ScoredCandidate _score(
