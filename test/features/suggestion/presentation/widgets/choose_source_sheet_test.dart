@@ -121,22 +121,37 @@ Widget _wrap(SurpriseCubit cubit, ChooseSource state) {
 
 /// Opens the sheet the real way (`showModalBottomSheet`), so a tap
 /// test can confirm it actually closes, not just that the right cubit
-/// method ran.
+/// method ran. `BlocProvider<SurpriseCubit>` is scoped *below*
+/// `MaterialApp`/its Navigator — matching `ChooseTypeScreen`'s own real
+/// scoping (the provider lives inside that screen's page, not above
+/// go_router's Navigator) — specifically so this reproduces the real
+/// bug a wrapping-the-whole-app provider would hide: a sheet pushed via
+/// `showModalBottomSheet` is a sibling of the page that opened it, not
+/// a descendant of that page's own `BlocProvider`, so the cubit has to
+/// be handed down explicitly via `BlocProvider.value` in the sheet's
+/// own `builder` — exactly what `ChooseTypeScreen`'s real
+/// `showModalBottomSheet` call does.
 Widget _wrapAsModalSheet(SurpriseCubit cubit, ChooseSource state) {
-  return BlocProvider<SurpriseCubit>.value(
-    value: cubit,
-    child: MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Builder(
+  return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: BlocProvider<SurpriseCubit>.value(
+      value: cubit,
+      child: Builder(
         builder: (context) => Scaffold(
           body: Center(
             child: TextButton(
-              onPressed: () => showModalBottomSheet<void>(
-                context: context,
-                isScrollControlled: true,
-                builder: (_) => ChooseSourceSheet(state: state),
-              ),
+              onPressed: () {
+                final cubit = context.read<SurpriseCubit>();
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => BlocProvider.value(
+                    value: cubit,
+                    child: ChooseSourceSheet(state: state),
+                  ),
+                );
+              },
               child: const Text('Open H11'),
             ),
           ),

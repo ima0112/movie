@@ -103,10 +103,20 @@ class _ChooseTypeViewState extends State<_ChooseTypeView> {
               current is SurpriseError),
       listener: (context, state) {
         if (state is ChooseSource) {
+          // A sheet pushed via showModalBottomSheet is a sibling of
+          // this screen's own subtree — it does NOT see this screen's
+          // BlocProvider by default, so the same SurpriseCubit instance
+          // has to be handed down explicitly via BlocProvider.value.
+          // Same fix MyListTopBar's own filter sheet already documents
+          // for the identical issue.
+          final cubit = context.read<SurpriseCubit>();
           showModalBottomSheet<void>(
             context: context,
             isScrollControlled: true,
-            builder: (_) => ChooseSourceSheet(state: state),
+            builder: (_) => BlocProvider.value(
+              value: cubit,
+              child: ChooseSourceSheet(state: state),
+            ),
           );
           return;
         }
