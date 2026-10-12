@@ -65,7 +65,14 @@ class MatchHubCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(title, style: AppTextStyles.h3),
+                      Flexible(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.h3,
+                        ),
+                      ),
                       if (pill != null) ...[
                         const SizedBox(width: AppSpacing.sm),
                         _SoonPill(label: pill),

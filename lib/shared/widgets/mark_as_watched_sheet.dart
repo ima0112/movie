@@ -135,7 +135,7 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
   Widget build(BuildContext context) {
     final isEditingWatched = widget.existingEntry?.isWatched ?? false;
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,

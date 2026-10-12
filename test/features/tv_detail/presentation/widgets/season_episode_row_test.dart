@@ -41,8 +41,16 @@ void main() {
         ),
       );
 
-      final dateText = tester.widget<Text>(find.text('2020-01-01'));
-      expect(dateText.style!.color, AppColors.inkMuted);
+      final richText = tester.widget<Text>(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Text &&
+              (widget.textSpan?.toPlainText().contains('2020-01-01') ??
+                  false),
+        ),
+      );
+      final dateSpan = (richText.textSpan! as TextSpan).children!.first;
+      expect((dateSpan as TextSpan).style!.color, AppColors.inkMuted);
     });
 
     testWidgets('an episode airing in the future renders its date in '
@@ -63,9 +71,15 @@ void main() {
         ),
       );
 
-      final dateFinder = find.textContaining('-');
-      final dateText = tester.widget<Text>(dateFinder);
-      expect(dateText.style!.color, AppColors.accent);
+      final richText = tester.widget<Text>(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Text &&
+              (widget.textSpan?.toPlainText().contains('-') ?? false),
+        ),
+      );
+      final dateSpan = (richText.textSpan! as TextSpan).children!.first;
+      expect((dateSpan as TextSpan).style!.color, AppColors.accent);
     });
 
     testWidgets('an episode with no air date shows "TBA"', (tester) async {

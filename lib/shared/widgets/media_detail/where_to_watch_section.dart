@@ -60,12 +60,18 @@ class WhereToWatchSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(context.l10n.whereToWatchTitle, style: AppTextStyles.h2),
-              GestureDetector(
-                onTap: onRegionTap,
-                child: Text(
-                  regionName,
-                  style: AppTextStyles.bodySm.copyWith(
-                    color: AppColors.inkMuted,
+              const SizedBox(width: AppSpacing.sm),
+              Flexible(
+                child: GestureDetector(
+                  onTap: onRegionTap,
+                  child: Text(
+                    regionName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.right,
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
+                    ),
                   ),
                 ),
               ),

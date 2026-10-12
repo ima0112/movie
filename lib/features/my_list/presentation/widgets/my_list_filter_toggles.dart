@@ -59,9 +59,13 @@ class HideWatchedFilterRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(context.l10n.myListHideWatchedToggle, style: AppTextStyles.body),
+        Expanded(
+          child: Text(
+            context.l10n.myListHideWatchedToggle,
+            style: AppTextStyles.body,
+          ),
+        ),
         Switch(
           value: hideWatched,
           onChanged: onChanged,

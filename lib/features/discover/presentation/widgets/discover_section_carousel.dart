@@ -90,9 +90,16 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = section.localizedLabel(context.l10n);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: AppTextStyles.h2),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.h2,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
         GestureDetector(
           // C1: "'See all' from B1 (arrives with the collection's name
           // and no filters)" — `collectionSection` is what lets C1 fetch

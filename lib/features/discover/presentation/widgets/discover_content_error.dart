@@ -33,9 +33,13 @@ class DiscoverContentError extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              context.l10n.commonCouldntLoad,
-              style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
+            Flexible(
+              child: Text(
+                context.l10n.commonCouldntLoad,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
+              ),
             ),
             const SizedBox(width: AppSpacing.sm),
             TextLinkButton(

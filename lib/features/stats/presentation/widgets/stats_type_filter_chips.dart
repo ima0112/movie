@@ -27,15 +27,15 @@ class StatsTypeFilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Row(
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
       children: [
         _chip(label: l10n.mediaSegmentAll, value: null),
-        const SizedBox(width: AppSpacing.sm),
         _chip(
           label: MediaType.movie.localizedPlural(l10n),
           value: MediaType.movie,
         ),
-        const SizedBox(width: AppSpacing.sm),
         _chip(
           label: MediaType.tvShow.localizedPlural(l10n),
           value: MediaType.tvShow,
