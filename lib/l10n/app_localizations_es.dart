@@ -727,4 +727,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String whereToWatchOverflowChip(int count) {
     return '+$count';
   }
+
+  @override
+  String personAgeLivedYears(int age) {
+    return 'Vivió $age años';
+  }
+
+  @override
+  String personAgeYearsOld(int age) {
+    return '$age años';
+  }
+
+  @override
+  String get personBiographyInEnglish => 'Biografía en inglés';
+
+  @override
+  String get personFilmographyComingSoon => 'Próximamente';
+
+  @override
+  String get personKnownForTitle => 'Conocido por';
+
+  @override
+  String get personFilmographyTitle => 'Filmografía';
 }

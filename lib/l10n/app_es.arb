@@ -258,5 +258,12 @@
   "whereToWatchRent": "Alquiler",
   "whereToWatchBuy": "Compra",
   "whereToWatchJustWatchAttribution": "Datos de JustWatch",
-  "whereToWatchOverflowChip": "+{count}"
+  "whereToWatchOverflowChip": "+{count}",
+
+  "personAgeLivedYears": "Vivió {age} años",
+  "personAgeYearsOld": "{age} años",
+  "personBiographyInEnglish": "Biografía en inglés",
+  "personFilmographyComingSoon": "Próximamente",
+  "personKnownForTitle": "Conocido por",
+  "personFilmographyTitle": "Filmografía"
 }

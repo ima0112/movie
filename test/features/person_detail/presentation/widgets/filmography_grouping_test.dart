@@ -41,12 +41,12 @@ void main() {
 
       final groups = credits.groupedByYear;
 
-      expect(groups.map((g) => g.label), ['2022', '2020']);
+      expect(groups.map((g) => g.year), [2022, 2020]);
       expect(groups.first.credits, hasLength(2));
       expect(groups.last.credits, hasLength(1));
     });
 
-    test('undated credits group as "Coming soon", ahead of every real '
+    test('undated credits group under a null year, ahead of every real '
         'year', () {
       final credits = [
         MediaCredit(
@@ -61,11 +61,11 @@ void main() {
 
       final groups = credits.groupedByYear;
 
-      expect(groups.map((g) => g.label), ['Coming soon', '2019']);
+      expect(groups.map((g) => g.year), [null, 2019]);
       expect(groups.first.credits.single.item.title, 'Future');
     });
 
-    test('no undated credits: no "Coming soon" group at all', () {
+    test('no undated credits: no null-year group at all', () {
       final credits = [
         MediaCredit(
           item: _movie(1, 'A', releaseDate: DateTime(2020, 1, 1)),
@@ -73,7 +73,7 @@ void main() {
         ),
       ];
 
-      expect(credits.groupedByYear.map((g) => g.label), ['2020']);
+      expect(credits.groupedByYear.map((g) => g.year), [2020]);
     });
   });
 

@@ -11,11 +11,15 @@ enum FilmographySegment { all, movies, tvShows, asDirector }
 
 /// One year's worth of filmography rows, already in the order D3 shows
 /// them: [PersonFilmography.groupedByYear]'s own result, newest year
-/// first, with undated credits ("Coming soon") always first of all.
+/// first, with undated credits always first of all.
 class FilmographyYearGroup {
-  const FilmographyYearGroup({required this.label, required this.credits});
+  const FilmographyYearGroup({required this.year, required this.credits});
 
-  final String label;
+  /// `null` for undated credits — CLAUDE.md rule 15: this is domain
+  /// code, so it carries the raw year, never a display string.
+  /// Presentation renders `null` as "Coming soon"
+  /// (`personFilmographyComingSoon`).
+  final int? year;
   final List<MediaCredit> credits;
 }
 
@@ -65,9 +69,9 @@ extension PersonFilmography on List<MediaCredit> {
     final years = byYear.keys.toList()..sort((a, b) => b.compareTo(a));
     return [
       if (undated.isNotEmpty)
-        FilmographyYearGroup(label: 'Coming soon', credits: undated),
+        FilmographyYearGroup(year: null, credits: undated),
       for (final year in years)
-        FilmographyYearGroup(label: '$year', credits: byYear[year]!),
+        FilmographyYearGroup(year: year, credits: byYear[year]!),
     ];
   }
 }

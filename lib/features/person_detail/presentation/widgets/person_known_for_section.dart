@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 
 /// D3's "Known for" — `docs/SCREENS.md` D3: "carousel of their 6 most
@@ -24,7 +25,7 @@ class PersonKnownForSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Known for', style: AppTextStyles.h2),
+          Text(context.l10n.personKnownForTitle, style: AppTextStyles.h2),
           const SizedBox(height: AppSpacing.md),
           MediaCarousel.standard(
             items: items,
