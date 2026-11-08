@@ -5,8 +5,11 @@ part 'tmdb_movie_list_item_dto.g.dart';
 /// One entry of `/movie/now_playing`, `/movie/top_rated`,
 /// `/movie/upcoming` — and, read straight off the raw JSON rather than
 /// through this `fromJson`'s own generated parsing path, a movie-typed
-/// entry of `/trending/all/week` too (same fields; `mediaType` is only
-/// ever populated for that last case — see `tmdb_media_datasource.dart`).
+/// entry of `/trending/all/week`/`/search/multi` too (same fields;
+/// `mediaType` is only ever populated for those — see
+/// `tmdb_media_datasource.dart`). Also doubles as one entry of
+/// `/person/{id}`'s own `movie_credits.cast`/`.crew` — `character`/`job`
+/// are only ever populated there.
 @JsonSerializable(createToJson: false)
 class TmdbMovieListItemDto {
   const TmdbMovieListItemDto({
@@ -17,6 +20,8 @@ class TmdbMovieListItemDto {
     required this.releaseDate,
     required this.voteAverage,
     this.mediaType,
+    this.character,
+    this.job,
   });
 
   final int id;
@@ -40,6 +45,12 @@ class TmdbMovieListItemDto {
   /// or `"person"`. `null` on every type-specific endpoint.
   @JsonKey(name: 'media_type')
   final String? mediaType;
+
+  /// Only present in `/person/{id}`'s own `movie_credits.cast`.
+  final String? character;
+
+  /// Only present in `/person/{id}`'s own `movie_credits.crew`.
+  final String? job;
 
   factory TmdbMovieListItemDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbMovieListItemDtoFromJson(json);

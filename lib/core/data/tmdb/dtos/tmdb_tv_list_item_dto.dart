@@ -3,10 +3,11 @@ import 'package:json_annotation/json_annotation.dart';
 part 'tmdb_tv_list_item_dto.g.dart';
 
 /// One entry of `/tv/on_the_air`, `/tv/top_rated`, `/tv/popular` — and a
-/// tv-typed entry of `/trending/all/week` (see `TmdbMovieListItemDto`'s
-/// own doc comment; the same applies here, mirrored for TV's different
-/// field names: `name` instead of `title`, `first_air_date` instead of
-/// `release_date`).
+/// tv-typed entry of `/trending/all/week`/`/search/multi` (see
+/// `TmdbMovieListItemDto`'s own doc comment; the same applies here,
+/// mirrored for TV's different field names: `name` instead of `title`,
+/// `first_air_date` instead of `release_date`). Also doubles as one
+/// entry of `/person/{id}`'s own `tv_credits.cast`/`.crew`.
 @JsonSerializable(createToJson: false)
 class TmdbTvListItemDto {
   const TmdbTvListItemDto({
@@ -17,6 +18,8 @@ class TmdbTvListItemDto {
     required this.firstAirDate,
     required this.voteAverage,
     this.mediaType,
+    this.character,
+    this.job,
   });
 
   final int id;
@@ -36,6 +39,12 @@ class TmdbTvListItemDto {
 
   @JsonKey(name: 'media_type')
   final String? mediaType;
+
+  /// Only present in `/person/{id}`'s own `tv_credits.cast`.
+  final String? character;
+
+  /// Only present in `/person/{id}`'s own `tv_credits.crew`.
+  final String? job;
 
   factory TmdbTvListItemDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbTvListItemDtoFromJson(json);

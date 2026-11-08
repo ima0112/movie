@@ -43,6 +43,11 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
       _ when RegExp(r'^/tv/\d+$').hasMatch(path) => 'tmdb_tv_detail_full.json',
       _ when RegExp(r'^/movie/\d+$').hasMatch(path) =>
         'tmdb_movie_detail_full.json',
+      _ when RegExp(r'^/person/\d+$').hasMatch(path) =>
+        'tmdb_person_detail_full.json',
+      '/discover/tv' => 'tmdb_tv_popular.json',
+      '/discover/movie' => 'tmdb_movie_now_playing.json',
+      '/search/multi' => 'tmdb_trending_all_week.json',
       _ when path.startsWith('/tv') || path == '/trending/tv/week' =>
         'tmdb_tv_popular.json',
       '/trending/all/week' => 'tmdb_trending_all_week.json',
@@ -64,13 +69,14 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
 
 void main() {
   late _FixtureRoutedAdapter adapter;
+  late TmdbMediaDatasource datasource;
   late TmdbMediaRepository repository;
 
   setUp(() {
     final apiClient = ApiClient();
     adapter = _FixtureRoutedAdapter();
     apiClient.dio.httpClientAdapter = adapter;
-    final datasource = TmdbMediaDatasource(apiClient);
+    datasource = TmdbMediaDatasource(apiClient);
     final configService = TmdbConfigurationService(apiClient);
     repository = TmdbMediaRepository(datasource, configService);
   });
@@ -168,16 +174,68 @@ void main() {
     });
   });
 
-  group('not yet implemented — the repo compiles, but these throw', () {
-    test('searchMulti', () {
-      expect(() => repository.searchMulti('x'), throwsUnimplementedError);
+  group('searchMulti', () {
+    test('a blank query -> an empty success, no request at all', () async {
+      final result = await repository.searchMulti('   ');
+
+      expect(adapter.requestedPaths, isEmpty);
+      expect((result as Success<List<MediaItem>>).value, isEmpty);
     });
 
-    test('discover', () {
-      expect(
-        () => repository.discover(const DiscoverFilter()),
-        throwsUnimplementedError,
+    test('hits /search/multi and drops person entries', () async {
+      final result = await repository.searchMulti('dune');
+
+      expect(adapter.requestedPaths, ['/search/multi']);
+      expect(adapter.lastQueryParameters?['query'], 'dune');
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items, isNotEmpty);
+      expect(items.every((i) => i is Movie || i is TvShow), isTrue);
+    });
+  });
+
+  group('discover', () {
+    test('type: movie -> only /discover/movie', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(type: MediaType.movie),
       );
+
+      expect(adapter.requestedPaths, ['/discover/movie']);
+      expect(result, isA<Success<List<MediaItem>>>());
+    });
+
+    test('type: tvShow -> only /discover/tv', () async {
+      final result = await repository.discover(
+        const DiscoverFilter(type: MediaType.tvShow),
+      );
+
+      expect(adapter.requestedPaths, ['/discover/tv']);
+      expect(result, isA<Success<List<MediaItem>>>());
+    });
+
+    test('type: null -> both /discover/movie and /discover/tv, '
+        'interleaved', () async {
+      final result = await repository.discover(const DiscoverFilter());
+
+      expect(
+        adapter.requestedPaths,
+        containsAll(['/discover/movie', '/discover/tv']),
+      );
+      final items = (result as Success<List<MediaItem>>).value;
+      expect(items.any((i) => i is Movie), isTrue);
+      expect(items.any((i) => i is TvShow), isTrue);
+    });
+  });
+
+  group('person detail', () {
+    test('/person/{id} with the right append_to_response', () async {
+      final dto = await datasource.personDetail(287);
+
+      expect(adapter.requestedPaths, ['/person/287']);
+      expect(
+        adapter.lastQueryParameters?['append_to_response'],
+        'movie_credits,tv_credits',
+      );
+      expect(dto.name, isNotEmpty);
     });
   });
 }
