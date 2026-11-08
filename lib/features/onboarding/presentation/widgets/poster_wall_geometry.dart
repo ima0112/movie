@@ -118,7 +118,7 @@ Duration driftDuration({required double loopHeight, required double speed}) {
 abstract final class PosterWallConfig {
   const PosterWallConfig._();
 
-  static const List<double> columnSpeeds = [6, 8, 5, 7];
+  static const List<double> columnSpeeds = [4, 4, 4, 4];
   static const double minAllowedSpeed = 4;
   static const double maxAllowedSpeed = 10;
 }
