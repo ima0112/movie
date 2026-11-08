@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/domain/entities/discover_filter.dart';
 import '../core/domain/entities/media_type.dart';
+import '../core/domain/repositories/media_repository.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
+import '../features/explore/presentation/screens/explore_screen.dart';
+import '../features/filtered_list/presentation/screens/filtered_list_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
@@ -27,9 +31,40 @@ class AppRoutes {
   static const String myTastes = '/my-tastes';
 
   /// C1 (Filtered listing), not built yet — see `movie_detail_header.dart`
-  /// / `movie_detail_title_block.dart`'s genre taps.
+  /// / `movie_detail_title_block.dart`'s genre taps. Left as its own
+  /// placeholder route deliberately: migrating D1/D2's genre taps onto
+  /// [filteredList] below is out of scope for the branch that added that
+  /// route — a separate, later change.
   static String genreListing(String genreId, MediaType type) =>
       '/genre/$genreId?type=${type.name}';
+
+  /// C1 (Filtered listing) proper — reached from B1's "See all"
+  /// (`discover_section_carousel.dart`), a B2 genre tile, or H8's "See N
+  /// results" (all three go through here, carrying a [FilteredListArgs]
+  /// via `extra` since a [DiscoverFilter] doesn't have — and isn't meant
+  /// to have, see its own doc comment — a lossless URL-string encoding).
+  static const String filteredList = '/list';
+}
+
+/// [FilteredListRouteArgs.title] is C1's own top-bar title (e.g. "In
+/// theaters", a genre's name, or "Results" for H8's "See N results").
+///
+/// [FilteredListRouteArgs.collectionSection] is set only for a B1 "See
+/// all" tap: `docs/SCREENS.md` C1's own "Source" line ("'See all'
+/// collections use their own endpoint until a filter is touched") —
+/// see `FilteredListCubit`'s own doc comment on the field it feeds.
+/// `null` for every other origin (a genre tile, H8), which already
+/// arrive with a real [DiscoverFilter].
+class FilteredListRouteArgs {
+  const FilteredListRouteArgs({
+    required this.filter,
+    required this.title,
+    this.collectionSection,
+  });
+
+  final DiscoverFilter filter;
+  final String title;
+  final CarouselSection? collectionSection;
 }
 
 /// The app's single `GoRouter`. Source of truth: `docs/STRUCTURE.md`
@@ -70,9 +105,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/explore',
-              // TODO: → B2 (Explore) once it's built.
-              builder: (context, state) =>
-                  const _RootPlaceholder(title: 'Explore'),
+              builder: (context, state) => const ExploreScreen(),
             ),
           ],
         ),
@@ -124,22 +157,20 @@ final GoRouter appRouter = GoRouter(
         return _GenreListingPlaceholderScreen(genreId: genreId, type: type);
       },
     ),
+    GoRoute(
+      path: AppRoutes.filteredList,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final args = state.extra! as FilteredListRouteArgs;
+        return FilteredListScreen(
+          filter: args.filter,
+          title: args.title,
+          collectionSection: args.collectionSection,
+        );
+      },
+    ),
   ],
 );
-
-/// Stand-in for a root tab that isn't built yet. Rendered inside
-/// [RootShell]'s own `Scaffold`, so it's just content — no `Scaffold` of
-/// its own.
-class _RootPlaceholder extends StatelessWidget {
-  const _RootPlaceholder({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(title));
-  }
-}
 
 /// Stand-in for C1 (Filtered listing). A real pushed screen (like D1
 /// itself), so it needs its own `Scaffold` + back button — see

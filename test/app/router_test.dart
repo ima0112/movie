@@ -32,7 +32,7 @@ void main() {
     // Discover (/) loaded.
     expect(find.text('Dune: Part Two'), findsOneWidget);
 
-    // Explore (/explore) — placeholder.
+    // Explore (/explore).
     await tester.tap(find.text('Explore'));
     await tester.pumpAndSettle();
     expect(find.text('Explore'), findsWidgets);

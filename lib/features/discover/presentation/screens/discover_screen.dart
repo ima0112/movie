@@ -6,11 +6,11 @@ import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/media_segmented_control.dart';
 import '../cubit/discover_cubit.dart';
 import '../cubit/saved_ids_cubit.dart';
 import '../widgets/discover_content_area.dart';
 import '../widgets/discover_halo.dart';
-import '../widgets/discover_segmented_control.dart';
 import '../widgets/discover_top_bar.dart';
 
 /// Discover (B1) — the app's home screen.
@@ -74,7 +74,7 @@ class _DiscoverViewState extends State<_DiscoverView> {
             child: Column(
               children: [
                 const DiscoverTopBar(),
-                DiscoverSegmentedControl(
+                MediaSegmentedControl(
                   segment: _segment,
                   onSelected: _onSegmentSelected,
                 ),

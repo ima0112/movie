@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/app_buttons.dart';
+import '../../core/theme/app_spacing.dart';
+import 'app_buttons.dart';
 
 /// H8's bottom row — "'Reset' and 'See N results' (N live) buttons"
 /// (`docs/SCREENS.md` H8). "Reset" only shows when there's something to

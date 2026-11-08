@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/domain/entities/genre.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/app_chip.dart';
+import '../../core/domain/entities/genre.dart';
+import '../../core/theme/app_spacing.dart';
+import 'app_chip.dart';
 
 /// H8: "multi-select genres" (`docs/SCREENS.md` H8) — plain flowing
 /// chips, not C5's 3-column `QuizTile` grid: a filter sheet's genre

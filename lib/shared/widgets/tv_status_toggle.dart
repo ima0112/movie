@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/domain/entities/discover_filter.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/app_chip.dart';
+import '../../core/domain/entities/discover_filter.dart';
+import '../../core/theme/app_spacing.dart';
+import 'app_chip.dart';
 
 /// H8: "status Airing/Ended (TV shows only)" (`docs/SCREENS.md` H8).
 /// Tapping the already-selected option clears it back to `null` (no
