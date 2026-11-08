@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/features/explore/domain/search_history_repository.dart';
 import 'package:movies/features/explore/presentation/cubit/explore_cubit.dart';
@@ -52,13 +54,54 @@ class _InMemorySearchHistoryRepository implements SearchHistoryRepository {
   }
 }
 
+/// A controllable stand-in for [SettingsRepository] — see
+/// `discover_cubit_test.dart`'s own copy of this class for why
+/// `watch()` is shaped this way. None of the existing tests in this
+/// file ever push through [controller]; it only needs to exist so
+/// `ExploreCubit`'s own constructor-time subscription has something
+/// valid to subscribe to.
+class _FakeSettingsRepository implements SettingsRepository {
+  _FakeSettingsRepository(this._current);
+
+  AppSettings _current;
+  final StreamController<AppSettings> controller =
+      StreamController<AppSettings>.broadcast();
+
+  @override
+  AppSettings get current => _current;
+
+  @override
+  Future<void> load() async {}
+
+  @override
+  Stream<AppSettings> watch() async* {
+    yield _current;
+    yield* controller.stream;
+  }
+
+  @override
+  Future<Result<void>> save(AppSettings settings) async {
+    _current = settings;
+    return const Success(null);
+  }
+}
+
+ExploreCubit _exploreCubit({
+  SearchHistoryRepository? searchHistoryRepository,
+  SettingsRepository? settingsRepository,
+}) => ExploreCubit(
+  FakeMediaRepository(),
+  searchHistoryRepository ?? _InMemorySearchHistoryRepository(),
+  settingsRepository ??
+      _FakeSettingsRepository(
+        const AppSettings(languageCode: 'en', regionCode: 'US'),
+      ),
+);
+
 void main() {
   group('ExploreCubit', () {
     test('starts in ExploreAtRest, segment All, no recent searches', () {
-      final cubit = ExploreCubit(
-        FakeMediaRepository(),
-        _InMemorySearchHistoryRepository(),
-      );
+      final cubit = _exploreCubit();
 
       final state = cubit.state;
       expect(state, isA<ExploreAtRest>());
@@ -72,7 +115,7 @@ void main() {
         'once the history stream emits', () async {
       final history = _InMemorySearchHistoryRepository();
       await history.record('dune');
-      final cubit = ExploreCubit(FakeMediaRepository(), history);
+      final cubit = _exploreCubit(searchHistoryRepository: history);
 
       await Future<void>.delayed(Duration.zero);
 
@@ -83,10 +126,7 @@ void main() {
     test('onQueryChanged emits Loading immediately, before the debounce '
         'fires', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
 
         cubit.onQueryChanged('dune');
 
@@ -100,10 +140,7 @@ void main() {
     test('a keystroke does not even start searching until 400ms of '
         'silence pass', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
 
         cubit.onQueryChanged('d');
         async.elapse(const Duration(milliseconds: 399));
@@ -125,10 +162,7 @@ void main() {
 
     test('rapid-fire keystrokes only search once, for the final text', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
 
         cubit.onQueryChanged('d');
         async.elapse(const Duration(milliseconds: 100));
@@ -151,10 +185,7 @@ void main() {
 
     test('a superseded search response never overwrites a newer one', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
 
         // First search settles (debounce + fake network delay)...
         cubit.onQueryChanged('dune');
@@ -176,10 +207,7 @@ void main() {
     test('clearing the query (empty string) skips the debounce entirely '
         'and returns to ExploreAtRest', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
         cubit.onQueryChanged('dune');
 
         cubit.onQueryChanged('');
@@ -197,10 +225,7 @@ void main() {
     test('clearQuery() returns to ExploreAtRest and cancels any pending '
         'debounce', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
         cubit.onQueryChanged('dune');
 
         cubit.clearQuery();
@@ -214,10 +239,7 @@ void main() {
 
     test('runRecentSearch() runs immediately, no debounce wait', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
 
         cubit.runRecentSearch('dune');
         // Only the fake repository's own network delay, no 400ms
@@ -233,7 +255,7 @@ void main() {
     test('a successful search is recorded to search history', () {
       fakeAsync((async) {
         final history = _InMemorySearchHistoryRepository();
-        final cubit = ExploreCubit(FakeMediaRepository(), history);
+        final cubit = _exploreCubit(searchHistoryRepository: history);
 
         cubit.onQueryChanged('dune');
         async.elapse(_fullRoundTrip);
@@ -246,10 +268,7 @@ void main() {
     test('selectSegment updates the segment without touching search '
         'results', () {
       fakeAsync((async) {
-        final cubit = ExploreCubit(
-          FakeMediaRepository(),
-          _InMemorySearchHistoryRepository(),
-        );
+        final cubit = _exploreCubit();
         cubit.onQueryChanged('dune');
         async.elapse(_fullRoundTrip);
         final resultsBefore = (cubit.state as ExploreSearchLoaded).results;
@@ -262,6 +281,102 @@ void main() {
         expect(after.results, resultsBefore);
 
         cubit.close();
+      });
+    });
+
+    group('refresh on locale change', () {
+      test(
+        'a region change repeats the active search exactly once',
+        () async {
+          final settingsRepository = _FakeSettingsRepository(
+            const AppSettings(languageCode: 'en', regionCode: 'US'),
+          );
+          final cubit = _exploreCubit(settingsRepository: settingsRepository);
+          final states = <ExploreState>[];
+          final subscription = cubit.stream.listen(states.add);
+
+          cubit.onQueryChanged('dune');
+          await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
+          expect((cubit.state as ExploreSearchLoaded).query, 'dune');
+          final loadingCountSoFar =
+              states.whereType<ExploreSearchLoading>().length;
+
+          settingsRepository.controller.add(
+            const AppSettings(languageCode: 'en', regionCode: 'MX'),
+          );
+          await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
+
+          expect(
+            states.whereType<ExploreSearchLoading>().length,
+            loadingCountSoFar + 1,
+          );
+          expect((cubit.state as ExploreSearchLoaded).query, 'dune');
+
+          await subscription.cancel();
+          await cubit.close();
+        },
+      );
+
+      test(
+        'an emission with the same language/region does not re-run the '
+        'search',
+        () async {
+          final settingsRepository = _FakeSettingsRepository(
+            const AppSettings(languageCode: 'en', regionCode: 'US'),
+          );
+          final cubit = _exploreCubit(settingsRepository: settingsRepository);
+
+          cubit.onQueryChanged('dune');
+          await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
+          final loadedBefore = cubit.state;
+
+          settingsRepository.controller.add(
+            const AppSettings(languageCode: 'en', regionCode: 'US'),
+          );
+          await pumpEventQueue();
+
+          // Cubit.emit always produces a new state instance — the exact
+          // same instance still showing means _onSettingsChanged never
+          // called emit() at all.
+          expect(cubit.state, same(loadedBefore));
+
+          await cubit.close();
+        },
+      );
+
+      test(
+        'ExploreAtRest (nothing typed) -> no-op, never touches what the '
+        'user is typing',
+        () async {
+          final settingsRepository = _FakeSettingsRepository(
+            const AppSettings(languageCode: 'en', regionCode: 'US'),
+          );
+          final cubit = _exploreCubit(settingsRepository: settingsRepository);
+          expect(cubit.state, isA<ExploreAtRest>());
+
+          settingsRepository.controller.add(
+            const AppSettings(languageCode: 'en', regionCode: 'MX'),
+          );
+          await pumpEventQueue();
+
+          expect(cubit.state, isA<ExploreAtRest>());
+
+          await cubit.close();
+        },
+      );
+
+      test('close() leaves no live subscription on SettingsRepository', () async {
+        final settingsRepository = _FakeSettingsRepository(
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+        );
+        final cubit = _exploreCubit(settingsRepository: settingsRepository);
+        await pumpEventQueue();
+        expect(settingsRepository.controller.hasListener, isTrue);
+
+        await cubit.close();
+        await pumpEventQueue();
+
+        expect(settingsRepository.controller.hasListener, isFalse);
       });
     });
   });

@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/domain/entities/app_settings.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../domain/search_history_repository.dart';
 import 'explore_state.dart';
 
@@ -27,17 +29,34 @@ import 'explore_state.dart';
 /// emitted — a slow, superseded search response arriving after a newer
 /// one can't overwrite it (the same class of bug a naive
 /// "just emit whatever comes back" implementation would have).
+///
+/// Also subscribes to [SettingsRepository.watch] so a language/region
+/// change (F11) re-runs whatever search is currently showing — never
+/// the user's own still-being-typed text, and never when there's no
+/// active search to repeat at all (State 1 "at rest", or State 3
+/// "listing" has nothing to re-run here). Cancelled in [close], same
+/// discipline as [_historySubscription].
 class ExploreCubit extends Cubit<ExploreState> {
-  ExploreCubit(this._mediaRepository, this._searchHistoryRepository)
-    : super(const ExploreAtRest(segment: MediaSegment.all)) {
+  ExploreCubit(
+    this._mediaRepository,
+    this._searchHistoryRepository,
+    this._settingsRepository,
+  ) : super(const ExploreAtRest(segment: MediaSegment.all)) {
     _historySubscription = _searchHistoryRepository.watch().listen(
       _onHistoryChanged,
     );
+    _settingsSubscription = _settingsRepository
+        .watch()
+        .distinct()
+        .skip(1)
+        .listen(_onSettingsChanged);
   }
 
   final MediaRepository _mediaRepository;
   final SearchHistoryRepository _searchHistoryRepository;
+  final SettingsRepository _settingsRepository;
   late final StreamSubscription<List<String>> _historySubscription;
+  late final StreamSubscription<AppSettings> _settingsSubscription;
   Timer? _debounce;
   int _searchGeneration = 0;
 
@@ -149,10 +168,25 @@ class ExploreCubit extends Cubit<ExploreState> {
     emit(ExploreListing(segment: state.segment, filter: filter, title: title));
   }
 
+  /// Repeats whatever search is currently showing — only when there is
+  /// one ([ExploreSearching] covers Loading/Loaded/Error, all of which
+  /// carry a [query]). [ExploreAtRest] (nothing typed) and
+  /// [ExploreListing] (not a text query) are left alone, so this never
+  /// touches what the user is actively typing.
+  void _onSettingsChanged(AppSettings _) {
+    if (isClosed) return;
+    if (state case ExploreSearching(:final query)) {
+      _debounce?.cancel();
+      emit(ExploreSearchLoading(segment: state.segment, query: query));
+      unawaited(_runSearch(query, ++_searchGeneration));
+    }
+  }
+
   @override
   Future<void> close() {
     _debounce?.cancel();
     unawaited(_historySubscription.cancel());
+    unawaited(_settingsSubscription.cancel());
     return super.close();
   }
 }
