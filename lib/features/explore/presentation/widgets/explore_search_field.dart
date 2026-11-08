@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 
 /// B2's search field — `docs/SCREENS.md` B2: "real search field
@@ -79,7 +80,7 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
             onChanged: widget.onChanged,
             style: AppTextStyles.body,
             decoration: InputDecoration(
-              hintText: 'Movies, TV shows, people',
+              hintText: context.l10n.exploreSearchHint,
               hintStyle: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
               filled: true,
               fillColor: AppColors.surfaceRaised,
@@ -105,7 +106,7 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
         const SizedBox(width: AppSpacing.sm),
         if (isTyping)
           TextLinkButton(
-            label: 'Cancel',
+            label: context.l10n.commonCancel,
             onTap: widget.onClear,
             fullWidth: false,
           )

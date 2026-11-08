@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 
 /// Compact inline error, matching `docs/SCREENS.md` B1's per-section
@@ -33,11 +34,15 @@ class DiscoverContentError extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Couldn't load",
+              context.l10n.commonCouldntLoad,
               style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
             ),
             const SizedBox(width: AppSpacing.sm),
-            TextLinkButton(label: 'Retry', onTap: onRetry, fullWidth: false),
+            TextLinkButton(
+              label: context.l10n.commonRetry,
+              onTap: onRetry,
+              fullWidth: false,
+            ),
           ],
         ),
       ),

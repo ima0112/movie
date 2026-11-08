@@ -89,7 +89,7 @@ class FilteredListChipsRow extends StatelessWidget {
       final to = filter.yearTo ?? DateTime.now().year;
       chips.add(
         _ActiveChip(
-          label: '$from–$to',
+          label: l10n.filteredListYearRangeChip(from, to),
           remove: () =>
               filter.copyWith(yearFrom: () => null, yearTo: () => null),
         ),
@@ -99,7 +99,9 @@ class FilteredListChipsRow extends StatelessWidget {
     if (filter.minVoteAverage != null && filter.minVoteAverage! > 0) {
       chips.add(
         _ActiveChip(
-          label: '${filter.minVoteAverage!.toStringAsFixed(1)}+ rating',
+          label: l10n.filteredListMinRatingChip(
+            filter.minVoteAverage!.toStringAsFixed(1),
+          ),
           remove: () => filter.copyWith(minVoteAverage: () => null),
         ),
       );
@@ -108,7 +110,7 @@ class FilteredListChipsRow extends StatelessWidget {
     if (filter.maxRuntimeMinutes != null) {
       chips.add(
         _ActiveChip(
-          label: 'Under ${filter.maxRuntimeMinutes} min',
+          label: l10n.filteredListMaxRuntimeChip(filter.maxRuntimeMinutes!),
           remove: () => filter.copyWith(maxRuntimeMinutes: () => null),
         ),
       );

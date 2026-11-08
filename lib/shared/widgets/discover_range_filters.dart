@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
 
 /// H8's three numeric-range controls — year range, minimum rating, and
 /// max runtime (`docs/SCREENS.md` H8). Grouped in one file: each is a
@@ -39,7 +40,10 @@ class YearRangeFilter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('$from – $to', style: AppTextStyles.h3),
+        Text(
+          context.l10n.discoverRangeFiltersYearRange(from, to),
+          style: AppTextStyles.h3,
+        ),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: AppColors.ink,
@@ -125,7 +129,12 @@ class MaxRuntimeFilter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(isNoLimit ? 'No limit' : '$value min', style: AppTextStyles.h3),
+        Text(
+          isNoLimit
+              ? context.l10n.discoverRangeFiltersNoLimit
+              : context.l10n.discoverRangeFiltersMinutes(value),
+          style: AppTextStyles.h3,
+        ),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: AppColors.ink,

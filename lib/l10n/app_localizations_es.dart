@@ -305,4 +305,146 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingWelcomeTmdbAttribution => 'Datos de TMDB';
+
+  @override
+  String get commonCouldntLoad => 'No se pudo cargar';
+
+  @override
+  String get commonReset => 'Restablecer';
+
+  @override
+  String get commonCancel => 'Cancelar';
+
+  @override
+  String get commonClearAll => 'Borrar todo';
+
+  @override
+  String get commonGenres => 'Géneros';
+
+  @override
+  String get carouselSectionForYou => 'Para ti';
+
+  @override
+  String get carouselSectionPopularThisWeek => 'Popular esta semana';
+
+  @override
+  String get carouselSectionBecauseYouLike => 'Porque te gusta…';
+
+  @override
+  String get carouselSectionInTheaters => 'En cines';
+
+  @override
+  String get carouselSectionTrending => 'Tendencias';
+
+  @override
+  String get carouselSectionTopRated => 'Mejor valoradas';
+
+  @override
+  String get carouselSectionUpcoming => 'Próximamente';
+
+  @override
+  String get carouselSectionAiringNow => 'En emisión ahora';
+
+  @override
+  String get carouselSectionPopular => 'Populares';
+
+  @override
+  String get exploreNoResults => 'Sin resultados';
+
+  @override
+  String get exploreTryAnotherTitle => 'Prueba con otro título';
+
+  @override
+  String get exploreDefaultResultsTitle => 'Resultados';
+
+  @override
+  String get exploreSearchHint => 'Películas, series, personas';
+
+  @override
+  String get exploreRecentSearchesLabel => 'Recientes';
+
+  @override
+  String exploreResultMetadata(int year, String typeLabel) {
+    return '$year · $typeLabel';
+  }
+
+  @override
+  String filteredListYearRangeChip(int from, int to) {
+    return '$from–$to';
+  }
+
+  @override
+  String filteredListMinRatingChip(String rating) {
+    return 'Valoración $rating+';
+  }
+
+  @override
+  String filteredListMaxRuntimeChip(int minutes) {
+    return 'Menos de $minutes min';
+  }
+
+  @override
+  String get filteredListEmptyTitle => 'Nada coincide con estos filtros';
+
+  @override
+  String get filteredListEmptyBody => 'Prueba a ajustar tus filtros.';
+
+  @override
+  String filteredListCountLine(int count, String sortLabel) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count resultados',
+      one: '1 resultado',
+    );
+    return '$_temp0 · $sortLabel';
+  }
+
+  @override
+  String get filterSheetTitle => 'Filtros';
+
+  @override
+  String get filterSheetSectionType => 'Tipo';
+
+  @override
+  String get filterSheetSectionYear => 'Año';
+
+  @override
+  String get filterSheetSectionMinRating => 'Valoración mínima';
+
+  @override
+  String get filterSheetSectionMaxRuntime => 'Duración máxima';
+
+  @override
+  String get filterSheetSectionStatus => 'Estado';
+
+  @override
+  String get filterSheetSectionSortBy => 'Ordenar por';
+
+  @override
+  String get filterSheetSeeResultsLoading => 'Ver resultados';
+
+  @override
+  String filterSheetSeeResultsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count resultados',
+      one: '1 resultado',
+    );
+    return 'Ver $_temp0';
+  }
+
+  @override
+  String discoverRangeFiltersYearRange(int from, int to) {
+    return '$from – $to';
+  }
+
+  @override
+  String get discoverRangeFiltersNoLimit => 'Sin límite';
+
+  @override
+  String discoverRangeFiltersMinutes(int value) {
+    return '$value min';
+  }
 }
