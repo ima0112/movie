@@ -20,7 +20,10 @@ import 'package:movies/core/data/local/drift_user_library_repository.dart'
     as _i497;
 import 'package:movies/core/data/local/drift_user_profile_repository.dart'
     as _i311;
+import 'package:movies/core/data/repositories/tmdb_media_repository.dart'
+    as _i28;
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart' as _i294;
+import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart' as _i118;
 import 'package:movies/core/domain/repositories/media_repository.dart' as _i245;
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart'
     as _i762;
@@ -69,9 +72,20 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i294.TmdbConfigurationService(gh<_i152.ApiClient>()),
       registerFor: {_real},
     );
+    gh.lazySingleton<_i118.TmdbMediaDatasource>(
+      () => _i118.TmdbMediaDatasource(gh<_i152.ApiClient>()),
+      registerFor: {_real},
+    );
     gh.lazySingleton<_i245.MediaRepository>(
       () => _i661.FakeMediaRepository(),
       registerFor: {_fake},
+    );
+    gh.lazySingleton<_i245.MediaRepository>(
+      () => _i28.TmdbMediaRepository(
+        gh<_i118.TmdbMediaDatasource>(),
+        gh<_i294.TmdbConfigurationService>(),
+      ),
+      registerFor: {_real},
     );
     gh.lazySingleton<_i365.MatchEngine>(
       () => _i365.MatchEngineImpl(

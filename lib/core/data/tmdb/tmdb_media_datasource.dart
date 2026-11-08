@@ -1,0 +1,81 @@
+import 'package:injectable/injectable.dart';
+
+import '../../../app/environments.dart';
+import '../../network/api_client.dart';
+import 'dtos/tmdb_movie_list_item_dto.dart';
+import 'dtos/tmdb_paged_response_dto.dart';
+import 'dtos/tmdb_tv_list_item_dto.dart';
+
+/// Raw TMDB responses only — DTOs in, DTOs (or, for the one mixed-type
+/// endpoint, raw JSON maps) out. Never a [MediaItem]; mapping is
+/// `tmdb_mappers.dart`'s job, not this datasource's (`docs/STRUCTURE.md`).
+@real
+@lazySingleton
+class TmdbMediaDatasource {
+  TmdbMediaDatasource(this._apiClient);
+
+  final ApiClient _apiClient;
+
+  /// `/trending/all/week`'s own `results` mix movies, TV shows, and
+  /// people (TMDB's `media_type` field) — returned as raw maps instead
+  /// of through [TmdbPagedResponseDto], since that generic wrapper needs
+  /// one single item type. See `tmdb_mappers.dart`'s
+  /// `mediaItemFromTrendingJson`, which reads `media_type` itself.
+  Future<List<Map<String, dynamic>>> trendingAllWeek() async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/trending/all/week',
+    );
+    return List<Map<String, dynamic>>.from(
+      response.data!['results'] as List,
+    );
+  }
+
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieNowPlaying() =>
+      _movies('/movie/now_playing');
+
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieTopRated() =>
+      _movies('/movie/top_rated');
+
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieUpcoming() =>
+      _movies('/movie/upcoming');
+
+  // Not in this branch's own original endpoint list, but added anyway:
+  // `CarouselSection.trending` (`docs/DECISIONS.md` §2's "Movies home" /
+  // "TV shows home" rows) is one of `DiscoverCubit.sectionsBySegment`'s
+  // *required* sections for both the Movies and TV Shows segments — a
+  // plain `UnimplementedError` here would crash `loadDiscover` for either
+  // segment, making this branch's own "Discover shows real TMDB data"
+  // manual-verification step impossible to pass at all.
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> trendingMovieWeek() =>
+      _movies('/trending/movie/week');
+
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvOnTheAir() =>
+      _tv('/tv/on_the_air');
+
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvTopRated() =>
+      _tv('/tv/top_rated');
+
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvPopular() =>
+      _tv('/tv/popular');
+
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> trendingTvWeek() =>
+      _tv('/trending/tv/week');
+
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> _movies(
+    String path,
+  ) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(path);
+    return TmdbPagedResponseDto.fromJson(
+      response.data!,
+      (json) => TmdbMovieListItemDto.fromJson(json! as Map<String, dynamic>),
+    );
+  }
+
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> _tv(String path) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(path);
+    return TmdbPagedResponseDto.fromJson(
+      response.data!,
+      (json) => TmdbTvListItemDto.fromJson(json! as Map<String, dynamic>),
+    );
+  }
+}

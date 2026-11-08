@@ -1,0 +1,39 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/tvbackdrop1.jpg",
+      "genre_ids": [10759, 18],
+      "id": 201,
+      "origin_country": ["US"],
+      "original_language": "en",
+      "original_name": "Signal Lost",
+      "overview": "A submarine crew loses contact with the surface.",
+      "popularity": 955.2,
+      "poster_path": "/signal-lost.jpg",
+      "first_air_date": "2024-09-12",
+      "name": "Signal Lost",
+      "vote_average": 8.3,
+      "vote_count": 2104
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [10763, 10764],
+      "id": 202,
+      "origin_country": ["GB"],
+      "original_language": "en",
+      "original_name": "Midnight Panel",
+      "overview": "A nightly panel show nobody remembers recording.",
+      "popularity": 12.9,
+      "poster_path": null,
+      "first_air_date": "",
+      "name": "Midnight Panel",
+      "vote_average": 5.2,
+      "vote_count": 19
+    }
+  ],
+  "total_pages": 18,
+  "total_results": 349
+}
