@@ -56,7 +56,7 @@ class MyListBody extends StatelessWidget {
               return all.isEmpty
                   ? MyListEmptyState(
                       tab: tab,
-                      otherTabsNote: 'Explore to add movies and shows here.',
+                      otherTabsNote: context.l10n.myListBodyOtherTabsNote,
                       onExploreTap: () => context.go('/explore'),
                     )
                   : MyListFilteredEmptyState(
@@ -86,7 +86,7 @@ class MyListBody extends StatelessWidget {
 
   static String _filteredEmptyTitle(TabFilter filter, AppLocalizations l10n) =>
       switch (filter.type) {
-        null => 'Nothing matches your filters',
+        null => l10n.myListBodyEmptyFilterTitle,
         MediaType.movie => l10n.myListFilteredEmptyMovieTitle,
         MediaType.tvShow => l10n.myListFilteredEmptyTvShowTitle,
       };

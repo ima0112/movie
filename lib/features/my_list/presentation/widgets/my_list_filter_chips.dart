@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/my_list_sort_localization.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import '../cubit/my_list_cubit.dart';
 
@@ -24,24 +26,16 @@ class SortFilterChips extends StatelessWidget {
   final MyListSort sort;
   final ValueChanged<MyListSort> onChanged;
 
-  static const _labels = {
-    MyListSort.recent: 'Recent',
-    MyListSort.titleAZ: 'Title A–Z',
-    MyListSort.year: 'Year',
-    MyListSort.tmdbRating: 'TMDB rating',
-    MyListSort.myRating: 'My rating',
-    MyListSort.dateWatched: 'Date watched',
-  };
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: [
         for (final option in options)
           AppChip(
-            label: _labels[option]!,
+            label: option.localizedLabel(l10n),
             state: option == sort ? ChipState.selected : ChipState.normal,
             onTap: () => onChanged(option),
           ),

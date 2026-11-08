@@ -5,6 +5,7 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/filter_controls.dart';
 import '../cubit/my_list_cubit.dart';
@@ -77,6 +78,7 @@ class _MyListFilterSheetState extends State<MyListFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -84,15 +86,15 @@ class _MyListFilterSheetState extends State<MyListFilterSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Sort and filter', style: AppTextStyles.h2),
+            Text(l10n.myListFilterSheetTitle, style: AppTextStyles.h2),
             const SizedBox(height: AppSpacing.xl),
-            const FilterSectionLabel('Type'),
+            FilterSectionLabel(l10n.filterSheetSectionType),
             TypeFilterChips(
               type: _draft.type,
               onChanged: (type) => _update(type: () => type),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const FilterSectionLabel('Sort by'),
+            FilterSectionLabel(l10n.filterSheetSectionSortBy),
             SortFilterChips(
               options: [
                 ..._baseSorts,
@@ -106,7 +108,7 @@ class _MyListFilterSheetState extends State<MyListFilterSheet> {
             ),
             const SizedBox(height: AppSpacing.lg),
             if (_isWatched) ...[
-              const FilterSectionLabel('Minimum rating'),
+              FilterSectionLabel(l10n.filterSheetSectionMinRating),
               MinStarsFilterRow(
                 minStars: _draft.minStars,
                 onChanged: (minStars) => _update(minStars: () => minStars),
@@ -122,14 +124,14 @@ class _MyListFilterSheetState extends State<MyListFilterSheet> {
                 if (!_draft.isDefault) ...[
                   Expanded(
                     child: SecondaryButton(
-                      label: 'Reset',
+                      label: l10n.commonReset,
                       onTap: () => setState(() => _draft = const TabFilter()),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
                 ],
                 Expanded(
-                  child: PrimaryButton(label: 'Apply', onTap: _apply),
+                  child: PrimaryButton(label: l10n.commonApply, onTap: _apply),
                 ),
               ],
             ),

@@ -86,7 +86,7 @@ class LibraryRowSwipeable extends StatelessWidget {
       SnackBar(
         content: Text(tab.localizedRemovedMessage(context.l10n)),
         action: SnackBarAction(
-          label: 'Undo',
+          label: context.l10n.myListUndoAction,
           onPressed: () => unawaited(userLibraryRepository.upsert(removed)),
         ),
         duration: const Duration(seconds: 4),

@@ -158,5 +158,30 @@
 
   "discoverRangeFiltersYearRange": "{from} – {to}",
   "discoverRangeFiltersNoLimit": "Sin límite",
-  "discoverRangeFiltersMinutes": "{value} min"
+  "discoverRangeFiltersMinutes": "{value} min",
+
+  "libraryRowDateToday": "Hoy",
+  "libraryRowDateYesterday": "Ayer",
+  "libraryRowDateDaysAgo": "Hace {count} días",
+
+  "myListUndoAction": "Deshacer",
+  "myListBodyOtherTabsNote": "Explora para añadir películas y series aquí.",
+  "myListBodyEmptyFilterTitle": "Nada coincide con tus filtros",
+
+  "myListSeasonsCount": "{count, plural, =1{1 temporada} other{{count} temporadas}}",
+  "myListRuntimeHoursMinutes": "{hours} h {minutes} min",
+  "myListRuntimeMinutesOnly": "{minutes} min",
+
+  "myListSortRecent": "Recientes",
+  "myListSortTitleAz": "Título A-Z",
+  "myListSortTmdbRating": "Valoración de TMDB",
+  "myListSortMyRating": "Mi valoración",
+  "myListSortDateWatched": "Fecha de visionado",
+
+  "myListFilterSheetTitle": "Ordenar y filtrar",
+  "commonApply": "Aplicar",
+
+  "myListHideWatchedToggle": "Ocultar lo que he visto",
+
+  "myListSegmentLabelWithCount": "{label} ({count})"
 }

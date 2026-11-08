@@ -447,4 +447,75 @@ class AppLocalizationsEs extends AppLocalizations {
   String discoverRangeFiltersMinutes(int value) {
     return '$value min';
   }
+
+  @override
+  String get libraryRowDateToday => 'Hoy';
+
+  @override
+  String get libraryRowDateYesterday => 'Ayer';
+
+  @override
+  String libraryRowDateDaysAgo(int count) {
+    return 'Hace $count días';
+  }
+
+  @override
+  String get myListUndoAction => 'Deshacer';
+
+  @override
+  String get myListBodyOtherTabsNote =>
+      'Explora para añadir películas y series aquí.';
+
+  @override
+  String get myListBodyEmptyFilterTitle => 'Nada coincide con tus filtros';
+
+  @override
+  String myListSeasonsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count temporadas',
+      one: '1 temporada',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String myListRuntimeHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String myListRuntimeMinutesOnly(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get myListSortRecent => 'Recientes';
+
+  @override
+  String get myListSortTitleAz => 'Título A-Z';
+
+  @override
+  String get myListSortTmdbRating => 'Valoración de TMDB';
+
+  @override
+  String get myListSortMyRating => 'Mi valoración';
+
+  @override
+  String get myListSortDateWatched => 'Fecha de visionado';
+
+  @override
+  String get myListFilterSheetTitle => 'Ordenar y filtrar';
+
+  @override
+  String get commonApply => 'Aplicar';
+
+  @override
+  String get myListHideWatchedToggle => 'Ocultar lo que he visto';
+
+  @override
+  String myListSegmentLabelWithCount(String label, int count) {
+    return '$label ($count)';
+  }
 }

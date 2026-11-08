@@ -84,16 +84,17 @@ class MyListEntryTile extends StatelessWidget {
     final typeLabel = detail.item.type.localizedSingular(l10n);
     final extra = switch (detail) {
       MovieDetail(:final runtimeMinutes) =>
-        runtimeMinutes == null ? null : _formatRuntime(runtimeMinutes),
-      TvShowDetail(:final seasons) =>
-        '${seasons.length} season${seasons.length == 1 ? '' : 's'}',
+        runtimeMinutes == null ? null : _formatRuntime(runtimeMinutes, l10n),
+      TvShowDetail(:final seasons) => l10n.myListSeasonsCount(seasons.length),
     };
     return [if (year != null) '$year', typeLabel, ?extra].join(' · ');
   }
 
-  static String _formatRuntime(int minutes) {
+  static String _formatRuntime(int minutes, AppLocalizations l10n) {
     final h = minutes ~/ 60;
     final m = minutes % 60;
-    return h > 0 ? '$h h $m min' : '$m min';
+    return h > 0
+        ? l10n.myListRuntimeHoursMinutes(h, m)
+        : l10n.myListRuntimeMinutesOnly(m);
   }
 }

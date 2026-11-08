@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/library_row.dart';
 
 Widget _pumpTrailing(LibraryRowTrailing trailing) {
   return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(
       body: LibraryRow(
         posterUrl: null,

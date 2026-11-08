@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/app_localizations.dart';
+import '../../l10n/l10n_extension.dart';
 
 /// The right-hand column of a [LibraryRow].
 ///
@@ -203,7 +206,7 @@ class _Trailing extends StatelessWidget {
           _StarRow(rating: rating ?? 0, emptyColor: AppColors.lineStrong),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            _relativeDate(watchedAt),
+            _relativeDate(watchedAt, context.l10n),
             style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
           ),
         ],
@@ -219,8 +222,12 @@ class _Trailing extends StatelessWidget {
 
 /// "Today", "Yesterday", "N days ago" for the last week, otherwise a
 /// short absolute date — used by [LibraryRowTrailing.starsWithDate]'s
-/// "short date" (`docs/SCREENS.md` B4).
-String _relativeDate(DateTime date) {
+/// "short date" (`docs/SCREENS.md` B4). The absolute-date fallback goes
+/// through `intl`'s own [DateFormat.MMMd] rather than a hand-rolled
+/// English month abbreviation list, so it already renders correctly in
+/// any locale `GlobalMaterialLocalizations.delegate` (already wired in
+/// `app.dart`) initializes date symbols for.
+String _relativeDate(DateTime date, AppLocalizations l10n) {
   final today = DateTime.now();
   final difference = DateTime(
     today.year,
@@ -228,27 +235,12 @@ String _relativeDate(DateTime date) {
     today.day,
   ).difference(DateTime(date.year, date.month, date.day)).inDays;
   return switch (difference) {
-    0 => 'Today',
-    1 => 'Yesterday',
-    > 1 && < 7 => '$difference days ago',
-    _ => '${_month[date.month - 1]} ${date.day}',
+    0 => l10n.libraryRowDateToday,
+    1 => l10n.libraryRowDateYesterday,
+    > 1 && < 7 => l10n.libraryRowDateDaysAgo(difference),
+    _ => DateFormat.MMMd(l10n.localeName).format(date),
   };
 }
-
-const _month = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
 
 class _StarRow extends StatelessWidget {
   const _StarRow({required this.rating, this.emptyColor = AppColors.inkDim});

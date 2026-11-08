@@ -871,6 +871,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{value} min'**
   String discoverRangeFiltersMinutes(int value);
+
+  /// No description provided for @libraryRowDateToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get libraryRowDateToday;
+
+  /// No description provided for @libraryRowDateYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get libraryRowDateYesterday;
+
+  /// LibraryRow's relative watched-date, for 2–6 days ago (docs/SCREENS.md B4's "short date"). This control's own switch never produces count == 1 (that's the separate libraryRowDateYesterday branch), so there's deliberately no ICU plural rule here — a locale is still free to inflect {count} itself however it needs within this one template.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String libraryRowDateDaysAgo(int count);
+
+  /// B4's swipe-to-remove SnackBarAction label, next to the tab-specific myListRemovedFromTab message.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get myListUndoAction;
+
+  /// B4's empty-state body line when a whole tab has zero entries (MyListEmptyState.otherTabsNote).
+  ///
+  /// In en, this message translates to:
+  /// **'Explore to add movies and shows here.'**
+  String get myListBodyOtherTabsNote;
+
+  /// B4's own filtered-empty-state headline when no type filter is active. Deliberately distinct from C1's filteredListEmptyTitle ("Nothing matches these filters") — different screen, different exact wording in the existing code, preserved as its own key rather than merged.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing matches your filters'**
+  String get myListBodyEmptyFilterTitle;
+
+  /// A TV show row's metadata line (B4) — season count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 season} other{{count} seasons}}'**
+  String myListSeasonsCount(int count);
+
+  /// A movie row's metadata line (B4) — runtime, for anything an hour or longer.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String myListRuntimeHoursMinutes(int hours, int minutes);
+
+  /// Same as myListRuntimeHoursMinutes, for a runtime under an hour.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String myListRuntimeMinutesOnly(int minutes);
+
+  /// No description provided for @myListSortRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get myListSortRecent;
+
+  /// No description provided for @myListSortTitleAz.
+  ///
+  /// In en, this message translates to:
+  /// **'Title A–Z'**
+  String get myListSortTitleAz;
+
+  /// B4's sort-by chip — "TMDB" stays untranslated in every locale, only "rating" translates.
+  ///
+  /// In en, this message translates to:
+  /// **'TMDB rating'**
+  String get myListSortTmdbRating;
+
+  /// No description provided for @myListSortMyRating.
+  ///
+  /// In en, this message translates to:
+  /// **'My rating'**
+  String get myListSortMyRating;
+
+  /// No description provided for @myListSortDateWatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Date watched'**
+  String get myListSortDateWatched;
+
+  /// No description provided for @myListFilterSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort and filter'**
+  String get myListFilterSheetTitle;
+
+  /// B4's own filter sheet "Apply" button — a generic enough verb other sheets may reuse later.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get commonApply;
+
+  /// No description provided for @myListHideWatchedToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide what I\'ve watched'**
+  String get myListHideWatchedToggle;
+
+  /// B4's segmented tab label with its own live count, e.g. "Favorites (12)". {label} is that LibraryTab's own localized label (LibraryTabLocalization.localizedLabel).
+  ///
+  /// In en, this message translates to:
+  /// **'{label} ({count})'**
+  String myListSegmentLabelWithCount(String label, int count);
 }
 
 class _AppLocalizationsDelegate
