@@ -200,5 +200,65 @@
   "myListFilteredEmptyTvShowTitle": "No TV shows here",
   "@myListFilteredEmptyTvShowTitle": {
     "description": "Same as myListFilteredEmptyMovieTitle, for a TV-show-only type filter — docs/SCREENS.md B4's own literal example."
+  },
+
+  "commonRetry": "Retry",
+  "@commonRetry": {
+    "description": "ErrorStateView's fixed CTA label (docs/SCREENS.md G: \"Error: same layout with 'Retry'.\")."
+  },
+  "commonNext": "Next",
+  "@commonNext": {
+    "description": "A step/form's \"move forward\" button — onboarding's NameStep and GenreStep (liked step) both use this exact word."
+  },
+  "commonSkip": "Skip",
+  "@commonSkip": {
+    "description": "OnboardingScaffold's header skip link, shown on any step that allows skipping."
+  },
+
+  "navTabDiscover": "Discover",
+  "navTabExplore": "Explore",
+  "navTabMyList": "My List",
+  "navTabYou": "You",
+  "@navTabYou": {
+    "description": "The bottom bar's 4th tab label — also referenced by onboardingTastesSavedSnackbar's own \"Edit in You\" wording, so keep both in sync if either changes."
+  },
+
+  "offlineBannerMessage": "Offline",
+  "@offlineBannerMessage": {
+    "description": "OfflineBanner's persistent top banner text (docs/SCREENS.md G)."
+  },
+
+  "onboardingSaveError": "Something went wrong — let's try again.",
+  "@onboardingSaveError": {
+    "description": "A2's finish() snackbar when saving the onboarding profile fails."
+  },
+  "onboardingTastesSavedSnackbar": "Tastes saved · Edit in You",
+  "@onboardingTastesSavedSnackbar": {
+    "description": "A2's exit snackbar when finish() succeeds and at least one genre was picked (docs/SCREENS.md A2). \"You\" here is the same word as navTabYou — keep them matching."
+  },
+
+  "onboardingGenreStep2Label": "Step 2 of 3",
+  "onboardingGenreStep3Label": "Step 3 of 3",
+  "onboardingGenreStep2Headline": "What genres do you like?",
+  "onboardingGenreStep3Headline": "And which ones never?",
+  "onboardingGenreStep3HighlightWord": "never",
+  "@onboardingGenreStep3HighlightWord": {
+    "description": "The single word inside onboardingGenreStep3Headline that GenreStepHeadline renders in amber — it's found by a literal substring search (text.indexOf(word)), so a translation MUST keep this exact word as a literal substring of its own translated onboardingGenreStep3Headline, not just a loose paraphrase."
+  },
+  "onboardingGenreStep3NextLabel": "Done",
+  "@onboardingGenreStep3NextLabel": {
+    "description": "Step 3's own main button label — the flow's last action, distinct from commonNext."
+  },
+
+  "onboardingNameHeadline": "What's your name?",
+  "onboardingNameBody": "That's what I'll call you, and how others will see you in rooms.",
+  "onboardingNameHint": "Your name",
+
+  "onboardingWelcomeHeadline": "Hi, I'm Pako",
+  "onboardingWelcomeSubtitle": "I'll help you find something to watch, alone or with friends.",
+  "onboardingWelcomeGetStarted": "Get started",
+  "onboardingWelcomeTmdbAttribution": "Data from TMDB",
+  "@onboardingWelcomeTmdbAttribution": {
+    "description": "Welcome step's attribution caption — \"TMDB\" stays untranslated in every locale, same as PakoTV's own name."
   }
 }

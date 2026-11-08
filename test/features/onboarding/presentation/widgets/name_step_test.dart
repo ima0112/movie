@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/features/onboarding/presentation/widgets/name_step.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/pako_state.dart' show PakoState;
 
 /// CLAUDE.md rule 14's own checklist, enforced for this step: a notched
 /// device's safe-area insets plus an open keyboard must never overflow.
 Widget _wrap(Widget child) {
   return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: MediaQuery(
       data: const MediaQueryData(
         size: Size(390, 844),

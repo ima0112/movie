@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/pako_state.dart';
 import '../../../../shared/widgets/profile_avatar.dart';
 import '../../../../shared/widgets/profile_color_picker.dart';
@@ -33,17 +34,17 @@ class NameStepForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasName = name.trim().isNotEmpty;
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(height: AppSpacing.lg),
         PakoState(mood: mood, size: pakoSize),
         const SizedBox(height: AppSpacing.lg),
-        Text("What's your name?", style: AppTextStyles.h1),
+        Text(l10n.onboardingNameHeadline, style: AppTextStyles.h1),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          "That's what I'll call you, and how others will see you in "
-          'rooms.',
+          l10n.onboardingNameBody,
           textAlign: TextAlign.center,
           style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
         ),
@@ -52,7 +53,7 @@ class NameStepForm extends StatelessWidget {
           controller: controller,
           autofocus: true,
           style: AppTextStyles.body,
-          decoration: const InputDecoration(hintText: 'Your name'),
+          decoration: InputDecoration(hintText: l10n.onboardingNameHint),
           onChanged: onNameChanged,
         ),
         if (hasName) ...[

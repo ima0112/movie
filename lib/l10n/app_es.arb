@@ -84,5 +84,35 @@
   "filteredListExcludeGenreChip": "Sin {genreName}",
 
   "myListFilteredEmptyMovieTitle": "No hay películas aquí",
-  "myListFilteredEmptyTvShowTitle": "No hay series aquí"
+  "myListFilteredEmptyTvShowTitle": "No hay series aquí",
+
+  "commonRetry": "Reintentar",
+  "commonNext": "Siguiente",
+  "commonSkip": "Omitir",
+
+  "navTabDiscover": "Descubrir",
+  "navTabExplore": "Explorar",
+  "navTabMyList": "Mi lista",
+  "navTabYou": "Tú",
+
+  "offlineBannerMessage": "Sin conexión",
+
+  "onboardingSaveError": "Algo salió mal. Inténtalo de nuevo.",
+  "onboardingTastesSavedSnackbar": "Gustos guardados · Edítalos en Tú",
+
+  "onboardingGenreStep2Label": "Paso 2 de 3",
+  "onboardingGenreStep3Label": "Paso 3 de 3",
+  "onboardingGenreStep2Headline": "¿Qué géneros te gustan?",
+  "onboardingGenreStep3Headline": "¿Y cuáles nunca?",
+  "onboardingGenreStep3HighlightWord": "nunca",
+  "onboardingGenreStep3NextLabel": "Listo",
+
+  "onboardingNameHeadline": "¿Cómo te llamas?",
+  "onboardingNameBody": "Así te llamaré, y así te verán los demás en las salas.",
+  "onboardingNameHint": "Tu nombre",
+
+  "onboardingWelcomeHeadline": "Hola, soy Pako",
+  "onboardingWelcomeSubtitle": "Te ayudaré a encontrar algo que ver, solo o con amigos.",
+  "onboardingWelcomeGetStarted": "Empezar",
+  "onboardingWelcomeTmdbAttribution": "Datos de TMDB"
 }

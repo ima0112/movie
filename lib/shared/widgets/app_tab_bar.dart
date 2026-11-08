@@ -4,6 +4,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/app_localizations.dart';
+import '../../l10n/l10n_extension.dart';
 import 'match_fab.dart';
 
 /// The four bottom-bar destinations. The Match button that sits between
@@ -14,28 +16,26 @@ import 'match_fab.dart';
 /// active in white, inactive in gray)... Visible on the 4 roots; hidden in
 /// details, quiz, rooms, and inside the Match modal.").
 enum AppTab {
-  discover(
-    icon: AppIcons.home,
-    iconFill: AppIcons.homeFill,
-    label: 'Discover',
-  ),
-  explore(
-    icon: AppIcons.compass,
-    iconFill: AppIcons.compassFill,
-    label: 'Explore',
-  ),
-  myList(icon: AppIcons.list, iconFill: AppIcons.listFill, label: 'My List'),
-  you(icon: AppIcons.user, iconFill: AppIcons.userFill, label: 'You');
+  discover(icon: AppIcons.home, iconFill: AppIcons.homeFill),
+  explore(icon: AppIcons.compass, iconFill: AppIcons.compassFill),
+  myList(icon: AppIcons.list, iconFill: AppIcons.listFill),
+  you(icon: AppIcons.user, iconFill: AppIcons.userFill);
 
-  const AppTab({
-    required this.icon,
-    required this.iconFill,
-    required this.label,
-  });
+  const AppTab({required this.icon, required this.iconFill});
 
   final IconData icon;
   final IconData iconFill;
-  final String label;
+}
+
+/// CLAUDE.md rule 15: [AppTab] itself carries no label text — only this
+/// extension does, switching on the enum value.
+extension AppTabLocalization on AppTab {
+  String localizedLabel(AppLocalizations l10n) => switch (this) {
+    AppTab.discover => l10n.navTabDiscover,
+    AppTab.explore => l10n.navTabExplore,
+    AppTab.myList => l10n.navTabMyList,
+    AppTab.you => l10n.navTabYou,
+  };
 }
 
 /// The 4-tab bottom bar. Leaves a center gap the width of [MatchFab] so a
@@ -116,7 +116,10 @@ class _TabItem extends StatelessWidget {
             color: color,
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(tab.label, style: AppTextStyles.caption.copyWith(color: color)),
+          Text(
+            tab.localizedLabel(context.l10n),
+            style: AppTextStyles.caption.copyWith(color: color),
+          ),
         ],
       ),
     );

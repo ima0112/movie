@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/genre.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 import 'genre_step.dart';
@@ -37,26 +38,27 @@ class OnboardingGenreStep extends StatelessWidget {
       selector: (state) => (state.likedGenres, state.vetoedGenres),
       builder: (context, data) {
         final (liked, vetoed) = data;
+        final l10n = context.l10n;
         if (isVetoedStep) {
           return GenreStep(
-            stepLabel: 'Step 3 of 3',
-            headline: 'And which ones never?',
-            highlightWord: 'never',
+            stepLabel: l10n.onboardingGenreStep3Label,
+            headline: l10n.onboardingGenreStep3Headline,
+            highlightWord: l10n.onboardingGenreStep3HighlightWord,
             selected: vetoed,
             disabledGenres: liked,
             onToggle: cubit.toggleVetoedGenre,
             onSkip: onFinish,
-            nextLabel: 'Done',
+            nextLabel: l10n.onboardingGenreStep3NextLabel,
             onNext: onFinish,
           );
         }
         return GenreStep(
-          stepLabel: 'Step 2 of 3',
-          headline: 'What genres do you like?',
+          stepLabel: l10n.onboardingGenreStep2Label,
+          headline: l10n.onboardingGenreStep2Headline,
           selected: liked,
           onToggle: cubit.toggleLikedGenre,
           onSkip: cubit.next,
-          nextLabel: 'Next',
+          nextLabel: l10n.commonNext,
           onNext: cubit.next,
         );
       },
