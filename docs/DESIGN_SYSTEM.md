@@ -155,6 +155,7 @@ regular/fill para los 8 conceptos que lo necesitan.
 | Género: Romance | `hearts_line` |
 | Género: Science Fiction | `aliens_line` |
 | Género: Thriller | `timer_flash_line` |
+| Stepper: incrementar / decrementar (E2 "Max seasons") | `add_circle_line` / `indeterminate_circle_line` |
 
 Si falta un concepto al implementar, añádelo a esta tabla antes de elegir el
 icono a ojo, para que quede consistente entre pantallas.
