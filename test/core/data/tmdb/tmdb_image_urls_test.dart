@@ -7,6 +7,7 @@ void main() {
     posterSizes: ['w92', 'w342', 'original'],
     backdropSizes: ['w780', 'original'],
     profileSizes: ['w185', 'original'],
+    stillSizes: ['w300', 'original'],
   );
 
   group('buildTmdbImageUrl', () {

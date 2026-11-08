@@ -1,0 +1,119 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/domain/entities/season_summary.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/poster_image.dart';
+
+/// D2's "Seasons" section — `docs/SCREENS.md` D2: "list of rows
+/// (thumbnail, 'Season N', year, 'X episodes', chevron) → H4."
+///
+/// Specials (TMDB's `season_number: 0`) sort to the end, labeled
+/// "Specials" rather than "Season 0" — a specials list is often thin or
+/// empty, so it reads better as an appendix than as "Season 0" sitting
+/// before "Season 1". Hidden entirely when it has no episodes at all
+/// (TMDB sometimes lists an empty specials season), unlike a regular
+/// season, which is always shown even at 0 episodes (e.g. announced but
+/// not yet aired).
+class TvSeasonsSection extends StatelessWidget {
+  const TvSeasonsSection({super.key, required this.seasons, this.onSeasonTap});
+
+  final List<SeasonSummary> seasons;
+  final void Function(SeasonSummary season)? onSeasonTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ordered = _ordered(seasons);
+    if (ordered.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xl,
+        vertical: AppSpacing.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Seasons', style: AppTextStyles.h2),
+          const SizedBox(height: AppSpacing.sm),
+          for (final season in ordered)
+            _SeasonRow(season: season, onTap: () => onSeasonTap?.call(season)),
+        ],
+      ),
+    );
+  }
+
+  static List<SeasonSummary> _ordered(List<SeasonSummary> seasons) {
+    final regular = seasons.where((s) => s.seasonNumber != 0).toList();
+    final specials = seasons.where(
+      (s) => s.seasonNumber == 0 && s.episodeCount > 0,
+    );
+    return [...regular, ...specials];
+  }
+}
+
+class _SeasonRow extends StatelessWidget {
+  const _SeasonRow({required this.season, required this.onTap});
+
+  final SeasonSummary season;
+  final VoidCallback onTap;
+
+  static const double _posterWidth = 56;
+  static const double _posterHeight = 84;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = season.seasonNumber == 0
+        ? 'Specials'
+        : 'Season ${season.seasonNumber}';
+    final year = season.airDate?.year;
+    final episodeLabel =
+        '${season.episodeCount} episode${season.episodeCount == 1 ? '' : 's'}';
+    final metadata = [if (year != null) '$year', episodeLabel].join(' · ');
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              child: SizedBox(
+                width: _posterWidth,
+                height: _posterHeight,
+                child: PosterImage(posterPath: season.posterPath),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(label, style: AppTextStyles.h3),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    metadata,
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            const Icon(
+              AppIcons.chevronRight,
+              size: 20,
+              color: AppColors.inkMuted,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -45,6 +45,7 @@ class TmdbConfigurationService {
         posterSizes: dto.images.posterSizes,
         backdropSizes: dto.images.backdropSizes,
         profileSizes: dto.images.profileSizes,
+        stillSizes: dto.images.stillSizes,
       );
     } catch (_) {
       // Keep whatever `_current` already was — see the class doc comment.

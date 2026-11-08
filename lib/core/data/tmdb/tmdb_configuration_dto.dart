@@ -28,6 +28,7 @@ class TmdbImagesConfigDto {
     required this.posterSizes,
     required this.backdropSizes,
     required this.profileSizes,
+    required this.stillSizes,
   });
 
   @JsonKey(name: 'secure_base_url')
@@ -41,6 +42,9 @@ class TmdbImagesConfigDto {
 
   @JsonKey(name: 'profile_sizes')
   final List<String> profileSizes;
+
+  @JsonKey(name: 'still_sizes')
+  final List<String> stillSizes;
 
   factory TmdbImagesConfigDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbImagesConfigDtoFromJson(json);

@@ -63,6 +63,39 @@ TvShowDetail _tvShowDetail({
 
 void main() {
   group('MarkAsWatchedSheet', () {
+    testWidgets('heading is "Mark as watched" with a MovieDetail, or no '
+        'mediaDetail at all', (tester) async {
+      final repository = InMemoryUserLibraryRepository();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MarkAsWatchedSheet(
+            mediaKey: _dune,
+            userLibraryRepository: repository,
+            mediaDetail: _movieDetail(),
+          ),
+        ),
+      );
+
+      expect(find.text('Mark as watched'), findsOneWidget);
+    });
+
+    testWidgets('heading asks "Have you finished {title}?" with a '
+        'TvShowDetail on hand', (tester) async {
+      final repository = InMemoryUserLibraryRepository();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MarkAsWatchedSheet(
+            mediaKey: _theBear,
+            userLibraryRepository: repository,
+            mediaDetail: _tvShowDetail(),
+          ),
+        ),
+      );
+
+      expect(find.text('Have you finished Title?'), findsOneWidget);
+      expect(find.text('Mark as watched'), findsNothing);
+    });
+
     testWidgets(
       'tapping Save with zero interaction saves a null rating and today '
       "as the date — H2's own fields are optional in practice",

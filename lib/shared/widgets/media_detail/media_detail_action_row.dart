@@ -24,7 +24,19 @@ import 'media_action_button.dart';
 /// `UserMediaEntry` needs — passed in as a plain value rather than read
 /// from any screen-specific Cubit, which is what makes this widget
 /// reusable by D2 without it (or this file) knowing that Cubit exists.
-class MediaDetailActionRow extends StatelessWidget {
+///
+/// Favorite/Watch later/Watched each get their *own* `StreamBuilder`,
+/// subscribed to `watchEntry(mediaKey)` mapped down to just the one
+/// boolean each button renders and `.distinct()`-ed — tapping Favorite
+/// only ever changes `isFavorite`, so only that mapped stream emits a
+/// new value and only that button's `StreamBuilder` rebuilds (verified
+/// with Flutter's widget-rebuild tracking: tapping one never shows the
+/// other two as dirty). A single shared `StreamBuilder` around all
+/// three (this file's previous shape) rebuilt every button on every
+/// change, which technically still satisfied rule 9's ban on a
+/// *screen*-wide rebuild, but not its stricter "a toggle rebuilds only
+/// itself" line once three toggles share one row.
+class MediaDetailActionRow extends StatefulWidget {
   const MediaDetailActionRow({
     super.key,
     required this.mediaKey,
@@ -44,88 +56,151 @@ class MediaDetailActionRow extends StatelessWidget {
   final VoidCallback? onSeeSimilar;
 
   @override
+  State<MediaDetailActionRow> createState() => _MediaDetailActionRowState();
+}
+
+class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
+  // One subscription, shared by the cache below and all three buttons'
+  // own derived streams (`asBroadcastStream` so each `.map().distinct()`
+  // downstream gets every event without re-querying the repository).
+  late final Stream<UserMediaEntry?> _entryStream;
+  late final StreamSubscription<UserMediaEntry?> _cacheSubscription;
+
+  // Tap handlers need the *current full* entry (to `copyWith` it), not
+  // just whichever single boolean triggered a rebuild — kept in sync by
+  // the same stream every button already renders from, read
+  // synchronously at tap time instead of awaiting a fresh one-shot query.
+  UserMediaEntry? _latestEntry;
+
+  @override
+  void initState() {
+    super.initState();
+    _entryStream = widget.userLibraryRepository
+        .watchEntry(widget.mediaKey)
+        .asBroadcastStream();
+    _cacheSubscription = _entryStream.listen((entry) => _latestEntry = entry);
+  }
+
+  @override
+  void dispose() {
+    unawaited(_cacheSubscription.cancel());
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final trailer = mediaDetail.trailer;
+    final trailer = widget.mediaDetail.trailer;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         PrimaryButton(
           label: trailer != null ? 'Trailer' : 'See similar',
           onTap: trailer != null
-              ? () => onPlayTrailer?.call(trailer)
-              : onSeeSimilar,
+              ? () => widget.onPlayTrailer?.call(trailer)
+              : widget.onSeeSimilar,
         ),
         const SizedBox(height: AppSpacing.lg),
-        StreamBuilder<UserMediaEntry?>(
-          stream: userLibraryRepository.watchEntry(mediaKey),
-          builder: (context, snapshot) {
-            final entry = snapshot.data;
-            return Row(
-              children: [
-                Expanded(
-                  child: MediaActionButton(
-                    iconOutline: AppIcons.favorite,
-                    iconFill: AppIcons.favoriteFill,
-                    label: 'Favorite',
-                    isActive: entry?.isFavorite ?? false,
-                    onTap: () => _toggle(
-                      entry,
-                      (e) => e.copyWith(isFavorite: !e.isFavorite),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: MediaActionButton(
-                    iconOutline: AppIcons.watchLater,
-                    iconFill: AppIcons.watchLaterFill,
-                    label: 'Watch later',
-                    isActive: entry?.isWatchLater ?? false,
-                    onTap: () => _toggle(
-                      entry,
-                      (e) => e.copyWith(isWatchLater: !e.isWatchLater),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: MediaActionButton(
-                    iconOutline: AppIcons.watched,
-                    iconFill: AppIcons.watchedFill,
-                    label: 'Watched',
-                    isActive: entry?.isWatched ?? false,
-                    // Always opens H2 first, even when re-tapping an
-                    // already-watched entry (SCREENS.md D1) — never
-                    // upserts directly.
-                    onTap: () => _openMarkAsWatchedSheet(context, entry),
-                  ),
-                ),
-              ],
-            );
-          },
+        Row(
+          children: [
+            Expanded(
+              child: _ToggleActionButton(
+                entryStream: _entryStream,
+                select: (entry) => entry?.isFavorite ?? false,
+                iconOutline: AppIcons.favorite,
+                iconFill: AppIcons.favoriteFill,
+                label: 'Favorite',
+                onTap: () =>
+                    _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
+              ),
+            ),
+            Expanded(
+              child: _ToggleActionButton(
+                entryStream: _entryStream,
+                select: (entry) => entry?.isWatchLater ?? false,
+                iconOutline: AppIcons.watchLater,
+                iconFill: AppIcons.watchLaterFill,
+                label: 'Watch later',
+                onTap: () =>
+                    _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
+              ),
+            ),
+            Expanded(
+              child: _ToggleActionButton(
+                entryStream: _entryStream,
+                select: (entry) => entry?.isWatched ?? false,
+                iconOutline: AppIcons.watched,
+                iconFill: AppIcons.watchedFill,
+                label: 'Watched',
+                // Always opens H2 first, even when re-tapping an
+                // already-watched entry (SCREENS.md D1) — never
+                // upserts directly.
+                onTap: _openMarkAsWatchedSheet,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  void _toggle(
-    UserMediaEntry? entry,
-    UserMediaEntry Function(UserMediaEntry) transform,
-  ) {
+  void _toggle(UserMediaEntry Function(UserMediaEntry) transform) {
     final current =
-        entry ??
-        UserMediaEntry(key: mediaKey, genres: mediaDetail.item.genres);
-    unawaited(userLibraryRepository.upsert(transform(current)));
+        _latestEntry ??
+        UserMediaEntry(
+          key: widget.mediaKey,
+          genres: widget.mediaDetail.item.genres,
+        );
+    unawaited(widget.userLibraryRepository.upsert(transform(current)));
   }
 
-  void _openMarkAsWatchedSheet(BuildContext context, UserMediaEntry? entry) {
+  void _openMarkAsWatchedSheet() {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (_) => MarkAsWatchedSheet(
-        mediaKey: mediaKey,
-        userLibraryRepository: userLibraryRepository,
-        existingEntry: entry,
-        mediaDetail: mediaDetail,
+        mediaKey: widget.mediaKey,
+        userLibraryRepository: widget.userLibraryRepository,
+        existingEntry: _latestEntry,
+        mediaDetail: widget.mediaDetail,
       ),
+    );
+  }
+}
+
+/// One Favorite/Watch later/Watched button, rebuilding only when its
+/// own [select]-ed boolean actually changes — see this file's own doc
+/// comment for why that needs its own `.map().distinct()` stream rather
+/// than sharing one `StreamBuilder` across all three buttons.
+class _ToggleActionButton extends StatelessWidget {
+  const _ToggleActionButton({
+    required this.entryStream,
+    required this.select,
+    required this.iconOutline,
+    required this.iconFill,
+    required this.label,
+    required this.onTap,
+  });
+
+  final Stream<UserMediaEntry?> entryStream;
+  final bool Function(UserMediaEntry? entry) select;
+  final IconData iconOutline;
+  final IconData iconFill;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+      stream: entryStream.map(select).distinct(),
+      builder: (context, snapshot) {
+        return MediaActionButton(
+          iconOutline: iconOutline,
+          iconFill: iconFill,
+          label: label,
+          isActive: snapshot.data ?? false,
+          onTap: onTap,
+        );
+      },
     );
   }
 }

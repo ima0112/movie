@@ -12,6 +12,7 @@ class TmdbImagesConfig {
     required this.posterSizes,
     required this.backdropSizes,
     required this.profileSizes,
+    required this.stillSizes,
   });
 
   const TmdbImagesConfig.fallback()
@@ -26,17 +27,23 @@ class TmdbImagesConfig {
         'original',
       ],
       backdropSizes = const ['w300', 'w780', 'w1280', 'original'],
-      profileSizes = const ['w45', 'w185', 'h632', 'original'];
+      profileSizes = const ['w45', 'w185', 'h632', 'original'],
+      stillSizes = const ['w92', 'w185', 'w300', 'original'];
 
   final String secureBaseUrl;
   final List<String> posterSizes;
   final List<String> backdropSizes;
   final List<String> profileSizes;
+
+  /// H4's own episode thumbnails (`Episode.stillPath`) — TMDB's
+  /// `/configuration` reports these under their own `still_sizes`, a
+  /// separate list from [backdropSizes] despite both being 16:9.
+  final List<String> stillSizes;
 }
 
-/// Which of [TmdbImagesConfig]'s three size lists a request validates
-/// [size] against.
-enum TmdbImageKind { poster, backdrop, profile }
+/// Which of [TmdbImagesConfig]'s size lists a request validates [size]
+/// against.
+enum TmdbImageKind { poster, backdrop, profile, still }
 
 /// A handful of reasonable, commonly-wanted size tokens per [TmdbImageKind]
 /// — callers aren't limited to these (any token TMDB actually serves for
@@ -49,6 +56,7 @@ abstract final class TmdbImageSizes {
   static const backdropMedium = 'w780';
   static const backdropLarge = 'w1280';
   static const profileMedium = 'w185';
+  static const stillMedium = 'w300'; // H4's episode row thumbnails.
 }
 
 /// Builds a full TMDB image URL from a raw path (as TMDB's own API
@@ -71,6 +79,7 @@ String? buildTmdbImageUrl({
     TmdbImageKind.poster => config.posterSizes,
     TmdbImageKind.backdrop => config.backdropSizes,
     TmdbImageKind.profile => config.profileSizes,
+    TmdbImageKind.still => config.stillSizes,
   };
   final resolvedSize = availableSizes.contains(size) ? size : 'original';
 

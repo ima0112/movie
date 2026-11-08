@@ -118,11 +118,10 @@ lib/
         widgets/
     movie_detail/
       presentation/
-    tv_detail/                    NOT BUILT YET — no screen exists. Data is ready
-      presentation/               (MediaRepository.detail() for TV, seasons on
-                                   demand via tmdb_detail_mappers.dart's
-                                   episodesFromSeasonDetail); this is purely the
-                                   missing presentation layer. seasons on demand
+    tv_detail/                    cubit/ (TvDetailCubit, SeasonCubit) + widgets/
+      presentation/               (status pill, seasons/creators sections,
+                                   season_sheet.dart = H4) + screens/
+                                   tv_detail_screen.dart (D2)
     person_detail/                NOT BUILT YET — no screen, no repository (see
       presentation/               §2's implementation notes in DECISIONS.md).
                                    The DTO/mapper/datasource call already exist.

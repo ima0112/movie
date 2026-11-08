@@ -24,4 +24,7 @@ TmdbImagesConfigDto _$TmdbImagesConfigDtoFromJson(Map<String, dynamic> json) =>
       profileSizes: (json['profile_sizes'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      stillSizes: (json['still_sizes'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );

@@ -103,14 +103,12 @@ What actually shipped, and where it diverges from the table above:
   it's domain-level business logic, not a TMDB-shape concern.
 - **Where to watch**: live, resolved against the hardcoded `'ES'`
   region. "Data from JustWatch"/"Data from TMDB" attribution is present
-  on D1 (movie detail) — **D2 (TV show detail) has no screen built
-  yet**, so its own copy of this requirement can't be checked until it
-  exists.
+  on both D1 (movie detail) and D2 (TV show detail, built in a later
+  branch than this stack — see `tv_detail/`).
 - **Seasons on demand**: `/tv/{id}/season/{n}` → `Episode` mapping is
-  built and tested, but **not wired into `MediaRepository`'s own
-  interface** — there's no consumer yet (D2/H4's season sheet isn't
-  built), so it stayed at the datasource+mapper level rather than
-  inventing an interface method nothing calls.
+  built and tested; `MediaRepository.season(tvId, n)` (returning the
+  season's own `overview` + its episodes as `SeasonDetail`) was added
+  once D2/H4 became real consumers, in the `tv-detail-cubit` branch.
 - **Person detail**: DTO + mapper (`tmdb_person_mappers.dart`) and the
   datasource call are built and tested, but **there is no
   `PersonRepository` and no `person_detail` feature/screen** — same
