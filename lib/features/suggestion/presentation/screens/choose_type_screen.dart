@@ -16,6 +16,7 @@ import '../../../match_engine/domain/vibe_catalog.dart';
 import '../../../taste_profile/domain/taste_profile_builder.dart';
 import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
+import '../widgets/choose_source_sheet.dart';
 import '../widgets/choose_type_cards.dart';
 
 /// E1 (Choose type) — `docs/SCREENS.md` E1.
@@ -23,13 +24,14 @@ import '../widgets/choose_type_cards.dart';
 /// Entry point of the whole Surprise-me flow: creates the one
 /// [SurpriseCubit] this session uses, and hands it forward to E2 (the
 /// quiz wrapper) or E3 (the result screen) via `extra` on whichever
-/// route its own `BlocListener` pushes. Both are separate go_router
-/// routes — siblings on the same root `Navigator`, not nested inside
-/// this screen's own widget tree — so a local `BlocProvider` alone
-/// wouldn't reach them; this is the same "same instance, handed down
-/// explicitly" reasoning `MyListTopBar`'s own filter sheet already
-/// documents for an analogous case (a sheet built outside this page's
-/// own subtree).
+/// route its own `BlocListener` pushes — or, when usable tastes exist,
+/// opens H11 in place first so the user can choose between the two.
+/// E2/E3 are separate go_router routes — siblings on the same root
+/// `Navigator`, not nested inside this screen's own widget tree — so a
+/// local `BlocProvider` alone wouldn't reach them; this is the same
+/// "same instance, handed down explicitly" reasoning `MyListTopBar`'s
+/// own filter sheet already documents for an analogous case (a sheet
+/// built outside this page's own subtree).
 ///
 /// Thin per CLAUDE.md rule 11: loads `VibeCatalog` (the same
 /// `FutureBuilder`-before-`BlocProvider` shape `QuizScreen`/
@@ -81,6 +83,13 @@ class _ChooseTypeViewState extends State<_ChooseTypeView> {
   // routing decision and pushing a duplicate E3 on top each time. This
   // listener's only job is the one-time choice of where to go right
   // after `chooseType()`; once made, it must never fire again.
+  //
+  // `ChooseSource` doesn't count as "navigated" yet — it only opens
+  // H11 in place (no route pushed), so the real decision (quiz vs
+  // result) still hasn't happened. `_hasNavigated` only flips once one
+  // of the other three states actually fires a push, whether that's
+  // straight from `chooseType()` (no usable tastes) or indirectly,
+  // once the user picks an option in H11.
   bool _hasNavigated = false;
 
   @override
@@ -88,10 +97,20 @@ class _ChooseTypeViewState extends State<_ChooseTypeView> {
     return BlocListener<SurpriseCubit, SurpriseState>(
       listenWhen: (previous, current) =>
           !_hasNavigated &&
-          (current is NeedsQuiz ||
+          (current is ChooseSource ||
+              current is NeedsQuiz ||
               current is SurpriseResult ||
               current is SurpriseError),
       listener: (context, state) {
+        if (state is ChooseSource) {
+          showModalBottomSheet<void>(
+            context: context,
+            isScrollControlled: true,
+            builder: (_) => ChooseSourceSheet(state: state),
+          );
+          return;
+        }
+
         _hasNavigated = true;
         final cubit = context.read<SurpriseCubit>();
         if (state is NeedsQuiz) {

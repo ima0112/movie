@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
@@ -18,16 +19,7 @@ import 'surprise_result_card.dart';
 
 /// E3's own loaded result — `docs/SCREENS.md` E3: headline, subtitle
 /// (per [SurpriseResult.source]), the result card, an optional
-/// relaxation note, and the two action buttons.
-///
-/// Deliberately **not built**: "Save these answers as my tastes?" (E3's
-/// own "if it came from the quiz and there's no profile" link). Doing
-/// this properly needs a `ParticipantAnswers` → `TasteProfile` reverse
-/// mapping that doesn't exist anywhere — `TasteProfileBuilder` only goes
-/// the other direction, and `ParticipantAnswers` carries no
-/// `likedGenres` equivalent to reconstruct a full `TasteProfile` from
-/// (only `excludedGenres`/`vibeIds`). Left as a documented TODO per this
-/// branch's own task, rather than inventing a lossy mapping now.
+/// relaxation note, and the action buttons/links.
 class SurpriseResultContent extends StatelessWidget {
   const SurpriseResultContent({super.key, required this.state});
 
@@ -40,7 +32,7 @@ class SurpriseResultContent extends StatelessWidget {
     final subtitle = switch (state.source) {
       SuggestionSource.profile => l10n.surpriseSourceProfile,
       SuggestionSource.inferredList => l10n.surpriseSourceInferredList,
-      SuggestionSource.quiz => null,
+      SuggestionSource.quiz => l10n.surpriseSourceQuiz,
     };
 
     return SingleChildScrollView(
@@ -48,13 +40,11 @@ class SurpriseResultContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l10n.surpriseYourSuggestionTitle, style: AppTextStyles.h1),
-          if (subtitle != null) ...[
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              subtitle,
-              style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
-            ),
-          ],
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            subtitle,
+            style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+          ),
           const SizedBox(height: AppSpacing.xl),
           SurpriseResultCard(
             item: item,
@@ -84,6 +74,22 @@ class SurpriseResultContent extends StatelessWidget {
             label: l10n.surpriseAnotherSuggestion,
             onTap: () => context.read<SurpriseCubit>().another(),
           ),
+          // Only profile/inferredList ever had a choice to begin with
+          // (H11) — having just answered the quiz, there's nothing
+          // left to offer. pushReplacement, not push: this replaces
+          // *this* E3 with E2, so E2's own pushReplacement back to E3
+          // once the quiz finishes lands on a single E3, not a second
+          // one stacked on top of this one.
+          if (state.source != SuggestionSource.quiz) ...[
+            const SizedBox(height: AppSpacing.md),
+            TextLinkButton(
+              label: l10n.surpriseAnswerQuizInstead,
+              onTap: () => context.pushReplacement(
+                AppRoutes.surpriseQuiz,
+                extra: context.read<SurpriseCubit>(),
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -42,9 +43,13 @@ MatchResult _resultWithPoolSize(int size) {
   );
 }
 
-TasteProfile _profile() {
+/// Usable by default (`TasteProfile.isUsableForSuggestions`) — a bare
+/// `Genre` is enough, and what it actually is doesn't matter to any of
+/// these tests (the empty `_emptyVibeCatalog` means no vibe ever maps
+/// back to it anyway).
+TasteProfile _profile({bool usable = true}) {
   return TasteProfile(
-    likedGenres: const {},
+    likedGenres: usable ? {const Genre(id: 'drama')} : const {},
     vetoedGenres: const {},
     likedVibes: const {},
     yearFrom: 2000,
@@ -61,8 +66,7 @@ class _FakeTasteProfileRepository implements TasteProfileRepository {
   Stream<TasteProfile?> watch() => Stream.value(profile);
 
   @override
-  Future<Result<void>> save(TasteProfile profile) async =>
-      const Success(null);
+  Future<Result<void>> save(TasteProfile profile) async => const Success(null);
 
   @override
   Future<Result<void>> delete() async => const Success(null);
@@ -153,6 +157,10 @@ void main() {
 
         unawaited(cubit.chooseType(MediaType.movie));
         async.flushMicrotasks();
+        expect(cubit.state, isA<ChooseSource>());
+
+        unawaited(cubit.useMyTastes());
+        async.flushMicrotasks();
         expect(cubit.state, isA<Searching>());
 
         async.elapse(const Duration(milliseconds: 1199));
@@ -175,6 +183,8 @@ void main() {
         final cubit = _cubit(engine: engine, profile: _profile());
 
         unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+        unawaited(cubit.useMyTastes());
         async.flushMicrotasks();
 
         async.elapse(const Duration(seconds: 7, milliseconds: 999));
@@ -202,6 +212,8 @@ void main() {
 
         unawaited(cubit.chooseType(MediaType.movie));
         async.flushMicrotasks();
+        unawaited(cubit.useMyTastes());
+        async.flushMicrotasks();
 
         async.elapse(const Duration(seconds: 3));
         expect(cubit.state, isA<SurpriseResult>());
@@ -219,6 +231,8 @@ void main() {
         final cubit = _cubit(engine: engine, profile: _profile());
 
         unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+        unawaited(cubit.useMyTastes());
         async.elapse(SurpriseCubit.minSearchingDuration);
 
         final firstResult = cubit.state as SurpriseResult;
@@ -252,23 +266,82 @@ void main() {
   });
 
   group('SurpriseCubit — the 3-case decision', () {
-    test('an explicit profile launches the engine directly', () {
+    test('a usable profile emits ChooseSource(source: profile), not a '
+        'search — no Searching, no engine call yet', () {
       fakeAsync((async) {
         final engine = _FakeMatchEngine(result: _resultWithPoolSize(2));
         final cubit = _cubit(engine: engine, profile: _profile());
 
         unawaited(cubit.chooseType(MediaType.movie));
-        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
 
-        final result = cubit.state as SurpriseResult;
-        expect(result.source, SuggestionSource.profile);
+        final state = cubit.state as ChooseSource;
+        expect(state.mediaType, MediaType.movie);
+        expect(state.source, SuggestionSource.profile);
+        expect(engine.callCount, 0);
 
         cubit.close();
       });
     });
 
-    test('no profile and an empty library emits NeedsQuiz, never '
-        'reaching the engine', () {
+    test('no usable profile but 5+ library entries emits '
+        'ChooseSource(source: inferredList)', () {
+      fakeAsync((async) {
+        final engine = _FakeMatchEngine(result: _resultWithPoolSize(2));
+        final entries = List.generate(
+          5,
+          (i) => UserMediaEntry(
+            title: 'Test',
+            key: MediaKey(type: MediaType.movie, tmdbId: i),
+            isFavorite: true,
+          ),
+        );
+        final cubit = _cubit(engine: engine, libraryEntries: entries);
+
+        unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+
+        final state = cubit.state as ChooseSource;
+        expect(state.source, SuggestionSource.inferredList);
+        expect(engine.callCount, 0);
+
+        cubit.close();
+      });
+    });
+
+    test('a profile that exists but isn\'t usable is treated like no '
+        'profile — falls through to inferredList when the library '
+        'qualifies', () {
+      fakeAsync((async) {
+        final engine = _FakeMatchEngine(result: _resultWithPoolSize(2));
+        final entries = List.generate(
+          5,
+          (i) => UserMediaEntry(
+            title: 'Test',
+            key: MediaKey(type: MediaType.movie, tmdbId: i),
+            isFavorite: true,
+          ),
+        );
+        final cubit = _cubit(
+          engine: engine,
+          profile: _profile(usable: false),
+          libraryEntries: entries,
+        );
+
+        unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+
+        expect(
+          (cubit.state as ChooseSource).source,
+          SuggestionSource.inferredList,
+        );
+
+        cubit.close();
+      });
+    });
+
+    test('no usable profile and fewer than 5 entries emits NeedsQuiz '
+        'directly, never reaching the engine', () {
       fakeAsync((async) {
         final engine = _FakeMatchEngine(result: _resultWithPoolSize(2));
         final cubit = _cubit(engine: engine);
@@ -284,8 +357,69 @@ void main() {
       });
     });
 
+    test('useMyTastes() launches the search with ChooseSource\'s own '
+        'mediaType/source, carried through to the result', () {
+      fakeAsync((async) {
+        final engine = _FakeMatchEngine(result: _resultWithPoolSize(2));
+        final cubit = _cubit(engine: engine, profile: _profile());
+
+        unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+        unawaited(cubit.useMyTastes());
+        async.flushMicrotasks();
+        expect(cubit.state, isA<Searching>());
+
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        final result = cubit.state as SurpriseResult;
+        expect(result.source, SuggestionSource.profile);
+        expect(engine.callCount, 1);
+
+        cubit.close();
+      });
+    });
+
+    test('useMyTastes() is a no-op outside of ChooseSource', () {
+      final cubit = _cubit(engine: _FakeMatchEngine());
+
+      unawaited(cubit.useMyTastes());
+      expect(cubit.state, isA<ChoosingType>());
+
+      cubit.close();
+    });
+
+    test('answerQuizInstead() emits NeedsQuiz with ChooseSource\'s own '
+        'mediaType, from ChooseSource', () {
+      fakeAsync((async) {
+        final engine = _FakeMatchEngine();
+        final cubit = _cubit(engine: engine, profile: _profile());
+
+        unawaited(cubit.chooseType(MediaType.tvShow));
+        async.flushMicrotasks();
+        expect(cubit.state, isA<ChooseSource>());
+
+        cubit.answerQuizInstead();
+
+        expect(cubit.state, isA<NeedsQuiz>());
+        expect((cubit.state as NeedsQuiz).mediaType, MediaType.tvShow);
+        expect(engine.callCount, 0);
+
+        cubit.close();
+      });
+    });
+
+    test('answerQuizInstead() is a no-op outside of ChooseSource', () {
+      final cubit = _cubit(engine: _FakeMatchEngine());
+
+      cubit.answerQuizInstead();
+      expect(cubit.state, isA<ChoosingType>());
+
+      cubit.close();
+    });
+
     test('answerWith (the quiz\'s own onComplete) only acts from '
-        'NeedsQuiz, and sources the result as "quiz"', () {
+        'NeedsQuiz, and sources the result as "quiz" — whether '
+        'NeedsQuiz came straight from chooseType or via '
+        'answerQuizInstead', () {
       fakeAsync((async) {
         final engine = _FakeMatchEngine(result: _resultWithPoolSize(2));
         final cubit = _cubit(engine: engine);
@@ -316,6 +450,8 @@ void main() {
         final cubit = _cubit(engine: failingEngine, profile: _profile());
 
         unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+        unawaited(cubit.useMyTastes());
         async.elapse(SurpriseCubit.maxSearchingDuration);
         expect(cubit.state, isA<SurpriseError>());
 

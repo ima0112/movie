@@ -3,9 +3,9 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../match_engine/domain/relaxation.dart';
 
 /// Where a Surprise-me result's answers came from — `docs/SCREENS.md`
-/// E3's own subtitles ("Based on your tastes" / "Based on your list")
-/// and whether its "Save these answers as my tastes?" link should even
-/// appear ("If it came from the quiz and there's no profile").
+/// E3's own per-source subtitle, and whether its "Answer the quiz
+/// instead" link should even appear (`profile`/`inferredList` only —
+/// having just answered the quiz, there's nothing left to offer).
 enum SuggestionSource { profile, inferredList, quiz }
 
 /// Surprise me (N=1)'s states — `docs/SCREENS.md` E1/E3.
@@ -32,6 +32,22 @@ final class NeedsQuiz extends SurpriseState {
   const NeedsQuiz(this.mediaType);
 
   final MediaType mediaType;
+}
+
+/// Usable tastes exist (DECISIONS.md §5's case 1 or 2 — an explicit,
+/// usable [TasteProfile], or one inferred from My List) — E1's own
+/// signal to open H11 instead of launching the search right away, so
+/// the user can pick between using that signal or answering the quiz
+/// anyway. [source] is always [SuggestionSource.profile] or
+/// [SuggestionSource.inferredList], never `.quiz` — this state only
+/// ever precedes [SurpriseCubit.useMyTastes]/
+/// [SurpriseCubit.answerQuizInstead], both of which read it off
+/// [SurpriseState], not something the quiz path ever produces.
+final class ChooseSource extends SurpriseState {
+  const ChooseSource(this.mediaType, this.source);
+
+  final MediaType mediaType;
+  final SuggestionSource source;
 }
 
 /// E3's own result. [candidates] is the *whole* pool
