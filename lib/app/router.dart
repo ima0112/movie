@@ -44,6 +44,13 @@ class AppRoutes {
   /// via `extra` since a [DiscoverFilter] doesn't have — and isn't meant
   /// to have, see its own doc comment — a lossless URL-string encoding).
   static const String filteredList = '/list';
+
+  /// E1 (Choose type), not built yet — see `match_hub_sheet.dart`'s own
+  /// "Surprise me" card. Left as its own placeholder route deliberately,
+  /// the same "destination not built yet" shape [genreListing] already
+  /// uses: building E1 itself is out of scope for the branch that only
+  /// needs to prove B3's card actually navigates somewhere.
+  static const String surprise = '/surprise';
 }
 
 /// [FilteredListRouteArgs.title] is C1's own top-bar title (e.g. "In
@@ -169,6 +176,13 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
+    GoRoute(
+      path: AppRoutes.surprise,
+      parentNavigatorKey: _rootNavigatorKey,
+      // TODO: → E1 (Choose type) once it's built — this placeholder only
+      // proves the Match hub's "Surprise me" card actually navigates.
+      builder: (context, state) => const _SurprisePlaceholderScreen(),
+    ),
   ],
 );
 
@@ -191,6 +205,21 @@ class _GenreListingPlaceholderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
       body: Center(child: Text('Genre: $genreId ($type)')),
+    );
+  }
+}
+
+/// Stand-in for E1 (Choose type) — same reasoning as
+/// [_GenreListingPlaceholderScreen]: a real pushed screen, own back
+/// button, just no real destination behind it yet.
+class _SurprisePlaceholderScreen extends StatelessWidget {
+  const _SurprisePlaceholderScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(leading: const BackButton()),
+      body: const Center(child: Text('Surprise me')),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/match_hub/presentation/widgets/match_hub_sheet.dart';
 import '../shared/widgets/app_tab_bar.dart';
 import '../shared/widgets/match_fab.dart';
 
@@ -30,12 +31,21 @@ class RootShell extends StatelessWidget {
             onTabSelected: (tab) =>
                 navigationShell.goBranch(AppTab.values.indexOf(tab)),
           ),
-          MatchFab(
-            // TODO: → B3 (Match hub modal) once it exists.
-            onTap: () {},
-          ),
+          MatchFab(onTap: () => _openMatchHub(context)),
         ],
       ),
+    );
+  }
+
+  void _openMatchHub(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      // SCREENS.md B3: "Drag handle and title 'Match'" — Flutter's own
+      // built-in handle rather than a bespoke widget for this one bit
+      // of sheet furniture.
+      showDragHandle: true,
+      builder: (_) => const MatchHubSheet(),
     );
   }
 }
