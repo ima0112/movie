@@ -743,5 +743,94 @@
   "personFilmographyTitle": "Filmography",
   "@personFilmographyTitle": {
     "description": "D3's own section header (docs/SCREENS.md D3)."
-  }
+  },
+
+  "quizExcludeWatchedToggle": "Exclude what I've already watched",
+  "@quizExcludeWatchedToggle": {
+    "description": "E2 step 4's own discreet toggle (docs/SCREENS.md E2) — deliberately its own key, not myListHideWatchedToggle (\"Hide what I've watched\"), since the two controls use different wording in the existing code."
+  },
+  "quizGenreStepHeadline": "Pick up to 3 you're NOT in the mood for",
+  "@quizGenreStepHeadline": {
+    "description": "E2 step 1's own headline (docs/SCREENS.md E2)."
+  },
+  "quizSelectionCounter": "{selected} of {max}",
+  "@quizSelectionCounter": {
+    "description": "E2 steps 1 and 2's own \"N of M\" counter under each headline (docs/SCREENS.md E2).",
+    "placeholders": {
+      "selected": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "quizMaxSeasonsLabel": "Max seasons",
+  "@quizMaxSeasonsLabel": {
+    "description": "E2 step 4's own stepper label (docs/SCREENS.md E2) — reuses discoverRangeFiltersNoLimit for its \"No limit\" value."
+  },
+  "quizSearchButton": "Search",
+  "@quizSearchButton": {
+    "description": "E2's final-step button, replacing commonNext (docs/SCREENS.md E2: \"Final button 'Search'\")."
+  },
+  "quizVibeStepHeadline": "Now pick 3 you ARE in the mood for",
+  "@quizVibeStepHeadline": {
+    "description": "E2 step 2's own headline (docs/SCREENS.md E2)."
+  },
+  "quizYearStepHeadline": "How far back do you want to go?",
+  "@quizYearStepHeadline": {
+    "description": "E2 step 3's own headline (docs/SCREENS.md E2)."
+  },
+
+  "surpriseErrorMessage": "Couldn't find a match. Try again.",
+  "@surpriseErrorMessage": {
+    "description": "E3's SurpriseError body — no exact copy is given in docs/SCREENS.md for this (E3 only describes the state, \"error with 'Retry'\"), so this is a plain, generic line."
+  },
+  "chooseTypeHeadline": "What are you in the mood for today?",
+  "@chooseTypeHeadline": {
+    "description": "E1's own headline (docs/SCREENS.md E1)."
+  },
+  "surpriseNoMoreSuggestionsTitle": "That's all for now",
+  "surpriseNoMoreSuggestionsBody": "We're out of suggestions from this search — try again for a fresh pick.",
+  "surpriseSearchAgain": "Search again",
+  "surpriseNoMatchTitle": "Couldn't find a match",
+  "@surpriseNoMatchTitle": {
+    "description": "E3's SurpriseError title — distinct from surpriseErrorMessage (the body), even though the wording overlaps in English."
+  },
+  "chooseTypeMovieLabel": "A movie",
+  "chooseTypeTvShowLabel": "A TV show",
+  "surpriseYourSuggestionTitle": "Your suggestion",
+  "@surpriseYourSuggestionTitle": {
+    "description": "E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states."
+  },
+  "surpriseSearchingLabel": "Searching…",
+  "surpriseViewDetailsLink": "View details",
+  "@surpriseViewDetailsLink": {
+    "description": "E3's result card link (docs/SCREENS.md E3)."
+  },
+  "surpriseSourceProfile": "Based on your tastes",
+  "surpriseSourceInferredList": "Based on your list",
+  "@surpriseSourceInferredList": {
+    "description": "E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — SuggestionSource.quiz shows neither subtitle."
+  },
+  "surpriseRelaxedSearchNote": "We broadened the search a bit to find this match.",
+  "surpriseAddToWatchLater": "Add to Watch later",
+  "surpriseAnotherSuggestion": "Another suggestion",
+  "@surpriseAnotherSuggestion": {
+    "description": "E3's secondary button (docs/SCREENS.md E3: \"Secondary button 'Another suggestion'\")."
+  },
+  "surpriseAddedToWatchLaterSnackbar": "Added to Watch later",
+
+  "matchHubTitle": "Match",
+  "@matchHubTitle": {
+    "description": "B3's own title (docs/SCREENS.md B3) — \"Match\" is this app's own feature name, left untranslated in every locale, same class of exception as \"PakoTV\"."
+  },
+  "matchHubSurpriseMeTitle": "Surprise me",
+  "matchHubSurpriseMeSubtitle": "A suggestion just for you",
+  "matchHubWithFriendsTitle": "Match with friends",
+  "@matchHubWithFriendsTitle": {
+    "description": "B3's second card — \"Match\" stays untranslated, same reason as matchHubTitle."
+  },
+  "matchHubWithFriendsSubtitle": "Decide together in seconds",
+  "matchHubSoonPill": "Soon"
 }

@@ -5,6 +5,7 @@ import '../../../../app/router.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_halo.dart';
 import '../../../../shared/widgets/pako_state.dart';
 import 'match_hub_card.dart';
@@ -33,6 +34,7 @@ class MatchHubSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SizedBox(
       // "Near-full-screen modal" — SCREENS.md gives no exact fraction,
       // so this leaves a visible sliver of whatever's behind it (the
@@ -60,23 +62,23 @@ class MatchHubSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Text('Match', style: AppTextStyles.h2),
+                  Text(l10n.matchHubTitle, style: AppTextStyles.h2),
                   const SizedBox(height: AppSpacing.xl),
                   MatchHubCard(
                     icon: AppIcons.dice,
-                    title: 'Surprise me',
-                    subtitle: 'A suggestion just for you',
+                    title: l10n.matchHubSurpriseMeTitle,
+                    subtitle: l10n.matchHubSurpriseMeSubtitle,
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push(AppRoutes.surprise);
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  const MatchHubCard(
+                  MatchHubCard(
                     icon: AppIcons.group,
-                    title: 'Match with friends',
-                    subtitle: 'Decide together in seconds',
-                    pillLabel: 'Soon',
+                    title: l10n.matchHubWithFriendsTitle,
+                    subtitle: l10n.matchHubWithFriendsSubtitle,
+                    pillLabel: l10n.matchHubSoonPill,
                   ),
                 ],
               ),

@@ -43,13 +43,10 @@ class QuizGenreStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Pick up to 3 you're NOT in the mood for",
-          style: AppTextStyles.h1,
-        ),
+        Text(context.l10n.quizGenreStepHeadline, style: AppTextStyles.h1),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          '${selected.length} of $_max',
+          context.l10n.quizSelectionCounter(selected.length, _max),
           style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
         ),
         const SizedBox(height: AppSpacing.lg),

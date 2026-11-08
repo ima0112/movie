@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
@@ -61,16 +62,14 @@ class _SurpriseResultView extends StatelessWidget {
                 Searching() => const SurpriseSearchingContent(),
                 SurpriseResult() => SurpriseResultContent(state: state),
                 Exhausted() => EmptyStateView(
-                  title: "That's all for now",
-                  body:
-                      "We're out of suggestions from this search — try "
-                      'again for a fresh pick.',
-                  ctaLabel: 'Search again',
+                  title: context.l10n.surpriseNoMoreSuggestionsTitle,
+                  body: context.l10n.surpriseNoMoreSuggestionsBody,
+                  ctaLabel: context.l10n.surpriseSearchAgain,
                   onCtaTap: () => context.read<SurpriseCubit>().retry(),
                 ),
-                SurpriseError(:final message) => ErrorStateView(
-                  title: "Couldn't find a match",
-                  body: message,
+                SurpriseError() => ErrorStateView(
+                  title: context.l10n.surpriseNoMatchTitle,
+                  body: context.l10n.surpriseErrorMessage,
                   onRetry: () => context.read<SurpriseCubit>().retry(),
                 ),
                 // ChoosingType/NeedsQuiz never reach E3 — only

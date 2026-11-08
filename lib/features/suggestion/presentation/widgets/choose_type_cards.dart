@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
 
@@ -30,13 +31,13 @@ class ChooseTypeCards extends StatelessWidget {
               children: [
                 _TypeCard(
                   icon: AppIcons.movie,
-                  label: 'A movie',
+                  label: context.l10n.chooseTypeMovieLabel,
                   onTap: () => cubit.chooseType(MediaType.movie),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _TypeCard(
                   icon: AppIcons.tvShow,
-                  label: 'A TV show',
+                  label: context.l10n.chooseTypeTvShowLabel,
                   onTap: () => cubit.chooseType(MediaType.tvShow),
                 ),
               ],
