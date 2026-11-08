@@ -55,4 +55,25 @@ class AppIcons {
 
   static const IconData star = RemixIcons.star_line;
   static const IconData starFill = RemixIcons.star_fill;
+
+  // Vibe catalog (16, docs/DECISIONS.md section 5) — one plain icon
+  // each, no `_fill` counterpart: `QuizTile` (the grid these render in,
+  // onboarding/quiz/C5) recolors a single outline icon for its selected
+  // state rather than swapping the glyph itself.
+  static const IconData vibeFeelGood = RemixIcons.sun_line;
+  static const IconData vibeIndie = RemixIcons.seedling_line;
+  static const IconData vibeMonster = RemixIcons.ghost_line;
+  static const IconData vibeDetective = RemixIcons.search_eye_line;
+  static const IconData vibeClassic = RemixIcons.medal_line;
+  static const IconData vibeSuperhero = RemixIcons.shield_flash_line;
+  static const IconData vibeCult = RemixIcons.moon_line;
+  static const IconData vibeTearjerker = RemixIcons.heart_pulse_line;
+  static const IconData vibeSports = RemixIcons.football_line;
+  static const IconData vibeDate = RemixIcons.hand_heart_line;
+  static const IconData vibeFuture = RemixIcons.rocket_line;
+  static const IconData vibeExplosive = RemixIcons.fire_line;
+  static const IconData vibeGritty = RemixIcons.knife_line;
+  static const IconData vibeTrueStory = RemixIcons.newspaper_line;
+  static const IconData vibeGangster = RemixIcons.money_dollar_circle_line;
+  static const IconData vibeMusical = RemixIcons.music_line;
 }

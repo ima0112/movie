@@ -124,6 +124,22 @@ regular/fill para los 8 conceptos que lo necesitan.
 | Dado (Sorpréndeme) | `dice_5_line` |
 | Gustos / corazón con persona | `user_add_line` (aprox. "usar mis gustos") |
 | Estrella de valoración (vacía/llena) | `star_line` / `star_fill` |
+| Vibe: Feel Good | `sun_line` |
+| Vibe: Indie | `seedling_line` |
+| Vibe: Monster | `ghost_line` |
+| Vibe: Detective | `search_eye_line` |
+| Vibe: Classic | `medal_line` |
+| Vibe: Superhero | `shield_flash_line` |
+| Vibe: Cult | `moon_line` |
+| Vibe: Tearjerker | `heart_pulse_line` |
+| Vibe: Sports | `football_line` |
+| Vibe: Date Night | `hand_heart_line` |
+| Vibe: Future | `rocket_line` |
+| Vibe: Explosive | `fire_line` |
+| Vibe: Gritty | `knife_line` |
+| Vibe: True Story | `newspaper_line` |
+| Vibe: Gangster | `money_dollar_circle_line` |
+| Vibe: Musical | `music_line` |
 
 Si falta un concepto al implementar, añádelo a esta tabla antes de elegir el
 icono a ojo, para que quede consistente entre pantallas.
