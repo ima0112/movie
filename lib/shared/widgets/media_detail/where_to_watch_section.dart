@@ -16,15 +16,30 @@ import '../app_chip.dart';
 /// placeholder until that data exists. Pure presentation — [providers]
 /// arrives as a plain value (CLAUDE.md rule 9 — the assembling screen
 /// already knows it's loaded).
+///
+/// [regionName] is SCREENS.md D1's "title with the region in gray on
+/// the right (tappable → H6)" — [onRegionTap] is `null` until H6
+/// (Settings' region picker) exists at all; see the TODO on the call
+/// site that leaves it that way (`docs/SCREENS.md` H6, B5's own
+/// "Region" row).
 class WhereToWatchSection extends StatelessWidget {
-  const WhereToWatchSection({super.key, required this.providers, this.onProviderTap});
+  const WhereToWatchSection({
+    super.key,
+    required this.providers,
+    required this.regionName,
+    this.onProviderTap,
+    this.onRegionTap,
+  });
 
   final WatchProviders providers;
+  final String regionName;
 
   /// Tap → opens TMDB's `link` in the browser (SCREENS.md D1). No
   /// browser-launching dependency is wired up yet, so the caller decides
   /// what "tap" means.
   final void Function(String link)? onProviderTap;
+
+  final VoidCallback? onRegionTap;
 
   static const int _maxProviders = 6;
 
@@ -40,7 +55,21 @@ class WhereToWatchSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Where to watch', style: AppTextStyles.h2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Where to watch', style: AppTextStyles.h2),
+              GestureDetector(
+                onTap: onRegionTap,
+                child: Text(
+                  regionName,
+                  style: AppTextStyles.bodySm.copyWith(
+                    color: AppColors.inkMuted,
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: AppSpacing.md),
           if (providers.flatrate.isNotEmpty)
             _ProviderRow(

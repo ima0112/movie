@@ -55,19 +55,24 @@ void main() {
     expect(find.byType(MediaDetailCompactBar), findsOneWidget);
   });
 
-  testWidgets(
-    'tapping a genre pushes the C1 placeholder with the right genre/type',
-    (tester) async {
-      await openDuneDetail(tester);
+  testWidgets('tapping a genre pushes the real C1 (filtered listing) for that '
+      'genre and type', (tester) async {
+    await openDuneDetail(tester);
 
-      // Dune: Part Two's genres (FakeMediaRepository): Science Fiction,
-      // Drama.
-      await tester.tap(find.text('Science Fiction'));
-      await tester.pumpAndSettle();
+    // Dune: Part Two's genres (FakeMediaRepository): Science Fiction,
+    // Drama.
+    await tester.tap(find.text('Science Fiction'));
+    await tester.pumpAndSettle();
 
-      expect(find.text('Genre: sci-fi (movie)'), findsOneWidget);
-    },
-  );
+    // C1's own top bar title is the genre's name (same convention as
+    // B2's genre tiles — see explore_content.dart). C1's grid cards
+    // show no title text (filtered_list_grid.dart's own doc comment),
+    // so this checks the count line instead: Dune: Part Two, Furiosa,
+    // and Untitled Sci-Fi Project are FakeMediaRepository's only
+    // three *movies* carrying Science Fiction.
+    expect(find.text('Science Fiction'), findsWidgets);
+    expect(find.text('3 results · Popularity'), findsOneWidget);
+  });
 
   testWidgets(
     'tapping Favorite rebuilds only its own action button, not the rest '

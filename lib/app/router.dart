@@ -41,19 +41,12 @@ class AppRoutes {
   /// (`you_screen.dart`'s `MyTastesCard.onTap`).
   static const String myTastes = '/my-tastes';
 
-  /// C1 (Filtered listing), not built yet — see `movie_detail_header.dart`
-  /// / `movie_detail_title_block.dart`'s genre taps. Left as its own
-  /// placeholder route deliberately: migrating D1/D2's genre taps onto
-  /// [filteredList] below is out of scope for the branch that added that
-  /// route — a separate, later change.
-  static String genreListing(String genreId, MediaType type) =>
-      '/genre/$genreId?type=${type.name}';
-
-  /// C1 (Filtered listing) proper — reached from B1's "See all"
-  /// (`discover_section_carousel.dart`), a B2 genre tile, or H8's "See N
-  /// results" (all three go through here, carrying a [FilteredListArgs]
-  /// via `extra` since a [DiscoverFilter] doesn't have — and isn't meant
-  /// to have, see its own doc comment — a lossless URL-string encoding).
+  /// C1 (Filtered listing) — reached from B1's "See all"
+  /// (`discover_section_carousel.dart`), a B2 genre tile, D1/D2's own
+  /// genre chips, or H8's "See N results" (all go through here,
+  /// carrying a [FilteredListArgs] via `extra` since a [DiscoverFilter]
+  /// doesn't have — and isn't meant to have, see its own doc comment —
+  /// a lossless URL-string encoding).
   static const String filteredList = '/list';
 
   /// E1 (Choose type) — `match_hub_sheet.dart`'s own "Surprise me" card.
@@ -211,18 +204,6 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const MyTastesScreen(),
     ),
     GoRoute(
-      path: '/genre/:genreId',
-      parentNavigatorKey: _rootNavigatorKey,
-      // TODO: → C1 (Filtered listing) once it's built — this placeholder
-      // only proves navigation + the genre/type round-trip from D1's
-      // tappable genres (`movie_detail_title_block.dart`).
-      builder: (context, state) {
-        final genreId = state.pathParameters['genreId']!;
-        final type = state.uri.queryParameters['type'] ?? MediaType.movie.name;
-        return _GenreListingPlaceholderScreen(genreId: genreId, type: type);
-      },
-    ),
-    GoRoute(
       path: AppRoutes.filteredList,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
@@ -257,26 +238,3 @@ final GoRouter appRouter = GoRouter(
     ),
   ],
 );
-
-/// Stand-in for C1 (Filtered listing). A real pushed screen (like D1
-/// itself), so it needs its own `Scaffold` + back button — see
-/// `docs/SCREENS.md` ("every pushed screen has a back button... and
-/// hides the bottom bar"): it's on the root navigator, outside
-/// [RootShell] entirely.
-class _GenreListingPlaceholderScreen extends StatelessWidget {
-  const _GenreListingPlaceholderScreen({
-    required this.genreId,
-    required this.type,
-  });
-
-  final String genreId;
-  final String type;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(leading: const BackButton()),
-      body: Center(child: Text('Genre: $genreId ($type)')),
-    );
-  }
-}

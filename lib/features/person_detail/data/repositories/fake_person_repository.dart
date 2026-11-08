@@ -11,13 +11,14 @@ const _drama = Genre(id: 'drama', name: 'Drama');
 const _sciFi = Genre(id: 'sci-fi', name: 'Science Fiction');
 const _comedy = Genre(id: 'comedy', name: 'Comedy');
 const _horror = Genre(id: 'horror', name: 'Horror');
+const _action = Genre(id: 'action', name: 'Action');
 
 /// Hardcoded stand-in for [PersonRepository] — same role as
 /// `FakeMediaRepository` (`docs/STRUCTURE.md`), feature-local rather
 /// than `core/` since nothing outside D3's own tests constructs it
 /// directly.
 ///
-/// Five sample people, chosen to exercise every branch D3 needs:
+/// Six sample people, chosen to exercise every branch D3 needs:
 /// - 1001 Timothée Chalamet: cast-only, one credit with no release
 ///   date yet ("Coming soon").
 /// - 1004 Denis Villeneuve: crew-only (no "As director" tab — that
@@ -30,6 +31,12 @@ const _horror = Genre(id: 'horror', name: 'Horror');
 ///   data stays invented rather than attaching a death date to someone
 ///   real): has both a birthday and a deathday, for the "years lived"
 ///   age calculation.
+/// - 2010 Karl Urban: the one id this file shares with
+///   `FakeMediaRepository`'s own cast data (he's "The Boys"' Billy
+///   Butcher there) — tapping his D2 cast circle and then a filmography
+///   credit of his own (Oppenheimer) needs his id to resolve to *some*
+///   `PersonDetail` here, not just the five above, which were all
+///   originally only cross-referenced with D1's own movie cast.
 @fake
 @LazySingleton(as: PersonRepository)
 class FakePersonRepository implements PersonRepository {
@@ -114,6 +121,26 @@ class FakePersonRepository implements PersonRepository {
     genres: [_drama],
     releaseDate: DateTime(1965, 6, 11),
     voteAverage: 7.0,
+  );
+
+  // Same ids as FakeMediaRepository's own "The Boys" (106) and
+  // "Oppenheimer" (2) — Karl Urban's own credits below need to resolve
+  // to the real D1/D2 sample pages when tapped, not a generic fallback.
+  static final _theBoys = TvShow(
+    id: 106,
+    title: 'The Boys',
+    posterUrl: null,
+    genres: [_action, _sciFi],
+    releaseDate: DateTime(2019, 7, 26),
+    voteAverage: 8.4,
+  );
+  static final _oppenheimerFromMediaRepository = Movie(
+    id: 2,
+    title: 'Oppenheimer',
+    posterUrl: null,
+    genres: [_drama],
+    releaseDate: DateTime(2023, 7, 21),
+    voteAverage: 8.2,
   );
 
   static final Map<int, PersonDetail> _people = {
@@ -212,6 +239,28 @@ class FakePersonRepository implements PersonRepository {
       deathday: DateTime(1998, 11, 10),
       placeOfBirth: 'Linz, Austria',
       credits: [MediaCredit(item: _theLongHorizon, character: 'Captain Reyes')],
+    ),
+    2010: PersonDetail(
+      person: Person(
+        id: 2010,
+        name: 'Karl Urban',
+        profilePath: null,
+        knownForDepartment: 'Acting',
+      ),
+      biography:
+          'Karl Urban is a New Zealand actor known for The Boys and '
+          'Dredd.',
+      biographyIsEnglishFallback: false,
+      birthday: DateTime(1972, 6, 7),
+      deathday: null,
+      placeOfBirth: 'Wellington, New Zealand',
+      credits: [
+        MediaCredit(item: _theBoys, character: 'Billy Butcher'),
+        MediaCredit(
+          item: _oppenheimerFromMediaRepository,
+          character: 'Lewis Strauss',
+        ),
+      ],
     ),
   };
 
