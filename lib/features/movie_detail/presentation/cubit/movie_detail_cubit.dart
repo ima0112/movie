@@ -29,9 +29,9 @@ final class MovieDetailLoaded extends MovieDetailState {
 
 /// The load failed.
 final class MovieDetailError extends MovieDetailState {
-  const MovieDetailError(this.message);
+  const MovieDetailError(this.reason);
 
-  final String message;
+  final FailureReason reason;
 }
 
 /// Loads a movie's full detail (D1) for the screen's `MediaKey`.
@@ -55,8 +55,8 @@ class MovieDetailCubit extends Cubit<MovieDetailState> {
     switch (result) {
       case Success<MediaDetail>(:final value):
         emit(MovieDetailLoaded(value));
-      case Failure<MediaDetail>(:final message):
-        emit(MovieDetailError(message));
+      case Failure<MediaDetail>(:final reason):
+        emit(MovieDetailError(reason));
     }
   }
 }

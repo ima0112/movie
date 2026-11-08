@@ -7,11 +7,11 @@ import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/repositories/person_repository.dart';
 
-const _drama = Genre(id: 'drama', name: 'Drama');
-const _sciFi = Genre(id: 'sci-fi', name: 'Science Fiction');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
-const _horror = Genre(id: 'horror', name: 'Horror');
-const _action = Genre(id: 'action', name: 'Action');
+const _drama = Genre(id: 'drama');
+const _sciFi = Genre(id: 'sci-fi');
+const _comedy = Genre(id: 'comedy');
+const _horror = Genre(id: 'horror');
+const _action = Genre(id: 'action');
 
 /// Hardcoded stand-in for [PersonRepository] — same role as
 /// `FakeMediaRepository` (`docs/STRUCTURE.md`), feature-local rather
@@ -270,7 +270,7 @@ class FakePersonRepository implements PersonRepository {
 
     final person = _people[personId];
     if (person == null) {
-      return Failure('No person found for id $personId.');
+      return Failure(FailureReason.notFound);
     }
     return Success(person);
   }

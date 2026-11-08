@@ -5,6 +5,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 
 /// E3's own result card — `docs/SCREENS.md` E3: "White card: large
@@ -42,7 +44,9 @@ class SurpriseResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final year = item.releaseDate?.year;
-    final genreNames = item.genres.map((g) => g.name).join(', ');
+    final genreNames = item.genres
+        .map((g) => g.localizedName(context.l10n))
+        .join(', ');
     final metadata = [
       if (year != null) '$year',
       if (genreNames.isNotEmpty) genreNames,
@@ -92,7 +96,10 @@ class SurpriseResultCard extends StatelessWidget {
                   color: AppColors.accent,
                 ),
                 const SizedBox(width: AppSpacing.xs),
-                Text(item.voteAverage.toStringAsFixed(1), style: AppTextStyles.bodySm),
+                Text(
+                  item.voteAverage.toStringAsFixed(1),
+                  style: AppTextStyles.bodySm,
+                ),
               ],
             ),
             if (onViewDetails != null) ...[

@@ -3,17 +3,21 @@ import 'package:flutter/material.dart';
 import '../../core/domain/entities/media_item.dart';
 import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../l10n/app_localizations.dart';
+import '../../l10n/genre_localization.dart';
+import '../../l10n/l10n_extension.dart';
+import '../../l10n/media_type_localization.dart';
 import 'media_card.dart';
 
 /// "2019 · Mystery, Comedy · Movie" — the hero's metadata line, per
 /// `docs/SCREENS.md` B1. Local to this file: it only reads fields
 /// [MediaItem] already carries, no extra data needed from the caller.
-String _heroMetadata(MediaItem item) {
+String _heroMetadata(MediaItem item, AppLocalizations l10n) {
   final parts = <String>[
     if (item.releaseDate != null) '${item.releaseDate!.year}',
     if (item.genres.isNotEmpty)
-      item.genres.map((genre) => genre.name).join(', '),
-    item.type == MediaType.movie ? 'Movie' : 'TV Show',
+      item.genres.map((genre) => genre.localizedName(l10n)).join(', '),
+    item.type.localizedSingular(l10n),
   ];
   return parts.join(' · ');
 }
@@ -136,7 +140,7 @@ class MediaCarousel extends StatelessWidget {
               size: MediaCardSize.hero,
               title: item.title,
               posterUrl: item.posterUrl,
-              metadata: _heroMetadata(item),
+              metadata: _heroMetadata(item, context.l10n),
               saveButton: buildSaveButton?.call(item),
               onSaveTap: buildSaveButton == null && onSave != null
                   ? () => onSave(item)

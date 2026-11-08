@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/discover_filter.dart';
-import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/media_type_localization.dart';
+import '../../../../l10n/tv_status_localization.dart';
 import '../../../../shared/widgets/app_chip.dart';
 
 /// C1's "row of active filter chips, each with '×'" (`docs/SCREENS.md`
@@ -25,7 +29,7 @@ class FilteredListChipsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chips = _activeChips(filter);
+    final chips = _activeChips(filter, context.l10n);
     if (chips.isEmpty) return const SizedBox.shrink();
 
     return Wrap(
@@ -43,13 +47,13 @@ class FilteredListChipsRow extends StatelessWidget {
     );
   }
 
-  List<_ActiveChip> _activeChips(DiscoverFilter filter) {
+  List<_ActiveChip> _activeChips(DiscoverFilter filter, AppLocalizations l10n) {
     final chips = <_ActiveChip>[];
 
     if (filter.type != null) {
       chips.add(
         _ActiveChip(
-          label: filter.type == MediaType.movie ? 'Movies' : 'TV Shows',
+          label: filter.type!.localizedPlural(l10n),
           remove: () => filter.copyWith(type: () => null),
         ),
       );
@@ -58,7 +62,7 @@ class FilteredListChipsRow extends StatelessWidget {
     for (final genre in filter.withGenres) {
       chips.add(
         _ActiveChip(
-          label: genre.name,
+          label: genre.localizedName(l10n),
           remove: () => filter.copyWith(
             withGenres: Set.of(filter.withGenres)..remove(genre),
           ),
@@ -69,7 +73,7 @@ class FilteredListChipsRow extends StatelessWidget {
     for (final genre in filter.withoutGenres) {
       chips.add(
         _ActiveChip(
-          label: 'No ${genre.name}',
+          label: l10n.filteredListExcludeGenreChip(genre.localizedName(l10n)),
           remove: () => filter.copyWith(
             withoutGenres: Set.of(filter.withoutGenres)..remove(genre),
           ),
@@ -113,9 +117,7 @@ class FilteredListChipsRow extends StatelessWidget {
     if (filter.tvStatus != null) {
       chips.add(
         _ActiveChip(
-          label: filter.tvStatus == DiscoverTvStatus.airing
-              ? 'Airing'
-              : 'Ended',
+          label: filter.tvStatus!.localizedLabel(l10n),
           remove: () => filter.copyWith(tvStatus: () => null),
         ),
       );

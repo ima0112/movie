@@ -29,5 +29,176 @@
         "type": "int"
       }
     }
+  },
+
+  "failureNetwork": "No connection — check your internet and try again.",
+  "@failureNetwork": {
+    "description": "Failure.localizedMessage (FailureReason.network) — the one translation site every network-shaped error goes through, CLAUDE.md rule 15."
+  },
+  "failureServer": "TMDB is having trouble right now. Try again in a moment.",
+  "@failureServer": {
+    "description": "Failure.localizedMessage (FailureReason.server)."
+  },
+  "failureNotFound": "We couldn't find that.",
+  "@failureNotFound": {
+    "description": "Failure.localizedMessage (FailureReason.notFound)."
+  },
+  "failureQuota": "Too many requests — try again in a moment.",
+  "@failureQuota": {
+    "description": "Failure.localizedMessage (FailureReason.quota)."
+  },
+  "failureStorage": "Something went wrong saving that on your device.",
+  "@failureStorage": {
+    "description": "Failure.localizedMessage (FailureReason.storage) — a local drift/SQLite read or write failure, not network-shaped."
+  },
+  "failureUnknown": "Something went wrong. Try again.",
+  "@failureUnknown": {
+    "description": "Failure.localizedMessage (FailureReason.unknown) — the generic catch-all."
+  },
+
+  "genreAction": "Action",
+  "genreAdventure": "Adventure",
+  "genreAnimation": "Animation",
+  "genreComedy": "Comedy",
+  "genreCrime": "Crime",
+  "genreDocumentary": "Documentary",
+  "genreDrama": "Drama",
+  "genreFamily": "Family",
+  "genreHistory": "History",
+  "genreHorror": "Horror",
+  "genreMusic": "Music",
+  "genreMystery": "Mystery",
+  "genreRomance": "Romance",
+  "genreSciFi": "Science Fiction",
+  "genreThriller": "Thriller",
+
+  "vibeFeelGood": "Feel Good",
+  "vibeIndie": "Indie",
+  "vibeMonster": "Monster",
+  "vibeDetective": "Detective",
+  "vibeClassic": "Classic",
+  "vibeSuperhero": "Superhero",
+  "vibeCult": "Cult",
+  "vibeTearjerker": "Tearjerker",
+  "vibeSports": "Sports",
+  "vibeDateNight": "Date Night",
+  "vibeFuture": "Future",
+  "vibeExplosive": "Explosive",
+  "vibeGritty": "Gritty",
+  "vibeTrueStory": "True Story",
+  "vibeGangster": "Gangster",
+  "vibeMusical": "Musical",
+
+  "tvStatusAiring": "Airing",
+  "@tvStatusAiring": {
+    "description": "D2's status pill, and DiscoverTvStatus.airing in H8's filter/the TV status toggle."
+  },
+  "tvStatusEnded": "Ended",
+  "@tvStatusEnded": {
+    "description": "D2's status pill, and DiscoverTvStatus.ended in H8's filter/the TV status toggle."
+  },
+  "tvStatusCancelled": "Cancelled",
+  "@tvStatusCancelled": {
+    "description": "D2's status pill only — TvStatusPill's own raw-TMDB-string branch for \"Canceled\"; DiscoverTvStatus (the H8 filter enum) has no cancelled value."
+  },
+  "quizFinishedToggleFinished": "Finished",
+  "@quizFinishedToggleFinished": {
+    "description": "E2 step 4's own \"Finished | Either\" toggle (TV shows) — deliberately its own word, not tvStatusEnded, even though it maps to the same DiscoverTvStatus.ended value."
+  },
+  "quizFinishedToggleEither": "Either",
+  "@quizFinishedToggleEither": {
+    "description": "E2 step 4's own \"Finished | Either\" toggle — the null/no-filter option."
+  },
+
+  "mediaTypeMovieSingular": "Movie",
+  "@mediaTypeMovieSingular": {
+    "description": "A single item's own type, e.g. \"2019 · Movie\" in a search result row."
+  },
+  "mediaTypeTvShowSingular": "TV Show",
+  "@mediaTypeTvShowSingular": {
+    "description": "A single item's own type, e.g. \"2022 · TV Show\" in a search result row."
+  },
+  "mediaTypeMoviePlural": "Movies",
+  "@mediaTypeMoviePlural": {
+    "description": "A segment/filter/tab label covering every movie, e.g. the Movies segmented control option."
+  },
+  "mediaTypeTvShowPlural": "TV Shows",
+  "@mediaTypeTvShowPlural": {
+    "description": "A segment/filter/tab label covering every TV show, e.g. the TV Shows segmented control option."
+  },
+  "mediaTypeTvTag": "TV",
+  "@mediaTypeTvTag": {
+    "description": "The small corner tag on a TV show's own poster card, distinguishing it from a movie poster at a glance."
+  },
+
+  "mediaSegmentAll": "All",
+  "@mediaSegmentAll": {
+    "description": "MediaSegment.all / FilmographySegment.all — the \"everything, no type filter\" option in a segmented control."
+  },
+
+  "personFilmographyAsDirector": "As director",
+  "@personFilmographyAsDirector": {
+    "description": "D3's filmography segmented control — FilmographySegment.asDirector, only shown once a person has both a cast and a crew credit."
+  },
+
+  "discoverSortPopularity": "Popularity",
+  "discoverSortRating": "Rating",
+  "discoverSortDate": "Date",
+  "discoverSortTitle": "Title",
+
+  "myListTabFavorites": "Favorites",
+  "myListTabWatchLater": "Watch later",
+  "myListTabWatched": "Watched",
+
+  "myListRemovedFromTab": "Removed from {tabName}",
+  "@myListRemovedFromTab": {
+    "description": "My List's swipe-to-remove snackbar. {tabName} is that LibraryTab's own localized label (myListTabFavorites/WatchLater/Watched).",
+    "placeholders": {
+      "tabName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "myListEmptyFavoritesHeadline": "No favorites yet",
+  "myListEmptyWatchLaterHeadline": "Nothing for later yet",
+  "myListEmptyWatchedHeadline": "You haven't marked anything as watched yet",
+
+  "myListFallbackTitleMovie": "Movie #{id}",
+  "@myListFallbackTitleMovie": {
+    "description": "My List row title fallback — shown only when MediaRepository.detail hasn't resolved yet for a movie entry. {id} is the TMDB id.",
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "myListFallbackTitleTvShow": "TV show #{id}",
+  "@myListFallbackTitleTvShow": {
+    "description": "Same as myListFallbackTitleMovie, for a TV show entry.",
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+
+  "filteredListExcludeGenreChip": "No {genreName}",
+  "@filteredListExcludeGenreChip": {
+    "description": "C1's active-filter chip for a genre in DiscoverFilter.withoutGenres (H8's \"excluded genres\"). {genreName} is that genre's own localized display name.",
+    "placeholders": {
+      "genreName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "myListFilteredEmptyMovieTitle": "No movies here",
+  "@myListFilteredEmptyMovieTitle": {
+    "description": "B4's filtered-empty state (docs/SCREENS.md B4's own literal example) when a movie-only type filter is what's hiding every entry. Deliberately its own sentence-case key, not composed from mediaTypeMoviePlural (\"Movies\") — that label's title case doesn't fit mid-sentence here."
+  },
+  "myListFilteredEmptyTvShowTitle": "No TV shows here",
+  "@myListFilteredEmptyTvShowTitle": {
+    "description": "Same as myListFilteredEmptyMovieTitle, for a TV-show-only type filter — docs/SCREENS.md B4's own literal example."
   }
 }

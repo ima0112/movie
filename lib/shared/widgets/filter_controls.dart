@@ -4,6 +4,8 @@ import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
+import '../../l10n/media_type_localization.dart';
 import 'app_chip.dart';
 
 /// A filter sheet's small gray section label — e.g. H9's "Type", "Sort
@@ -48,12 +50,17 @@ class TypeFilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Wrap(
       spacing: AppSpacing.sm,
       children: [
-        _chip(context, 'All', null),
-        _chip(context, 'Movies', MediaType.movie),
-        _chip(context, 'TV Shows', MediaType.tvShow),
+        _chip(context, l10n.mediaSegmentAll, null),
+        _chip(context, MediaType.movie.localizedPlural(l10n), MediaType.movie),
+        _chip(
+          context,
+          MediaType.tvShow.localizedPlural(l10n),
+          MediaType.tvShow,
+        ),
       ],
     );
   }

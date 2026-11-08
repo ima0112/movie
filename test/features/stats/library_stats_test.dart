@@ -26,7 +26,7 @@ void main() {
     });
 
     test('two instances with the same fields are equal', () {
-      const action = Genre(id: 'action', name: 'Action');
+      const action = Genre(id: 'action');
       final a = _stats(topGenres: [(action, 3)]);
       final b = _stats(topGenres: [(action, 3)]);
 
@@ -36,8 +36,8 @@ void main() {
 
     test('a different topGenres order makes two instances unequal — it\'s '
         'a ranking, not a set', () {
-      const action = Genre(id: 'action', name: 'Action');
-      const drama = Genre(id: 'drama', name: 'Drama');
+      const action = Genre(id: 'action');
+      const drama = Genre(id: 'drama');
       final a = _stats(topGenres: [(action, 3), (drama, 2)]);
       final b = _stats(topGenres: [(drama, 2), (action, 3)]);
 

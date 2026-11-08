@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/library_tab_localization.dart';
 import '../../../../shared/widgets/library_row.dart';
 
 /// Wires up [LibraryRow]'s swipe callbacks to B4's actual behavior
@@ -82,7 +84,7 @@ class LibraryRowSwipeable extends StatelessWidget {
     unawaited(userLibraryRepository.remove(entry.key));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_removedMessage(tab)),
+        content: Text(tab.localizedRemovedMessage(context.l10n)),
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () => unawaited(userLibraryRepository.upsert(removed)),
@@ -91,10 +93,4 @@ class LibraryRowSwipeable extends StatelessWidget {
       ),
     );
   }
-
-  static String _removedMessage(LibraryTab tab) => switch (tab) {
-    LibraryTab.favorites => 'Removed from Favorites',
-    LibraryTab.watchLater => 'Removed from Watch later',
-    LibraryTab.watched => 'Removed from Watched',
-  };
 }

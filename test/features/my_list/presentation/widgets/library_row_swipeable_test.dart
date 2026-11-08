@@ -6,6 +6,7 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/features/my_list/presentation/widgets/library_row_swipeable.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/library_row.dart';
 
 /// Manual-verification step (swipe left → remove + Undo) made automatic
@@ -19,6 +20,8 @@ void main() {
   Future<void> pumpRow(WidgetTester tester, UserLibraryRepository repository) {
     return tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: LibraryRowSwipeable(
             key: const ValueKey(dune),

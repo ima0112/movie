@@ -24,14 +24,14 @@ import '../../../../core/domain/repositories/media_repository.dart';
 class FakeMediaRepository implements MediaRepository {
   static const _delay = Duration(milliseconds: 400);
 
-  static const _action = Genre(id: 'action', name: 'Action');
-  static const _animation = Genre(id: 'animation', name: 'Animation');
-  static const _comedy = Genre(id: 'comedy', name: 'Comedy');
-  static const _documentary = Genre(id: 'documentary', name: 'Documentary');
-  static const _drama = Genre(id: 'drama', name: 'Drama');
-  static const _horror = Genre(id: 'horror', name: 'Horror');
-  static const _mystery = Genre(id: 'mystery', name: 'Mystery');
-  static const _sciFi = Genre(id: 'sci-fi', name: 'Science Fiction');
+  static const _action = Genre(id: 'action');
+  static const _animation = Genre(id: 'animation');
+  static const _comedy = Genre(id: 'comedy');
+  static const _documentary = Genre(id: 'documentary');
+  static const _drama = Genre(id: 'drama');
+  static const _horror = Genre(id: 'horror');
+  static const _mystery = Genre(id: 'mystery');
+  static const _sciFi = Genre(id: 'sci-fi');
 
   // Cast/crew shared across the D1 sample details below.
   static const _timotheeChalamet = Person(
@@ -988,7 +988,7 @@ class FakeMediaRepository implements MediaRepository {
           }
         }
         if (movie == null) {
-          return Failure('No movie found for id ${key.tmdbId}.');
+          return Failure(FailureReason.notFound);
         }
         return Success(_movieDetails[key.tmdbId] ?? _genericDetail(movie));
 
@@ -1001,7 +1001,7 @@ class FakeMediaRepository implements MediaRepository {
           }
         }
         if (show == null) {
-          return Failure('No TV show found for id ${key.tmdbId}.');
+          return Failure(FailureReason.notFound);
         }
         return Success(_tvShowDetails[key.tmdbId] ?? _genericTvDetail(show));
     }
@@ -1013,7 +1013,7 @@ class FakeMediaRepository implements MediaRepository {
 
     final season = _seasonDetails[tvId]?[seasonNumber];
     if (season == null) {
-      return Failure('No season $seasonNumber found for TV show id $tvId.');
+      return Failure(FailureReason.notFound);
     }
     return Success(season);
   }

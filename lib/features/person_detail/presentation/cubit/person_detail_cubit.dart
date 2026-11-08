@@ -30,9 +30,9 @@ final class PersonDetailLoaded extends PersonDetailState {
 
 /// The load failed.
 final class PersonDetailError extends PersonDetailState {
-  const PersonDetailError(this.message);
+  const PersonDetailError(this.reason);
 
-  final String message;
+  final FailureReason reason;
 }
 
 /// Loads a person's full detail (D3).
@@ -54,8 +54,8 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     switch (result) {
       case Success<PersonDetail>(:final value):
         emit(PersonDetailLoaded(value));
-      case Failure<PersonDetail>(:final message):
-        emit(PersonDetailError(message));
+      case Failure<PersonDetail>(:final reason):
+        emit(PersonDetailError(reason));
     }
   }
 }

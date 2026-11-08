@@ -5,5 +5,84 @@
 
   "settingsAboutVersion": "Versión {version} ({build})",
 
-  "settingsDataDeleteItemCount": "{count, plural, =1{1 elemento} other{{count} elementos}}"
+  "settingsDataDeleteItemCount": "{count, plural, =1{1 elemento} other{{count} elementos}}",
+
+  "failureNetwork": "Sin conexión — revisa tu internet e inténtalo de nuevo.",
+  "failureServer": "TMDB está teniendo problemas ahora mismo. Inténtalo de nuevo en un momento.",
+  "failureNotFound": "No hemos podido encontrar esto.",
+  "failureQuota": "Demasiadas solicitudes — inténtalo de nuevo en un momento.",
+  "failureStorage": "Algo salió mal al guardar esto en tu dispositivo.",
+  "failureUnknown": "Algo salió mal. Inténtalo de nuevo.",
+
+  "genreAction": "Acción",
+  "genreAdventure": "Aventura",
+  "genreAnimation": "Animación",
+  "genreComedy": "Comedia",
+  "genreCrime": "Crimen",
+  "genreDocumentary": "Documental",
+  "genreDrama": "Drama",
+  "genreFamily": "Familiar",
+  "genreHistory": "Historia",
+  "genreHorror": "Terror",
+  "genreMusic": "Música",
+  "genreMystery": "Misterio",
+  "genreRomance": "Romance",
+  "genreSciFi": "Ciencia ficción",
+  "genreThriller": "Suspense",
+
+  "vibeFeelGood": "Para sentirse bien",
+  "vibeIndie": "Indie",
+  "vibeMonster": "Monstruos",
+  "vibeDetective": "Detectives",
+  "vibeClassic": "Clásico",
+  "vibeSuperhero": "Superhéroes",
+  "vibeCult": "Culto",
+  "vibeTearjerker": "Lágrimas",
+  "vibeSports": "Deportes",
+  "vibeDateNight": "Noche romántica",
+  "vibeFuture": "Futuro",
+  "vibeExplosive": "Explosivo",
+  "vibeGritty": "Crudo",
+  "vibeTrueStory": "Historia real",
+  "vibeGangster": "Gánsteres",
+  "vibeMusical": "Musical",
+
+  "tvStatusAiring": "En emisión",
+  "tvStatusEnded": "Finalizada",
+  "tvStatusCancelled": "Cancelada",
+  "quizFinishedToggleFinished": "Terminada",
+  "quizFinishedToggleEither": "Cualquiera",
+
+  "mediaTypeMovieSingular": "Película",
+  "mediaTypeTvShowSingular": "Serie",
+  "mediaTypeMoviePlural": "Películas",
+  "mediaTypeTvShowPlural": "Series",
+  "mediaTypeTvTag": "TV",
+
+  "mediaSegmentAll": "Todo",
+
+  "personFilmographyAsDirector": "Como director",
+
+  "discoverSortPopularity": "Popularidad",
+  "discoverSortRating": "Valoración",
+  "discoverSortDate": "Fecha",
+  "discoverSortTitle": "Título",
+
+  "myListTabFavorites": "Favoritos",
+  "myListTabWatchLater": "Ver después",
+  "myListTabWatched": "Vistos",
+
+  "myListRemovedFromTab": "Eliminado de {tabName}",
+
+  "myListEmptyFavoritesHeadline": "Todavía no tienes favoritos",
+  "myListEmptyWatchLaterHeadline": "Nada para ver después todavía",
+  "myListEmptyWatchedHeadline": "Aún no has marcado nada como visto",
+
+  "myListFallbackTitleMovie": "Película n.º {id}",
+  "myListFallbackTitleTvShow": "Serie n.º {id}",
+
+  "filteredListExcludeGenreChip": "Sin {genreName}",
+
+  "myListFilteredEmptyMovieTitle": "No hay películas aquí",
+  "myListFilteredEmptyTvShowTitle": "No hay series aquí"
 }

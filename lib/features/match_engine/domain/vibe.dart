@@ -49,7 +49,6 @@ class VibeRule {
 class Vibe {
   const Vibe({
     required this.id,
-    required this.name,
     required this.icon,
     required this.movie,
     required this.tv,
@@ -57,8 +56,10 @@ class Vibe {
     this.minVoteAverage,
   });
 
+  /// Stable identifier (e.g. `"feel_good"`) — never a display name
+  /// (CLAUDE.md rule 15). Presentation shows a vibe via
+  /// `VibeLocalization.localizedName` (`lib/l10n/vibe_localization.dart`).
   final String id;
-  final String name;
 
   /// The `AppIcons` constant name this vibe renders with (e.g.
   /// `"vibeFeelGood"` → `AppIcons.vibeFeelGood`) — a plain `String`, not
@@ -102,7 +103,6 @@ class Vibe {
   factory Vibe.fromJson(Map<String, dynamic> json) {
     return Vibe(
       id: json['id'] as String,
-      name: json['name'] as String,
       icon: json['icon'] as String,
       movie: VibeRule.fromJson(json['movie'] as Map<String, dynamic>),
       tv: VibeRule.fromJson(json['tv'] as Map<String, dynamic>),
@@ -118,7 +118,7 @@ class Vibe {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'Vibe($id, $name)';
+  String toString() => 'Vibe($id)';
 }
 
 /// Order-sensitive list content equality — a local stand-in for

@@ -81,9 +81,9 @@ class ExploreCubit extends Cubit<ExploreState> {
         emit(
           ExploreSearchLoaded(segment: segment, query: query, results: results),
         );
-      case ExploreSearchError(:final query, :final message):
+      case ExploreSearchError(:final query, :final reason):
         emit(
-          ExploreSearchError(segment: segment, query: query, message: message),
+          ExploreSearchError(segment: segment, query: query, reason: reason),
         );
       case ExploreListing(:final filter, :final title):
         emit(ExploreListing(segment: segment, filter: filter, title: title));
@@ -135,12 +135,12 @@ class ExploreCubit extends Cubit<ExploreState> {
             results: value,
           ),
         );
-      case Failure<List<MediaItem>>(:final message):
+      case Failure<List<MediaItem>>(:final reason):
         emit(
           ExploreSearchError(
             segment: state.segment,
             query: query,
-            message: message,
+            reason: reason,
           ),
         );
     }

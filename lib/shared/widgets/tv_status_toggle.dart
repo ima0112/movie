@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/discover_filter.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../l10n/l10n_extension.dart';
+import '../../l10n/tv_status_localization.dart';
 import 'app_chip.dart';
 
 /// H8: "status Airing/Ended (TV shows only)" (`docs/SCREENS.md` H8).
@@ -22,11 +24,18 @@ class TvStatusToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Wrap(
       spacing: AppSpacing.sm,
       children: [
-        _chip('Airing', DiscoverTvStatus.airing),
-        _chip('Ended', DiscoverTvStatus.ended),
+        _chip(
+          DiscoverTvStatus.airing.localizedLabel(l10n),
+          DiscoverTvStatus.airing,
+        ),
+        _chip(
+          DiscoverTvStatus.ended.localizedLabel(l10n),
+          DiscoverTvStatus.ended,
+        ),
       ],
     );
   }

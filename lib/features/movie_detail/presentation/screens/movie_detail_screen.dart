@@ -7,6 +7,8 @@ import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/failure_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/media_detail/media_detail_compact_bar.dart';
 import '../../../../shared/widgets/media_detail/media_detail_header.dart';
 import '../../../../shared/widgets/media_detail/media_detail_skeleton.dart';
@@ -97,7 +99,7 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
                 MovieDetailInitial() || MovieDetailLoading() => const Stack(
                   children: [MediaDetailSkeleton(), ScrimBackButton()],
                 ),
-                MovieDetailError(:final message) => Stack(
+                MovieDetailError(:final reason) => Stack(
                   children: [
                     // ErrorStateView sizes itself to its own content
                     // (Padding around a Column with mainAxisSize.min) —
@@ -107,7 +109,7 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
                     Center(
                       child: ErrorStateView(
                         title: "Couldn't load",
-                        body: message,
+                        body: reason.localizedMessage(context.l10n),
                         onRetry: () => context
                             .read<MovieDetailCubit>()
                             .loadDetail(widget.mediaKey),

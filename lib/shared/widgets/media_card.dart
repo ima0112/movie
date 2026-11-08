@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
 
 /// The poster card sizes used across PakoTV.
 ///
@@ -221,10 +222,7 @@ class _HeroCaption extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (tag != null) ...[
-          _Pill(
-            label: tag,
-            amber: tag == 'For you',
-          ),
+          _Pill(label: tag, amber: tag == 'For you'),
           const SizedBox(height: AppSpacing.sm),
         ],
         Text(
@@ -252,7 +250,7 @@ class _TvTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _Pill(label: 'TV', amber: false);
+    return _Pill(label: context.l10n.mediaTypeTvTag, amber: false);
   }
 }
 

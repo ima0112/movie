@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/genre_icons.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/quiz_tile.dart';
 import 'genre_step_headline.dart';
@@ -70,7 +72,7 @@ class GenreStep extends StatelessWidget {
                   final isDisabled = disabledGenres.contains(genre);
                   return QuizTile(
                     icon: icon,
-                    label: genre.name,
+                    label: genre.localizedName(context.l10n),
                     state: isSelected
                         ? QuizTileState.selected
                         : (isDisabled

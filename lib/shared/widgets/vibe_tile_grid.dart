@@ -4,6 +4,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../features/match_engine/domain/vibe.dart';
+import '../../l10n/l10n_extension.dart';
+import '../../l10n/vibe_localization.dart';
 
 /// A 4-column grid of [Vibe] tiles — `docs/SCREENS.md` C5 ("4-column
 /// grid of the 16 vibes") and E2 step 2 (the identical shape, "4-column
@@ -101,7 +103,7 @@ class _VibeTileState extends State<_VibeTile> {
     );
 
     return Tooltip(
-      message: widget.vibe.name,
+      message: widget.vibe.localizedName(context.l10n),
       child: GestureDetector(
         onTap: _handleTap,
         // docs/DESIGN_SYSTEM.md section 7: "Selección de tile/chip:

@@ -1,6 +1,7 @@
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../core/domain/entities/result.dart';
 
 /// B2 (Explore)'s three states — `docs/SCREENS.md` B2: "State 1 — At
 /// rest... State 2 — Typing... State 3 — Listing (see C1)."
@@ -67,10 +68,10 @@ final class ExploreSearchError extends ExploreSearching {
   const ExploreSearchError({
     required super.segment,
     required super.query,
-    required this.message,
+    required this.reason,
   });
 
-  final String message;
+  final FailureReason reason;
 }
 
 /// State 3 — B2 itself renders nothing for this: it's the signal to

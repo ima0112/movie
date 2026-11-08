@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/discover_filter.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../l10n/discover_sort_by_localization.dart';
+import '../../l10n/l10n_extension.dart';
 import 'app_chip.dart';
 
 /// H8: "sort by Popularity/Rating/Date/Title" (`docs/SCREENS.md` H8).
@@ -21,22 +23,16 @@ class DiscoverSortChips extends StatelessWidget {
   final DiscoverSortBy sortBy;
   final ValueChanged<DiscoverSortBy> onChanged;
 
-  static const _labels = {
-    DiscoverSortBy.popularity: 'Popularity',
-    DiscoverSortBy.rating: 'Rating',
-    DiscoverSortBy.releaseDate: 'Date',
-    DiscoverSortBy.title: 'Title',
-  };
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: [
         for (final option in DiscoverSortBy.values)
           AppChip(
-            label: _labels[option]!,
+            label: option.localizedLabel(l10n),
             state: option == sortBy ? ChipState.selected : ChipState.normal,
             onTap: () => onChanged(option),
           ),

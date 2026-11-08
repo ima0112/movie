@@ -26,4 +26,211 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get failureNetwork =>
+      'Sin conexión — revisa tu internet e inténtalo de nuevo.';
+
+  @override
+  String get failureServer =>
+      'TMDB está teniendo problemas ahora mismo. Inténtalo de nuevo en un momento.';
+
+  @override
+  String get failureNotFound => 'No hemos podido encontrar esto.';
+
+  @override
+  String get failureQuota =>
+      'Demasiadas solicitudes — inténtalo de nuevo en un momento.';
+
+  @override
+  String get failureStorage =>
+      'Algo salió mal al guardar esto en tu dispositivo.';
+
+  @override
+  String get failureUnknown => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get genreAction => 'Acción';
+
+  @override
+  String get genreAdventure => 'Aventura';
+
+  @override
+  String get genreAnimation => 'Animación';
+
+  @override
+  String get genreComedy => 'Comedia';
+
+  @override
+  String get genreCrime => 'Crimen';
+
+  @override
+  String get genreDocumentary => 'Documental';
+
+  @override
+  String get genreDrama => 'Drama';
+
+  @override
+  String get genreFamily => 'Familiar';
+
+  @override
+  String get genreHistory => 'Historia';
+
+  @override
+  String get genreHorror => 'Terror';
+
+  @override
+  String get genreMusic => 'Música';
+
+  @override
+  String get genreMystery => 'Misterio';
+
+  @override
+  String get genreRomance => 'Romance';
+
+  @override
+  String get genreSciFi => 'Ciencia ficción';
+
+  @override
+  String get genreThriller => 'Suspense';
+
+  @override
+  String get vibeFeelGood => 'Para sentirse bien';
+
+  @override
+  String get vibeIndie => 'Indie';
+
+  @override
+  String get vibeMonster => 'Monstruos';
+
+  @override
+  String get vibeDetective => 'Detectives';
+
+  @override
+  String get vibeClassic => 'Clásico';
+
+  @override
+  String get vibeSuperhero => 'Superhéroes';
+
+  @override
+  String get vibeCult => 'Culto';
+
+  @override
+  String get vibeTearjerker => 'Lágrimas';
+
+  @override
+  String get vibeSports => 'Deportes';
+
+  @override
+  String get vibeDateNight => 'Noche romántica';
+
+  @override
+  String get vibeFuture => 'Futuro';
+
+  @override
+  String get vibeExplosive => 'Explosivo';
+
+  @override
+  String get vibeGritty => 'Crudo';
+
+  @override
+  String get vibeTrueStory => 'Historia real';
+
+  @override
+  String get vibeGangster => 'Gánsteres';
+
+  @override
+  String get vibeMusical => 'Musical';
+
+  @override
+  String get tvStatusAiring => 'En emisión';
+
+  @override
+  String get tvStatusEnded => 'Finalizada';
+
+  @override
+  String get tvStatusCancelled => 'Cancelada';
+
+  @override
+  String get quizFinishedToggleFinished => 'Terminada';
+
+  @override
+  String get quizFinishedToggleEither => 'Cualquiera';
+
+  @override
+  String get mediaTypeMovieSingular => 'Película';
+
+  @override
+  String get mediaTypeTvShowSingular => 'Serie';
+
+  @override
+  String get mediaTypeMoviePlural => 'Películas';
+
+  @override
+  String get mediaTypeTvShowPlural => 'Series';
+
+  @override
+  String get mediaTypeTvTag => 'TV';
+
+  @override
+  String get mediaSegmentAll => 'Todo';
+
+  @override
+  String get personFilmographyAsDirector => 'Como director';
+
+  @override
+  String get discoverSortPopularity => 'Popularidad';
+
+  @override
+  String get discoverSortRating => 'Valoración';
+
+  @override
+  String get discoverSortDate => 'Fecha';
+
+  @override
+  String get discoverSortTitle => 'Título';
+
+  @override
+  String get myListTabFavorites => 'Favoritos';
+
+  @override
+  String get myListTabWatchLater => 'Ver después';
+
+  @override
+  String get myListTabWatched => 'Vistos';
+
+  @override
+  String myListRemovedFromTab(String tabName) {
+    return 'Eliminado de $tabName';
+  }
+
+  @override
+  String get myListEmptyFavoritesHeadline => 'Todavía no tienes favoritos';
+
+  @override
+  String get myListEmptyWatchLaterHeadline => 'Nada para ver después todavía';
+
+  @override
+  String get myListEmptyWatchedHeadline => 'Aún no has marcado nada como visto';
+
+  @override
+  String myListFallbackTitleMovie(int id) {
+    return 'Película n.º $id';
+  }
+
+  @override
+  String myListFallbackTitleTvShow(int id) {
+    return 'Serie n.º $id';
+  }
+
+  @override
+  String filteredListExcludeGenreChip(String genreName) {
+    return 'Sin $genreName';
+  }
+
+  @override
+  String get myListFilteredEmptyMovieTitle => 'No hay películas aquí';
+
+  @override
+  String get myListFilteredEmptyTvShowTitle => 'No hay series aquí';
 }

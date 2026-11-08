@@ -44,10 +44,10 @@ final class DiscoverLoaded extends DiscoverState {
 
 /// The load for [segment] failed.
 final class DiscoverError extends DiscoverState {
-  const DiscoverError({required this.segment, required this.message});
+  const DiscoverError({required this.segment, required this.reason});
 
   final MediaSegment segment;
-  final String message;
+  final FailureReason reason;
 }
 
 /// Loads Discover's (B1) hero and named carousels for whichever segment
@@ -121,8 +121,8 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     switch (heroResult) {
       case Success<List<MediaItem>>(:final value):
         heroItems = value;
-      case Failure<List<MediaItem>>(:final message):
-        emit(DiscoverError(segment: segment, message: message));
+      case Failure<List<MediaItem>>(:final reason):
+        emit(DiscoverError(segment: segment, reason: reason));
         return;
     }
 
@@ -135,8 +135,8 @@ class DiscoverCubit extends Cubit<DiscoverState> {
       switch (result) {
         case Success<List<MediaItem>>(:final value):
           carousels[section] = value;
-        case Failure<List<MediaItem>>(:final message):
-          emit(DiscoverError(segment: segment, message: message));
+        case Failure<List<MediaItem>>(:final reason):
+          emit(DiscoverError(segment: segment, reason: reason));
           return;
       }
     }

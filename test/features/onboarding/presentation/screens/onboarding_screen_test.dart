@@ -33,7 +33,7 @@ import 'package:movies/features/onboarding/presentation/widgets/poster_wall.dart
 class _FailingMediaRepository implements MediaRepository {
   @override
   Future<Result<List<MediaItem>>> getPosterWallItems() async =>
-      const Failure('offline');
+      const Failure(FailureReason.network);
 
   @override
   Future<Result<List<MediaItem>>> getCarouselSection(
@@ -47,7 +47,8 @@ class _FailingMediaRepository implements MediaRepository {
       throw UnimplementedError();
 
   @override
-  Future<Result<MediaDetail>> detail(MediaKey key) => throw UnimplementedError();
+  Future<Result<MediaDetail>> detail(MediaKey key) =>
+      throw UnimplementedError();
 
   @override
   Future<Result<SeasonDetail>> season(int tvId, int seasonNumber) =>
@@ -115,48 +116,47 @@ void main() {
     final savedTastes = getIt<TasteProfileRepository>();
     final profile = await savedTastes.watch().first;
     expect(profile, isNotNull);
-    expect(profile!.likedGenres.map((g) => g.name), contains('Action'));
+    expect(profile!.likedGenres.map((g) => g.id), contains('action'));
 
     // Drains the SnackBar's own pending auto-dismiss Timer so the test
     // binding's "no pending timers" teardown check doesn't trip.
     await tester.pump(const Duration(seconds: 5));
   });
 
-  testWidgets(
-    'a failed poster fetch on welcome (offline) falls back to '
-    'placeholder tiles instead of crashing',
-    (tester) async {
-      final previousMediaRepository = getIt<MediaRepository>();
+  testWidgets('a failed poster fetch on welcome (offline) falls back to '
+      'placeholder tiles instead of crashing', (tester) async {
+    final previousMediaRepository = getIt<MediaRepository>();
+    getIt.unregister<MediaRepository>();
+    getIt.registerLazySingleton<MediaRepository>(_FailingMediaRepository.new);
+    addTearDown(() {
       getIt.unregister<MediaRepository>();
-      getIt.registerLazySingleton<MediaRepository>(_FailingMediaRepository.new);
-      addTearDown(() {
-        getIt.unregister<MediaRepository>();
-        getIt.registerLazySingleton<MediaRepository>(() => previousMediaRepository);
-      });
-
-      appRouter.go('/');
-      await tester.pumpWidget(
-        MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (_) => UserProfileCubit(getIt<UserProfileRepository>()),
-            ),
-            BlocProvider(
-              create: (_) => TasteProfileCubit(getIt<TasteProfileRepository>()),
-            ),
-          ],
-          child: const PakoTvApp(),
-        ),
+      getIt.registerLazySingleton<MediaRepository>(
+        () => previousMediaRepository,
       );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+    });
 
-      // No exception surfaced (TestWidgetsFlutterBinding would have
-      // failed the test on its own if one had), welcome's own copy is
-      // still there, and the poster wall renders — every tile a
-      // placeholder since the fetch failed.
-      expect(find.text("Hi, I'm Pako"), findsOneWidget);
-      expect(find.byType(PosterWall), findsOneWidget);
-    },
-  );
+    appRouter.go('/');
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => UserProfileCubit(getIt<UserProfileRepository>()),
+          ),
+          BlocProvider(
+            create: (_) => TasteProfileCubit(getIt<TasteProfileRepository>()),
+          ),
+        ],
+        child: const PakoTvApp(),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // No exception surfaced (TestWidgetsFlutterBinding would have
+    // failed the test on its own if one had), welcome's own copy is
+    // still there, and the poster wall renders — every tile a
+    // placeholder since the fetch failed.
+    expect(find.text("Hi, I'm Pako"), findsOneWidget);
+    expect(find.byType(PosterWall), findsOneWidget);
+  });
 }

@@ -5,6 +5,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/genre_icons.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/quiz_tile.dart';
 
 /// E2 step 1 — `docs/SCREENS.md` E2: "Pick up to 3 you're NOT in the mood
@@ -41,7 +43,10 @@ class QuizGenreStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Pick up to 3 you're NOT in the mood for", style: AppTextStyles.h1),
+        Text(
+          "Pick up to 3 you're NOT in the mood for",
+          style: AppTextStyles.h1,
+        ),
         const SizedBox(height: AppSpacing.sm),
         Text(
           '${selected.length} of $_max',
@@ -64,7 +69,7 @@ class QuizGenreStep extends StatelessWidget {
 
             return QuizTile(
               icon: icon,
-              label: genre.name,
+              label: genre.localizedName(context.l10n),
               // A genre already at the cap and not itself selected shows
               // disabled (30% opacity, inert) — QuizTileState's own doc
               // comment already covers this exact "picked elsewhere,

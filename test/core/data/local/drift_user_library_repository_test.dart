@@ -16,8 +16,8 @@ import 'package:movies/core/persistence/app_database.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
 const _theBear = MediaKey(type: MediaType.tvShow, tmdbId: 101);
-const _action = Genre(id: 'action', name: 'Action');
-const _drama = Genre(id: 'drama', name: 'Drama');
+const _action = Genre(id: 'action');
+const _drama = Genre(id: 'drama');
 
 /// A fresh repository over an in-memory database — never touches disk or
 /// `path_provider`, so this runs the same everywhere `flutter test` does.

@@ -5,9 +5,9 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/features/stats/domain/library_stats_calculator.dart';
 
-const _action = Genre(id: 'action', name: 'Action');
-const _drama = Genre(id: 'drama', name: 'Drama');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
+const _action = Genre(id: 'action');
+const _drama = Genre(id: 'drama');
+const _comedy = Genre(id: 'comedy');
 
 MediaKey _movie(int id) => MediaKey(type: MediaType.movie, tmdbId: id);
 MediaKey _tvShow(int id) => MediaKey(type: MediaType.tvShow, tmdbId: id);
@@ -320,9 +320,7 @@ void main() {
     });
 
     test('caps at limit (5 by default, matching C4\'s "list of 5")', () {
-      final counts = {
-        for (var i = 0; i < 8; i++) Genre(id: 'g$i', name: 'Genre $i'): i,
-      };
+      final counts = {for (var i = 0; i < 8; i++) Genre(id: 'g$i'): i};
 
       final ranked = topGenres(counts);
 

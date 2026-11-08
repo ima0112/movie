@@ -51,8 +51,8 @@ class DriftOnboardingRepository implements OnboardingRepository {
           );
       _isCompleted = true;
       return const Success(null);
-    } catch (e) {
-      return Failure('Could not mark onboarding completed: $e');
+    } catch (_) {
+      return Failure(FailureReason.storage);
     }
   }
 }

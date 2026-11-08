@@ -6,6 +6,9 @@ import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/genre_catalog.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/failure_localization.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
@@ -40,9 +43,9 @@ class ExploreContent extends StatelessWidget {
             segment: state.segment,
             onTap: (item) => context.pushMediaDetail(item.key),
           ),
-          ExploreSearchError() => ErrorStateView(
+          ExploreSearchError(:final reason) => ErrorStateView(
             title: "Couldn't load",
-            body: 'Check your connection and try again.',
+            body: reason.localizedMessage(context.l10n),
             onRetry: () =>
                 context.read<ExploreCubit>().runRecentSearch(state.query),
           ),
@@ -86,7 +89,7 @@ class _AtRestContent extends StatelessWidget {
               type: state.segment.mediaType,
               withGenres: {genre},
             ),
-            title: genre.name,
+            title: genre.localizedName(context.l10n),
           ),
         ),
       ],

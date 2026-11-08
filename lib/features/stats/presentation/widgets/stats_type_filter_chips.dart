@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/media_type_localization.dart';
 import '../../../../shared/widgets/app_chip.dart';
 
 /// C4's "Filter chips: All · Movies · TV Shows" (`docs/SCREENS.md` C4).
@@ -24,13 +26,20 @@ class StatsTypeFilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Row(
       children: [
-        _chip(label: 'All', value: null),
+        _chip(label: l10n.mediaSegmentAll, value: null),
         const SizedBox(width: AppSpacing.sm),
-        _chip(label: 'Movies', value: MediaType.movie),
+        _chip(
+          label: MediaType.movie.localizedPlural(l10n),
+          value: MediaType.movie,
+        ),
         const SizedBox(width: AppSpacing.sm),
-        _chip(label: 'TV Shows', value: MediaType.tvShow),
+        _chip(
+          label: MediaType.tvShow.localizedPlural(l10n),
+          value: MediaType.tvShow,
+        ),
       ],
     );
   }

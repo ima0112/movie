@@ -6,6 +6,7 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import '../../../../shared/widgets/discover_range_filters.dart'
     show MaxRuntimeFilter;
@@ -112,18 +113,19 @@ class _FinishedOrEitherToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Wrap(
       spacing: AppSpacing.sm,
       children: [
         AppChip(
-          label: 'Finished',
+          label: l10n.quizFinishedToggleFinished,
           state: tvStatus == DiscoverTvStatus.ended
               ? ChipState.selected
               : ChipState.normal,
           onTap: () => onChanged(DiscoverTvStatus.ended),
         ),
         AppChip(
-          label: 'Either',
+          label: l10n.quizFinishedToggleEither,
           state: tvStatus == null ? ChipState.selected : ChipState.normal,
           onTap: () => onChanged(null),
         ),

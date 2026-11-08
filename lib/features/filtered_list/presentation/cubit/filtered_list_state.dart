@@ -1,5 +1,6 @@
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_item.dart';
+import '../../../../core/domain/entities/result.dart';
 
 /// C1 (Filtered listing)'s load state — `docs/SCREENS.md` C1.
 ///
@@ -50,7 +51,7 @@ final class FilteredListLoaded extends FilteredListState {
 
 /// The `discover()` call failed.
 final class FilteredListError extends FilteredListState {
-  const FilteredListError({required super.filter, required this.message});
+  const FilteredListError({required super.filter, required this.reason});
 
-  final String message;
+  final FailureReason reason;
 }

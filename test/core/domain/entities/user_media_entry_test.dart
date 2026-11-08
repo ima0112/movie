@@ -5,8 +5,8 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 
 const _key = MediaKey(type: MediaType.movie, tmdbId: 1);
-const _action = Genre(id: 'action', name: 'Action');
-const _drama = Genre(id: 'drama', name: 'Drama');
+const _action = Genre(id: 'action');
+const _drama = Genre(id: 'drama');
 
 void main() {
   group('UserMediaEntry', () {

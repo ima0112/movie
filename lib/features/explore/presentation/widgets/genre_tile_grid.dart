@@ -4,6 +4,8 @@ import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/l10n_extension.dart';
 
 /// B2's "Genres" grid — "2-column tiles (96 px tall, backdrop of the
 /// genre's most popular title dimmed to 40% with a fade to black, 16/500
@@ -71,7 +73,10 @@ class _GenreTile extends StatelessWidget {
             // exactly (h3 is the nearest: 15/600) — same "closest token,
             // not a one-off literal" call this codebase already makes
             // elsewhere (rule 4).
-            child: Text(genre.name, style: AppTextStyles.h3),
+            child: Text(
+              genre.localizedName(context.l10n),
+              style: AppTextStyles.h3,
+            ),
           ),
         ),
       ),

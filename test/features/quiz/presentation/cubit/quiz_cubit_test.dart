@@ -7,10 +7,10 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/features/quiz/presentation/cubit/quiz_cubit.dart';
 import 'package:movies/features/quiz/presentation/cubit/quiz_state.dart';
 
-const _horror = Genre(id: 'horror', name: 'Horror');
-const _action = Genre(id: 'action', name: 'Action');
-const _comedy = Genre(id: 'comedy', name: 'Comedy');
-const _drama = Genre(id: 'drama', name: 'Drama');
+const _horror = Genre(id: 'horror');
+const _action = Genre(id: 'action');
+const _comedy = Genre(id: 'comedy');
+const _drama = Genre(id: 'drama');
 
 void main() {
   test('a freshly constructed cubit already has sensible defaults', () {
@@ -143,8 +143,7 @@ void main() {
     });
 
     test('nextStep() is a no-op while the current step is invalid', () {
-      final cubit = QuizCubit(MediaType.movie)
-        ..nextStep(); // step 1 → 2
+      final cubit = QuizCubit(MediaType.movie)..nextStep(); // step 1 → 2
       cubit.nextStep(); // step 2 is invalid (0 vibes) — should not advance
       expect(cubit.state.step, 2);
     });
