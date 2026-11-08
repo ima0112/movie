@@ -73,6 +73,51 @@ class UserMediaEntries extends Table {
   Set<Column> get primaryKey => {mediaType, tmdbId};
 }
 
+/// The local user's own profile (`docs/DECISIONS.md` section 7) — a
+/// single row, never a list. [id] always stores `0`;
+/// `DriftUserProfileRepository` never writes or queries any other value,
+/// so there is never more than one row (drift has no direct "singleton
+/// table" construct to enforce this at the schema level).
+@DataClassName('UserProfileRow')
+class UserProfileTable extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  TextColumn get displayName => text()();
+
+  /// See `UserProfile.initialColor` — a 32-bit ARGB int, not a color
+  /// name or hex string.
+  IntColumn get initialColor => integer()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// The local user's taste profile (C5 "My Tastes") — same single-row
+/// convention as [UserProfileTable].
+@DataClassName('TasteProfileRow')
+class TasteProfileTable extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+
+  /// `TasteProfile.likedGenres`, serialized as `id:name` pairs joined by
+  /// commas (e.g. `"action:Action,drama:Drama"`) — a genre's `id` alone
+  /// isn't enough to rebuild a `Genre` without a lookup table, and there
+  /// isn't a normalized genre catalog in `core/domain` yet to look it up
+  /// against, so both fields are stored directly.
+  TextColumn get likedGenres => text()();
+
+  /// Same `id:name` serialization as [likedGenres].
+  TextColumn get vetoedGenres => text()();
+
+  /// `TasteProfile.likedVibes`, comma-joined — vibe names come from
+  /// `assets/vibes.json` and never contain a comma.
+  TextColumn get likedVibes => text()();
+  IntColumn get yearFrom => integer()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single SQLite (drift) database.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/persistence/
@@ -82,7 +127,7 @@ class UserMediaEntries extends Table {
 /// against, just the one connection every repository built on drift
 /// (starting with `DriftUserLibraryRepository`) needs to share.
 @LazySingleton()
-@DriftDatabase(tables: [UserMediaEntries])
+@DriftDatabase(tables: [UserMediaEntries, UserProfileTable, TasteProfileTable])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -92,12 +137,24 @@ class AppDatabase extends _$AppDatabase {
   /// `drift_user_library_repository_test.dart`.
   AppDatabase.forTesting(super.executor);
 
-  /// Bump this whenever a table changes shape; drift's `onUpgrade`
-  /// migration callback (added once there's a schema to migrate away
-  /// from) keys off it. Starts at 1 — [UserMediaEntries] is this
-  /// database's first table.
+  /// Bump this whenever a table changes shape. Went to 2 when
+  /// [UserProfileTable] and [TasteProfileTable] were added — [onUpgrade]
+  /// below just creates those two new tables for anyone updating from an
+  /// install that only had [UserMediaEntries] (version 1); nothing about
+  /// that existing table changed shape.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(userProfileTable);
+        await m.createTable(tasteProfileTable);
+      }
+    },
+  );
 }
 
 QueryExecutor _openConnection() {
