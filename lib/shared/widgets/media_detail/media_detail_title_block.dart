@@ -7,6 +7,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/genre_localization.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../l10n/number_format_extension.dart';
 
 /// [MediaDetailHeader]'s centered title/metadata/rating/genres block — in
 /// its own file per CLAUDE.md rule 11, `media_detail_header.dart` was
@@ -80,7 +81,10 @@ class MediaDetailTitleBlock extends StatelessWidget {
           children: [
             const Icon(AppIcons.starFill, size: 14, color: AppColors.accent),
             const SizedBox(width: AppSpacing.xs),
-            Text(voteAverage.toStringAsFixed(1), style: AppTextStyles.bodySm),
+            Text(
+              voteAverage.localizedRating(context.l10n),
+              style: AppTextStyles.bodySm,
+            ),
           ],
         ),
         if (genres.isNotEmpty) ...[

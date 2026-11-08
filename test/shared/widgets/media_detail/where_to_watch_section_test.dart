@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_detail/where_to_watch_section.dart';
 
 const _providers = WatchProviders(
@@ -16,7 +17,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: WhereToWatchSection(
               providers: WatchProviders.empty,
@@ -33,7 +36,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: WhereToWatchSection(
               providers: _providers,
@@ -53,6 +58,8 @@ void main() {
       var tapped = false;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: WhereToWatchSection(
               providers: _providers,
@@ -70,7 +77,9 @@ void main() {
     testWidgets('tapping the region is a harmless no-op when '
         'onRegionTap is null (H6/Settings not built yet)', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: WhereToWatchSection(
               providers: _providers,

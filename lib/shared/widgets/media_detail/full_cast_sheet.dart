@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../profile_image.dart';
 
 /// H3 (Full cast) — `docs/SCREENS.md` H3: "Cast and crew list with an
@@ -51,7 +52,7 @@ class _FullCastSheetState extends State<FullCastSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Full cast', style: AppTextStyles.h2),
+              Text(context.l10n.fullCastSheetTitle, style: AppTextStyles.h2),
               const SizedBox(height: AppSpacing.md),
               _SearchField(
                 query: _query,
@@ -62,7 +63,7 @@ class _FullCastSheetState extends State<FullCastSheet> {
                 child: cast.isEmpty && crew.isEmpty
                     ? Center(
                         child: Text(
-                          'No matches',
+                          context.l10n.commonNoMatches,
                           style: AppTextStyles.bodySm.copyWith(
                             color: AppColors.inkMuted,
                           ),
@@ -71,7 +72,7 @@ class _FullCastSheetState extends State<FullCastSheet> {
                     : ListView(
                         children: [
                           if (cast.isNotEmpty) ...[
-                            _SectionLabel('Cast'),
+                            _SectionLabel(context.l10n.fullCastSheetCastLabel),
                             for (final member in cast)
                               _PersonRow(
                                 person: member.person,
@@ -81,7 +82,7 @@ class _FullCastSheetState extends State<FullCastSheet> {
                               ),
                           ],
                           if (crew.isNotEmpty) ...[
-                            _SectionLabel('Crew'),
+                            _SectionLabel(context.l10n.fullCastSheetCrewLabel),
                             for (final member in crew)
                               _PersonRow(
                                 person: member.person,
@@ -113,7 +114,7 @@ class _SearchField extends StatelessWidget {
       onChanged: onChanged,
       style: AppTextStyles.body,
       decoration: InputDecoration(
-        hintText: 'Search cast and crew',
+        hintText: context.l10n.fullCastSheetSearchHint,
         hintStyle: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
         prefixIcon: const Icon(AppIcons.search, color: AppColors.inkMuted),
         filled: true,

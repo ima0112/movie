@@ -4,6 +4,7 @@ import '../../../core/domain/entities/person.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/l10n_extension.dart';
 import 'media_cast_circle.dart';
 import 'media_crew_line.dart';
 
@@ -74,10 +75,8 @@ class MediaCastRow extends StatelessWidget {
               child: GestureDetector(
                 onTap: onSeeFullCastTap,
                 child: Text(
-                  'See full cast',
-                  style: AppTextStyles.bodySm.copyWith(
-                    color: AppColors.accent,
-                  ),
+                  context.l10n.mediaCastRowSeeFullCast,
+                  style: AppTextStyles.bodySm.copyWith(color: AppColors.accent),
                 ),
               ),
             ),

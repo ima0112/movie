@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/person.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_detail/full_cast_sheet.dart';
 
 const _chalamet = Person(
@@ -36,7 +37,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: FullCastSheet(cast: _cast, crew: _crew),
           ),
@@ -56,7 +59,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: FullCastSheet(cast: _cast, crew: _crew),
           ),
@@ -73,7 +78,9 @@ void main() {
 
     testWidgets('a query matching nobody shows "No matches"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: FullCastSheet(cast: _cast, crew: _crew),
           ),
@@ -92,6 +99,8 @@ void main() {
       Person? tapped;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: FullCastSheet(
               cast: _cast,

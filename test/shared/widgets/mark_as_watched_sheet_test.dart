@@ -7,6 +7,7 @@ import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/mark_as_watched_sheet.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
@@ -68,6 +69,8 @@ void main() {
       final repository = InMemoryUserLibraryRepository();
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MarkAsWatchedSheet(
             mediaKey: _dune,
             userLibraryRepository: repository,
@@ -84,6 +87,8 @@ void main() {
       final repository = InMemoryUserLibraryRepository();
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MarkAsWatchedSheet(
             mediaKey: _theBear,
             userLibraryRepository: repository,
@@ -103,6 +108,8 @@ void main() {
         final repository = InMemoryUserLibraryRepository();
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: MarkAsWatchedSheet(
               mediaKey: _dune,
               userLibraryRepository: repository,
@@ -128,6 +135,8 @@ void main() {
       final repository = InMemoryUserLibraryRepository();
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MarkAsWatchedSheet(
             mediaKey: _dune,
             userLibraryRepository: repository,
@@ -152,6 +161,8 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: MarkAsWatchedSheet(
               mediaKey: _dune,
               userLibraryRepository: repository,
@@ -162,6 +173,8 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: MarkAsWatchedSheet(
               mediaKey: _dune,
               userLibraryRepository: repository,
@@ -184,6 +197,8 @@ void main() {
       final repository = InMemoryUserLibraryRepository();
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MarkAsWatchedSheet(
             mediaKey: _dune,
             userLibraryRepository: repository,
@@ -206,6 +221,8 @@ void main() {
       final repository = InMemoryUserLibraryRepository();
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MarkAsWatchedSheet(
             mediaKey: _theBear,
             userLibraryRepository: repository,
@@ -233,6 +250,8 @@ void main() {
         final repository = InMemoryUserLibraryRepository();
         await tester.pumpWidget(
           MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: MarkAsWatchedSheet(
               mediaKey: _dune,
               userLibraryRepository: repository,

@@ -625,5 +625,88 @@
   "tvEpisodeTba": "TBA",
   "@tvEpisodeTba": {
     "description": "H4's episode row air date, for an episode with no air date yet (\"To Be Announced\")."
+  },
+
+  "commonNoMatches": "No matches",
+  "@commonNoMatches": {
+    "description": "H3 (full cast) and H6 (region)'s own searchable-list empty state — deliberately distinct wording from exploreNoResults (\"No results\"), a different control with its own existing copy."
+  },
+  "commonSave": "Save",
+  "@commonSave": {
+    "description": "H2's own \"Save\" button (docs/SCREENS.md H2)."
+  },
+
+  "mediaDetailHaveYouFinished": "Have you finished {title}?",
+  "@mediaDetailHaveYouFinished": {
+    "description": "H2's own heading for a TV show specifically (docs/SCREENS.md H2) — a movie uses mediaDetailMarkAsWatched instead.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaDetailMarkAsWatched": "Mark as watched",
+  "@mediaDetailMarkAsWatched": {
+    "description": "H2's own heading for a movie (docs/SCREENS.md H2)."
+  },
+  "mediaDetailYourRating": "Your rating",
+  "mediaDetailRemoveFromWatched": "Remove from Watched",
+  "@mediaDetailRemoveFromWatched": {
+    "description": "H2's own link, shown only when re-opening the sheet for an already-watched entry (docs/SCREENS.md H2)."
+  },
+
+  "regionSheetTitle": "Region",
+  "@regionSheetTitle": {
+    "description": "H6's own title (docs/SCREENS.md H6)."
+  },
+  "regionSheetSearchHint": "Search countries",
+
+  "fullCastSheetTitle": "Full cast",
+  "@fullCastSheetTitle": {
+    "description": "H3's own title (docs/SCREENS.md H3)."
+  },
+  "fullCastSheetCastLabel": "Cast",
+  "fullCastSheetCrewLabel": "Crew",
+  "fullCastSheetSearchHint": "Search cast and crew",
+
+  "mediaSimilarTitle": "Similar",
+  "@mediaSimilarTitle": {
+    "description": "D1/D2's own \"Similar\" carousel header (docs/SCREENS.md D1)."
+  },
+
+  "mediaDetailActionTrailer": "Trailer",
+  "@mediaDetailActionTrailer": {
+    "description": "D1/D2's primary action button when a trailer exists (docs/SCREENS.md D1) — mediaDetailActionSeeSimilar replaces it when there's no trailer."
+  },
+  "mediaDetailActionSeeSimilar": "See similar",
+  "mediaDetailActionFavorite": "Favorite",
+  "@mediaDetailActionFavorite": {
+    "description": "D1/D2's own Favorite toggle (docs/SCREENS.md D1: \"Favorite · Watch later · Watched\"). The other two reuse myListTabWatchLater/myListTabWatched — same words, same meaning."
+  },
+
+  "mediaCastRowSeeFullCast": "See full cast",
+  "@mediaCastRowSeeFullCast": {
+    "description": "D1/D2's link into H3 (docs/SCREENS.md D1)."
+  },
+
+  "whereToWatchTitle": "Where to watch",
+  "@whereToWatchTitle": {
+    "description": "D1/D2's own section title (docs/SCREENS.md D1)."
+  },
+  "whereToWatchSubscription": "Subscription",
+  "whereToWatchRent": "Rent",
+  "whereToWatchBuy": "Buy",
+  "whereToWatchJustWatchAttribution": "Data from JustWatch",
+  "@whereToWatchJustWatchAttribution": {
+    "description": "D1/D2's mandatory footer (docs/SCREENS.md D1) — \"JustWatch\" stays untranslated in every locale, same as \"TMDB\"/\"PakoTV\"."
+  },
+  "whereToWatchOverflowChip": "+{count}",
+  "@whereToWatchOverflowChip": {
+    "description": "D1/D2's own \"+N\" chip once a provider row exceeds its max shown (docs/SCREENS.md D1).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/domain/entities/media_item.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/l10n_extension.dart';
 import '../media_carousel.dart';
 
 /// D1/D2's "Similar" carousel — no "See all" (`docs/SCREENS.md` D1,
@@ -24,7 +25,7 @@ class MediaSimilarSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Similar', style: AppTextStyles.h2),
+          Text(context.l10n.mediaSimilarTitle, style: AppTextStyles.h2),
           const SizedBox(height: AppSpacing.md),
           MediaCarousel.standard(
             items: similar,

@@ -1189,6 +1189,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TBA'**
   String get tvEpisodeTba;
+
+  /// H3 (full cast) and H6 (region)'s own searchable-list empty state — deliberately distinct wording from exploreNoResults ("No results"), a different control with its own existing copy.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches'**
+  String get commonNoMatches;
+
+  /// H2's own "Save" button (docs/SCREENS.md H2).
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get commonSave;
+
+  /// H2's own heading for a TV show specifically (docs/SCREENS.md H2) — a movie uses mediaDetailMarkAsWatched instead.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you finished {title}?'**
+  String mediaDetailHaveYouFinished(String title);
+
+  /// H2's own heading for a movie (docs/SCREENS.md H2).
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as watched'**
+  String get mediaDetailMarkAsWatched;
+
+  /// No description provided for @mediaDetailYourRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating'**
+  String get mediaDetailYourRating;
+
+  /// H2's own link, shown only when re-opening the sheet for an already-watched entry (docs/SCREENS.md H2).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Watched'**
+  String get mediaDetailRemoveFromWatched;
+
+  /// H6's own title (docs/SCREENS.md H6).
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get regionSheetTitle;
+
+  /// No description provided for @regionSheetSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search countries'**
+  String get regionSheetSearchHint;
+
+  /// H3's own title (docs/SCREENS.md H3).
+  ///
+  /// In en, this message translates to:
+  /// **'Full cast'**
+  String get fullCastSheetTitle;
+
+  /// No description provided for @fullCastSheetCastLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cast'**
+  String get fullCastSheetCastLabel;
+
+  /// No description provided for @fullCastSheetCrewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get fullCastSheetCrewLabel;
+
+  /// No description provided for @fullCastSheetSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search cast and crew'**
+  String get fullCastSheetSearchHint;
+
+  /// D1/D2's own "Similar" carousel header (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'Similar'**
+  String get mediaSimilarTitle;
+
+  /// D1/D2's primary action button when a trailer exists (docs/SCREENS.md D1) — mediaDetailActionSeeSimilar replaces it when there's no trailer.
+  ///
+  /// In en, this message translates to:
+  /// **'Trailer'**
+  String get mediaDetailActionTrailer;
+
+  /// No description provided for @mediaDetailActionSeeSimilar.
+  ///
+  /// In en, this message translates to:
+  /// **'See similar'**
+  String get mediaDetailActionSeeSimilar;
+
+  /// D1/D2's own Favorite toggle (docs/SCREENS.md D1: "Favorite · Watch later · Watched"). The other two reuse myListTabWatchLater/myListTabWatched — same words, same meaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get mediaDetailActionFavorite;
+
+  /// D1/D2's link into H3 (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'See full cast'**
+  String get mediaCastRowSeeFullCast;
+
+  /// D1/D2's own section title (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'Where to watch'**
+  String get whereToWatchTitle;
+
+  /// No description provided for @whereToWatchSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get whereToWatchSubscription;
+
+  /// No description provided for @whereToWatchRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get whereToWatchRent;
+
+  /// No description provided for @whereToWatchBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get whereToWatchBuy;
+
+  /// D1/D2's mandatory footer (docs/SCREENS.md D1) — "JustWatch" stays untranslated in every locale, same as "TMDB"/"PakoTV".
+  ///
+  /// In en, this message translates to:
+  /// **'Data from JustWatch'**
+  String get whereToWatchJustWatchAttribution;
+
+  /// D1/D2's own "+N" chip once a provider row exceeds its max shown (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'+{count}'**
+  String whereToWatchOverflowChip(int count);
 }
 
 class _AppLocalizationsDelegate
