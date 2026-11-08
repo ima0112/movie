@@ -5,7 +5,9 @@ import '../core/domain/entities/discover_filter.dart';
 import '../core/domain/entities/media_key.dart';
 import '../core/domain/entities/media_type.dart';
 import '../core/domain/repositories/media_repository.dart';
+import '../core/domain/repositories/onboarding_repository.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
+import 'di.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/filtered_list/presentation/screens/filtered_list_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
@@ -32,6 +34,13 @@ class AppRoutes {
   static String tvDetail(int id) => '/tv/$id';
 
   static String personDetail(int id) => '/person/$id';
+
+  /// A2 (Onboarding) — the app's own top-level `redirect` sends every
+  /// route here until `OnboardingRepository.isCompleted()` is `true`,
+  /// and sends this one route to [DiscoverScreen] once it is. The real
+  /// A2 flow (welcome + 3 steps) isn't built yet — see
+  /// `_WelcomePlaceholderScreen`'s own doc comment.
+  static const String welcome = '/welcome';
 
   /// C4 (Stats), pushed from B5's "See stats" link
   /// (`you_screen.dart`'s `onSeeStats`).
@@ -129,6 +138,7 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
+  redirect: _onboardingRedirect,
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -236,5 +246,71 @@ final GoRouter appRouter = GoRouter(
         return SurpriseResultScreen(cubit: cubit);
       },
     ),
+    GoRoute(
+      path: AppRoutes.welcome,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const _WelcomePlaceholderScreen(),
+    ),
   ],
 );
+
+/// This app's own "where should the user be" gate (`docs/SCREENS.md`
+/// A2's own access rule: "first launch only"). Evaluated by `GoRouter`
+/// on every navigation attempt, including the very first one:
+/// - Not completed, and not already headed to [AppRoutes.welcome]:
+///   redirect there, regardless of what was actually requested.
+/// - Completed, and headed to [AppRoutes.welcome] (e.g. a stale deep
+///   link, or just landing there again after finishing it): redirect
+///   to Discover instead of showing it a second time.
+/// - Otherwise: no redirect.
+///
+/// Reads [OnboardingRepository] through `getIt` rather than taking it
+/// as a parameter — `appRouter` is a plain top-level `GoRouter`, not a
+/// widget, so there's no constructor to thread it through; every other
+/// cross-cutting read in this file (`MediaDetailNavigation`'s own
+/// extension methods) does the same.
+///
+/// Deliberately synchronous — [OnboardingRepository.isCompleted] is a
+/// plain, always-available value (see its own doc comment for why),
+/// not awaited here. `redirect` runs on every navigation, including
+/// pops; an `async` version of this function added a real timing gap
+/// to each one, which surfaced as cross-test `Cubit`-used-after-close
+/// flakiness in this app's own widget tests (a previous version of
+/// this function awaited `isCompleted()`, before the interface was
+/// changed to be synchronous specifically to fix this).
+String? _onboardingRedirect(BuildContext context, GoRouterState state) {
+  final isCompleted = getIt<OnboardingRepository>().isCompleted;
+  final isWelcome = state.matchedLocation == AppRoutes.welcome;
+
+  if (!isCompleted && !isWelcome) return AppRoutes.welcome;
+  if (isCompleted && isWelcome) return '/';
+  return null;
+}
+
+/// Stand-in for A2 (Onboarding) — the real welcome + 3-step flow isn't
+/// built yet (see this session's own audit of `docs/SCREENS.md` A1/A2).
+/// Still needs a real way out, unlike the other placeholders in this
+/// file (`/tv/:id` etc., before their screens existed): without one,
+/// [_onboardingRedirect] would trap every fresh install (and every
+/// test that doesn't explicitly mark onboarding complete) here with no
+/// path forward at all.
+class _WelcomePlaceholderScreen extends StatelessWidget {
+  const _WelcomePlaceholderScreen();
+
+  Future<void> _skip(BuildContext context) async {
+    await getIt<OnboardingRepository>().markCompleted();
+    if (context.mounted) context.go('/');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => _skip(context),
+          child: const Text('Skip for now (placeholder)'),
+        ),
+      ),
+    );
+  }
+}

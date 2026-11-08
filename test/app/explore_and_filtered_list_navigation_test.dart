@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
+import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_search_field.dart';
@@ -36,30 +38,36 @@ void main() {
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
     );
+    // Same swap for OnboardingRepository — `isCompleted: true`
+    // (the default) since this test isn't about the onboarding
+    // gate itself (see onboarding_redirect_test.dart for that).
+    getIt.unregister<OnboardingRepository>();
+    getIt.registerLazySingleton<OnboardingRepository>(
+      InMemoryOnboardingRepository.new,
+    );
   });
 
-  testWidgets(
-    'typing in Explore debounces, then shows search results',
-    (tester) async {
-      await tester.pumpWidget(const PakoTvApp());
-      await tester.pumpAndSettle();
+  testWidgets('typing in Explore debounces, then shows search results', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
 
-      await tester.tap(_exploreTab());
-      await tester.pumpAndSettle();
-      expect(find.byType(ExploreSearchField), findsOneWidget);
+    await tester.tap(_exploreTab());
+    await tester.pumpAndSettle();
+    expect(find.byType(ExploreSearchField), findsOneWidget);
 
-      await tester.enterText(find.byType(TextField), 'dune');
-      // Right after typing, still within the 400 ms debounce window —
-      // FakeMediaRepository.searchMulti hasn't even been called yet.
-      await tester.pump(const Duration(milliseconds: 100));
-      expect(find.text('Dune: Part Two'), findsNothing);
+    await tester.enterText(find.byType(TextField), 'dune');
+    // Right after typing, still within the 400 ms debounce window —
+    // FakeMediaRepository.searchMulti hasn't even been called yet.
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Dune: Part Two'), findsNothing);
 
-      // Past the debounce, then past FakeMediaRepository's own 400 ms
-      // artificial delay.
-      await tester.pumpAndSettle();
-      expect(find.text('Dune: Part Two'), findsOneWidget);
-    },
-  );
+    // Past the debounce, then past FakeMediaRepository's own 400 ms
+    // artificial delay.
+    await tester.pumpAndSettle();
+    expect(find.text('Dune: Part Two'), findsOneWidget);
+  });
 
   testWidgets(
     'tapping a genre tile reaches C1 with that genre as an active chip; '

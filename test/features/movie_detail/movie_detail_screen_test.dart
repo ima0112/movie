@@ -4,7 +4,9 @@ import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/app/router.dart';
+import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 
@@ -23,6 +25,13 @@ void main() {
     getIt.unregister<UserLibraryRepository>();
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
+    );
+    // Same swap for OnboardingRepository — `isCompleted: true`
+    // (the default) since this test isn't about the onboarding
+    // gate itself (see onboarding_redirect_test.dart for that).
+    getIt.unregister<OnboardingRepository>();
+    getIt.registerLazySingleton<OnboardingRepository>(
+      InMemoryOnboardingRepository.new,
     );
   });
 

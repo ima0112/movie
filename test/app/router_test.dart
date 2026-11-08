@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
+import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/shared/widgets/media_card.dart';
@@ -20,6 +22,14 @@ void main() {
     getIt.unregister<UserLibraryRepository>();
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
+    );
+    // Same swap for OnboardingRepository — these tests exercise
+    // Discover/tabs/detail navigation, not the onboarding gate itself
+    // (see onboarding_redirect_test.dart for that), so `isCompleted:
+    // true` (the default) keeps them landing where they already did.
+    getIt.unregister<OnboardingRepository>();
+    getIt.registerLazySingleton<OnboardingRepository>(
+      InMemoryOnboardingRepository.new,
     );
   });
 
