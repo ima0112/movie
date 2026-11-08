@@ -147,7 +147,19 @@ lib/
     taste_profile/
       domain/
         taste_profile_builder.dart   explicit + implicit → ParticipantAnswers
-      presentation/               onboarding (skippable) + Settings › My Tastes
+      presentation/               Settings › My Tastes only — A2's own genre
+                                   steps are OnboardingCubit's (below), not
+                                   this feature's; they share no code yet
+                                   beyond the genre entity itself.
+    onboarding/
+      presentation/
+        cubit/                    OnboardingCubit — the whole A2 flow's
+                                   draft (step, name, color, liked/vetoed
+                                   genres); writes through the global
+                                   UserProfileCubit/TasteProfileCubit +
+                                   OnboardingRepository, never its own
+                                   repository. No screen yet — welcome +
+                                   3 steps is a later branch.
     quiz/
       presentation/               genre/vibe grids, year slider → ParticipantAnswers
     match_engine/
