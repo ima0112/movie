@@ -17,4 +17,5 @@ final getIt = GetIt.instance;
 /// generated — run `dart run build_runner build
 /// --delete-conflicting-outputs` after adding or changing an annotation.
 @InjectableInit()
-void configureDependencies() => getIt.init();
+void configureDependencies(String environment) =>
+    getIt.init(environment: environment);
