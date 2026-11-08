@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:movies/app/environments.dart';
 import 'core/config/env.dart';
-import 'core/domain/repositories/onboarding_repository.dart';
 
-import 'app/app.dart';
 import 'app/di.dart';
+import 'app/splash_gate.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final binding = WidgetsFlutterBinding.ensureInitialized();
+  // Keeps the native splash (flutter_native_splash.yaml) on screen past
+  // Flutter's own first frame — SplashGate calls .remove() once its own
+  // first frame (A1's in-app splash) is ready to take over, so there's
+  // no blank gap between the two.
+  FlutterNativeSplash.preserve(widgetsBinding: binding);
   Env.validate();
   configureDependencies(Env.useFake ? fake.name : real.name);
-  // Loaded before `runApp` so `OnboardingRepository.isCompleted` — a
-  // synchronous value by design (see its own doc comment) — is already
-  // accurate by the time the router's first redirect reads it.
-  await getIt<OnboardingRepository>().load();
-  runApp(const PakoTvApp());
+  runApp(const SplashGate());
 }
