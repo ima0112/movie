@@ -1,5 +1,7 @@
 import '../entities/genre.dart';
+import '../entities/media_detail.dart';
 import '../entities/media_item.dart';
+import '../entities/media_key.dart';
 import '../entities/media_type.dart';
 import '../entities/result.dart';
 
@@ -64,4 +66,7 @@ abstract interface class MediaRepository {
     MediaType? type,
     Genre? genre,
   });
+
+  /// D1 (movie) / D2 (TV show) full detail for one catalog item.
+  Future<Result<MediaDetail>> detail(MediaKey key);
 }
