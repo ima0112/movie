@@ -15,9 +15,18 @@ sealed class LibraryRowTrailing {
   /// A relative date, e.g. "Saved yesterday" (Favorites, Watch later).
   const factory LibraryRowTrailing.date(String date) = _DateTrailing;
 
-  /// 1–5 stars, e.g. the Watched tab. `rating == 0` renders as unrated:
-  /// all five stars in gray.
+  /// 1–5 stars alone, e.g. a rating with no date attached (D3's
+  /// filmography rows). `rating == 0` renders as unrated: all five
+  /// stars in gray.
   const factory LibraryRowTrailing.stars(int rating) = _StarsTrailing;
+
+  /// Stars *and* a date at once — B4's actual Watched-tab column ("1–5
+  /// amber stars... and a short date"), which [stars] alone can't render.
+  /// `rating == null` renders as unrated: all five stars in gray.
+  const factory LibraryRowTrailing.starsWithDate({
+    required int? rating,
+    required DateTime watchedAt,
+  }) = _StarsWithDateTrailing;
 
   /// A plain chevron, e.g. a filmography row that just pushes a detail.
   const factory LibraryRowTrailing.chevron() = _ChevronTrailing;
@@ -31,6 +40,12 @@ class _DateTrailing extends LibraryRowTrailing {
 class _StarsTrailing extends LibraryRowTrailing {
   const _StarsTrailing(this.rating);
   final int rating;
+}
+
+class _StarsWithDateTrailing extends LibraryRowTrailing {
+  const _StarsWithDateTrailing({required this.rating, required this.watchedAt});
+  final int? rating;
+  final DateTime watchedAt;
 }
 
 class _ChevronTrailing extends LibraryRowTrailing {
@@ -181,6 +196,18 @@ class _Trailing extends StatelessWidget {
         style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
       ),
       _StarsTrailing(:final rating) => _StarRow(rating: rating),
+      _StarsWithDateTrailing(:final rating, :final watchedAt) => Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _StarRow(rating: rating ?? 0, emptyColor: AppColors.lineStrong),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            _relativeDate(watchedAt),
+            style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+          ),
+        ],
+      ),
       _ChevronTrailing() => Icon(
         AppIcons.chevronRight,
         size: 20,
@@ -190,10 +217,48 @@ class _Trailing extends StatelessWidget {
   }
 }
 
+/// "Today", "Yesterday", "N days ago" for the last week, otherwise a
+/// short absolute date — used by [LibraryRowTrailing.starsWithDate]'s
+/// "short date" (`docs/SCREENS.md` B4).
+String _relativeDate(DateTime date) {
+  final today = DateTime.now();
+  final difference = DateTime(
+    today.year,
+    today.month,
+    today.day,
+  ).difference(DateTime(date.year, date.month, date.day)).inDays;
+  return switch (difference) {
+    0 => 'Today',
+    1 => 'Yesterday',
+    > 1 && < 7 => '$difference days ago',
+    _ => '${_month[date.month - 1]} ${date.day}',
+  };
+}
+
+const _month = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
 class _StarRow extends StatelessWidget {
-  const _StarRow({required this.rating});
+  const _StarRow({required this.rating, this.emptyColor = AppColors.inkDim});
 
   final int rating;
+
+  /// `.stars` uses `inkDim`; `.starsWithDate` uses `lineStrong` (H2/B4's
+  /// own spec for that variant) — different enough contexts that baking
+  /// one fixed color in would've been wrong for one of them.
+  final Color emptyColor;
 
   // Compact rating stars — smaller than the standard 18 px "small pill"
   // icon size, since five of them sit in a row's trailing column.
@@ -211,7 +276,7 @@ class _StarRow extends StatelessWidget {
           Icon(
             AppIcons.starFill,
             size: _starSize,
-            color: i <= rating ? AppColors.accent : AppColors.inkDim,
+            color: i <= rating ? AppColors.accent : emptyColor,
           ),
       ],
     );

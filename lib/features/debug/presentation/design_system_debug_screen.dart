@@ -313,9 +313,7 @@ class _IconsSection extends StatelessWidget {
     return Wrap(
       spacing: AppSpacing.lg,
       runSpacing: AppSpacing.lg,
-      children: [
-        for (final (name, icon) in _icons) _IconSwatch(name, icon),
-      ],
+      children: [for (final (name, icon) in _icons) _IconSwatch(name, icon)],
     );
   }
 }
@@ -445,7 +443,10 @@ class _MediaCardSection extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               _Labeled(
                 label: 'no tag, no save',
-                child: MediaCard(size: MediaCardSize.hero, title: 'Poor Things'),
+                child: MediaCard(
+                  size: MediaCardSize.hero,
+                  title: 'Poor Things',
+                ),
               ),
             ],
           ),
@@ -493,11 +494,7 @@ class _ChipSection extends StatelessWidget {
         ),
         _Labeled(
           label: 'normal + icon',
-          child: AppChip(
-            label: 'Recent',
-            icon: AppIcons.retry,
-            onTap: () {},
-          ),
+          child: AppChip(label: 'Recent', icon: AppIcons.retry, onTap: () {}),
         ),
         _Labeled(
           label: 'selected',
@@ -557,9 +554,7 @@ class _QuizTileSectionState extends State<_QuizTileSection> {
               child: QuizTile(
                 icon: AppIcons.compass,
                 label: 'Adventure',
-                state: _toggled
-                    ? QuizTileState.selected
-                    : QuizTileState.normal,
+                state: _toggled ? QuizTileState.selected : QuizTileState.normal,
                 onTap: () => setState(() => _toggled = !_toggled),
               ),
             ),
@@ -782,6 +777,27 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
           title: 'Dune: Part Two',
           metadata: '2024 · Movie · 2 h 46 min',
           trailing: LibraryRowTrailing.stars(3),
+        ),
+        const Divider(color: AppColors.line, height: AppSpacing.xxl),
+        LibraryRow(
+          posterUrl: null,
+          title: 'Oppenheimer',
+          metadata: '2023 · Movie · 3 h',
+          trailing: LibraryRowTrailing.starsWithDate(
+            rating: 4,
+            watchedAt: DateTime.now(),
+          ),
+        ),
+        const Divider(color: AppColors.line, height: AppSpacing.xxl),
+        LibraryRow(
+          posterUrl: null,
+          title: 'Poor Things',
+          metadata: '2023 · Movie · 2 h 21 min',
+          // rating: null — all five stars render in lineStrong gray.
+          trailing: LibraryRowTrailing.starsWithDate(
+            rating: null,
+            watchedAt: DateTime.now().subtract(const Duration(days: 3)),
+          ),
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
         const LibraryRow(
