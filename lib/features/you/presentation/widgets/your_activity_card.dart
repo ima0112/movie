@@ -7,6 +7,17 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
+/// A single entry's contribution to the "Hours" sum, in minutes. Exactly
+/// one of the two terms is ever non-zero for a given entry: movies only
+/// ever have [UserMediaEntry.runtimeMinutes] set, TV entries only ever
+/// have `episodeCount`/`episodeRuntimeMinutes` set — so adding both
+/// unconditionally (with `?? 0` for whichever pair doesn't apply) is
+/// equivalent to switching on the entry's `MediaKey.type`, without
+/// needing to.
+int _minutesFor(UserMediaEntry entry) =>
+    (entry.runtimeMinutes ?? 0) +
+    (entry.episodeCount ?? 0) * (entry.episodeRuntimeMinutes ?? 0);
+
 /// B5 ("You")'s "Your Activity" card: four large numbers plus a link to
 /// Stats.
 ///
@@ -21,12 +32,13 @@ import '../../../../core/theme/app_text_styles.dart';
 /// My-List-wide Cubit caching the full list, and this card needs nothing
 /// more than a live count over the same stream My List itself uses.
 ///
-/// **"hours" is a known gap, not a bug**: neither `UserMediaEntry` nor
-/// `UserMediaEntries` (its drift table) stores a title's runtime, so
-/// there is no data this card could sum to produce a real hours figure
-/// today. It renders as "—" until a later branch adds that column and
-/// populates it from `MediaDetail.runtimeMinutes` — the other three
-/// numbers are real, live counts.
+/// "Hours" sums each watched entry's [UserMediaEntry.runtimeMinutes]
+/// (movies) or `episodeCount * episodeRuntimeMinutes` (TV, whole-show
+/// estimate — TV is tracked at the whole-show level, never per episode),
+/// divided by 60. A `null` field (an entry watched before that field
+/// existed, or whose `MediaDetail` had no runtime from TMDB) contributes
+/// `0` to the sum rather than throwing or being skipped — old data just
+/// undercounts instead of breaking the card.
 class YourActivityCard extends StatelessWidget {
   const YourActivityCard({
     super.key,
@@ -60,13 +72,18 @@ class YourActivityCard extends StatelessWidget {
                 final watched = entries.where((e) => e.isWatched).length;
                 final favorites = entries.where((e) => e.isFavorite).length;
                 final watchLater = entries.where((e) => e.isWatchLater).length;
+                final hours =
+                    entries
+                        .where((e) => e.isWatched)
+                        .fold<int>(0, (sum, e) => sum + _minutesFor(e)) /
+                    60;
                 return Row(
                   children: [
                     Expanded(
                       child: _Metric(value: '$watched', label: 'Watched'),
                     ),
                     Expanded(
-                      child: _Metric(value: '—', label: 'Hours'),
+                      child: _Metric(value: '${hours.round()}', label: 'Hours'),
                     ),
                     Expanded(
                       child: _Metric(value: '$favorites', label: 'Favorites'),

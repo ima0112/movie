@@ -122,6 +122,14 @@ class MovieActionRow extends StatelessWidget {
   }
 
   void _openMarkAsWatchedSheet(BuildContext context, UserMediaEntry? entry) {
+    // Whatever's already loaded right now — D1 only ever opens this once
+    // MovieDetailLoaded is showing (the row itself needs the detail to
+    // render), so this is never null in practice.
+    final state = context.read<MovieDetailCubit>().state;
+    final detail = switch (state) {
+      MovieDetailLoaded(:final detail) => detail,
+      _ => null,
+    };
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -129,6 +137,7 @@ class MovieActionRow extends StatelessWidget {
         mediaKey: mediaKey,
         userLibraryRepository: userLibraryRepository,
         existingEntry: entry,
+        mediaDetail: detail,
       ),
     );
   }

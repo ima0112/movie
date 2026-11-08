@@ -138,5 +138,50 @@ void main() {
 
       expect((result as Success<List<UserMediaEntry>>).value, hasLength(2));
     });
+
+    test('upsert persists and watchEntry returns the duration snapshot '
+        '(runtimeMinutes for a movie, episodeCount/episodeRuntimeMinutes '
+        'for a TV show)', () async {
+      final repository = _repository();
+      await repository.upsert(
+        UserMediaEntry(
+          key: _dune,
+          watchedAt: DateTime(2024, 1, 1),
+          runtimeMinutes: 166,
+        ),
+      );
+      await repository.upsert(
+        UserMediaEntry(
+          key: _theBear,
+          watchedAt: DateTime(2024, 1, 1),
+          episodeCount: 62,
+          episodeRuntimeMinutes: 24,
+        ),
+      );
+
+      final movie = await repository.watchEntry(_dune).first;
+      final show = await repository.watchEntry(_theBear).first;
+
+      expect(movie!.runtimeMinutes, 166);
+      expect(show!.episodeCount, 62);
+      expect(show.episodeRuntimeMinutes, 24);
+    });
+
+    test('an entry saved with no duration fields at all (as every entry was '
+        'before this column existed) reads back with them null, not an '
+        'error', () async {
+      final repository = _repository();
+      // No runtimeMinutes/episodeCount/episodeRuntimeMinutes passed —
+      // exactly what every pre-migration watched entry looks like.
+      await repository.upsert(
+        UserMediaEntry(key: _dune, watchedAt: DateTime(2024, 1, 1)),
+      );
+
+      final entry = await repository.watchEntry(_dune).first;
+
+      expect(entry!.runtimeMinutes, isNull);
+      expect(entry.episodeCount, isNull);
+      expect(entry.episodeRuntimeMinutes, isNull);
+    });
   });
 }

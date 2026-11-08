@@ -65,6 +65,18 @@ class UserMediaEntries extends Table {
   /// `UserMediaEntry.markWatched`.
   IntColumn get rating => integer().nullable()();
 
+  // --- Duration snapshot, added in schema v3
+  // (core/domain/entities/user_media_entry.dart's own fields of the same
+  // name) — populated once, at the moment H2's "Save" upserts a watched
+  // entry, from whatever `MediaDetail` the detail screen already has
+  // loaded. Nullable with no default: an entry watched before this
+  // schema version, or an unwatched Favorites/Watch later entry, simply
+  // has these as SQL NULL — never a fabricated 0 that could be summed
+  // silently. ---
+  IntColumn get runtimeMinutes => integer().nullable()();
+  IntColumn get episodeCount => integer().nullable()();
+  IntColumn get episodeRuntimeMinutes => integer().nullable()();
+
   /// When this row last changed. Lets a future sync step know what to
   /// push without re-sending every row.
   DateTimeColumn get updatedAt => dateTime()();
@@ -138,12 +150,13 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   /// Bump this whenever a table changes shape. Went to 2 when
-  /// [UserProfileTable] and [TasteProfileTable] were added — [onUpgrade]
-  /// below just creates those two new tables for anyone updating from an
-  /// install that only had [UserMediaEntries] (version 1); nothing about
-  /// that existing table changed shape.
+  /// [UserProfileTable] and [TasteProfileTable] were added, and to 3 when
+  /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
+  /// `episodeRuntimeMinutes` columns — [onUpgrade] below adds each
+  /// version's own change in order, never a destructive drop/recreate,
+  /// so nobody's existing My List/profile/tastes data is lost on update.
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -152,6 +165,14 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         await m.createTable(userProfileTable);
         await m.createTable(tasteProfileTable);
+      }
+      if (from < 3) {
+        await m.addColumn(userMediaEntries, userMediaEntries.runtimeMinutes);
+        await m.addColumn(userMediaEntries, userMediaEntries.episodeCount);
+        await m.addColumn(
+          userMediaEntries,
+          userMediaEntries.episodeRuntimeMinutes,
+        );
       }
     },
   );

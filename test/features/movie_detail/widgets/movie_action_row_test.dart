@@ -39,5 +39,44 @@ void main() {
       expect(await userLibraryRepository.watchEntry(_dune).first, isNull);
       expect(find.text('Mark as watched'), findsOneWidget);
     });
+
+    testWidgets(
+      'Watched → Save populates runtimeMinutes from the already-loaded '
+      "MovieDetail, with no extra fetch",
+      (tester) async {
+        final userLibraryRepository = InMemoryUserLibraryRepository();
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: BlocProvider(
+                create: (_) =>
+                    MovieDetailCubit(FakeMediaRepository())..loadDetail(_dune),
+                child: MovieActionRow(
+                  mediaKey: _dune,
+                  userLibraryRepository: userLibraryRepository,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        // FakeMediaRepository's own fake network delay: pumpAndSettle()
+        // alone doesn't reliably advance far enough past it before the
+        // tap below fires (nothing keeps scheduling frames while
+        // MovieDetailLoading just sits there), so the row could still
+        // read a stale MovieDetailLoading state at tap-time otherwise.
+        await tester.pump(const Duration(milliseconds: 500));
+
+        await tester.tap(find.text('Watched'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+
+        // FakeMediaRepository's sample movie (tmdbId 1) has
+        // runtimeMinutes: 166.
+        final saved = await userLibraryRepository.watchEntry(_dune).first;
+        expect(saved!.runtimeMinutes, 166);
+      },
+    );
   });
 }

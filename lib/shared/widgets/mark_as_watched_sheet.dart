@@ -2,14 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../core/domain/entities/media_detail.dart';
 import '../../core/domain/entities/media_key.dart';
 import '../../core/domain/entities/user_media_entry.dart';
 import '../../core/domain/repositories/user_library_repository.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'app_buttons.dart';
+import 'mark_as_watched_date_field.dart';
+import 'media_detail_duration.dart';
 import 'rating_stars_selector.dart';
 
 /// H2 (Mark as watched) — `docs/SCREENS.md` H2: "Title, 5-star selector
@@ -29,6 +31,7 @@ class MarkAsWatchedSheet extends StatefulWidget {
     required this.mediaKey,
     required this.userLibraryRepository,
     this.existingEntry,
+    this.mediaDetail,
   });
 
   final MediaKey mediaKey;
@@ -39,6 +42,11 @@ class MarkAsWatchedSheet extends StatefulWidget {
   /// (`docs/SCREENS.md` D1: "Tapping 'Watched' again opens H2 with
   /// current values... a red 'Remove from Watched' link").
   final UserMediaEntry? existingEntry;
+
+  /// The detail screen's already-loaded [MediaDetail] (D1/D2 always have
+  /// one) — see [durationFieldsFrom] for how "Save" turns it into
+  /// [UserMediaEntry]'s duration snapshot.
+  final MediaDetail? mediaDetail;
 
   @override
   State<MarkAsWatchedSheet> createState() => _MarkAsWatchedSheetState();
@@ -70,9 +78,19 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
   void _save() {
     final current =
         widget.existingEntry ?? UserMediaEntry(key: widget.mediaKey);
+    // Fresh values fall back to `current`'s own — see
+    // [durationFieldsFrom]'s doc comment.
+    final fresh = durationFieldsFrom(widget.mediaDetail);
     unawaited(
       widget.userLibraryRepository.upsert(
-        current.markWatched(watchedAt: _date, rating: _rating),
+        current.markWatched(
+          watchedAt: _date,
+          rating: _rating,
+          runtimeMinutes: fresh.runtimeMinutes ?? current.runtimeMinutes,
+          episodeCount: fresh.episodeCount ?? current.episodeCount,
+          episodeRuntimeMinutes:
+              fresh.episodeRuntimeMinutes ?? current.episodeRuntimeMinutes,
+        ),
       ),
     );
     Navigator.of(context).pop();
@@ -109,20 +127,7 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
               onChanged: (rating) => setState(() => _rating = rating),
             ),
             const SizedBox(height: AppSpacing.lg),
-            GestureDetector(
-              onTap: _pickDate,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_formatDate(_date), style: AppTextStyles.body),
-                  const Icon(
-                    AppIcons.chevronDown,
-                    size: 20,
-                    color: AppColors.inkMuted,
-                  ),
-                ],
-              ),
-            ),
+            MarkAsWatchedDateField(date: _date, onTap: _pickDate),
             const SizedBox(height: AppSpacing.xl),
             PrimaryButton(label: 'Save', onTap: _save),
             if (isEditingWatched) ...[
@@ -142,9 +147,4 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
       ),
     );
   }
-
-  static const _month = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec';
-
-  static String _formatDate(DateTime date) =>
-      '${_month.split(',')[date.month - 1]} ${date.day}, ${date.year}';
 }
