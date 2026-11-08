@@ -146,6 +146,24 @@ class OnboardingTable extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// The user's own TMDB content preferences (F11) — one row, same
+/// single-row convention as [UserProfileTable]. See
+/// `core/domain/repositories/settings_repository.dart`'s own doc
+/// comment for why [languageCode]/[regionCode] always have a value
+/// (never nullable): row `id = 0` is only ever absent before this
+/// device's very first `SettingsRepository.load` call, which persists
+/// a system-locale-derived default immediately rather than leaving it
+/// unset.
+@DataClassName('SettingsRow')
+class SettingsTable extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  TextColumn get languageCode => text()();
+  TextColumn get regionCode => text()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// B2's "Recent" search chips (`docs/SCREENS.md` B2: "'Recent' as chips
 /// (last 10; tap to run, long-press to remove; 'Clear all')"). `query`
 /// itself is the primary key: re-searching an already-present query
@@ -183,6 +201,7 @@ class SearchHistoryTable extends Table {
     TasteProfileTable,
     SearchHistoryTable,
     OnboardingTable,
+    SettingsTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -198,12 +217,13 @@ class AppDatabase extends _$AppDatabase {
   /// [UserProfileTable] and [TasteProfileTable] were added, to 3 when
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
-  /// was added, and to 5 when [OnboardingTable] was — [onUpgrade] below
-  /// adds each version's own change in order, never a destructive
-  /// drop/recreate, so nobody's existing My List/profile/tastes/search
-  /// data is lost on update.
+  /// was added, to 5 when [OnboardingTable] was, and to 6 when
+  /// [SettingsTable] was — [onUpgrade] below adds each version's own
+  /// change in order, never a destructive drop/recreate, so nobody's
+  /// existing My List/profile/tastes/search/onboarding data is lost on
+  /// update.
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -226,6 +246,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 5) {
         await m.createTable(onboardingTable);
+      }
+      if (from < 6) {
+        await m.createTable(settingsTable);
       }
     },
   );

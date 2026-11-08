@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
+import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/domain/repositories/user_profile_repository.dart';
@@ -31,5 +32,6 @@ void main() {
     expect(getIt.isRegistered<UserLibraryRepository>(), isTrue);
     expect(getIt.isRegistered<UserProfileRepository>(), isTrue);
     expect(getIt.isRegistered<TasteProfileRepository>(), isTrue);
+    expect(getIt.isRegistered<SettingsRepository>(), isTrue);
   });
 }

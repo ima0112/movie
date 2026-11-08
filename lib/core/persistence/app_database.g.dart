@@ -2230,6 +2230,261 @@ class OnboardingTableCompanion extends UpdateCompanion<OnboardingRow> {
   }
 }
 
+class $SettingsTableTable extends SettingsTable
+    with TableInfo<$SettingsTableTable, SettingsRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SettingsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _languageCodeMeta = const VerificationMeta(
+    'languageCode',
+  );
+  @override
+  late final GeneratedColumn<String> languageCode = GeneratedColumn<String>(
+    'language_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _regionCodeMeta = const VerificationMeta(
+    'regionCode',
+  );
+  @override
+  late final GeneratedColumn<String> regionCode = GeneratedColumn<String>(
+    'region_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, languageCode, regionCode];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'settings_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SettingsRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('language_code')) {
+      context.handle(
+        _languageCodeMeta,
+        languageCode.isAcceptableOrUnknown(
+          data['language_code']!,
+          _languageCodeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_languageCodeMeta);
+    }
+    if (data.containsKey('region_code')) {
+      context.handle(
+        _regionCodeMeta,
+        regionCode.isAcceptableOrUnknown(data['region_code']!, _regionCodeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_regionCodeMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SettingsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SettingsRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      languageCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language_code'],
+      )!,
+      regionCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}region_code'],
+      )!,
+    );
+  }
+
+  @override
+  $SettingsTableTable createAlias(String alias) {
+    return $SettingsTableTable(attachedDatabase, alias);
+  }
+}
+
+class SettingsRow extends DataClass implements Insertable<SettingsRow> {
+  final int id;
+  final String languageCode;
+  final String regionCode;
+  const SettingsRow({
+    required this.id,
+    required this.languageCode,
+    required this.regionCode,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['language_code'] = Variable<String>(languageCode);
+    map['region_code'] = Variable<String>(regionCode);
+    return map;
+  }
+
+  SettingsTableCompanion toCompanion(bool nullToAbsent) {
+    return SettingsTableCompanion(
+      id: Value(id),
+      languageCode: Value(languageCode),
+      regionCode: Value(regionCode),
+    );
+  }
+
+  factory SettingsRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SettingsRow(
+      id: serializer.fromJson<int>(json['id']),
+      languageCode: serializer.fromJson<String>(json['languageCode']),
+      regionCode: serializer.fromJson<String>(json['regionCode']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'languageCode': serializer.toJson<String>(languageCode),
+      'regionCode': serializer.toJson<String>(regionCode),
+    };
+  }
+
+  SettingsRow copyWith({int? id, String? languageCode, String? regionCode}) =>
+      SettingsRow(
+        id: id ?? this.id,
+        languageCode: languageCode ?? this.languageCode,
+        regionCode: regionCode ?? this.regionCode,
+      );
+  SettingsRow copyWithCompanion(SettingsTableCompanion data) {
+    return SettingsRow(
+      id: data.id.present ? data.id.value : this.id,
+      languageCode: data.languageCode.present
+          ? data.languageCode.value
+          : this.languageCode,
+      regionCode: data.regionCode.present
+          ? data.regionCode.value
+          : this.regionCode,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettingsRow(')
+          ..write('id: $id, ')
+          ..write('languageCode: $languageCode, ')
+          ..write('regionCode: $regionCode')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, languageCode, regionCode);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SettingsRow &&
+          other.id == this.id &&
+          other.languageCode == this.languageCode &&
+          other.regionCode == this.regionCode);
+}
+
+class SettingsTableCompanion extends UpdateCompanion<SettingsRow> {
+  final Value<int> id;
+  final Value<String> languageCode;
+  final Value<String> regionCode;
+  const SettingsTableCompanion({
+    this.id = const Value.absent(),
+    this.languageCode = const Value.absent(),
+    this.regionCode = const Value.absent(),
+  });
+  SettingsTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String languageCode,
+    required String regionCode,
+  }) : languageCode = Value(languageCode),
+       regionCode = Value(regionCode);
+  static Insertable<SettingsRow> custom({
+    Expression<int>? id,
+    Expression<String>? languageCode,
+    Expression<String>? regionCode,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (languageCode != null) 'language_code': languageCode,
+      if (regionCode != null) 'region_code': regionCode,
+    });
+  }
+
+  SettingsTableCompanion copyWith({
+    Value<int>? id,
+    Value<String>? languageCode,
+    Value<String>? regionCode,
+  }) {
+    return SettingsTableCompanion(
+      id: id ?? this.id,
+      languageCode: languageCode ?? this.languageCode,
+      regionCode: regionCode ?? this.regionCode,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (languageCode.present) {
+      map['language_code'] = Variable<String>(languageCode.value);
+    }
+    if (regionCode.present) {
+      map['region_code'] = Variable<String>(regionCode.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettingsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('languageCode: $languageCode, ')
+          ..write('regionCode: $regionCode')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2246,6 +2501,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $OnboardingTableTable onboardingTable = $OnboardingTableTable(
     this,
   );
+  late final $SettingsTableTable settingsTable = $SettingsTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2256,6 +2512,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tasteProfileTable,
     searchHistoryTable,
     onboardingTable,
+    settingsTable,
   ];
 }
 
@@ -3481,6 +3738,175 @@ typedef $$OnboardingTableTableProcessedTableManager =
       OnboardingRow,
       PrefetchHooks Function()
     >;
+typedef $$SettingsTableTableCreateCompanionBuilder =
+    SettingsTableCompanion Function({
+      Value<int> id,
+      required String languageCode,
+      required String regionCode,
+    });
+typedef $$SettingsTableTableUpdateCompanionBuilder =
+    SettingsTableCompanion Function({
+      Value<int> id,
+      Value<String> languageCode,
+      Value<String> regionCode,
+    });
+
+class $$SettingsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SettingsTableTable> {
+  $$SettingsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get languageCode => $composableBuilder(
+    column: $table.languageCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get regionCode => $composableBuilder(
+    column: $table.regionCode,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SettingsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SettingsTableTable> {
+  $$SettingsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get languageCode => $composableBuilder(
+    column: $table.languageCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get regionCode => $composableBuilder(
+    column: $table.regionCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SettingsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SettingsTableTable> {
+  $$SettingsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get languageCode => $composableBuilder(
+    column: $table.languageCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get regionCode => $composableBuilder(
+    column: $table.regionCode,
+    builder: (column) => column,
+  );
+}
+
+class $$SettingsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SettingsTableTable,
+          SettingsRow,
+          $$SettingsTableTableFilterComposer,
+          $$SettingsTableTableOrderingComposer,
+          $$SettingsTableTableAnnotationComposer,
+          $$SettingsTableTableCreateCompanionBuilder,
+          $$SettingsTableTableUpdateCompanionBuilder,
+          (
+            SettingsRow,
+            BaseReferences<_$AppDatabase, $SettingsTableTable, SettingsRow>,
+          ),
+          SettingsRow,
+          PrefetchHooks Function()
+        > {
+  $$SettingsTableTableTableManager(_$AppDatabase db, $SettingsTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SettingsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SettingsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SettingsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> languageCode = const Value.absent(),
+                Value<String> regionCode = const Value.absent(),
+              }) => SettingsTableCompanion(
+                id: id,
+                languageCode: languageCode,
+                regionCode: regionCode,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String languageCode,
+                required String regionCode,
+              }) => SettingsTableCompanion.insert(
+                id: id,
+                languageCode: languageCode,
+                regionCode: regionCode,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SettingsTableTable, SettingsRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SettingsTableTable,
+                    SettingsRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SettingsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SettingsTableTable,
+      SettingsRow,
+      $$SettingsTableTableFilterComposer,
+      $$SettingsTableTableOrderingComposer,
+      $$SettingsTableTableAnnotationComposer,
+      $$SettingsTableTableCreateCompanionBuilder,
+      $$SettingsTableTableUpdateCompanionBuilder,
+      (
+        SettingsRow,
+        BaseReferences<_$AppDatabase, $SettingsTableTable, SettingsRow>,
+      ),
+      SettingsRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3495,4 +3921,6 @@ class $AppDatabaseManager {
       $$SearchHistoryTableTableTableManager(_db, _db.searchHistoryTable);
   $$OnboardingTableTableTableManager get onboardingTable =>
       $$OnboardingTableTableTableManager(_db, _db.onboardingTable);
+  $$SettingsTableTableTableManager get settingsTable =>
+      $$SettingsTableTableTableManager(_db, _db.settingsTable);
 }
