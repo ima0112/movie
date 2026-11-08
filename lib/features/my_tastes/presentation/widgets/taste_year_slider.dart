@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 
 /// C5's "How far back" — "slider with a large number" (`docs/SCREENS.md`
 /// C5), the same shape DESIGN_SYSTEM.md's own component sheet lists
@@ -39,7 +40,7 @@ class TasteYearSlider extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('How far back', style: AppTextStyles.h3),
+        Text(context.l10n.myTastesHowFarBackLabel, style: AppTextStyles.h3),
         const SizedBox(height: AppSpacing.sm),
         Text('$clamped', style: AppTextStyles.display),
         SliderTheme(

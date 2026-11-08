@@ -8,6 +8,7 @@ import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/user_profile.dart';
 import 'package:movies/core/domain/repositories/user_profile_repository.dart';
 import 'package:movies/features/you/presentation/widgets/you_header.dart';
+import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/edit_profile_sheet.dart';
 import 'package:movies/shared/widgets/profile_color_picker.dart';
 
@@ -45,6 +46,8 @@ void main() {
           BlocProvider<UserProfileCubit>.value(
             value: cubit,
             child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
               home: Scaffold(
                 body: Column(
                   children: [
@@ -83,6 +86,8 @@ void main() {
         BlocProvider<UserProfileCubit>.value(
           value: cubit,
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Builder(
               builder: (context) => Scaffold(
                 body: Column(

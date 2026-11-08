@@ -34,7 +34,7 @@ class StatsGenreBars extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Genres you watch most', style: AppTextStyles.h3),
+        Text(context.l10n.statsGenreBarsTitle, style: AppTextStyles.h3),
         const SizedBox(height: AppSpacing.md),
         for (final (genre, count) in topGenres)
           Padding(

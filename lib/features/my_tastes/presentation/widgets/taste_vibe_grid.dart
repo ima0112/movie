@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/vibe_tile_grid.dart';
 import '../../../match_engine/domain/vibe.dart';
 
@@ -30,7 +31,7 @@ class TasteVibeGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Vibes you like', style: AppTextStyles.h3),
+        Text(context.l10n.myTastesVibesLikeTitle, style: AppTextStyles.h3),
         const SizedBox(height: AppSpacing.md),
         VibeTileGrid(vibes: vibes, selected: selected, onToggle: onToggle),
       ],

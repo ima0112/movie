@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 
 /// C4's "'Activity over the last 12 months': strip of 12 cells with
 /// intensity" (`docs/SCREENS.md` C4). No existing shared widget for
@@ -33,7 +34,7 @@ class StatsActivityStrip extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Activity over the last 12 months', style: AppTextStyles.h3),
+        Text(context.l10n.statsActivityStripTitle, style: AppTextStyles.h3),
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [

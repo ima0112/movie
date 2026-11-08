@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../cubit/stats_cubit.dart';
 import '../widgets/stats_activity_strip.dart';
 import '../widgets/stats_empty_state.dart';
@@ -57,7 +58,7 @@ class _StatsView extends StatelessWidget {
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        title: Text('Stats', style: AppTextStyles.h2),
+        title: Text(context.l10n.statsTitle, style: AppTextStyles.h2),
       ),
       body: Column(
         children: [

@@ -6,6 +6,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/library_tab_localization.dart';
+import '../../../../l10n/number_format_extension.dart';
 
 /// A single entry's contribution to the "Hours" sum, in minutes. Exactly
 /// one of the two terms is ever non-zero for a given entry: movies only
@@ -63,11 +66,12 @@ class YourActivityCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Your Activity', style: AppTextStyles.h3),
+            Text(context.l10n.yourActivityTitle, style: AppTextStyles.h3),
             const SizedBox(height: AppSpacing.md),
             StreamBuilder<List<UserMediaEntry>>(
               stream: userLibraryRepository.watch(),
               builder: (context, snapshot) {
+                final l10n = context.l10n;
                 final entries = snapshot.data ?? const <UserMediaEntry>[];
                 final watched = entries.where((e) => e.isWatched).length;
                 final favorites = entries.where((e) => e.isFavorite).length;
@@ -80,18 +84,27 @@ class YourActivityCard extends StatelessWidget {
                 return Row(
                   children: [
                     Expanded(
-                      child: _Metric(value: '$watched', label: 'Watched'),
-                    ),
-                    Expanded(
-                      child: _Metric(value: '${hours.round()}', label: 'Hours'),
-                    ),
-                    Expanded(
-                      child: _Metric(value: '$favorites', label: 'Favorites'),
+                      child: _Metric(
+                        value: watched.localizedCount(l10n),
+                        label: LibraryTab.watched.localizedLabel(l10n),
+                      ),
                     ),
                     Expanded(
                       child: _Metric(
-                        value: '$watchLater',
-                        label: 'Watch later',
+                        value: hours.round().localizedCount(l10n),
+                        label: l10n.yourActivityHoursLabel,
+                      ),
+                    ),
+                    Expanded(
+                      child: _Metric(
+                        value: favorites.localizedCount(l10n),
+                        label: LibraryTab.favorites.localizedLabel(l10n),
+                      ),
+                    ),
+                    Expanded(
+                      child: _Metric(
+                        value: watchLater.localizedCount(l10n),
+                        label: LibraryTab.watchLater.localizedLabel(l10n),
                       ),
                     ),
                   ],
@@ -105,7 +118,7 @@ class YourActivityCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'See stats',
+                    context.l10n.yourActivitySeeStats,
                     style: AppTextStyles.bodySm.copyWith(
                       color: AppColors.accent,
                     ),

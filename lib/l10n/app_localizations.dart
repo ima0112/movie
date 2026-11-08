@@ -979,6 +979,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{label} ({count})'**
   String myListSegmentLabelWithCount(String label, int count);
+
+  /// Shared across three spots: MyTastesCard's own header (B5), MyTastesInvitation's button label, and C5's AppBar title — same word, same screen, in all three.
+  ///
+  /// In en, this message translates to:
+  /// **'My Tastes'**
+  String get myTastesTitle;
+
+  /// MyTastesCard's summary line (docs/SCREENS.md B5: "3 vibes · since 1990 · never Horror"), first fragment. Deliberately not ICU-pluralized in English — always says "vibes", even at count == 1 — preserving this control's existing behavior exactly; Spanish, which has no prior behavior of its own, pluralizes correctly.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} vibes'**
+  String myTastesSummaryVibeCount(int count);
+
+  /// MyTastesCard's summary line, second fragment (docs/SCREENS.md B5).
+  ///
+  /// In en, this message translates to:
+  /// **'since {year}'**
+  String myTastesSummarySinceYear(int year);
+
+  /// MyTastesCard's summary line, third (optional) fragment (docs/SCREENS.md B5). {genreName} is that Genre's own localized display name.
+  ///
+  /// In en, this message translates to:
+  /// **'never {genreName}'**
+  String myTastesSummaryNeverGenre(String genreName);
+
+  /// No description provided for @myTastesInvitationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build your taste profile'**
+  String get myTastesInvitationTitle;
+
+  /// No description provided for @myTastesInvitationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Get picks that actually match what you like.'**
+  String get myTastesInvitationBody;
+
+  /// No description provided for @youHeaderGreetingNoProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi'**
+  String get youHeaderGreetingNoProfile;
+
+  /// No description provided for @youHeaderTapToSetName.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to set your name'**
+  String get youHeaderTapToSetName;
+
+  /// You's header once a profile name exists.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, {name}'**
+  String youHeaderGreetingWithName(String name);
+
+  /// No description provided for @yourActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Activity'**
+  String get yourActivityTitle;
+
+  /// No description provided for @yourActivityHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get yourActivityHoursLabel;
+
+  /// No description provided for @yourActivitySeeStats.
+  ///
+  /// In en, this message translates to:
+  /// **'See stats'**
+  String get yourActivitySeeStats;
+
+  /// No description provided for @statsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get statsTitle;
+
+  /// No description provided for @statsActivityStripTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity over the last 12 months'**
+  String get statsActivityStripTitle;
+
+  /// No description provided for @statsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark something as watched to see your stats'**
+  String get statsEmptyTitle;
+
+  /// No description provided for @statsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your numbers will show up here once you do.'**
+  String get statsEmptyBody;
+
+  /// No description provided for @statsGenreBarsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres you watch most'**
+  String get statsGenreBarsTitle;
+
+  /// No description provided for @statsMoviesWatchedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Movies watched'**
+  String get statsMoviesWatchedLabel;
+
+  /// No description provided for @statsHoursOfMoviesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours of movies'**
+  String get statsHoursOfMoviesLabel;
+
+  /// No description provided for @statsTvShowsWatchedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TV shows watched'**
+  String get statsTvShowsWatchedLabel;
+
+  /// No description provided for @statsEstimatedTvHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated TV hours'**
+  String get statsEstimatedTvHoursLabel;
+
+  /// No description provided for @myTastesGenresLikeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres you like'**
+  String get myTastesGenresLikeTitle;
+
+  /// No description provided for @myTastesGenresNeverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres you never want'**
+  String get myTastesGenresNeverTitle;
+
+  /// No description provided for @myTastesSavedIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get myTastesSavedIndicator;
+
+  /// No description provided for @myTastesVibesLikeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibes you like'**
+  String get myTastesVibesLikeTitle;
+
+  /// No description provided for @myTastesHowFarBackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How far back'**
+  String get myTastesHowFarBackLabel;
+
+  /// StatsMetricGrid's own hours-value format, e.g. "312 h" (docs/SCREENS.md C4's own example). {hours} is already locale-formatted (LocalizedCount.localizedCount) before being substituted in.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h'**
+  String statsHoursValue(String hours);
 }
 
 class _AppLocalizationsDelegate

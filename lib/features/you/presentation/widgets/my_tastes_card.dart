@@ -83,7 +83,7 @@ class _Summary extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: Text('My Tastes', style: AppTextStyles.h3)),
+            Expanded(child: Text(l10n.myTastesTitle, style: AppTextStyles.h3)),
             const Icon(
               AppIcons.chevronRight,
               size: 20,
@@ -117,14 +117,16 @@ class _Summary extends StatelessWidget {
   /// widget's own reasonable default for that gap, not a documented rule.
   static String _summaryLine(TasteProfile profile, AppLocalizations l10n) {
     final parts = <String>[
-      '${profile.likedVibes.length} vibes',
-      'since ${profile.yearFrom}',
+      l10n.myTastesSummaryVibeCount(profile.likedVibes.length),
+      l10n.myTastesSummarySinceYear(profile.yearFrom),
     ];
     if (profile.vetoedGenres.isNotEmpty) {
       final firstVetoed =
           (profile.vetoedGenres.toList()..sort((a, b) => a.id.compareTo(b.id)))
               .first;
-      parts.add('never ${firstVetoed.localizedName(l10n)}');
+      parts.add(
+        l10n.myTastesSummaryNeverGenre(firstVetoed.localizedName(l10n)),
+      );
     }
     return parts.join(' · ');
   }

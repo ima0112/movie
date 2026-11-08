@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 
 /// C4's empty state — "empty ('Mark something as watched to see your
@@ -21,9 +22,9 @@ class StatsEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateView(
-      title: 'Mark something as watched to see your stats',
-      body: 'Your numbers will show up here once you do.',
-      ctaLabel: 'Explore',
+      title: context.l10n.statsEmptyTitle,
+      body: context.l10n.statsEmptyBody,
+      ctaLabel: context.l10n.navTabExplore,
       onCtaTap: onExploreTap,
     );
   }
