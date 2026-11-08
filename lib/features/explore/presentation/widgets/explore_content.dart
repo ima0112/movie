@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
@@ -39,7 +38,7 @@ class ExploreContent extends StatelessWidget {
           ExploreSearchLoaded() => SearchResultsList(
             results: state.results,
             segment: state.segment,
-            onTap: (item) => context.push(AppRoutes.movieDetail(item.id)),
+            onTap: (item) => context.pushMediaDetail(item.key),
           ),
           ExploreSearchError() => ErrorStateView(
             title: "Couldn't load",

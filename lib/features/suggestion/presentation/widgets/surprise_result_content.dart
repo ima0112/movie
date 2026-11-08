@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
@@ -57,7 +56,7 @@ class SurpriseResultContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           SurpriseResultCard(
             item: item,
-            onViewDetails: () => context.push(AppRoutes.movieDetail(item.id)),
+            onViewDetails: () => context.pushMediaDetail(item.key),
           ),
           if (state.relaxationsApplied.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.md),
@@ -77,11 +76,7 @@ class SurpriseResultContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           PrimaryButton(
             label: 'Add to Watch later',
-            onTap: () => _addToWatchLater(
-              context,
-              MediaKey(type: item.type, tmdbId: item.id),
-              item.genres,
-            ),
+            onTap: () => _addToWatchLater(context, item.key, item.genres),
           ),
           const SizedBox(height: AppSpacing.md),
           SecondaryButton(

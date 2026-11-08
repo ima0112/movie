@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
@@ -132,7 +131,7 @@ class _Grid extends StatelessWidget {
           items: state.visibleItems,
           hasMore: state.hasMore,
           onLoadMore: () => context.read<FilteredListCubit>().loadMore(),
-          onTap: (item) => context.push(AppRoutes.movieDetail(item.id)),
+          onTap: (item) => context.pushMediaDetail(item.key),
         );
       },
     );

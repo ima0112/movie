@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/domain/entities/discover_filter.dart';
+import '../core/domain/entities/media_key.dart';
 import '../core/domain/entities/media_type.dart';
 import '../core/domain/repositories/media_repository.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
@@ -25,6 +26,11 @@ class AppRoutes {
   const AppRoutes._();
 
   static String movieDetail(int id) => '/movie/$id';
+
+  static String tvDetail(int id) => '/tv/$id';
+
+  /// D3 (Person detail, not built yet) — see [_PersonDetailPlaceholderScreen].
+  static String personDetail(int id) => '/person/$id';
 
   /// C4 (Stats), pushed from B5's "See stats" link
   /// (`you_screen.dart`'s `onSeeStats`).
@@ -84,6 +90,30 @@ class FilteredListRouteArgs {
   final DiscoverFilter filter;
   final String title;
   final CarouselSection? collectionSection;
+}
+
+/// The one place any card/row navigates to D1/D2/D3 — no widget builds
+/// `/movie/:id`, `/tv/:id`, or `/person/:id` by hand (CLAUDE.md rule 2's
+/// "no widget or repository builds a TMDB URL by hand," applied here to
+/// this app's own in-app routes instead).
+extension MediaDetailNavigation on BuildContext {
+  /// Movie or TV show, picked from [key]'s own [MediaKey.type] — the
+  /// same `MediaKey` every repository call and `UserLibraryRepository`
+  /// entry already uses, so a caller never has to re-derive which route
+  /// shape a given id needs.
+  Future<T?> pushMediaDetail<T>(MediaKey key) {
+    final path = switch (key.type) {
+      MediaType.movie => AppRoutes.movieDetail(key.tmdbId),
+      MediaType.tvShow => AppRoutes.tvDetail(key.tmdbId),
+    };
+    return push<T>(path);
+  }
+
+  /// D3 (Person detail, not built yet) — cast/crew rows and search
+  /// results that are people still need somewhere to push to; see
+  /// [_PersonDetailPlaceholderScreen].
+  Future<T?> pushPersonDetail<T>(int personId) =>
+      push<T>(AppRoutes.personDetail(personId));
 }
 
 /// The app's single `GoRouter`. Source of truth: `docs/STRUCTURE.md`
@@ -152,6 +182,32 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return MovieDetailScreen(movieId: id);
+      },
+    ),
+    GoRoute(
+      path: '/tv/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      // TODO: D2 (TV show detail) isn't built yet — MovieDetailContent
+      // specifically casts its loaded MediaDetail to MovieDetail
+      // (`movie_detail_screen.dart`), which would throw for a real
+      // TvShowDetail, so this can't reuse MovieDetailScreen as-is. This
+      // placeholder only proves the routing/navigation round-trip
+      // (pushMediaDetail picking `/tv/:id`, not `/movie/:id`, for a TV
+      // MediaKey) — same scope line the `/genre/:genreId` placeholder
+      // below already draws for C1.
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return _TvDetailPlaceholderScreen(id: id);
+      },
+    ),
+    GoRoute(
+      path: '/person/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      // TODO: D3 (Person detail) isn't built yet — same "proves the
+      // route, not the screen" scope as `/tv/:id` above.
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return _PersonDetailPlaceholderScreen(id: id);
       },
     ),
     GoRoute(
@@ -231,6 +287,39 @@ class _GenreListingPlaceholderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
       body: Center(child: Text('Genre: $genreId ($type)')),
+    );
+  }
+}
+
+/// Stand-in for D2 (TV show detail) — see `/tv/:id`'s own TODO above for
+/// why this can't just reuse [MovieDetailScreen] yet. Same shape as
+/// [_GenreListingPlaceholderScreen]: its own `Scaffold` + back button,
+/// on the root navigator outside [RootShell].
+class _TvDetailPlaceholderScreen extends StatelessWidget {
+  const _TvDetailPlaceholderScreen({required this.id});
+
+  final int id;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(leading: const BackButton()),
+      body: Center(child: Text('TV show: $id')),
+    );
+  }
+}
+
+/// Stand-in for D3 (Person detail) — see `/person/:id`'s own TODO above.
+class _PersonDetailPlaceholderScreen extends StatelessWidget {
+  const _PersonDetailPlaceholderScreen({required this.id});
+
+  final int id;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(leading: const BackButton()),
+      body: Center(child: Text('Person: $id')),
     );
   }
 }
