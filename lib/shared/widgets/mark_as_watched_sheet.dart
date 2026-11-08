@@ -19,12 +19,10 @@ import 'rating_stars_selector.dart';
 /// from Watched' link if it already was".
 ///
 /// Opens from D1/D2's "Watched" button and (not yet wired — a separate
-/// follow-up) B4's swipe-right/tapping the stars in Watched. Always
-/// opened *before* any write happens — nothing reaches
-/// [UserLibraryRepository] until "Save" (or "Remove from Watched") is
-/// tapped. Both fields are genuinely optional in practice: the date
-/// defaults to today and the rating defaults to unset, so tapping
-/// "Save" with zero interaction is always valid.
+/// follow-up) B4's swipe-right/tapping the stars in Watched. Nothing
+/// reaches [UserLibraryRepository] until "Save"/"Remove from Watched" is
+/// tapped. Both fields are genuinely optional: the date defaults to
+/// today and the rating to unset, so a zero-interaction Save is valid.
 class MarkAsWatchedSheet extends StatefulWidget {
   const MarkAsWatchedSheet({
     super.key,
@@ -44,8 +42,7 @@ class MarkAsWatchedSheet extends StatefulWidget {
   final UserMediaEntry? existingEntry;
 
   /// The detail screen's already-loaded [MediaDetail] (D1/D2 always have
-  /// one) — see [durationFieldsFrom] for how "Save" turns it into
-  /// [UserMediaEntry]'s duration snapshot.
+  /// one) — see [durationFieldsFrom] for how "Save" uses it.
   final MediaDetail? mediaDetail;
 
   @override
@@ -90,6 +87,9 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
           episodeCount: fresh.episodeCount ?? current.episodeCount,
           episodeRuntimeMinutes:
               fresh.episodeRuntimeMinutes ?? current.episodeRuntimeMinutes,
+          // markWatched() already falls back to current.genres itself
+          // when this is null, unlike the duration fields above.
+          genres: widget.mediaDetail?.item.genres,
         ),
       ),
     );

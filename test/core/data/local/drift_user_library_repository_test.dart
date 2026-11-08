@@ -1,6 +1,7 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/local/drift_user_library_repository.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
@@ -10,6 +11,8 @@ import 'package:movies/core/persistence/app_database.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
 const _theBear = MediaKey(type: MediaType.tvShow, tmdbId: 101);
+const _action = Genre(id: 'action', name: 'Action');
+const _drama = Genre(id: 'drama', name: 'Drama');
 
 /// A fresh repository over an in-memory database — never touches disk or
 /// `path_provider`, so this runs the same everywhere `flutter test` does.
@@ -182,6 +185,32 @@ void main() {
       expect(entry!.runtimeMinutes, isNull);
       expect(entry.episodeCount, isNull);
       expect(entry.episodeRuntimeMinutes, isNull);
+    });
+
+    test('upsert persists and watchEntry returns genres, in order', () async {
+      final repository = _repository();
+
+      await repository.upsert(
+        const UserMediaEntry(
+          key: _dune,
+          isFavorite: true,
+          genres: [_action, _drama],
+        ),
+      );
+
+      final entry = await repository.watchEntry(_dune).first;
+
+      expect(entry!.genres, [_action, _drama]);
+    });
+
+    test('an entry saved with no genres reads back as an empty list, not '
+        'null or an error', () async {
+      final repository = _repository();
+      await repository.upsert(const UserMediaEntry(key: _dune));
+
+      final entry = await repository.watchEntry(_dune).first;
+
+      expect(entry!.genres, isEmpty);
     });
   });
 }

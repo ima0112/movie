@@ -31,20 +31,22 @@ class UserMediaEntries extends Table {
   IntColumn get tmdbId => integer()();
 
   // --- Catalog snapshot: enough to render a MediaItem-shaped card
-  // without a network call. All nullable: `UserLibraryRepository.upsert`
-  // only ever receives a `UserMediaEntry` (just the flags below), which
-  // carries none of this — a call site that also has the catalog item on
-  // hand (e.g. the screen that just fetched it) is what would populate
-  // these, once something writes them at all. Until then, a row can
-  // exist with every snapshot column empty.
+  // without a network call. All nullable, and — apart from `genres`
+  // below — still unmapped: `UserMediaEntry` doesn't carry title/
+  // posterPath/etc. itself, so `UserLibraryRepository.upsert` has
+  // nothing to write here yet. A call site that also has the catalog
+  // item on hand (e.g. the screen that just fetched it) is what would
+  // populate these, once something writes them at all.
   TextColumn get title => text().nullable()();
   TextColumn get posterPath => text().nullable()();
   TextColumn get backdropPath => text().nullable()();
 
-  /// Genre names, serialized (e.g. comma-joined) by whoever writes this
-  /// row — drift/SQLite has no native array column, and this is a
-  /// read-mostly snapshot, not something ever queried by individual
-  /// genre.
+  /// `UserMediaEntry.genres`, serialized as `id:name` pairs joined by
+  /// commas (same format as `TasteProfileTable.likedGenres`, for the
+  /// same reason — a genre's `id` alone isn't enough to rebuild a
+  /// `Genre` without a lookup table this codebase doesn't have yet).
+  /// Mapped both ways by `DriftUserLibraryRepository` — the one column
+  /// in this "catalog snapshot" block that isn't just sitting unused.
   TextColumn get genres => text().nullable()();
   RealColumn get voteAverage => real().nullable()();
   IntColumn get voteCount => integer().nullable()();

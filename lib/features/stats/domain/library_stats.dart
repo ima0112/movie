@@ -51,16 +51,12 @@ class LibraryStats {
   /// stars".
   final double? averageRating;
 
-  /// "Genres you watch most" — up to 5, most-watched first.
-  ///
-  /// **Always empty today.** `UserMediaEntry` doesn't carry genre data
-  /// anywhere yet (only the drift table's own unused "genres" snapshot
-  /// column comes close, and nothing maps it back into the domain
-  /// entity) — see `library_stats_calculator.dart`'s top-of-file note.
-  /// A future branch that adds genre tracking to `UserMediaEntry` (the
-  /// same way `runtimeMinutes` was added) is what fills this in; the
-  /// ranking algorithm itself already exists and is tested
-  /// (`topGenres()` in the calculator file), just not fed real data yet.
+  /// "Genres you watch most" — up to 5, most-watched first, counting
+  /// each watched entry's `UserMediaEntry.genres` once per genre it
+  /// lists. An entry saved before that field existed has `genres: []`
+  /// and simply doesn't contribute — an undercount for old data, not an
+  /// error. See `library_stats_calculator.dart`'s `topGenres()` for the
+  /// ranking/tie-break rule.
   final List<(Genre, int)> topGenres;
 
   /// The watch-date year with the most entries watched. `null` when
