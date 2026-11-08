@@ -6,7 +6,7 @@ import 'package:movies/app/environments.dart';
 import 'package:movies/app/router.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
-import 'package:movies/features/movie_detail/presentation/widgets/movie_detail_compact_bar.dart';
+import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 
 /// Manual-verification checklist from the task, made automatic and
 /// repeatable via `WidgetTester` instead of a live simulator session —
@@ -45,14 +45,14 @@ void main() {
       'header has scrolled past the top', (tester) async {
     await openDuneDetail(tester);
 
-    expect(find.byType(MovieDetailCompactBar), findsNothing);
+    expect(find.byType(MediaDetailCompactBar), findsNothing);
 
     // The header is 55% of the screen — dragging further than that
     // scrolls the title well past the top.
     await tester.drag(find.byType(Scrollable).first, const Offset(0, -800));
     await tester.pumpAndSettle();
 
-    expect(find.byType(MovieDetailCompactBar), findsOneWidget);
+    expect(find.byType(MediaDetailCompactBar), findsOneWidget);
   });
 
   testWidgets(
@@ -93,15 +93,15 @@ void main() {
       bool rebuilt(String widgetName) =>
           captured.any((line) => line.contains(widgetName));
 
-      // The tap only travels through MovieActionRow's own StreamBuilder —
-      // its sibling sections, the header, and the screen's Scaffold never
-      // get marked dirty by it.
-      expect(rebuilt('MovieActionButton'), isTrue);
-      expect(rebuilt('MovieDetailHeader'), isFalse);
+      // The tap only travels through MediaDetailActionRow's own
+      // StreamBuilder — its sibling sections, the header, and the
+      // screen's Scaffold never get marked dirty by it.
+      expect(rebuilt('MediaActionButton'), isTrue);
+      expect(rebuilt('MediaDetailHeader'), isFalse);
       expect(rebuilt('WhereToWatchSection'), isFalse);
-      expect(rebuilt('MovieSynopsisSection'), isFalse);
-      expect(rebuilt('MovieCastRow'), isFalse);
-      expect(rebuilt('MovieSimilarSection'), isFalse);
+      expect(rebuilt('MediaSynopsisSection'), isFalse);
+      expect(rebuilt('MediaCastRow'), isFalse);
+      expect(rebuilt('MediaSimilarSection'), isFalse);
       expect(rebuilt('CustomScrollView'), isFalse);
     },
   );

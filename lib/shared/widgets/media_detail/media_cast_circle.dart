@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/domain/entities/person.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../core/domain/entities/person.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
-/// One [MovieCastRow] circle: a 64 px avatar, name, and character
-/// (SCREENS.md D1). In its own file per rule 11: `movie_cast_row.dart` was
-/// over the 150-line target on its own.
-class MovieCastCircle extends StatelessWidget {
-  const MovieCastCircle({
+/// One [MediaCastRow] circle: a 64 px avatar, name, and character
+/// (`docs/SCREENS.md` D1, reused unchanged by D2). In its own file per
+/// rule 11: `media_cast_row.dart` was over the 150-line target on its
+/// own.
+class MediaCastCircle extends StatelessWidget {
+  const MediaCastCircle({
     super.key,
     required this.member,
     required this.size,

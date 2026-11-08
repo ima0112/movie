@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/domain/entities/person.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../core/domain/entities/person.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 
-/// [MovieCastRow]'s "Director and writer" line — tappable names separated
-/// by "·" (SCREENS.md D1). In its own file per rule 11:
-/// `movie_cast_row.dart` was over the 150-line target on its own.
-class MovieCrewLine extends StatelessWidget {
-  const MovieCrewLine({super.key, required this.crew, this.onPersonTap});
+/// [MediaCastRow]'s "Director and writer" line — tappable names separated
+/// by "·" (`docs/SCREENS.md` D1, reused unchanged by D2). In its own file
+/// per rule 11: `media_cast_row.dart` was over the 150-line target on
+/// its own.
+class MediaCrewLine extends StatelessWidget {
+  const MediaCrewLine({super.key, required this.crew, this.onPersonTap});
 
   final List<CrewMember> crew;
   final void Function(Person person)? onPersonTap;

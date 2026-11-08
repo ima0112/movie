@@ -3,26 +3,38 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
+import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import 'movie_action_row.dart';
-import 'movie_cast_row.dart';
-import 'movie_detail_header.dart';
-import 'movie_similar_section.dart';
-import 'movie_synopsis_section.dart';
-import 'where_to_watch_section.dart';
+import '../../../../shared/widgets/media_detail/media_cast_row.dart';
+import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
+import '../../../../shared/widgets/media_detail/media_detail_header.dart';
+import '../../../../shared/widgets/media_detail/media_similar_section.dart';
+import '../../../../shared/widgets/media_detail/media_synopsis_section.dart';
+import '../../../../shared/widgets/media_detail/where_to_watch_section.dart';
+import 'movie_metadata.dart';
 
-/// D1 once `MovieDetailCubit` has loaded — assembles every rule-13 sub-
-/// widget inside a `CustomScrollView`/slivers, which is what lets
-/// [MovieDetailHeader] scroll underneath the compact bar
+/// D1 once `MovieDetailCubit` has loaded — assembles the shared,
+/// generic `media_detail` widgets (`shared/widgets/media_detail/`) inside
+/// a `CustomScrollView`/slivers, which is what lets
+/// `MediaDetailHeader` scroll underneath the compact bar
 /// (`movie_detail_screen.dart` owns the shared `ScrollController` and the
-/// bar's visibility). Each sub-widget carries its own `BlocSelector`
-/// (rule 9) — this widget itself only lays things out, no Bloc
-/// subscription of its own.
+/// bar's visibility).
+///
+/// [detail] arrives already loaded and already narrowed to [MovieDetail]
+/// — the *only* place in D1 that reads `MovieDetailCubit`'s state at all
+/// is `movie_detail_screen.dart`'s own top-level `BlocBuilder`; every
+/// widget below this one is a plain, Cubit-unaware function of the
+/// values passed in (CLAUDE.md rule 9 — there is nothing left to
+/// rebuild independently once the detail is loaded, since none of it
+/// changes again while this is mounted — the one exception,
+/// `MediaDetailActionRow`'s own favorite/watch-later state, keeps its
+/// own narrow `StreamBuilder` on `UserLibraryRepository` exactly as
+/// before).
 ///
 /// Trailer playback and provider links have no `url_launcher` wired up
 /// yet (not discussed/added as a dependency) — a `SnackBar` stands in so
@@ -30,11 +42,13 @@ import 'where_to_watch_section.dart';
 class MovieDetailContent extends StatelessWidget {
   const MovieDetailContent({
     super.key,
+    required this.detail,
     required this.mediaKey,
     required this.scrollController,
     required this.similarSectionKey,
   });
 
+  final MovieDetail detail;
   final MediaKey mediaKey;
   final ScrollController scrollController;
   final GlobalKey similarSectionKey;
@@ -56,7 +70,12 @@ class MovieDetailContent extends StatelessWidget {
       controller: scrollController,
       slivers: [
         SliverToBoxAdapter(
-          child: MovieDetailHeader(
+          child: MediaDetailHeader(
+            posterUrl: detail.item.posterUrl,
+            title: detail.item.title,
+            metadataLine: movieMetadataLine(detail),
+            voteAverage: detail.item.voteAverage,
+            genres: detail.item.genres,
             onGenreTap: (genre) =>
                 context.push(AppRoutes.genreListing(genre.id, MediaType.movie)),
           ),
@@ -69,9 +88,10 @@ class MovieDetailContent extends StatelessWidget {
             0,
           ),
           sliver: SliverToBoxAdapter(
-            child: MovieActionRow(
+            child: MediaDetailActionRow(
               mediaKey: mediaKey,
               userLibraryRepository: userLibraryRepository,
+              mediaDetail: detail,
               // TODO(url_launcher): open the YouTube app/browser once
               // that dependency is discussed and added.
               onPlayTrailer: (trailer) =>
@@ -86,6 +106,7 @@ class MovieDetailContent extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: WhereToWatchSection(
+            providers: detail.watchProviders,
             // TODO(url_launcher): open the provider's link once that
             // dependency is discussed and added.
             onProviderTap: (link) => ScaffoldMessenger.of(
@@ -93,12 +114,20 @@ class MovieDetailContent extends StatelessWidget {
             ).showSnackBar(SnackBar(content: Text('Would open: $link'))),
           ),
         ),
-        const SliverToBoxAdapter(child: MovieSynopsisSection()),
+        SliverToBoxAdapter(
+          child: MediaSynopsisSection(
+            overview: detail.overview,
+            tagline: detail.tagline,
+          ),
+        ),
         // TODO: onPersonTap/onSeeFullCastTap → D3/H3 once they're built.
-        const SliverToBoxAdapter(child: MovieCastRow()),
+        SliverToBoxAdapter(
+          child: MediaCastRow(cast: detail.cast, crew: detail.crew),
+        ),
         SliverToBoxAdapter(
           key: similarSectionKey,
-          child: MovieSimilarSection(
+          child: MediaSimilarSection(
+            similar: detail.similar,
             onItemTap: (item) => context.push(AppRoutes.movieDetail(item.id)),
           ),
         ),

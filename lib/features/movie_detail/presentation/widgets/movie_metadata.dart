@@ -1,0 +1,25 @@
+import '../../../../core/domain/entities/media_detail.dart';
+
+/// D1's own metadata-line formatting — "2019 · 2 h 10 min · PG-13"
+/// (`docs/SCREENS.md` D1). Kept here, not in the now-generic
+/// `MediaDetailHeader`/`MediaDetailTitleBlock` (`shared/widgets/
+/// media_detail/`): D2's own line ("2022–2024 · 3 seasons · 24
+/// episodes · TV-14") is different enough per-field logic that each
+/// screen formats its own string and hands the header an already-built
+/// one, rather than the shared widget switching on media type itself.
+String movieMetadataLine(MovieDetail detail) {
+  final year = detail.releaseDate?.year;
+  final runtime = detail.runtimeMinutes;
+  final certification = detail.certification;
+  return [
+    if (year != null) '$year',
+    if (runtime != null) _formatRuntime(runtime),
+    ?certification,
+  ].join(' · ');
+}
+
+String _formatRuntime(int minutes) {
+  final h = minutes ~/ 60;
+  final m = minutes % 60;
+  return h > 0 ? '$h h $m min' : '$m min';
+}
