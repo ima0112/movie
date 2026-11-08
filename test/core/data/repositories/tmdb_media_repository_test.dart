@@ -140,6 +140,37 @@ void main() {
       expect(adapter.requestedPaths, isEmpty);
       expect((result as Success<List<MediaItem>>).value, isEmpty);
     });
+
+    test('forYou/becauseYouLike -> an empty success, not a thrown '
+        'UnimplementedError (neither has a taste profile wired in yet, '
+        'but DiscoverCubit never actually requests them today)', () async {
+      final forYou = await repository.getCarouselSection(
+        CarouselSection.forYou,
+      );
+      final becauseYouLike = await repository.getCarouselSection(
+        CarouselSection.becauseYouLike,
+      );
+
+      expect(adapter.requestedPaths, isEmpty);
+      expect((forYou as Success<List<MediaItem>>).value, isEmpty);
+      expect((becauseYouLike as Success<List<MediaItem>>).value, isEmpty);
+    });
+
+    test('trending/topRated with type: null -> an empty success, not a '
+        'thrown UnimplementedError (neither section has an "All" segment '
+        'equivalent, but this never actually happens via DiscoverCubit)',
+        () async {
+      final trending = await repository.getCarouselSection(
+        CarouselSection.trending,
+      );
+      final topRated = await repository.getCarouselSection(
+        CarouselSection.topRated,
+      );
+
+      expect(adapter.requestedPaths, isEmpty);
+      expect((trending as Success<List<MediaItem>>).value, isEmpty);
+      expect((topRated as Success<List<MediaItem>>).value, isEmpty);
+    });
   });
 
   group('detail', () {
