@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../core/domain/entities/media_type.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
+import '../features/my_list/presentation/screens/my_list_screen.dart';
 import 'root_shell.dart';
 
 /// Route paths, kept next to the routes that define them so features
@@ -68,9 +69,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/my-list',
-              // TODO: → B4 (My List) once it's built.
-              builder: (context, state) =>
-                  const _RootPlaceholder(title: 'My List'),
+              builder: (context, state) => const MyListScreen(),
             ),
           ],
         ),
