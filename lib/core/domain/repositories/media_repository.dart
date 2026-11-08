@@ -5,6 +5,7 @@ import '../entities/media_item.dart';
 import '../entities/media_key.dart';
 import '../entities/media_type.dart';
 import '../entities/result.dart';
+import '../entities/season_summary.dart';
 
 /// One of Discover's named carousels.
 ///
@@ -70,6 +71,12 @@ abstract interface class MediaRepository {
 
   /// D1 (movie) / D2 (TV show) full detail for one catalog item.
   Future<Result<MediaDetail>> detail(MediaKey key);
+
+  /// H4 (season sheet), fetched on demand once a D2 "Seasons" row is
+  /// tapped — never bundled into [detail]'s own `TvShowDetail.seasons`
+  /// (`docs/DECISIONS.md` §2: "seasons on demand via
+  /// `/tv/{id}/season/{n}`").
+  Future<Result<SeasonDetail>> season(int tvId, int seasonNumber);
 
   /// B2's typing-state `/search/multi` — matches on title.
   ///

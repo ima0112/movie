@@ -9,6 +9,7 @@ import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/domain/entities/video.dart';
 import '../../../../core/domain/entities/watch_providers.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
@@ -118,6 +119,83 @@ class FakeMediaRepository implements MediaRepository {
     name: 'Tony McNamara',
     profilePath: null,
     knownForDepartment: 'Writing',
+  );
+
+  // Cast/crew/creators shared across the D2 sample details below — ids
+  // 2000+ to stay clear of the D1 block above.
+  static const _christopherStorer = Person(
+    id: 2001,
+    name: 'Christopher Storer',
+    profilePath: null,
+    knownForDepartment: 'Directing',
+  );
+  static const _jeremyAllenWhite = Person(
+    id: 2002,
+    name: 'Jeremy Allen White',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+  static const _ayoEdebiri = Person(
+    id: 2003,
+    name: 'Ayo Edebiri',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+  static const _ebonMossBachrach = Person(
+    id: 2004,
+    name: 'Ebon Moss-Bachrach',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+
+  static const _nicPizzolatto = Person(
+    id: 2005,
+    name: 'Nic Pizzolatto',
+    profilePath: null,
+    knownForDepartment: 'Writing',
+  );
+  static const _matthewMcConaughey = Person(
+    id: 2006,
+    name: 'Matthew McConaughey',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+  static const _woodyHarrelson = Person(
+    id: 2007,
+    name: 'Woody Harrelson',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+  static const _jodieFoster = Person(
+    id: 2008,
+    name: 'Jodie Foster',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+
+  static const _ericKripke = Person(
+    id: 2009,
+    name: 'Eric Kripke',
+    profilePath: null,
+    knownForDepartment: 'Writing',
+  );
+  static const _karlUrban = Person(
+    id: 2010,
+    name: 'Karl Urban',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+  static const _jackQuaid = Person(
+    id: 2011,
+    name: 'Jack Quaid',
+    profilePath: null,
+    knownForDepartment: 'Acting',
+  );
+  static const _antonyStarr = Person(
+    id: 2012,
+    name: 'Antony Starr',
+    profilePath: null,
+    knownForDepartment: 'Acting',
   );
 
   static final List<Movie> _movies = [
@@ -440,6 +518,428 @@ class FakeMediaRepository implements MediaRepository {
     );
   }
 
+  /// D2 sample detail data, covering the three statuses the "Seasons"
+  /// section needs to exercise: an airing show with several seasons
+  /// (The Boys), an ended one (True Detective), and one whose own
+  /// season list includes a special season (The Bear's Season 0).
+  /// Keyed by the [TvShow.id]s above; TV shows without an entry here
+  /// fall back to [_genericTvDetail].
+  static final Map<int, TvShowDetail> _tvShowDetails = {
+    101: TvShowDetail(
+      item: _tvShows[0], // The Bear
+      overview:
+          'A young chef from the fine dining world returns to Chicago to '
+          'run his family\'s Italian beef sandwich shop after a family '
+          'tragedy.',
+      cast: const [
+        CastMember(
+          person: _jeremyAllenWhite,
+          character: 'Carmen "Carmy" Berzatto',
+          order: 0,
+        ),
+        CastMember(person: _ayoEdebiri, character: 'Sydney Adamu', order: 1),
+        CastMember(
+          person: _ebonMossBachrach,
+          character: 'Richard "Richie" Jerimovich',
+          order: 2,
+        ),
+      ],
+      crew: const [
+        CrewMember(
+          person: _christopherStorer,
+          job: 'Director',
+          department: 'Directing',
+        ),
+      ],
+      videos: const [
+        Video(
+          key: 'yK_sU_qkPlo',
+          site: 'YouTube',
+          type: 'Trailer',
+          name: 'Official Trailer',
+        ),
+      ],
+      similar: [_tvShows[3]], // Hacks
+      imdbId: 'tt14452776',
+      tagline: null,
+      status: 'Returning Series',
+      watchProviders: const WatchProviders(
+        flatrate: ['Hulu'],
+        rent: [],
+        buy: [],
+        link: 'https://www.themoviedb.org/tv/136315-the-bear/watch',
+      ),
+      creators: const [_christopherStorer],
+      seasons: [
+        SeasonSummary(
+          seasonNumber: 0,
+          name: 'Specials',
+          episodeCount: 1,
+          posterPath: null,
+          airDate: DateTime(2022, 6, 23),
+        ),
+        SeasonSummary(
+          seasonNumber: 1,
+          name: 'Season 1',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2022, 6, 23),
+        ),
+        SeasonSummary(
+          seasonNumber: 2,
+          name: 'Season 2',
+          episodeCount: 10,
+          posterPath: null,
+          airDate: DateTime(2023, 6, 22),
+        ),
+        SeasonSummary(
+          seasonNumber: 3,
+          name: 'Season 3',
+          episodeCount: 10,
+          posterPath: null,
+          airDate: DateTime(2024, 6, 27),
+        ),
+      ],
+      numberOfEpisodes: 29,
+      episodeRuntimeMinutes: 30,
+      firstAirDate: DateTime(2022, 6, 23),
+      lastAirDate: DateTime(2024, 6, 27),
+      inProduction: true,
+      certification: 'TV-MA',
+    ),
+    103: TvShowDetail(
+      item: _tvShows[2], // True Detective
+      overview:
+          'Seasonal anthology series in which police investigations unearth '
+          'the personal and professional secrets of those involved, both '
+          'within and outside the law.',
+      cast: const [
+        CastMember(
+          person: _matthewMcConaughey,
+          character: 'Rust Cohle',
+          order: 0,
+        ),
+        CastMember(person: _woodyHarrelson, character: 'Marty Hart', order: 1),
+        CastMember(person: _jodieFoster, character: 'Liz Danvers', order: 2),
+      ],
+      crew: const [
+        CrewMember(
+          person: _nicPizzolatto,
+          job: 'Writer',
+          department: 'Writing',
+        ),
+      ],
+      videos: const [
+        Video(
+          key: 'HTzSfwl8ShU',
+          site: 'YouTube',
+          type: 'Trailer',
+          name: 'Official Trailer',
+        ),
+      ],
+      similar: [_tvShows[4]], // Shōgun
+      imdbId: 'tt2356777',
+      tagline: null,
+      status: 'Ended',
+      watchProviders: const WatchProviders(
+        flatrate: ['Max'],
+        rent: [],
+        buy: [],
+        link: 'https://www.themoviedb.org/tv/46648-true-detective/watch',
+      ),
+      creators: const [_nicPizzolatto],
+      seasons: [
+        SeasonSummary(
+          seasonNumber: 1,
+          name: 'Season 1',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2014, 1, 12),
+        ),
+        SeasonSummary(
+          seasonNumber: 2,
+          name: 'Season 2',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2015, 6, 21),
+        ),
+        SeasonSummary(
+          seasonNumber: 3,
+          name: 'Season 3',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2019, 1, 13),
+        ),
+        SeasonSummary(
+          seasonNumber: 4,
+          name: 'Night Country',
+          episodeCount: 6,
+          posterPath: null,
+          airDate: DateTime(2024, 1, 14),
+        ),
+      ],
+      numberOfEpisodes: 30,
+      episodeRuntimeMinutes: 55,
+      firstAirDate: DateTime(2014, 1, 12),
+      lastAirDate: DateTime(2024, 2, 18),
+      inProduction: false,
+      certification: 'TV-MA',
+    ),
+    106: TvShowDetail(
+      item: _tvShows[5], // The Boys
+      overview:
+          'A group of vigilantes set out to take down corrupt superheroes '
+          'who abuse their superpowers.',
+      cast: const [
+        CastMember(person: _karlUrban, character: 'Billy Butcher', order: 0),
+        CastMember(person: _jackQuaid, character: 'Hughie Campbell', order: 1),
+        CastMember(person: _antonyStarr, character: 'Homelander', order: 2),
+      ],
+      crew: const [
+        CrewMember(person: _ericKripke, job: 'Writer', department: 'Writing'),
+      ],
+      videos: const [
+        Video(
+          key: 'aHjpOzsQ9YI',
+          site: 'YouTube',
+          type: 'Trailer',
+          name: 'Official Trailer',
+        ),
+      ],
+      similar: [_tvShows[1]], // Fallout
+      imdbId: 'tt1190634',
+      tagline: null,
+      status: 'Returning Series',
+      watchProviders: const WatchProviders(
+        flatrate: ['Amazon Prime Video'],
+        rent: [],
+        buy: [],
+        link: 'https://www.themoviedb.org/tv/76479-the-boys/watch',
+      ),
+      creators: const [_ericKripke],
+      seasons: [
+        SeasonSummary(
+          seasonNumber: 1,
+          name: 'Season 1',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2019, 7, 26),
+        ),
+        SeasonSummary(
+          seasonNumber: 2,
+          name: 'Season 2',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2020, 9, 4),
+        ),
+        SeasonSummary(
+          seasonNumber: 3,
+          name: 'Season 3',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2022, 6, 3),
+        ),
+        SeasonSummary(
+          seasonNumber: 4,
+          name: 'Season 4',
+          episodeCount: 8,
+          posterPath: null,
+          airDate: DateTime(2024, 6, 13),
+        ),
+      ],
+      numberOfEpisodes: 32,
+      episodeRuntimeMinutes: 60,
+      firstAirDate: DateTime(2019, 7, 26),
+      lastAirDate: DateTime(2024, 7, 18),
+      inProduction: true,
+      certification: 'TV-MA',
+    ),
+  };
+
+  /// The fallback for a TV show id with no entry in [_tvShowDetails]:
+  /// same [TvShow], but no cast/crew/seasons/watch providers data yet —
+  /// mirrors [_genericDetail]'s own movie fallback.
+  TvShowDetail _genericTvDetail(TvShow show) {
+    return TvShowDetail(
+      item: show,
+      overview: '',
+      cast: const [],
+      crew: const [],
+      videos: const [],
+      similar: const [],
+      imdbId: null,
+      tagline: null,
+      status: show.releaseDate == null ? 'In Production' : 'Returning Series',
+      watchProviders: WatchProviders.empty,
+      creators: const [],
+      seasons: const [],
+      numberOfEpisodes: 0,
+      episodeRuntimeMinutes: null,
+      firstAirDate: show.releaseDate,
+      lastAirDate: null,
+      inProduction: false,
+      certification: null,
+    );
+  }
+
+  /// H4's own on-demand fetch — only a couple of representative
+  /// episodes per season, not every one [SeasonSummary.episodeCount]
+  /// above claims, the same "enough to exercise the screen, not a full
+  /// catalog" spirit as [_movieDetails]. Keyed by tv id, then season
+  /// number; a season/show with no entry here is a [Failure] from
+  /// [season], same as an unknown movie id from [detail].
+  static final Map<int, Map<int, SeasonDetail>> _seasonDetails = {
+    101: {
+      // The Bear
+      0: SeasonDetail(
+        seasonNumber: 0,
+        name: 'Specials',
+        overview: 'Behind-the-scenes looks and bonus footage from the kitchen.',
+        episodes: [
+          Episode(
+            episodeNumber: 1,
+            name: 'Behind the Bear',
+            overview:
+                'A look at how the kitchen crew pulled off the first '
+                'season.',
+            stillPath: null,
+            airDate: DateTime(2022, 6, 23),
+            runtimeMinutes: 20,
+          ),
+        ],
+      ),
+      1: SeasonDetail(
+        seasonNumber: 1,
+        name: 'Season 1',
+        overview:
+            'Carmy returns home to Chicago to run his family\'s Italian '
+            'beef sandwich shop after a heartbreaking death in the family.',
+        episodes: [
+          Episode(
+            episodeNumber: 1,
+            name: 'System',
+            overview: 'Carmy tries to bring order to the kitchen.',
+            stillPath: null,
+            airDate: DateTime(2022, 6, 23),
+            runtimeMinutes: 30,
+          ),
+          Episode(
+            episodeNumber: 2,
+            name: 'Hands',
+            overview: 'The crew preps for a packed service.',
+            stillPath: null,
+            airDate: DateTime(2022, 6, 23),
+            runtimeMinutes: 27,
+          ),
+        ],
+      ),
+    },
+    103: {
+      // True Detective
+      1: SeasonDetail(
+        seasonNumber: 1,
+        name: 'Season 1',
+        overview:
+            'Two detectives investigate a ritualistic murder in '
+            'Louisiana, with the case unraveling over 17 years.',
+        episodes: [
+          Episode(
+            episodeNumber: 1,
+            name: 'The Long Bright Dark',
+            overview: 'Detectives Hart and Cohle recall their 1995 case.',
+            stillPath: null,
+            airDate: DateTime(2014, 1, 12),
+            runtimeMinutes: 58,
+          ),
+          Episode(
+            episodeNumber: 2,
+            name: 'Seeing Things',
+            overview: 'Cohle\'s visions lead to a possible suspect.',
+            stillPath: null,
+            airDate: DateTime(2014, 1, 19),
+            runtimeMinutes: 52,
+          ),
+        ],
+      ),
+      4: SeasonDetail(
+        seasonNumber: 4,
+        name: 'Night Country',
+        overview:
+            'Police investigate the disappearance of eight men from a '
+            'remote Alaskan research station.',
+        episodes: [
+          Episode(
+            episodeNumber: 1,
+            name: 'Part 1',
+            overview: 'The men of the Tsalal research station vanish.',
+            stillPath: null,
+            airDate: DateTime(2024, 1, 14),
+            runtimeMinutes: 56,
+          ),
+          Episode(
+            episodeNumber: 2,
+            name: 'Part 2',
+            overview: 'Danvers and Navarro clash over the investigation.',
+            stillPath: null,
+            airDate: DateTime(2024, 1, 21),
+            runtimeMinutes: 51,
+          ),
+        ],
+      ),
+    },
+    106: {
+      // The Boys
+      1: SeasonDetail(
+        seasonNumber: 1,
+        name: 'Season 1',
+        overview:
+            'Hughie Campbell joins Billy Butcher\'s crusade to expose the '
+            'corruption of Vought\'s superheroes.',
+        episodes: [
+          Episode(
+            episodeNumber: 1,
+            name: 'The Name of the Game',
+            overview: 'Hughie\'s girlfriend is killed by a Supe.',
+            stillPath: null,
+            airDate: DateTime(2019, 7, 26),
+            runtimeMinutes: 61,
+          ),
+          Episode(
+            episodeNumber: 2,
+            name: 'Cherry',
+            overview: 'Hughie wrestles with what to do next.',
+            stillPath: null,
+            airDate: DateTime(2019, 7, 26),
+            runtimeMinutes: 58,
+          ),
+        ],
+      ),
+      4: SeasonDetail(
+        seasonNumber: 4,
+        name: 'Season 4',
+        overview: 'Homelander tightens his grip as the Boys race against time.',
+        episodes: [
+          Episode(
+            episodeNumber: 1,
+            name: 'Department of Dirty Tricks',
+            overview: 'The team regroups after a devastating loss.',
+            stillPath: null,
+            airDate: DateTime(2024, 6, 13),
+            runtimeMinutes: 64,
+          ),
+          Episode(
+            episodeNumber: 2,
+            name: 'Life Among the Septics',
+            overview: 'Butcher confronts his own mortality.',
+            stillPath: null,
+            airDate: DateTime(2024, 6, 13),
+            runtimeMinutes: 59,
+          ),
+        ],
+      ),
+    },
+  };
+
   @override
   Future<Result<List<MediaItem>>> getHeroItems({MediaType? type}) async {
     await Future.delayed(_delay);
@@ -478,22 +978,44 @@ class FakeMediaRepository implements MediaRepository {
   Future<Result<MediaDetail>> detail(MediaKey key) async {
     await Future.delayed(_delay);
 
-    if (key.type != MediaType.movie) {
-      return const Failure('TV show detail is not implemented yet.');
-    }
+    switch (key.type) {
+      case MediaType.movie:
+        Movie? movie;
+        for (final m in _movies) {
+          if (m.id == key.tmdbId) {
+            movie = m;
+            break;
+          }
+        }
+        if (movie == null) {
+          return Failure('No movie found for id ${key.tmdbId}.');
+        }
+        return Success(_movieDetails[key.tmdbId] ?? _genericDetail(movie));
 
-    Movie? movie;
-    for (final m in _movies) {
-      if (m.id == key.tmdbId) {
-        movie = m;
-        break;
-      }
+      case MediaType.tvShow:
+        TvShow? show;
+        for (final s in _tvShows) {
+          if (s.id == key.tmdbId) {
+            show = s;
+            break;
+          }
+        }
+        if (show == null) {
+          return Failure('No TV show found for id ${key.tmdbId}.');
+        }
+        return Success(_tvShowDetails[key.tmdbId] ?? _genericTvDetail(show));
     }
-    if (movie == null) {
-      return Failure('No movie found for id ${key.tmdbId}.');
-    }
+  }
 
-    return Success(_movieDetails[key.tmdbId] ?? _genericDetail(movie));
+  @override
+  Future<Result<SeasonDetail>> season(int tvId, int seasonNumber) async {
+    await Future.delayed(_delay);
+
+    final season = _seasonDetails[tvId]?[seasonNumber];
+    if (season == null) {
+      return Failure('No season $seasonNumber found for TV show id $tvId.');
+    }
+    return Success(season);
   }
 
   @override

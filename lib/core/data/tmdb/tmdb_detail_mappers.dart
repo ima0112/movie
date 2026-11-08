@@ -123,10 +123,18 @@ TvShowDetail mediaDetailFromTvDto(
     firstAirDate: parseTmdbDate(dto.firstAirDate),
     lastAirDate: parseTmdbDate(dto.lastAirDate),
     inProduction: dto.inProduction,
-    certification: _certificationFromContentRatings(
-      dto.contentRatings,
-      region,
-    ),
+    certification: _certificationFromContentRatings(dto.contentRatings, region),
+  );
+}
+
+/// `/tv/{id}/season/{n}` → [SeasonDetail] — H4's own fetch
+/// (`MediaRepository.season`), built on top of [episodesFromSeasonDetail].
+SeasonDetail seasonDetailFromDto(TmdbSeasonDetailDto dto) {
+  return SeasonDetail(
+    seasonNumber: dto.seasonNumber,
+    name: dto.name,
+    overview: dto.overview,
+    episodes: episodesFromSeasonDetail(dto),
   );
 }
 

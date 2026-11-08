@@ -12,6 +12,7 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/core/network/api_client.dart';
 
@@ -156,39 +157,45 @@ void main() {
       expect((becauseYouLike as Success<List<MediaItem>>).value, isEmpty);
     });
 
-    test('trending/topRated with type: null -> an empty success, not a '
-        'thrown UnimplementedError (neither section has an "All" segment '
-        'equivalent, but this never actually happens via DiscoverCubit)',
-        () async {
-      final trending = await repository.getCarouselSection(
-        CarouselSection.trending,
-      );
-      final topRated = await repository.getCarouselSection(
-        CarouselSection.topRated,
-      );
+    test(
+      'trending/topRated with type: null -> an empty success, not a '
+      'thrown UnimplementedError (neither section has an "All" segment '
+      'equivalent, but this never actually happens via DiscoverCubit)',
+      () async {
+        final trending = await repository.getCarouselSection(
+          CarouselSection.trending,
+        );
+        final topRated = await repository.getCarouselSection(
+          CarouselSection.topRated,
+        );
 
-      expect(adapter.requestedPaths, isEmpty);
-      expect((trending as Success<List<MediaItem>>).value, isEmpty);
-      expect((topRated as Success<List<MediaItem>>).value, isEmpty);
-    });
+        expect(adapter.requestedPaths, isEmpty);
+        expect((trending as Success<List<MediaItem>>).value, isEmpty);
+        expect((topRated as Success<List<MediaItem>>).value, isEmpty);
+      },
+    );
   });
 
   group('detail', () {
-    test('movie key -> /movie/{id} with the right append_to_response',
-        () async {
-      final result = await repository.detail(
-        const MediaKey(type: MediaType.movie, tmdbId: 693134),
-      );
+    test(
+      'movie key -> /movie/{id} with the right append_to_response',
+      () async {
+        final result = await repository.detail(
+          const MediaKey(type: MediaType.movie, tmdbId: 693134),
+        );
 
-      expect(adapter.requestedPaths, ['/movie/693134']);
-      expect(adapter.lastQueryParameters?['append_to_response'],
-          'credits,videos,similar,release_dates,watch/providers');
-      expect(result, isA<Success<MediaDetail>>());
-      expect(
-        (result as Success<MediaDetail>).value.item.title,
-        'Dune: Part Two',
-      );
-    });
+        expect(adapter.requestedPaths, ['/movie/693134']);
+        expect(
+          adapter.lastQueryParameters?['append_to_response'],
+          'credits,videos,similar,release_dates,watch/providers',
+        );
+        expect(result, isA<Success<MediaDetail>>());
+        expect(
+          (result as Success<MediaDetail>).value.item.title,
+          'Dune: Part Two',
+        );
+      },
+    );
 
     test('tv key -> /tv/{id} with the right append_to_response', () async {
       final result = await repository.detail(
@@ -196,12 +203,24 @@ void main() {
       );
 
       expect(adapter.requestedPaths, ['/tv/94997']);
-      expect(adapter.lastQueryParameters?['append_to_response'],
-          'credits,videos,similar,content_ratings,watch/providers');
       expect(
-        (result as Success<MediaDetail>).value.item.title,
-        'Signal Lost',
+        adapter.lastQueryParameters?['append_to_response'],
+        'credits,videos,similar,content_ratings,watch/providers',
       );
+      expect((result as Success<MediaDetail>).value.item.title, 'Signal Lost');
+    });
+  });
+
+  group('season', () {
+    test('-> /tv/{tvId}/season/{n}', () async {
+      final result = await repository.season(94997, 1);
+
+      expect(adapter.requestedPaths, ['/tv/94997/season/1']);
+      expect(result, isA<Success<SeasonDetail>>());
+      final season = (result as Success<SeasonDetail>).value;
+      expect(season.name, 'Season 1');
+      expect(season.overview, isNotEmpty);
+      expect(season.episodes, hasLength(2));
     });
   });
 

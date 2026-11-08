@@ -10,6 +10,7 @@ TmdbSeasonDetailDto _$TmdbSeasonDetailDtoFromJson(Map<String, dynamic> json) =>
     TmdbSeasonDetailDto(
       seasonNumber: (json['season_number'] as num).toInt(),
       name: json['name'] as String,
+      overview: json['overview'] as String? ?? '',
       episodes: (json['episodes'] as List<dynamic>)
           .map((e) => TmdbEpisodeDto.fromJson(e as Map<String, dynamic>))
           .toList(),
