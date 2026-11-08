@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:injectable/injectable.dart';
 
 import '../../../core/domain/entities/discover_filter.dart';
@@ -17,7 +19,11 @@ import 'vibe_catalog.dart';
 /// Per-call configuration [MatchEngine.resolve] needs beyond the
 /// [MatchQuery] itself.
 class MatchOptions {
-  const MatchOptions({required this.vibeCatalog, this.alternativesCount = 3});
+  const MatchOptions({
+    required this.vibeCatalog,
+    this.alternativesCount = 3,
+    this.randomizeTop,
+  });
 
   /// Resolves each `MatchQuery.vibeWeights` id back to a [Vibe], for that
   /// vibe's own genre/keyword/year/rating rule. Not constructor-injected
@@ -27,8 +33,22 @@ class MatchOptions {
   final VibeCatalog vibeCatalog;
 
   /// `docs/DECISIONS.md`'s own "alternatives[3–4]" — a range, not a
-  /// fixed count; this picks the low end as the default.
+  /// fixed count; this picks the low end as the default. Ignored when
+  /// [randomizeTop] is set — see that field's own doc comment.
   final int alternativesCount;
+
+  /// When set, [MatchEngineImpl] picks the winner at random from among
+  /// the top [randomizeTop] scored candidates instead of deterministically
+  /// the single best one — `docs/DECISIONS.md`'s own "Surprise me"
+  /// closing line: "The engine picks with some randomness among the
+  /// top-5 scored so 'Surprise me' doesn't repeat." Every other
+  /// candidate from that same pool becomes `alternatives`, so the full
+  /// pool (winner + alternatives) is exactly `min(randomizeTop,
+  /// however many candidates actually came back)` — `SurpriseCubit
+  /// .another()` rotates through that whole pool locally rather than
+  /// calling [MatchEngine.resolve] again. `null` (the Matcher's own
+  /// case, unaffected by this) keeps today's deterministic behavior.
+  final int? randomizeTop;
 }
 
 /// Pure domain service — `docs/DECISIONS.md` section 5: "Pure domain
@@ -92,9 +112,15 @@ abstract interface class MatchEngine {
 /// (wired and honored by `FakeMediaRepository.discover`).
 @LazySingleton(as: MatchEngine)
 class MatchEngineImpl implements MatchEngine {
-  const MatchEngineImpl(this._mediaRepository);
+  MatchEngineImpl(this._mediaRepository, [Random? random])
+    : _random = random ?? Random();
 
   final MediaRepository _mediaRepository;
+
+  /// Injectable (defaults to a real one) so [MatchOptions.randomizeTop]'s
+  /// winner pick is reproducible in tests — see this class's own test
+  /// file for a seeded instance.
+  final Random _random;
 
   /// Relaxation step 3's runtime increase, in minutes. Not a value
   /// `docs/DECISIONS.md` specifies ("Raise runtime / season limit" names
@@ -136,6 +162,7 @@ class MatchEngineImpl implements MatchEngine {
       currentQuery,
       relaxationsApplied,
       options.alternativesCount,
+      options.randomizeTop,
     );
   }
 
@@ -231,13 +258,27 @@ class MatchEngineImpl implements MatchEngine {
     MatchQuery query,
     List<Relaxation> relaxationsApplied,
     int alternativesCount,
+    int? randomizeTop,
   ) {
-    final winner = scored.first;
-    final alternatives = scored
-        .skip(1)
-        .take(alternativesCount)
-        .map((c) => c.item)
-        .toList();
+    final _ScoredCandidate winner;
+    final List<MediaItem> alternatives;
+
+    if (randomizeTop != null && randomizeTop > 1) {
+      final poolSize = min(randomizeTop, scored.length);
+      final winnerIndex = _random.nextInt(poolSize);
+      winner = scored[winnerIndex];
+      alternatives = [
+        for (var i = 0; i < poolSize; i++)
+          if (i != winnerIndex) scored[i].item,
+      ];
+    } else {
+      winner = scored.first;
+      alternatives = scored
+          .skip(1)
+          .take(alternativesCount)
+          .map((c) => c.item)
+          .toList();
+    }
 
     final satisfaction = [
       for (final entry in query.vibeIdsByParticipant.entries)
