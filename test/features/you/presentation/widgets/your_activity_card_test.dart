@@ -140,5 +140,29 @@ void main() {
         expect(find.text('1'), findsOneWidget); // Favorites.
       },
     );
+
+    testWidgets(
+      'clearAll() on UserLibraryRepository zeroes an already-mounted '
+      'card\'s numbers, with no restart',
+      (tester) async {
+        final repository = InMemoryUserLibraryRepository();
+        await repository.upsert(
+          UserMediaEntry(
+            title: 'Test Title',
+            key: _dune,
+            watchedAt: DateTime(2024, 1, 1),
+            runtimeMinutes: 166,
+          ),
+        );
+        await _pump(tester, repository);
+        expect(find.text('3'), findsOneWidget);
+
+        await repository.clearAll();
+        await tester.pumpAndSettle();
+
+        expect(find.text('3'), findsNothing);
+        expect(find.text('0'), findsWidgets);
+      },
+    );
   });
 }

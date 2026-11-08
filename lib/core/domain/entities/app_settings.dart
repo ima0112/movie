@@ -15,6 +15,12 @@ class AppSettings {
   /// and certifications against.
   final String regionCode;
 
+  AppSettings copyWith({String? languageCode, String? regionCode}) =>
+      AppSettings(
+        languageCode: languageCode ?? this.languageCode,
+        regionCode: regionCode ?? this.regionCode,
+      );
+
   @override
   bool operator ==(Object other) =>
       other is AppSettings &&

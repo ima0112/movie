@@ -44,6 +44,19 @@ class UserMediaEntry {
   /// was created or last re-saved — same "capture what's on hand" rule
   /// as [genres], and for the same reason: "My List" and Export My List
   /// need to show/write a real title with no network round trip.
+  ///
+  /// Because it's a snapshot, it keeps whatever language TMDB returned
+  /// it in **at that moment** — not the user's *current* Settings
+  /// language (`AppSettings.languageCode`, `settings-screen` branch). A
+  /// title favorited in Spanish still reads in Spanish in My List/the
+  /// exported JSON after the user later switches Settings to English;
+  /// it only picks up the new language the next time this exact entry
+  /// is favorited/watch-latered/watched again (which re-saves [title]
+  /// from whatever `MediaItem`/`MediaDetail` is on hand then). This is
+  /// a deliberate consequence of the "capture what's on hand" rule
+  /// above, not a bug to fix — re-fetching every saved title on every
+  /// language change would mean a network round trip per entry just to
+  /// keep My List's own offline snapshot in sync.
   final String title;
 
   final bool isFavorite;
