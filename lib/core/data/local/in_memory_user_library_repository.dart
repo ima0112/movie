@@ -1,25 +1,18 @@
 import 'dart:async';
 
-import 'package:injectable/injectable.dart';
-
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
 import '../../domain/entities/user_media_entry.dart';
 import '../../domain/repositories/user_library_repository.dart';
 
-// TODO(drift): replace with a persistent implementation (SQLite via
-// drift, `user_media` table — see docs/STRUCTURE.md) once My List is
-// built. Everything here is lost on app restart.
-/// In-memory stand-in for [UserLibraryRepository].
-///
-/// `@LazySingleton` on purpose, not per-screen: its whole point is that
-/// state survives for as long as the app is open and is the *same* for
-/// every screen that reads it (My List, a detail screen's action row,
-/// Stats...) — a new instance per screen would defeat that entirely. See
-/// the project's CLAUDE.md rule 10 ("Global vs. screen-local Cubits" —
-/// the same lifecycle argument applies to this repository).
-@LazySingleton(as: UserLibraryRepository)
+/// In-memory stand-in for [UserLibraryRepository]. Superseded by
+/// `DriftUserLibraryRepository` (`drift_user_library_repository.dart`) as
+/// the app's real "My List" storage — kept, unannotated, as a fast,
+/// dependency-free test double (see `in_memory_user_library_repository_test.dart`).
+/// Not `@LazySingleton` anymore: only one implementation may be
+/// registered `as: UserLibraryRepository`, or injectable's codegen fails
+/// on the ambiguity.
 class InMemoryUserLibraryRepository implements UserLibraryRepository {
   final Map<MediaKey, UserMediaEntry> _entries = {};
 
@@ -29,19 +22,24 @@ class InMemoryUserLibraryRepository implements UserLibraryRepository {
   final StreamController<void> _changes = StreamController<void>.broadcast();
 
   List<UserMediaEntry> _matching({LibraryTab? tab, MediaType? type}) {
-    return _entries.values.where((entry) {
-      if (type != null && entry.key.type != type) return false;
-      return switch (tab) {
-        null => true,
-        LibraryTab.favorites => entry.isFavorite,
-        LibraryTab.watchLater => entry.isWatchLater,
-        LibraryTab.watched => entry.isWatched,
-      };
-    }).toList(growable: false);
+    return _entries.values
+        .where((entry) {
+          if (type != null && entry.key.type != type) return false;
+          return switch (tab) {
+            null => true,
+            LibraryTab.favorites => entry.isFavorite,
+            LibraryTab.watchLater => entry.isWatchLater,
+            LibraryTab.watched => entry.isWatched,
+          };
+        })
+        .toList(growable: false);
   }
 
   @override
-  Stream<List<UserMediaEntry>> watch({LibraryTab? tab, MediaType? type}) async* {
+  Stream<List<UserMediaEntry>> watch({
+    LibraryTab? tab,
+    MediaType? type,
+  }) async* {
     // A subscriber joining after entries already exist should see them
     // immediately, not just future changes — hence yielding once upfront.
     yield _matching(tab: tab, type: type);

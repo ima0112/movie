@@ -86,6 +86,12 @@ class UserMediaEntries extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  /// Testing-only: pass a `NativeDatabase.memory()` (or any other
+  /// in-memory `QueryExecutor`) so tests never touch a real file on disk
+  /// or need `path_provider`'s platform channel — see
+  /// `drift_user_library_repository_test.dart`.
+  AppDatabase.forTesting(super.executor);
+
   /// Bump this whenever a table changes shape; drift's `onUpgrade`
   /// migration callback (added once there's a schema to migrate away
   /// from) keys off it. Starts at 1 — [UserMediaEntries] is this

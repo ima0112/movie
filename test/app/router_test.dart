@@ -2,11 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/shared/widgets/media_card.dart';
 
 void main() {
-  setUpAll(configureDependencies);
+  setUpAll(() {
+    configureDependencies();
+    // The real DriftUserLibraryRepository needs a native sqlite file via
+    // path_provider, which has no platform channel in `flutter test`'s
+    // host environment — swap in the fast, in-memory test double instead
+    // of exercising real (and here, unavailable) disk I/O. Navigating
+    // into a movie detail screen (below) resolves UserLibraryRepository
+    // via MovieActionRow.
+    getIt.unregister<UserLibraryRepository>();
+    getIt.registerLazySingleton<UserLibraryRepository>(
+      InMemoryUserLibraryRepository.new,
+    );
+  });
 
   testWidgets('the four tabs navigate, and switching back to Discover '
       'keeps its already-loaded state instead of reloading from scratch', (
@@ -86,7 +100,8 @@ void main() {
       // generic fallback, or — D2 not being implemented yet — a TV show
       // that ends in an error state) always renders exactly one way back.
       final carouselCard = find.byWidgetPredicate(
-        (widget) => widget is MediaCard && widget.size == MediaCardSize.carousel,
+        (widget) =>
+            widget is MediaCard && widget.size == MediaCardSize.carousel,
       );
       expect(carouselCard, findsWidgets);
       await tester.tap(carouselCard.first);
