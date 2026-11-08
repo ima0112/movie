@@ -49,6 +49,7 @@ lib/
         result.dart               Result<T> | Failure (Failure carries an optional FailureReason)
       repositories/
         media_repository.dart
+        person_repository.dart
         user_library_repository.dart
         taste_profile_repository.dart
         user_profile_repository.dart
@@ -75,12 +76,16 @@ lib/
                                            forYou/becauseYouLike degrade to an empty list (need
                                            TasteProfileRepository + the still-unbuilt
                                            RecommendationBuilder, F1b)
+        tmdb_person_repository.dart        implements PersonRepository; @real. A second, explicit
+                                           English-language call only when the primary (user-
+                                           language) biography comes back empty.
         user_library_repository_impl.dart
         taste_profile_repository_impl.dart
       (FakeMediaRepository, @Environment('fake'), lives in
       features/discover/data/repositories/ — it implements the same
       MediaRepository but is feature-local, not core/, since nothing
-      outside Discover's own tests constructs it directly)
+      outside Discover's own tests constructs it directly. Same for
+      FakePersonRepository in features/person_detail/data/repositories/.)
 
   shared/
     widgets/
@@ -122,9 +127,13 @@ lib/
       presentation/               (status pill, seasons/creators sections,
                                    season_sheet.dart = H4) + screens/
                                    tv_detail_screen.dart (D2)
-    person_detail/                NOT BUILT YET — no screen, no repository (see
-      presentation/               §2's implementation notes in DECISIONS.md).
-                                   The DTO/mapper/datasource call already exist.
+    person_detail/                cubit/ (PersonDetailCubit) + widgets/ (header,
+      presentation/               biography, known-for, filmography sections +
+      data/                       segmented control) + screens/
+                                   person_detail_screen.dart (D3). data/
+                                   repositories/fake_person_repository.dart —
+                                   feature-local, same reasoning as
+                                   FakeMediaRepository below.
     my_list/
       presentation/               favorites / watch later / watched tabs
     stats/

@@ -1,0 +1,84 @@
+import 'package:flutter/material.dart';
+
+import '../../../../app/router.dart';
+import '../../../../core/domain/entities/person.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import 'known_for.dart';
+import 'person_age_label.dart';
+import 'person_biography_section.dart';
+import 'person_detail_header.dart';
+import 'person_filmography_section.dart';
+import 'person_known_for_section.dart';
+
+/// D3 once `PersonDetailCubit` has loaded — assembles the header,
+/// biography, "Known for", and filmography sections.
+///
+/// [detail] arrives already loaded — same "only the screen's own
+/// top-level `BlocBuilder` reads Cubit state at all" discipline D1/D2's
+/// own content widgets follow (CLAUDE.md rule 9).
+class PersonDetailContent extends StatelessWidget {
+  const PersonDetailContent({
+    super.key,
+    required this.detail,
+    required this.scrollController,
+    required this.headerKey,
+  });
+
+  final PersonDetail detail;
+  final ScrollController scrollController;
+
+  /// Lets the assembling screen measure the header's real height (it
+  /// isn't a fixed fraction of the screen the way D1/D2's full-bleed
+  /// poster header is) to decide when the compact bar should appear.
+  final GlobalKey headerKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      controller: scrollController,
+      padding: EdgeInsets.zero,
+      children: [
+        KeyedSubtree(
+          key: headerKey,
+          child: PersonDetailHeader(
+            person: detail.person,
+            ageLabel: personAgeLabel(detail),
+            placeOfBirth: detail.placeOfBirth,
+          ),
+        ),
+        PersonBiographySection(
+          biography: detail.biography,
+          isEnglishFallback: detail.biographyIsEnglishFallback,
+        ),
+        PersonKnownForSection(
+          items: detail.credits.knownForItems(),
+          onItemTap: (item) => context.pushMediaDetail(item.key),
+        ),
+        PersonFilmographySection(
+          credits: detail.credits,
+          onCreditTap: (credit) => context.pushMediaDetail(credit.item.key),
+        ),
+        const _Footer(),
+      ],
+    );
+  }
+}
+
+class _Footer extends StatelessWidget {
+  const _Footer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+      child: Center(
+        child: Text(
+          'Data from TMDB',
+          style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
+        ),
+      ),
+    );
+  }
+}

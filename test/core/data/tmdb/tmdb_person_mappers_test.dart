@@ -25,7 +25,9 @@ void main() {
     );
 
     expect(detail.person.name, 'Brad Pitt');
+    expect(detail.person.knownForDepartment, 'Acting');
     expect(detail.biography, startsWith('William Bradley Pitt'));
+    expect(detail.biographyIsEnglishFallback, isFalse);
     expect(detail.birthday, DateTime(1963, 12, 18));
     expect(detail.deathday, isNull);
     expect(detail.placeOfBirth, 'Shawnee, Oklahoma, USA');
@@ -61,5 +63,49 @@ void main() {
     expect(detail.credits, isEmpty);
     expect(detail.biography, isEmpty);
     expect(detail.birthday, isNull);
+  });
+
+  group('fallbackBiography', () {
+    TmdbPersonDetailDto dtoWithBiography(String biography) =>
+        TmdbPersonDetailDto.fromJson({
+          'id': 1,
+          'name': 'Someone',
+          'biography': biography,
+          'movie_credits': {'cast': [], 'crew': []},
+          'tv_credits': {'cast': [], 'crew': []},
+        });
+
+    test('used, and flagged, only when the primary biography is empty', () {
+      final detail = personDetailFromDto(
+        dtoWithBiography(''),
+        imagesConfig: const TmdbImagesConfig.fallback(),
+        fallbackBiography: 'English biography.',
+      );
+
+      expect(detail.biography, 'English biography.');
+      expect(detail.biographyIsEnglishFallback, isTrue);
+    });
+
+    test('ignored when the primary biography already has content', () {
+      final detail = personDetailFromDto(
+        dtoWithBiography('Primary-language biography.'),
+        imagesConfig: const TmdbImagesConfig.fallback(),
+        fallbackBiography: 'English biography.',
+      );
+
+      expect(detail.biography, 'Primary-language biography.');
+      expect(detail.biographyIsEnglishFallback, isFalse);
+    });
+
+    test('a person with neither biography stays empty, unflagged', () {
+      final detail = personDetailFromDto(
+        dtoWithBiography(''),
+        imagesConfig: const TmdbImagesConfig.fallback(),
+        fallbackBiography: '',
+      );
+
+      expect(detail.biography, isEmpty);
+      expect(detail.biographyIsEnglishFallback, isFalse);
+    });
   });
 }

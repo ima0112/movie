@@ -22,9 +22,13 @@ import 'package:movies/core/data/local/drift_user_profile_repository.dart'
     as _i311;
 import 'package:movies/core/data/repositories/tmdb_media_repository.dart'
     as _i28;
+import 'package:movies/core/data/repositories/tmdb_person_repository.dart'
+    as _i496;
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart' as _i294;
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart' as _i118;
 import 'package:movies/core/domain/repositories/media_repository.dart' as _i245;
+import 'package:movies/core/domain/repositories/person_repository.dart'
+    as _i263;
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart'
     as _i762;
 import 'package:movies/core/domain/repositories/user_library_repository.dart'
@@ -40,6 +44,8 @@ import 'package:movies/features/explore/data/drift_search_history_repository.dar
 import 'package:movies/features/explore/domain/search_history_repository.dart'
     as _i942;
 import 'package:movies/features/match_engine/domain/match_engine.dart' as _i365;
+import 'package:movies/features/person_detail/data/repositories/fake_person_repository.dart'
+    as _i849;
 
 const String _real = 'real';
 const String _fake = 'fake';
@@ -76,12 +82,23 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i118.TmdbMediaDatasource(gh<_i152.ApiClient>()),
       registerFor: {_real},
     );
+    gh.lazySingleton<_i263.PersonRepository>(
+      () => _i849.FakePersonRepository(),
+      registerFor: {_fake},
+    );
     gh.lazySingleton<_i245.MediaRepository>(
       () => _i661.FakeMediaRepository(),
       registerFor: {_fake},
     );
     gh.lazySingleton<_i245.MediaRepository>(
       () => _i28.TmdbMediaRepository(
+        gh<_i118.TmdbMediaDatasource>(),
+        gh<_i294.TmdbConfigurationService>(),
+      ),
+      registerFor: {_real},
+    );
+    gh.lazySingleton<_i263.PersonRepository>(
+      () => _i496.TmdbPersonRepository(
         gh<_i118.TmdbMediaDatasource>(),
         gh<_i294.TmdbConfigurationService>(),
       ),
