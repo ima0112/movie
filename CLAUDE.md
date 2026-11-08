@@ -49,7 +49,6 @@ ask before inventing it.
    of the SCREENS.md inventory it implements (e.g. "implements B1.
    Discover"). If no entry exists yet, don't build it without first adding
    it to that document.
-
 9. **Granular Bloc rebuilds — no exceptions.** A screen-wide `BlocBuilder`
    wrapping the entire widget tree is not acceptable. Every `BlocBuilder`
    must scope to the smallest widget that actually needs to change:
@@ -67,7 +66,6 @@ ask before inventing it.
      writing the `build()` method, and give each one its own narrowly
      scoped builder. If you can't justify why a `BlocBuilder`'s subtree is
      as large as it is, it's too large.
-
 10. **Global vs. screen-local Cubits — decide by lifecycle, not by tree
     position.** A Cubit is global only if its state must outlive the screen
     that first needed it AND be read/reacted to by other, unrelated screens.
@@ -122,6 +120,25 @@ ask before inventing it.
     Submit the stack with `gt submit --stack` once it's ready. If asked to
     "build screen X", default to proposing this breakdown and building it
     stack-by-stack rather than producing one big diff.
+13. **Domain entity file grouping — group by sealed family or trivial
+    composition, split everything else.** Rule 11 governs presentation
+    widgets; domain entities follow a different logic based on identity
+    and reuse, not line count:
+    - **Group in one file**: a `sealed class` together with its direct
+      variants (e.g. `MediaDetail`/`MovieDetail`/`TvShowDetail` all in
+      `media_detail.dart`) — splitting a sealed family across files hurts
+      readability of the exhaustiveness the compiler is enforcing. Also
+      group a type with tiny (2–3 field) value objects that have no
+      meaning or use outside that type's context (e.g. `CastMember`/
+      `CrewMember`/`MediaCredit` alongside `Person` in `person.dart`).
+    - **Split into its own file**: anything with an identity or lifecycle
+      independent of where it was first introduced — in particular
+      anything reused by more than one other entity or by its own widget/
+      screen (e.g. `Episode` and `SeasonSummary`, which the season sheet
+      consumes on their own; `WatchProviders`, reused by both `MovieDetail`
+      and `TvShowDetail` and likely to grow in v1.2; `Video`).
+    - When unsure, ask: "will this type ever be imported somewhere that
+      doesn't care about the type I grouped it with?" If yes, split it.
 
 ## Code conventions
 
