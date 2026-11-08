@@ -7,6 +7,7 @@ import 'package:movies/core/data/repositories/tmdb_media_repository.dart';
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart';
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -24,6 +25,7 @@ import 'package:movies/core/network/api_client.dart';
 /// `/movie/now_playing`?), not re-proving the mapper itself.
 class _FixtureRoutedAdapter implements HttpClientAdapter {
   final List<String> requestedPaths = [];
+  Map<String, dynamic>? lastQueryParameters;
 
   @override
   Future<ResponseBody> fetch(
@@ -32,12 +34,20 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
     Future<void>? cancelFuture,
   ) async {
     requestedPaths.add(options.path);
+    lastQueryParameters = options.queryParameters;
 
-    final fixture = options.path.startsWith('/tv') || options.path == '/trending/tv/week'
-        ? 'tmdb_tv_popular.json'
-        : options.path == '/trending/all/week'
-        ? 'tmdb_trending_all_week.json'
-        : 'tmdb_movie_now_playing.json';
+    final path = options.path;
+    final fixture = switch (path) {
+      _ when RegExp(r'^/tv/\d+/season/\d+$').hasMatch(path) =>
+        'tmdb_season_detail.json',
+      _ when RegExp(r'^/tv/\d+$').hasMatch(path) => 'tmdb_tv_detail_full.json',
+      _ when RegExp(r'^/movie/\d+$').hasMatch(path) =>
+        'tmdb_movie_detail_full.json',
+      _ when path.startsWith('/tv') || path == '/trending/tv/week' =>
+        'tmdb_tv_popular.json',
+      '/trending/all/week' => 'tmdb_trending_all_week.json',
+      _ => 'tmdb_movie_now_playing.json',
+    };
 
     return ResponseBody.fromString(
       File('test/fixtures/$fixture').readAsStringSync(),
@@ -126,16 +136,39 @@ void main() {
     });
   });
 
-  group('not yet implemented — the repo compiles, but these throw', () {
-    test('detail', () {
+  group('detail', () {
+    test('movie key -> /movie/{id} with the right append_to_response',
+        () async {
+      final result = await repository.detail(
+        const MediaKey(type: MediaType.movie, tmdbId: 693134),
+      );
+
+      expect(adapter.requestedPaths, ['/movie/693134']);
+      expect(adapter.lastQueryParameters?['append_to_response'],
+          'credits,videos,similar,release_dates,watch/providers');
+      expect(result, isA<Success<MediaDetail>>());
       expect(
-        () => repository.detail(
-          const MediaKey(type: MediaType.movie, tmdbId: 1),
-        ),
-        throwsUnimplementedError,
+        (result as Success<MediaDetail>).value.item.title,
+        'Dune: Part Two',
       );
     });
 
+    test('tv key -> /tv/{id} with the right append_to_response', () async {
+      final result = await repository.detail(
+        const MediaKey(type: MediaType.tvShow, tmdbId: 94997),
+      );
+
+      expect(adapter.requestedPaths, ['/tv/94997']);
+      expect(adapter.lastQueryParameters?['append_to_response'],
+          'credits,videos,similar,content_ratings,watch/providers');
+      expect(
+        (result as Success<MediaDetail>).value.item.title,
+        'Signal Lost',
+      );
+    });
+  });
+
+  group('not yet implemented — the repo compiles, but these throw', () {
     test('searchMulti', () {
       expect(() => repository.searchMulti('x'), throwsUnimplementedError);
     });

@@ -1,0 +1,22 @@
+{
+  "season_number": 1,
+  "name": "Season 1",
+  "episodes": [
+    {
+      "episode_number": 1,
+      "name": "Silence",
+      "overview": "The crew notices the first anomaly.",
+      "still_path": "/signal-lost-s1e1.jpg",
+      "air_date": "2024-09-12",
+      "runtime": 54
+    },
+    {
+      "episode_number": 2,
+      "name": "Depth",
+      "overview": "",
+      "still_path": null,
+      "air_date": "",
+      "runtime": null
+    }
+  ]
+}

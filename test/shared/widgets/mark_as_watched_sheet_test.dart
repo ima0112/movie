@@ -58,6 +58,7 @@ TvShowDetail _tvShowDetail({
   firstAirDate: null,
   lastAirDate: null,
   inProduction: false,
+  certification: null,
 );
 
 void main() {

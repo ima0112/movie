@@ -12,16 +12,16 @@ import '../../domain/entities/result.dart';
 import '../../domain/repositories/media_repository.dart';
 import '../../network/dio_failure_mapper.dart';
 import '../tmdb/tmdb_configuration_service.dart';
+import '../tmdb/tmdb_detail_mappers.dart';
 import '../tmdb/tmdb_image_urls.dart';
 import '../tmdb/tmdb_mappers.dart';
 import '../tmdb/tmdb_media_datasource.dart';
 
-/// Discover's (B1) real TMDB-backed [MediaRepository] — the first of the
-/// interface's five methods to leave the fake stand-in behind.
-/// [detail]/[searchMulti]/[discover] stay `UnimplementedError` (their own
-/// TODO each) until their own branches land; `getHeroItems`/
-/// `getCarouselSection` only handle the sections Discover's own
-/// `DiscoverCubit.sectionsBySegment` actually requests.
+/// Discover's (B1) and D1/D2's real TMDB-backed [MediaRepository].
+/// [searchMulti]/[discover] stay `UnimplementedError` (their own TODO)
+/// until their own branches land; `getHeroItems`/`getCarouselSection`
+/// only handle the sections Discover's own `DiscoverCubit.
+/// sectionsBySegment` actually requests.
 @real
 @LazySingleton(as: MediaRepository)
 class TmdbMediaRepository implements MediaRepository {
@@ -29,6 +29,11 @@ class TmdbMediaRepository implements MediaRepository {
 
   final TmdbMediaDatasource _datasource;
   final TmdbConfigurationService _configService;
+
+  /// Same hardcoded `'ES'` default as `LocaleInterceptor`'s own region
+  /// query parameter — no real settings source exists yet (see that
+  /// interceptor's own doc comment).
+  static const _region = 'ES';
 
   /// Fire-and-forget, memoized — see `PosterImage`'s own identical use of
   /// `TmdbConfigurationService` for why this doesn't need an `await`.
@@ -188,10 +193,24 @@ class TmdbMediaRepository implements MediaRepository {
   }
 
   @override
-  Future<Result<MediaDetail>> detail(MediaKey key) {
-    // TODO(tmdb-media-detail): /movie/{id} or /tv/{id} with
-    // append_to_response — a later branch's job.
-    throw UnimplementedError('detail() is not implemented yet.');
+  Future<Result<MediaDetail>> detail(MediaKey key) async {
+    try {
+      final MediaDetail detail = switch (key.type) {
+        MediaType.movie => mediaDetailFromMovieDto(
+          await _datasource.movieDetail(key.tmdbId),
+          imagesConfig: _imagesConfig,
+          region: _region,
+        ),
+        MediaType.tvShow => mediaDetailFromTvDto(
+          await _datasource.tvDetail(key.tmdbId),
+          imagesConfig: _imagesConfig,
+          region: _region,
+        ),
+      };
+      return Success(detail);
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
   }
 
   @override

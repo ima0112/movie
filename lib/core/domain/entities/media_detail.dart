@@ -39,15 +39,33 @@ sealed class MediaDetail {
   final String status;
   final WatchProviders watchProviders;
 
-  /// The trailer button's pick — see `docs/SCREENS.md` D1: "official +
+  /// The user's own language, for [trailer]'s own "+ user's language"
+  /// tier — matches the same `es`/`ES` default `LocaleInterceptor` and
+  /// `TmdbMediaRepository` already fall back to everywhere else, since
+  /// no real settings source exists yet.
+  static const _userLanguage = 'es';
+
+  /// The trailer button's pick — `docs/SCREENS.md` D1: "official +
   /// Trailer + user's language → official → Teaser → first available."
-  /// TODO: this only picks the first YouTube "Trailer"; the full
-  /// selection order isn't implemented yet.
+  /// Only ever a YouTube video (`docs/SCREENS.md` D1: "opens YouTube") —
+  /// a non-YouTube video can't be "played" by this button at all, so it
+  /// never competes with a YouTube one, at any tier.
   Video? get trailer {
-    for (final v in videos) {
-      if (v.isYoutube && v.type == 'Trailer') return v;
+    final youtube = videos.where((v) => v.isYoutube);
+    if (youtube.isEmpty) return null;
+
+    for (final v in youtube) {
+      if (v.official && v.type == 'Trailer' && v.iso6391 == _userLanguage) {
+        return v;
+      }
     }
-    return null;
+    for (final v in youtube) {
+      if (v.official) return v;
+    }
+    for (final v in youtube) {
+      if (v.type == 'Teaser') return v;
+    }
+    return youtube.first;
   }
 }
 
@@ -92,6 +110,7 @@ final class TvShowDetail extends MediaDetail {
     required this.firstAirDate,
     required this.lastAirDate,
     required this.inProduction,
+    required this.certification,
   });
 
   final List<Person> creators;
@@ -101,6 +120,12 @@ final class TvShowDetail extends MediaDetail {
   final DateTime? firstAirDate;
   final DateTime? lastAirDate;
   final bool inProduction;
+
+  /// D2's own metadata-line rating, e.g. "TV-14" — TMDB's `content_
+  /// ratings`, the show-level equivalent of [MovieDetail.certification]
+  /// (`docs/SCREENS.md` D2: "Year–Year · N seasons · M episodes ·
+  /// Rating").
+  final String? certification;
 
   /// Stats' "Estimated TV hours" — falls back to 45 min/episode when TMDB
   /// doesn't give a runtime.

@@ -1,0 +1,124 @@
+{
+  "adult": false,
+  "backdrop_path": "/backdrop-dune.jpg",
+  "genres": [
+    { "id": 878, "name": "Science Fiction" },
+    { "id": 12, "name": "Adventure" }
+  ],
+  "id": 693134,
+  "imdb_id": "tt15239678",
+  "original_language": "en",
+  "original_title": "Dune: Part Two",
+  "overview": "Paul Atreides unites with Chani and the Fremen.",
+  "popularity": 410.2,
+  "poster_path": "/dune-part-two.jpg",
+  "release_date": "2024-03-01",
+  "runtime": 166,
+  "status": "Released",
+  "tagline": "Long live the fighters.",
+  "title": "Dune: Part Two",
+  "video": false,
+  "vote_average": 8.4,
+  "vote_count": 9321,
+  "credits": {
+    "cast": [
+      {
+        "id": 1001,
+        "name": "Timothée Chalamet",
+        "character": "Paul Atreides",
+        "order": 0,
+        "profile_path": "/chalamet.jpg",
+        "known_for_department": "Acting"
+      },
+      {
+        "id": 1002,
+        "name": "Zendaya",
+        "character": "Chani",
+        "order": 1,
+        "profile_path": null,
+        "known_for_department": "Acting"
+      }
+    ],
+    "crew": [
+      {
+        "id": 1004,
+        "name": "Denis Villeneuve",
+        "job": "Director",
+        "department": "Directing",
+        "profile_path": null,
+        "known_for_department": "Directing"
+      }
+    ]
+  },
+  "videos": {
+    "results": [
+      {
+        "key": "en-teaser",
+        "site": "YouTube",
+        "type": "Teaser",
+        "name": "Teaser Trailer",
+        "official": true,
+        "iso_639_1": "en"
+      },
+      {
+        "key": "es-trailer",
+        "site": "YouTube",
+        "type": "Trailer",
+        "name": "Tráiler oficial",
+        "official": true,
+        "iso_639_1": "es"
+      },
+      {
+        "key": "en-trailer",
+        "site": "YouTube",
+        "type": "Trailer",
+        "name": "Official Trailer",
+        "official": true,
+        "iso_639_1": "en"
+      }
+    ]
+  },
+  "similar": {
+    "page": 1,
+    "results": [
+      {
+        "id": 603692,
+        "title": "John Wick: Chapter 4",
+        "genre_ids": [28],
+        "poster_path": "/john-wick-4.jpg",
+        "release_date": "2023-03-22",
+        "vote_average": 7.8
+      }
+    ],
+    "total_pages": 5,
+    "total_results": 92
+  },
+  "release_dates": {
+    "results": [
+      {
+        "iso_3166_1": "US",
+        "release_dates": [{ "certification": "PG-13" }]
+      },
+      {
+        "iso_3166_1": "ES",
+        "release_dates": [{ "certification": "" }, { "certification": "12" }]
+      }
+    ]
+  },
+  "watch/providers": {
+    "results": {
+      "US": {
+        "link": "https://www.themoviedb.org/movie/693134-dune-part-two/watch?locale=US",
+        "flatrate": [{ "provider_name": "Max" }],
+        "rent": [],
+        "buy": []
+      },
+      "ES": {
+        "link": "https://www.themoviedb.org/movie/693134-dune-part-two/watch?locale=ES",
+        "flatrate": [{ "provider_name": "Movistar Plus+" }],
+        "rent": [{ "provider_name": "Apple TV" }],
+        "buy": [{ "provider_name": "Apple TV" }]
+      }
+    }
+  }
+}
