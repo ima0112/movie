@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,6 +10,7 @@ import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../core/launch/launch_external_link.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -38,9 +41,6 @@ import 'movie_metadata.dart';
 /// own narrow `StreamBuilder` on `UserLibraryRepository` exactly as
 /// before).
 ///
-/// Trailer playback and provider links have no `url_launcher` wired up
-/// yet (not discussed/added as a dependency) — a `SnackBar` stands in so
-/// the tap is still visibly verifiable.
 class MovieDetailContent extends StatelessWidget {
   const MovieDetailContent({
     super.key,
@@ -114,14 +114,8 @@ class MovieDetailContent extends StatelessWidget {
               mediaKey: mediaKey,
               userLibraryRepository: userLibraryRepository,
               mediaDetail: detail,
-              // TODO(url_launcher): open the YouTube app/browser once
-              // that dependency is discussed and added.
               onPlayTrailer: (trailer) =>
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Would open trailer: ${trailer.key}'),
-                    ),
-                  ),
+                  unawaited(launchYoutubeTrailer(context, trailer.key)),
               onSeeSimilar: _scrollToSimilar,
             ),
           ),
@@ -138,11 +132,8 @@ class MovieDetailContent extends StatelessWidget {
             // B5 | Searchable list of countries") isn't built yet
             // (no Settings feature/screen exists at all).
             onRegionTap: null,
-            // TODO(url_launcher): open the provider's link once that
-            // dependency is discussed and added.
-            onProviderTap: (link) => ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Would open: $link'))),
+            onProviderTap: (link) =>
+                unawaited(launchExternalLink(context, link)),
           ),
         ),
         SliverToBoxAdapter(

@@ -40,10 +40,9 @@ sealed class MediaDetail {
   final WatchProviders watchProviders;
 
   /// The user's own language, for [trailer]'s own "+ user's language"
-  /// tier — matches the same `es`/`ES` default `LocaleInterceptor` and
-  /// `TmdbMediaRepository` already fall back to everywhere else, since
+  /// tier — matches `LocaleInterceptor`'s own `en`/`US` default, since
   /// no real settings source exists yet.
-  static const _userLanguage = 'es';
+  static const _userLanguage = 'en';
 
   /// The trailer button's pick — `docs/SCREENS.md` D1: "official +
   /// Trailer + user's language → official → Teaser → first available."

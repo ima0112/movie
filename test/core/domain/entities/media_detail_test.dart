@@ -35,7 +35,7 @@ MovieDetail _detail({required List<Video> videos}) {
 
 void main() {
   group('MediaDetail.trailer', () {
-    test('tier 1: official + Trailer + user\'s language (es) wins over '
+    test('tier 1: official + Trailer + user\'s language (en) wins over '
         'everything else', () {
       final detail = _detail(
         videos: const [
@@ -43,17 +43,17 @@ void main() {
             key: 'a',
             site: 'YouTube',
             type: 'Trailer',
-            name: 'Official EN',
+            name: 'Official ES',
             official: true,
-            iso6391: 'en',
+            iso6391: 'es',
           ),
           Video(
             key: 'b',
             site: 'YouTube',
             type: 'Trailer',
-            name: 'Official ES',
+            name: 'Official EN',
             official: true,
-            iso6391: 'es',
+            iso6391: 'en',
           ),
         ],
       );
@@ -61,7 +61,7 @@ void main() {
       expect(detail.trailer?.key, 'b');
     });
 
-    test('tier 2: no es-language official Trailer -> any official video', () {
+    test('tier 2: no en-language official Trailer -> any official video', () {
       final detail = _detail(
         videos: const [
           Video(
