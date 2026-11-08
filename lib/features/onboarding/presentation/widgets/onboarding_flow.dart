@@ -68,27 +68,30 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<OnboardingCubit>();
-    return Scaffold(
-      body: BlocSelector<OnboardingCubit, OnboardingState, OnboardingStep>(
-        selector: (state) => state.step,
-        builder: (context, step) {
-          return switch (step) {
-            OnboardingStep.welcome => OnboardingWelcomeStep(
-              postersFuture: _postersFuture,
-              onGetStarted: cubit.next,
-            ),
-            OnboardingStep.name => const OnboardingNameStep(),
-            OnboardingStep.likedGenres => OnboardingGenreStep(
-              isVetoedStep: false,
-              onFinish: () => _finish(context),
-            ),
-            OnboardingStep.vetoedGenres => OnboardingGenreStep(
-              isVetoedStep: true,
-              onFinish: () => _finish(context),
-            ),
-          };
-        },
-      ),
+    // No Scaffold here — each step below is its own self-contained
+    // "screen" (WelcomeView, and NameStep/GenreStep via
+    // onboarding_scaffold.dart), each with its own Scaffold/SafeArea
+    // (CLAUDE.md rule 14). A Scaffold here too would just nest one
+    // inside another for no benefit.
+    return BlocSelector<OnboardingCubit, OnboardingState, OnboardingStep>(
+      selector: (state) => state.step,
+      builder: (context, step) {
+        return switch (step) {
+          OnboardingStep.welcome => OnboardingWelcomeStep(
+            postersFuture: _postersFuture,
+            onGetStarted: cubit.next,
+          ),
+          OnboardingStep.name => const OnboardingNameStep(),
+          OnboardingStep.likedGenres => OnboardingGenreStep(
+            isVetoedStep: false,
+            onFinish: () => _finish(context),
+          ),
+          OnboardingStep.vetoedGenres => OnboardingGenreStep(
+            isVetoedStep: true,
+            onFinish: () => _finish(context),
+          ),
+        };
+      },
     );
   }
 }

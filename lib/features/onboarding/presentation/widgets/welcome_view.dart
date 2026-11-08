@@ -28,9 +28,14 @@ class WelcomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.surface,
-      child: Stack(
+    // Scaffold, not ColoredBox — this is now a self-contained "screen"
+    // (OnboardingFlow no longer wraps the active step in a Scaffold of
+    // its own, see onboarding_scaffold.dart's doc comment), and without
+    // a Material ancestor every Text here would fall back to Flutter's
+    // debug style the same way splash_screen.dart's own did.
+    return Scaffold(
+      backgroundColor: AppColors.surface,
+      body: Stack(
         fit: StackFit.expand,
         children: [
           PosterWall(posterUrls: posterUrls),
@@ -52,34 +57,50 @@ class WelcomeView extends StatelessWidget {
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.xl),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const PakoState(mood: PakoMood.idle, size: 96),
-                  const SizedBox(height: AppSpacing.lg),
-                  // docs/SCREENS.md A2: "Hi, I'm Pako" at 28 px — no exact
-                  // token for 28; h1 (26) is the closest existing one.
-                  Text(
-                    "Hi, I'm Pako",
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.h1,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    "I'll help you find something to watch, alone or with "
-                    'friends.',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.inkMuted,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  PrimaryButton(label: 'Get started', onTap: onGetStarted),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    'Data from TMDB',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.inkDim,
+              // CustomScrollView + SliverFillRemaining(hasScrollBody:
+              // false) — same reasoning as name_step_form.dart: fills
+              // at least the available height (so "end" alignment still
+              // anchors content to the bottom on a normal device) but
+              // scrolls instead of overflowing once a small device or
+              // reduced height can't fit it all (CLAUDE.md rule 14).
+              child: CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const PakoState(mood: PakoMood.idle, size: 96),
+                        const SizedBox(height: AppSpacing.lg),
+                        // docs/SCREENS.md A2: "Hi, I'm Pako" at 28 px —
+                        // no exact token for 28; h1 (26) is the closest.
+                        Text(
+                          "Hi, I'm Pako",
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.h1,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          "I'll help you find something to watch, alone "
+                          'or with friends.',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.inkMuted,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xxl),
+                        PrimaryButton(
+                          label: 'Get started',
+                          onTap: onGetStarted,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        Text(
+                          'Data from TMDB',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.inkDim,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
