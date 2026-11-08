@@ -20,6 +20,7 @@ import 'package:movies/core/data/local/drift_user_library_repository.dart'
     as _i497;
 import 'package:movies/core/data/local/drift_user_profile_repository.dart'
     as _i311;
+import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart' as _i294;
 import 'package:movies/core/domain/repositories/media_repository.dart' as _i245;
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart'
     as _i762;
@@ -63,6 +64,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i166.UserLibraryRepository>(
       () => _i497.DriftUserLibraryRepository(gh<_i231.AppDatabase>()),
+    );
+    gh.lazySingleton<_i294.TmdbConfigurationService>(
+      () => _i294.TmdbConfigurationService(gh<_i152.ApiClient>()),
+      registerFor: {_real},
     );
     gh.lazySingleton<_i245.MediaRepository>(
       () => _i661.FakeMediaRepository(),
