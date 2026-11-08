@@ -32,6 +32,22 @@ void main() {
       expect(a, isNot(equals(b)));
     });
 
+    test('two instances with the same withKeywords are equal, compared by '
+        'content not order', () {
+      final a = DiscoverFilter(withKeywords: {1, 2});
+      final b = DiscoverFilter(withKeywords: {2, 1});
+
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('a different withKeywords makes two instances unequal', () {
+      const a = DiscoverFilter();
+      final b = DiscoverFilter(withKeywords: {1});
+
+      expect(a, isNot(equals(b)));
+    });
+
     test('a different maxRuntimeMinutes or tvStatus makes two instances '
         'unequal too', () {
       const base = DiscoverFilter(type: MediaType.movie);
@@ -78,8 +94,8 @@ void main() {
       expect(copy.type, MediaType.movie);
     });
 
-    test('withGenres/withoutGenres/sortBy use the plain "not passed" '
-        'form, no wrapper function needed', () {
+    test('withGenres/withoutGenres/withKeywords/sortBy use the plain "not '
+        'passed" form, no wrapper function needed', () {
       const genre = Genre(id: 'drama');
       const original = DiscoverFilter();
 
@@ -87,6 +103,15 @@ void main() {
 
       expect(copy.withGenres, {genre});
       expect(copy.withoutGenres, isEmpty);
+      expect(copy.withKeywords, isEmpty);
+    });
+
+    test('withKeywords not passed stays unchanged', () {
+      final original = DiscoverFilter(withKeywords: {1, 2});
+
+      final copy = original.copyWith(sortBy: DiscoverSortBy.title);
+
+      expect(copy.withKeywords, {1, 2});
     });
   });
 }

@@ -42,6 +42,13 @@ Map<String, dynamic> discoverQueryParams(
     params['without_genres'] = withoutGenreIds.join(',');
   }
 
+  if (filter.withKeywords.isNotEmpty) {
+    // Same OR-via-pipe form as with_genres (DiscoverFilter.withKeywords'
+    // own doc comment) — a different TMDB parameter, so it still ANDs
+    // with with_genres/without_genres regardless.
+    params['with_keywords'] = filter.withKeywords.join('|');
+  }
+
   final dateField = isMovie ? 'primary_release_date' : 'first_air_date';
   if (filter.yearFrom != null) {
     params['$dateField.gte'] = '${filter.yearFrom}-01-01';

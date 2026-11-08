@@ -66,17 +66,21 @@ abstract interface class MatchEngine {
   /// can make unconditionally against an arbitrary `MediaRepository` (a
   /// small `FakeMediaRepository` fixture, in particular, can genuinely
   /// run out).
-  Future<MatchResult?> resolve(MatchQuery query, {required MatchOptions options});
+  Future<MatchResult?> resolve(
+    MatchQuery query, {
+    required MatchOptions options,
+  });
 }
 
 /// See [MatchEngine]'s own doc comment for the contract. Strategy per
 /// `docs/DECISIONS.md` section 5 ("Fetching candidates" / "Scoring"):
 ///
 /// - **One `MediaRepository.discover` call per requested vibe**, not one
-///   per candidate — each call's [DiscoverFilter.withGenres] is that
-///   vibe's own genre rule for [MatchQuery.mediaType], plus every hard
-///   filter [MatchQuery] carries. A candidate can surface from more than
-///   one vibe's call; [_fetchAndScore] merges by id and remembers every
+///   per candidate — each call's [DiscoverFilter.withGenres]/
+///   [DiscoverFilter.withKeywords] are that vibe's own genre/keyword
+///   rule for [MatchQuery.mediaType], plus every hard filter
+///   [MatchQuery] carries. A candidate can surface from more than one
+///   vibe's call; [_fetchAndScore] merges by id and remembers every
 ///   vibe it matched under.
 /// - **Score** = the sum of [MatchQuery.vibeWeights] for every vibe a
 ///   candidate matched, minus a flat penalty if it's in
@@ -211,11 +215,19 @@ class MatchEngineImpl implements MatchEngine {
   DiscoverFilter _filterForVibe(Vibe vibe, MatchQuery query) {
     final rule = vibe.ruleFor(query.mediaType);
     final genres = rule.genreIds.map(_genreById).whereType<Genre>().toSet();
+    // VibeRule.keywordIds is a List<String> (vibes.json's own JSON
+    // shape — see its doc comment), but a real TMDB keyword id is
+    // numeric; the keyword-resolution script DECISIONS.md §5 describes
+    // is what's expected to populate those strings with parseable
+    // TMDB ids once a vibe actually has any. Always empty today, so
+    // this never actually parses anything yet.
+    final keywordIds = rule.keywordIds.map(int.parse).toSet();
 
     return DiscoverFilter(
       type: query.mediaType,
       withGenres: genres,
       withoutGenres: query.excludedGenres,
+      withKeywords: keywordIds,
       yearFrom: query.yearFrom,
       yearTo: vibe.maxReleaseYear,
       minVoteAverage: vibe.minVoteAverage,

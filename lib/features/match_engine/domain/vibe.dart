@@ -11,13 +11,15 @@ class VibeRule {
   /// not raw TMDB genre ids.
   final List<String> genreIds;
 
-  /// TMDB keyword ids for this vibe/type (e.g. Superhero's
-  /// `superhero`/`based-on-comic`). **Always empty today** —
-  /// `assets/vibes.json` ships with every `keywordIds` array empty;
-  /// resolving them needs a real TMDB keyword search, which only
-  /// happens once the network layer is wired up (`MediaRepository`,
-  /// not yet implemented for real — see `docs/STRUCTURE.md`). Nothing
-  /// downstream should treat an empty list here as an error.
+  /// TMDB keyword ids for this vibe/type, as numeric-string ids (not
+  /// slugs — `MatchEngine._filterForVibe` parses each one straight
+  /// into `DiscoverFilter.withKeywords`'s `Set<int>`). **Always empty
+  /// today** — `assets/vibes.json` ships with every `keywordIds` array
+  /// empty; a keyword-resolution script (`docs/DECISIONS.md` §5) is
+  /// expected to fill in only the vibes that actually need one, once a
+  /// real TMDB keyword search backs it. Nothing downstream should
+  /// treat an empty list here as an error — `Vibe.isMeaningfulFor`
+  /// already accounts for a vibe having genres but no keywords yet.
   final List<String> keywordIds;
 
   factory VibeRule.fromJson(Map<String, dynamic> json) {
