@@ -51,3 +51,7 @@ app.*.map.json
 # Local secrets
 env/*.json
 !env/*.example.json
+
+# tool/resolve_vibe_keywords.dart's own scratch report — generated
+# from live TMDB totals on whoever's machine runs it, not source data.
+tool/out/
