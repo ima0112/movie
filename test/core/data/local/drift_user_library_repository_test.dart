@@ -1,11 +1,16 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/drift_onboarding_repository.dart';
+import 'package:movies/core/data/local/drift_taste_profile_repository.dart';
 import 'package:movies/core/data/local/drift_user_library_repository.dart';
+import 'package:movies/core/data/local/drift_user_profile_repository.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
+import 'package:movies/core/domain/entities/user_profile.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/persistence/app_database.dart';
 
@@ -27,7 +32,11 @@ void main() {
   group('DriftUserLibraryRepository', () {
     test('upsert followed by watchEntry emits the correct value', () async {
       final repository = _repository();
-      const entry = UserMediaEntry(key: _dune, isFavorite: true);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _dune,
+        isFavorite: true,
+      );
 
       // Subscribing before the upsert lets `emitsInOrder` see both the
       // initial `null` (nothing saved yet) and the post-upsert value —
@@ -52,7 +61,11 @@ void main() {
     test('a new watchEntry subscriber immediately sees an already-saved '
         'entry, not just future changes', () async {
       final repository = _repository();
-      const entry = UserMediaEntry(key: _dune, isFavorite: true);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _dune,
+        isFavorite: true,
+      );
       await repository.upsert(entry);
 
       final first = await repository.watchEntry(_dune).first;
@@ -64,7 +77,11 @@ void main() {
       'marking as watched clears isWatchLater on the emitted entry',
       () async {
         final repository = _repository();
-        const inWatchLater = UserMediaEntry(key: _dune, isWatchLater: true);
+        const inWatchLater = UserMediaEntry(
+          title: 'Test Title',
+          key: _dune,
+          isWatchLater: true,
+        );
         await repository.upsert(inWatchLater);
         expect(
           (await repository.watchEntry(_dune).first)!.isWatchLater,
@@ -84,10 +101,14 @@ void main() {
     test('watch() filters by tab and type', () async {
       final repository = _repository();
       await repository.upsert(
-        const UserMediaEntry(key: _dune, isFavorite: true),
+        const UserMediaEntry(title: 'Test Title', key: _dune, isFavorite: true),
       );
       await repository.upsert(
-        const UserMediaEntry(key: _theBear, isWatchLater: true),
+        const UserMediaEntry(
+          title: 'Test Title',
+          key: _theBear,
+          isWatchLater: true,
+        ),
       );
 
       final favorites = await repository.watch(tab: LibraryTab.favorites).first;
@@ -102,7 +123,9 @@ void main() {
 
     test('remove deletes the entry', () async {
       final repository = _repository();
-      await repository.upsert(const UserMediaEntry(key: _dune));
+      await repository.upsert(
+        const UserMediaEntry(title: 'Test Title', key: _dune),
+      );
 
       final result = await repository.remove(_dune);
 
@@ -114,16 +137,25 @@ void main() {
         'recent first', () async {
       final repository = _repository();
       await repository.upsert(
-        UserMediaEntry(key: _dune, watchedAt: DateTime(2024, 1, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _dune,
+          watchedAt: DateTime(2024, 1, 1),
+        ),
       );
       await repository.upsert(
         UserMediaEntry(
+          title: 'Test Title',
           key: const MediaKey(type: MediaType.movie, tmdbId: 2),
           watchedAt: DateTime(2024, 6, 1),
         ),
       );
       await repository.upsert(
-        UserMediaEntry(key: _theBear, watchedAt: DateTime(2024, 3, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _theBear,
+          watchedAt: DateTime(2024, 3, 1),
+        ),
       );
 
       final result = await repository.watchedKeys(MediaType.movie);
@@ -134,8 +166,12 @@ void main() {
 
     test('all returns every stored entry', () async {
       final repository = _repository();
-      await repository.upsert(const UserMediaEntry(key: _dune));
-      await repository.upsert(const UserMediaEntry(key: _theBear));
+      await repository.upsert(
+        const UserMediaEntry(title: 'Test Title', key: _dune),
+      );
+      await repository.upsert(
+        const UserMediaEntry(title: 'Test Title', key: _theBear),
+      );
 
       final result = await repository.all();
 
@@ -148,6 +184,7 @@ void main() {
       final repository = _repository();
       await repository.upsert(
         UserMediaEntry(
+          title: 'Test Title',
           key: _dune,
           watchedAt: DateTime(2024, 1, 1),
           runtimeMinutes: 166,
@@ -155,6 +192,7 @@ void main() {
       );
       await repository.upsert(
         UserMediaEntry(
+          title: 'Test Title',
           key: _theBear,
           watchedAt: DateTime(2024, 1, 1),
           episodeCount: 62,
@@ -177,7 +215,11 @@ void main() {
       // No runtimeMinutes/episodeCount/episodeRuntimeMinutes passed —
       // exactly what every pre-migration watched entry looks like.
       await repository.upsert(
-        UserMediaEntry(key: _dune, watchedAt: DateTime(2024, 1, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _dune,
+          watchedAt: DateTime(2024, 1, 1),
+        ),
       );
 
       final entry = await repository.watchEntry(_dune).first;
@@ -192,6 +234,7 @@ void main() {
 
       await repository.upsert(
         const UserMediaEntry(
+          title: 'Test Title',
           key: _dune,
           isFavorite: true,
           genres: [_action, _drama],
@@ -206,11 +249,75 @@ void main() {
     test('an entry saved with no genres reads back as an empty list, not '
         'null or an error', () async {
       final repository = _repository();
-      await repository.upsert(const UserMediaEntry(key: _dune));
+      await repository.upsert(
+        const UserMediaEntry(title: 'Test Title', key: _dune),
+      );
 
       final entry = await repository.watchEntry(_dune).first;
 
       expect(entry!.genres, isEmpty);
+    });
+
+    group('clearAll', () {
+      test('removes every entry', () async {
+        final repository = _repository();
+        await repository.upsert(
+          const UserMediaEntry(title: 'Dune', key: _dune, isFavorite: true),
+        );
+        await repository.upsert(
+          const UserMediaEntry(
+            title: 'The Bear',
+            key: _theBear,
+            isWatchLater: true,
+          ),
+        );
+
+        final result = await repository.clearAll();
+
+        expect(result, isA<Success<void>>());
+        expect((await repository.all() as Success).value, isEmpty);
+      });
+
+      test(
+        '"Delete My List" touches nothing else — the user profile, the '
+        'taste profile, and the onboarding flag all survive untouched',
+        () async {
+          final db = AppDatabase.forTesting(NativeDatabase.memory());
+          addTearDown(db.close);
+
+          await DriftUserProfileRepository(db).save(
+            const UserProfile(displayName: 'Daniel', initialColor: 0xFFF2B441),
+          );
+          await DriftTasteProfileRepository(db).save(
+            TasteProfile(
+              likedGenres: {_action},
+              vetoedGenres: const {},
+              likedVibes: const {'Cozy'},
+              yearFrom: 1990,
+              updatedAt: DateTime(2024, 1, 1),
+            ),
+          );
+          await DriftOnboardingRepository(db).markCompleted();
+          final library = DriftUserLibraryRepository(db);
+          await library.upsert(const UserMediaEntry(title: 'Dune', key: _dune));
+
+          final result = await library.clearAll();
+
+          expect(result, isA<Success<void>>());
+          expect((await library.all() as Success).value, isEmpty);
+          expect(
+            (await DriftUserProfileRepository(db).watch().first)?.displayName,
+            'Daniel',
+          );
+          expect(
+            (await DriftTasteProfileRepository(db).watch().first)?.likedGenres,
+            {_action},
+          );
+          final onboarding = DriftOnboardingRepository(db);
+          await onboarding.load();
+          expect(onboarding.isCompleted, isTrue);
+        },
+      );
     });
   });
 }

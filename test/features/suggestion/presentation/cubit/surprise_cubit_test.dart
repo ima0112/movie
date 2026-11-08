@@ -63,6 +63,9 @@ class _FakeTasteProfileRepository implements TasteProfileRepository {
   @override
   Future<Result<void>> save(TasteProfile profile) async =>
       const Success(null);
+
+  @override
+  Future<Result<void>> delete() async => const Success(null);
 }
 
 class _FakeUserLibraryRepository implements UserLibraryRepository {
@@ -83,6 +86,9 @@ class _FakeUserLibraryRepository implements UserLibraryRepository {
 
   @override
   Future<Result<void>> remove(MediaKey key) async => const Success(null);
+
+  @override
+  Future<Result<void>> clearAll() async => const Success(null);
 
   @override
   Future<Result<List<MediaKey>>> watchedKeys(

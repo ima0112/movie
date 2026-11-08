@@ -54,6 +54,8 @@ dependencies:
   # app/splash_gate.dart, so this is a regular dependency, not dev-only.
   flutter_native_splash: ^2.4.8
   url_launcher: ^6.3.3
+  share_plus: ^13.3.1
+  package_info_plus: ^10.2.2
 
 dev_dependencies:
   flutter_test:

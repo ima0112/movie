@@ -40,6 +40,7 @@ UserMediaEntry _entry(
   bool watched = false,
 }) {
   return UserMediaEntry(
+    title: 'Test Title',
     key: MediaKey(type: MediaType.movie, tmdbId: id),
     isFavorite: isFavorite,
     watchedAt: (watched || rating != null) ? DateTime(2024) : null,
@@ -117,7 +118,11 @@ void main() {
         vetoedGenres: {_horror},
       );
       final libraryEntries = [
-        _entry(1, isFavorite: true, genres: [_horror]), // strong signal, but vetoed
+        _entry(
+          1,
+          isFavorite: true,
+          genres: [_horror],
+        ), // strong signal, but vetoed
       ];
 
       final result = TasteProfileBuilder(_vibeCatalog).build(

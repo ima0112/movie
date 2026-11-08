@@ -36,6 +36,7 @@ void main() {
       final repository = InMemoryUserLibraryRepository();
       await repository.upsert(
         UserMediaEntry(
+          title: 'Test Title',
           key: _dune,
           watchedAt: DateTime(2024, 1, 1),
           runtimeMinutes: 166,
@@ -56,6 +57,7 @@ void main() {
         final repository = InMemoryUserLibraryRepository();
         await repository.upsert(
           UserMediaEntry(
+            title: 'Test Title',
             key: _theBear,
             watchedAt: DateTime(2024, 1, 1),
             episodeCount: 62,
@@ -74,7 +76,11 @@ void main() {
         'contributes 0 to Hours instead of throwing', (tester) async {
       final repository = InMemoryUserLibraryRepository();
       await repository.upsert(
-        UserMediaEntry(key: _oldMovie, watchedAt: DateTime(2024, 1, 1)),
+        UserMediaEntry(
+          title: 'Test Title',
+          key: _oldMovie,
+          watchedAt: DateTime(2024, 1, 1),
+        ),
       );
 
       await _pump(tester, repository);
@@ -94,6 +100,7 @@ void main() {
         final repository = InMemoryUserLibraryRepository();
         await repository.upsert(
           UserMediaEntry(
+            title: 'Test Title',
             key: _dune,
             watchedAt: DateTime(2024, 1, 1),
             runtimeMinutes: 120,
@@ -101,6 +108,7 @@ void main() {
         );
         await repository.upsert(
           UserMediaEntry(
+            title: 'Test Title',
             key: _theBear,
             watchedAt: DateTime(2024, 1, 1),
             episodeCount: 10,
@@ -108,12 +116,20 @@ void main() {
           ),
         );
         await repository.upsert(
-          UserMediaEntry(key: _oldMovie, watchedAt: DateTime(2024, 1, 1)),
+          UserMediaEntry(
+            title: 'Test Title',
+            key: _oldMovie,
+            watchedAt: DateTime(2024, 1, 1),
+          ),
         );
         // Only a favorite, never watched — must not count towards Hours
         // or Watched even though it has no duration fields either.
         await repository.upsert(
-          const UserMediaEntry(key: _oppenheimer, isFavorite: true),
+          const UserMediaEntry(
+            title: 'Test Title',
+            key: _oppenheimer,
+            isFavorite: true,
+          ),
         );
 
         await _pump(tester, repository);

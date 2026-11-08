@@ -12,6 +12,7 @@ void main() {
   group('UserMediaEntry', () {
     test('isFavorite and isWatchLater are independent', () {
       const entry = UserMediaEntry(
+        title: 'Test Title',
         key: _key,
         isFavorite: true,
         isWatchLater: true,
@@ -24,7 +25,11 @@ void main() {
 
     test('markWatched clears isWatchLater — docs/DECISIONS.md section 4: '
         '"Marking as watched automatically removes it from Watch later"', () {
-      const entry = UserMediaEntry(key: _key, isWatchLater: true);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _key,
+        isWatchLater: true,
+      );
 
       final watched = entry.markWatched(
         watchedAt: DateTime(2024, 1, 1),
@@ -40,7 +45,7 @@ void main() {
     });
 
     test('markWatched defaults watchedAt to now', () {
-      const entry = UserMediaEntry(key: _key);
+      const entry = UserMediaEntry(title: 'Test Title', key: _key);
       final before = DateTime.now();
 
       final watched = entry.markWatched();
@@ -53,6 +58,7 @@ void main() {
 
     test('unmarkWatched clears watchedAt and rating', () {
       final entry = UserMediaEntry(
+        title: 'Test Title',
         key: _key,
         watchedAt: DateTime(2024, 1, 1),
         rating: 5,
@@ -67,22 +73,24 @@ void main() {
 
     test('rating must be between 1 and 5', () {
       expect(
-        () => UserMediaEntry(key: _key, rating: 0),
+        () => UserMediaEntry(title: 'Test Title', key: _key, rating: 0),
         throwsA(isA<AssertionError>()),
       );
       expect(
-        () => UserMediaEntry(key: _key, rating: 6),
+        () => UserMediaEntry(title: 'Test Title', key: _key, rating: 6),
         throwsA(isA<AssertionError>()),
       );
     });
 
     test('two entries with the same fields are equal', () {
       final a = UserMediaEntry(
+        title: 'Test Title',
         key: _key,
         isFavorite: true,
         watchedAt: DateTime(2024, 1, 1),
       );
       final b = UserMediaEntry(
+        title: 'Test Title',
         key: _key,
         isFavorite: true,
         watchedAt: DateTime(2024, 1, 1),
@@ -92,14 +100,18 @@ void main() {
     });
 
     test('genres defaults to empty', () {
-      const entry = UserMediaEntry(key: _key);
+      const entry = UserMediaEntry(title: 'Test Title', key: _key);
 
       expect(entry.genres, isEmpty);
     });
 
     test('markWatched preserves genres when none are passed, unlike rating '
         'and the duration fields (which hard-reset)', () {
-      const entry = UserMediaEntry(key: _key, genres: [_action, _drama]);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _key,
+        genres: [_action, _drama],
+      );
 
       final watched = entry.markWatched();
 
@@ -107,7 +119,11 @@ void main() {
     });
 
     test('markWatched replaces genres when a fresh list is passed', () {
-      const entry = UserMediaEntry(key: _key, genres: [_action]);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _key,
+        genres: [_action],
+      );
 
       final watched = entry.markWatched(genres: const [_drama]);
 
@@ -117,6 +133,7 @@ void main() {
     test('unmarkWatched preserves genres — it describes the title, not '
         'the watch event', () {
       const entry = UserMediaEntry(
+        title: 'Test Title',
         key: _key,
         watchedAt: null,
         genres: [_action],
@@ -130,7 +147,11 @@ void main() {
 
     test('copyWith preserves genres by default and replaces them when '
         'passed', () {
-      const entry = UserMediaEntry(key: _key, genres: [_action]);
+      const entry = UserMediaEntry(
+        title: 'Test Title',
+        key: _key,
+        genres: [_action],
+      );
 
       expect(entry.copyWith(isFavorite: true).genres, [_action]);
       expect(entry.copyWith(genres: const [_drama]).genres, [_drama]);
@@ -138,8 +159,16 @@ void main() {
 
     test('two entries with genres in a different order are not equal — '
         "it's a list, not a set", () {
-      const a = UserMediaEntry(key: _key, genres: [_action, _drama]);
-      const b = UserMediaEntry(key: _key, genres: [_drama, _action]);
+      const a = UserMediaEntry(
+        title: 'Test Title',
+        key: _key,
+        genres: [_action, _drama],
+      );
+      const b = UserMediaEntry(
+        title: 'Test Title',
+        key: _key,
+        genres: [_drama, _action],
+      );
 
       expect(a, isNot(equals(b)));
     });

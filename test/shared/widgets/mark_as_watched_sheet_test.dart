@@ -166,6 +166,7 @@ void main() {
               mediaKey: _dune,
               userLibraryRepository: repository,
               existingEntry: UserMediaEntry(
+                title: 'Test Title',
                 key: _dune,
                 watchedAt: DateTime(2024, 1, 1),
                 rating: 5,
@@ -236,6 +237,7 @@ void main() {
               mediaKey: _dune,
               userLibraryRepository: repository,
               existingEntry: UserMediaEntry(
+                title: 'Test Title',
                 key: _dune,
                 watchedAt: DateTime(2024, 1, 1),
                 rating: 3,

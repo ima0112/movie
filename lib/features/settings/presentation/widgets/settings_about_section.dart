@@ -1,0 +1,66 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+import '../../../../core/launch/launch_external_link.dart';
+import '../../../../shared/widgets/settings_row.dart';
+
+/// C6's About group — `docs/SCREENS.md` C6: "Version (long-press copies
+/// the build number), Source code (GitHub, external link), Licenses
+/// (`showLicensePage`)". The TMDB attribution block (same row) isn't
+/// built here — there's no logo asset for it yet.
+class SettingsAboutSection extends StatefulWidget {
+  const SettingsAboutSection({super.key});
+
+  @override
+  State<SettingsAboutSection> createState() => _SettingsAboutSectionState();
+}
+
+class _SettingsAboutSectionState extends State<SettingsAboutSection> {
+  late final Future<PackageInfo> _packageInfo = PackageInfo.fromPlatform();
+
+  static const _sourceCodeUrl = 'https://github.com/ima0112/movie';
+
+  void _copyBuildNumber(String buildNumber) {
+    unawaited(Clipboard.setData(ClipboardData(text: buildNumber)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Build number copied')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SettingsGroupHeader(title: 'About'),
+        FutureBuilder<PackageInfo>(
+          future: _packageInfo,
+          builder: (context, snapshot) {
+            final info = snapshot.data;
+            return SettingsRow(
+              label: 'Version',
+              value: info == null
+                  ? null
+                  : '${info.version} (${info.buildNumber})',
+              showChevron: false,
+              onLongPress: info == null
+                  ? null
+                  : () => _copyBuildNumber(info.buildNumber),
+            );
+          },
+        ),
+        SettingsRow(
+          label: 'Source code',
+          onTap: () => unawaited(launchExternalLink(context, _sourceCodeUrl)),
+        ),
+        SettingsRow(
+          label: 'Licenses',
+          onTap: () =>
+              showLicensePage(context: context, applicationName: 'PakoTV'),
+        ),
+      ],
+    );
+  }
+}

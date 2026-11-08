@@ -22,7 +22,11 @@ void main() {
         home: Scaffold(
           body: LibraryRowSwipeable(
             key: const ValueKey(dune),
-            entry: const UserMediaEntry(key: dune, isFavorite: true),
+            entry: const UserMediaEntry(
+              title: 'Test Title',
+              key: dune,
+              isFavorite: true,
+            ),
             tab: LibraryTab.favorites,
             userLibraryRepository: repository,
             posterUrl: null,
@@ -39,7 +43,9 @@ void main() {
     tester,
   ) async {
     final repository = InMemoryUserLibraryRepository();
-    await repository.upsert(const UserMediaEntry(key: dune, isFavorite: true));
+    await repository.upsert(
+      const UserMediaEntry(title: 'Test Title', key: dune, isFavorite: true),
+    );
     await pumpRow(tester, repository);
 
     await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
@@ -52,7 +58,9 @@ void main() {
 
   testWidgets('tapping Undo restores the removed entry', (tester) async {
     final repository = InMemoryUserLibraryRepository();
-    await repository.upsert(const UserMediaEntry(key: dune, isFavorite: true));
+    await repository.upsert(
+      const UserMediaEntry(title: 'Test Title', key: dune, isFavorite: true),
+    );
     await pumpRow(tester, repository);
 
     await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
@@ -64,7 +72,7 @@ void main() {
 
     expect(
       await repository.watchEntry(dune).first,
-      const UserMediaEntry(key: dune, isFavorite: true),
+      const UserMediaEntry(title: 'Test Title', key: dune, isFavorite: true),
     );
   });
 }
