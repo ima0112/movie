@@ -1,0 +1,71 @@
+import 'package:flutter/widgets.dart';
+
+import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../shared/widgets/state_views.dart';
+
+/// B4's empty state: no entries at all for a tab (`docs/SCREENS.md` B4:
+/// "empty with sleeping Pako..., per-tab headline..., a line mentioning
+/// what does exist in other tabs, 'Explore' CTA").
+///
+/// [otherTabsNote] is the "line mentioning what does exist in other
+/// tabs" — its exact wording isn't given verbatim in SCREENS.md (unlike
+/// the per-tab headlines below), and depends on live counts for every
+/// tab, which this widget doesn't have; the screen that already
+/// subscribes to all three tabs' counts (see `MyListSegmentedTabs`)
+/// composes it.
+class MyListEmptyState extends StatelessWidget {
+  const MyListEmptyState({
+    super.key,
+    required this.tab,
+    required this.otherTabsNote,
+    this.onExploreTap,
+  });
+
+  final LibraryTab tab;
+  final String otherTabsNote;
+  final VoidCallback? onExploreTap;
+
+  static const _headlines = {
+    LibraryTab.favorites: 'No favorites yet',
+    LibraryTab.watchLater: 'Nothing for later yet',
+    LibraryTab.watched: "You haven't marked anything as watched yet",
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateView(
+      title: _headlines[tab]!,
+      body: otherTabsNote,
+      ctaLabel: 'Explore',
+      onCtaTap: onExploreTap,
+    );
+  }
+}
+
+/// B4's filtered-empty state: entries exist for the tab, but the active
+/// H9 filter hides all of them (`docs/SCREENS.md` B4: "If a filter is
+/// what's emptying the list: 'No TV shows here' + 'See all'").
+///
+/// [title] is caller-supplied (e.g. "No TV shows here") since the exact
+/// wording depends on which filter dimension is currently active —
+/// SCREENS.md gives one example, not a template for every combination.
+class MyListFilteredEmptyState extends StatelessWidget {
+  const MyListFilteredEmptyState({
+    super.key,
+    required this.title,
+    this.onSeeAllTap,
+  });
+
+  final String title;
+  final VoidCallback? onSeeAllTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateView(
+      title: title,
+      body: 'Try adjusting your filters.',
+      ctaLabel: 'See all',
+      onCtaTap: onSeeAllTap,
+    );
+  }
+}
