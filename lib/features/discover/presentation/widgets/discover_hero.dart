@@ -6,7 +6,7 @@ import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../shared/widgets/media_carousel.dart';
-import '../bloc/discover_cubit.dart';
+import '../cubit/discover_cubit.dart';
 import 'discover_hero_save_button.dart';
 
 /// The Discover hero. Carries its own `BlocSelector` on just

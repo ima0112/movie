@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../shared/widgets/media_card.dart';
-import '../bloc/saved_ids_cubit.dart';
+import '../cubit/saved_ids_cubit.dart';
 
 /// One hero card's save button. Carries its own `BlocSelector` scoped to
 /// a single item id — tapping it (or another card's) only rebuilds this

@@ -3,7 +3,7 @@ import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
-import 'package:movies/features/discover/presentation/bloc/discover_cubit.dart';
+import 'package:movies/features/discover/presentation/cubit/discover_cubit.dart';
 
 void main() {
   group('DiscoverCubit', () {

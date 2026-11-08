@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/media_segment.dart';
-import '../bloc/discover_cubit.dart';
+import '../cubit/discover_cubit.dart';
 import 'discover_content_error.dart';
 import 'discover_content_loaded.dart';
 import 'discover_content_skeleton.dart';
