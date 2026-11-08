@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/domain/entities/media_type.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
+import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
 import 'root_shell.dart';
 
 /// Route paths, kept next to the routes that define them so features
@@ -11,6 +13,11 @@ class AppRoutes {
   const AppRoutes._();
 
   static String movieDetail(int id) => '/movie/$id';
+
+  /// C1 (Filtered listing), not built yet — see `movie_detail_header.dart`
+  /// / `movie_detail_title_block.dart`'s genre taps.
+  static String genreListing(String genreId, MediaType type) =>
+      '/genre/$genreId?type=${type.name}';
 }
 
 /// The app's single `GoRouter`. Source of truth: `docs/STRUCTURE.md`
@@ -41,7 +48,10 @@ final GoRouter appRouter = GoRouter(
       branches: [
         StatefulShellBranch(
           routes: [
-            GoRoute(path: '/', builder: (context, state) => const DiscoverScreen()),
+            GoRoute(
+              path: '/',
+              builder: (context, state) => const DiscoverScreen(),
+            ),
           ],
         ),
         StatefulShellBranch(
@@ -78,11 +88,21 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/movie/:id',
       parentNavigatorKey: _rootNavigatorKey,
-      // TODO: → D1 (Movie detail) once it's built — this placeholder only
-      // proves navigation + the id round-trip.
       builder: (context, state) {
-        final id = state.pathParameters['id']!;
-        return _MoviePlaceholderScreen(id: id);
+        final id = int.parse(state.pathParameters['id']!);
+        return MovieDetailScreen(movieId: id);
+      },
+    ),
+    GoRoute(
+      path: '/genre/:genreId',
+      parentNavigatorKey: _rootNavigatorKey,
+      // TODO: → C1 (Filtered listing) once it's built — this placeholder
+      // only proves navigation + the genre/type round-trip from D1's
+      // tappable genres (`movie_detail_title_block.dart`).
+      builder: (context, state) {
+        final genreId = state.pathParameters['genreId']!;
+        final type = state.uri.queryParameters['type'] ?? MediaType.movie.name;
+        return _GenreListingPlaceholderScreen(genreId: genreId, type: type);
       },
     ),
   ],
@@ -102,21 +122,25 @@ class _RootPlaceholder extends StatelessWidget {
   }
 }
 
-/// Stand-in for D1 (Movie detail). A real pushed screen (unlike the root
-/// placeholders above), so it needs its own `Scaffold` + back button —
-/// this is what `docs/SCREENS.md` means by "every pushed screen has a
-/// back button... and hides the bottom bar": it's on the root navigator,
-/// outside `RootShell` entirely.
-class _MoviePlaceholderScreen extends StatelessWidget {
-  const _MoviePlaceholderScreen({required this.id});
+/// Stand-in for C1 (Filtered listing). A real pushed screen (like D1
+/// itself), so it needs its own `Scaffold` + back button — see
+/// `docs/SCREENS.md` ("every pushed screen has a back button... and
+/// hides the bottom bar"): it's on the root navigator, outside
+/// [RootShell] entirely.
+class _GenreListingPlaceholderScreen extends StatelessWidget {
+  const _GenreListingPlaceholderScreen({
+    required this.genreId,
+    required this.type,
+  });
 
-  final String id;
+  final String genreId;
+  final String type;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
-      body: Center(child: Text('Movie $id')),
+      body: Center(child: Text('Genre: $genreId ($type)')),
     );
   }
 }
