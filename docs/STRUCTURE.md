@@ -68,13 +68,25 @@ lib/
 
   features/
     discover/
-      presentation/               Movies/TV Shows tabs, 4 carousels each
-    search/
+      presentation/               Movies/TV Shows tabs, hero, sections
+    explore/                      merged screen: search + genre browsing +
+                                   filters (SCREENS.md B2 — search and
+                                   genres are NOT separate features/screens,
+                                   they were merged into one)
       domain/                     SearchHistoryRepository (private)
       data/
       presentation/
-    genres/
+        explore_screen.dart
+        cubit/
+        widgets/
+    filtered_list/                C1 — shared by Discover ("See all") and
+                                   Explore (genre tap, filter results); NOT
+                                   nested inside explore/, since Discover
+                                   also navigates here
       presentation/
+        filtered_list_screen.dart
+        cubit/
+        widgets/
     movie_detail/
       presentation/
     tv_detail/
@@ -161,7 +173,7 @@ Name the subfolder `cubit/` (not `bloc/`) when the feature uses a plain
 | DI | `get_it` + `injectable` | Repositories and services are annotated (`@LazySingleton(as: SomeRepository)`) on their implementation class; `injectable_generator` (via `build_runner`) writes the actual `getIt` registrations into `app/di.config.dart`. `main()` only calls `configureDependencies()`. Cubits/Blocs are NOT annotated/registered — they're created where the screen is built and pull dependencies via `getIt<T>()`. |
 | Navigation | go_router | Needed for Matcher deep links (`app://room/K7PM3Q`) and sharing. |
 | HTTP | Dio | Interceptors for bearer auth, `language`/`region`, and logging. |
-| Persistence | drift (SQLite) | Typed, migrations, queries for Stats. |
+| Persistence | drift (SQLite), backed by the `sqlite3` package | Typed, migrations, queries for Stats. Use `sqlite3` (≥ 3.6.0) directly — `sqlite3_flutter_libs` is deprecated, do not add it. |
 | Models | Hand-written immutable classes in `domain`; `freezed` optional for DTOs | Keeping the domain free of codegen makes it readable in review. |
 | Serialization | `json_serializable` only in `data/` | |
 
