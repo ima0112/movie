@@ -1086,6 +1086,15 @@ class FakeMediaRepository implements MediaRepository {
     return Success(results);
   }
 
+  @override
+  Future<Result<List<MediaItem>>> getPosterWallItems() async {
+    await Future.delayed(_delay);
+    // The fake's whole sample universe (16 titles) — there's no TMDB
+    // trending-week split to combine here, just every title this
+    // environment has.
+    return Success([..._movies, ..._tvShows]);
+  }
+
   static int Function(MediaItem, MediaItem)? _comparatorFor(
     DiscoverSortBy sortBy,
   ) {

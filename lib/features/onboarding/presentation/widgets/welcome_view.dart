@@ -40,13 +40,18 @@ class WelcomeView extends StatelessWidget {
         children: [
           PosterWall(posterUrls: posterUrls),
           const Align(alignment: Alignment.topCenter, child: AppHalo()),
+          // "Fade to black from 30% to 62%" (docs/SCREENS.md A2) plus a
+          // short fade at the very top — not in that spec, but without
+          // it a poster tile can get hard-clipped right under the
+          // status bar/notch with no visual softening at all.
           const DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: [0, 0.3, 0.62],
+                stops: [0, 0.1, 0.3, 0.62],
                 colors: [
+                  AppColors.surface,
                   Colors.transparent,
                   Colors.transparent,
                   AppColors.surface,

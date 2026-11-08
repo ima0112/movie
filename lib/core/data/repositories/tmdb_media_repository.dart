@@ -291,4 +291,20 @@ class TmdbMediaRepository implements MediaRepository {
         .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig))
         .toList();
   }
+
+  @override
+  Future<Result<List<MediaItem>>> getPosterWallItems() async {
+    try {
+      final moviesFuture = _mapMovies(_datasource.trendingMovieWeek);
+      final tvFuture = _mapTv(_datasource.trendingTvWeek);
+      final seenIds = <int>{};
+      final items = <MediaItem>[];
+      for (final item in [...await moviesFuture, ...await tvFuture]) {
+        if (seenIds.add(item.id)) items.add(item);
+      }
+      return Success(items);
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
+  }
 }
