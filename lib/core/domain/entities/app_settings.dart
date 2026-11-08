@@ -1,13 +1,15 @@
-/// The user's own TMDB content preferences — F11 ("Language (es/en),
-/// region..."). Deliberately narrow: this only ever changes which
-/// language/region TMDB's own content comes back in, never the app's
-/// own UI language (that's a separate, later localization step — see
-/// `docs/DECISIONS.md` §F11's own scope note).
+/// The user's own content and interface preferences — F11 ("Language
+/// (es/en), region..."). [languageCode] is a single, unified value:
+/// both `LocaleInterceptor`'s TMDB `language` parameter (via
+/// `tmdbLanguageTag`) and `PakoTvApp`'s own `MaterialApp.router.locale`
+/// read the same field — one Settings row, not two separate
+/// "content language"/"app language" preferences.
 class AppSettings {
   const AppSettings({required this.languageCode, required this.regionCode});
 
-  /// ISO 639-1, e.g. `es`/`en` — the `language` half of
-  /// `LocaleInterceptor`'s TMDB query parameter.
+  /// ISO 639-1, e.g. `es`/`en` — feeds both `LocaleInterceptor`'s TMDB
+  /// `language` query parameter (via `tmdbLanguageTag`) and the app's
+  /// own UI `Locale` (CLAUDE.md rule 15).
   final String languageCode;
 
   /// ISO 3166-1 alpha-2, e.g. `ES`/`US` — the `region` half of the same

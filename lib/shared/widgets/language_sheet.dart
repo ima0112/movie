@@ -4,11 +4,12 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'checkable_option_row.dart';
 
-/// H5 (Content language) — `docs/SCREENS.md` H5: "Single-select list:
-/// Español / English." [selectedLanguageCode] is
-/// `AppSettings.languageCode` (`es`/`en`); [onSelected] is called with
-/// the new code and this sheet pops itself — the caller never has to
-/// close it manually.
+/// H5 (Language) — `docs/SCREENS.md` H5: "Single-select list: Español
+/// / English." [selectedLanguageCode] is `AppSettings.languageCode`
+/// (`es`/`en`) — now the single source for both TMDB content and the
+/// app's own UI, so this is plain "Language" again, not "Content
+/// language". [onSelected] is called with the new code and this sheet
+/// pops itself — the caller never has to close it manually.
 class LanguageSheet extends StatelessWidget {
   const LanguageSheet({
     super.key,
@@ -33,7 +34,7 @@ class LanguageSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Content language', style: AppTextStyles.h2),
+            Text('Language', style: AppTextStyles.h2),
             const SizedBox(height: AppSpacing.md),
             for (final option in _options)
               CheckableOptionRow(

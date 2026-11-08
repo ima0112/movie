@@ -1,12 +1,14 @@
 import '../entities/app_settings.dart';
 import '../entities/result.dart';
 
-/// The user's own TMDB content preferences (F11) — `domain` contract
-/// only, per CLAUDE.md rule 2. There is no global preferences Cubit on
-/// top of this: `SettingsCubit` (Settings screen only, a later branch)
-/// is the single, screen-local subscriber; anything else that needs a
-/// current value (e.g. a future locale-aware `ApiClient` interceptor)
-/// reads [current] or [watch] directly.
+/// The user's own content and interface preferences (F11) — `domain`
+/// contract only, per CLAUDE.md rule 2. There is no global preferences
+/// Cubit on top of this: `SettingsCubit` (Settings screen only) is the
+/// single screen-local subscriber that *writes*; both real readers —
+/// `ApiClient`'s `LocaleInterceptor` and `PakoTvApp`'s own
+/// `MaterialApp.router.locale` — read [current] or [watch] directly
+/// instead, per CLAUDE.md rule 15 (the UI's own language is this same
+/// value, not a second preference).
 ///
 /// [current] is synchronous and always available — the same "cache a
 /// plain value, swap it once the real load resolves" shape

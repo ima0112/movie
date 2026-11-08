@@ -148,6 +148,14 @@ ask before inventing it.
     with a notch, on a small device (iPhone SE or a small Android), with
     the keyboard open, and at 200% text scale, and state in the PR
     description which of these you checked.
+15. **Localization.** All text visible or accessible to the user comes
+    from `AppLocalizations`; `domain` and `data` never contain
+    user-facing text. Keys are camelCase with a feature prefix (e.g.
+    `discoverSeeAll`); messages use typed placeholders and ICU plurals,
+    never string concatenation; add an `@key` with a `description` when
+    the context isn't obvious from the key name alone. Documented
+    exceptions: TMDB's own attribution text, and the exported JSON's own
+    (internal, non-display) keys.
 
 ## Code conventions
 

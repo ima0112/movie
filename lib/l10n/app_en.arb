@@ -1,0 +1,33 @@
+{
+  "@@locale": "en",
+
+  "discoverSeeAll": "See all",
+  "@discoverSeeAll": {
+    "description": "Discover (B1) — link under a carousel section header that opens the full collection as a filtered list (C1)."
+  },
+
+  "settingsAboutVersion": "Version {version} ({build})",
+  "@settingsAboutVersion": {
+    "description": "Settings (C6) → About's Version row value. {version} is the app's own semantic version (e.g. 1.0.0); {build} is the platform build number.",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      },
+      "build": {
+        "type": "String",
+        "example": "1"
+      }
+    }
+  },
+
+  "settingsDataDeleteItemCount": "{count, plural, =1{1 item} other{{count} items}}",
+  "@settingsDataDeleteItemCount": {
+    "description": "Settings (C6) → I1 (Confirm deletion) — how many items a deletion removes (e.g. \"Delete My List\"). {count} is the number of items.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

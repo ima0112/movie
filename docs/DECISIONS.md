@@ -18,7 +18,7 @@ Status: conceptualization closed, no code yet. Date: 2026-09-08.
 ### Store publishing
 - Google Play: one-time $25 registration.
 - App Store: requires the Apple Developer Program ($99/year; verify current price). There is no free path to publish on the App Store. Alternatives if not paying: TestFlight for invited testers, or installing from Xcode on your own device, plus a demo video in the README.
-- **Before publishing**: localize the app's own interface (not just TMDB's content — see F11's own distinction between the two) into at least Spanish and English. v1.0's Settings screen only ever changes which language TMDB's content comes back in; the UI itself (buttons, labels, every screen built so far) stays hardcoded English until this step, which is a pre-launch task, not a per-feature one.
+- **Before publishing**: translate every remaining hardcoded user-facing string into the app's own `AppLocalizations` (`lib/l10n/`, CLAUDE.md rule 15) for both Spanish and English. The infrastructure itself (ARB files, `MaterialApp.router`'s `locale`, `context.l10n`) exists from the start — Settings' one Language row drives both TMDB's content and the UI at once (F11) — but most individual screens still hold their own hardcoded English literals until each is migrated; this is a pre-launch completeness task, not a per-feature one.
 
 ### Public repo and secrets
 - No API key or Firebase configuration file goes into the repo.
@@ -145,7 +145,7 @@ What actually shipped, and where it diverges from the table above:
 | F9 | Onboarding + user profile + taste profile | Welcome → **What's your name? (required: display name and initial color)** → two skippable genre steps. Local `UserProfile { displayName, initialColor }`, editable in You. **No age or gender is asked**: minor protection is handled by the stores (12+/Teen rating declared in the listing), and not collecting age avoids COPPA/GDPR-K obligations. No in-app Family mode toggle in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` (TMDB's `certification` filter only covers `/discover/movie`, not `/discover/tv` or any carousel endpoint, so a toggle could only ever be partially effective). Tastes always editable in You → My Tastes. |
 | F9b | You tab | Header with initial and name, My Tastes card, Your Activity card (4 numbers + link to Stats), Recent Rooms (v1.1). Gear icon → Settings. |
 | F10 | Surprise me | Individual suggestion using the match engine (see §5). |
-| F11 | Settings (screen pushed from You) | Content language (es/en) and region — TMDB's own content only, never the app's own interface language; UI localization is a separate pre-launch step (§1's own "Before publishing" note). Export My List (JSON), deletions, about + TMDB attribution. No theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md`. |
+| F11 | Settings (screen pushed from You) | Language (es/en) and region — one Language setting drives both TMDB's own content and the app's own interface (`AppLocalizations`, CLAUDE.md rule 15); translating every screen's own remaining literals is a separate pre-launch completeness step (§1's own "Before publishing" note), not a second preference. Export My List (JSON), deletions, about + TMDB attribution. No theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md`. |
 | F12 | States | Skeleton loaders, empty, error with retry, offline notice. |
 | F13 | TMDB attribution | Mandatory logo and text in Settings and on the store listing. |
 
