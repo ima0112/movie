@@ -2,13 +2,16 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/drift_settings_repository.dart';
 import 'package:movies/core/data/repositories/tmdb_person_repository.dart';
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart';
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
 import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/network/api_client.dart';
+import 'package:movies/core/persistence/app_database.dart';
 
 /// Serves a fixture per request, same idea as
 /// `tmdb_media_repository_test.dart`'s own adapter — here the choice is
@@ -60,7 +63,9 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
 }
 
 TmdbPersonRepository _repositoryWith(_FixtureRoutedAdapter adapter) {
-  final apiClient = ApiClient();
+  final db = AppDatabase.forTesting(NativeDatabase.memory());
+  addTearDown(db.close);
+  final apiClient = ApiClient(DriftSettingsRepository(db));
   apiClient.dio.httpClientAdapter = adapter;
   final datasource = TmdbMediaDatasource(apiClient);
   final configService = TmdbConfigurationService(apiClient);

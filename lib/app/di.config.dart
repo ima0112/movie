@@ -77,22 +77,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i824.UserProfileRepository>(
       () => _i311.DriftUserProfileRepository(gh<_i231.AppDatabase>()),
     );
-    gh.lazySingleton<_i152.ApiClient>(
-      () => _i152.ApiClient(),
-      registerFor: {_real},
-    );
     gh.lazySingleton<_i780.SettingsRepository>(
       () => _i448.DriftSettingsRepository(gh<_i231.AppDatabase>()),
     );
     gh.lazySingleton<_i166.UserLibraryRepository>(
       () => _i497.DriftUserLibraryRepository(gh<_i231.AppDatabase>()),
     );
-    gh.lazySingleton<_i294.TmdbConfigurationService>(
-      () => _i294.TmdbConfigurationService(gh<_i152.ApiClient>()),
-      registerFor: {_real},
-    );
-    gh.lazySingleton<_i118.TmdbMediaDatasource>(
-      () => _i118.TmdbMediaDatasource(gh<_i152.ApiClient>()),
+    gh.lazySingleton<_i152.ApiClient>(
+      () => _i152.ApiClient(gh<_i780.SettingsRepository>()),
       registerFor: {_real},
     );
     gh.lazySingleton<_i263.PersonRepository>(
@@ -103,17 +95,19 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i661.FakeMediaRepository(),
       registerFor: {_fake},
     );
+    gh.lazySingleton<_i294.TmdbConfigurationService>(
+      () => _i294.TmdbConfigurationService(gh<_i152.ApiClient>()),
+      registerFor: {_real},
+    );
+    gh.lazySingleton<_i118.TmdbMediaDatasource>(
+      () => _i118.TmdbMediaDatasource(gh<_i152.ApiClient>()),
+      registerFor: {_real},
+    );
     gh.lazySingleton<_i245.MediaRepository>(
       () => _i28.TmdbMediaRepository(
         gh<_i118.TmdbMediaDatasource>(),
         gh<_i294.TmdbConfigurationService>(),
-      ),
-      registerFor: {_real},
-    );
-    gh.lazySingleton<_i263.PersonRepository>(
-      () => _i496.TmdbPersonRepository(
-        gh<_i118.TmdbMediaDatasource>(),
-        gh<_i294.TmdbConfigurationService>(),
+        gh<_i780.SettingsRepository>(),
       ),
       registerFor: {_real},
     );
@@ -122,6 +116,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i245.MediaRepository>(),
         gh<_i407.Random>(),
       ),
+    );
+    gh.lazySingleton<_i263.PersonRepository>(
+      () => _i496.TmdbPersonRepository(
+        gh<_i118.TmdbMediaDatasource>(),
+        gh<_i294.TmdbConfigurationService>(),
+      ),
+      registerFor: {_real},
     );
     return this;
   }
