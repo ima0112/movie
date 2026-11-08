@@ -105,6 +105,31 @@ void main() {
       },
     );
 
+    test(
+      'a genre id no longer in GenreCatalog (e.g. saved by an older '
+      "build whose catalog has since dropped it) is dropped on read, "
+      "not fabricated into a Genre GenreLocalization can't display",
+      () async {
+        final repository = _repository();
+        await repository.save(
+          TasteProfile(
+            likedGenres: {
+              _action,
+              const Genre(id: 'legacy-unknown'),
+            },
+            vetoedGenres: const {},
+            likedVibes: const {},
+            yearFrom: 1990,
+            updatedAt: DateTime(2024, 1, 1),
+          ),
+        );
+
+        final saved = await repository.watch().first;
+
+        expect(saved!.likedGenres, {_action});
+      },
+    );
+
     group('delete', () {
       test('clears the profile back to null', () async {
         final repository = _repository();

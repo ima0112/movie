@@ -168,7 +168,11 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
 
   static List<Genre> _deserializeGenres(String? serialized) {
     if (serialized == null || serialized.isEmpty) return const [];
-    return serialized.split(',').map(GenreCatalog.byId).toList();
+    return serialized
+        .split(',')
+        .map(GenreCatalog.byId)
+        .whereType<Genre>()
+        .toList();
   }
 }
 

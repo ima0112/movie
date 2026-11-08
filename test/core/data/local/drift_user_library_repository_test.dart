@@ -258,6 +258,30 @@ void main() {
       expect(entry!.genres, isEmpty);
     });
 
+    test(
+      'a genre id no longer in GenreCatalog (e.g. saved by an older '
+      "build whose catalog has since dropped it) is dropped on read, "
+      "not fabricated into a Genre GenreLocalization can't display",
+      () async {
+        final repository = _repository();
+        await repository.upsert(
+          const UserMediaEntry(
+            title: 'Test Title',
+            key: _dune,
+            genres: [
+              _action,
+              Genre(id: 'legacy-unknown'),
+              _drama,
+            ],
+          ),
+        );
+
+        final entry = await repository.watchEntry(_dune).first;
+
+        expect(entry!.genres, [_action, _drama]);
+      },
+    );
+
     group('clearAll', () {
       test('removes every entry', () async {
         final repository = _repository();
