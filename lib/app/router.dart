@@ -11,6 +11,10 @@ import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
+import '../features/suggestion/presentation/cubit/surprise_cubit.dart';
+import '../features/suggestion/presentation/screens/choose_type_screen.dart';
+import '../features/suggestion/presentation/screens/surprise_quiz_screen.dart';
+import '../features/suggestion/presentation/screens/surprise_result_screen.dart';
 import '../features/you/presentation/screens/you_screen.dart';
 import 'root_shell.dart';
 
@@ -45,12 +49,20 @@ class AppRoutes {
   /// to have, see its own doc comment — a lossless URL-string encoding).
   static const String filteredList = '/list';
 
-  /// E1 (Choose type), not built yet — see `match_hub_sheet.dart`'s own
-  /// "Surprise me" card. Left as its own placeholder route deliberately,
-  /// the same "destination not built yet" shape [genreListing] already
-  /// uses: building E1 itself is out of scope for the branch that only
-  /// needs to prove B3's card actually navigates somewhere.
+  /// E1 (Choose type) — `match_hub_sheet.dart`'s own "Surprise me" card.
   static const String surprise = '/surprise';
+
+  /// E2 (the shared quiz), reached only from [ChooseTypeScreen]'s own
+  /// `BlocListener` once its `SurpriseCubit` emits `NeedsQuiz` — always
+  /// carries that same `SurpriseCubit` instance via `extra` (see
+  /// `ChooseTypeScreen`'s own doc comment for why a route-level hand-off
+  /// is needed instead of a nested `BlocProvider`).
+  static const String surpriseQuiz = '/surprise/quiz';
+
+  /// E3 (Surprise me result) — reached from [ChooseTypeScreen] directly
+  /// (an explicit profile/inferred list) or from [surpriseQuiz] once the
+  /// quiz completes. Same `extra`-carried `SurpriseCubit` hand-off.
+  static const String surpriseResult = '/surprise/result';
 }
 
 /// [FilteredListRouteArgs.title] is C1's own top-bar title (e.g. "In
@@ -179,9 +191,23 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.surprise,
       parentNavigatorKey: _rootNavigatorKey,
-      // TODO: → E1 (Choose type) once it's built — this placeholder only
-      // proves the Match hub's "Surprise me" card actually navigates.
-      builder: (context, state) => const _SurprisePlaceholderScreen(),
+      builder: (context, state) => const ChooseTypeScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.surpriseQuiz,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final cubit = state.extra! as SurpriseCubit;
+        return SurpriseQuizScreen(cubit: cubit);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.surpriseResult,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final cubit = state.extra! as SurpriseCubit;
+        return SurpriseResultScreen(cubit: cubit);
+      },
     ),
   ],
 );
@@ -205,21 +231,6 @@ class _GenreListingPlaceholderScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(leading: const BackButton()),
       body: Center(child: Text('Genre: $genreId ($type)')),
-    );
-  }
-}
-
-/// Stand-in for E1 (Choose type) — same reasoning as
-/// [_GenreListingPlaceholderScreen]: a real pushed screen, own back
-/// button, just no real destination behind it yet.
-class _SurprisePlaceholderScreen extends StatelessWidget {
-  const _SurprisePlaceholderScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(leading: const BackButton()),
-      body: const Center(child: Text('Surprise me')),
     );
   }
 }

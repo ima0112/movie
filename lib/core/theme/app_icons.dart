@@ -100,4 +100,9 @@ class AppIcons {
   /// "9. Stepper (seasons) and toggle").
   static const IconData stepperIncrement = RemixIcons.add_circle_line;
   static const IconData stepperDecrement = RemixIcons.indeterminate_circle_line;
+
+  /// E1's own "two large cards 'A movie' / 'A TV show', each with an
+  /// icon".
+  static const IconData movie = RemixIcons.movie_line;
+  static const IconData tvShow = RemixIcons.tv_line;
 }
