@@ -113,7 +113,7 @@ class TvDetailContent extends StatelessWidget {
           child: MediaDetailHeader(
             posterUrl: detail.item.posterUrl,
             title: detail.item.title,
-            metadataLine: tvMetadataLine(detail),
+            metadataLine: tvMetadataLine(detail, context.l10n),
             voteAverage: detail.item.voteAverage,
             genres: detail.item.genres,
             statusPill: TvStatusPill(status: detail.status),
@@ -206,7 +206,7 @@ class _Footer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
       child: Center(
         child: Text(
-          'Data from TMDB',
+          context.l10n.onboardingWelcomeTmdbAttribution,
           style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
         ),
       ),

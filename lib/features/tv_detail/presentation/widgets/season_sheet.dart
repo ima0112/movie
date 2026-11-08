@@ -50,9 +50,10 @@ class _SeasonSheetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final title = seasonSummary.seasonNumber == 0
-        ? 'Specials'
-        : 'Season ${seasonSummary.seasonNumber}';
+        ? l10n.tvSpecialsLabel
+        : l10n.tvSeasonLabel(seasonSummary.seasonNumber);
 
     return SafeArea(
       child: FractionallySizedBox(
@@ -76,7 +77,7 @@ class _SeasonSheetView extends StatelessWidget {
                       SeasonLoading() => const _SeasonSkeleton(),
                       SeasonError(:final reason) => Center(
                         child: ErrorStateView(
-                          title: "Couldn't load",
+                          title: context.l10n.commonCouldntLoad,
                           body: reason.localizedMessage(context.l10n),
                         ),
                       ),

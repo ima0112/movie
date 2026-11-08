@@ -576,5 +576,54 @@
         "type": "String"
       }
     }
+  },
+
+  "commonReadMore": "Read more",
+  "@commonReadMore": {
+    "description": "The tap-to-expand link at the end of a folded synopsis/biography (docs/SCREENS.md D1: \"Synopsis folded to 4 lines with an amber 'Read more'\") — shared by D1/D2's synopsis, D3's biography, and H4's episode overview."
+  },
+
+  "tvEpisodeCount": "{count, plural, =1{1 episode} other{{count} episodes}}",
+  "@tvEpisodeCount": {
+    "description": "D2's \"Seasons\" row and H4's own title both show a season's episode count (docs/SCREENS.md D2).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tvCreatedByLabel": "Created by ",
+  "@tvCreatedByLabel": {
+    "description": "D2's creator credit (docs/SCREENS.md D2: \"'Created by': names (→ D3)\") — trailing space is deliberate, it precedes the first tappable name with no separator of its own."
+  },
+  "tvSeasonsSectionTitle": "Seasons",
+  "tvSpecialsLabel": "Specials",
+  "@tvSpecialsLabel": {
+    "description": "D2's \"Seasons\" row and H4's own title, for season 0 specifically — shown instead of \"Season 0\"."
+  },
+  "tvSeasonLabel": "Season {number}",
+  "@tvSeasonLabel": {
+    "description": "D2's \"Seasons\" row and H4's own title, for any season other than 0 (see tvSpecialsLabel).",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "tvEpisodeRowTitle": "{number}. {name}",
+  "@tvEpisodeRowTitle": {
+    "description": "H4's own episode row — number + title (docs/SCREENS.md H4).",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tvEpisodeTba": "TBA",
+  "@tvEpisodeTba": {
+    "description": "H4's episode row air date, for an episode with no air date yet (\"To Be Announced\")."
   }
 }

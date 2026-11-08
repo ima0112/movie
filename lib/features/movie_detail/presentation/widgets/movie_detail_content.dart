@@ -108,7 +108,7 @@ class MovieDetailContent extends StatelessWidget {
           child: MediaDetailHeader(
             posterUrl: detail.item.posterUrl,
             title: detail.item.title,
-            metadataLine: movieMetadataLine(detail),
+            metadataLine: movieMetadataLine(detail, context.l10n),
             voteAverage: detail.item.voteAverage,
             genres: detail.item.genres,
             onGenreTap: (genre) => context.push(
@@ -188,7 +188,7 @@ class _Footer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
       child: Center(
         child: Text(
-          'Data from TMDB',
+          context.l10n.onboardingWelcomeTmdbAttribution,
           style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
         ),
       ),
