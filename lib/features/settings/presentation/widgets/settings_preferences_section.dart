@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/app_settings.dart';
 import '../../../../core/domain/entities/country.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/language_sheet.dart';
 import '../../../../shared/widgets/region_sheet.dart';
 import '../../../../shared/widgets/settings_row.dart';
@@ -50,19 +51,21 @@ class SettingsPreferencesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SettingsGroupHeader(title: 'Preferences'),
+        SettingsGroupHeader(title: context.l10n.settingsPreferencesHeader),
         BlocSelector<SettingsCubit, AppSettings, String>(
           selector: (settings) => settings.languageCode,
           builder: (context, languageCode) => SettingsRow(
-            label: 'Language',
-            value: languageCode == 'es' ? 'Español' : 'English',
+            label: context.l10n.settingsLanguageLabel,
+            value: languageCode == 'es'
+                ? context.l10n.languageNameSpanish
+                : context.l10n.languageNameEnglish,
             onTap: () => _openLanguageSheet(context, languageCode),
           ),
         ),
         BlocSelector<SettingsCubit, AppSettings, String>(
           selector: (settings) => settings.regionCode,
           builder: (context, regionCode) => SettingsRow(
-            label: 'Region',
+            label: context.l10n.regionSheetTitle,
             value: countryName(regionCode),
             onTap: () => _openRegionSheet(context, regionCode),
           ),

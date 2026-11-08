@@ -6,6 +6,7 @@ import '../../core/domain/entities/user_profile.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
 import 'app_buttons.dart';
 import 'pako_state.dart';
 import 'profile_avatar.dart';
@@ -70,6 +71,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final name = _nameController.text;
     return SafeArea(
       child: Padding(
@@ -80,11 +82,10 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
           children: [
             const Center(child: PakoState(mood: PakoMood.idle, size: 56)),
             const SizedBox(height: AppSpacing.lg),
-            Text('Edit profile', style: AppTextStyles.h2),
+            Text(l10n.editProfileSheetTitle, style: AppTextStyles.h2),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              "That's what I'll call you, and how others will see you in "
-              'rooms.',
+              l10n.onboardingNameBody,
               style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpacing.xl),
@@ -92,7 +93,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
               controller: _nameController,
               autofocus: true,
               style: AppTextStyles.body,
-              decoration: const InputDecoration(hintText: 'Your name'),
+              decoration: InputDecoration(hintText: l10n.onboardingNameHint),
               onChanged: (value) => setState(() {
                 if (value.trim().isNotEmpty && _selectedColor == null) {
                   _selectedColor = AppColors.profileColors.first.toARGB32();
@@ -119,7 +120,11 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
               ),
             ],
             const SizedBox(height: AppSpacing.xl),
-            PrimaryButton(label: 'Save', onTap: _save, isDisabled: !_canSave),
+            PrimaryButton(
+              label: l10n.commonSave,
+              onTap: _save,
+              isDisabled: !_canSave,
+            ),
           ],
         ),
       ),

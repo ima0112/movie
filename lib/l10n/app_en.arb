@@ -6,9 +6,9 @@
     "description": "Discover (B1) — link under a carousel section header that opens the full collection as a filtered list (C1)."
   },
 
-  "settingsAboutVersion": "Version {version} ({build})",
+  "settingsAboutVersion": "{version} ({build})",
   "@settingsAboutVersion": {
-    "description": "Settings (C6) → About's Version row value. {version} is the app's own semantic version (e.g. 1.0.0); {build} is the platform build number.",
+    "description": "Settings (C6) → About's Version row VALUE only — the row's own label is the separate settingsVersionLabel key (\"Version\"), so this doesn't bake that word in too. {version} is the app's own semantic version (e.g. 1.0.0); {build} is the platform build number. Not wired up to any call site until this branch — safe to reshape.",
     "placeholders": {
       "version": {
         "type": "String",
@@ -832,5 +832,70 @@
     "description": "B3's second card — \"Match\" stays untranslated, same reason as matchHubTitle."
   },
   "matchHubWithFriendsSubtitle": "Decide together in seconds",
-  "matchHubSoonPill": "Soon"
+  "matchHubSoonPill": "Soon",
+
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "C6's own AppBar title (docs/SCREENS.md C6)."
+  },
+
+  "settingsPreferencesHeader": "Preferences",
+  "settingsLanguageLabel": "Language",
+  "@settingsLanguageLabel": {
+    "description": "C6's own row label and H5's sheet title (docs/SCREENS.md C6/H5) — same word in both places."
+  },
+  "languageNameSpanish": "Español",
+  "@languageNameSpanish": {
+    "description": "A language's own name in itself (its endonym) — deliberately identical in every locale's ARB file, the same convention every language picker uses (Spanish is always \"Español\", regardless of the app's current language)."
+  },
+  "languageNameEnglish": "English",
+  "@languageNameEnglish": {
+    "description": "Same convention as languageNameSpanish — deliberately identical in every locale."
+  },
+
+  "settingsDataHeader": "Data",
+  "settingsExportMyList": "Export My List",
+  "settingsDeleteMyListLabel": "Delete My List",
+  "settingsDeleteMyTastesLabel": "Delete My Tastes",
+  "settingsExportFailedSnackbar": "Couldn't export My List",
+  "settingsMyListDeletedSnackbar": "My List deleted",
+  "settingsDeleteMyListFailedSnackbar": "Couldn't delete My List",
+  "settingsMyTastesDeletedSnackbar": "My Tastes deleted",
+  "settingsDeleteMyTastesFailedSnackbar": "Couldn't delete My Tastes",
+
+  "settingsDeleteListDialogTitle": "Delete your list?",
+  "settingsDeleteTastesDialogTitle": "Delete your tastes?",
+  "settingsDeleteDialogBody": "This will remove {itemsPhrase}. This can't be undone.",
+  "@settingsDeleteDialogBody": {
+    "description": "I1's own body (docs/SCREENS.md I1), shared by both the My List and My Tastes deletion dialogs. {itemsPhrase} is already a complete, pluralized phrase (e.g. \"3 items\"/\"1 selection\") from settingsDataDeleteItemCount or settingsDataDeleteSelectionCount — never a bare count — so this template has no noun of its own to agree in gender/number with across locales.",
+    "placeholders": {
+      "itemsPhrase": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsDataDeleteSelectionCount": "{count, plural, =1{1 selection} other{{count} selections}}",
+  "@settingsDataDeleteSelectionCount": {
+    "description": "I1's own item-count phrase for the My Tastes deletion dialog — settingsDataDeleteItemCount's counterpart for \"selection(s)\" instead of \"item(s)\".",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonDelete": "Delete",
+  "@commonDelete": {
+    "description": "I1's own destructive confirm button (docs/SCREENS.md I1: \"Cancel / Delete (destructive)\")."
+  },
+
+  "settingsBuildNumberCopiedSnackbar": "Build number copied",
+  "settingsAboutHeader": "About",
+  "settingsVersionLabel": "Version",
+  "settingsSourceCodeLabel": "Source code",
+  "settingsLicensesLabel": "Licenses",
+
+  "editProfileSheetTitle": "Edit profile",
+  "@editProfileSheetTitle": {
+    "description": "H10's own title (docs/SCREENS.md H10)."
+  }
 }

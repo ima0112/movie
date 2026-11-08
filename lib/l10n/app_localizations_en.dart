@@ -13,7 +13,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsAboutVersion(String version, String build) {
-    return 'Version $version ($build)';
+    return '$version ($build)';
   }
 
   @override
@@ -822,4 +822,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get matchHubSoonPill => 'Soon';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsPreferencesHeader => 'Preferences';
+
+  @override
+  String get settingsLanguageLabel => 'Language';
+
+  @override
+  String get languageNameSpanish => 'Español';
+
+  @override
+  String get languageNameEnglish => 'English';
+
+  @override
+  String get settingsDataHeader => 'Data';
+
+  @override
+  String get settingsExportMyList => 'Export My List';
+
+  @override
+  String get settingsDeleteMyListLabel => 'Delete My List';
+
+  @override
+  String get settingsDeleteMyTastesLabel => 'Delete My Tastes';
+
+  @override
+  String get settingsExportFailedSnackbar => 'Couldn\'t export My List';
+
+  @override
+  String get settingsMyListDeletedSnackbar => 'My List deleted';
+
+  @override
+  String get settingsDeleteMyListFailedSnackbar => 'Couldn\'t delete My List';
+
+  @override
+  String get settingsMyTastesDeletedSnackbar => 'My Tastes deleted';
+
+  @override
+  String get settingsDeleteMyTastesFailedSnackbar =>
+      'Couldn\'t delete My Tastes';
+
+  @override
+  String get settingsDeleteListDialogTitle => 'Delete your list?';
+
+  @override
+  String get settingsDeleteTastesDialogTitle => 'Delete your tastes?';
+
+  @override
+  String settingsDeleteDialogBody(String itemsPhrase) {
+    return 'This will remove $itemsPhrase. This can\'t be undone.';
+  }
+
+  @override
+  String settingsDataDeleteSelectionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selections',
+      one: '1 selection',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String get settingsBuildNumberCopiedSnackbar => 'Build number copied';
+
+  @override
+  String get settingsAboutHeader => 'About';
+
+  @override
+  String get settingsVersionLabel => 'Version';
+
+  @override
+  String get settingsSourceCodeLabel => 'Source code';
+
+  @override
+  String get settingsLicensesLabel => 'Licenses';
+
+  @override
+  String get editProfileSheetTitle => 'Edit profile';
 }

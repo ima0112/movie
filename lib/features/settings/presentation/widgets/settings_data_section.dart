@@ -8,6 +8,7 @@ import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/settings_row.dart';
 import '../../domain/library_export.dart';
 import 'confirm_deletion_dialog.dart';
@@ -32,20 +33,20 @@ class SettingsDataSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SettingsGroupHeader(title: 'Data'),
+        SettingsGroupHeader(title: context.l10n.settingsDataHeader),
         SettingsRow(
-          label: 'Export My List',
+          label: context.l10n.settingsExportMyList,
           showChevron: false,
           onTap: () => _exportLibrary(context),
         ),
         SettingsRow(
-          label: 'Delete My List',
+          label: context.l10n.settingsDeleteMyListLabel,
           labelColor: AppColors.danger,
           showChevron: false,
           onTap: () => _deleteLibrary(context),
         ),
         SettingsRow(
-          label: 'Delete My Tastes',
+          label: context.l10n.settingsDeleteMyTastesLabel,
           labelColor: AppColors.danger,
           showChevron: false,
           onTap: () => _deleteTastes(context),
@@ -55,11 +56,12 @@ class SettingsDataSection extends StatelessWidget {
   }
 
   Future<void> _exportLibrary(BuildContext context) async {
+    final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
     final result = await userLibraryRepository.all();
     if (result is! Success<List<UserMediaEntry>>) {
       messenger.showSnackBar(
-        const SnackBar(content: Text("Couldn't export My List")),
+        SnackBar(content: Text(l10n.settingsExportFailedSnackbar)),
       );
       return;
     }
@@ -76,12 +78,13 @@ class SettingsDataSection extends StatelessWidget {
       );
     } catch (_) {
       messenger.showSnackBar(
-        const SnackBar(content: Text("Couldn't export My List")),
+        SnackBar(content: Text(l10n.settingsExportFailedSnackbar)),
       );
     }
   }
 
   Future<void> _deleteLibrary(BuildContext context) async {
+    final l10n = context.l10n;
     final result = await userLibraryRepository.all();
     final itemCount = result is Success<List<UserMediaEntry>>
         ? result.value.length
@@ -90,9 +93,10 @@ class SettingsDataSection extends StatelessWidget {
     if (!context.mounted) return;
     final confirmed = await showConfirmDeletionDialog(
       context,
-      subject: 'list',
-      itemCount: itemCount,
-      itemNoun: 'item',
+      title: l10n.settingsDeleteListDialogTitle,
+      body: l10n.settingsDeleteDialogBody(
+        l10n.settingsDataDeleteItemCount(itemCount),
+      ),
     );
     if (!confirmed) return;
     if (!context.mounted) return;
@@ -103,14 +107,15 @@ class SettingsDataSection extends StatelessWidget {
       SnackBar(
         content: Text(
           deleteResult is Success<void>
-              ? 'My List deleted'
-              : "Couldn't delete My List",
+              ? l10n.settingsMyListDeletedSnackbar
+              : l10n.settingsDeleteMyListFailedSnackbar,
         ),
       ),
     );
   }
 
   Future<void> _deleteTastes(BuildContext context) async {
+    final l10n = context.l10n;
     final profile = await tasteProfileRepository.watch().first;
     final itemCount = profile == null
         ? 0
@@ -121,9 +126,10 @@ class SettingsDataSection extends StatelessWidget {
     if (!context.mounted) return;
     final confirmed = await showConfirmDeletionDialog(
       context,
-      subject: 'tastes',
-      itemCount: itemCount,
-      itemNoun: 'selection',
+      title: l10n.settingsDeleteTastesDialogTitle,
+      body: l10n.settingsDeleteDialogBody(
+        l10n.settingsDataDeleteSelectionCount(itemCount),
+      ),
     );
     if (!confirmed) return;
     if (!context.mounted) return;
@@ -134,8 +140,8 @@ class SettingsDataSection extends StatelessWidget {
       SnackBar(
         content: Text(
           deleteResult is Success<void>
-              ? 'My Tastes deleted'
-              : "Couldn't delete My Tastes",
+              ? l10n.settingsMyTastesDeletedSnackbar
+              : l10n.settingsDeleteMyTastesFailedSnackbar,
         ),
       ),
     );

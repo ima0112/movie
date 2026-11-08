@@ -42,10 +42,10 @@ void main() {
 
     testWidgets('substitutes typed placeholders', (tester) async {
       final en = await pumpWithLocale(tester, const Locale('en'));
-      expect(en.l10n.settingsAboutVersion('1.0.0', '3'), 'Version 1.0.0 (3)');
+      expect(en.l10n.settingsAboutVersion('1.0.0', '3'), '1.0.0 (3)');
 
       final es = await pumpWithLocale(tester, const Locale('es'));
-      expect(es.l10n.settingsAboutVersion('1.0.0', '3'), 'Versión 1.0.0 (3)');
+      expect(es.l10n.settingsAboutVersion('1.0.0', '3'), '1.0.0 (3)');
     });
 
     testWidgets('resolves ICU plurals on both sides of =1/other', (

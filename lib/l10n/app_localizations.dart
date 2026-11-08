@@ -104,10 +104,10 @@ abstract class AppLocalizations {
   /// **'See all'**
   String get discoverSeeAll;
 
-  /// Settings (C6) → About's Version row value. {version} is the app's own semantic version (e.g. 1.0.0); {build} is the platform build number.
+  /// Settings (C6) → About's Version row VALUE only — the row's own label is the separate settingsVersionLabel key ("Version"), so this doesn't bake that word in too. {version} is the app's own semantic version (e.g. 1.0.0); {build} is the platform build number. Not wired up to any call site until this branch — safe to reshape.
   ///
   /// In en, this message translates to:
-  /// **'Version {version} ({build})'**
+  /// **'{version} ({build})'**
   String settingsAboutVersion(String version, String build);
 
   /// Settings (C6) → I1 (Confirm deletion) — how many items a deletion removes (e.g. "Delete My List"). {count} is the number of items.
@@ -1543,6 +1543,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Soon'**
   String get matchHubSoonPill;
+
+  /// C6's own AppBar title (docs/SCREENS.md C6).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsPreferencesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get settingsPreferencesHeader;
+
+  /// C6's own row label and H5's sheet title (docs/SCREENS.md C6/H5) — same word in both places.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguageLabel;
+
+  /// A language's own name in itself (its endonym) — deliberately identical in every locale's ARB file, the same convention every language picker uses (Spanish is always "Español", regardless of the app's current language).
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get languageNameSpanish;
+
+  /// Same convention as languageNameSpanish — deliberately identical in every locale.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageNameEnglish;
+
+  /// No description provided for @settingsDataHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Data'**
+  String get settingsDataHeader;
+
+  /// No description provided for @settingsExportMyList.
+  ///
+  /// In en, this message translates to:
+  /// **'Export My List'**
+  String get settingsExportMyList;
+
+  /// No description provided for @settingsDeleteMyListLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete My List'**
+  String get settingsDeleteMyListLabel;
+
+  /// No description provided for @settingsDeleteMyTastesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete My Tastes'**
+  String get settingsDeleteMyTastesLabel;
+
+  /// No description provided for @settingsExportFailedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t export My List'**
+  String get settingsExportFailedSnackbar;
+
+  /// No description provided for @settingsMyListDeletedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'My List deleted'**
+  String get settingsMyListDeletedSnackbar;
+
+  /// No description provided for @settingsDeleteMyListFailedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete My List'**
+  String get settingsDeleteMyListFailedSnackbar;
+
+  /// No description provided for @settingsMyTastesDeletedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'My Tastes deleted'**
+  String get settingsMyTastesDeletedSnackbar;
+
+  /// No description provided for @settingsDeleteMyTastesFailedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete My Tastes'**
+  String get settingsDeleteMyTastesFailedSnackbar;
+
+  /// No description provided for @settingsDeleteListDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your list?'**
+  String get settingsDeleteListDialogTitle;
+
+  /// No description provided for @settingsDeleteTastesDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your tastes?'**
+  String get settingsDeleteTastesDialogTitle;
+
+  /// I1's own body (docs/SCREENS.md I1), shared by both the My List and My Tastes deletion dialogs. {itemsPhrase} is already a complete, pluralized phrase (e.g. "3 items"/"1 selection") from settingsDataDeleteItemCount or settingsDataDeleteSelectionCount — never a bare count — so this template has no noun of its own to agree in gender/number with across locales.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove {itemsPhrase}. This can\'t be undone.'**
+  String settingsDeleteDialogBody(String itemsPhrase);
+
+  /// I1's own item-count phrase for the My Tastes deletion dialog — settingsDataDeleteItemCount's counterpart for "selection(s)" instead of "item(s)".
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 selection} other{{count} selections}}'**
+  String settingsDataDeleteSelectionCount(int count);
+
+  /// I1's own destructive confirm button (docs/SCREENS.md I1: "Cancel / Delete (destructive)").
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// No description provided for @settingsBuildNumberCopiedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Build number copied'**
+  String get settingsBuildNumberCopiedSnackbar;
+
+  /// No description provided for @settingsAboutHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAboutHeader;
+
+  /// No description provided for @settingsVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get settingsVersionLabel;
+
+  /// No description provided for @settingsSourceCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source code'**
+  String get settingsSourceCodeLabel;
+
+  /// No description provided for @settingsLicensesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Licenses'**
+  String get settingsLicensesLabel;
+
+  /// H10's own title (docs/SCREENS.md H10).
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfileSheetTitle;
 }
 
 class _AppLocalizationsDelegate

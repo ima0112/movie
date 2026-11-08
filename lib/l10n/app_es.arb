@@ -3,7 +3,7 @@
 
   "discoverSeeAll": "Ver todo",
 
-  "settingsAboutVersion": "Versión {version} ({build})",
+  "settingsAboutVersion": "{version} ({build})",
 
   "settingsDataDeleteItemCount": "{count, plural, =1{1 elemento} other{{count} elementos}}",
 
@@ -298,5 +298,36 @@
   "matchHubSurpriseMeSubtitle": "Una sugerencia solo para ti",
   "matchHubWithFriendsTitle": "Match con amigos",
   "matchHubWithFriendsSubtitle": "Decide con amigos en segundos",
-  "matchHubSoonPill": "Pronto"
+  "matchHubSoonPill": "Pronto",
+
+  "settingsTitle": "Ajustes",
+
+  "settingsPreferencesHeader": "Preferencias",
+  "settingsLanguageLabel": "Idioma",
+  "languageNameSpanish": "Español",
+  "languageNameEnglish": "English",
+
+  "settingsDataHeader": "Datos",
+  "settingsExportMyList": "Exportar mi lista",
+  "settingsDeleteMyListLabel": "Eliminar mi lista",
+  "settingsDeleteMyTastesLabel": "Eliminar mis gustos",
+  "settingsExportFailedSnackbar": "No se pudo exportar tu lista",
+  "settingsMyListDeletedSnackbar": "Lista eliminada",
+  "settingsDeleteMyListFailedSnackbar": "No se pudo eliminar tu lista",
+  "settingsMyTastesDeletedSnackbar": "Gustos eliminados",
+  "settingsDeleteMyTastesFailedSnackbar": "No se pudieron eliminar tus gustos",
+
+  "settingsDeleteListDialogTitle": "¿Eliminar tu lista?",
+  "settingsDeleteTastesDialogTitle": "¿Eliminar tus gustos?",
+  "settingsDeleteDialogBody": "Se eliminarán {itemsPhrase}. No podrás deshacerlo.",
+  "settingsDataDeleteSelectionCount": "{count, plural, =1{1 selección} other{{count} selecciones}}",
+  "commonDelete": "Eliminar",
+
+  "settingsBuildNumberCopiedSnackbar": "Número de compilación copiado",
+  "settingsAboutHeader": "Acerca de",
+  "settingsVersionLabel": "Versión",
+  "settingsSourceCodeLabel": "Código fuente",
+  "settingsLicensesLabel": "Licencias",
+
+  "editProfileSheetTitle": "Editar perfil"
 }

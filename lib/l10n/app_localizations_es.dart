@@ -13,7 +13,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String settingsAboutVersion(String version, String build) {
-    return 'Versión $version ($build)';
+    return '$version ($build)';
   }
 
   @override
@@ -844,4 +844,92 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get matchHubSoonPill => 'Pronto';
+
+  @override
+  String get settingsTitle => 'Ajustes';
+
+  @override
+  String get settingsPreferencesHeader => 'Preferencias';
+
+  @override
+  String get settingsLanguageLabel => 'Idioma';
+
+  @override
+  String get languageNameSpanish => 'Español';
+
+  @override
+  String get languageNameEnglish => 'English';
+
+  @override
+  String get settingsDataHeader => 'Datos';
+
+  @override
+  String get settingsExportMyList => 'Exportar mi lista';
+
+  @override
+  String get settingsDeleteMyListLabel => 'Eliminar mi lista';
+
+  @override
+  String get settingsDeleteMyTastesLabel => 'Eliminar mis gustos';
+
+  @override
+  String get settingsExportFailedSnackbar => 'No se pudo exportar tu lista';
+
+  @override
+  String get settingsMyListDeletedSnackbar => 'Lista eliminada';
+
+  @override
+  String get settingsDeleteMyListFailedSnackbar =>
+      'No se pudo eliminar tu lista';
+
+  @override
+  String get settingsMyTastesDeletedSnackbar => 'Gustos eliminados';
+
+  @override
+  String get settingsDeleteMyTastesFailedSnackbar =>
+      'No se pudieron eliminar tus gustos';
+
+  @override
+  String get settingsDeleteListDialogTitle => '¿Eliminar tu lista?';
+
+  @override
+  String get settingsDeleteTastesDialogTitle => '¿Eliminar tus gustos?';
+
+  @override
+  String settingsDeleteDialogBody(String itemsPhrase) {
+    return 'Se eliminarán $itemsPhrase. No podrás deshacerlo.';
+  }
+
+  @override
+  String settingsDataDeleteSelectionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selecciones',
+      one: '1 selección',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get commonDelete => 'Eliminar';
+
+  @override
+  String get settingsBuildNumberCopiedSnackbar =>
+      'Número de compilación copiado';
+
+  @override
+  String get settingsAboutHeader => 'Acerca de';
+
+  @override
+  String get settingsVersionLabel => 'Versión';
+
+  @override
+  String get settingsSourceCodeLabel => 'Código fuente';
+
+  @override
+  String get settingsLicensesLabel => 'Licencias';
+
+  @override
+  String get editProfileSheetTitle => 'Editar perfil';
 }
