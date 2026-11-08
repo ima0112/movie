@@ -1,6 +1,8 @@
 /// The local user's own profile — display name and avatar color, nothing
 /// else (no age or gender: `docs/DECISIONS.md` section 4/F9 — minor
-/// protection is handled by store ratings and Family mode instead).
+/// protection is handled by the stores' own 12+/Teen rating instead; see
+/// `docs/decisions/family-mode-not-in-v1.md` for why an in-app content
+/// filter was dropped rather than built partially).
 ///
 /// Shape fixed by `docs/DECISIONS.md` section 7: `UserProfile
 /// { displayName, initialColor }`. Set once during onboarding (F9,

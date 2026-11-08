@@ -10,7 +10,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['include_adult'], false);
@@ -21,7 +20,6 @@ void main() {
       final params = discoverQueryParams(
         DiscoverFilter(minVoteAverage: 7),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['vote_count.gte'], 100);
@@ -31,7 +29,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['sort_by'], 'popularity.desc');
@@ -48,7 +45,6 @@ void main() {
           },
         ),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       // action=28, comedy=35.
@@ -61,12 +57,10 @@ void main() {
       final movie = discoverQueryParams(
         DiscoverFilter(withGenres: {action}),
         type: MediaType.movie,
-        region: 'ES',
       );
       final tv = discoverQueryParams(
         DiscoverFilter(withGenres: {action}),
         type: MediaType.tvShow,
-        region: 'ES',
       );
 
       expect(movie['with_genres'], '28');
@@ -77,7 +71,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params.containsKey('with_genres'), isFalse);
@@ -91,7 +84,6 @@ void main() {
           withoutGenres: {GenreCatalog.all.firstWhere((g) => g.id == 'horror')},
         ),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['without_genres'], '27');
@@ -103,7 +95,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(yearFrom: 1990, yearTo: 1999),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['primary_release_date.gte'], '1990-01-01');
@@ -114,7 +105,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(yearFrom: 1990),
         type: MediaType.tvShow,
-        region: 'ES',
       );
 
       expect(params['first_air_date.gte'], '1990-01-01');
@@ -125,7 +115,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params.containsKey('primary_release_date.gte'), isFalse);
@@ -138,7 +127,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(minVoteAverage: 7.5),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['vote_average.gte'], 7.5);
@@ -148,7 +136,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params.containsKey('vote_average.gte'), isFalse);
@@ -160,7 +147,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(maxRuntimeMinutes: 120),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['with_runtime.lte'], 120);
@@ -170,7 +156,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(maxRuntimeMinutes: 120),
         type: MediaType.tvShow,
-        region: 'ES',
       );
 
       expect(params.containsKey('with_runtime.lte'), isFalse);
@@ -182,7 +167,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(tvStatus: DiscoverTvStatus.airing),
         type: MediaType.tvShow,
-        region: 'ES',
       );
 
       expect(params['with_status'], '0');
@@ -192,7 +176,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(tvStatus: DiscoverTvStatus.ended),
         type: MediaType.tvShow,
-        region: 'ES',
       );
 
       expect(params['with_status'], '3');
@@ -202,7 +185,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(tvStatus: DiscoverTvStatus.airing),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params.containsKey('with_status'), isFalse);
@@ -215,12 +197,10 @@ void main() {
       final movie = discoverQueryParams(
         const DiscoverFilter(sortBy: DiscoverSortBy.releaseDate),
         type: MediaType.movie,
-        region: 'ES',
       );
       final tv = discoverQueryParams(
         const DiscoverFilter(sortBy: DiscoverSortBy.releaseDate),
         type: MediaType.tvShow,
-        region: 'ES',
       );
 
       expect(movie['sort_by'], 'primary_release_date.desc');
@@ -231,7 +211,6 @@ void main() {
       final params = discoverQueryParams(
         const DiscoverFilter(sortBy: DiscoverSortBy.rating),
         type: MediaType.movie,
-        region: 'ES',
       );
 
       expect(params['sort_by'], 'vote_average.desc');
@@ -241,12 +220,10 @@ void main() {
       final movie = discoverQueryParams(
         const DiscoverFilter(sortBy: DiscoverSortBy.title),
         type: MediaType.movie,
-        region: 'ES',
       );
       final tv = discoverQueryParams(
         const DiscoverFilter(sortBy: DiscoverSortBy.title),
         type: MediaType.tvShow,
-        region: 'ES',
       );
 
       expect(movie['sort_by'], 'title.asc');
@@ -254,41 +231,4 @@ void main() {
     });
   });
 
-  group('discoverQueryParams — familyMode', () {
-    test('off by default: no certification params at all', () {
-      final params = discoverQueryParams(
-        const DiscoverFilter(),
-        type: MediaType.movie,
-        region: 'ES',
-      );
-
-      expect(params.containsKey('certification_country'), isFalse);
-      expect(params.containsKey('certification.lte'), isFalse);
-    });
-
-    test('on: certification_country matches the given region, with a '
-        'fixed certification.lte', () {
-      final params = discoverQueryParams(
-        const DiscoverFilter(),
-        type: MediaType.movie,
-        region: 'ES',
-        familyMode: true,
-      );
-
-      expect(params['certification_country'], 'ES');
-      expect(params['certification.lte'], '16');
-    });
-
-    test('applies the same way to a TV discover call', () {
-      final params = discoverQueryParams(
-        const DiscoverFilter(),
-        type: MediaType.tvShow,
-        region: 'ES',
-        familyMode: true,
-      );
-
-      expect(params['certification_country'], 'ES');
-      expect(params['certification.lte'], '16');
-    });
-  });
 }

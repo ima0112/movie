@@ -283,7 +283,7 @@ class TmdbMediaRepository implements MediaRepository {
 
   Future<List<MediaItem>> _discoverMovies(DiscoverFilter filter) async {
     final page = await _datasource.discoverMovie(
-      discoverQueryParams(filter, type: MediaType.movie, region: _region),
+      discoverQueryParams(filter, type: MediaType.movie),
     );
     return page.results
         .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig))
@@ -292,7 +292,7 @@ class TmdbMediaRepository implements MediaRepository {
 
   Future<List<MediaItem>> _discoverTv(DiscoverFilter filter) async {
     final page = await _datasource.discoverTv(
-      discoverQueryParams(filter, type: MediaType.tvShow, region: _region),
+      discoverQueryParams(filter, type: MediaType.tvShow),
     );
     return page.results
         .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig))
