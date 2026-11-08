@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/app/environments.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/domain/repositories/user_profile_repository.dart';
@@ -24,7 +25,7 @@ import 'package:movies/core/domain/repositories/user_profile_repository.dart';
 /// only needs to catch "the annotation exists but the registration
 /// wasn't generated", which `isRegistered` does without any of that.
 void main() {
-  setUpAll(configureDependencies);
+  setUpAll(() => configureDependencies(fake.name));
 
   test('every repository app/app.dart resolves via getIt is registered', () {
     expect(getIt.isRegistered<UserLibraryRepository>(), isTrue);

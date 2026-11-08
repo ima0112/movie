@@ -17,8 +17,20 @@ final class Success<T> extends Result<T> {
   final T value;
 }
 
+/// Why a [Failure] happened — lets presentation code branch (an offline
+/// banner for [network], a distinct empty state for [notFound], a
+/// "slow down" message for [quota]) without parsing [Failure.message].
+///
+/// Source of truth: this project's CLAUDE.md rule 7 and
+/// `docs/DECISIONS.md` §2/§7 — `core/network`'s Dio-to-`Failure` mapping
+/// is the one place that assigns these; everything else defaults to
+/// [unknown] (e.g. local/drift failures, which aren't network-shaped at
+/// all).
+enum FailureReason { network, server, notFound, quota, unknown }
+
 final class Failure<T> extends Result<T> {
-  const Failure(this.message);
+  const Failure(this.message, {this.reason = FailureReason.unknown});
 
   final String message;
+  final FailureReason reason;
 }
