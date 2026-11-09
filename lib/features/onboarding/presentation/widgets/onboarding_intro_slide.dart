@@ -40,7 +40,8 @@ class OnboardingIntroSlide extends StatelessWidget {
   /// Four dots in the design: the two slides, the name step, the genres.
   static const int dotCount = 4;
 
-  static const double _fadeHeight = 160;
+  static const double _fadeHeight = 230;
+  static const double _textMaxFraction = 0.5;
 
   @override
   Widget build(BuildContext context) {
@@ -57,76 +58,104 @@ class OnboardingIntroSlide extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: onSkip,
-                  child: Text(
-                    l10n.commonSkip,
-                    style: AppTextStyles.bodySm.copyWith(
-                      color: AppColors.inkMuted,
+          // The text block may take up to half the screen (scrolling past
+          // that with large text); the phone area gets everything left.
+          child: LayoutBuilder(
+            builder: (context, constraints) => Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: onSkip,
+                    child: Text(
+                      l10n.commonSkip,
+                      style: AppTextStyles.bodySm.copyWith(
+                        color: AppColors.inkMuted,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xxl,
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: constraints.maxHeight * _textMaxFraction,
                   ),
-                  child: Column(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xxl,
+                    ),
+                    child: Column(
+                      children: [
+                        GenreStepHeadline(
+                          text: headline,
+                          highlightWord: highlightWord,
+                          style: AppTextStyles.display,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Text(
+                          body,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.inkMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // The phone runs behind the footer, as in the design: the
+                // dots and button float over its faded-out bottom.
+                Expanded(
+                  child: Stack(
                     children: [
-                      GenreStepHeadline(
-                        text: headline,
-                        highlightWord: highlightWord,
-                        style: AppTextStyles.display,
+                      Positioned.fill(
+                        child: ClipRect(
+                          child: OverflowBox(
+                            alignment: Alignment.topCenter,
+                            minWidth: 0,
+                            minHeight: 0,
+                            maxHeight: IntroPhoneFrame.height + AppSpacing.xxl,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                top: AppSpacing.xxl,
+                              ),
+                              child: visual,
+                            ),
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      Text(
-                        body,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.inkMuted,
+                      const Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        height: _fadeHeight,
+                        child: IgnorePointer(child: _BottomFade()),
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            OnboardingPagerDots(
+                              count: dotCount,
+                              activeIndex: activeDot,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(AppSpacing.xxl),
+                              child: PrimaryButton(
+                                label: l10n.commonNext,
+                                onTap: onNext,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Expanded(
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ClipRect(
-                        child: OverflowBox(
-                          alignment: Alignment.topCenter,
-                          minHeight: 0,
-                          maxHeight: IntroPhoneFrame.height + AppSpacing.xxl,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: AppSpacing.xxl),
-                            child: visual,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      height: _fadeHeight,
-                      child: IgnorePointer(child: _BottomFade()),
-                    ),
-                  ],
-                ),
-              ),
-              OnboardingPagerDots(count: dotCount, activeIndex: activeDot),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.xxl),
-                child: PrimaryButton(label: l10n.commonNext, onTap: onNext),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

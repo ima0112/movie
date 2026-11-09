@@ -307,6 +307,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboardingIntroDiscoverHighlight => 'en segundos';
 
   @override
+  String get onboardingIntroRatingLabel => 'valoración';
+
+  @override
   String get onboardingIntroDiscoverBody =>
       'Explora el catálogo de TMDB. No es una app de streaming: te decimos dónde verlo.';
 
