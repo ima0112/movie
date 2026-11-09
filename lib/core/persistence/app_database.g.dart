@@ -464,23 +464,28 @@ class UserMediaEntryRow extends DataClass
   /// `MediaKey.tmdbId`.
   final int tmdbId;
   final String? title;
+
+  /// Named `posterPath` for the SQL column's own history, but holds
+  /// `UserMediaEntry.posterUrl` — a fully resolved image URL (TMDB host
+  /// + a size token already baked in by the mapper), not a raw TMDB
+  /// path fragment. `MediaItem` never carries the raw path past the
+  /// data layer's own DTO, so there is nothing shorter to store here.
   final String? posterPath;
   final String? backdropPath;
 
-  /// `UserMediaEntry.genres`, serialized as `id:name` pairs joined by
-  /// commas (same format as `TasteProfileTable.likedGenres`, for the
-  /// same reason — a genre's `id` alone isn't enough to rebuild a
-  /// `Genre` without a lookup table this codebase doesn't have yet).
-  /// Mapped both ways by `DriftUserLibraryRepository` — the one column
-  /// in this "catalog snapshot" block that isn't just sitting unused.
+  /// `UserMediaEntry.genres`, serialized as comma-joined ids (same
+  /// format as `TasteProfileTable.likedGenres`) — never a display name
+  /// (CLAUDE.md rule 15); `GenreCatalog.byId` rebuilds each `Genre`.
   final String? genres;
+
+  /// `UserMediaEntry.voteAverage`.
   final double? voteAverage;
   final int? voteCount;
   final double? popularity;
 
-  /// Release/first-air year — kept separate from a full release date
-  /// since a year is all the offline snapshot ever needs to show
-  /// (`docs/SCREENS.md` D1).
+  /// `UserMediaEntry.year` — release/first-air year, kept separate from
+  /// a full release date since a year is all the offline snapshot ever
+  /// needs to show (`docs/SCREENS.md` D1).
   final int? year;
   final bool isFavorite;
   final bool isWatchLater;
@@ -1577,18 +1582,17 @@ class $TasteProfileTableTable extends TasteProfileTable
 class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
   final int id;
 
-  /// `TasteProfile.likedGenres`, serialized as `id:name` pairs joined by
-  /// commas (e.g. `"action:Action,drama:Drama"`) — a genre's `id` alone
-  /// isn't enough to rebuild a `Genre` without a lookup table, and there
-  /// isn't a normalized genre catalog in `core/domain` yet to look it up
-  /// against, so both fields are stored directly.
+  /// `TasteProfile.likedGenres`, serialized as comma-joined ids (e.g.
+  /// `"action,drama"`) — never a display name (CLAUDE.md rule 15);
+  /// `GenreCatalog.byId` rebuilds each `Genre`.
   final String likedGenres;
 
-  /// Same `id:name` serialization as [likedGenres].
+  /// Same id-only serialization as [likedGenres].
   final String vetoedGenres;
 
-  /// `TasteProfile.likedVibes`, comma-joined — vibe names come from
-  /// `assets/vibes.json` and never contain a comma.
+  /// `TasteProfile.likedVibes`, comma-joined — [Vibe] ids from
+  /// `assets/vibes.json` (never a display name, CLAUDE.md rule 15), and
+  /// none of them contain a comma.
   final String likedVibes;
   final int yearFrom;
   final DateTime updatedAt;

@@ -235,7 +235,7 @@ void main() {
     test('picks the winner at random from the top-N pool (seeded for a '
         'deterministic pick); every other candidate from that same pool '
         'becomes an alternative', () async {
-      final seededEngine = MatchEngineImpl(FakeMediaRepository(), Random(42));
+      final seededEngine = MatchEngineImpl.seeded(FakeMediaRepository(), Random(42));
       final catalog = VibeCatalog([
         vibe('comedy', ['comedy']),
       ]);
@@ -262,7 +262,7 @@ void main() {
 
     test('a pool smaller than randomizeTop still uses the whole pool, '
         'not fewer candidates', () async {
-      final seededEngine = MatchEngineImpl(FakeMediaRepository(), Random(42));
+      final seededEngine = MatchEngineImpl.seeded(FakeMediaRepository(), Random(42));
       final catalog = VibeCatalog([
         vibe('scifi', ['sci-fi']),
       ]);
