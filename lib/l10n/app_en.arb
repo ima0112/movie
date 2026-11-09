@@ -616,6 +616,19 @@
     }
   },
 
+  "mediaDetailDuration": "Duration",
+  "@mediaDetailDuration": {
+    "description": "D1's stat card label above the movie's runtime (docs/SCREENS.md D1)."
+  },
+  "mediaDetailClassification": "Classification",
+  "@mediaDetailClassification": {
+    "description": "D1's stat card label above the movie's age certification (\"PG-13\", \"R\"…), not the TMDB score (docs/SCREENS.md D1)."
+  },
+  "mediaDetailSynopsis": "Synopsis",
+  "@mediaDetailSynopsis": {
+    "description": "The small caption above D1/D2's synopsis text; shown in capitals."
+  },
+
   "commonReadMore": "Read more",
   "@commonReadMore": {
     "description": "The tap-to-expand link at the end of a folded synopsis/biography (docs/SCREENS.md D1: \"Synopsis folded to 4 lines with an amber 'Read more'\") — shared by D1/D2's synopsis, D3's biography, and H4's episode overview."

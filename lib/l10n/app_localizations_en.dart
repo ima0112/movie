@@ -652,6 +652,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get mediaDetailDuration => 'Duration';
+
+  @override
+  String get mediaDetailClassification => 'Classification';
+
+  @override
+  String get mediaDetailSynopsis => 'Synopsis';
+
+  @override
   String get commonReadMore => 'Read more';
 
   @override

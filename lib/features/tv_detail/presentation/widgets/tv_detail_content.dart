@@ -19,6 +19,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/locale_names.dart';
 import '../../../../shared/widgets/media_detail/full_cast_sheet.dart';
 import '../../../../shared/widgets/media_detail/media_cast_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
@@ -125,9 +126,13 @@ class TvDetailContent extends StatelessWidget {
               mediaDetail: detail,
               metaPrefix: [
                 tvMetadataLine(detail, context.l10n),
-                if (detail.countryCodes.isNotEmpty) detail.countryCodes.first,
+                if (detail.countryCodes.isNotEmpty)
+                  countryDisplayName(context, detail.countryCodes.first),
               ].where((part) => part.isNotEmpty).join(' · '),
-              extraChips: tvInfoChips(detail),
+              extraChips: [
+                if (detail.originalLanguage?.trim().isNotEmpty ?? false)
+                  languageDisplayName(context, detail.originalLanguage!),
+              ],
               onGenreTap: (genre) => context.push(
                 AppRoutes.filteredList,
                 extra: FilteredListRouteArgs(

@@ -19,11 +19,13 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/locale_names.dart';
 import '../../../../shared/widgets/media_detail/full_cast_sheet.dart';
 import '../../../../shared/widgets/media_detail/media_cast_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_header.dart';
 import '../../../../shared/widgets/media_detail/media_similar_section.dart';
+import '../../../../shared/widgets/media_detail/media_stat_cards.dart';
 import '../../../../shared/widgets/media_detail/media_synopsis_section.dart';
 import '../../../../shared/widgets/media_detail/where_to_watch_section.dart';
 import '../../../../shared/widgets/region_sheet.dart';
@@ -99,6 +101,22 @@ class MovieDetailContent extends StatelessWidget {
     );
   }
 
+  /// D1's Duration / Classification stat cards — each only when TMDB has it.
+  List<MediaStat> _stats(BuildContext context) {
+    final l10n = context.l10n;
+    final runtime = detail.runtimeMinutes;
+    final certification = detail.certification;
+    return [
+      if (runtime != null)
+        MediaStat(
+          label: l10n.mediaDetailDuration,
+          value: movieRuntimeLabel(runtime, l10n),
+        ),
+      if (certification != null && certification.isNotEmpty)
+        MediaStat(label: l10n.mediaDetailClassification, value: certification),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final userLibraryRepository = getIt<UserLibraryRepository>();
@@ -127,8 +145,11 @@ class MovieDetailContent extends StatelessWidget {
               mediaKey: mediaKey,
               userLibraryRepository: userLibraryRepository,
               mediaDetail: detail,
-              metaPrefix: movieMetaPrefix(detail),
-              extraChips: movieInfoChips(detail, context.l10n),
+              metaPrefix: movieMetaPrefix(context, detail),
+              extraChips: [
+                if (detail.originalLanguage?.trim().isNotEmpty ?? false)
+                  languageDisplayName(context, detail.originalLanguage!),
+              ],
               onGenreTap: (genre) => context.push(
                 AppRoutes.filteredList,
                 extra: FilteredListRouteArgs(
@@ -145,6 +166,7 @@ class MovieDetailContent extends StatelessWidget {
             ),
           ),
         ),
+        SliverToBoxAdapter(child: MediaStatCards(stats: _stats(context))),
         SliverToBoxAdapter(
           child: MediaSynopsisSection(overview: detail.overview),
         ),
