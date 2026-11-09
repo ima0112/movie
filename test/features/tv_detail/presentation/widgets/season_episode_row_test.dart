@@ -18,7 +18,9 @@ final _aired = Episode(
 
 void main() {
   group('SeasonEpisodeRow', () {
-    testWidgets('shows the episode number and title together', (tester) async {
+    testWidgets('shows the title, with the episode number in a badge', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -27,7 +29,8 @@ void main() {
         ),
       );
 
-      expect(find.text('1. Silence'), findsOneWidget);
+      expect(find.text('Silence'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
     });
 
     testWidgets('an aired episode\'s date renders muted, not amber', (
@@ -45,8 +48,7 @@ void main() {
         find.byWidgetPredicate(
           (widget) =>
               widget is Text &&
-              (widget.textSpan?.toPlainText().contains('2020-01-01') ??
-                  false),
+              (widget.textSpan?.toPlainText().contains('2020-01-01') ?? false),
         ),
       );
       final dateSpan = (richText.textSpan! as TextSpan).children!.first;
@@ -102,9 +104,8 @@ void main() {
       expect(find.text('TBA'), findsOneWidget);
     });
 
-    testWidgets('synopsis starts folded and expands on "Read more"', (
-      tester,
-    ) async {
+    testWidgets('the synopsis is clipped to 2 lines, with no inline Read more '
+        '(the full text lives in the episode sheet)', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -115,13 +116,6 @@ void main() {
 
       final textWidget = tester.widget<Text>(find.text(_aired.overview));
       expect(textWidget.maxLines, 2);
-      expect(find.text('Read more'), findsOneWidget);
-
-      await tester.tap(find.text('Read more'));
-      await tester.pump();
-
-      final expandedText = tester.widget<Text>(find.text(_aired.overview));
-      expect(expandedText.maxLines, isNull);
       expect(find.text('Read more'), findsNothing);
     });
   });

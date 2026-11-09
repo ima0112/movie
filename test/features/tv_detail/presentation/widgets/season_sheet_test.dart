@@ -47,12 +47,39 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('1. System'), findsOneWidget);
+      expect(find.text('System'), findsOneWidget);
       // Episode 2's row is below the fold of the sheet's own (small)
       // viewport — the sliver list only realizes it once scrolled in.
       await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
       await tester.pumpAndSettle();
-      expect(find.text('2. Hands'), findsOneWidget);
+      expect(find.text('Hands'), findsOneWidget);
+    });
+
+    testWidgets('shows the show name and episode count in the header card, '
+        'and survives a small device at 200% text scale (es)', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('es'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(320, 568),
+              textScaler: TextScaler.linear(2),
+            ),
+            child: const SeasonSheet(
+              tvId: 101,
+              seasonSummary: _theBearSeason1,
+              showTitle: 'The Bear',
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('The Bear'), findsOneWidget);
+      expect(find.text('EPISODIOS'), findsOneWidget);
     });
 
     testWidgets('a specials season titles itself "Specials", not '

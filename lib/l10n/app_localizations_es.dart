@@ -690,6 +690,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tvCreatedByLabel => 'Creada por ';
 
   @override
+  String get tvEpisodesSectionTitle => 'Episodios';
+
+  @override
   String get tvSeasonsSectionTitle => 'Temporadas';
 
   @override

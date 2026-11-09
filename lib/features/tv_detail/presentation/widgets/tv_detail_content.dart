@@ -71,7 +71,11 @@ class TvDetailContent extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (_) => SeasonSheet(tvId: mediaKey.tmdbId, seasonSummary: season),
+      builder: (_) => SeasonSheet(
+        tvId: mediaKey.tmdbId,
+        seasonSummary: season,
+        showTitle: detail.item.title,
+      ),
     );
   }
 

@@ -634,6 +634,7 @@
   "@tvCreatedByLabel": {
     "description": "D2's creator credit (docs/SCREENS.md D2: \"'Created by': names (→ D3)\") — trailing space is deliberate, it precedes the first tappable name with no separator of its own."
   },
+  "tvEpisodesSectionTitle": "Episodes",
   "tvSeasonsSectionTitle": "Seasons",
   "tvSpecialsLabel": "Specials",
   "@tvSpecialsLabel": {
