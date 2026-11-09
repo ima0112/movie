@@ -221,6 +221,9 @@
   "statsTvShowsWatchedLabel": "Series vistas",
   "statsEstimatedTvHoursLabel": "Horas estimadas de series",
 
+  "myTastesIntro": "Cuanto más sepamos, mejores serán tus recomendaciones y el modo Sorpréndeme. Todo se guarda solo en tu dispositivo.",
+  "myTastesGenresLikeHint": "Elige los que quieras.",
+  "myTastesGenresNeverHint": "No los mostramos en recomendaciones.",
   "myTastesGenresLikeTitle": "Géneros que te gustan",
   "myTastesGenresNeverTitle": "Géneros que nunca quieres",
   "myTastesSavedIndicator": "Guardado",

@@ -25,7 +25,7 @@ a este documento primero y luego a código — nunca al revés.
 | `onDanger` | `#1A0606` | Texto sobre fondo `danger` (botón destructivo) |
 | `onAccent` | `#1A1204` | Texto/iconos sobre fondo `accent` |
 | `success` | `#6FCF97` | Match perfecto, check de participante listo |
-| `danger` | `#FF6B6B` | Acciones destructivas, errores |
+| `danger` | `#FF6B6B` | Acciones destructivas, errores, géneros vetados (chip rojo tachado en Mis gustos) |
 | Colores de perfil | `#F2B441` (ámbar) · `#FF6B6B` (coral) · `#6FCF97` (menta) · `#A78BFA` (lila) | Solo para la inicial de usuario / avatares de sala. No se usan en ningún otro contexto de UI. |
 
 **Dónde va el acento (`accent`) — lista cerrada, no añadir más sitios sin

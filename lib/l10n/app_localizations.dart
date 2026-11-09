@@ -1166,6 +1166,24 @@ abstract class AppLocalizations {
   /// **'Estimated TV hours'**
   String get statsEstimatedTvHoursLabel;
 
+  /// No description provided for @myTastesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The more we know, the better your recommendations and Surprise me. Everything is saved only on your device.'**
+  String get myTastesIntro;
+
+  /// No description provided for @myTastesGenresLikeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose as many as you like.'**
+  String get myTastesGenresLikeHint;
+
+  /// No description provided for @myTastesGenresNeverHint.
+  ///
+  /// In en, this message translates to:
+  /// **'We won\'t show them in recommendations.'**
+  String get myTastesGenresNeverHint;
+
   /// No description provided for @myTastesGenresLikeTitle.
   ///
   /// In en, this message translates to:

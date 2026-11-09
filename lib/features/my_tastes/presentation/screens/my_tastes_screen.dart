@@ -9,11 +9,11 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/genre_icons.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/app_buttons.dart';
+import '../../../../shared/widgets/app_chip.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/my_tastes_cubit.dart';
 import '../cubit/my_tastes_state.dart';
-import '../widgets/taste_genre_grid.dart';
+import '../widgets/taste_genre_section.dart';
 import '../widgets/taste_vibe_grid.dart';
 import '../widgets/taste_year_slider.dart';
 
@@ -71,27 +71,53 @@ class _MyTastesView extends StatelessWidget {
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        title: Text(context.l10n.myTastesTitle, style: AppTextStyles.h2),
+        centerTitle: true,
+        title: Text(context.l10n.myTastesTitle, style: AppTextStyles.h3),
+        actions: [
+          // "Reset" lives in the app bar (the "Mis gustos" design), amber
+          // like every text link.
+          Builder(
+            builder: (context) => TextButton(
+              onPressed: context.read<MyTastesCubit>().reset,
+              child: Text(
+                context.l10n.commonReset,
+                style: AppTextStyles.bodySm.copyWith(
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: BlocBuilder<MyTastesCubit, MyTastesState>(
         builder: (context, state) {
           final cubit = context.read<MyTastesCubit>();
           final l10n = context.l10n;
+          final genres = [for (final (genre, _) in genreOptions) genre];
           return ListView(
             padding: const EdgeInsets.all(AppSpacing.xl),
             children: [
-              TasteGenreGrid(
+              Text(
+                l10n.myTastesIntro,
+                style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
+              ),
+              const SizedBox(height: AppSpacing.xxl),
+              TasteGenreSection(
                 title: l10n.myTastesGenresLikeTitle,
-                options: genreOptions,
+                hint: l10n.myTastesGenresLikeHint,
+                genres: genres,
                 selected: state.likedGenres,
                 onToggle: cubit.toggleLikedGenre,
               ),
               const SizedBox(height: AppSpacing.xxl),
-              TasteGenreGrid(
+              TasteGenreSection(
                 title: l10n.myTastesGenresNeverTitle,
-                options: genreOptions,
+                hint: l10n.myTastesGenresNeverHint,
+                genres: genres,
                 selected: state.vetoedGenres,
                 onToggle: cubit.toggleVetoedGenre,
+                selectedState: ChipState.vetoed,
               ),
               const SizedBox(height: AppSpacing.xxl),
               TasteVibeGrid(
@@ -107,11 +133,6 @@ class _MyTastesView extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               Row(
                 children: [
-                  TextLinkButton(
-                    label: l10n.commonReset,
-                    onTap: cubit.reset,
-                    fullWidth: false,
-                  ),
                   const Spacer(),
                   AnimatedOpacity(
                     opacity: state.justSaved ? 1 : 0,

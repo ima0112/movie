@@ -131,13 +131,12 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 
 ### C5. My Tastes
 - Access: My Tastes card in B5; invitation card in B1; or from the Surprise me result when saving.
-- Elements (vertical scroll, everything editable in place):
-  - "Genres you like" section: 3-column grid.
-  - "Genres you never want" section: 3-column grid (mutually exclusive with the above).
+- Elements (vertical scroll, everything editable in place). Top bar: back, centered title, amber "Reset" on the right. Under it, a 14 px muted intro line ("The more we know, the better your recommendations and Surprise me. Everything is saved only on your device."). Each section has a 20 px title and a 13 px muted hint:
+  - "Genres you like" section ("Choose as many as you like."): every genre as a wrapping chip, selected = amber.
+  - "Genres you never want" section ("We won't show them in recommendations."): the same chips, mutually exclusive with the above; a picked one is red-tinted with a red border and struck through.
   - "Vibes you like" section: 4-column grid of the 16 vibes.
   - "How far back" section: slider with a large number.
   - Auto-saved; discreet "Saved" text on change.
-  - "Reset" link.
 - States: none special.
 
 ---
