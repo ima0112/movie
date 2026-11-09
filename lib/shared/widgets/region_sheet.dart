@@ -28,6 +28,10 @@ class RegionSheet extends StatefulWidget {
 class _RegionSheetState extends State<RegionSheet> {
   String _query = '';
 
+  // Below this much height (small device, keyboard open, large text) the
+  // subtitle steps aside so the matches stay visible.
+  static const double _compactHeight = 480;
+
   @override
   Widget build(BuildContext context) {
     final results = countryCatalog
@@ -41,45 +45,61 @@ class _RegionSheetState extends State<RegionSheet> {
     return SafeArea(
       child: FractionallySizedBox(
         heightFactor: 0.85,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(context.l10n.regionSheetTitle, style: AppTextStyles.h2),
-              const SizedBox(height: AppSpacing.md),
-              _SearchField(
-                query: _query,
-                onChanged: (query) => setState(() => _query = query),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Expanded(
-                child: results.isEmpty
-                    ? Center(
-                        child: Text(
-                          context.l10n.commonNoMatches,
-                          style: AppTextStyles.bodySm.copyWith(
-                            color: AppColors.inkMuted,
-                          ),
-                        ),
-                      )
-                    : ListView(
-                        children: [
-                          for (final country in results)
-                            CheckableOptionRow(
-                              label: country.name,
-                              isSelected:
-                                  country.code == widget.selectedRegionCode,
-                              onTap: () {
-                                widget.onSelected(country.code);
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                        ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final compact = constraints.maxHeight < _compactHeight;
+            return Padding(
+              padding: const EdgeInsets.all(AppSpacing.xxl),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(context.l10n.regionSheetTitle, style: AppTextStyles.h1),
+                  if (!compact) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      context.l10n.regionSheetSubtitle,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.inkMuted,
                       ),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.lg),
+                  _SearchField(
+                    query: _query,
+                    onChanged: (query) => setState(() => _query = query),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Expanded(
+                    child: results.isEmpty
+                        ? Center(
+                            child: Text(
+                              context.l10n.commonNoMatches,
+                              style: AppTextStyles.bodySm.copyWith(
+                                color: AppColors.inkMuted,
+                              ),
+                            ),
+                          )
+                        : ListView(
+                            children: [
+                              for (final (i, country) in results.indexed) ...[
+                                if (i > 0) const Divider(height: 1),
+                                CheckableOptionRow(
+                                  label: country.name,
+                                  isSelected:
+                                      country.code == widget.selectedRegionCode,
+                                  onTap: () {
+                                    widget.onSelected(country.code);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -102,11 +122,17 @@ class _SearchField extends StatelessWidget {
         hintStyle: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
         prefixIcon: const Icon(AppIcons.search, color: AppColors.inkMuted),
         filled: true,
-        fillColor: AppColors.surfaceRaised,
+        // The sheet itself is surfaceRaised, so the field sits one level
+        // down on `surface` with a hairline border (the "Región" design).
+        fillColor: AppColors.surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.lineStrong),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+          borderSide: const BorderSide(color: AppColors.lineStrong),
         ),
         suffixIcon: query.isEmpty
             ? null

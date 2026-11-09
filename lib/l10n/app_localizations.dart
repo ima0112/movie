@@ -1244,6 +1244,12 @@ abstract class AppLocalizations {
   /// **'Region'**
   String get regionSheetTitle;
 
+  /// No description provided for @regionSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets which services you see in \"Where to watch\".'**
+  String get regionSheetSubtitle;
+
   /// No description provided for @regionSheetSearchHint.
   ///
   /// In en, this message translates to:

@@ -673,6 +673,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get regionSheetTitle => 'Region';
 
   @override
+  String get regionSheetSubtitle =>
+      'Sets which services you see in \"Where to watch\".';
+
+  @override
   String get regionSheetSearchHint => 'Search countries';
 
   @override
