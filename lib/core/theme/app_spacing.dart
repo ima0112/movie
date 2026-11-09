@@ -28,6 +28,9 @@ class AppSpacing {
   /// Large cards, result sheets.
   static const double radiusLg = 16;
 
+  /// Discover hero card.
+  static const double radiusXl = 20;
+
   /// Buttons, chips.
   static const double radiusPill = 999;
 

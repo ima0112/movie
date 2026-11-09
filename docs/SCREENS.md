@@ -41,14 +41,15 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Access: tab 1 (root). Main screen.
 - Elements:
   - Fixed amber halo behind the header and the top of the hero; fades with scrolling.
-  - Top bar: "PakoTV" wordmark at 24 px on the left (arrives from the splash), search icon on the right (→ B2 with the field focused). Nothing else.
+  - Top bar: "PakoTV" wordmark at 24 px on the left (arrives from the splash). Nothing else — search is the field under the hero.
   - Segmented control **All | Movies | TV Shows** (white active pill; remembers the last choice; 200 ms cross-fade on change). "All" by default.
-  - **Hero** (no header): up to 8 cards, 330×440 (3:4, cropped poster), with snap and a 24 px peek of the next one. Full-bleed poster, fade to black over the bottom 40%; on top of it: reason tag (12 px pill, 60% black background; "For you" in amber), 26 px title, gray 13 px metadata ("2019 · Mystery, Comedy · Movie"). Circular save button (36 px) top right, amber if already in Watch later. No auto-advance, no dots. Tap → detail with Hero transition.
+  - **Hero** (no header): up to 8 cards, 330×290, 20 px radius (cropped poster), with snap and a 24 px peek of the next one. Full-bleed poster, fade to black over the bottom 40%; on top of it: reason tag (12 px pill, 60% black background; "For you" in amber), 26 px title, gray 13 px metadata ("2019 · Mystery, Comedy · Movie"). Circular save button (36 px) top right, amber if already in Watch later. No auto-advance, no dots. Tap → detail with Hero transition.
     - All: 3 For You (if there's a profile) + 3 mixed trending + 1 in theaters + 1 airing now. The first card is always "For you" when a profile exists. **Not built**: the hero itself doesn't mix in "For you" cards yet — only the carousel section below does (see F1b, `RecommendationBuilder`); the hero's own `getHeroItems` is unchanged.
     - Movies: 3 in theaters + 3 trending + 2 upcoming.
     - TV Shows: 3 airing now + 3 trending + 2 top rated.
     - Deduplicated; excludes anything already in My List.
   - **"For you" / "Because you like {title}" sections** (F1b) — first, before every segment's own named sections below, in **all 3 segments** (not just All), each filtered to that segment's type: "For you" from a usable taste profile, or the library's own favorites/well-rated genres with no profile; "Because you like {title}" from a deterministic library seed (favorite or ≥4★) via TMDB's `/recommendations`. {title} is a real saved title, never a genre. Either section is simply absent with no signal, or below 6 results after excluding posterless items and anything already in My List — never an empty or generic carousel. Each loads, errors, and retries on its own (see States below) — one failing never blocks the other, or any of the sections below.
+  - **Search field** right under the hero: 48 px pill in `surfaceRaised`, search icon + "Movies, TV shows, people" in muted text; tap → B2.
   - Sections (20/500 header + amber 14 px "See all" + poster carousel 110×165, 3.2 visible, no title or year underneath):
     - All: Popular this week · Watch later (if ≥ 3; the title links to B4). TV posters carry a small "TV" pill in the corner; movies don't.
     - Movies: In theaters · Trending · Top rated · Upcoming (the only section with a 13 px release date under the poster).

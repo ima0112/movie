@@ -7,6 +7,7 @@ import '../../../recommendations/presentation/cubit/recommendations_cubit.dart';
 import '../../../recommendations/presentation/widgets/recommendation_section_view.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero.dart';
+import 'discover_search_field.dart';
 import 'discover_section_carousel.dart';
 
 /// The hero + every section, once `DiscoverCubit` has something loaded
@@ -41,6 +42,8 @@ class DiscoverContentLoaded extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         children: [
           DiscoverHero(segment: segment),
+          const SizedBox(height: AppSpacing.xl),
+          const DiscoverSearchField(),
           const SizedBox(height: AppSpacing.xxxl),
           RecommendationSectionView(
             slot: RecommendationSlot.forYou,

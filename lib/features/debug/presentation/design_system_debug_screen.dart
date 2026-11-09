@@ -412,7 +412,7 @@ class _MediaCardSection extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xxl),
         Text(
-          'Hero (330×440)',
+          'Hero (330×290)',
           style: AppTextStyles.h3.copyWith(color: AppColors.inkMuted),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -966,7 +966,7 @@ class _MediaCarouselSection extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xxl),
         Text(
-          'hero (330×440, snap, 24px peek — full-bleed, breaks out of the '
+          'hero (330×290, snap, 24px peek — full-bleed, breaks out of the '
           'screen padding)',
           style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
         ),

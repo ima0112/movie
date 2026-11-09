@@ -52,7 +52,7 @@ enum TmdbImageKind { poster, backdrop, profile, still }
 abstract final class TmdbImageSizes {
   static const posterSmall = 'w185'; // list rows, 110×165 token @~2x
   static const posterMedium = 'w342';
-  static const posterLarge = 'w500'; // hero cards (330×440)
+  static const posterLarge = 'w500'; // hero cards (330×290)
   static const backdropMedium = 'w780';
   static const backdropLarge = 'w1280';
   static const profileMedium = 'w185';
