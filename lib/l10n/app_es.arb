@@ -237,6 +237,8 @@
   "tvEpisodeCount": "{count, plural, =1{1 episodio} other{{count} episodios}}",
   "tvCreatedByLabel": "Creada por ",
   "tvEpisodesSectionTitle": "Episodios",
+  "tvEpisodeCode": "T{season} · E{episode}",
+  "tvEpisodeCodeSpecials": "Especiales · E{episode}",
   "tvSeasonsSectionTitle": "Temporadas",
   "tvSpecialsLabel": "Especiales",
   "tvSeasonLabel": "Temporada {number}",

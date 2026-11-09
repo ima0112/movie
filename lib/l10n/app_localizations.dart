@@ -1244,6 +1244,18 @@ abstract class AppLocalizations {
   /// **'Episodes'**
   String get tvEpisodesSectionTitle;
 
+  /// H4b's caption over the episode name (e.g. "S1 · E4").
+  ///
+  /// In en, this message translates to:
+  /// **'S{season} · E{episode}'**
+  String tvEpisodeCode(int season, int episode);
+
+  /// H4b's caption for an episode of season 0 (TMDB's specials).
+  ///
+  /// In en, this message translates to:
+  /// **'Specials · E{episode}'**
+  String tvEpisodeCodeSpecials(int episode);
+
   /// No description provided for @tvSeasonsSectionTitle.
   ///
   /// In en, this message translates to:

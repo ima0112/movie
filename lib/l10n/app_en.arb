@@ -635,6 +635,21 @@
     "description": "D2's creator credit (docs/SCREENS.md D2: \"'Created by': names (→ D3)\") — trailing space is deliberate, it precedes the first tappable name with no separator of its own."
   },
   "tvEpisodesSectionTitle": "Episodes",
+  "tvEpisodeCode": "S{season} · E{episode}",
+  "@tvEpisodeCode": {
+    "description": "H4b's caption over the episode name (e.g. \"S1 · E4\").",
+    "placeholders": {
+      "season": {"type": "int"},
+      "episode": {"type": "int"}
+    }
+  },
+  "tvEpisodeCodeSpecials": "Specials · E{episode}",
+  "@tvEpisodeCodeSpecials": {
+    "description": "H4b's caption for an episode of season 0 (TMDB's specials).",
+    "placeholders": {
+      "episode": {"type": "int"}
+    }
+  },
   "tvSeasonsSectionTitle": "Seasons",
   "tvSpecialsLabel": "Specials",
   "@tvSpecialsLabel": {
