@@ -133,7 +133,11 @@ class TvDetailContent extends StatelessWidget {
               mediaKey: mediaKey,
               userLibraryRepository: userLibraryRepository,
               mediaDetail: detail,
-              metaPrefix: tvMetadataLine(detail, context.l10n),
+              metaPrefix: [
+                tvMetadataLine(detail, context.l10n),
+                if (detail.countryCodes.isNotEmpty) detail.countryCodes.first,
+              ].where((part) => part.isNotEmpty).join(' · '),
+              extraChips: tvInfoChips(detail),
               onGenreTap: (genre) => context.push(
                 AppRoutes.filteredList,
                 extra: FilteredListRouteArgs(

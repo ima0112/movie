@@ -47,6 +47,12 @@ TmdbTvDetailDto _$TmdbTvDetailDtoFromJson(Map<String, dynamic> json) =>
         json['watch/providers'] as Map<String, dynamic>,
       ),
       backdropPath: json['backdrop_path'] as String?,
+      originalLanguage: json['original_language'] as String?,
+      originCountry:
+          (json['origin_country'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
     );
 
 TmdbCreatorDto _$TmdbCreatorDtoFromJson(Map<String, dynamic> json) =>

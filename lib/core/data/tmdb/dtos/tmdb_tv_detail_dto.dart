@@ -37,6 +37,8 @@ class TmdbTvDetailDto {
     required this.contentRatings,
     required this.watchProviders,
     this.backdropPath,
+    this.originalLanguage,
+    this.originCountry = const [],
   });
 
   final int id;
@@ -49,6 +51,14 @@ class TmdbTvDetailDto {
   /// The 16:9 backdrop, for D2's header (`null` when TMDB has none).
   @JsonKey(name: 'backdrop_path')
   final String? backdropPath;
+
+  /// ISO 639-1 code of the original language (`en`).
+  @JsonKey(name: 'original_language')
+  final String? originalLanguage;
+
+  /// ISO codes of the show's origin countries (`['US']`).
+  @JsonKey(name: 'origin_country', defaultValue: <String>[])
+  final List<String> originCountry;
 
   final List<TmdbGenreRefDto> genres;
 

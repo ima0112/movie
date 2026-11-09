@@ -31,6 +31,8 @@ class TmdbMovieDetailDto {
     required this.releaseDates,
     required this.watchProviders,
     this.backdropPath,
+    this.originalLanguage,
+    this.productionCountries = const [],
   });
 
   final int id;
@@ -43,6 +45,14 @@ class TmdbMovieDetailDto {
   /// The 16:9 backdrop, for D1's header (`null` when TMDB has none).
   @JsonKey(name: 'backdrop_path')
   final String? backdropPath;
+
+  /// ISO 639-1 code of the original language (`en`).
+  @JsonKey(name: 'original_language')
+  final String? originalLanguage;
+
+  /// Production countries' ISO codes come as `{iso_3166_1: 'US', name: …}`.
+  @JsonKey(name: 'production_countries', defaultValue: <TmdbCountryRefDto>[])
+  final List<TmdbCountryRefDto> productionCountries;
 
   final List<TmdbGenreRefDto> genres;
 
@@ -114,4 +124,15 @@ class TmdbReleaseDateEntryDto {
 
   factory TmdbReleaseDateEntryDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbReleaseDateEntryDtoFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
+class TmdbCountryRefDto {
+  const TmdbCountryRefDto({required this.iso31661});
+
+  @JsonKey(name: 'iso_3166_1')
+  final String iso31661;
+
+  factory TmdbCountryRefDto.fromJson(Map<String, dynamic> json) =>
+      _$TmdbCountryRefDtoFromJson(json);
 }
