@@ -195,8 +195,8 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 - Exits: H11, E2, or E3.
 
 ### E2. Quiz (1 screen, 4 steps) — shared with the Matcher
-- Access: E1 with no profile, or Matcher F2.
-- Common elements: back button, "Step X of 4" indicator, large conversational headline, step content, full-width "Next" button (disabled until the step's rule is met). On step 1, at the top, a secondary "Use my tastes" button (only if a profile exists; fills answers in and jumps to step 4's confirmation).
+- Access: E1 when no usable `TasteProfile`/inferred list exists at all (otherwise E1 reaches H11 first, which offers "Use my tastes" before ever reaching this screen — see H11 below), or Matcher F2.
+- Common elements: back button, "Step X of 4" indicator, large conversational headline, step content, full-width "Next" button (disabled until the step's rule is met). **Not built: a second "Use my tastes" button on step 1 of this screen itself** — `QuizCubit`'s own doc comment documents this as deliberately out of scope (it would couple this Cubit to one specific prior-answer source). Superseded in practice by H11, which already handles "use my tastes" one step earlier, before this screen is ever reached with a usable profile on hand.
 - Step 1 — "Pick up to 3 you're NOT in the mood for": 4-column grid of genres for the chosen type; icon + name; max 3; counter "1 of 3".
 - Step 2 — "Now pick 3 you ARE in the mood for": 4-column grid of the 16 vibes; exactly 3; counter "3 of 3".
 - Step 3 — "How far back do you want to go?": large year number, full-width slider (1950–present), room for an illustration.

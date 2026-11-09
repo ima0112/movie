@@ -212,11 +212,8 @@ class MatchEngineImpl implements MatchEngine {
     final rule = vibe.ruleFor(query.mediaType);
     final genres = rule.genreIds.map(_genreById).whereType<Genre>().toSet();
     // VibeRule.keywordIds is a List<String> (vibes.json's own JSON
-    // shape — see its doc comment), but a real TMDB keyword id is
-    // numeric; the keyword-resolution script DECISIONS.md §5 describes
-    // is what's expected to populate those strings with parseable
-    // TMDB ids once a vibe actually has any. Always empty today, so
-    // this never actually parses anything yet.
+    // shape — see its doc comment); a real TMDB keyword id is numeric,
+    // so this parses each one.
     final keywordIds = rule.keywordIds.map(int.parse).toSet();
 
     return DiscoverFilter(

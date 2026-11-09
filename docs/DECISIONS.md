@@ -81,7 +81,8 @@ What actually shipped, and where it diverges from the table above:
   planned, not yet started.
 - **Genres**: `/genre/movie/list`/`/genre/tv/list` were **not
   implemented** — this app's genre system is served entirely by the
-  static `GenreCatalog` (15 normalized genres) plus
+  static `GenreCatalog` (16 normalized genres, including `fantasy`,
+  added in the `vibe-keywords-curated` branch) plus
   `core/data/tmdb/tmdb_genre_mapper.dart`'s hand-maintained TMDB-id
   tables (both directions: id→Genre for mapping API responses, Genre→id
   for building `/discover`'s `with_genres`/`without_genres`). No live
@@ -92,9 +93,12 @@ What actually shipped, and where it diverges from the table above:
   for now).
 - **Explore by genre / engine `/discover`**: live for both `movie` and
   `tv`, via a pure, independently-tested `DiscoverFilter` → query-params
-  function (`tmdb_discover_params.dart`). `vote_count.gte` is H8's own
-  fixed `100`, not the slider value. No certification/content-rating
-  filter — see `docs/decisions/family-mode-not-in-v1.md`.
+  function (`tmdb_discover_params.dart`). `vote_count.gte` comes from
+  `DiscoverFilter.minVoteCount` (default `100`); H8's filter sheet has
+  no control for it, so Explore always sends the default. The one real
+  caller that varies it is `MatchQuery.voteCountGte` (§5): `200` on the
+  first attempt, `50` after relaxation step 4. No certification/
+  content-rating filter — see `docs/decisions/family-mode-not-in-v1.md`.
 - **Movie/TV detail**: live, exactly the `append_to_response` combinations
   above, one call each. Trailer selection ("official + Trailer + user's
   language → official → Teaser → first available") ended up as pure
@@ -121,9 +125,13 @@ What actually shipped, and where it diverges from the table above:
   explicit English-language call and `PersonDetail
   .biographyIsEnglishFallback` flags it, for D3's own "Biography in
   English" note.
-- **Keywords for vibes**: untouched by this stack — `/search/keyword`'s
-  "resolve once, fix in the vibes JSON" remains `match_engine`/`vibe`'s
-  own concern, not a runtime call.
+- **Keywords for vibes**: done, via `tool/resolve_vibe_keywords.dart`
+  (dev-only, not shipped) — a one-time research script that calls
+  `/search/keyword` and `/discover` to measure candidate keyword pools,
+  never writing to the app itself. The resolved ids were hand-copied
+  into `assets/vibes.json`'s real `keywordIds`; see §5 for the curated
+  catalog. No runtime call to `/search/keyword` exists in the shipped
+  app.
 
 ### OMDb (v1.2+)
 `GET /?i={imdb_id}` using the `imdb_id` TMDB returns in the detail. Lazy and cached.
@@ -147,7 +155,7 @@ What actually shipped, and where it diverges from the table above:
 | F9 | Onboarding + user profile + taste profile | Welcome → **What's your name? (required: display name and initial color)** → two skippable genre steps. Local `UserProfile { displayName, initialColor }`, editable in You. **No age or gender is asked**: minor protection is handled by the stores (12+/Teen rating declared in the listing), and not collecting age avoids COPPA/GDPR-K obligations. No in-app Family mode toggle in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` (TMDB's `certification` filter only covers `/discover/movie`, not `/discover/tv` or any carousel endpoint, so a toggle could only ever be partially effective). Tastes always editable in You → My Tastes. |
 | F9b | You tab | Header with initial and name, My Tastes card, Your Activity card (4 numbers + link to Stats), Recent Rooms (v1.1). Gear icon → Settings. |
 | F10 | Surprise me | Individual suggestion using the match engine (see §5). |
-| F11 | Settings (screen pushed from You) | Language (es/en) and region — one Language setting drives both TMDB's own content and the app's own interface (`AppLocalizations`, CLAUDE.md rule 15); translating every screen's own remaining literals is a separate pre-launch completeness step (§1's own "Before publishing" note), not a second preference. Export My List (JSON), deletions, about + TMDB attribution. No theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md`. |
+| F11 | Settings (screen pushed from You) | Language (es/en) and region — one Language setting drives both TMDB's own content and the app's own interface (`AppLocalizations`, CLAUDE.md rule 15) — one preference, not two. Export My List (JSON), deletions, about + TMDB attribution. No theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md`. |
 | F12 | States | Skeleton loaders, empty, error with retry, offline notice. |
 | F13 | TMDB attribution | Mandatory logo and text in Settings and on the store listing. |
 
@@ -192,7 +200,7 @@ What actually shipped, and where it diverges from the table above:
 ### `TasteProfile`
 - Fields: `likedGenres`, `vetoedGenres`, `likedVibes`, `yearFrom`, `updatedAt`. Local (same store as `my_list`).
 - Uses **our own normalized genres** (Action, Comedy, Drama…) that map to TMDB's movie and TV genres.
-- Fed from: (a) optional onboarding, (b) Settings → My Tastes, (c) at the end of a guided quiz with the offer "Save as your tastes?".
+- Fed from: (a) optional onboarding, (b) Settings → My Tastes. **Not** fed from the quiz (E2) or the Matcher's questionnaire — see `docs/decisions/quiz-answers-not-saved-to-profile.md`; the quiz asks for vetoes, not favorite genres, so there's no clean mapping back into `likedGenres`.
 - Implicit signals from `my_list`: favorites and watched items rated ≥ 4 reinforce genres; items rated ≤ 2 subtract. They never replace the explicit profile, only fine-tune it.
 
 ---
@@ -241,15 +249,77 @@ Returns `MatchResult { winner, alternatives[3–4], satisfaction {participant �
 There is always a result; the screen states what was relaxed.
 
 ### Vibe catalog
-- JSON file in `assets/`. 16 initial vibes, each with an icon, name, and rule.
-- Each vibe has two mapping columns (movie and TV) to genres and TMDB keyword IDs, plus optional filters (e.g., *Classic* = `release_date.lte=1999` + `vote_average.gte=7.5`).
-- Examples: Feel Good → Comedy + Family + `feel-good`, `friendship`; Date Night → Romance + Comedy + `romantic-comedy`; Superhero → `superhero`, `based-on-comic`; True Story → `based-on-true-story`, `biography`; Tearjerker → Drama + `grief`, `terminal-illness`; Gritty → Crime + Thriller + `neo-noir`.
+- `assets/vibes.json`. **16 vibes on movie, 11 of them also on TV** (5
+  are movie-only by design: `indie`, `tearjerker`, `gangster`,
+  `musical`, `fantasy` — their TV rule is deliberately empty, either
+  because they never had one or because real `/discover` pool
+  measurements showed under ~30 titles at `vote_count.gte=200`, too
+  thin to ever meaningfully surface; `Vibe.isMeaningfulFor(type)` is
+  `false` for an empty rule, so the engine skips it for that type
+  entirely rather than returning a near-empty pool). Each vibe has an
+  icon, a name, and a rule per media type: a genre set, a keyword-id
+  set, and (one case) a year/rating filter.
+- **Combination rule**: within a rule, genres are OR'd together and
+  keyword ids are OR'd together; the genre group and the keyword group
+  are then AND'd (`MatchEngine._filterForVibe` → `DiscoverFilter`, sent
+  to `/discover` as `with_genres=a|b` AND `with_keywords=c|d`). A vibe
+  with genres but no keywords (or vice versa) just omits the empty
+  side of the AND.
+- **Curated keyword ids actually shipped** (resolved via
+  `tool/resolve_vibe_keywords.dart`, hand-copied into `assets/vibes.json`):
+  - `monster`: `1299` (monster), `13031` (creature)
+  - `indie`: `281237` (independent film) — movie only
+  - `superhero`: `9715` (superhero)
+  - `tearjerker`: `9872` (grief), `6564` (terminal illness), `156924` (tearjerker) — movie only
+  - `sports`: `6075` (sports)
+  - `gritty`: `207268` (neo-noir), `286125` (gritty)
+  - `true_story`: `9672` (based on true story), `5565` (biography)
+  - `gangster`: `3149` (gangster), `10391` (mafia) — movie only
+  - `musical`: `4344` (musical) — movie only
+  - `classic` uses no genres or keywords at all: `release_date.lte=1999` + `vote_average.gte=7.5`.
+  - `feel_good`, `detective`, `date`, `future`, `explosive`, `fantasy` are genre-only (no keyword search ever found a candidate worth adding).
+- **Cult, retired.** No TMDB keyword cleared the volume bar once
+  crossed with genres (every real candidate — "cult classic", "cult
+  film" — produced too few titles to be worth a dedicated vibe), and
+  the one thing it offered beyond genre alone (an older, offbeat pick)
+  is already covered by `classic`. Removed entirely rather than
+  shipped with an empty or misleading rule.
+- **Mind-bending, never added.** Of its candidate keyword terms, only
+  "psychological thriller" cleared the pool-size threshold — and that
+  reads as a *thriller genre*, not "twisty plot / unreliable reality,"
+  which is what the vibe was meant to mean. Adding it under that
+  keyword would have mislabeled a genre as a vibe, so it was never
+  added to `assets/vibes.json` at all (it only ever existed as a
+  candidate in `tool/vibe_search_terms.json`).
+- **Fantasy, movie only.** TMDB's TV side has no standalone Fantasy
+  genre — `10765` is "Sci-Fi & Fantasy," the same id as this catalog's
+  own `sci-fi`. Giving `fantasy` a TV rule would mean vetoing it also
+  vetoes `sci-fi` (see Paso 4 finding below), so its TV rule is
+  deliberately left empty; it only resolves on movie, where `14` is
+  its own distinct TMDB id.
 
 ### Surprise me (N=1)
-First tap: movie or TV show? Then, in order:
-1. `TasteProfile` exists → used, refined with `my_list` signals, excludes watched items, result in one tap.
-2. No profile but `my_list` has ≥ 5 items → provisional profile inferred, result labeled "Based on your list", link to save it.
-3. Nothing → guided quiz (same steps as the Matcher) and at the end "Save these answers as your tastes?".
+First tap: movie or TV show? Then (`SurpriseCubit`, via
+`TasteProfileBuilder.build`), in order:
+1. **A usable `TasteProfile` exists** (`TasteProfile
+   .isUsableForSuggestions`: at least one liked vibe **or** one
+   favorite genre — vetoes and `yearFrom` alone don't count, since a
+   profile with only vetoes has nothing positive to search for) →
+   `ChooseSource` (H11) offers "Use my tastes" or "Answer the quiz
+   instead." Choosing "Use my tastes": the profile is used directly,
+   refined with `my_list` signals, excludes watched items, result in
+   one tap.
+2. **No usable profile, but `my_list` has ≥ 5 items** → a provisional
+   profile is inferred entirely from those signals. This also reaches
+   `ChooseSource` (H11), labeled "Based on your list" instead of
+   "Based on your tastes," with the same "Use my tastes" / "Answer the
+   quiz instead" choice — not a separate immediate result, and no
+   "link to save it" (there is nothing built that would save an
+   inferred profile).
+3. **Neither** → straight to the guided quiz (same steps as the
+   Matcher, `QuizCubit`), no `ChooseSource` step. Quiz answers are
+   never saved back to the profile — see
+   `docs/decisions/quiz-answers-not-saved-to-profile.md`.
 
 The engine picks with some randomness among the top-5 scored so "Surprise me" doesn't repeat.
 
@@ -323,28 +393,37 @@ Spark plan (~50k reads / ~20k writes per day; verify when configuring). Guardrai
 - These four rules are what makes it possible to insert a BFF later by only changing the base URL.
 
 ### Feature-first structure
+Real tree (see `docs/STRUCTURE.md` for the authoritative, actively
+maintained version — this is a summary, not a duplicate source of
+truth):
 ```
 lib/
   core/            networking (ApiClient), theme, localization, persistence, config
   shared/          common widgets (media card, skeletons, states)
   features/
-    discover/
-    search/
-    genres/
+    discover/        F1 Discover home
+    explore/         F2 search + genres + filters (merged search/genres, see F3)
+    filtered_list/   the "See all" / filtered results list F2 pushes to
     movie_detail/
     tv_detail/
     person_detail/
     my_list/
     stats/
-    taste_profile/   onboarding + My Tastes + TasteProfileBuilder
+    onboarding/      welcome + name/color + 2 genre steps
+    taste_profile/   TasteProfileBuilder (domain)
+    my_tastes/       Settings → My Tastes screen (presentation)
     quiz/            quiz widgets → ParticipantAnswers
-    recommendations/ RecommendationBuilder (editorial hero + For you + Because you like X)
     match_engine/    pure domain: MatchQuery, MatchResult, MatchEngine, vibes, relaxation
-    suggestion/      Surprise me
-    matcher/         (v1.1) rooms, Firebase, QR, waiting room, group result
-    settings/
+    match_hub/       B3 hub sheet opened from the center tab-bar button
+    suggestion/      Surprise me (E1/E2/E3)
+    you/             F9b You tab
+    settings/        F11
+    debug/           dev-only design-system preview screen, not shipped
 ```
-`streaming_availability` and `external_ratings` are added in v1.2 as new features without touching existing ones.
+`streaming_availability` and `external_ratings` are added in v1.2 as
+new features without touching existing ones. The Matcher (v1.1) adds a
+`matcher/` feature (rooms, Firebase, QR, waiting room, group result) —
+not built yet.
 
 ### Domain model (to be defined in the next step)
 `MediaItem` (abstraction over `Movie` and `TvShow`), `Person`, `Genre` (normalized), `Vibe`, `UserMediaEntry`, `TasteProfile`, **`UserProfile { displayName, initialColor }`** (local, with `UserProfileRepository`), `ParticipantAnswers`, `MatchQuery`, `MatchResult`, `MatchRoom`.

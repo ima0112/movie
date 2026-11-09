@@ -163,10 +163,18 @@ lib/
     taste_profile/
       domain/
         taste_profile_builder.dart   explicit + implicit → ParticipantAnswers
-      presentation/               Settings › My Tastes only — A2's own genre
-                                   steps are OnboardingCubit's (below), not
-                                   this feature's; they share no code yet
-                                   beyond the genre entity itself.
+                                   (Surprise me). Domain-only — no
+                                   presentation/ here; the My Tastes
+                                   *screen* is its own top-level feature
+                                   (my_tastes/, below), not nested under
+                                   this one.
+    my_tastes/                   Settings › My Tastes screen
+      presentation/
+        screens/
+        cubit/                    MyTastesCubit — autosaves on every
+                                   change, no minimum-selection gate
+                                   (see Paso 4 finding below)
+        widgets/                  genre/vibe grids, year slider
     onboarding/
       presentation/
         cubit/                    OnboardingCubit — the whole A2 flow's
@@ -174,8 +182,11 @@ lib/
                                    genres); writes through the global
                                    UserProfileCubit/TasteProfileCubit +
                                    OnboardingRepository, never its own
-                                   repository. No screen yet — welcome +
-                                   3 steps is a later branch.
+                                   repository.
+        screens/
+          onboarding_screen.dart
+        widgets/                  welcome_view.dart, genre_step.dart,
+                                   name_step.dart, poster_wall*.dart, etc.
     quiz/
       presentation/               genre/vibe grids, year slider → ParticipantAnswers
     match_engine/
@@ -188,8 +199,19 @@ lib/
         relaxation.dart
         match_engine.dart         pure, no Flutter or direct network access
     suggestion/
-      presentation/               Surprise me (N=1)
-    matcher/                      (v1.1)
+      presentation/               Surprise me (E1/E2/E3): SurpriseCubit,
+                                   ChooseSource (H11) sheet, result screen
+    match_hub/                    B3 — the sheet the center tab-bar
+      presentation/               button opens (match_hub_sheet.dart,
+                                   match_hub_card.dart); Matcher's own
+                                   entry (v1.1) will live here too
+    you/                          F9b You tab
+      presentation/
+        screens/
+          you_screen.dart
+        widgets/                  header, My Tastes card/invitation,
+                                   Your Activity card
+    matcher/                      (v1.1) — not built yet
       domain/
         match_room.dart
         room_participant.dart
@@ -198,9 +220,13 @@ lib/
         firestore_room_datasource.dart
         match_room_repository_impl.dart
       presentation/               create / join / waiting / group result
-    settings/                    NOT BUILT YET — F11/F13's mandatory TMDB
-      presentation/               attribution (logo + text) has nowhere to live
-                                   until this exists.
+    settings/                    F11 — built (settings-screen branch);
+      presentation/               language/region, export My List, data
+                                   deletion, about + TMDB attribution.
+    debug/                       dev-only; design_system_debug_screen.dart
+      presentation/               previews color/type tokens — not shipped
+                                   to users, excluded from the no-hardcoded-
+                                   text guardrail.
 
 assets/
   vibes.json
