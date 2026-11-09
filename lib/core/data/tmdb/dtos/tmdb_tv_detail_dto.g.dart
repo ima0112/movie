@@ -46,6 +46,7 @@ TmdbTvDetailDto _$TmdbTvDetailDtoFromJson(Map<String, dynamic> json) =>
       watchProviders: TmdbWatchProvidersDto.fromJson(
         json['watch/providers'] as Map<String, dynamic>,
       ),
+      backdropPath: json['backdrop_path'] as String?,
     );
 
 TmdbCreatorDto _$TmdbCreatorDtoFromJson(Map<String, dynamic> json) =>

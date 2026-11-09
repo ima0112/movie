@@ -56,6 +56,7 @@ MovieDetail mediaDetailFromMovieDto(
     tagline: _nullIfEmpty(dto.tagline),
     status: dto.status,
     watchProviders: _watchProvidersFrom(dto.watchProviders, region),
+    backdropUrl: _backdropUrl(dto.backdropPath, imagesConfig),
     runtimeMinutes: dto.runtime,
     releaseDate: parseTmdbDate(dto.releaseDate),
     certification: _certificationFromReleaseDates(dto.releaseDates, region),
@@ -95,6 +96,7 @@ TvShowDetail mediaDetailFromTvDto(
     tagline: null, // ...nor a tagline.
     status: dto.status,
     watchProviders: _watchProvidersFrom(dto.watchProviders, region),
+    backdropUrl: _backdropUrl(dto.backdropPath, imagesConfig),
     creators: dto.createdBy
         .map(
           (c) => Person(
@@ -244,3 +246,11 @@ String? _certificationFromContentRatings(
 
 String? _nullIfEmpty(String? value) =>
     (value == null || value.isEmpty) ? null : value;
+
+String? _backdropUrl(String? path, TmdbImagesConfig config) =>
+    buildTmdbImageUrl(
+      config: config,
+      kind: TmdbImageKind.backdrop,
+      path: path,
+      size: TmdbImageSizes.backdropMedium,
+    );

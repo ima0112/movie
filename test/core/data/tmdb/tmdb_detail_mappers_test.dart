@@ -117,6 +117,15 @@ void main() {
       );
     });
 
+    test('maps backdrop_path to a w780 backdrop URL', () {
+      final detail = load('tmdb_movie_detail_full.json');
+
+      expect(
+        detail.backdropUrl,
+        'https://image.tmdb.org/t/p/w780/backdrop-dune.jpg',
+      );
+    });
+
     test('a movie with no trailer at all -> trailer is null, not a crash', () {
       final detail = load('tmdb_movie_detail_no_trailer.json');
 
@@ -168,6 +177,13 @@ void main() {
         region: 'ES',
       );
     }
+
+    test('maps backdrop_path to a w780 backdrop URL', () {
+      expect(
+        load().backdropUrl,
+        'https://image.tmdb.org/t/p/w780/tv-backdrop.jpg',
+      );
+    });
 
     test('maps name into title, first/last air date, episode runtime', () {
       final detail = load();

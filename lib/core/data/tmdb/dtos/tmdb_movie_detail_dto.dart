@@ -30,6 +30,7 @@ class TmdbMovieDetailDto {
     required this.similar,
     required this.releaseDates,
     required this.watchProviders,
+    this.backdropPath,
   });
 
   final int id;
@@ -38,6 +39,10 @@ class TmdbMovieDetailDto {
 
   @JsonKey(name: 'poster_path')
   final String? posterPath;
+
+  /// The 16:9 backdrop, for D1's header (`null` when TMDB has none).
+  @JsonKey(name: 'backdrop_path')
+  final String? backdropPath;
 
   final List<TmdbGenreRefDto> genres;
 
