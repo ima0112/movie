@@ -20,24 +20,25 @@ void main() {
       cubit.close();
     });
 
-    test('refreshForRegion swaps the detail in without a loading state, and '
+    test('setRegion swaps the detail in without a loading state, and '
         'does nothing before the first load', () async {
       final cubit = MovieDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
       );
-      await cubit.refreshForRegion(_dune);
+      await cubit.setRegion(_dune, 'CU');
       expect(cubit.state, isA<MovieDetailInitial>());
 
       await cubit.loadDetail(_dune);
       final states = <MovieDetailState>[];
       final sub = cubit.stream.listen(states.add);
-      await cubit.refreshForRegion(_dune);
+      await cubit.setRegion(_dune, 'CU');
       await Future<void>.delayed(Duration.zero);
       await sub.cancel();
 
       expect(states, hasLength(1));
       expect(states.single, isA<MovieDetailLoaded>());
+      expect((states.single as MovieDetailLoaded).regionCode, 'CU');
       await cubit.close();
     });
 

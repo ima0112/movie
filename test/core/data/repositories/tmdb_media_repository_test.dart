@@ -155,25 +155,29 @@ void main() {
       expect((result as Success<List<MediaItem>>).value, isEmpty);
     });
 
-    test('recommendationsFor a movie seed hits /movie/{id}/recommendations',
-        () async {
-      final result = await repository.recommendationsFor(
-        const MediaKey(type: MediaType.movie, tmdbId: 42),
-      );
+    test(
+      'recommendationsFor a movie seed hits /movie/{id}/recommendations',
+      () async {
+        final result = await repository.recommendationsFor(
+          const MediaKey(type: MediaType.movie, tmdbId: 42),
+        );
 
-      expect(adapter.requestedPaths, ['/movie/42/recommendations']);
-      expect(result, isA<Success<List<MediaItem>>>());
-    });
+        expect(adapter.requestedPaths, ['/movie/42/recommendations']);
+        expect(result, isA<Success<List<MediaItem>>>());
+      },
+    );
 
-    test('recommendationsFor a TV seed hits /tv/{id}/recommendations',
-        () async {
-      final result = await repository.recommendationsFor(
-        const MediaKey(type: MediaType.tvShow, tmdbId: 7),
-      );
+    test(
+      'recommendationsFor a TV seed hits /tv/{id}/recommendations',
+      () async {
+        final result = await repository.recommendationsFor(
+          const MediaKey(type: MediaType.tvShow, tmdbId: 7),
+        );
 
-      expect(adapter.requestedPaths, ['/tv/7/recommendations']);
-      expect(result, isA<Success<List<MediaItem>>>());
-    });
+        expect(adapter.requestedPaths, ['/tv/7/recommendations']);
+        expect(result, isA<Success<List<MediaItem>>>());
+      },
+    );
 
     test(
       'trending/topRated with type: null -> an empty success, not a '
@@ -228,35 +232,53 @@ void main() {
       expect((result as Success<MediaDetail>).value.item.title, 'Signal Lost');
     });
 
-    test(
-      'a SettingsRepository region change changes a fresh detail call\'s '
-      '"Where to watch" data — the fixture only has providers for Spain, '
-      'so switching to a region with none makes hasAny false',
-      () async {
-        await settingsRepository.save(
-          const AppSettings(languageCode: 'en', regionCode: 'ES'),
-        );
-        final beforeResult = await repository.detail(
-          const MediaKey(type: MediaType.movie, tmdbId: 693134),
-        );
-        expect(
-          (beforeResult as Success<MediaDetail>).value.watchProviders.hasAny,
-          isTrue,
-        );
+    test('a SettingsRepository region change changes a fresh detail call\'s '
+        '"Where to watch" data — the fixture only has providers for Spain, '
+        'so switching to a region with none makes hasAny false', () async {
+      await settingsRepository.save(
+        const AppSettings(languageCode: 'en', regionCode: 'ES'),
+      );
+      final beforeResult = await repository.detail(
+        const MediaKey(type: MediaType.movie, tmdbId: 693134),
+      );
+      expect(
+        (beforeResult as Success<MediaDetail>).value.watchProviders.hasAny,
+        isTrue,
+      );
 
-        await settingsRepository.save(
-          const AppSettings(languageCode: 'en', regionCode: 'FR'),
-        );
+      await settingsRepository.save(
+        const AppSettings(languageCode: 'en', regionCode: 'FR'),
+      );
 
-        final afterResult = await repository.detail(
-          const MediaKey(type: MediaType.movie, tmdbId: 693134),
-        );
-        expect(
-          (afterResult as Success<MediaDetail>).value.watchProviders.hasAny,
-          isFalse,
-        );
-      },
-    );
+      final afterResult = await repository.detail(
+        const MediaKey(type: MediaType.movie, tmdbId: 693134),
+      );
+      expect(
+        (afterResult as Success<MediaDetail>).value.watchProviders.hasAny,
+        isFalse,
+      );
+    });
+
+    test('a regionCode override applies to that one call only, leaving the '
+        'saved region as it was', () async {
+      await settingsRepository.save(
+        const AppSettings(languageCode: 'en', regionCode: 'ES'),
+      );
+      const key = MediaKey(type: MediaType.movie, tmdbId: 693134);
+
+      final overridden = await repository.detail(key, regionCode: 'FR');
+      expect(
+        (overridden as Success<MediaDetail>).value.watchProviders.hasAny,
+        isFalse,
+      );
+
+      final saved = await repository.detail(key);
+      expect(
+        (saved as Success<MediaDetail>).value.watchProviders.hasAny,
+        isTrue,
+      );
+      expect(settingsRepository.current.regionCode, 'ES');
+    });
   });
 
   group('season', () {

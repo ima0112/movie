@@ -51,7 +51,7 @@ class _RecordingMediaRepository implements MediaRepository {
       throw UnimplementedError();
 
   @override
-  Future<Result<MediaDetail>> detail(MediaKey key) =>
+  Future<Result<MediaDetail>> detail(MediaKey key, {String? regionCode}) =>
       throw UnimplementedError();
 
   @override
