@@ -147,5 +147,90 @@ void main() {
       await tester.tap(find.text('Zendaya'));
       expect(tapped, _zendaya);
     });
+
+    testWidgets('searching looks through cast AND crew, whichever tab is '
+        'selected, grouped under their headings', (tester) async {
+      _usePhoneScreen(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: FullCastScreen(title: 'Dune', cast: _cast, crew: _crew),
+        ),
+      );
+
+      // On the Cast tab, a crew member's name still finds them.
+      await tester.enterText(find.byType(TextField), 'denis');
+      await tester.pump();
+      expect(find.text('Denis Villeneuve'), findsOneWidget);
+      expect(find.text('CREW'), findsOneWidget);
+      expect(find.text('CAST'), findsNothing);
+
+      // A name present in both lists shows under both headings.
+      await tester.enterText(find.byType(TextField), 'e');
+      await tester.pump();
+      expect(find.text('CAST'), findsOneWidget);
+      expect(find.text('CREW'), findsOneWidget);
+      expect(find.text('Zendaya'), findsOneWidget);
+      expect(find.text('Denis Villeneuve'), findsOneWidget);
+
+      // Clearing the search brings the tabs back, on the tab we left.
+      await tester.enterText(find.byType(TextField), '');
+      await tester.pump();
+      expect(find.text('Denis Villeneuve'), findsNothing);
+      expect(find.text('Zendaya'), findsOneWidget);
+    });
+
+    testWidgets('Cast and Crew scroll independently', (tester) async {
+      _usePhoneScreen(tester);
+      Person p(int i) => Person(
+        id: 100 + i,
+        name: 'Person $i',
+        profilePath: null,
+        knownForDepartment: 'Acting',
+      );
+      final cast = [
+        for (var i = 0; i < 60; i++)
+          CastMember(person: p(i), character: 'Role $i', order: i),
+      ];
+      final crew = [
+        for (var i = 0; i < 60; i++)
+          CrewMember(person: p(1000 + i), job: 'Job $i', department: 'Crew'),
+      ];
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: FullCastScreen(title: 'Dune', cast: cast, crew: crew),
+        ),
+      );
+
+      double offset() => tester
+          .state<ScrollableState>(
+            find.descendant(
+              of: find.byType(ListView),
+              matching: find.byType(Scrollable),
+            ),
+          )
+          .position
+          .pixels;
+
+      await tester.drag(find.byType(ListView), const Offset(0, -900));
+      await tester.pumpAndSettle();
+      final castOffset = offset();
+      expect(castOffset, greaterThan(0));
+
+      // Crew starts at the top — Cast's scroll did not carry over.
+      await tester.tap(find.text('Crew'));
+      await tester.pumpAndSettle();
+      expect(offset(), 0);
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pumpAndSettle();
+
+      // Back on Cast, its own position is exactly where we left it.
+      await tester.tap(find.text('Cast'));
+      await tester.pumpAndSettle();
+      expect(offset(), castOffset);
+    });
   });
 }
