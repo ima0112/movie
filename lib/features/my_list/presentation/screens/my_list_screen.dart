@@ -7,7 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../cubit/my_list_cubit.dart';
 import '../widgets/my_list_body.dart';
-import '../widgets/my_list_segmented_tabs.dart';
+import '../widgets/my_list_tabs.dart';
 import '../widgets/my_list_top_bar.dart';
 
 /// My List (B4).
@@ -32,9 +32,7 @@ class MyListScreen extends StatelessWidget {
           child: Column(
             children: [
               const MyListTopBar(),
-              MyListSegmentedTabs(
-                userLibraryRepository: getIt<UserLibraryRepository>(),
-              ),
+              MyListTabs(userLibraryRepository: getIt<UserLibraryRepository>()),
               const SizedBox(height: AppSpacing.md),
               Expanded(
                 child: MyListBody(

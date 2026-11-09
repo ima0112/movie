@@ -45,7 +45,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Elements:
   - Fixed amber halo behind the header and the top of the hero; fades with scrolling.
   - Top bar: "PakoTV" wordmark at 24 px on the left (arrives from the splash). Nothing else — search is the field under the hero.
-  - Segmented control **All | Movies | TV Shows** (white active pill; remembers the last choice; 200 ms cross-fade on change). "All" by default.
+  - Segmented control **All | Movies | TV Shows** (the app's one tab design: a contained pill with a white active pill, like B2/B4/C4/D3b/D1b; remembers the last choice; 200 ms cross-fade on change). "All" by default.
   - **Hero** (no header): up to 8 cards, 330×290, 20 px radius (cropped poster), with snap and a 24 px peek of the next one. Full-bleed poster, fade to black over the bottom 40%; on top of it: reason tag (12 px pill, 60% black background; "For you" in amber), 26 px title, gray 13 px metadata ("2019 · Mystery, Comedy · Movie"). Circular save button (36 px) top right, amber if already in Watch later. No auto-advance, no dots. Tap → detail with Hero transition.
     - All: 3 For You (if there's a profile) + 3 mixed trending + 1 in theaters + 1 airing now. The first card is always "For you" when a profile exists. **Not built**: the hero itself doesn't mix in "For you" cards yet — only the carousel section below does (see F1b, `RecommendationBuilder`); the hero's own `getHeroItems` is unchanged.
     - Movies: 3 in theaters + 3 trending + 2 upcoming.
@@ -121,7 +121,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Access: "See stats" in B5.
 - Elements:
   - "Stats" top bar.
-  - Filter chips: All · Movies · TV Shows.
+  - Filter tabs: All · Movies · TV Shows (the same contained-pill control as everywhere else).
   - Four metric cards in a 2×2 grid: Movies watched · Hours of movies · TV shows watched · Estimated TV hours.
   - "Genres you watch most": list of 5 horizontal bars with name and count.
   - "Your most-watched year": one large number + subtitle.

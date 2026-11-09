@@ -14,7 +14,7 @@ import '../../../../shared/widgets/state_views.dart';
 /// tabs" — its exact wording isn't given verbatim in SCREENS.md (unlike
 /// the per-tab headlines below), and depends on live counts for every
 /// tab, which this widget doesn't have; the screen that already
-/// subscribes to all three tabs' counts (see `MyListSegmentedTabs`)
+/// subscribes to all three tabs' counts (see `MyListTabs`)
 /// composes it.
 class MyListEmptyState extends StatelessWidget {
   const MyListEmptyState({

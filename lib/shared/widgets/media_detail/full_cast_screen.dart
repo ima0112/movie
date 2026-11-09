@@ -9,8 +9,11 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/app_localizations.dart';
 import '../overline_label.dart';
-import 'cast_crew_tabs.dart';
+import '../app_segmented_control.dart';
 import 'full_cast_person_tile.dart';
+
+/// Which list [FullCastScreen] is showing.
+enum CastCrewTab { cast, crew }
 
 /// D1b (Full cast & crew) — `docs/SCREENS.md` D1b: a pushed page (it used to
 /// be the H3 bottom sheet) with the title as its own heading, a "Cast | Crew"
@@ -96,15 +99,25 @@ class _FullCastScreenState extends State<FullCastScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CastCrewTabs(
+              AppSegmentedControl<CastCrewTab>(
+                padding: EdgeInsets.zero,
+                segments: [
+                  AppSegment(
+                    value: CastCrewTab.cast,
+                    // While searching, the labels carry each list's match
+                    // count.
+                    label: searching
+                        ? '${l10n.fullCastCastLabel} · ${_filtered(_cast).length}'
+                        : l10n.fullCastCastLabel,
+                  ),
+                  AppSegment(
+                    value: CastCrewTab.crew,
+                    label: searching
+                        ? '${l10n.fullCastCrewLabel} · ${_filtered(_crew).length}'
+                        : l10n.fullCastCrewLabel,
+                  ),
+                ],
                 selected: _tab,
-                // While searching, the labels carry each list's match count.
-                castLabel: searching
-                    ? '${l10n.fullCastCastLabel} · ${_filtered(_cast).length}'
-                    : l10n.fullCastCastLabel,
-                crewLabel: searching
-                    ? '${l10n.fullCastCrewLabel} · ${_filtered(_crew).length}'
-                    : l10n.fullCastCrewLabel,
                 onSelected: (tab) => setState(() => _tab = tab),
               ),
               const SizedBox(height: AppSpacing.md),
