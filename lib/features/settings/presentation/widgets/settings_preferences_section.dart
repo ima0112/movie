@@ -49,9 +49,9 @@ class SettingsPreferencesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return SettingsGroup(
+      title: context.l10n.settingsPreferencesHeader,
       children: [
-        SettingsGroupHeader(title: context.l10n.settingsPreferencesHeader),
         BlocSelector<SettingsCubit, AppSettings, String>(
           selector: (settings) => settings.languageCode,
           builder: (context, languageCode) => SettingsRow(

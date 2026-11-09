@@ -31,9 +31,9 @@ class SettingsDataSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return SettingsGroup(
+      title: context.l10n.settingsDataHeader,
       children: [
-        SettingsGroupHeader(title: context.l10n.settingsDataHeader),
         SettingsRow(
           label: context.l10n.settingsExportMyList,
           showChevron: false,
