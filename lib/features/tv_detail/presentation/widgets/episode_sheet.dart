@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/overline_label.dart';
 
 import '../../../../core/domain/entities/season_summary.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -32,7 +32,6 @@ class EpisodeSheet extends StatelessWidget {
   final void Function(Person person)? onPersonTap;
 
   static const double _heightFactor = 0.85;
-  static const double _captionSpacing = 0.6;
   static const double _guestSize = 64;
 
   @override
@@ -58,13 +57,7 @@ class EpisodeSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text(
-              code.toUpperCase(),
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.inkMuted,
-                letterSpacing: _captionSpacing,
-              ),
-            ),
+            OverlineLabel(code),
             const SizedBox(height: AppSpacing.xs),
             Text(episode.name, style: AppTextStyles.h1),
             const SizedBox(height: AppSpacing.md),
@@ -92,13 +85,7 @@ class EpisodeSheet extends StatelessWidget {
             ],
             if (episode.guestStars.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.xl),
-              Text(
-                l10n.tvEpisodeGuestStars.toUpperCase(),
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.inkMuted,
-                  letterSpacing: _captionSpacing,
-                ),
-              ),
+              OverlineLabel(l10n.tvEpisodeGuestStars),
               const SizedBox(height: AppSpacing.md),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,

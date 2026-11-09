@@ -9,6 +9,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/genre_icons.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/my_tastes_cubit.dart';
@@ -93,13 +94,20 @@ class _MyTastesView extends StatelessWidget {
           final l10n = context.l10n;
           final genres = [for (final (genre, _) in genreOptions) genre];
           return ListView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
+            padding: const EdgeInsets.only(
+              top: AppSpacing.xl,
+              bottom: AppSpacing.sectionGap,
+            ),
             children: [
-              Text(
-                l10n.myTastesIntro,
-                style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.screenMargin,
+                ),
+                child: Text(
+                  l10n.myTastesIntro,
+                  style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
+                ),
               ),
-              const SizedBox(height: AppSpacing.xxl),
               TasteGenreSection(
                 title: l10n.myTastesGenresLikeTitle,
                 hint: l10n.myTastesGenresLikeHint,
@@ -107,7 +115,6 @@ class _MyTastesView extends StatelessWidget {
                 selected: state.likedGenres,
                 onToggle: cubit.toggleLikedGenre,
               ),
-              const SizedBox(height: AppSpacing.xxl),
               TasteGenreSection(
                 title: l10n.myTastesGenresNeverTitle,
                 hint: l10n.myTastesGenresNeverHint,
@@ -116,32 +123,39 @@ class _MyTastesView extends StatelessWidget {
                 onToggle: cubit.toggleVetoedGenre,
                 selectedState: ChipState.vetoed,
               ),
-              const SizedBox(height: AppSpacing.xxl),
-              TasteVibeGrid(
-                vibes: state.availableVibes,
-                selected: state.likedVibes,
-                onToggle: cubit.toggleVibe,
+              AppSection(
+                child: TasteVibeGrid(
+                  vibes: state.availableVibes,
+                  selected: state.likedVibes,
+                  onToggle: cubit.toggleVibe,
+                ),
               ),
-              const SizedBox(height: AppSpacing.xxl),
-              TasteYearSlider(
-                yearFrom: state.yearFrom,
-                onChanged: cubit.setYearFrom,
+              AppSection(
+                child: TasteYearSlider(
+                  yearFrom: state.yearFrom,
+                  onChanged: cubit.setYearFrom,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              Row(
-                children: [
-                  const Spacer(),
-                  AnimatedOpacity(
-                    opacity: state.justSaved ? 1 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Text(
-                      l10n.myTastesSavedIndicator,
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.inkMuted,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.screenMargin,
+                ),
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    AnimatedOpacity(
+                      opacity: state.justSaved ? 1 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        l10n.myTastesSavedIndicator,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.inkMuted,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           );

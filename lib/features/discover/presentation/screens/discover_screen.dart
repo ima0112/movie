@@ -39,9 +39,10 @@ class DiscoverScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) =>
-              DiscoverCubit(getIt<MediaRepository>(), getIt<SettingsRepository>())
-                ..loadDiscover(MediaSegment.all),
+          create: (_) => DiscoverCubit(
+            getIt<MediaRepository>(),
+            getIt<SettingsRepository>(),
+          )..loadDiscover(MediaSegment.all),
         ),
         BlocProvider(create: (_) => SavedIdsCubit()),
         BlocProvider(

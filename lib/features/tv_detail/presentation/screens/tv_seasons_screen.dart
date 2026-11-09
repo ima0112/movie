@@ -8,6 +8,7 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_section.dart';
 import '../widgets/episode_ref_card.dart';
 import '../widgets/season_sheet.dart';
 import '../widgets/seasons_summary_card.dart';
@@ -23,8 +24,6 @@ class TvSeasonsScreen extends StatelessWidget {
   const TvSeasonsScreen({super.key, required this.detail});
 
   final TvShowDetail detail;
-
-  static const double _captionSpacing = 0.6;
 
   void _openSeason(BuildContext context, SeasonSummary season) {
     showModalBottomSheet<void>(
@@ -44,20 +43,6 @@ class TvSeasonsScreen extends StatelessWidget {
     final seasonCount = detail.seasons.where((s) => s.seasonNumber != 0).length;
     final finished = tvStatusIsFinished(detail.status);
 
-    Widget caption(String text) => Padding(
-      padding: const EdgeInsets.only(
-        top: AppSpacing.xxl,
-        bottom: AppSpacing.md,
-      ),
-      child: Text(
-        text.toUpperCase(),
-        style: AppTextStyles.caption.copyWith(
-          color: AppColors.inkMuted,
-          letterSpacing: _captionSpacing,
-        ),
-      ),
-    );
-
     return Scaffold(
       backgroundColor: AppColors.surface,
       appBar: AppBar(
@@ -72,39 +57,52 @@ class TvSeasonsScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
+          padding: const EdgeInsets.only(bottom: AppSpacing.sectionGap),
           children: [
-            SeasonsSummaryCard(
-              title: detail.item.title,
-              chips: [
-                tvStatusLabel(detail.status, l10n),
-                if (seasonCount > 0) l10n.myListSeasonsCount(seasonCount),
-                if (detail.numberOfEpisodes > 0)
-                  l10n.tvEpisodeCount(detail.numberOfEpisodes),
-              ],
-            ),
-            caption(l10n.tvNextEpisodeCaption),
-            EpisodeRefCard(
-              episode: detail.nextEpisode,
-              emptyTitle: l10n.tvNoNextEpisodeTitle,
-              emptyBody: finished
-                  ? l10n.tvNoNextEpisodeEnded
-                  : l10n.tvNoNextEpisodeUnknown,
-            ),
-            if (detail.lastEpisode != null) ...[
-              caption(l10n.tvLastAiredEpisodeCaption),
-              EpisodeRefCard(
-                episode: detail.lastEpisode,
-                emptyTitle: '',
-                emptyBody: '',
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenMargin,
+                AppSpacing.xl,
+                AppSpacing.screenMargin,
+                0,
               ),
-            ],
-            caption(l10n.tvSeasonsSectionTitle),
-            TvSeasonsSection(
-              seasons: detail.seasons,
-              showTitle: false,
-              padding: EdgeInsets.zero,
-              onSeasonTap: (season) => _openSeason(context, season),
+              child: SeasonsSummaryCard(
+                title: detail.item.title,
+                chips: [
+                  tvStatusLabel(detail.status, l10n),
+                  if (seasonCount > 0) l10n.myListSeasonsCount(seasonCount),
+                  if (detail.numberOfEpisodes > 0)
+                    l10n.tvEpisodeCount(detail.numberOfEpisodes),
+                ],
+              ),
+            ),
+            AppSection.overline(
+              title: l10n.tvNextEpisodeCaption,
+              child: EpisodeRefCard(
+                episode: detail.nextEpisode,
+                emptyTitle: l10n.tvNoNextEpisodeTitle,
+                emptyBody: finished
+                    ? l10n.tvNoNextEpisodeEnded
+                    : l10n.tvNoNextEpisodeUnknown,
+              ),
+            ),
+            if (detail.lastEpisode != null)
+              AppSection.overline(
+                title: l10n.tvLastAiredEpisodeCaption,
+                child: EpisodeRefCard(
+                  episode: detail.lastEpisode,
+                  emptyTitle: '',
+                  emptyBody: '',
+                ),
+              ),
+            AppSection.overline(
+              title: l10n.tvSeasonsSectionTitle,
+              child: TvSeasonsSection(
+                seasons: detail.seasons,
+                showTitle: false,
+                padding: EdgeInsets.zero,
+                onSeasonTap: (season) => _openSeason(context, season),
+              ),
             ),
           ],
         ),

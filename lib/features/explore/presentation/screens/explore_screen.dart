@@ -69,7 +69,10 @@ class _ExploreView extends StatelessWidget {
         backgroundColor: AppColors.surface,
         body: SafeArea(
           child: Column(
-            children: [ExploreHeader(), Expanded(child: ExploreContent())],
+            children: [
+              ExploreHeader(),
+              Expanded(child: ExploreContent()),
+            ],
           ),
         ),
       ),

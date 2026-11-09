@@ -88,9 +88,9 @@ class _StatsView extends StatelessWidget {
                   padding: const EdgeInsets.all(AppSpacing.xl),
                   children: [
                     StatsMetricGrid(stats: stats),
-                    const SizedBox(height: AppSpacing.xxl),
+                    const SizedBox(height: AppSpacing.sectionGap),
                     StatsGenreBars(topGenres: stats.topGenres),
-                    const SizedBox(height: AppSpacing.xxl),
+                    const SizedBox(height: AppSpacing.sectionGap),
                     StatsActivityStrip(monthlyActivity: stats.monthlyActivity),
                   ],
                 );

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/tmdb_footer.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/person.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import 'known_for.dart';
 import 'person_age_label.dart';
@@ -65,25 +63,8 @@ class PersonDetailContent extends StatelessWidget {
             extra: PersonFilmographyRouteArgs(detail: detail),
           ),
         ),
-        const _Footer(),
+        const TmdbFooter(),
       ],
-    );
-  }
-}
-
-class _Footer extends StatelessWidget {
-  const _Footer();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
-      child: Center(
-        child: Text(
-          context.l10n.onboardingWelcomeTmdbAttribution,
-          style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
-        ),
-      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/overline_label.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -28,7 +29,6 @@ class WelcomeView extends StatelessWidget {
   final VoidCallback onGetStarted;
 
   static const double _wordmarkSize = 48;
-  static const double _taglineSpacing = 2;
 
   // surface at 55% / 35% / 90% — the poster wall's dimming stops.
   static const Color _overlayTop = Color(0x8C0B0B0D);
@@ -84,13 +84,9 @@ class WelcomeView extends StatelessWidget {
                       children: [
                         const AppWordmark(size: _wordmarkSize),
                         const SizedBox(height: AppSpacing.sm),
-                        Text(
-                          l10n.onboardingWelcomeTagline.toUpperCase(),
+                        OverlineLabel(
+                          l10n.onboardingWelcomeTagline,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.inkMuted,
-                            letterSpacing: _taglineSpacing,
-                          ),
                         ),
                         const SizedBox(height: AppSpacing.xxxl * 2),
                         // TMDB's required wording (same text as C7).

@@ -6,7 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../profile_image.dart';
 
-/// One person in [FullCastSheet]'s grid: a 4:5 rounded portrait, the name
+/// One person in [FullCastScreen]'s grid: a 4:5 rounded portrait, the name
 /// (semibold) and the character or job underneath. Its width comes from
 /// the parent; it sizes its own height, so large text never overflows.
 class FullCastPersonTile extends StatelessWidget {

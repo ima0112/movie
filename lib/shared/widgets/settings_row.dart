@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'overline_label.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
@@ -91,8 +92,6 @@ class SettingsGroup extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  static const double _headerSpacing = 0.6;
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -107,13 +106,7 @@ class SettingsGroup extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: Text(
-              title.toUpperCase(),
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.inkMuted,
-                letterSpacing: _headerSpacing,
-              ),
-            ),
+            child: OverlineLabel(title),
           ),
           ClipRRect(
             borderRadius: BorderRadius.circular(AppSpacing.radiusLg),

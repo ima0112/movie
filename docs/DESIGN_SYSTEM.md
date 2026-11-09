@@ -117,6 +117,13 @@ borde). Reparto, Similares, Conocida por, las secciones de Descubrir y las
 recomendaciones la usan; una pantalla nueva compone secciones con ella en
 vez de colocar huecos y títulos a mano.
 
+Piezas compartidas del mismo sistema, para no repetirlas por pantalla:
+`AppSection.overline` (sección con etiqueta pequeña en mayúsculas),
+`OverlineLabel` (la etiqueta: "SINOPSIS", "ACTORES INVITADOS", el nombre de
+un grupo de ajustes), `ExpandableText` ("Leer más" / "Leer menos", solo si
+el texto se corta; sinopsis, biografía y sinopsis de temporada) y
+`TmdbFooter` (el "Datos de TMDB" del final de un detalle).
+
 Una sección es dueña de su espacio **superior** (`sectionPadding` si su
 contenido va dentro del margen, `sectionTopPadding` si desplaza de borde a
 borde) y nunca lleva espacio inferior: así, una sección que se oculta por

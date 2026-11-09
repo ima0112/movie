@@ -4,6 +4,7 @@ import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import '../../../../shared/widgets/genre_multi_select_chips.dart';
 
@@ -37,23 +38,24 @@ class TasteGenreSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: AppTextStyles.h2),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          hint,
-          style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        GenreMultiSelectChips(
-          genres: genres,
-          selected: selected,
-          onToggle: onToggle,
-          selectedState: selectedState,
-        ),
-      ],
+    return AppSection(
+      title: title,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            hint,
+            style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          GenreMultiSelectChips(
+            genres: genres,
+            selected: selected,
+            onToggle: onToggle,
+            selectedState: selectedState,
+          ),
+        ],
+      ),
     );
   }
 }

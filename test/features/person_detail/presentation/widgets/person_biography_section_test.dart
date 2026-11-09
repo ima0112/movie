@@ -57,33 +57,50 @@ void main() {
       expect(find.text('Biography in English'), findsOneWidget);
     });
 
-    testWidgets('starts folded to 3 lines and expands on "Read more"', (
-      tester,
-    ) async {
-      const bio = 'A short bio.';
+    testWidgets('a long bio starts folded to 3 lines and toggles Read more / '
+        'Read less', (tester) async {
+      final bio = List.filled(40, 'A long biography sentence.').join(' ');
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
+            body: SingleChildScrollView(
+              child: PersonBiographySection(
+                biography: bio,
+                isEnglishFallback: false,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.widget<Text>(find.text(bio)).maxLines, 3);
+      expect(find.text('Read more'), findsOneWidget);
+
+      await tester.tap(find.text('Read more'));
+      await tester.pump();
+
+      expect(tester.widget<Text>(find.text(bio)).maxLines, isNull);
+      expect(find.text('Read less'), findsOneWidget);
+    });
+
+    testWidgets('a short bio that fits has no toggle', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(
             body: PersonBiographySection(
-              biography: bio,
+              biography: 'A short bio.',
               isEnglishFallback: false,
             ),
           ),
         ),
       );
 
-      final textWidget = tester.widget<Text>(find.text(bio));
-      expect(textWidget.maxLines, 3);
-      expect(find.text('Read more'), findsOneWidget);
-
-      await tester.tap(find.text('Read more'));
-      await tester.pump();
-
-      final expandedText = tester.widget<Text>(find.text(bio));
-      expect(expandedText.maxLines, isNull);
       expect(find.text('Read more'), findsNothing);
+      expect(find.text('Read less'), findsNothing);
     });
   });
 }

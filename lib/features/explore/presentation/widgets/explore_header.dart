@@ -35,9 +35,7 @@ class ExploreHeader extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _ExploreSearchBar(),
-            ],
+            children: [const _ExploreSearchBar()],
           ),
         ),
         const SizedBox(height: AppSpacing.sm),

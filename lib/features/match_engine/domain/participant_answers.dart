@@ -1,4 +1,5 @@
-import '../../../core/domain/entities/discover_filter.dart' show DiscoverTvStatus;
+import '../../../core/domain/entities/discover_filter.dart'
+    show DiscoverTvStatus;
 import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_key.dart';
 

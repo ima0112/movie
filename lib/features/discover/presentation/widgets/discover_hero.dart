@@ -36,8 +36,7 @@ class DiscoverHero extends StatelessWidget {
         }
         return MediaCarousel.hero(
           items: heroItems,
-          saveButtonBuilder: (item) =>
-              DiscoverHeroSaveButton(itemId: item.id),
+          saveButtonBuilder: (item) => DiscoverHeroSaveButton(itemId: item.id),
           // `pushMediaDetail` (→ `push`, not `go`): the detail screen's
           // back button should return to Discover with its scroll
           // position intact, not replace it in the stack.

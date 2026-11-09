@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import 'overline_label.dart';
 
 /// The one building block for a titled block of a scrolling screen
 /// ("Cast", "Similar movies", a Discover carousel…): [AppSpacing.sectionGap]
@@ -23,7 +24,20 @@ class AppSection extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.inset = true,
-  });
+  }) : _overline = false;
+
+  /// A section headed by a small capitalised [OverlineLabel] instead of an
+  /// `h2` ("NEXT EPISODE", "SEASONS" on D2b).
+  const AppSection.overline({
+    super.key,
+    required this.child,
+    required String this.title,
+    this.inset = true,
+  }) : actionLabel = null,
+       onAction = null,
+       _overline = true;
+
+  final bool _overline;
 
   final Widget child;
   final String? title;
@@ -47,11 +61,13 @@ class AppSection extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.screenMargin,
               ),
-              child: _Heading(
-                title: title,
-                actionLabel: actionLabel,
-                onAction: onAction,
-              ),
+              child: _overline
+                  ? OverlineLabel(title)
+                  : _Heading(
+                      title: title,
+                      actionLabel: actionLabel,
+                      onAction: onAction,
+                    ),
             ),
             const SizedBox(height: AppSpacing.headingGap),
           ],

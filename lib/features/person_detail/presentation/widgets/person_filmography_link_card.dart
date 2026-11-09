@@ -5,6 +5,7 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_section.dart';
 
 /// D3's "Filmography" block: the heading and one card, "View full
 /// filmography · 64 titles ›", that opens D3b ("Persona" design). Nothing is
@@ -27,16 +28,11 @@ class PersonFilmographyLinkCard extends StatelessWidget {
 
     final l10n = context.l10n;
     final count = l10n.personFilmographyTitleCount(titleCount);
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.lg,
-      ),
+    return AppSection(
+      title: l10n.personFilmographyTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.personFilmographyTitle, style: AppTextStyles.h2),
-          const SizedBox(height: AppSpacing.md),
           Semantics(
             button: true,
             excludeSemantics: true,

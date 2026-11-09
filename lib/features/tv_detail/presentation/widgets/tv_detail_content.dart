@@ -15,13 +15,12 @@ import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/launch/launch_external_link.dart';
 import '../../../../core/launch/media_share.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/locale_names.dart';
 import '../../../../shared/widgets/media_detail/media_cast_row.dart';
+import '../../../../shared/widgets/tmdb_footer.dart';
 import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_header.dart';
 import '../../../../shared/widgets/media_detail/media_similar_section.dart';
@@ -199,27 +198,8 @@ class TvDetailContent extends StatelessWidget {
             onItemTap: (item) => context.pushMediaDetail(item.key),
           ),
         ),
-        const SliverToBoxAdapter(child: _Footer()),
+        const SliverToBoxAdapter(child: TmdbFooter()),
       ],
-    );
-  }
-}
-
-class _Footer extends StatelessWidget {
-  const _Footer();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: AppSpacing.sectionPadding.copyWith(
-        bottom: AppSpacing.sectionGap,
-      ),
-      child: Center(
-        child: Text(
-          context.l10n.onboardingWelcomeTmdbAttribution,
-          style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
-        ),
-      ),
     );
   }
 }

@@ -22,11 +22,11 @@ class MediaDetailSkeleton extends StatelessWidget {
           height: MediaDetailHeader.height,
           borderRadius: BorderRadius.zero,
         ),
-        const SizedBox(height: AppSpacing.xxl),
+        const SizedBox(height: AppSpacing.sectionGap),
         Center(child: SkeletonBlock(width: width * 0.6, height: 28)),
         const SizedBox(height: AppSpacing.sm),
         Center(child: SkeletonBlock(width: width * 0.4, height: 16)),
-        const SizedBox(height: AppSpacing.xxl),
+        const SizedBox(height: AppSpacing.sectionGap),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           child: SkeletonBlock(width: width - AppSpacing.xl * 2, height: 52),
