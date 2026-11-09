@@ -430,4 +430,50 @@ void main() {
       expect(repository.capturedFilters.first.withKeywords, isEmpty);
     });
   });
+
+  group('MatchEngine — minVoteCount propagation (_filterForVibe)', () {
+    test('the first fetch carries MatchQuery.voteCountGte\'s own default '
+        '(200) as DiscoverFilter.minVoteCount', () async {
+      final repository = _RecordingMediaRepository();
+      final engine = MatchEngineImpl(repository);
+      final catalog = VibeCatalog([
+        vibe('comedy', ['comedy']),
+      ]);
+      final query = MatchQuery.aggregate(MediaType.movie, [
+        answers('ana', vibeIds: {'comedy'}, yearFrom: 1950),
+      ]);
+
+      await engine.resolve(query, options: MatchOptions(vibeCatalog: catalog));
+
+      expect(repository.capturedFilters, isNotEmpty);
+      expect(repository.capturedFilters.first.minVoteCount, 200);
+    });
+
+    test('relaxation step 4 (lowerVoteCountThreshold) changes the actual '
+        'parameter the next fetch sends — 200 on the first attempt, 50 '
+        'once that step fires', () async {
+      final repository = _RecordingMediaRepository();
+      final engine = MatchEngineImpl(repository);
+      final catalog = VibeCatalog([
+        vibe('comedy', ['comedy']),
+      ]);
+      // A single vibe (no dropLeastSupportedVibe — needs 2+) and no
+      // maxRuntimeMinutes (no raiseRuntimeOrSeasonLimit either) — with
+      // the fake repository never returning a single candidate,
+      // resolve() churns through every *applicable* step in order:
+      // widenYearRange, then lowerVoteCountThreshold. The relaxed
+      // voteCountGte only ever shows up on the fetch that follows it.
+      final query = MatchQuery.aggregate(MediaType.movie, [
+        answers('ana', vibeIds: {'comedy'}, yearFrom: 1950),
+      ]);
+
+      await engine.resolve(query, options: MatchOptions(vibeCatalog: catalog));
+
+      final minVoteCounts = repository.capturedFilters
+          .map((f) => f.minVoteCount)
+          .toList();
+      expect(minVoteCounts.first, 200);
+      expect(minVoteCounts.last, 50);
+    });
+  });
 }

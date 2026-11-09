@@ -65,9 +65,10 @@ class YearRangeFilter extends StatelessWidget {
 }
 
 /// H8: "minimum rating (0–9 slider, `vote_count.gte=100` fixed)" — the
-/// `vote_count.gte` part is a hard-coded TMDB query parameter a real
-/// `MediaRepositoryImpl` always sends alongside this, not something the
-/// UI (or `DiscoverFilter`) exposes as a user-adjustable value.
+/// `vote_count.gte` part is `DiscoverFilter.minVoteCount`'s own fixed
+/// default (`100`), not something this slider (or any other H8
+/// control) ever changes; `MatchEngine._filterForVibe` is the one real
+/// caller that varies it, via `MatchQuery.voteCountGte`.
 class MinRatingFilter extends StatelessWidget {
   const MinRatingFilter({
     super.key,

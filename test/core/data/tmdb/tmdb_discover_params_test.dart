@@ -15,7 +15,7 @@ void main() {
       expect(params['include_adult'], false);
     });
 
-    test('vote_count.gte is always the fixed 100 from H8, regardless of '
+    test('vote_count.gte defaults to 100 from H8, regardless of '
         'minVoteAverage', () {
       final params = discoverQueryParams(
         DiscoverFilter(minVoteAverage: 7),
@@ -23,6 +23,16 @@ void main() {
       );
 
       expect(params['vote_count.gte'], 100);
+    });
+
+    test('vote_count.gte emits DiscoverFilter.minVoteCount\'s own value '
+        'when set to something other than the default', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(minVoteCount: 200),
+        type: MediaType.movie,
+      );
+
+      expect(params['vote_count.gte'], 200);
     });
 
     test('defaults to sort_by popularity.desc', () {
