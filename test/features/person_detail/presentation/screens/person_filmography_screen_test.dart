@@ -64,7 +64,7 @@ void main() {
 
   group('PersonFilmographyScreen', () {
     testWidgets('the person\'s name is the title; the list shows every '
-        'credit, grouped by year', (tester) async {
+        'credit, newest first with role · year and rating', (tester) async {
       await tester.pumpWidget(
         _app(PersonFilmographyScreen(detail: _detail(credits))),
       );
@@ -72,13 +72,18 @@ void main() {
       expect(find.text('Leonardo DiCaprio'), findsOneWidget);
       expect(find.text('Inception'), findsOneWidget);
       expect(find.text('Growing Pains'), findsOneWidget);
-      expect(find.text('2010'), findsOneWidget);
-      expect(find.text('1991'), findsOneWidget);
+      expect(find.text('Dom Cobb · 2010'), findsOneWidget);
+      expect(find.text('Luke · 1991'), findsOneWidget);
+      expect(find.text('8.0'), findsNWidgets(2));
+      expect(
+        tester.getTopLeft(find.text('Inception')).dy,
+        lessThan(tester.getTopLeft(find.text('Growing Pains')).dy),
+      );
       // The screen's title is the name, so no "Filmography" heading.
       expect(find.text('Filmography'), findsNothing);
     });
 
-    testWidgets('the Movies chip hides the TV credits', (tester) async {
+    testWidgets('the Movies tab hides the TV credits', (tester) async {
       await tester.pumpWidget(
         _app(PersonFilmographyScreen(detail: _detail(credits))),
       );

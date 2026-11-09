@@ -119,23 +119,66 @@ void main() {
     });
   });
 
-  group('PersonFilmography.hasBothCastAndCrew', () {
-    test('false for cast-only credits', () {
-      final credits = [MediaCredit(item: _movie(1, 'A'), character: 'Lead')];
-      expect(credits.hasBothCastAndCrew, isFalse);
-    });
-
-    test('false for crew-only credits', () {
-      final credits = [MediaCredit(item: _movie(1, 'A'), job: 'Director')];
-      expect(credits.hasBothCastAndCrew, isFalse);
-    });
-
-    test('true once both a cast and a crew credit exist', () {
+  group('PersonFilmography.availableSegments', () {
+    test('movies only: no tabs beyond All (Movies would equal All)', () {
       final credits = [
+        MediaCredit(item: _movie(1, 'A'), character: 'Lead'),
+        MediaCredit(item: _movie(2, 'B'), character: 'Lead'),
+      ];
+      expect(credits.availableSegments, [FilmographySegment.all]);
+    });
+
+    test('movies and shows: Movies and TV Shows both appear', () {
+      final credits = [
+        MediaCredit(item: _movie(1, 'A'), character: 'Lead'),
+        MediaCredit(item: _tvShow(2, 'B'), character: 'Lead'),
+      ];
+      expect(credits.availableSegments, [
+        FilmographySegment.all,
+        FilmographySegment.movies,
+        FilmographySegment.tvShows,
+      ]);
+    });
+
+    test('As director only when they directed AND did something else', () {
+      final actedAndDirected = [
         MediaCredit(item: _movie(1, 'A'), character: 'Lead'),
         MediaCredit(item: _movie(2, 'B'), job: 'Director'),
       ];
-      expect(credits.hasBothCastAndCrew, isTrue);
+      expect(actedAndDirected.availableSegments, [
+        FilmographySegment.all,
+        FilmographySegment.asDirector,
+      ]);
+
+      final onlyDirected = [
+        MediaCredit(item: _movie(1, 'A'), job: 'Director'),
+        MediaCredit(item: _tvShow(2, 'B'), job: 'Director'),
+      ];
+      expect(onlyDirected.availableSegments, [
+        FilmographySegment.all,
+        FilmographySegment.movies,
+        FilmographySegment.tvShows,
+      ]);
+
+      // A crew credit that isn't directing never makes the tab appear.
+      final producer = [
+        MediaCredit(item: _movie(1, 'A'), character: 'Lead'),
+        MediaCredit(item: _movie(2, 'B'), job: 'Producer'),
+      ];
+      expect(producer.availableSegments, [FilmographySegment.all]);
+    });
+
+    test('newestFirst: undated first, then by year descending', () {
+      final undated = MediaCredit(item: _movie(1, 'U'), character: 'x');
+      final y2020 = MediaCredit(
+        item: _movie(2, 'Old', releaseDate: DateTime(2020)),
+        character: 'x',
+      );
+      final y2022 = MediaCredit(
+        item: _movie(3, 'New', releaseDate: DateTime(2022)),
+        character: 'x',
+      );
+      expect([y2020, undated, y2022].newestFirst, [undated, y2022, y2020]);
     });
   });
 }

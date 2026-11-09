@@ -213,7 +213,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 
 ### D3b. Filmography (pushed)
 - Access: the "View full filmography" card in D3. Pushed screen: back button, the person's name centered as the title, no bottom bar. Receives the already-loaded person (no network call of its own).
-- Elements: The list — filter chips All · Movies · TV Shows, grouped by release year descending under a year header; credits with no release date group as "Coming soon", ahead of every real year. No infinite scroll — the one combined-credits call already has everything. An "As director" chip is added, and only then, when this person has both a cast credit and a crew credit among all their credits (not just the current filter) — picking it narrows to `job == 'Director'` specifically, not every crew department.
+- Elements: the app's tabs (contained pill) **All · Movies · TV Shows · As director** — a tab appears only when it would show something different from All (a person with only movies has no "Movies" tab; one who never directed has no "As director" tab), and with no tab beyond All the control isn't drawn at all. Under it, a flat list, newest first (credits with no release date ahead of the rest). Row: 52×76 poster, the title, a muted "role · year" line ("Coming soon" in place of the year for an undated credit) and the ★ rating at the far end (hidden while TMDB has no score), with a hairline between rows. "As director" narrows to `job == 'Director'` specifically, not every crew department. No infinite scroll — the one combined-credits call already has everything.
 - Exits: D1/D2.
 
 ---
