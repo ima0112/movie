@@ -60,9 +60,16 @@ class _PersonDetailViewState extends State<_PersonDetailView> {
     _scrollController.addListener(_onScroll);
   }
 
+  /// The header's real height, remembered. The list builds its children
+  /// lazily, so once the header has scrolled far enough away its element is
+  /// disposed and [_headerKey] has no context any more; reading the height
+  /// from it then made the bar vanish again deep in a long biography.
+  double? _headerHeight;
+
   void _onScroll() {
-    final headerHeight =
-        _headerKey.currentContext?.size?.height ?? double.infinity;
+    _headerHeight = _headerKey.currentContext?.size?.height ?? _headerHeight;
+    final headerHeight = _headerHeight;
+    if (headerHeight == null) return;
     _showCompactBar.value =
         _scrollController.offset > headerHeight - kToolbarHeight;
   }

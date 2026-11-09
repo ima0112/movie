@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
+import 'package:movies/core/domain/entities/person.dart';
+import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/repositories/person_repository.dart';
 import 'package:movies/core/theme/app_spacing.dart';
 import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
 import 'package:movies/features/person_detail/presentation/widgets/person_biography_section.dart';
@@ -9,6 +12,7 @@ import 'package:movies/features/person_detail/presentation/widgets/person_detail
 import 'package:movies/features/person_detail/presentation/widgets/person_filmography_link_card.dart';
 import 'package:movies/features/person_detail/presentation/widgets/person_known_for_section.dart';
 import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 import 'package:movies/shared/widgets/profile_image.dart';
 import 'package:movies/shared/widgets/scrim_back_button.dart';
 
@@ -119,4 +123,64 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Denis Villeneuve'), findsWidgets);
   });
+
+  testWidgets('the compact bar stays once shown, even far down a very long '
+      'biography (the header is no longer built)', (tester) async {
+    final original = getIt<PersonRepository>();
+    addTearDown(() {
+      getIt.unregister<PersonRepository>();
+      getIt.registerSingleton<PersonRepository>(original);
+    });
+    getIt.unregister<PersonRepository>();
+    getIt.registerSingleton<PersonRepository>(_LongBioRepository(original));
+
+    await open(tester, size: const Size(390, 700));
+    // Expand the bio so there is a lot to scroll through.
+    await tester.tap(find.text('Leer más'));
+    await tester.pumpAndSettle();
+    expect(find.byType(MediaDetailCompactBar), findsNothing);
+
+    final listFinder = find.byType(ListView);
+    for (final dy in [-400.0, -1500.0, -3000.0, -3000.0]) {
+      await tester.drag(listFinder, Offset(0, dy));
+      await tester.pumpAndSettle();
+      expect(
+        find.byType(MediaDetailCompactBar),
+        findsOneWidget,
+        reason: 'after dragging $dy',
+      );
+    }
+
+    // Back at the very top the bar turns into the transparent header again.
+    await tester.drag(listFinder, const Offset(0, 20000));
+    await tester.pumpAndSettle();
+    expect(find.byType(MediaDetailCompactBar), findsNothing);
+  });
+}
+
+class _LongBioRepository implements PersonRepository {
+  _LongBioRepository(this._inner);
+
+  final PersonRepository _inner;
+
+  @override
+  Future<Result<PersonDetail>> detail(int personId) async {
+    final result = await _inner.detail(personId);
+    if (result is! Success<PersonDetail>) return result;
+    final d = result.value;
+    return Success(
+      PersonDetail(
+        person: d.person,
+        biography: List.filled(
+          120,
+          'A very long biography paragraph.',
+        ).join('\n\n'),
+        biographyIsEnglishFallback: false,
+        birthday: d.birthday,
+        deathday: d.deathday,
+        placeOfBirth: d.placeOfBirth,
+        credits: d.credits,
+      ),
+    );
+  }
 }

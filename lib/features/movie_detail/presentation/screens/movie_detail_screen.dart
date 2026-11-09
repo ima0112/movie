@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
 import '../../../../core/domain/entities/media_detail.dart';
+import '../../../../core/launch/media_share.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
@@ -140,8 +143,14 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
                 MovieDetailLoaded(:final detail) => detail.item.title,
                 _ => null,
               },
-              builder: (context, title) =>
-                  MediaDetailCompactBar(title: title ?? ''),
+              builder: (context, title) => MediaDetailCompactBar(
+                title: title ?? '',
+                onShare: title == null
+                    ? null
+                    : () => unawaited(
+                        shareMedia(context, title: title, key: widget.mediaKey),
+                      ),
+              ),
             ),
           ),
         ],

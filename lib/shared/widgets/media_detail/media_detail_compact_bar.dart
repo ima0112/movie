@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/l10n_extension.dart';
 
 /// D1/D2's compact bar: "When the title scrolls past the top, a compact
 /// black bar appears with back and the title at 16 px" (`docs/SCREENS.md`
@@ -17,9 +18,13 @@ import '../../../core/theme/app_text_styles.dart';
 /// it in, so a scroll-driven rebuild never touches the rest of D1/D2 and
 /// this widget itself needs no Cubit awareness at all.
 class MediaDetailCompactBar extends StatelessWidget {
-  const MediaDetailCompactBar({super.key, required this.title});
+  const MediaDetailCompactBar({super.key, required this.title, this.onShare});
 
   final String title;
+
+  /// Shows a Share action at the end of the bar (D1/D2: their Share circle
+  /// has scrolled away by now). `null` for screens with no share.
+  final VoidCallback? onShare;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +50,14 @@ class MediaDetailCompactBar extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: AppSpacing.xl),
+            if (onShare != null)
+              IconButton(
+                onPressed: onShare,
+                tooltip: context.l10n.mediaDetailShare,
+                icon: const Icon(AppIcons.share, color: AppColors.ink),
+              )
+            else
+              const SizedBox(width: AppSpacing.xl),
           ],
         ),
       ),
