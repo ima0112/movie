@@ -113,8 +113,8 @@ class TextLinkButton extends StatelessWidget {
   }
 }
 
-/// Filled pill in `danger` red, background and border both red, `ink`
-/// text — destructive actions (delete My List, delete My Tastes...).
+/// Filled pill in `danger` red, background and border both red, dark
+/// `onDanger` text — destructive actions (delete My List, delete My Tastes...).
 class DestructiveButton extends StatelessWidget {
   const DestructiveButton({
     super.key,
@@ -141,7 +141,7 @@ class DestructiveButton extends StatelessWidget {
       fullWidth: fullWidth,
       backgroundColor: AppColors.danger,
       borderColor: AppColors.danger,
-      foregroundColor: AppColors.ink,
+      foregroundColor: AppColors.onDanger,
     );
   }
 }
@@ -212,7 +212,10 @@ class _BaseButton extends StatelessWidget {
       opacity: isDisabled ? _disabledOpacity : 1,
       child: SizedBox(
         width: fullWidth ? double.infinity : null,
-        child: GestureDetector(onTap: isInteractive ? onTap : null, child: pill),
+        child: GestureDetector(
+          onTap: isInteractive ? onTap : null,
+          child: pill,
+        ),
       ),
     );
   }

@@ -39,6 +39,7 @@ class AppIcons {
 
   static const IconData user = RemixIcons.user_line;
   static const IconData userFill = RemixIcons.user_fill;
+  static const IconData delete = RemixIcons.delete_bin_line;
   static const IconData edit = RemixIcons.edit_2_line;
   static const IconData settings = RemixIcons.settings_line;
   static const IconData stats = RemixIcons.bar_chart_line;

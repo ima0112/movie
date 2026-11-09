@@ -22,6 +22,7 @@ a este documento primero y luego a código — nunca al revés.
 | `inkDim` | `#5F5E5A` | Texto terciario (atribuciones, pies de página) |
 | `accent` | `#F2B441` | Único acento. Ver "Dónde va el acento" abajo |
 | `accentDeep` | `#5A3A10` | Origen del halo radial (nunca se usa como color de texto o icono) |
+| `onDanger` | `#1A0606` | Texto sobre fondo `danger` (botón destructivo) |
 | `onAccent` | `#1A1204` | Texto/iconos sobre fondo `accent` |
 | `success` | `#6FCF97` | Match perfecto, check de participante listo |
 | `danger` | `#FF6B6B` | Acciones destructivas, errores |
