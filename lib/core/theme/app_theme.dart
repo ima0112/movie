@@ -62,6 +62,10 @@ class AppTheme {
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.surfaceRaised,
+        // Every sheet gets the design's handle (40×4) unless it opts out.
+        showDragHandle: true,
+        dragHandleColor: AppColors.sheetHandle,
+        dragHandleSize: const Size(40, 4),
         shape: const RoundedRectangleBorder(
           borderRadius: AppSpacing.bottomSheetRadius,
         ),

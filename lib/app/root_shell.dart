@@ -43,10 +43,6 @@ class RootShell extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      // SCREENS.md B3: "Drag handle and title 'Match'" — Flutter's own
-      // built-in handle rather than a bespoke widget for this one bit
-      // of sheet furniture.
-      showDragHandle: true,
       builder: (_) => const MatchHubSheet(),
     );
   }

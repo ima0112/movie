@@ -17,6 +17,7 @@ a este documento primero y luego a código — nunca al revés.
 | `lineStrong` | `#2A2A2E` | Bordes de chips y botones secundarios |
 | `ink` | `#F5F5F7` | Texto primario, iconos activos |
 | `glass` / `glassBorder` / `shadow` | `#1C1C20` 62% · `#F5F5F7` 12% · `#000000` 45% | Barra de tabs flotante (relleno, borde, sombra). Solo sobre un desenfoque de fondo. |
+| `sheetHandle` | `#F5F5F7` 24% | Asa de arrastre de las hojas inferiores (40×4) |
 | `inkMuted` | `#A1A1A8` | Texto secundario, metadatos, iconos inactivos |
 | `inkDim` | `#5F5E5A` | Texto terciario (atribuciones, pies de página) |
 | `accent` | `#F2B441` | Único acento. Ver "Dónde va el acento" abajo |
@@ -78,8 +79,9 @@ Escala nombrada — usar siempre el nombre, nunca el número suelto:
 | `xxxl` | 32 (separación entre secciones de Descubrir) |
 
 Radios: `radiusSm` 8 · `radiusMd` 12 (pósters, tarjetas, tiles) ·
-`radiusLg` 16 (tarjetas grandes, hojas del resultado) · `radiusPill` 999
-(botones, chips) · hojas inferiores: 20 arriba, 0 abajo.
+`radiusLg` 16 (tarjetas grandes, hojas del resultado) · `radiusXl` 20
+(tarjeta héroe de Descubrir) · `radiusXxl` 24 (diálogos) · `radiusPill` 999
+(botones, chips) · hojas inferiores: 28 arriba, 0 abajo, con asa de arrastre.
 
 ---
 

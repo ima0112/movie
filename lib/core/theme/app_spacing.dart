@@ -34,9 +34,12 @@ class AppSpacing {
   /// Buttons, chips.
   static const double radiusPill = 999;
 
+  /// Dialogs and other floating cards.
+  static const double radiusXxl = 24;
+
   /// Bottom sheets: rounded top corners, square bottom.
   static const BorderRadius bottomSheetRadius = BorderRadius.only(
-    topLeft: Radius.circular(20),
-    topRight: Radius.circular(20),
+    topLeft: Radius.circular(28),
+    topRight: Radius.circular(28),
   );
 }

@@ -30,6 +30,9 @@ class AppColors {
   /// Hairline border of glass surfaces (`ink` at 12%).
   static const Color glassBorder = Color(0x1FF5F5F7);
 
+  /// Drag handle of bottom sheets (`ink` at 24%).
+  static const Color sheetHandle = Color(0x3DF5F5F7);
+
   /// Drop shadow under floating surfaces (black at 45%).
   static const Color shadow = Color(0x73000000);
 
