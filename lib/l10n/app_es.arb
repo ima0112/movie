@@ -273,6 +273,7 @@
   "mediaCastRowSeeFullCast": "Ver reparto completo",
 
   "whereToWatchTitle": "Dónde ver",
+  "whereToWatchTapHint": "Toca un servicio para abrirlo en JustWatch",
   "whereToWatchSubscription": "Suscripción",
   "whereToWatchRent": "Alquiler",
   "whereToWatchBuy": "Compra",

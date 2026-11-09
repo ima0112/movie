@@ -32,7 +32,7 @@ a este documento primero y luego a código — nunca al revés.
 actualizar este documento:** wordmark ("TV"), enlaces "Ver todo", estado
 seleccionado de chips/tiles, etiqueta "Para ti", botón flotante de Match,
 fondo a sangre del resultado del Matcher, barras y celdas de Estadísticas,
-icono relleno de acciones activas (favorito/después/vista). En cualquier
+icono relleno de acciones activas (favorito/después/vista), caja "Streaming" de Dónde ver. En cualquier
 otro sitio, si dudas si algo debería ser ámbar, la respuesta por defecto es
 no.
 
