@@ -1292,6 +1292,18 @@ abstract class AppLocalizations {
   /// **'Mark as watched'**
   String get mediaDetailMarkAsWatched;
 
+  /// No description provided for @mediaDetailDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get mediaDetailDateLabel;
+
+  /// Accessibility label of one of H2's five rating stars (e.g. "4 of 5").
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 5'**
+  String mediaDetailRatingStarLabel(int count);
+
   /// No description provided for @mediaDetailYourRating.
   ///
   /// In en, this message translates to:

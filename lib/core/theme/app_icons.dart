@@ -41,6 +41,7 @@ class AppIcons {
   static const IconData userFill = RemixIcons.user_fill;
   static const IconData cloudOff = RemixIcons.cloud_off_line;
   static const IconData wifiOff = RemixIcons.signal_wifi_off_line;
+  static const IconData calendar = RemixIcons.calendar_line;
   static const IconData delete = RemixIcons.delete_bin_line;
   static const IconData edit = RemixIcons.edit_2_line;
   static const IconData settings = RemixIcons.settings_line;

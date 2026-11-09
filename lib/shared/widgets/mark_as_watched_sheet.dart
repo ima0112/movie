@@ -136,25 +136,24 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
     final isEditingWatched = widget.existingEntry?.isWatched ?? false;
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_heading(), style: AppTextStyles.h2),
+            Text(_heading(), style: AppTextStyles.h1),
             const SizedBox(height: AppSpacing.xl),
-            Text(
-              context.l10n.mediaDetailYourRating,
-              style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
-            ),
-            const SizedBox(height: AppSpacing.sm),
+            _FieldLabel(context.l10n.mediaDetailYourRating),
+            const SizedBox(height: AppSpacing.xs),
             RatingStarsSelector(
               rating: _rating,
               onChanged: (rating) => setState(() => _rating = rating),
             ),
             const SizedBox(height: AppSpacing.lg),
+            _FieldLabel(context.l10n.mediaDetailDateLabel),
+            const SizedBox(height: AppSpacing.sm),
             MarkAsWatchedDateField(date: _date, onTap: _pickDate),
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.xxl),
             PrimaryButton(label: context.l10n.commonSave, onTap: _save),
             if (isEditingWatched) ...[
               const SizedBox(height: AppSpacing.md),
@@ -170,6 +169,27 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// A small spaced-out uppercase caption over a field ("YOUR RATING",
+/// "DATE") — the "Marcar como vista" design.
+class _FieldLabel extends StatelessWidget {
+  const _FieldLabel(this.text);
+
+  final String text;
+
+  static const double _letterSpacing = 0.6;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text.toUpperCase(),
+      style: AppTextStyles.caption.copyWith(
+        color: AppColors.inkMuted,
+        letterSpacing: _letterSpacing,
       ),
     );
   }

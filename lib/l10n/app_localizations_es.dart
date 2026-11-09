@@ -723,6 +723,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mediaDetailMarkAsWatched => 'Marcar como visto';
 
   @override
+  String get mediaDetailDateLabel => 'Fecha';
+
+  @override
+  String mediaDetailRatingStarLabel(int count) {
+    return '$count de 5';
+  }
+
+  @override
   String get mediaDetailYourRating => 'Tu valoración';
 
   @override

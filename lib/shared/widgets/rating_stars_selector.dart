@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
-import '../../core/theme/app_spacing.dart';
+import '../../l10n/l10n_extension.dart';
 
-/// H2's "5-star selector (optional)" (`docs/SCREENS.md` H2) — tapping the
-/// already-selected star clears it back to `null` ("optional" meaning a
-/// rating can genuinely be left unset, not just default to 1).
-///
-/// Split out of `mark_as_watched_sheet.dart` per CLAUDE.md rule 11. Pure
-/// presentation — no feature dependency, everything comes in by
-/// parameter.
+/// H2's five stars: amber and filled up to the rating, an outline in muted
+/// gray after it. Tapping the current rating again clears it (`null`).
+/// Each star is a 48 px touch target with its own "N of 5" accessibility
+/// label.
 class RatingStarsSelector extends StatelessWidget {
   const RatingStarsSelector({
     super.key,
@@ -21,21 +18,34 @@ class RatingStarsSelector extends StatelessWidget {
   final int? rating;
   final ValueChanged<int?> onChanged;
 
+  static const double _touchSize = 48;
+  static const double _iconSize = 38;
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         for (var star = 1; star <= 5; star++)
-          GestureDetector(
-            onTap: () => onChanged(star == rating ? null : star),
-            child: Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.xs),
-              child: Icon(
-                AppIcons.starFill,
-                size: 32,
-                color: rating != null && star <= rating!
-                    ? AppColors.accent
-                    : AppColors.lineStrong,
+          Semantics(
+            button: true,
+            selected: rating != null && star <= rating!,
+            label: context.l10n.mediaDetailRatingStarLabel(star),
+            excludeSemantics: true,
+            child: GestureDetector(
+              onTap: () => onChanged(star == rating ? null : star),
+              behavior: HitTestBehavior.opaque,
+              child: SizedBox(
+                width: _touchSize,
+                height: _touchSize,
+                child: Icon(
+                  rating != null && star <= rating!
+                      ? AppIcons.starFill
+                      : AppIcons.star,
+                  size: _iconSize,
+                  color: rating != null && star <= rating!
+                      ? AppColors.accent
+                      : AppColors.inkMuted,
+                ),
               ),
             ),
           ),
