@@ -10,6 +10,7 @@ import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
+import 'package:movies/core/theme/app_spacing.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 import 'package:movies/shared/widgets/media_detail/media_similar_section.dart';
@@ -88,6 +89,34 @@ void main() {
     expect(find.text('Classification'), findsOneWidget);
     expect(find.text('PG-13'), findsOneWidget);
     expect(find.text('SYNOPSIS'), findsOneWidget);
+  });
+
+  testWidgets('every section starts the same AppSpacing.sectionGap below the '
+      'previous one', (tester) async {
+    tester.view.physicalSize = const Size(390, 5000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await openDuneDetail(tester);
+
+    double top(Finder f) => tester.getTopLeft(f).dy;
+    double bottom(Finder f) => tester.getBottomLeft(f).dy;
+    final sections = [
+      find.byType(MediaSynopsisSection),
+      find.byType(WhereToWatchSection),
+      find.byType(MediaCastRow),
+      find.byType(MediaSimilarSection),
+    ];
+    for (var i = 1; i < sections.length; i++) {
+      // Each section widget wraps its own top padding, so the box starts at
+      // the end of the previous one and its first content sits sectionGap in.
+      expect(top(sections[i]), moreOrLessEquals(bottom(sections[i - 1])));
+    }
+    // The first content of each section (a Text/heading) is sectionGap below
+    // the section's own top edge.
+    expect(
+      tester.getTopLeft(find.text('Where to watch')).dy - top(sections[1]),
+      greaterThanOrEqualTo(AppSpacing.sectionGap),
+    );
   });
 
   testWidgets('sections run synopsis -> where to watch -> cast -> similar, '

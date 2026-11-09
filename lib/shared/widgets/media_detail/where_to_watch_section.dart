@@ -50,12 +50,9 @@ class WhereToWatchSection extends StatelessWidget {
     final onTap = link == null ? null : () => onProviderTap?.call(link);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.lg,
-      ),
+      padding: AppSpacing.sectionPadding,
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.cardPadding),
         decoration: BoxDecoration(
           color: AppColors.surfaceRaised,
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
