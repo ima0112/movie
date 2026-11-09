@@ -146,6 +146,9 @@ class MovieDetailContent extends StatelessWidget {
           ),
         ),
         SliverToBoxAdapter(
+          child: MediaSynopsisSection(overview: detail.overview),
+        ),
+        SliverToBoxAdapter(
           child: WhereToWatchSection(
             providers: detail.watchProviders,
             regionName: countryName(
@@ -157,19 +160,18 @@ class MovieDetailContent extends StatelessWidget {
           ),
         ),
         SliverToBoxAdapter(
-          child: MediaSynopsisSection(overview: detail.overview),
-        ),
-        SliverToBoxAdapter(
           child: MediaCastRow(
             cast: detail.cast,
             crew: detail.crew,
             onPersonTap: (person) => context.pushPersonDetail(person.id),
             onSeeFullCastTap: () => _openFullCastSheet(context),
+            showCrew: false,
           ),
         ),
         SliverToBoxAdapter(
           key: similarSectionKey,
           child: MediaSimilarSection(
+            title: context.l10n.mediaSimilarMoviesTitle,
             similar: detail.similar,
             onItemTap: (item) => context.pushMediaDetail(item.key),
           ),

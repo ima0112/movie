@@ -11,10 +11,18 @@ import '../media_carousel.dart';
 /// plain value (CLAUDE.md rule 9 — the assembling screen already knows
 /// it's loaded).
 class MediaSimilarSection extends StatelessWidget {
-  const MediaSimilarSection({super.key, required this.similar, this.onItemTap});
+  const MediaSimilarSection({
+    super.key,
+    required this.similar,
+    this.onItemTap,
+    this.title,
+  });
 
   final List<MediaItem> similar;
   final void Function(MediaItem item)? onItemTap;
+
+  /// Overrides the default "Similar" heading (D1 says "Similar movies").
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +33,10 @@ class MediaSimilarSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.l10n.mediaSimilarTitle, style: AppTextStyles.h2),
+          Text(
+            title ?? context.l10n.mediaSimilarTitle,
+            style: AppTextStyles.h2,
+          ),
           const SizedBox(height: AppSpacing.md),
           MediaCarousel.standard(
             items: similar,

@@ -810,6 +810,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fullCastSheetSearchHint => 'Buscar en reparto y equipo';
 
   @override
+  String get mediaSimilarMoviesTitle => 'Películas similares';
+
+  @override
   String get mediaSimilarTitle => 'Similares';
 
   @override
@@ -826,9 +829,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get mediaDetailActionFavorite => 'Favorito';
-
-  @override
-  String get mediaCastRowSeeFullCast => 'Ver reparto completo';
 
   @override
   String get whereToWatchTitle => 'Dónde ver';

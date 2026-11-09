@@ -24,6 +24,7 @@ class MediaCastRow extends StatelessWidget {
     required this.crew,
     this.onPersonTap,
     this.onSeeFullCastTap,
+    this.showCrew = true,
   });
 
   final List<CastMember> cast;
@@ -32,6 +33,11 @@ class MediaCastRow extends StatelessWidget {
 
   /// "See full cast" → H3 (not built yet).
   final VoidCallback? onSeeFullCastTap;
+
+  /// Whether to list the crew's names under the circles. D1 hides them (the
+  /// design has no such line, and a movie's crew runs to hundreds of names);
+  /// D2 still shows them.
+  final bool showCrew;
 
   static const double _circleSize = 64;
   static const int _visibleCount = 10;
@@ -46,6 +52,32 @@ class MediaCastRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    context.l10n.fullCastSheetCastLabel,
+                    style: AppTextStyles.h2,
+                  ),
+                ),
+                if (cast.length > _visibleCount)
+                  GestureDetector(
+                    onTap: onSeeFullCastTap,
+                    behavior: HitTestBehavior.opaque,
+                    child: Text(
+                      context.l10n.discoverSeeAll,
+                      style: AppTextStyles.bodySm.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
           SizedBox(
             // Avatar + gap + two lines of `caption` (name, character) —
             // `xxl` alone (used for the "See full cast"/crew spacing
@@ -68,20 +100,7 @@ class MediaCastRow extends StatelessWidget {
               },
             ),
           ),
-          if (cast.length > _visibleCount) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: GestureDetector(
-                onTap: onSeeFullCastTap,
-                child: Text(
-                  context.l10n.mediaCastRowSeeFullCast,
-                  style: AppTextStyles.bodySm.copyWith(color: AppColors.accent),
-                ),
-              ),
-            ),
-          ],
-          if (crew.isNotEmpty) ...[
+          if (showCrew && crew.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.md),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),

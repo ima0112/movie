@@ -10,7 +10,11 @@ import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
+import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
+import 'package:movies/shared/widgets/media_detail/media_similar_section.dart';
+import 'package:movies/shared/widgets/media_detail/media_synopsis_section.dart';
+import 'package:movies/shared/widgets/media_detail/where_to_watch_section.dart';
 
 /// Manual-verification checklist from the task, made automatic and
 /// repeatable via `WidgetTester` instead of a live simulator session —
@@ -70,6 +74,30 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(MediaDetailCompactBar), findsOneWidget);
+  });
+
+  testWidgets('sections run synopsis -> where to watch -> cast -> similar, '
+      'and the crew\'s names are not listed', (tester) async {
+    // Tall enough that every sliver is built at once, so their positions can
+    // be compared.
+    tester.view.physicalSize = const Size(390, 5000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await openDuneDetail(tester);
+
+    double top(Finder f) => tester.getTopLeft(f).dy;
+    final synopsis = top(find.byType(MediaSynopsisSection));
+    final where = top(find.byType(WhereToWatchSection));
+    final cast = top(find.byType(MediaCastRow));
+    final similar = top(find.byType(MediaSimilarSection));
+
+    expect(synopsis, lessThan(where));
+    expect(where, lessThan(cast));
+    expect(cast, lessThan(similar));
+    expect(find.text('Similar movies'), findsOneWidget);
+    // FakeMediaRepository's crew (director, writer) is not printed.
+    expect(find.textContaining('(Director)'), findsNothing);
+    expect(find.textContaining('(Writer)'), findsNothing);
   });
 
   testWidgets('tapping a genre pushes the real C1 (filtered listing) for that '
