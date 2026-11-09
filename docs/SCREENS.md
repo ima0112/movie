@@ -302,7 +302,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 
 | # | Dialog | Opens from | Content |
 |---|---|---|---|
-| I1 | Confirm deletion | B5 | "Delete your list? This can't be undone." Cancel / Delete (destructive) |
+| I1 | Confirm deletion | B5 | Floating card: red trash badge, "Delete your list? This can't be undone.", Cancel / Delete (destructive) side by side |
 | I2 | Leave the room | F3, F5 | Host: "If you leave, the room closes for everyone". Guest: "You can come back with the code". Cancel / Leave |
 | I3 | Too many vetoes | F3 when searching | "You've vetoed 10 of 16 genres between you. There isn't much left to pick from." Search anyway / Back to room |
 

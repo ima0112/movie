@@ -62,6 +62,9 @@ class AppColors {
   /// Destructive actions, errors.
   static const Color danger = Color(0xFFFF6B6B);
 
+  /// Text/icons on top of a [danger] background.
+  static const Color onDanger = Color(0xFF1A0606);
+
   /// Profile colors — user initial avatars and room avatars only. Not used
   /// in any other UI context.
   static const Color profileAmber = Color(0xFFF2B441);
