@@ -1,4 +1,5 @@
 import 'genre.dart';
+import 'media_item.dart';
 import 'media_key.dart';
 
 /// One row of "My List" — see `docs/DECISIONS.md` section 4 ("My List,
@@ -9,18 +10,16 @@ import 'media_key.dart';
 /// time. Watched is tracked via [watchedAt] (`null` = not watched) with
 /// an optional 1–5 [rating], set together via [markWatched].
 ///
-/// [runtimeMinutes]/[episodeCount]/[episodeRuntimeMinutes] are a
-/// duration snapshot taken at the moment H2's "Save" is tapped (see
-/// `MarkAsWatchedSheet`), not fetched live from this entry — the same
-/// "capture what's on hand at write time" approach the drift table's own
-/// catalog snapshot columns already use (`app_database.dart`). They live
-/// on this domain entity rather than only in the drift row, unlike that
-/// catalog snapshot, because domain-level code (`your_activity_card.dart`,
-/// `LibraryStatsCalculator`) actually needs to read them back through
-/// [UserLibraryRepository.watch] — the untouched catalog columns don't
-/// have a reader yet, these do from the moment they're added. [genres]
-/// is the same idea, populated from whichever `MediaItem`/`MediaDetail`
-/// is on hand at the moment a row is first created or re-saved.
+/// [runtimeMinutes]/[episodeCount]/[episodeRuntimeMinutes]/[posterUrl]/
+/// [voteAverage]/[year] are a catalog/duration snapshot populated
+/// whenever a `MediaDetail`/`MediaItem` happens to be on hand at a write
+/// — H2's "Save" (`MarkAsWatchedSheet`), D1/D2's Favorite/Watch later
+/// toggle (`MediaDetailActionRow`), E3's "Add to watch later", and the
+/// detail screens' own lazy refresh on open (`MovieDetailCubit`/
+/// `TvDetailCubit`) — never fetched live from this entry. [genres] is
+/// the same idea and the oldest of the group. [catalogSnapshotFrom]
+/// extracts the catalog half of this from a `MediaItem` in one place,
+/// shared by every one of those call sites.
 class UserMediaEntry {
   const UserMediaEntry({
     required this.key,
@@ -33,6 +32,9 @@ class UserMediaEntry {
     this.episodeCount,
     this.episodeRuntimeMinutes,
     this.genres = const [],
+    this.posterUrl,
+    this.voteAverage,
+    this.year,
   }) : assert(
          rating == null || (rating >= 1 && rating <= 5),
          'rating must be 1-5',
@@ -66,30 +68,35 @@ class UserMediaEntry {
   /// 1–5. Only meaningful once [watchedAt] is set.
   final int? rating;
 
-  /// `MovieDetail.runtimeMinutes` at the moment this entry was marked
-  /// watched. Meant for movie entries only (H2 never populates it for a
-  /// TV show) — not enforced by an assert, since evaluating `key.type`
-  /// in this constructor's initializer list would stop it from being
-  /// `const`, which every existing call site (including every test
-  /// using `const UserMediaEntry(...)`) relies on. `null` for any entry
-  /// that isn't a watched movie, and legitimately `null` even for one
-  /// that is — an entry watched before this field existed, or one whose
-  /// `MovieDetail` itself had no runtime from TMDB. Callers summing this
-  /// (`your_activity_card.dart`, `LibraryStatsCalculator`) must treat a
-  /// missing value as `0`, not an error.
+  /// `MovieDetail.runtimeMinutes` at the moment this entry was last
+  /// saved or refreshed with a `MovieDetail` on hand (marked watched,
+  /// toggled favorite/watch later from D1, or the lazy refresh on
+  /// reopening D1). Meant for movie entries only — not enforced by an
+  /// assert, since evaluating `key.type` in this constructor's
+  /// initializer list would stop it from being `const`, which every
+  /// existing call site (including every test using
+  /// `const UserMediaEntry(...)`) relies on. `null` for any entry that
+  /// isn't a movie, and legitimately `null` for one that is — an entry
+  /// saved before this field existed, one only ever saved from E3 (no
+  /// `MediaDetail` on hand there), or one whose `MovieDetail` itself had
+  /// no runtime from TMDB. Callers summing this (`your_activity_card.dart`,
+  /// `LibraryStatsCalculator`) must treat a missing value as `0`, not an
+  /// error.
   final int? runtimeMinutes;
 
-  /// `TvShowDetail.numberOfEpisodes` at the moment this entry was marked
-  /// watched — the whole show's episode count, since TV is tracked at
-  /// the whole-show level (`MediaKey`'s own doc comment), not per
-  /// episode. Meant for TV entries only — same not-a-const-assert
-  /// reasoning as [runtimeMinutes].
+  /// `TvShowDetail.numberOfEpisodes` at the moment this entry was last
+  /// saved or refreshed with a `TvShowDetail` on hand (same set of
+  /// moments as [runtimeMinutes]) — the whole show's episode count,
+  /// since TV is tracked at the whole-show level (`MediaKey`'s own doc
+  /// comment), not per episode. Meant for TV entries only — same
+  /// not-a-const-assert reasoning as [runtimeMinutes].
   final int? episodeCount;
 
   /// `TvShowDetail.episodeRuntimeMinutes` at the moment this entry was
-  /// marked watched. Meant for TV entries only; can still be `null` for
-  /// one, same optionality as `TvShowDetail`'s own field (TMDB doesn't
-  /// always give a per-episode runtime).
+  /// last saved or refreshed with a `TvShowDetail` on hand. Meant for TV
+  /// entries only; can still be `null` for one, same optionality as
+  /// `TvShowDetail`'s own field (TMDB doesn't always give a per-episode
+  /// runtime).
   final int? episodeRuntimeMinutes;
 
   /// `MediaItem.genres` at the moment this entry was created or last
@@ -99,6 +106,25 @@ class UserMediaEntry {
   /// existed. Powers C4's "Genres you watch most"
   /// (`LibraryStatsCalculator.topGenres`).
   final List<Genre> genres;
+
+  /// `MediaItem.posterUrl` at the moment this entry was last saved or
+  /// refreshed — already a fully resolved image URL (TMDB's image host +
+  /// a size token baked in by the mapper), not a raw TMDB path. Same
+  /// "capture what's on hand" rule as [title]/[genres]. Lets My List (B4)
+  /// render its poster with no network round trip; `null` when TMDB had
+  /// none, or for an entry saved before this field existed.
+  final String? posterUrl;
+
+  /// `MediaItem.voteAverage` at the moment this entry was last saved or
+  /// refreshed. Powers H9's "TMDB rating" sort; `null` for an entry saved
+  /// before this field existed.
+  final double? voteAverage;
+
+  /// `MediaItem.releaseDate?.year` (movie) / first-air year (TV) at the
+  /// moment this entry was last saved or refreshed. Powers H9's "Year"
+  /// sort and My List's offline metadata line; `null` for an entry saved
+  /// before this field existed, or when TMDB had no release date yet.
+  final int? year;
 
   bool get isWatched => watchedAt != null;
 
@@ -121,6 +147,9 @@ class UserMediaEntry {
     int? episodeCount,
     int? episodeRuntimeMinutes,
     List<Genre>? genres,
+    String? posterUrl,
+    double? voteAverage,
+    int? year,
   }) {
     return UserMediaEntry(
       key: key,
@@ -133,6 +162,9 @@ class UserMediaEntry {
       episodeCount: episodeCount,
       episodeRuntimeMinutes: episodeRuntimeMinutes,
       genres: genres ?? this.genres,
+      posterUrl: posterUrl ?? this.posterUrl,
+      voteAverage: voteAverage ?? this.voteAverage,
+      year: year ?? this.year,
     );
   }
 
@@ -148,6 +180,9 @@ class UserMediaEntry {
       isFavorite: isFavorite,
       isWatchLater: isWatchLater,
       genres: genres,
+      posterUrl: posterUrl,
+      voteAverage: voteAverage,
+      year: year,
     );
   }
 
@@ -161,6 +196,9 @@ class UserMediaEntry {
     int? episodeCount,
     int? episodeRuntimeMinutes,
     List<Genre>? genres,
+    String? posterUrl,
+    double? voteAverage,
+    int? year,
   }) {
     return UserMediaEntry(
       key: key,
@@ -174,6 +212,9 @@ class UserMediaEntry {
       episodeRuntimeMinutes:
           episodeRuntimeMinutes ?? this.episodeRuntimeMinutes,
       genres: genres ?? this.genres,
+      posterUrl: posterUrl ?? this.posterUrl,
+      voteAverage: voteAverage ?? this.voteAverage,
+      year: year ?? this.year,
     );
   }
 
@@ -189,7 +230,10 @@ class UserMediaEntry {
       other.runtimeMinutes == runtimeMinutes &&
       other.episodeCount == episodeCount &&
       other.episodeRuntimeMinutes == episodeRuntimeMinutes &&
-      _listEquals(other.genres, genres);
+      _listEquals(other.genres, genres) &&
+      other.posterUrl == posterUrl &&
+      other.voteAverage == voteAverage &&
+      other.year == year;
 
   @override
   int get hashCode => Object.hash(
@@ -203,6 +247,9 @@ class UserMediaEntry {
     episodeCount,
     episodeRuntimeMinutes,
     Object.hashAll(genres),
+    posterUrl,
+    voteAverage,
+    year,
   );
 
   @override
@@ -210,8 +257,23 @@ class UserMediaEntry {
       'UserMediaEntry($key, title: $title, favorite: $isFavorite, '
       'watchLater: $isWatchLater, watchedAt: $watchedAt, rating: $rating, '
       'runtimeMinutes: $runtimeMinutes, episodeCount: $episodeCount, '
-      'episodeRuntimeMinutes: $episodeRuntimeMinutes, genres: $genres)';
+      'episodeRuntimeMinutes: $episodeRuntimeMinutes, genres: $genres, '
+      'posterUrl: $posterUrl, voteAverage: $voteAverage, year: $year)';
 }
+
+/// The catalog-snapshot fields [UserMediaEntry] captures from a
+/// [MediaItem] — pulled out as one function rather than inlined at each
+/// of its 3+ call sites (My List toggles, Mark as watched, Surprise me's
+/// "Add to watch later", the detail screens' lazy snapshot refresh), all
+/// of which need exactly this same mapping.
+({String title, List<Genre> genres, String? posterUrl, double? voteAverage, int? year})
+catalogSnapshotFrom(MediaItem item) => (
+  title: item.title,
+  genres: item.genres,
+  posterUrl: item.posterUrl,
+  voteAverage: item.voteAverage,
+  year: item.releaseDate?.year,
+);
 
 /// Order-sensitive list content equality — see `LibraryStats`' own copy
 /// of this same small helper for why: no `package:collection` dependency

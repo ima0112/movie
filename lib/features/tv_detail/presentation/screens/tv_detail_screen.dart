@@ -6,6 +6,7 @@ import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -39,7 +40,8 @@ class TvDetailScreen extends StatelessWidget {
     final mediaKey = MediaKey(type: MediaType.tvShow, tmdbId: tvId);
     return BlocProvider(
       create: (_) =>
-          TvDetailCubit(getIt<MediaRepository>())..loadDetail(mediaKey),
+          TvDetailCubit(getIt<MediaRepository>(), getIt<UserLibraryRepository>())
+            ..loadDetail(mediaKey),
       child: _TvDetailView(mediaKey: mediaKey),
     );
   }

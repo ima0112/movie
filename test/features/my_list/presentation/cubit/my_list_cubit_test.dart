@@ -101,6 +101,12 @@ void main() {
       cubit.close();
     });
 
+    test('the default TabFilter sorts by Title A-Z, not "Recent" (removed '
+        '— it was a no-op for Favorites/Watch later, with no "date saved" '
+        'field to sort by)', () {
+      expect(const TabFilter().sort, MyListSort.titleAZ);
+    });
+
     test('TabFilter.isDefault is true only for the untouched default', () {
       const defaultFilter = TabFilter();
       const changedFilter = TabFilter(minStars: 2);

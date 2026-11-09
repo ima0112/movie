@@ -13,6 +13,7 @@ import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/library_tab_localization.dart';
 import '../app_buttons.dart';
 import '../mark_as_watched_sheet.dart';
+import '../media_detail_duration.dart';
 import 'media_action_button.dart';
 
 /// D1/D2's Trailer button + the Favorite / Watch later / Watched row.
@@ -149,12 +150,22 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
   }
 
   void _toggle(UserMediaEntry Function(UserMediaEntry) transform) {
-    final current =
-        _latestEntry ??
-        UserMediaEntry(
-          key: widget.mediaKey,
-          title: widget.mediaDetail.item.title,
-          genres: widget.mediaDetail.item.genres,
+    // Always re-stamps the catalog snapshot from what's already loaded
+    // here, favorite/watch-later toggle or not — the same "capture
+    // what's on hand" rule every other write site in this file's own
+    // doc comment follows for genres.
+    final snapshot = catalogSnapshotFrom(widget.mediaDetail.item);
+    final duration = durationFieldsFrom(widget.mediaDetail);
+    final current = (_latestEntry ?? UserMediaEntry(key: widget.mediaKey, title: snapshot.title))
+        .copyWith(
+          title: snapshot.title,
+          genres: snapshot.genres,
+          posterUrl: snapshot.posterUrl,
+          voteAverage: snapshot.voteAverage,
+          year: snapshot.year,
+          runtimeMinutes: duration.runtimeMinutes,
+          episodeCount: duration.episodeCount,
+          episodeRuntimeMinutes: duration.episodeRuntimeMinutes,
         );
     unawaited(widget.userLibraryRepository.upsert(transform(current)));
   }

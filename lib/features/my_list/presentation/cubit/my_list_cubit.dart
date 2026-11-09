@@ -5,17 +5,19 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 
 /// My List's (B4) sort options — see `docs/SCREENS.md` H9 ("Sort and
-/// filter My List"): "sort by Recent / Title A–Z / Year / TMDB rating
-/// and, in Watched, My rating / Date watched". [myRating] and
-/// [dateWatched] only make sense (and per H9 are only ever offered) in
-/// the Watched tab — the widget that renders H9's chips decides which
-/// options to show for the current tab, not this enum.
+/// filter My List"): "sort by Title A–Z / Year / TMDB rating and, in
+/// Watched, My rating / Date watched". [myRating] and [dateWatched]
+/// only make sense (and per H9 are only ever offered) in the Watched
+/// tab — the widget that renders H9's chips decides which options to
+/// show for the current tab, not this enum.
 ///
-/// [recent] means "by date saved" in Favorites/Watch later and "by date
-/// watched" in Watched (`docs/SCREENS.md` B4's default-sort note) — a
-/// single value covering both, since it's the same conceptual "most
-/// recent activity" default either way.
-enum MyListSort { recent, titleAZ, year, tmdbRating, myRating, dateWatched }
+/// No `recent` option: it never had anywhere to read "date saved" from
+/// for Favorites/Watch later (`UserMediaEntry` has no such field, only
+/// `watchedAt`, Watched-only), so it was always a silent no-op there —
+/// removed rather than kept as a chip that does nothing. [dateWatched]
+/// already covers the one tab (Watched) where "most recent" has a real
+/// column to sort by.
+enum MyListSort { titleAZ, year, tmdbRating, myRating, dateWatched }
 
 /// One [LibraryTab]'s own H9 filter/sort selection.
 ///
@@ -26,7 +28,7 @@ enum MyListSort { recent, titleAZ, year, tmdbRating, myRating, dateWatched }
 class TabFilter {
   const TabFilter({
     this.type,
-    this.sort = MyListSort.recent,
+    this.sort = MyListSort.titleAZ,
     this.minStars,
     this.hideWatched = false,
   });

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movies/app/di.dart';
 import 'package:movies/app/router.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -41,6 +43,8 @@ class _FakeTasteProfileRepository implements TasteProfileRepository {
 }
 
 class _FakeUserLibraryRepository implements UserLibraryRepository {
+  final List<UserMediaEntry> upserted = [];
+
   @override
   Stream<List<UserMediaEntry>> watch({LibraryTab? tab, MediaType? type}) =>
       Stream.value(const []);
@@ -49,8 +53,23 @@ class _FakeUserLibraryRepository implements UserLibraryRepository {
   Stream<UserMediaEntry?> watchEntry(MediaKey key) => Stream.value(null);
 
   @override
-  Future<Result<void>> upsert(UserMediaEntry entry) async =>
-      const Success(null);
+  Future<Result<void>> upsert(UserMediaEntry entry) async {
+    upserted.add(entry);
+    return const Success(null);
+  }
+
+  @override
+  Future<Result<void>> updateCatalogSnapshot(
+    MediaKey key, {
+    required String title,
+    required List<Genre> genres,
+    String? posterUrl,
+    double? voteAverage,
+    int? year,
+    int? runtimeMinutes,
+    int? episodeCount,
+    int? episodeRuntimeMinutes,
+  }) async => const Success(null);
 
   @override
   Future<Result<void>> remove(MediaKey key) async => const Success(null);
@@ -195,6 +214,39 @@ void main() {
       );
 
       expect(find.text('Answer the quiz instead'), findsNothing);
+    });
+  });
+
+  group('SurpriseResultContent — "Add to watch later"', () {
+    testWidgets('persists voteAverage and year from the suggested item, '
+        'not just title/genres', (tester) async {
+      // "Add to watch later" reaches for the global `getIt` directly
+      // (surprise_result_content.dart's own `_addToWatchLater`) rather
+      // than a repository passed in by this widget's constructor —
+      // unlike every other write site in this branch, so the fake has
+      // to go through `getIt` too, not just `SurpriseCubit`'s own.
+      final userLibraryRepository = _FakeUserLibraryRepository();
+      getIt.registerSingleton<UserLibraryRepository>(userLibraryRepository);
+      addTearDown(() => getIt.unregister<UserLibraryRepository>());
+      final cubit = SurpriseCubit(
+        _NoopMatchEngine(),
+        TasteProfileBuilder(VibeCatalog(const [])),
+        _FakeTasteProfileRepository(),
+        userLibraryRepository,
+      );
+      addTearDown(cubit.close);
+
+      await tester.pumpWidget(
+        _wrap(cubit, _resultState(SuggestionSource.profile)),
+      );
+      await tester.ensureVisible(find.text('Add to Watch later'));
+      await tester.tap(find.text('Add to Watch later'));
+      await tester.pumpAndSettle();
+
+      final saved = userLibraryRepository.upserted.single;
+      expect(saved.title, 'Dune: Part Two');
+      expect(saved.voteAverage, 8.4);
+      expect(saved.year, 2024);
     });
   });
 }

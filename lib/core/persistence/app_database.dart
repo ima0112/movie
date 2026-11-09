@@ -15,11 +15,11 @@ part 'app_database.g.dart';
 /// snapshot of the catalog item (title, poster, genres, rating...) so My
 /// List, Stats, and an offline detail view can render without a network
 /// round trip — see `docs/SCREENS.md` D1 ("offline with a snapshot if
-/// it's in My List: poster, title, year, genres"). Some of these columns
-/// (backdropPath, voteCount, popularity) go beyond what `MediaItem`
-/// exposes today; the mapper that reads this table back into a domain
-/// entity (a later branch) will need to either extend
-/// `MediaItem`/`Movie`/`TvShow` or leave them unused for now.
+/// it's in My List: poster, title, year, genres"). Three of these
+/// columns (backdropPath, voteCount, popularity) go beyond what
+/// `MediaItem` exposes today and stay unused — extending
+/// `MediaItem`/`Movie`/`TvShow` to carry them is a separate, larger
+/// change (see each column's own doc comment below).
 @DataClassName('UserMediaEntryRow')
 class UserMediaEntries extends Table {
   /// `MediaKey.type` — stored as text (the enum's name) rather than an
@@ -31,29 +31,39 @@ class UserMediaEntries extends Table {
   IntColumn get tmdbId => integer()();
 
   // --- Catalog snapshot: enough to render a MediaItem-shaped card
-  // without a network call. All nullable, and — apart from `genres`
-  // below — still unmapped: `UserMediaEntry` doesn't carry title/
-  // posterPath/etc. itself, so `UserLibraryRepository.upsert` has
-  // nothing to write here yet. A call site that also has the catalog
-  // item on hand (e.g. the screen that just fetched it) is what would
-  // populate these, once something writes them at all.
+  // without a network call. All nullable. `title`/`genres`/`posterPath`/
+  // `voteAverage`/`year` are mapped both ways by
+  // `DriftUserLibraryRepository` (`UserMediaEntry`'s own fields of the
+  // same name/purpose — `posterUrl` on the domain side, see below).
+  // `backdropPath`/`voteCount`/`popularity` remain unmapped: `MediaItem`/
+  // `MediaDetail` carry none of these three at all today, and adding
+  // them would mean extending that entity (every TMDB mapper, every
+  // carousel/hero call site, every test fixture) — out of scope for the
+  // my-list-sort-fix branch that mapped the rest of this block. Tracked
+  // in docs/TODO_AUDIT.md ("limpieza posterior: columnas muertas").
   TextColumn get title => text().nullable()();
+
+  /// Named `posterPath` for the SQL column's own history, but holds
+  /// `UserMediaEntry.posterUrl` — a fully resolved image URL (TMDB host
+  /// + a size token already baked in by the mapper), not a raw TMDB
+  /// path fragment. `MediaItem` never carries the raw path past the
+  /// data layer's own DTO, so there is nothing shorter to store here.
   TextColumn get posterPath => text().nullable()();
   TextColumn get backdropPath => text().nullable()();
 
   /// `UserMediaEntry.genres`, serialized as comma-joined ids (same
   /// format as `TasteProfileTable.likedGenres`) — never a display name
   /// (CLAUDE.md rule 15); `GenreCatalog.byId` rebuilds each `Genre`.
-  /// Mapped both ways by `DriftUserLibraryRepository` — the one column
-  /// in this "catalog snapshot" block that isn't just sitting unused.
   TextColumn get genres => text().nullable()();
+
+  /// `UserMediaEntry.voteAverage`.
   RealColumn get voteAverage => real().nullable()();
   IntColumn get voteCount => integer().nullable()();
   RealColumn get popularity => real().nullable()();
 
-  /// Release/first-air year — kept separate from a full release date
-  /// since a year is all the offline snapshot ever needs to show
-  /// (`docs/SCREENS.md` D1).
+  /// `UserMediaEntry.year` — release/first-air year, kept separate from
+  /// a full release date since a year is all the offline snapshot ever
+  /// needs to show (`docs/SCREENS.md` D1).
   IntColumn get year => integer().nullable()();
 
   // --- UserMediaEntry's own fields

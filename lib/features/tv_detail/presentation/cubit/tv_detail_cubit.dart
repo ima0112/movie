@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../shared/widgets/media_detail_duration.dart';
 
 /// TV show detail's (D2) load state — same shape as
 /// `MovieDetailCubit`'s own `MovieDetailState` (D1).
@@ -47,9 +50,11 @@ final class TvDetailError extends TvDetailState {
 /// shared Cubit would need its own type-narrowing anyway, with no
 /// benefit over two small, independently readable Cubits.
 class TvDetailCubit extends Cubit<TvDetailState> {
-  TvDetailCubit(this._mediaRepository) : super(const TvDetailInitial());
+  TvDetailCubit(this._mediaRepository, this._userLibraryRepository)
+    : super(const TvDetailInitial());
 
   final MediaRepository _mediaRepository;
+  final UserLibraryRepository _userLibraryRepository;
 
   Future<void> loadDetail(MediaKey key) async {
     emit(const TvDetailLoading());
@@ -58,8 +63,27 @@ class TvDetailCubit extends Cubit<TvDetailState> {
     switch (result) {
       case Success<MediaDetail>(:final value):
         emit(TvDetailLoaded(value));
+        await _refreshLibrarySnapshot(key, value);
       case Failure<MediaDetail>(:final reason):
         emit(TvDetailError(reason));
     }
+  }
+
+  /// See `MovieDetailCubit._refreshLibrarySnapshot`'s own doc comment —
+  /// same mechanism, mirrored for D2.
+  Future<void> _refreshLibrarySnapshot(MediaKey key, MediaDetail detail) async {
+    final snapshot = catalogSnapshotFrom(detail.item);
+    final duration = durationFieldsFrom(detail);
+    await _userLibraryRepository.updateCatalogSnapshot(
+      key,
+      title: snapshot.title,
+      genres: snapshot.genres,
+      posterUrl: snapshot.posterUrl,
+      voteAverage: snapshot.voteAverage,
+      year: snapshot.year,
+      runtimeMinutes: duration.runtimeMinutes,
+      episodeCount: duration.episodeCount,
+      episodeRuntimeMinutes: duration.episodeRuntimeMinutes,
+    );
   }
 }

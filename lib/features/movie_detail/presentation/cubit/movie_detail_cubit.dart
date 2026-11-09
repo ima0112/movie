@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../shared/widgets/media_detail_duration.dart';
 
 /// Movie detail's (D1) load state.
 sealed class MovieDetailState {
@@ -44,9 +47,11 @@ final class MovieDetailError extends MovieDetailState {
 /// the screen that builds this one resolves the repository and passes it
 /// in.
 class MovieDetailCubit extends Cubit<MovieDetailState> {
-  MovieDetailCubit(this._mediaRepository) : super(const MovieDetailInitial());
+  MovieDetailCubit(this._mediaRepository, this._userLibraryRepository)
+    : super(const MovieDetailInitial());
 
   final MediaRepository _mediaRepository;
+  final UserLibraryRepository _userLibraryRepository;
 
   Future<void> loadDetail(MediaKey key) async {
     emit(const MovieDetailLoading());
@@ -55,8 +60,30 @@ class MovieDetailCubit extends Cubit<MovieDetailState> {
     switch (result) {
       case Success<MediaDetail>(:final value):
         emit(MovieDetailLoaded(value));
+        await _refreshLibrarySnapshot(key, value);
       case Failure<MediaDetail>(:final reason):
         emit(MovieDetailError(reason));
     }
+  }
+
+  /// My List's own "refresh on open" (`docs/DECISIONS.md` section 4) —
+  /// a no-op if nothing is saved at [key] yet. Catalog-only: never
+  /// touches isFavorite/isWatchLater/watchedAt/rating, and never races
+  /// a favorite/watch-later toggle landing on the same row (see
+  /// `UserLibraryRepository.updateCatalogSnapshot`'s own doc comment).
+  Future<void> _refreshLibrarySnapshot(MediaKey key, MediaDetail detail) async {
+    final snapshot = catalogSnapshotFrom(detail.item);
+    final duration = durationFieldsFrom(detail);
+    await _userLibraryRepository.updateCatalogSnapshot(
+      key,
+      title: snapshot.title,
+      genres: snapshot.genres,
+      posterUrl: snapshot.posterUrl,
+      voteAverage: snapshot.voteAverage,
+      year: snapshot.year,
+      runtimeMinutes: duration.runtimeMinutes,
+      episodeCount: duration.episodeCount,
+      episodeRuntimeMinutes: duration.episodeRuntimeMinutes,
+    );
   }
 }

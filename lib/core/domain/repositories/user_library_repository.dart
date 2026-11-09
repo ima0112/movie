@@ -1,3 +1,4 @@
+import '../entities/genre.dart';
 import '../entities/media_key.dart';
 import '../entities/media_type.dart';
 import '../entities/result.dart';
@@ -15,6 +16,29 @@ abstract interface class UserLibraryRepository {
   Stream<UserMediaEntry?> watchEntry(MediaKey key);
 
   Future<Result<void>> upsert(UserMediaEntry entry);
+
+  /// Refreshes only the catalog-snapshot fields of whatever is already
+  /// saved at [key] — never `isFavorite`/`isWatchLater`/`watchedAt`/
+  /// `rating`. A no-op if [key] has no saved entry. A `null` optional
+  /// field means "nothing fresher than what's already there," not "set
+  /// it to null" — the stored value is left untouched, not blanked.
+  ///
+  /// Used by the movie/TV detail screens' own lazy "refresh on open"
+  /// (`MovieDetailCubit`/`TvDetailCubit`): it must never race a
+  /// favorite/watch-later toggle landing on the same row, so this talks
+  /// to storage directly rather than reading the current entry and
+  /// [upsert]-ing a full replacement back.
+  Future<Result<void>> updateCatalogSnapshot(
+    MediaKey key, {
+    required String title,
+    required List<Genre> genres,
+    String? posterUrl,
+    double? voteAverage,
+    int? year,
+    int? runtimeMinutes,
+    int? episodeCount,
+    int? episodeRuntimeMinutes,
+  });
 
   Future<Result<void>> remove(MediaKey key);
 

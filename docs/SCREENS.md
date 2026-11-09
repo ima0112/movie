@@ -84,9 +84,9 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
   - Top bar: "My List" title and a single icon on the right, filters (→ H9; amber if filters are active).
   - Segmented Favorites · Watch later · Watched, each with a live counter.
   - Row of amber chips with active filters (each with "×"), only when something differs from the default.
-  - Rows: 56×84 poster, 16/500 title, gray 13 px line ("2022 · TV Show · 2 seasons" / "2023 · Movie · 1 h 46 min"); right-hand column per tab: Favorites and Watch later → relative date saved; Watched → 1–5 amber stars (empty ones in dark gray; unrated shows all five in gray) and a short date. Tapping the stars → H2 directly.
+  - Rows: 56×84 poster, 16/500 title, gray 13 px line ("2022 · TV Show · 24 episodes" / "2023 · Movie · 1 h 46 min") — rendered entirely from the saved entry's own catalog snapshot, no network call; the episode count/runtime segment only appears once the entry has picked one up (a toggle or Save from the detail screen, or the detail screen's own lazy refresh on reopening) — until then the line is just "year · type". Right-hand column per tab: Favorites and Watch later → relative date saved; Watched → 1–5 amber stars (empty ones in dark gray; unrated shows all five in gray) and a short date. Tapping the stars → H2 directly.
   - Swipe left → "Remove" (red, snackbar with "Undo" for 4 s, no dialog); swipe right → "Watched" (amber → H2) in Favorites/Watch later, "Favorite" in Watched. Long-press → H1.
-  - Default sort: Recent (by date saved); in Watched, by date watched.
+  - Default sort: Title A–Z, every tab (there's no "date saved" field to sort Favorites/Watch later by; Watched also offers Date watched from H9, just not as the default).
 - States: empty with sleeping Pako (Rive, `mood = asleep`), per-tab headline ("No favorites yet" / "Nothing for later yet" / "You haven't marked anything as watched yet"), a line mentioning what does exist in other tabs, "Explore" CTA. If a filter is what's emptying the list: "No TV shows here" + "See all".
 - Exits: D1/D2, H1, H2, H9.
 
@@ -291,7 +291,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (2
 | H6 | Region | B5 | Searchable list of countries |
 | H7 | Theme | B5 | Dark / Light / System |
 | H8 | Filters | B2, C1 | Type (All/Movies/TV Shows); multi-select genres; year (range slider 1950–present); minimum rating (0–9 slider, `vote_count.gte=100` fixed); max runtime (movies only); status Airing/Ended (TV shows only); sort by Popularity/Rating/Date/Title; "Hide what I've watched" toggle (client-side). "Reset" and "See N results" (N live) buttons. Only applies to `/discover`, not text search. |
-| H9 | Sort and filter My List | B4 | Type (All/Movies/TV Shows); sort by Recent / Title A–Z / Year / TMDB rating and, in Watched, My rating / Date watched; in Watched, minimum rating (★1–5); in Favorites and Watch later, "Hide what I've watched". Remembers state per tab. "Reset" (only if something's active) and "Apply"; swiping to close discards. |
+| H9 | Sort and filter My List | B4 | Type (All/Movies/TV Shows); sort by Title A–Z / Year / TMDB rating and, in Watched, My rating / Date watched; in Watched, minimum rating (★1–5); in Favorites and Watch later, "Hide what I've watched". Remembers state per tab. "Reset" (only if something's active) and "Apply"; swiping to close discards. |
 | H10 | Edit profile | B5 | Name and initial color (4). Same controls as onboarding step 1. |
 | H11 | Choose source | E1 | Subtitle naming the source ("Based on your tastes" / "Based on your list"); "Use my tastes" (primary) / "Answer the quiz instead" (secondary) |
 

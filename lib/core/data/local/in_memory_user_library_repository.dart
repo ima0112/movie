@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../domain/entities/genre.dart';
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
@@ -59,6 +60,39 @@ class InMemoryUserLibraryRepository implements UserLibraryRepository {
   @override
   Future<Result<void>> upsert(UserMediaEntry entry) async {
     _entries[entry.key] = entry;
+    _changes.add(null);
+    return const Success(null);
+  }
+
+  @override
+  Future<Result<void>> updateCatalogSnapshot(
+    MediaKey key, {
+    required String title,
+    required List<Genre> genres,
+    String? posterUrl,
+    double? voteAverage,
+    int? year,
+    int? runtimeMinutes,
+    int? episodeCount,
+    int? episodeRuntimeMinutes,
+  }) async {
+    final current = _entries[key];
+    if (current == null) return const Success(null);
+    // No `await` between the read above and this write — this map
+    // mutation is a single synchronous step, so there's no interleaving
+    // window for a concurrent `upsert` (e.g. a favorite toggle) to land
+    // in between, unlike a real SQL round trip.
+    _entries[key] = current.copyWith(
+      title: title,
+      genres: genres,
+      posterUrl: posterUrl ?? current.posterUrl,
+      voteAverage: voteAverage ?? current.voteAverage,
+      year: year ?? current.year,
+      runtimeMinutes: runtimeMinutes ?? current.runtimeMinutes,
+      episodeCount: episodeCount ?? current.episodeCount,
+      episodeRuntimeMinutes:
+          episodeRuntimeMinutes ?? current.episodeRuntimeMinutes,
+    );
     _changes.add(null);
     return const Success(null);
   }

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
-import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -22,21 +21,9 @@ import 'my_list_entry_tile.dart';
 /// rendered, so a single `BlocBuilder` here is justified, not the
 /// screen-wide kind rule 9 forbids.
 ///
-/// TODO: sorting only covers what `UserMediaEntry` can sort by today —
-/// Watched by `watchedAt`/`rating`. Title/Year/TMDB rating need every
-/// row's `MediaDetail` loaded up front, not fetched lazily per row the
-/// way [MyListEntryTile] does it. Favorites/Watch later's "Recent" isn't
-/// meaningful yet either: `UserMediaEntry` has no "date saved" field
-/// (only `watchedAt`, Watched-only) — those rows keep the stream's own
-/// order until one's added.
 class MyListBody extends StatelessWidget {
-  const MyListBody({
-    super.key,
-    required this.mediaRepository,
-    required this.userLibraryRepository,
-  });
+  const MyListBody({super.key, required this.userLibraryRepository});
 
-  final MediaRepository mediaRepository;
   final UserLibraryRepository userLibraryRepository;
 
   @override
@@ -74,7 +61,6 @@ class MyListBody extends StatelessWidget {
                 key: ValueKey(sorted[index].key),
                 entry: sorted[index],
                 tab: tab,
-                mediaRepository: mediaRepository,
                 userLibraryRepository: userLibraryRepository,
               ),
             );
@@ -116,7 +102,6 @@ class MyListBody extends StatelessWidget {
   ) {
     final sorted = [...entries];
     switch (sort) {
-      case MyListSort.recent:
       case MyListSort.dateWatched:
         if (tab == LibraryTab.watched) {
           sorted.sort(
@@ -128,10 +113,34 @@ class MyListBody extends StatelessWidget {
       case MyListSort.myRating:
         sorted.sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
       case MyListSort.titleAZ:
+        sorted.sort(_byTitle);
       case MyListSort.year:
+        sorted.sort(_byYearThenTitle);
       case MyListSort.tmdbRating:
-        break; // TODO: needs eagerly-loaded MediaDetail per entry.
+        sorted.sort(_byRatingThenTitle);
     }
     return sorted;
+  }
+
+  static int _byTitle(UserMediaEntry a, UserMediaEntry b) =>
+      a.title.toLowerCase().compareTo(b.title.toLowerCase());
+
+  // Most recent year first; an entry saved before `year` existed (null)
+  // always sorts after one that has it, regardless of direction.
+  static int _byYearThenTitle(UserMediaEntry a, UserMediaEntry b) {
+    if (a.year == null && b.year == null) return _byTitle(a, b);
+    if (a.year == null) return 1;
+    if (b.year == null) return -1;
+    final byYear = b.year!.compareTo(a.year!);
+    return byYear != 0 ? byYear : _byTitle(a, b);
+  }
+
+  // Highest TMDB rating first; same null-goes-last rule as year above.
+  static int _byRatingThenTitle(UserMediaEntry a, UserMediaEntry b) {
+    if (a.voteAverage == null && b.voteAverage == null) return _byTitle(a, b);
+    if (a.voteAverage == null) return 1;
+    if (b.voteAverage == null) return -1;
+    final byRating = b.voteAverage!.compareTo(a.voteAverage!);
+    return byRating != 0 ? byRating : _byTitle(a, b);
   }
 }

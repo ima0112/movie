@@ -450,6 +450,15 @@
       }
     }
   },
+  "myListEpisodesCount": "{count, plural, =1{1 episode} other{{count} episodes}}",
+  "@myListEpisodesCount": {
+    "description": "My List's own TV show row metadata line (B4) — episode count, from UserMediaEntry.episodeCount (the persisted snapshot has no season count).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "myListRuntimeHoursMinutes": "{hours} h {minutes} min",
   "@myListRuntimeHoursMinutes": {
     "description": "A movie row's metadata line (B4) — runtime, for anything an hour or longer.",
@@ -472,7 +481,6 @@
     }
   },
 
-  "myListSortRecent": "Recent",
   "myListSortTitleAz": "Title A–Z",
   "myListSortTmdbRating": "TMDB rating",
   "@myListSortTmdbRating": {
