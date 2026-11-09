@@ -1724,6 +1724,48 @@ abstract class AppLocalizations {
   /// **'Source code'**
   String get settingsSourceCodeLabel;
 
+  /// No description provided for @settingsAttributionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attribution and credits'**
+  String get settingsAttributionLabel;
+
+  /// No description provided for @attributionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attribution and credits'**
+  String get attributionTitle;
+
+  /// C7's TMDB card — TMDB's required attribution wording. "TMDB" stays untranslated in every locale.
+  ///
+  /// In en, this message translates to:
+  /// **'This product uses the TMDB API but is not endorsed or certified by TMDB.'**
+  String get attributionTmdbBody;
+
+  /// No description provided for @attributionTmdbDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Posters, images, synopses, cast and ratings.'**
+  String get attributionTmdbDetail;
+
+  /// C7's JustWatch card. "JustWatch" stays untranslated in every locale.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaming availability data is provided by JustWatch.'**
+  String get attributionJustWatchBody;
+
+  /// No description provided for @attributionJustWatchDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaming, rent and buy options for your region.'**
+  String get attributionJustWatchDetail;
+
+  /// No description provided for @attributionFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'PakoTV is a free personal project. All trademarks belong to their respective owners.'**
+  String get attributionFooter;
+
   /// No description provided for @settingsLicensesLabel.
   ///
   /// In en, this message translates to:

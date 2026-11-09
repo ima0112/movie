@@ -936,6 +936,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSourceCodeLabel => 'Source code';
 
   @override
+  String get settingsAttributionLabel => 'Attribution and credits';
+
+  @override
+  String get attributionTitle => 'Attribution and credits';
+
+  @override
+  String get attributionTmdbBody =>
+      'This product uses the TMDB API but is not endorsed or certified by TMDB.';
+
+  @override
+  String get attributionTmdbDetail =>
+      'Posters, images, synopses, cast and ratings.';
+
+  @override
+  String get attributionJustWatchBody =>
+      'Streaming availability data is provided by JustWatch.';
+
+  @override
+  String get attributionJustWatchDetail =>
+      'Streaming, rent and buy options for your region.';
+
+  @override
+  String get attributionFooter =>
+      'PakoTV is a free personal project. All trademarks belong to their respective owners.';
+
+  @override
   String get settingsLicensesLabel => 'Licenses';
 
   @override

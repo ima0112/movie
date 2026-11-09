@@ -16,6 +16,7 @@ import '../features/person_detail/presentation/screens/person_detail_screen.dart
 import '../features/tv_detail/presentation/screens/tv_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
+import '../features/settings/presentation/screens/attribution_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
 import '../features/suggestion/presentation/cubit/surprise_cubit.dart';
@@ -53,6 +54,9 @@ class AppRoutes {
   /// C6 (Settings), pushed from B5's gear icon
   /// (`you_screen.dart`'s `YouHeader.onOpenSettings`).
   static const String settings = '/settings';
+
+  /// C7 (Attribution and credits), pushed from C6's About group.
+  static const String attribution = '/attribution';
 
   /// C1 (Filtered listing) — reached from B1's "See all"
   /// (`discover_section_carousel.dart`), a B2 genre tile, D1/D2's own
@@ -233,6 +237,11 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.settings,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.attribution,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const AttributionScreen(),
     ),
     GoRoute(
       path: AppRoutes.filteredList,

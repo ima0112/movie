@@ -334,6 +334,13 @@
   "settingsAboutHeader": "Acerca de",
   "settingsVersionLabel": "Versión",
   "settingsSourceCodeLabel": "Código fuente",
+  "settingsAttributionLabel": "Atribución y créditos",
+  "attributionTitle": "Atribución y créditos",
+  "attributionTmdbBody": "Este producto usa la API de TMDB, pero no está avalado ni certificado por TMDB.",
+  "attributionTmdbDetail": "Pósters, imágenes, sinopsis, reparto y valoraciones.",
+  "attributionJustWatchBody": "Los datos de disponibilidad en plataformas los proporciona JustWatch.",
+  "attributionJustWatchDetail": "Streaming, alquiler y compra según tu región.",
+  "attributionFooter": "PakoTV es un proyecto personal gratuito. Todas las marcas pertenecen a sus respectivos dueños.",
   "settingsLicensesLabel": "Licencias",
 
   "editProfileSheetTitle": "Editar perfil"

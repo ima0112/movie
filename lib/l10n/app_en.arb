@@ -924,6 +924,19 @@
   "settingsAboutHeader": "About",
   "settingsVersionLabel": "Version",
   "settingsSourceCodeLabel": "Source code",
+  "settingsAttributionLabel": "Attribution and credits",
+  "attributionTitle": "Attribution and credits",
+  "attributionTmdbBody": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+  "@attributionTmdbBody": {
+    "description": "C7's TMDB card — TMDB's required attribution wording. \"TMDB\" stays untranslated in every locale."
+  },
+  "attributionTmdbDetail": "Posters, images, synopses, cast and ratings.",
+  "attributionJustWatchBody": "Streaming availability data is provided by JustWatch.",
+  "@attributionJustWatchBody": {
+    "description": "C7's JustWatch card. \"JustWatch\" stays untranslated in every locale."
+  },
+  "attributionJustWatchDetail": "Streaming, rent and buy options for your region.",
+  "attributionFooter": "PakoTV is a free personal project. All trademarks belong to their respective owners.",
   "settingsLicensesLabel": "Licenses",
 
   "editProfileSheetTitle": "Edit profile",

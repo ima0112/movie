@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:go_router/go_router.dart';
+
+import '../../../../app/router.dart';
 import '../../../../core/launch/launch_external_link.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/settings_row.dart';
@@ -37,6 +40,10 @@ class _SettingsAboutSectionState extends State<SettingsAboutSection> {
     return SettingsGroup(
       title: l10n.settingsAboutHeader,
       children: [
+        SettingsRow(
+          label: l10n.settingsAttributionLabel,
+          onTap: () => context.push(AppRoutes.attribution),
+        ),
         FutureBuilder<PackageInfo>(
           future: _packageInfo,
           builder: (context, snapshot) {
