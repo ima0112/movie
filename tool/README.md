@@ -43,10 +43,7 @@ is a deliberate, manual edit after reading it.
     all** (e.g. a vibe you're prototyping before adding it for real) —
     a vibe that's already there always keeps using its own actual
     `genreIds`, resolved through `TmdbGenreMapper` like the app itself
-    does. Needed for a vibe whose genre has no normalized `Genre` in
-    `GenreCatalog.all` either — "fantasy" is the example: TMDB's own
-    Fantasy (14) has no equivalent in the catalog at all, so there's no
-    vibes.json-style entry to fall back on.
+    does.
   - **Add a term, a new vibe id, or a `genres` override here without
     touching the script** — it reads whichever vibe ids you pass it
     (see below), all pulled from this one file.
@@ -98,10 +95,10 @@ Every `/discover` total is actually **two** calls, always: `raw` (no
 `vote_count.gte` at all) and `vote_count.gte=200` — `MatchQuery`'s own
 default field (`match_query.dart`) and `docs/DECISIONS.md` §5's
 documented first-attempt threshold, used as this script's single,
-consistent vote criterion across every number in the report (see the
-report's own preamble for why 200, not the `100`
-`discoverQueryParams` actually sends today — a separate, pre-existing
-gap).
+consistent vote criterion across every number in the report. This is
+genuinely what a real first attempt sends today (`DiscoverFilter
+.minVoteCount`/`MatchEngine._filterForVibe`, since the
+`min-vote-count-filter` branch), not just an aspirational value.
 
 Rate limits: 300ms pause between every TMDB call, retry with
 exponential backoff (honoring a `Retry-After` header when TMDB sends
@@ -122,9 +119,8 @@ scratch artifact, not source data). Sections:
    type and the movie/tv pool totals.
 3. **TMDB genre resolution — verification** — a few ids resolved live
    via `TmdbGenreMapper.toTmdbId` (action/sci-fi's TV-side merges into
-   "Action & Adventure"/"Sci-Fi & Fantasy"; fantasy's total absence
-   from `GenreCatalog.all`), so the mapping claims in the rest of the
-   report are never hand-typed guesses.
+   "Action & Adventure"/"Sci-Fi & Fantasy"), so the mapping claims in
+   the rest of the report are never hand-typed guesses.
 4. **Summary** — one row per vibe covered by this run (keyword vibes
    included, via their own genre-pool baseline), for an at-a-glance
    comparison.
@@ -150,3 +146,31 @@ realistic one), independent of each other:
 No flag at all means the keyword crosses 50+ (at `≥200`) for at least
 one media type — a real candidate to consider adding to
 `VibeRule.keywordIds` by hand.
+
+## resolve_vibe_keywords.dart --final-pools
+
+A second mode of the same script — measures `assets/vibes.json`
+**exactly as shipped** (genres OR'd, keywords OR'd, both ANDed
+together when a vibe has both — the same rule
+`MatchEngine._filterForVibe` builds), not a candidate search. Doesn't
+read `tool/vibe_search_terms.json` at all; reads every vibe straight
+from `assets/vibes.json`.
+
+```
+dart run tool/resolve_vibe_keywords.dart --final-pools
+```
+
+For each vibe/type with a non-empty rule, two `/discover` calls (same
+`raw`/`≥200` pair as the keyword-discovery mode above). A vibe/type
+with an empty rule (`Vibe.isMeaningfulFor` already `false`) is reported
+as `— (empty rule)` and never queried.
+
+Written to `tool/out/vibe_final_pools_report.md` (gitignored). Besides
+the full per-vibe/type table, it calls out:
+- **TV rows below 30 at `≥200`** — candidates whose TV rule is too thin
+  to ever meaningfully surface in the match engine. Flagged, never
+  emptied automatically; emptying one in `assets/vibes.json` (and
+  updating `test/features/match_engine/domain/vibe_catalog_test.dart`'s
+  own exclusion lists) is a deliberate, manual follow-up.
+- **Movie rows below the same threshold** — informational only, movie
+  rules are never emptied regardless.

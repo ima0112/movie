@@ -17,7 +17,7 @@ import '../../../../shared/widgets/quiz_tile.dart';
 /// [genreOptions]) isn't segmented by media type yet — the same gap
 /// `explore_content.dart`'s own doc comment already flags for Explore's
 /// genre grid (the TMDB-id-per-type mapping that would make this
-/// possible lives only in `data/tmdb/`) — so this shows the same 15
+/// possible lives only in `data/tmdb/`) — so this shows the same 16
 /// genres for a movie or a TV session.
 ///
 /// Reuses [QuizTile] directly rather than `TasteGenreGrid` (C5's own

@@ -57,7 +57,7 @@ lib/
         season_summary.dart       SeasonSummary + Episode (grouped, rule 13)
         person.dart               Person, PersonDetail, CastMember/CrewMember, MediaCredit
         genre.dart                normalized genre; TMDB-id mapping deliberately NOT here — see data/tmdb/tmdb_genre_mapper.dart
-        genre_catalog.dart        the fixed, hand-maintained 15-genre list
+        genre_catalog.dart        the fixed, hand-maintained 16-genre list
         discover_filter.dart      C1/B2/H8's filter set, translated by data/tmdb/tmdb_discover_params.dart
         user_media_entry.dart
         taste_profile.dart

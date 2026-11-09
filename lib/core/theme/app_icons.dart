@@ -66,7 +66,6 @@ class AppIcons {
   static const IconData vibeDetective = RemixIcons.search_eye_line;
   static const IconData vibeClassic = RemixIcons.medal_line;
   static const IconData vibeSuperhero = RemixIcons.shield_flash_line;
-  static const IconData vibeCult = RemixIcons.moon_line;
   static const IconData vibeTearjerker = RemixIcons.heart_pulse_line;
   static const IconData vibeSports = RemixIcons.football_line;
   static const IconData vibeDate = RemixIcons.hand_heart_line;
@@ -76,8 +75,9 @@ class AppIcons {
   static const IconData vibeTrueStory = RemixIcons.newspaper_line;
   static const IconData vibeGangster = RemixIcons.money_dollar_circle_line;
   static const IconData vibeMusical = RemixIcons.music_line;
+  static const IconData vibeFantasy = RemixIcons.sparkling_line;
 
-  // Genre catalog (15, GenreCatalog — core/domain/entities/
+  // Genre catalog (16, GenreCatalog — core/domain/entities/
   // genre_catalog.dart) — same one-plain-icon convention as the vibes
   // above, for the same reason (QuizTile recolors, never swaps glyphs).
   static const IconData genreAction = RemixIcons.boxing_line;
@@ -88,6 +88,7 @@ class AppIcons {
   static const IconData genreDocumentary = RemixIcons.camera_line;
   static const IconData genreDrama = RemixIcons.emotion_line;
   static const IconData genreFamily = RemixIcons.parent_line;
+  static const IconData genreFantasy = RemixIcons.magic_line;
   static const IconData genreHistory = RemixIcons.ancient_pavilion_line;
   static const IconData genreHorror = RemixIcons.ghost_line;
   static const IconData genreMusic = RemixIcons.music_2_line;

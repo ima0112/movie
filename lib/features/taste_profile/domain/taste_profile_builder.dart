@@ -168,6 +168,15 @@ class TasteProfileBuilder {
   /// [requiredVibeCount] (no signal at all, or every mappable vibe
   /// already picked), the result is simply smaller than 3 rather than
   /// an error — a thinner answer, not an invalid one.
+  ///
+  /// [existingVibes] is filtered down to vibes that are both known to
+  /// [vibeCatalog] and [Vibe.isMeaningfulFor] [mediaType] *before* any
+  /// of the trim/fill logic below runs — a stale id from an older
+  /// catalog (e.g. a removed vibe) or one with an empty rule for this
+  /// type (e.g. "indie" requested for a TV session) is silently
+  /// dropped, the same way `MatchEngine._fetchAndScore` already skips
+  /// it rather than let it waste one of the 3 slots or inflate
+  /// `Satisfaction.vibesRequested` with something that can never score.
   Set<String> _completeVibes({
     required Set<String> existingVibes,
     required Set<Genre> likedGenres,
@@ -175,13 +184,18 @@ class TasteProfileBuilder {
     required Map<Genre, int> affinity,
     required MediaType mediaType,
   }) {
-    if (existingVibes.length == requiredVibeCount) return existingVibes;
-    if (existingVibes.length > requiredVibeCount) {
-      final sorted = existingVibes.toList()..sort();
+    final applicableVibes = existingVibes.where((id) {
+      final vibe = vibeCatalog.byId(id);
+      return vibe != null && vibe.isMeaningfulFor(mediaType);
+    }).toSet();
+
+    if (applicableVibes.length == requiredVibeCount) return applicableVibes;
+    if (applicableVibes.length > requiredVibeCount) {
+      final sorted = applicableVibes.toList()..sort();
       return sorted.take(requiredVibeCount).toSet();
     }
 
-    final vibeIds = Set<String>.of(existingVibes);
+    final vibeIds = Set<String>.of(applicableVibes);
     final rankedGenres =
         likedGenres.where((g) => !vetoedGenres.contains(g)).toList()
           ..sort((a, b) {

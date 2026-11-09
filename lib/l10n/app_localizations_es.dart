@@ -74,6 +74,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get genreFamily => 'Familiar';
 
   @override
+  String get genreFantasy => 'Fantasía';
+
+  @override
   String get genreHistory => 'Historia';
 
   @override
@@ -113,9 +116,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get vibeSuperhero => 'Superhéroes';
 
   @override
-  String get vibeCult => 'Culto';
-
-  @override
   String get vibeTearjerker => 'Lágrimas';
 
   @override
@@ -141,6 +141,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get vibeMusical => 'Musical';
+
+  @override
+  String get vibeFantasy => 'Fantasía';
 
   @override
   String get tvStatusAiring => 'En emisión';

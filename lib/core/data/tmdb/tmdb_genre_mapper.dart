@@ -11,15 +11,16 @@ import '../../domain/entities/media_type.dart';
 ///
 /// TMDB keeps separate id spaces per media type with some genres merged
 /// differently on the TV side — two deliberate choices on how those
-/// merges fold into our smaller, 15-genre catalog:
+/// merges fold into our smaller, 16-genre catalog:
 /// - TV's "Action & Adventure" (10759) → [GenreCatalog.all]'s `action`.
-/// - TV's "Sci-Fi & Fantasy" (10765) → `sci-fi`.
+/// - TV's "Sci-Fi & Fantasy" (10765) → `sci-fi`, for [fromTmdbId] — see
+///   [_tvToTmdbIdOnly]'s own doc comment for the `fantasy` half of this.
 ///
 /// Several TMDB genres have **no equivalent at all** in
-/// [GenreCatalog.all] (Fantasy, War, Western, TV Movie, Kids, News,
-/// Reality, Soap, Talk, War & Politics) — [fromTmdbId] returns `null`
-/// for those, and callers (`tmdb_mappers.dart`) simply drop them from a
-/// title's genre list rather than inventing a catch-all bucket.
+/// [GenreCatalog.all] (War, Western, TV Movie, Kids, News, Reality,
+/// Soap, Talk, War & Politics) — [fromTmdbId] returns `null` for those,
+/// and callers (`tmdb_mappers.dart`) simply drop them from a title's
+/// genre list rather than inventing a catch-all bucket.
 abstract final class TmdbGenreMapper {
   static const Map<int, String> _movieIds = {
     28: 'action',
@@ -30,6 +31,7 @@ abstract final class TmdbGenreMapper {
     99: 'documentary',
     18: 'drama',
     10751: 'family',
+    14: 'fantasy',
     36: 'history',
     27: 'horror',
     10402: 'music',
@@ -52,6 +54,22 @@ abstract final class TmdbGenreMapper {
     37: 'thriller',
   };
 
+  /// TV-only, [toTmdbId]-only entries for a normalized genre that
+  /// shares its TMDB id with another one already in [_tvIds] —
+  /// [fromTmdbId] can only ever resolve one TMDB id to a single
+  /// normalized genre (it's a plain `Map<int, String>`), so `10765`
+  /// stays `sci-fi` there, unchanged. `fantasy` still needs to build
+  /// `with_genres`/`without_genres` on the TV side (e.g. vetoing it
+  /// from C5), hence this separate, `String`-keyed map, where two
+  /// different keys mapping to the same TMDB id is no conflict at all.
+  ///
+  /// **Consequence, worth knowing**: on TV, `fantasy` and `sci-fi` are
+  /// the *same* TMDB category (10765) — TMDB itself can't tell them
+  /// apart for a TV show. Vetoing one in [toTmdbId]'s `without_genres`
+  /// use vetoes the other too. Movies don't have this problem: Fantasy
+  /// (14) is its own distinct id in [_movieIds].
+  static const Map<String, int> _tvToTmdbIdOnly = {'fantasy': 10765};
+
   /// `null` when [tmdbId] has no equivalent in [GenreCatalog.all] for
   /// this [type] — a real, expected outcome (see class doc comment), not
   /// an error.
@@ -71,9 +89,7 @@ abstract final class TmdbGenreMapper {
 
   /// The reverse of [fromTmdbId] — `tmdb_discover_params.dart`'s own
   /// `with_genres`/`without_genres` translation. `null` when [genre] has
-  /// no TMDB id for this [type] (nothing in [GenreCatalog.all] maps to
-  /// more than one TMDB id per type, so this is a plain 1:1 lookup, not
-  /// a list).
+  /// no TMDB id for this [type].
   static int? toTmdbId(Genre genre, MediaType type) {
     final ids = switch (type) {
       MediaType.movie => _movieIds,
@@ -82,6 +98,7 @@ abstract final class TmdbGenreMapper {
     for (final entry in ids.entries) {
       if (entry.value == genre.id) return entry.key;
     }
+    if (type == MediaType.tvShow) return _tvToTmdbIdOnly[genre.id];
     return null;
   }
 }

@@ -15,49 +15,53 @@ Map<String, dynamic> _loadFixture(String name) =>
 void main() {
   const imagesConfig = TmdbImagesConfig.fallback();
 
-  group('mediaItemFromMovieDto (test/fixtures/tmdb_movie_now_playing.json)', () {
-    final results =
-        (_loadFixture('tmdb_movie_now_playing.json')['results'] as List)
-            .cast<Map<String, dynamic>>();
-    final movies = results
-        .map(TmdbMovieListItemDto.fromJson)
-        .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: imagesConfig))
-        .toList();
+  group(
+    'mediaItemFromMovieDto (test/fixtures/tmdb_movie_now_playing.json)',
+    () {
+      final results =
+          (_loadFixture('tmdb_movie_now_playing.json')['results'] as List)
+              .cast<Map<String, dynamic>>();
+      final movies = results
+          .map(TmdbMovieListItemDto.fromJson)
+          .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: imagesConfig))
+          .toList();
 
-    test('maps title, release date, vote average, and a resolved poster '
-        'URL for a normal item', () {
-      final trailOfEmbers = movies.firstWhere((m) => m.id == 101);
+      test('maps title, release date, vote average, and a resolved poster '
+          'URL for a normal item', () {
+        final trailOfEmbers = movies.firstWhere((m) => m.id == 101);
 
-      expect(trailOfEmbers.title, 'Trail of Embers');
-      expect(trailOfEmbers.releaseDate, DateTime(2026, 3, 20));
-      expect(trailOfEmbers.voteAverage, 7.4);
-      expect(
-        trailOfEmbers.posterUrl,
-        'https://image.tmdb.org/t/p/w342/trail-of-embers.jpg',
-      );
-      expect(trailOfEmbers, isA<Movie>());
-    });
+        expect(trailOfEmbers.title, 'Trail of Embers');
+        expect(trailOfEmbers.releaseDate, DateTime(2026, 3, 20));
+        expect(trailOfEmbers.voteAverage, 7.4);
+        expect(
+          trailOfEmbers.posterUrl,
+          'https://image.tmdb.org/t/p/w342/trail-of-embers.jpg',
+        );
+        expect(trailOfEmbers, isA<Movie>());
+      });
 
-    test('maps every known genre id and drops unknown ones', () {
-      final trailOfEmbers = movies.firstWhere((m) => m.id == 101);
-      expect(
-        trailOfEmbers.genres.map((g) => g.id),
-        containsAll(['action', 'adventure']),
-      );
+      test('maps every known genre id', () {
+        final trailOfEmbers = movies.firstWhere((m) => m.id == 101);
+        expect(
+          trailOfEmbers.genres.map((g) => g.id),
+          containsAll(['action', 'adventure']),
+        );
 
-      // id 103's genre_ids are [14 (Fantasy — no equivalent), 10751
-      // (family)] — Fantasy must be silently dropped, not crash or
-      // produce a bogus Genre.
-      final theLastLantern = movies.firstWhere((m) => m.id == 103);
-      expect(theLastLantern.genres.map((g) => g.id), ['family']);
-    });
+        // id 103's genre_ids are [14 (Fantasy), 10751 (Family)] — both
+        // map now (Fantasy has had a catalog equivalent since the
+        // vibe-keywords-curated branch); see tmdb_genre_mapper_test.dart
+        // for actual "unknown id gets dropped" coverage.
+        final theLastLantern = movies.firstWhere((m) => m.id == 103);
+        expect(theLastLantern.genres.map((g) => g.id), ['fantasy', 'family']);
+      });
 
-    test('an item with no poster_path -> posterUrl is null, not a broken '
-        'URL', () {
-      final withoutWaiting = movies.firstWhere((m) => m.id == 102);
-      expect(withoutWaiting.posterUrl, isNull);
-    });
-  });
+      test('an item with no poster_path -> posterUrl is null, not a broken '
+          'URL', () {
+        final withoutWaiting = movies.firstWhere((m) => m.id == 102);
+        expect(withoutWaiting.posterUrl, isNull);
+      });
+    },
+  );
 
   group('mediaItemFromTvDto (test/fixtures/tmdb_tv_popular.json)', () {
     final results = (_loadFixture('tmdb_tv_popular.json')['results'] as List)
@@ -85,18 +89,15 @@ void main() {
       expect(signalLost.genres.map((g) => g.id), contains('action'));
     });
 
-    test(
-      'an item with no poster_path, an empty first_air_date, and only '
-      'unmapped genre ids (News/Reality) -> null poster, null date, and '
-      'an empty genre list, not a crash',
-      () {
-        final midnightPanel = shows.firstWhere((s) => s.id == 202);
+    test('an item with no poster_path, an empty first_air_date, and only '
+        'unmapped genre ids (News/Reality) -> null poster, null date, and '
+        'an empty genre list, not a crash', () {
+      final midnightPanel = shows.firstWhere((s) => s.id == 202);
 
-        expect(midnightPanel.posterUrl, isNull);
-        expect(midnightPanel.releaseDate, isNull);
-        expect(midnightPanel.genres, isEmpty);
-      },
-    );
+      expect(midnightPanel.posterUrl, isNull);
+      expect(midnightPanel.releaseDate, isNull);
+      expect(midnightPanel.genres, isEmpty);
+    });
   });
 
   group(

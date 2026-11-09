@@ -136,7 +136,6 @@ const Map<String, IconData> _vibeIcons = {
   'vibeDetective': AppIcons.vibeDetective,
   'vibeClassic': AppIcons.vibeClassic,
   'vibeSuperhero': AppIcons.vibeSuperhero,
-  'vibeCult': AppIcons.vibeCult,
   'vibeTearjerker': AppIcons.vibeTearjerker,
   'vibeSports': AppIcons.vibeSports,
   'vibeDate': AppIcons.vibeDate,
@@ -146,4 +145,5 @@ const Map<String, IconData> _vibeIcons = {
   'vibeTrueStory': AppIcons.vibeTrueStory,
   'vibeGangster': AppIcons.vibeGangster,
   'vibeMusical': AppIcons.vibeMusical,
+  'vibeFantasy': AppIcons.vibeFantasy,
 };
