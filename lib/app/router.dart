@@ -20,6 +20,7 @@ import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
 import '../features/settings/presentation/screens/attribution_screen.dart';
 import '../features/person_detail/presentation/screens/person_filmography_screen.dart';
+import '../shared/widgets/media_detail/full_cast_screen.dart';
 import '../features/tv_detail/presentation/screens/tv_seasons_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
@@ -66,6 +67,10 @@ class AppRoutes {
   /// carries the loaded person via `extra` ([PersonFilmographyRouteArgs]).
   static const String personFilmography = '/person-filmography';
 
+  /// D1b (Full cast & crew), pushed from D1/D2's Cast "See all" — carries
+  /// the title and the loaded cast/crew via `extra` ([FullCastRouteArgs]).
+  static const String fullCast = '/full-cast';
+
   /// D2b (Seasons), pushed from D2's Seasons card — carries the loaded show
   /// via `extra` ([TvSeasonsRouteArgs]).
   static const String tvSeasons = '/tv-seasons';
@@ -109,6 +114,20 @@ class PersonFilmographyRouteArgs {
   const PersonFilmographyRouteArgs({required this.detail});
 
   final PersonDetail detail;
+}
+
+/// What D1b needs: the cast and crew D1/D2 already loaded, so the screen makes
+/// no network call of its own.
+class FullCastRouteArgs {
+  const FullCastRouteArgs({
+    required this.title,
+    required this.cast,
+    required this.crew,
+  });
+
+  final String title;
+  final List<CastMember> cast;
+  final List<CrewMember> crew;
 }
 
 /// What D2b needs: the show D2 already loaded, so the screen makes no
@@ -277,6 +296,19 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final args = state.extra! as PersonFilmographyRouteArgs;
         return PersonFilmographyScreen(detail: args.detail);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.fullCast,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final args = state.extra! as FullCastRouteArgs;
+        return FullCastScreen(
+          title: args.title,
+          cast: args.cast,
+          crew: args.crew,
+          onPersonTap: (person) => context.pushPersonDetail(person.id),
+        );
       },
     ),
     GoRoute(

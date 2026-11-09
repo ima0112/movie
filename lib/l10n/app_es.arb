@@ -273,10 +273,9 @@
   "regionSheetSubtitle": "Define qué plataformas ves en \"Dónde ver\".",
   "regionSheetSearchHint": "Buscar países",
 
-  "fullCastSheetTitle": "Reparto completo",
-  "fullCastSheetCastLabel": "Reparto",
-  "fullCastSheetCrewLabel": "Equipo",
-  "fullCastSheetSearchHint": "Buscar en reparto y equipo",
+  "fullCastCastLabel": "Reparto",
+  "fullCastCrewLabel": "Equipo",
+  "fullCastSearchHint": "Buscar en reparto y equipo",
 
   "mediaSimilarMoviesTitle": "Películas similares",
   "mediaSimilarTitle": "Similares",

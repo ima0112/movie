@@ -789,16 +789,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get regionSheetSearchHint => 'Search countries';
 
   @override
-  String get fullCastSheetTitle => 'Full cast';
+  String get fullCastCastLabel => 'Cast';
 
   @override
-  String get fullCastSheetCastLabel => 'Cast';
+  String get fullCastCrewLabel => 'Crew';
 
   @override
-  String get fullCastSheetCrewLabel => 'Crew';
-
-  @override
-  String get fullCastSheetSearchHint => 'Search cast and crew';
+  String get fullCastSearchHint => 'Search cast and crew';
 
   @override
   String get mediaSimilarMoviesTitle => 'Similar movies';

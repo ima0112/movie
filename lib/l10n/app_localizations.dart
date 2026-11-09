@@ -1436,29 +1436,23 @@ abstract class AppLocalizations {
   /// **'Search countries'**
   String get regionSheetSearchHint;
 
-  /// H3's own title (docs/SCREENS.md H3).
-  ///
-  /// In en, this message translates to:
-  /// **'Full cast'**
-  String get fullCastSheetTitle;
-
-  /// No description provided for @fullCastSheetCastLabel.
+  /// No description provided for @fullCastCastLabel.
   ///
   /// In en, this message translates to:
   /// **'Cast'**
-  String get fullCastSheetCastLabel;
+  String get fullCastCastLabel;
 
-  /// No description provided for @fullCastSheetCrewLabel.
+  /// No description provided for @fullCastCrewLabel.
   ///
   /// In en, this message translates to:
   /// **'Crew'**
-  String get fullCastSheetCrewLabel;
+  String get fullCastCrewLabel;
 
-  /// No description provided for @fullCastSheetSearchHint.
+  /// No description provided for @fullCastSearchHint.
   ///
   /// In en, this message translates to:
   /// **'Search cast and crew'**
-  String get fullCastSheetSearchHint;
+  String get fullCastSearchHint;
 
   /// No description provided for @mediaSimilarMoviesTitle.
   ///

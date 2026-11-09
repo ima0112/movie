@@ -774,13 +774,9 @@
   "regionSheetSubtitle": "Sets which services you see in \"Where to watch\".",
   "regionSheetSearchHint": "Search countries",
 
-  "fullCastSheetTitle": "Full cast",
-  "@fullCastSheetTitle": {
-    "description": "H3's own title (docs/SCREENS.md H3)."
-  },
-  "fullCastSheetCastLabel": "Cast",
-  "fullCastSheetCrewLabel": "Crew",
-  "fullCastSheetSearchHint": "Search cast and crew",
+  "fullCastCastLabel": "Cast",
+  "fullCastCrewLabel": "Crew",
+  "fullCastSearchHint": "Search cast and crew",
 
   "mediaSimilarMoviesTitle": "Similar movies",
   "mediaSimilarTitle": "Similar",

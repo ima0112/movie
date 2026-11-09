@@ -167,11 +167,17 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - **Where to watch**: a `surfaceRaised` card (radius 16, hairline border) with the title and a "JustWatch" badge on the right. Inside, the **Streaming** box on top (amber label and a faint amber border; up to 5 services as 56 px logos with their names under them), then **Rent** and **Buy** side by side (neutral boxes; up to 3 services each as 36 px logos), each with "+N" when there are more. A service with no logo shows its first letter. Under the title, a **country pill** (globe, country name, chevron; outlined, 36 px tall) that opens H6 — choosing a country reloads the detail in place for that screen only (no loading screen, scroll kept) and does not change the saved region; leaving and re-entering shows the saved region again. Under the boxes: "Tap a service to open it in JustWatch"; any service tile opens TMDB's `link` in the browser. Groups with no data are omitted; no data anywhere: the card stays, with "Not available to stream, rent or buy in {country}. Try another country." under the pill, so the country can always be changed. Mandatory 11 px footer "Data from JustWatch".
 - Two stat cards under the info card, side by side: **Duration** ("2 h 28 min") and **Classification** ("PG-13"); a card without data is omitted, and neither data means no row.
 - Synopsis under a "SYNOPSIS" caption (muted, capitals), folded to 4 lines. The amber toggle appears only when the text is really cut: "Read more" expands, then it becomes "Read less" to fold it back; a synopsis that fits has no toggle (the tagline lives in the header).
-- Cast: a "Cast" heading with "See all" (amber, → H3, shown when there are more than 10) on the right, then 10 circles at 64 px with name and character (→ D3).
+- Cast: a "Cast" heading with "See all" (amber, → D1b, shown when there are more than 10) on the right, then 10 circles at 64 px with name and character (→ D3).
 - Similar movies: standard carousel under a "Similar movies" heading, no "See all".
 - Footer: "Data from TMDB".
 - States: skeleton with the poster already visible via the Hero and centered blocks; full-screen error with "Retry"; offline with a snapshot if it's in My List (poster, title, year, genres) and network sections shown as "Not available offline".
-- Exits: D3, C1, H2, H3, H6.
+- Exits: D1b, D3, C1, H2, H6.
+
+### D1b. Full cast & crew (pushed)
+- Access: "See all" in D1/D2's Cast section (shown past 10 people). Pushed screen (it replaces the old H3 bottom sheet): back button, the movie's/show's title centered as the screen title, no bottom bar. Receives the already-loaded cast and crew (no network call of its own).
+- Elements: a "Cast | Crew" pill (selected = white pill), an internal search box ("Search cast and crew"; filters the selected tab by name, case-insensitive, with a clear button) and a 3-column grid of 4:5 rounded portraits with the name and the character (Cast) or job (Crew) under each. No matches: "No matches". A person with no photo shows a colored monogram.
+- Layout: scrollable page; with the keyboard open the grid stays reachable; survives a small device at 200% text.
+- Exits: D3.
 
 ### D2. TV show detail
 - Same as D1 with these changes:
@@ -310,7 +316,6 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 |---|---|---|---|
 | H1 | Quick actions | Long-press a card | Thumbnail + title, three rows: Favorite / Watch later / Mark watched |
 | H2 | Mark as watched | "Watched" button in D1/D2, swipe in B4, H1 | Title ("Mark as watched" for a movie, "Have you finished {title}?" for a TV show — asking about a show commits to having finished it, not just pressed a button), 5-star selector (optional), date (today by default, editable), "Save" button, "Remove from Watched" link if it already was |
-| H3 | Full cast | "See all" in D1/D2 | Sheet with a "Cast | Crew" pill, an internal search box (filters the selected tab by name) and a 3-column grid of 4:5 portraits with name and character/job; tap → D3 |
 | H4 | Season N | Season card in D2b | Header card (poster, show name, "Season N", episode-count chip and, when TMDB has one, a ★ rating chip); season synopsis folded to 2 lines with "Read more"; "EPISODES" list of compact rows (112×64 still with a number badge, name, date · runtime, 2-line synopsis) |
 | H4b | Episode | Episode row in H4 | Sheet over H4: a 16:9 still, "S1 · E1" caption ("Specials · E1" for season 0), the episode name, info chips (air date, runtime, ★ rating when TMDB has one), the full synopsis, and a "GUEST STARS" row of 64 px circles with name and character (→ D3) when the episode lists any |
 | H5 | Language | B5 | Single-select list: Español / English — one setting for the interface and TMDB's content |

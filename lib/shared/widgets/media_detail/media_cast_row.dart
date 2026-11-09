@@ -47,7 +47,7 @@ class MediaCastRow extends StatelessWidget {
 
     final visibleCast = cast.take(_visibleCount).toList();
     return AppSection(
-      title: context.l10n.fullCastSheetCastLabel,
+      title: context.l10n.fullCastCastLabel,
       actionLabel: cast.length > _visibleCount
           ? context.l10n.discoverSeeAll
           : null,
