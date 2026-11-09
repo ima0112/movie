@@ -259,12 +259,11 @@
   "onboardingNameBody": "That's what I'll call you, and how others will see you in rooms.",
   "onboardingNameHint": "Your name",
 
-  "onboardingWelcomeHeadline": "Hi, I'm Pako",
-  "onboardingWelcomeSubtitle": "I'll help you find something to watch, alone or with friends.",
+  "onboardingWelcomeTagline": "Find what to watch",
   "onboardingWelcomeGetStarted": "Get started",
   "onboardingWelcomeTmdbAttribution": "Data from TMDB",
   "@onboardingWelcomeTmdbAttribution": {
-    "description": "Welcome step's attribution caption — \"TMDB\" stays untranslated in every locale, same as PakoTV's own name."
+    "description": "TMDB attribution caption — used as the footer of the movie, TV and person detail screens (it began on the welcome step). \"TMDB\" stays untranslated in every locale, same as PakoTV's own name."
   },
 
   "commonCouldntLoad": "Couldn't load",

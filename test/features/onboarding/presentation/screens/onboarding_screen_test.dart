@@ -161,7 +161,7 @@ void main() {
     // failed the test on its own if one had), welcome's own copy is
     // still there, and the poster wall renders — every tile a
     // placeholder since the fetch failed.
-    expect(find.text("Hi, I'm Pako"), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
     expect(find.byType(PosterWall), findsOneWidget);
   });
 }

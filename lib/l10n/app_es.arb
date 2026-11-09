@@ -113,8 +113,7 @@
   "onboardingNameBody": "Así te llamaré, y así te verán los demás en las salas.",
   "onboardingNameHint": "Tu nombre",
 
-  "onboardingWelcomeHeadline": "Hola, soy Pako",
-  "onboardingWelcomeSubtitle": "Te ayudaré a encontrar algo que ver, solo o con amigos.",
+  "onboardingWelcomeTagline": "Encuentra qué ver",
   "onboardingWelcomeGetStarted": "Empezar",
   "onboardingWelcomeTmdbAttribution": "Datos de TMDB",
 

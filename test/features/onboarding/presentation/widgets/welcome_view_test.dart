@@ -29,7 +29,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(tester.takeException(), isNull);
-      expect(find.text("Hi, I'm Pako"), findsOneWidget);
+      expect(find.text('Get started'), findsOneWidget);
     },
   );
 }
