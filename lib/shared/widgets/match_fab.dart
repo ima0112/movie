@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
-import 'pako_state.dart';
+import '../../core/theme/app_icons.dart';
+import '../../l10n/l10n_extension.dart';
 
-/// The Match button: a raised amber circle with Pako's face, centered in
-/// the bottom tab bar. Tapping it opens the Match hub (B3) as a modal.
+/// The Match button: an amber circle with a sparkle, centered on the
+/// floating tab bar. Tapping it opens the Match hub (B3) as a modal.
 ///
-/// Source of truth: `docs/SCREENS.md` section B ("60 px amber circular
-/// button raised 14 px in the center with Pako's face... White dot on the
-/// button if a room is active.").
+/// Source of truth: the "Barra inferior flotante" design (56 px amber
+/// circle, sparkle icon, soft amber glow) and `docs/SCREENS.md` section B.
 ///
 /// Pure presentation — no feature dependency, everything comes in by
 /// parameter.
@@ -20,22 +20,17 @@ class MatchFab extends StatelessWidget {
   final VoidCallback? onTap;
 
   /// The button's own diameter — `app_tab_bar.dart` reserves a center gap
-  /// this wide so the two line up.
-  static const double diameter = 60;
+  /// wide enough for it.
+  static const double diameter = 56;
 
-  // Raises the button above the tab bar it sits on.
-  static const double _raise = 14;
-
-  // Pako fills most of the circle, with a little breathing room.
-  static const double _pakoSize = 40;
-
-  // White dot, top right, when a room is active.
+  static const double _iconSize = 26;
   static const double _dotSize = 14;
 
   @override
   Widget build(BuildContext context) {
-    return Transform.translate(
-      offset: const Offset(0, -_raise),
+    return Semantics(
+      button: true,
+      label: context.l10n.navMatchButton,
       child: GestureDetector(
         onTap: onTap,
         child: SizedBox(
@@ -45,12 +40,23 @@ class MatchFab extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               DecoratedBox(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.accent,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.accent.withValues(alpha: 0.35),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
                 child: const Center(
-                  child: PakoState(mood: PakoMood.idle, size: _pakoSize),
+                  child: Icon(
+                    AppIcons.match,
+                    size: _iconSize,
+                    color: AppColors.onAccent,
+                  ),
                 ),
               ),
               if (hasActiveRoom)

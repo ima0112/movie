@@ -259,6 +259,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navTabYou => 'You';
 
   @override
+  String get navMatchButton => 'Surprise me and match';
+
+  @override
   String get offlineBannerMessage => 'Offline';
 
   @override

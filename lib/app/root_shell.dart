@@ -21,6 +21,8 @@ class RootShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // The bar floats over the content (glass blur), not beside it.
+      extendBody: true,
       body: navigationShell,
       bottomNavigationBar: Stack(
         alignment: Alignment.topCenter,

@@ -50,6 +50,9 @@ class AppIcons {
   static const IconData info = RemixIcons.information_line;
   static const IconData hourglass = RemixIcons.hourglass_line;
   static const IconData group = RemixIcons.team_line;
+
+  /// The Match button's sparkle (replaces Pako's face there).
+  static const IconData match = RemixIcons.sparkling_2_fill;
   static const IconData dice = RemixIcons.dice_5_line;
   static const IconData useMyTastes = RemixIcons.user_add_line;
 
