@@ -632,6 +632,42 @@ abstract class AppLocalizations {
   /// **'Your name'**
   String get onboardingNameHint;
 
+  /// No description provided for @onboardingIntroDiscoverHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Find what to watch\nin seconds'**
+  String get onboardingIntroDiscoverHeadline;
+
+  /// The phrase inside onboardingIntroDiscoverHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact phrase as a substring of its own translated headline.
+  ///
+  /// In en, this message translates to:
+  /// **'in seconds'**
+  String get onboardingIntroDiscoverHighlight;
+
+  /// No description provided for @onboardingIntroDiscoverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore TMDB\'s catalog. It\'s not a streaming app: we tell you where to watch it.'**
+  String get onboardingIntroDiscoverBody;
+
+  /// No description provided for @onboardingIntroSurpriseHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'No idea? Surprise me'**
+  String get onboardingIntroSurpriseHeadline;
+
+  /// The phrase inside onboardingIntroSurpriseHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact phrase as a substring of its own translated headline.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise me'**
+  String get onboardingIntroSurpriseHighlight;
+
+  /// No description provided for @onboardingIntroSurpriseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer a few questions or use your tastes and we\'ll suggest what to watch.'**
+  String get onboardingIntroSurpriseBody;
+
   /// No description provided for @onboardingWelcomeTagline.
   ///
   /// In en, this message translates to:

@@ -259,6 +259,18 @@
   "onboardingNameBody": "That's what I'll call you, and how others will see you in rooms.",
   "onboardingNameHint": "Your name",
 
+  "onboardingIntroDiscoverHeadline": "Find what to watch\nin seconds",
+  "onboardingIntroDiscoverHighlight": "in seconds",
+  "@onboardingIntroDiscoverHighlight": {
+    "description": "The phrase inside onboardingIntroDiscoverHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact phrase as a substring of its own translated headline."
+  },
+  "onboardingIntroDiscoverBody": "Explore TMDB's catalog. It's not a streaming app: we tell you where to watch it.",
+  "onboardingIntroSurpriseHeadline": "No idea? Surprise me",
+  "onboardingIntroSurpriseHighlight": "Surprise me",
+  "@onboardingIntroSurpriseHighlight": {
+    "description": "The phrase inside onboardingIntroSurpriseHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact phrase as a substring of its own translated headline."
+  },
+  "onboardingIntroSurpriseBody": "Answer a few questions or use your tastes and we'll suggest what to watch.",
   "onboardingWelcomeTagline": "Find what to watch",
   "onboardingWelcomeGetStarted": "Get started",
   "onboardingWelcomeTmdbAttribution": "Data from TMDB",

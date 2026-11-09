@@ -58,6 +58,16 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     emit(state.copyWith(step: OnboardingStep.values[nextIndex]));
   }
 
+  /// "Skip" on either intro slide — jumps straight to the (required) name
+  /// step. A no-op anywhere else.
+  void skipIntro() {
+    if (state.step != OnboardingStep.introDiscover &&
+        state.step != OnboardingStep.introSurprise) {
+      return;
+    }
+    emit(state.copyWith(step: OnboardingStep.name));
+  }
+
   void back() {
     final previousIndex = state.step.index - 1;
     if (previousIndex < 0) return;

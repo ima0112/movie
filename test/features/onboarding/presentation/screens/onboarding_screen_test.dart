@@ -98,6 +98,11 @@ void main() {
 
     await tester.tap(find.text('Get started'));
     await tester.pumpAndSettle();
+    // The two intro slides: Next, Next.
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Dani');
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next'));
@@ -126,6 +131,42 @@ void main() {
     // fixed-size pump, since reaching the latter's Timer takes a few
     // more microtask turns than a single pump(duration) covers.
     await tester.pumpAndSettle(const Duration(seconds: 1));
+  });
+
+  testWidgets('Skip on the first intro slide lands on the name step', (
+    tester,
+  ) async {
+    appRouter.go('/');
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.text('Get started'));
+    await tester.pumpAndSettle();
+    expect(find.text('Find what to watch\nin seconds'), findsOneWidget);
+
+    await tester.tap(find.text('Skip'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget); // the name field
+  });
+
+  testWidgets('Skip on the second intro slide lands on the name step', (
+    tester,
+  ) async {
+    appRouter.go('/');
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.text('Get started'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(find.text('No idea? Surprise me'), findsOneWidget);
+
+    await tester.tap(find.text('Skip'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget);
   });
 
   testWidgets('a failed poster fetch on welcome (offline) falls back to '

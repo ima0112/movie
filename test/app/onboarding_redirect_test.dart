@@ -95,6 +95,11 @@ void main() {
 
     await tester.tap(find.text('Get started'));
     await tester.pumpAndSettle();
+    // The two intro slides: Next, Next.
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField), 'Dani');
     await tester.pumpAndSettle();

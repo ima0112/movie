@@ -10,10 +10,11 @@ import '../../../../l10n/l10n_extension.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 import 'onboarding_genre_step.dart';
+import 'onboarding_intro_step.dart';
 import 'onboarding_name_step.dart';
 import 'onboarding_welcome_step.dart';
 
-/// A2's own 4-screen switch, once `OnboardingCubit` is already provided
+/// A2's own screen switch, once `OnboardingCubit` is already provided
 /// above it (see `onboarding_screen.dart`). Owns the one thing that
 /// isn't the Cubit's job: step 0's poster fetch (a plain network read,
 /// not form state) and the flow's own exit (`docs/SCREENS.md` A2:
@@ -77,6 +78,12 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           OnboardingStep.welcome => OnboardingWelcomeStep(
             postersFuture: _postersFuture,
             onGetStarted: cubit.next,
+          ),
+          OnboardingStep.introDiscover => const OnboardingIntroStep(
+            kind: OnboardingIntroKind.discover,
+          ),
+          OnboardingStep.introSurprise => const OnboardingIntroStep(
+            kind: OnboardingIntroKind.surprise,
           ),
           OnboardingStep.name => const OnboardingNameStep(),
           OnboardingStep.likedGenres => OnboardingGenreStep(
