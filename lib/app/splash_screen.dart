@@ -4,25 +4,18 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../shared/widgets/app_halo.dart';
 import '../shared/widgets/app_wordmark.dart';
-import '../shared/widgets/pako_state.dart';
+import '../shared/widgets/app_monogram.dart';
 
-/// A1 (Splash) — `docs/SCREENS.md`: "static native (Pako's logo, off,
-/// centered on `#0B0B0D`) → Rive animation: amber halo, Pako powers on,
-/// 'PakoTV' wordmark unfurls → Pako powers off and the wordmark slides
-/// into its spot on Home." The native half is
-/// `flutter_native_splash.yaml`; this is what takes over the instant
-/// Flutter can draw its own first frame, picking up from the exact same
-/// `PakoMood.off` so there's no visible jump between the two.
+/// A1 (Splash) — `docs/SCREENS.md`: the "P" monogram fades in over an
+/// amber halo, the "PakoTV" wordmark unfurls, then the wordmark slides
+/// into its spot on Home. The native half is `flutter_native_splash.yaml`;
+/// this takes over the instant Flutter can draw its own first frame.
 ///
 /// [preload] is awaited the moment this widget mounts; [onFinished]
 /// fires once it's done *and* the animation has had its full ~1.3 s to
 /// play, capped at [maxDuration] regardless — `docs/SCREENS.md`
 /// "Duration: max 1.5 s" is a hard ceiling, not a target, so a slow
 /// network never holds the splash open past it.
-///
-/// TODO(rive): replace this hand-timed mood/opacity sequence with a
-/// real `RiveAnimation` driving `powerOn` — see `pako_state.dart`'s own
-/// TODO for the same gap.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({
     super.key,
@@ -44,7 +37,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  PakoMood _mood = PakoMood.off;
+  bool _markVisible = false;
   bool _wordmarkVisible = false;
   bool _exiting = false;
 
@@ -62,10 +55,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _run() async {
     final preloadFuture = widget.preload();
-    _after(SplashScreen.powerOnDelay, () => _mood = PakoMood.idle);
+    _after(SplashScreen.powerOnDelay, () => _markVisible = true);
     _after(SplashScreen.wordmarkDelay, () => _wordmarkVisible = true);
     _after(SplashScreen.powerOffDelay, () {
-      _mood = PakoMood.off;
       _exiting = true;
     });
 
@@ -97,9 +89,10 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                AnimatedSwitcher(
+                AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
-                  child: PakoState(key: ValueKey(_mood), mood: _mood, size: 96),
+                  opacity: _markVisible ? 1 : 0,
+                  child: const AppMonogram(),
                 ),
                 const SizedBox(height: AppSpacing.xxl),
                 AnimatedSlide(

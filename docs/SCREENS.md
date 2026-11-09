@@ -17,7 +17,7 @@ Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and th
 
 ### A1. Splash
 - Access: cold app launch.
-- Elements: static native (Pako's logo, off, centered on `#0B0B0D`) → Rive animation: amber halo, Pako powers on, "PakoTV" wordmark unfurls → Pako powers off and the wordmark slides into its spot on Home.
+- Elements: amber halo, the "P" monogram (104 px amber rounded square) fades in, the "PakoTV" wordmark unfurls → the wordmark slides into its spot on Home.
 - Duration: max 1.5 s; while theme, language, `/configuration`, and `/trending/all/week` load.
 - Exits: A2 if it's the first launch, otherwise → B1.
 
