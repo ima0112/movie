@@ -632,17 +632,11 @@ abstract class AppLocalizations {
   /// **'Your name'**
   String get onboardingNameHint;
 
-  /// No description provided for @onboardingWelcomeHeadline.
+  /// No description provided for @onboardingWelcomeTagline.
   ///
   /// In en, this message translates to:
-  /// **'Hi, I\'m Pako'**
-  String get onboardingWelcomeHeadline;
-
-  /// No description provided for @onboardingWelcomeSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'I\'ll help you find something to watch, alone or with friends.'**
-  String get onboardingWelcomeSubtitle;
+  /// **'Find what to watch'**
+  String get onboardingWelcomeTagline;
 
   /// No description provided for @onboardingWelcomeGetStarted.
   ///
@@ -650,7 +644,7 @@ abstract class AppLocalizations {
   /// **'Get started'**
   String get onboardingWelcomeGetStarted;
 
-  /// Welcome step's attribution caption — "TMDB" stays untranslated in every locale, same as PakoTV's own name.
+  /// TMDB attribution caption — used as the footer of the movie, TV and person detail screens (it began on the welcome step). "TMDB" stays untranslated in every locale, same as PakoTV's own name.
   ///
   /// In en, this message translates to:
   /// **'Data from TMDB'**

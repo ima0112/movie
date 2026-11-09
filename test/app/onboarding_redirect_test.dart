@@ -56,7 +56,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    expect(find.text("Hi, I'm Pako"), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
     expect(find.text('Explore'), findsNothing);
   });
 
@@ -70,7 +70,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Dune: Part Two'), findsOneWidget);
-      expect(find.text("Hi, I'm Pako"), findsNothing);
+      expect(find.text('Get started'), findsNothing);
     },
   );
 
@@ -91,7 +91,7 @@ void main() {
     // Not pumpAndSettle here either — see the first test's own note.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text("Hi, I'm Pako"), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
 
     await tester.tap(find.text('Get started'));
     await tester.pumpAndSettle();

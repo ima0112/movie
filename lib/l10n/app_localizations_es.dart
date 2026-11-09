@@ -300,11 +300,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboardingNameHint => 'Tu nombre';
 
   @override
-  String get onboardingWelcomeHeadline => 'Hola, soy Pako';
-
-  @override
-  String get onboardingWelcomeSubtitle =>
-      'Te ayudaré a encontrar algo que ver, solo o con amigos.';
+  String get onboardingWelcomeTagline => 'Encuentra qué ver';
 
   @override
   String get onboardingWelcomeGetStarted => 'Empezar';

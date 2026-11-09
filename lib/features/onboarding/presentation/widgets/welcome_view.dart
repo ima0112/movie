@@ -5,13 +5,13 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
-import '../../../../shared/widgets/app_halo.dart';
-import '../../../../shared/widgets/pako_state.dart';
+import '../../../../shared/widgets/app_wordmark.dart';
 import 'poster_wall.dart';
 
-/// Step 0 — `docs/SCREENS.md` A2: poster wall, fade to black from 30%
-/// to 62% of the height, amber halo, Pako in `idle` on the fade line,
-/// "Hi, I'm Pako", one subtitle line, "Get started", TMDB attribution.
+/// Step 0 — `docs/SCREENS.md` A2: poster wall under a dark overlay that
+/// goes solid by 78% of the height, the 48 px "PakoTV" wordmark with a
+/// spaced-out tagline, TMDB's attribution line, and "Get started"
+/// (the "Onboarding 0 · Bienvenida" design — no mascot).
 ///
 /// Pure presentation (CLAUDE.md rule 9) — [posterUrls] and
 /// [onGetStarted] are supplied by whatever screen eventually wires up
@@ -27,6 +27,14 @@ class WelcomeView extends StatelessWidget {
   final List<String?> posterUrls;
   final VoidCallback onGetStarted;
 
+  static const double _wordmarkSize = 48;
+  static const double _taglineSpacing = 2;
+
+  // surface at 55% / 35% / 90% — the poster wall's dimming stops.
+  static const Color _overlayTop = Color(0x8C0B0B0D);
+  static const Color _overlayMid = Color(0x590B0B0D);
+  static const Color _overlayLow = Color(0xE60B0B0D);
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -41,21 +49,18 @@ class WelcomeView extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           PosterWall(posterUrls: posterUrls),
-          const Align(alignment: Alignment.topCenter, child: AppHalo()),
-          // "Fade to black from 30% to 62%" (docs/SCREENS.md A2) plus a
-          // short fade at the very top — not in that spec, but without
-          // it a poster tile can get hard-clipped right under the
-          // status bar/notch with no visual softening at all.
+          // Overlay from the design: dimmed poster wall at the top, 90%
+          // dark by 62% of the height, solid from 78%.
           const DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: [0, 0.1, 0.3, 0.62],
+                stops: [0, 0.3, 0.62, 0.78],
                 colors: [
-                  AppColors.surface,
-                  Colors.transparent,
-                  Colors.transparent,
+                  _overlayTop,
+                  _overlayMid,
+                  _overlayLow,
                   AppColors.surface,
                 ],
               ),
@@ -77,34 +82,29 @@ class WelcomeView extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        const PakoState(mood: PakoMood.idle, size: 96),
-                        const SizedBox(height: AppSpacing.lg),
-                        // docs/SCREENS.md A2: "Hi, I'm Pako" at 28 px —
-                        // no exact token for 28; h1 (26) is the closest.
-                        Text(
-                          l10n.onboardingWelcomeHeadline,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.h1,
-                        ),
+                        const AppWordmark(fontSize: _wordmarkSize),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
-                          l10n.onboardingWelcomeSubtitle,
+                          l10n.onboardingWelcomeTagline.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.body.copyWith(
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.inkMuted,
+                            letterSpacing: _taglineSpacing,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xxxl * 2),
+                        // TMDB's required wording (same text as C7).
+                        Text(
+                          l10n.attributionTmdbBody,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.caption.copyWith(
                             color: AppColors.inkMuted,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.xxl),
+                        const SizedBox(height: AppSpacing.xl),
                         PrimaryButton(
                           label: l10n.onboardingWelcomeGetStarted,
                           onTap: onGetStarted,
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        Text(
-                          l10n.onboardingWelcomeTmdbAttribution,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.inkDim,
-                          ),
                         ),
                       ],
                     ),
