@@ -35,7 +35,7 @@ Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and th
 
 ## B. Tabs (bottom bar with 4 + Match button)
 
-Bottom bar: Discover · Explore · [Pako button] · My List · You. Four tabs (24 px icon + 11 px label; active in white, inactive in gray) and in the center a **60 px amber circular button raised 14 px with Pako's face** that opens B3 as a modal. White dot on the button when a room is active. Visible on the 4 roots; hidden in details, quiz, rooms, and inside the Match modal.
+Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating glass pill (inset 16 px, 68 px tall, blurred) with four icon-only tabs (26 px icon; active in white with a 5 px amber dot, inactive in gray) and in the center a **56 px amber circular button with a sparkle icon, straddling the pill's top edge** that opens B3 as a modal. White dot on the button when a room is active. Visible on the 4 roots; hidden in details, quiz, rooms, and inside the Match modal.
 
 ### B1. Discover
 - Access: tab 1 (root). Main screen.

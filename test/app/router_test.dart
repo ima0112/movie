@@ -10,7 +10,16 @@ import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/features/my_list/presentation/screens/my_list_screen.dart';
+import 'package:movies/features/you/presentation/screens/you_screen.dart';
+import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/shared/widgets/media_card.dart';
+
+/// Tabs are icon-only, so they're found by semantics label inside the bar.
+Finder _tab(String label) => find.descendant(
+  of: find.byType(AppTabBar),
+  matching: find.bySemanticsLabel(label),
+);
 
 void main() {
   setUpAll(() {
@@ -51,27 +60,27 @@ void main() {
     expect(find.text('Dune: Part Two'), findsOneWidget);
 
     // Explore (/explore).
-    await tester.tap(find.text('Explore'));
+    await tester.tap(_tab('Explore'));
     await tester.pumpAndSettle();
     expect(find.text('Explore'), findsWidgets);
     expect(find.text('Dune: Part Two'), findsNothing);
 
     // My List (/my-list) — placeholder.
-    await tester.tap(find.text('My List'));
+    await tester.tap(_tab('My List'));
     await tester.pumpAndSettle();
-    expect(find.text('My List'), findsWidgets);
+    expect(find.byType(MyListScreen), findsOneWidget);
 
     // You (/you) — placeholder.
-    await tester.tap(find.text('You'));
+    await tester.tap(_tab('You'));
     await tester.pumpAndSettle();
-    expect(find.text('You'), findsWidgets);
+    expect(find.byType(YouScreen), findsOneWidget);
 
     // Back to Discover: StatefulShellRoute.indexedStack keeps each
     // branch's Navigator (and DiscoverCubit's already-loaded state) alive
     // underneath — a single `pump()` (no time for a fresh 400ms fake-repo
     // load) should already show the previously-loaded hero, not a
     // skeleton.
-    await tester.tap(find.text('Discover'));
+    await tester.tap(_tab('Discover'));
     await tester.pump();
     expect(find.text('Dune: Part Two'), findsOneWidget);
   });
@@ -89,12 +98,12 @@ void main() {
     expect(find.byIcon(AppIcons.back), findsOneWidget);
     // The pushed detail hides the tab bar — a pushed screen per
     // docs/SCREENS.md ("every pushed screen... hides the bottom bar").
-    expect(find.text('Discover'), findsNothing);
+    expect(find.byType(AppTabBar), findsNothing);
 
     await tester.tap(find.byIcon(AppIcons.back));
     await tester.pumpAndSettle();
     expect(find.text('Dune: Part Two'), findsOneWidget);
-    expect(find.text('Discover'), findsOneWidget);
+    expect(find.byType(AppTabBar), findsOneWidget);
   });
 
   testWidgets(

@@ -16,6 +16,7 @@ a este documento primero y luego a código — nunca al revés.
 | `line` | `#1E1E22` | Separadores finos entre filas del mismo grupo |
 | `lineStrong` | `#2A2A2E` | Bordes de chips y botones secundarios |
 | `ink` | `#F5F5F7` | Texto primario, iconos activos |
+| `glass` / `glassBorder` / `shadow` | `#1C1C20` 62% · `#F5F5F7` 12% · `#000000` 45% | Barra de tabs flotante (relleno, borde, sombra). Solo sobre un desenfoque de fondo. |
 | `inkMuted` | `#A1A1A8` | Texto secundario, metadatos, iconos inactivos |
 | `inkDim` | `#5F5E5A` | Texto terciario (atribuciones, pies de página) |
 | `accent` | `#F2B441` | Único acento. Ver "Dónde va el acento" abajo |

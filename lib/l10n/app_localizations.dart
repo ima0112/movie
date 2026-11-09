@@ -554,6 +554,12 @@ abstract class AppLocalizations {
   /// **'You'**
   String get navTabYou;
 
+  /// Accessibility label of the center sparkle button in the bottom bar, which opens the Match hub.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise me and match'**
+  String get navMatchButton;
+
   /// OfflineBanner's persistent top banner text (docs/SCREENS.md G).
   ///
   /// In en, this message translates to:

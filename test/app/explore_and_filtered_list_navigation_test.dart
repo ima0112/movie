@@ -25,11 +25,14 @@ import 'package:movies/shared/widgets/explore_filter_sheet.dart';
 /// its current location carries over between separate `pumpWidget` calls
 /// in this same test file — a later test can start already on whichever
 /// tab an earlier one left active. Every test below finds the Explore
-/// tab through [AppTabBar] specifically rather than a bare
-/// `find.text('Explore')`, which would otherwise sometimes also match
-/// Explore's own (still-mounted, per `IndexedStack`) title text.
-Finder _exploreTab() =>
-    find.descendant(of: find.byType(AppTabBar), matching: find.text('Explore'));
+/// tab through [AppTabBar] specifically (the tabs are icon-only, so by
+/// their semantics label) rather than a bare `find.text('Explore')`,
+/// which would match Explore's own (still-mounted, per `IndexedStack`)
+/// title text.
+Finder _exploreTab() => find.descendant(
+  of: find.byType(AppTabBar),
+  matching: find.bySemanticsLabel('Explore'),
+);
 
 void main() {
   setUpAll(() {

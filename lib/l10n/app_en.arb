@@ -220,6 +220,10 @@
   "navTabExplore": "Explore",
   "navTabMyList": "My List",
   "navTabYou": "You",
+  "navMatchButton": "Surprise me and match",
+  "@navMatchButton": {
+    "description": "Accessibility label of the center sparkle button in the bottom bar, which opens the Match hub."
+  },
   "@navTabYou": {
     "description": "The bottom bar's 4th tab label — also referenced by onboardingTastesSavedSnackbar's own \"Edit in You\" wording, so keep both in sync if either changes."
   },

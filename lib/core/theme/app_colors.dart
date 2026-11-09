@@ -23,6 +23,16 @@ class AppColors {
   /// Borders for chips and secondary buttons.
   static const Color lineStrong = Color(0xFF2A2A2E);
 
+  /// Translucent glass fill of the floating tab bar (`#1C1C20` at 62%).
+  /// Only meaningful over a backdrop blur.
+  static const Color glass = Color(0x9E1C1C20);
+
+  /// Hairline border of glass surfaces (`ink` at 12%).
+  static const Color glassBorder = Color(0x1FF5F5F7);
+
+  /// Drop shadow under floating surfaces (black at 45%).
+  static const Color shadow = Color(0x73000000);
+
   /// Primary text, active icons.
   static const Color ink = Color(0xFFF5F5F7);
 

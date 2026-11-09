@@ -676,7 +676,7 @@ class _TabBarSectionState extends State<_TabBarSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Tap a tab, or the Pako button to toggle the active-room dot',
+          'Tap a tab, or the Match button to toggle the active-room dot',
           style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
         ),
         const SizedBox(height: AppSpacing.md),
