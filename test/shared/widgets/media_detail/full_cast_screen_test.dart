@@ -174,11 +174,22 @@ void main() {
       expect(find.text('Zendaya'), findsOneWidget);
       expect(find.text('Denis Villeneuve'), findsOneWidget);
 
-      // Clearing the search brings the tabs back, on the tab we left.
+      // The tabs never go away: they show the counts, and picking Crew puts
+      // the crew matches first.
+      expect(find.text('Cast · 2'), findsOneWidget);
+      expect(find.text('Crew · 1'), findsOneWidget);
+      await tester.tap(find.text('Crew · 1'));
+      await tester.pump();
+      expect(
+        tester.getTopLeft(find.text('CREW')).dy,
+        lessThan(tester.getTopLeft(find.text('CAST')).dy),
+      );
+
+      // Clearing the search brings back the plain tabs.
       await tester.enterText(find.byType(TextField), '');
       await tester.pump();
-      expect(find.text('Denis Villeneuve'), findsNothing);
-      expect(find.text('Zendaya'), findsOneWidget);
+      expect(find.text('Cast'), findsOneWidget);
+      expect(find.text('Denis Villeneuve'), findsOneWidget);
     });
 
     testWidgets('Cast and Crew scroll independently', (tester) async {
