@@ -45,7 +45,7 @@ class FullCastPersonTile extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             person.name,
-            style: AppTextStyles.bodySm.copyWith(fontWeight: FontWeight.w600),
+            style: AppTextStyles.bodySmStrong,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),

@@ -157,6 +157,14 @@ ask before inventing it.
     exceptions: TMDB's own attribution text, and the exported JSON's own
     (internal, non-display) keys.
 
+16. **Layout and type come from the design system, globally.** A titled
+    block of a scrolling screen is an `AppSection` (it owns the gap above
+    it and the heading style); gaps are `AppSpacing` roles (`sectionGap`,
+    `headingGap`, `cardGap`, `cardPadding`, `itemGap`, `screenMargin`);
+    text weight/size comes from an `AppTextStyles` token (add a token, never
+    `copyWith(fontWeight/fontSize)`). `test/core/theme/design_tokens_guard_test.dart`
+    fails on raw numbers and font overrides. See `docs/DESIGN_SYSTEM.md` §2–3.
+
 ## Code conventions
 
 - State: `flutter_bloc` — one `Cubit` per screen (plain `Bloc` only if the screen has a real event-driven flow, e.g. the Matcher's room lifecycle).

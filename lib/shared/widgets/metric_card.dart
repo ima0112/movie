@@ -36,9 +36,7 @@ class MetricCard extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.inkMuted,
-              ),
+              style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
             ),
           ],
         ),

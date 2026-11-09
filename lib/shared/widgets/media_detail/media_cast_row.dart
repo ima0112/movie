@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/domain/entities/person.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../app_section.dart';
 import 'media_cast_circle.dart';
 import 'media_crew_line.dart';
 
@@ -46,34 +46,16 @@ class MediaCastRow extends StatelessWidget {
     if (cast.isEmpty) return const SizedBox.shrink();
 
     final visibleCast = cast.take(_visibleCount).toList();
-    return Padding(
-      padding: AppSpacing.sectionTopPadding,
+    return AppSection(
+      title: context.l10n.fullCastSheetCastLabel,
+      actionLabel: cast.length > _visibleCount
+          ? context.l10n.discoverSeeAll
+          : null,
+      onAction: onSeeFullCastTap,
+      inset: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    context.l10n.fullCastSheetCastLabel,
-                    style: AppTextStyles.h2,
-                  ),
-                ),
-                if (cast.length > _visibleCount)
-                  GestureDetector(
-                    onTap: onSeeFullCastTap,
-                    behavior: HitTestBehavior.opaque,
-                    child: Text(
-                      context.l10n.discoverSeeAll,
-                      style: AppTextStyles.action,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.headingGap),
           SizedBox(
             // Avatar + gap + two lines of `caption` (name, character) —
             // `xxl` alone (used for the "See full cast"/crew spacing
@@ -81,7 +63,9 @@ class MediaCastRow extends StatelessWidget {
             // by ~10px; `xxxl + sm` covers it with margin.
             height: _circleSize + AppSpacing.xxxl + AppSpacing.sm,
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenMargin,
+              ),
               scrollDirection: Axis.horizontal,
               itemCount: visibleCast.length,
               separatorBuilder: (context, index) =>
@@ -99,7 +83,9 @@ class MediaCastRow extends StatelessWidget {
           if (showCrew && crew.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.md),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenMargin,
+              ),
               child: MediaCrewLine(crew: crew, onPersonTap: onPersonTap),
             ),
           ],

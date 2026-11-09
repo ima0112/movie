@@ -37,6 +37,7 @@ class AppMonogram extends StatelessWidget {
         child: Text(
           'P', // l10n-exempt: brand-name
           style: AppTextStyles.h1.copyWith(
+            // type-exempt: the glyph scales with the avatar size
             fontSize: size * _glyphRatio,
             height: 1,
             color: AppColors.onAccent,

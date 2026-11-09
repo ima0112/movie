@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/media_card.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/discover_cubit.dart';
@@ -32,14 +33,9 @@ class DiscoverContentSkeleton extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.xxxl),
-        for (var i = 0; i < sectionCount; i++) ...[
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            child: DiscoverSectionSkeleton(),
-          ),
-          const SizedBox(height: AppSpacing.xxxl),
-        ],
+        for (var i = 0; i < sectionCount; i++)
+          const AppSection(child: DiscoverSectionSkeleton()),
+        const SizedBox(height: AppSpacing.sectionGap),
       ],
     );
   }

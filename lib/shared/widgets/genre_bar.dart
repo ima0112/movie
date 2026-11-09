@@ -65,9 +65,7 @@ class GenreBar extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: AppColors.accent,
-                    borderRadius: BorderRadius.circular(
-                      AppSpacing.radiusPill,
-                    ),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
                   ),
                   child: const SizedBox(height: _barHeight),
                 ),

@@ -36,8 +36,6 @@ class GenreChipsStep extends StatelessWidget {
   final VoidCallback onSkip;
   final VoidCallback onNext;
 
-  static const double _eyebrowSpacing = 1.6;
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -78,10 +76,8 @@ class GenreChipsStep extends StatelessWidget {
                           children: [
                             Text(
                               l10n.onboardingLikedEyebrow.toUpperCase(),
-                              style: AppTextStyles.caption.copyWith(
+                              style: AppTextStyles.overline.copyWith(
                                 color: AppColors.accent,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: _eyebrowSpacing,
                               ),
                             ),
                             const SizedBox(height: AppSpacing.md),

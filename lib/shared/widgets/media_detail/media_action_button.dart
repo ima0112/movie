@@ -77,8 +77,7 @@ class MediaActionButton extends StatelessWidget {
                         label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodySm.copyWith(
-                          fontWeight: FontWeight.w600,
+                        style: AppTextStyles.bodySmStrong.copyWith(
                           color: color,
                         ),
                       ),

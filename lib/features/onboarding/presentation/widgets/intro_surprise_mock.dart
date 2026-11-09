@@ -36,11 +36,7 @@ class IntroSurpriseMock extends StatelessWidget {
             children: [
               Text(
                 l10n.surpriseSourceProfile.toUpperCase(),
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.6,
-                ),
+                style: AppTextStyles.overline.copyWith(color: AppColors.accent),
               ),
               const SizedBox(height: AppSpacing.xs),
               // Sample title and year/runtime, not UI copy.
@@ -98,8 +94,7 @@ class _MockButton extends StatelessWidget {
         label,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppTextStyles.bodySm.copyWith(
-          fontWeight: FontWeight.w600,
+        style: AppTextStyles.bodySmStrong.copyWith(
           color: filled ? AppColors.onAccent : AppColors.ink,
         ),
       ),

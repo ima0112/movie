@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/media_card.dart';
 
 /// D3's "Known for": a row of their most popular titles, each poster with
@@ -24,16 +25,17 @@ class PersonKnownForSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SizedBox.shrink();
 
-    return Padding(
-      padding: const EdgeInsets.only(left: AppSpacing.xl),
+    return AppSection(
+      title: context.l10n.personKnownForTitle,
+      inset: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.l10n.personKnownForTitle, style: AppTextStyles.h2),
-          const SizedBox(height: AppSpacing.md),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(right: AppSpacing.xl),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.screenMargin,
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

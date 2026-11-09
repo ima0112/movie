@@ -67,9 +67,7 @@ class SeasonEpisodeRow extends StatelessWidget {
                     ),
                     child: Text(
                       '${episode.episodeNumber}',
-                      style: AppTextStyles.caption.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.captionStrong,
                     ),
                   ),
                 ),
@@ -86,7 +84,7 @@ class SeasonEpisodeRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xxs),
                   Text.rich(
                     TextSpan(
                       children: [

@@ -78,6 +78,28 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// [body] in semibold: emphasised running text.
+  static final TextStyle bodyStrong = body.copyWith(fontWeight: _semibold);
+
+  /// [bodySm] in semibold: names, chip labels, button labels.
+  static final TextStyle bodySmStrong = bodySm.copyWith(fontWeight: _semibold);
+
+  /// [caption] in semibold: small badges and counters.
+  static final TextStyle captionStrong = caption.copyWith(
+    fontWeight: _semibold,
+  );
+
+  /// [h3] in regular weight: the unselected state of a selectable row.
+  static final TextStyle h3Regular = h3.copyWith(fontWeight: _regular);
+
+  /// Selected/unselected pair for segmented controls and tabs, so the
+  /// weight swap lives here and not in each widget.
+  static TextStyle bodySmToggle(bool selected) =>
+      selected ? bodySmStrong : bodySm;
+  static TextStyle captionToggle(bool selected) =>
+      selected ? captionStrong : caption;
+  static TextStyle h3Toggle(bool selected) => selected ? h3 : h3Regular;
+
   /// Small caps label above a block ("SYNOPSIS"): 11, semibold, tracked,
   /// muted. Callers pass the text already upper-cased.
   static final TextStyle overline = GoogleFonts.manrope(

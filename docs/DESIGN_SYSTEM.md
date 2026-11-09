@@ -61,10 +61,19 @@ Familia única: **Manrope** (Google Fonts), pesos 400 (regular) y 600
 | `action` | 13 / 1.5 | 600 | Acción de texto en ámbar ("Leer más", "Ver todo") |
 | `micro` | 9–10 / 1.3 | 400 | Texto dentro de pills muy pequeñas |
 
+Variantes ya definidas para no tocar el peso en el widget: `bodyStrong`,
+`bodySmStrong`, `captionStrong`, `h3Regular` y los pares seleccionado /
+no seleccionado `bodySmToggle(bool)`, `captionToggle(bool)`, `h3Toggle(bool)`.
+
 Regla: el tamaño, el peso y el interlineado salen siempre de un estilo de
 la tabla; `copyWith` solo cambia el **color** (o el decorado puntual). Si
 hace falta otro peso o tamaño, falta un estilo aquí: se añade, no se
 improvisa en el widget.
+
+Esto se **verifica automáticamente** (`test/core/theme/design_tokens_guard_test.dart`):
+falla si un widget escribe `fontSize:`/`fontWeight:` o un número suelto en
+`EdgeInsets`/`SizedBox` (excepciones puntuales con un comentario
+`// type-exempt:` o `// layout-exempt:` y su motivo).
 
 Regla: nunca introducir una segunda familia tipográfica, ni para números
 (las cifras de Estadísticas usan la misma Manrope). Nunca usar cursiva salvo
@@ -84,7 +93,7 @@ Escala nombrada — usar siempre el nombre, nunca el número suelto:
 | `lg` | 16 |
 | `xl` | 20 (margen lateral estándar de pantalla) |
 | `xxl` | 24 |
-| `xxxl` | 32 (separación entre secciones de Descubrir) |
+| `xxxl` | 32 (márgenes grandes de portadas/diálogos; las secciones usan `sectionGap`) |
 
 ### Roles de espaciado (distancias con nombre)
 
@@ -99,6 +108,14 @@ número de la escala cada vez:
 | `cardGap` | 12 (`md`) | Entre tarjetas apiladas del mismo grupo (tarjeta de info → tarjetas Duración/Clasificación, Temporadas) |
 | `cardPadding` | 16 (`lg`) | Relleno interior de una tarjeta |
 | `itemGap` | 8 (`sm`) | Entre elementos pequeños relacionados |
+
+**`AppSection`** (`shared/widgets/app_section.dart`) es la pieza única para
+un bloque con título de una pantalla que se desplaza: pone `sectionGap`
+arriba, el título `h2` con su acción ámbar opcional ("Ver todo"),
+`headingGap` y el contenido (`inset: false` si el contenido va de borde a
+borde). Reparto, Similares, Conocida por, las secciones de Descubrir y las
+recomendaciones la usan; una pantalla nueva compone secciones con ella en
+vez de colocar huecos y títulos a mano.
 
 Una sección es dueña de su espacio **superior** (`sectionPadding` si su
 contenido va dentro del margen, `sectionTopPadding` si desplaza de borde a

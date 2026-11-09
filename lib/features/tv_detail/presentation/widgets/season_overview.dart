@@ -38,10 +38,7 @@ class _SeasonOverviewState extends State<SeasonOverview> {
             onTap: () => setState(() => _expanded = true),
             child: Text(
               context.l10n.commonReadMore,
-              style: AppTextStyles.bodySm.copyWith(
-                color: AppColors.accent,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTextStyles.action,
             ),
           ),
         ],

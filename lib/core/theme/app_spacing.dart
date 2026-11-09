@@ -7,6 +7,8 @@ import 'package:flutter/widgets.dart';
 class AppSpacing {
   const AppSpacing._();
 
+  /// Hairline gap between stacked lines of text.
+  static const double xxs = 2;
   static const double xs = 4;
   static const double sm = 8;
   static const double md = 12;

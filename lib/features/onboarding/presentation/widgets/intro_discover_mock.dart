@@ -35,7 +35,7 @@ class IntroDiscoverMock extends StatelessWidget {
         const Positioned(
           left: AppSpacing.lg,
           top: 22,
-          child: AppWordmark(fontSize: _wordmarkSize),
+          child: AppWordmark(size: _wordmarkSize),
         ),
         Positioned(
           left: AppSpacing.lg,
@@ -53,7 +53,7 @@ class IntroDiscoverMock extends StatelessWidget {
                       label: segment.localizedLabel(l10n),
                       selected: segment == MediaSegment.all,
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: AppSpacing.xs + 2),
                   ],
                 ],
               ),
@@ -100,7 +100,7 @@ class _SectionTitle extends StatelessWidget {
         title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppTextStyles.bodySm.copyWith(fontWeight: FontWeight.w600),
+        style: AppTextStyles.bodySmStrong,
       ),
     );
   }
@@ -116,7 +116,7 @@ class _MockChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: IntroDiscoverMock._chipHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 2),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: selected ? AppColors.ink : Colors.transparent,
@@ -125,10 +125,9 @@ class _MockChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: AppTextStyles.caption.copyWith(
-          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-          color: selected ? AppColors.surface : AppColors.ink,
-        ),
+        style: AppTextStyles.captionToggle(
+          selected,
+        ).copyWith(color: selected ? AppColors.surface : AppColors.ink),
       ),
     );
   }

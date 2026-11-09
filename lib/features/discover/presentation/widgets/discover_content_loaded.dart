@@ -44,21 +44,18 @@ class DiscoverContentLoaded extends StatelessWidget {
           DiscoverHero(segment: segment),
           const SizedBox(height: AppSpacing.xl),
           const DiscoverSearchField(),
-          const SizedBox(height: AppSpacing.xxxl),
+          // Each section below owns its own gap above it.
           RecommendationSectionView(
             slot: RecommendationSlot.forYou,
             segment: segment,
           ),
-          const SizedBox(height: AppSpacing.xxxl),
           RecommendationSectionView(
             slot: RecommendationSlot.becauseYouLike,
             segment: segment,
           ),
-          const SizedBox(height: AppSpacing.xxxl),
-          for (final section in sections) ...[
+          for (final section in sections)
             DiscoverSectionCarousel(segment: segment, section: section),
-            const SizedBox(height: AppSpacing.xxxl),
-          ],
+          const SizedBox(height: AppSpacing.sectionGap),
         ],
       ),
     );

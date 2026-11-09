@@ -107,9 +107,7 @@ class _SurpriseVisual extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Text(
                   context.l10n.surpriseUseMyTastes,
-                  style: AppTextStyles.bodySm.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTextStyles.bodySmStrong,
                 ),
               ],
             ),

@@ -65,7 +65,7 @@ class TvSeasonsLinkCard extends StatelessWidget {
                           color: AppColors.inkMuted,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AppSpacing.xxs),
                       Text(
                         l10n.tvSeasonsLinkValue(seasonCount, episodeCount),
                         style: AppTextStyles.h2,

@@ -7,11 +7,9 @@ import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/carousel_section_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_section_skeleton.dart';
@@ -47,66 +45,18 @@ class DiscoverSectionCarousel extends StatelessWidget {
         if (items != null && items.isEmpty) {
           return const SizedBox.shrink();
         }
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: items == null
-              ? const DiscoverSectionSkeleton()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _SectionHeader(segment: segment, section: section),
-                    const SizedBox(height: AppSpacing.md),
-                    MediaCarousel.standard(
-                      items: items,
-                      // TV posters carry a "TV" pill only in the mixed
-                      // "All" segment — see docs/SCREENS.md B1.
-                      showTypeTag: segment == MediaSegment.all,
-                      // `pushMediaDetail` (→ `push`, not `go`): the detail
-                      // screen's back button should return to Discover
-                      // with its scroll position intact, not replace it
-                      // in the stack.
-                      onItemTap: (item) => context.pushMediaDetail(item.key),
-                    ),
-                  ],
-                ),
-        );
-      },
-    );
-  }
-}
-
-/// A section's "20/500 header + amber 14 px 'See all'" — see
-/// `docs/SCREENS.md` B1. Static once its data has arrived — lives inside
-/// [DiscoverSectionCarousel]'s `BlocSelector` builder, not behind a
-/// selector of its own, since it never varies independently of that
-/// section's items and is only ever used from there.
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.segment, required this.section});
-
-  final MediaSegment segment;
-  final CarouselSection section;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = section.localizedLabel(context.l10n);
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.h2,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        GestureDetector(
-          // C1: "'See all' from B1 (arrives with the collection's name
-          // and no filters)" — `collectionSection` is what lets C1 fetch
-          // this exact collection instead of a plain discover() call
-          // until a filter gets touched (see `FilteredListCubit`'s own
-          // doc comment on that field).
-          onTap: () => context.push(
+        if (items == null) {
+          return const AppSection(child: DiscoverSectionSkeleton());
+        }
+        final label = section.localizedLabel(context.l10n);
+        return AppSection(
+          title: label,
+          actionLabel: context.l10n.discoverSeeAll,
+          // C1: "'See all' from B1 (arrives with the collection's name and no
+          // filters)" — `collectionSection` is what lets C1 fetch this exact
+          // collection instead of a plain discover() call until a filter
+          // gets touched (see `FilteredListCubit`'s own doc comment).
+          onAction: () => context.push(
             AppRoutes.filteredList,
             extra: FilteredListRouteArgs(
               filter: DiscoverFilter(type: segment.mediaType),
@@ -114,12 +64,18 @@ class _SectionHeader extends StatelessWidget {
               collectionSection: section,
             ),
           ),
-          child: Text(
-            context.l10n.discoverSeeAll,
-            style: AppTextStyles.body.copyWith(color: AppColors.accent),
+          child: MediaCarousel.standard(
+            items: items,
+            // TV posters carry a "TV" pill only in the mixed "All" segment —
+            // see docs/SCREENS.md B1.
+            showTypeTag: segment == MediaSegment.all,
+            // `pushMediaDetail` (→ `push`, not `go`): the detail screen's back
+            // button should return to Discover with its scroll position
+            // intact, not replace it in the stack.
+            onItemTap: (item) => context.pushMediaDetail(item.key),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

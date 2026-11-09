@@ -84,8 +84,7 @@ class _Tab extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: AppTextStyles.bodySm.copyWith(
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            style: AppTextStyles.bodySmToggle(isSelected).copyWith(
               color: isSelected ? AppColors.surface : AppColors.inkMuted,
             ),
           ),
