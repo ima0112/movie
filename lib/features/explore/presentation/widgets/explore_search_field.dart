@@ -84,6 +84,10 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
               hintStyle: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
               filled: true,
               fillColor: AppColors.surfaceRaised,
+              prefixIcon: const Icon(
+                AppIcons.search,
+                color: AppColors.inkMuted,
+              ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.lg,
               ),

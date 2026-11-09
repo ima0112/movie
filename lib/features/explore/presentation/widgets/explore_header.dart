@@ -6,7 +6,6 @@ import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/explore_filter_sheet.dart';
 import '../../../../shared/widgets/media_segmented_control.dart';
@@ -14,7 +13,7 @@ import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
 import 'explore_search_field.dart';
 
-/// B2's static "Explore" title plus its two Bloc-subscribed controls —
+/// B2's header (no title — the design opens on the search field): its two Bloc-subscribed controls —
 /// the search field's live query and the segmented control's live
 /// segment. Grouped in one file since each is only a handful of lines,
 /// the same "not substantial enough on its own" call
@@ -37,8 +36,6 @@ class ExploreHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(context.l10n.navTabExplore, style: AppTextStyles.h2),
-              const SizedBox(height: AppSpacing.md),
               const _ExploreSearchBar(),
             ],
           ),
@@ -99,6 +96,7 @@ class _ExploreSegmentedControl extends StatelessWidget {
       selector: (state) => state.segment,
       builder: (context, segment) {
         return MediaSegmentedControl(
+          style: MediaSegmentedStyle.pill,
           segment: segment,
           onSelected: (value) =>
               context.read<ExploreCubit>().selectSegment(value),
