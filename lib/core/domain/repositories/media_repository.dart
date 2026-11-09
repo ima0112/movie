@@ -1,5 +1,4 @@
 import '../entities/discover_filter.dart';
-import '../entities/genre.dart';
 import '../entities/media_detail.dart';
 import '../entities/media_item.dart';
 import '../entities/media_key.dart';
@@ -9,20 +8,22 @@ import '../entities/season_summary.dart';
 
 /// One of Discover's named carousels.
 ///
-/// Source of truth: `docs/SCREENS.md` B1 (Discover) —
-/// "All: For You · Popular this week · Because you like [genre] · Watch
-/// later. Movies: In theaters · Trending · Top rated · Upcoming. TV Shows:
-/// Airing now · Trending · Top rated · Popular."
+/// Source of truth: `docs/SCREENS.md` B1 (Discover) — "All: Popular
+/// this week · Watch later. Movies: In theaters · Trending · Top rated
+/// · Upcoming. TV Shows: Airing now · Trending · Top rated · Popular."
+/// "For you"/"Because you like X" are **not** here — unlike every
+/// other entry, they need local signal (`TasteProfile`/
+/// `UserLibraryRepository`) this repository has no access to, plus
+/// their own independent loading/error/retry per section (CLAUDE.md
+/// rule 9), which this enum's single-batch `getCarouselSection` loop
+/// (`DiscoverCubit.loadDiscover`) can't give them. They're built by
+/// `RecommendationBuilder` (`features/recommendations/domain/`) and
+/// fetched via [MediaRepository.recommendationsFor]/`.discover`
+/// directly from `RecommendationsCubit`, a separate Cubit from
+/// `DiscoverCubit` entirely.
 enum CarouselSection {
   /// "All" segment only.
-  forYou,
-
-  /// "All" segment only.
   popularThisWeek,
-
-  /// "All" segment only. Needs a genre — see
-  /// [MediaRepository.getCarouselSection].
-  becauseYouLike,
 
   /// "All" segment only; the screen only shows this section once there
   /// are 3+ items in Watch later.
@@ -61,13 +62,19 @@ abstract interface class MediaRepository {
   Future<Result<List<MediaItem>>> getHeroItems({MediaType? type});
 
   /// One named Discover carousel. [type] picks the segment the same way
-  /// as [getHeroItems]. [genre] is required when [section] is
-  /// [CarouselSection.becauseYouLike] and ignored otherwise.
+  /// as [getHeroItems].
   Future<Result<List<MediaItem>>> getCarouselSection(
     CarouselSection section, {
     MediaType? type,
-    Genre? genre,
   });
+
+  /// B1's "Because you like X" (`RecommendationBuilder`'s own seed
+  /// pick) — `/movie|tv/{id}/recommendations`, picked by [seed]'s own
+  /// type. Collaborative-filtering based, which is a closer fit for
+  /// "people who liked this also liked…" than `/similar` (genre/keyword
+  /// based) — and cheaper than fetching [seed]'s full `detail()` just
+  /// to read `MediaDetail.similar`.
+  Future<Result<List<MediaItem>>> recommendationsFor(MediaKey seed);
 
   /// D1 (movie) / D2 (TV show) full detail for one catalog item.
   Future<Result<MediaDetail>> detail(MediaKey key);

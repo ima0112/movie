@@ -4,8 +4,10 @@ import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
+import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
+import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_search_field.dart';
@@ -32,11 +34,16 @@ Finder _exploreTab() =>
 void main() {
   setUpAll(() {
     configureDependencies(fake.name);
-    // Same swap `router_test.dart` makes — the real DriftUserLibraryRepository
-    // needs path_provider, unavailable in `flutter test`'s host environment.
+    // Same swap `router_test.dart` makes — the real
+    // DriftUserLibraryRepository/DriftTasteProfileRepository need
+    // path_provider, unavailable in `flutter test`'s host environment.
     getIt.unregister<UserLibraryRepository>();
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
+    );
+    getIt.unregister<TasteProfileRepository>();
+    getIt.registerLazySingleton<TasteProfileRepository>(
+      InMemoryTasteProfileRepository.new,
     );
     // Same swap for OnboardingRepository — `isCompleted: true`
     // (the default) since this test isn't about the onboarding

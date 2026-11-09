@@ -155,19 +155,24 @@ void main() {
       expect((result as Success<List<MediaItem>>).value, isEmpty);
     });
 
-    test('forYou/becauseYouLike -> an empty success, not a thrown '
-        'UnimplementedError (neither has a taste profile wired in yet, '
-        'but DiscoverCubit never actually requests them today)', () async {
-      final forYou = await repository.getCarouselSection(
-        CarouselSection.forYou,
-      );
-      final becauseYouLike = await repository.getCarouselSection(
-        CarouselSection.becauseYouLike,
+    test('recommendationsFor a movie seed hits /movie/{id}/recommendations',
+        () async {
+      final result = await repository.recommendationsFor(
+        const MediaKey(type: MediaType.movie, tmdbId: 42),
       );
 
-      expect(adapter.requestedPaths, isEmpty);
-      expect((forYou as Success<List<MediaItem>>).value, isEmpty);
-      expect((becauseYouLike as Success<List<MediaItem>>).value, isEmpty);
+      expect(adapter.requestedPaths, ['/movie/42/recommendations']);
+      expect(result, isA<Success<List<MediaItem>>>());
+    });
+
+    test('recommendationsFor a TV seed hits /tv/{id}/recommendations',
+        () async {
+      final result = await repository.recommendationsFor(
+        const MediaKey(type: MediaType.tvShow, tmdbId: 7),
+      );
+
+      expect(adapter.requestedPaths, ['/tv/7/recommendations']);
+      expect(result, isA<Success<List<MediaItem>>>());
     });
 
     test(

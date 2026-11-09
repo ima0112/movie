@@ -94,7 +94,7 @@ class TasteProfileBuilder {
       likedVibes = profile.likedVibes;
       yearFrom = profile.yearFrom;
     } else if (libraryEntries.length >= minInferredEntries) {
-      final affinity = _genreAffinity(libraryEntries);
+      final affinity = genreAffinityFrom(libraryEntries);
       likedGenres = {
         for (final entry in affinity.entries)
           if (entry.value > 0) entry.key,
@@ -111,7 +111,7 @@ class TasteProfileBuilder {
       existingVibes: likedVibes,
       likedGenres: likedGenres,
       vetoedGenres: vetoedGenres,
-      affinity: _genreAffinity(libraryEntries),
+      affinity: genreAffinityFrom(libraryEntries),
       mediaType: mediaType,
     );
     final watchedKeys = {
@@ -127,26 +127,6 @@ class TasteProfileBuilder {
       excludeWatched: true,
       watchedKeys: watchedKeys,
     );
-  }
-
-  /// Per-genre affinity from [entries]: +1 for each favorite or ≥4-star
-  /// watch touching that genre, -1 for each ≤2-star watch. An entry with
-  /// neither signal (unrated, or rated 3) contributes nothing. Purely a
-  /// ranking signal for [_completeVibes] — never read for anything else.
-  static Map<Genre, int> _genreAffinity(List<UserMediaEntry> entries) {
-    final affinity = <Genre, int>{};
-    for (final entry in entries) {
-      final rating = entry.rating;
-      final isBoost = entry.isFavorite || (rating != null && rating >= 4);
-      final isPenalty = rating != null && rating <= 2;
-      if (!isBoost && !isPenalty) continue;
-
-      final delta = isBoost ? 1 : -1;
-      for (final genre in entry.genres) {
-        affinity[genre] = (affinity[genre] ?? 0) + delta;
-      }
-    }
-    return affinity;
   }
 
   /// Deterministic (sorted by [Genre.id]) truncation — [TasteProfile]

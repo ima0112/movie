@@ -692,11 +692,11 @@ abstract class AppLocalizations {
   /// **'Popular this week'**
   String get carouselSectionPopularThisWeek;
 
-  /// B1's "Because you like [genre]" carousel header — shown as a static label today, with no genre actually interpolated in yet (docs/SCREENS.md B1).
+  /// B1's "Because you like X" carousel header (docs/SCREENS.md B1) — X is RecommendationBuilder's own deterministic seed title, a real UserMediaEntry.title, never a genre.
   ///
   /// In en, this message translates to:
-  /// **'Because you like…'**
-  String get carouselSectionBecauseYouLike;
+  /// **'Because you like {title}'**
+  String carouselSectionBecauseYouLike(String title);
 
   /// No description provided for @carouselSectionInTheaters.
   ///

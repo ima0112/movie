@@ -6,11 +6,13 @@ import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
+import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
+import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 
 /// A controllable stand-in for [SettingsRepository] — see
@@ -65,6 +67,10 @@ void main() {
     getIt.unregister<UserLibraryRepository>();
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
+    );
+    getIt.unregister<TasteProfileRepository>();
+    getIt.registerLazySingleton<TasteProfileRepository>(
+      InMemoryTasteProfileRepository.new,
     );
     getIt.unregister<OnboardingRepository>();
     getIt.registerLazySingleton<OnboardingRepository>(

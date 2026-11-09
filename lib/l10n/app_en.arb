@@ -286,9 +286,14 @@
 
   "carouselSectionForYou": "For You",
   "carouselSectionPopularThisWeek": "Popular this week",
-  "carouselSectionBecauseYouLike": "Because you like…",
+  "carouselSectionBecauseYouLike": "Because you like {title}",
   "@carouselSectionBecauseYouLike": {
-    "description": "B1's \"Because you like [genre]\" carousel header — shown as a static label today, with no genre actually interpolated in yet (docs/SCREENS.md B1)."
+    "description": "B1's \"Because you like X\" carousel header (docs/SCREENS.md B1) — X is RecommendationBuilder's own deterministic seed title, a real UserMediaEntry.title, never a genre.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   },
   "carouselSectionInTheaters": "In theaters",
   "carouselSectionTrending": "Trending",

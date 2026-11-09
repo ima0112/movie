@@ -5,8 +5,10 @@ import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/app/router.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
+import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
+import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 
@@ -18,13 +20,19 @@ import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart
 void main() {
   setUpAll(() {
     configureDependencies(fake.name);
-    // The real DriftUserLibraryRepository needs a native sqlite file via
-    // path_provider, which has no platform channel in `flutter test`'s
-    // host environment — swap in the fast, in-memory test double instead
-    // of exercising real (and here, unavailable) disk I/O.
+    // The real DriftUserLibraryRepository/DriftTasteProfileRepository
+    // need a native sqlite file via path_provider, which has no
+    // platform channel in `flutter test`'s host environment — swap in
+    // the fast, in-memory test doubles instead of exercising real (and
+    // here, unavailable) disk I/O. Back on Discover (pushed from here,
+    // popped back to), RecommendationsCubit resolves both.
     getIt.unregister<UserLibraryRepository>();
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
+    );
+    getIt.unregister<TasteProfileRepository>();
+    getIt.registerLazySingleton<TasteProfileRepository>(
+      InMemoryTasteProfileRepository.new,
     );
     // Same swap for OnboardingRepository — `isCompleted: true`
     // (the default) since this test isn't about the onboarding

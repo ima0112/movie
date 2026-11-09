@@ -144,7 +144,7 @@ What actually shipped, and where it diverges from the table above:
 | # | Feature | Detail |
 |---|---|---|
 | F1 | Discover (Home) | Three segments: **All** (default) / Movies / TV Shows. At the top, a **headerless hero**: up to 8 large snap cards (330×440, 3:4), each with a reason tag inside ("For you", "Trending", "In theaters", "New season", "Releases mm dd"). Below, standard carousels with a header and "See all". Pull-to-refresh. |
-| F1b | "For you" recommendations | In the All segment: a "For you" section and a "Because you like [genre]" section built with `/discover` from the taste profile (explicit + My List signals), excluding vetoed genres and anything already in My List. With no profile: hero shows trending titles and an **invitation card** with Pako ("Tell me your tastes" → My Tastes) instead of "For you". Domain service `RecommendationBuilder`. |
+| F1b | "For you"/"Because you like X" recommendations | **Built** (`recommendation-builder` branch), in **all 3 segments**, each filtered to that segment's type. "For you": `/discover` from a usable `TasteProfile` (genres + liked vibes' own genre/keyword rules, vetoes excluded), or — with no usable profile — the library's own positive-affinity genres (favorites/well-rated watches). "Because you like X": a deterministic library seed (favorite or ≥4★, most recently watched, id as the final tiebreak) fed into `/{type}/{id}/recommendations`. Either section hides itself entirely (no empty/generic carousel) with no signal, or below 6 results once posterless items and anything already in the library are excluded. Pure domain service `RecommendationBuilder` (`features/recommendations/domain/`); its own `RecommendationsCubit` loads/retries each section independently of `DiscoverCubit`'s 8 named carousels (CLAUDE.md rule 9) — see §5's own "Recommendations" entry for the full design and its reload triggers. |
 | F2 | Explore (search + genres + filters, a single tab) | A real search field up top; at rest, recents and genres as image tiles; while typing, `/search/multi` results with a type badge and client-side segment filtering. Filter sheet (type, genres, year, minimum rating, runtime/status, sort, hide watched) that feeds `/discover`; filters don't apply to text search and the UI says so. A single list screen with filters shown as chips for "See all", genre, and results. |
 | F3 | — | Merged into F2. |
 | F4 | Movie detail | Full-bleed poster fading to black, centered title and metadata, TMDB rating, tappable genres, Trailer button (opens YouTube via `url_launcher`; embedded player in v1.2), Favorite · Watch later · Watched action row, **"Where to watch" section** (subscription / rent / buy by region, logos, link to TMDB /watch, JustWatch attribution), synopsis, cast, director and writer, similar titles. |
@@ -324,6 +324,29 @@ First tap: movie or TV show? Then (`SurpriseCubit`, via
 
 The engine picks with some randomness among the top-5 scored so "Surprise me" doesn't repeat.
 
+### Recommendations ("For you" / "Because you like X", B1 F1b)
+
+Pure domain service `RecommendationBuilder` (`features/recommendations/domain/`) — not `MatchEngine` itself (that's built for resolving one N≥1 answer with per-vibe scoring, overkill for ranking a carousel by popularity), but it reuses two pieces `MatchEngine`/`TasteProfileBuilder` already had: `Vibe.genresFor`/`.keywordIdsFor` (the same genre/keyword resolution `MatchEngineImpl._filterForVibe` uses) and `genreAffinityFrom` (the same library-signal ranking `TasteProfileBuilder`'s inferred-profile case uses) — both promoted out of those classes' own private methods specifically so this wouldn't duplicate them.
+
+**"For you"**: a `DiscoverFilter` built from a usable `TasteProfile` (liked genres, plus every liked vibe's own `genresFor`/`keywordIdsFor` for the active segment's type, OR'd together within each group; vetoed genres become `withoutGenres`) — or, with no usable profile, the library's own positive-affinity genres (`genreAffinityFrom`, favorites/≥4★ watches boost, ≤2★ penalize). No signal at all (neither) → the section doesn't exist, never an empty or generic carousel.
+
+**"Because you like X"**: a deterministic seed from the library — favorite or rated ≥4, ranked by rating (a ratingless favorite counts as 5), then most recently watched, then `MediaKey.tmdbId` as a final tiebreak so the pick never depends on list order or randomness — fed into `/{movie|tv}/{id}/recommendations` (collaborative-filtering based, a closer fit for "people who liked this also liked…" than the genre/keyword `similar` already bundled into the detail call, and far cheaper than fetching that full detail just to read it). No favorite/≥4★ entry at all → hidden.
+
+Both sections: posterless items and anything already in the library (any flag, not just watched) are excluded client-side (TMDB has no such `/discover`/`/recommendations` parameter); below 6 results after that, the section hides rather than showing a half-empty carousel.
+
+**All 3 Discover segments** (not just All), each filtered to that segment's type — `DiscoverFilter.type`/the seed-candidate filter both take `MediaSegment.mediaType` directly; "All" (`null`) is passed straight through, since `MediaRepository.discover` already interleaves movie+tv for a `null` type on its own.
+
+**`RecommendationsCubit`** (`features/recommendations/presentation/cubit/`) — deliberately separate from `DiscoverCubit`: that Cubit fetches its 8 named carousels in one sequential loop, one `DiscoverLoaded` at the end, so a single failure fails the whole segment with no independent retry. These 2 sections need their own loading/error/retry per CLAUDE.md rule 9, so rather than reworking that loop, they get their own Cubit with two independent state slots (one per section) and their own `retry(slot)`.
+
+Reload triggers — exactly 3:
+1. Language/region change (`SettingsRepository.watch()`, same pattern `DiscoverCubit` already uses).
+2. Pull-to-refresh.
+3. Returning from a pushed detail screen (`RouteAware.didPopNext`, via `app/router.dart`'s `discoverRouteObserver`).
+
+Switching *bottom tabs* away and back does **not** reload — B1 lives under a `StatefulShellRoute.indexedStack`, which keeps the whole branch (and this Cubit) alive without rebuilding it, so there's no lifecycle event to hook into for that case; documented as a known, accepted gap rather than a fragile workaround (`docs/SCREENS.md` B1). A library change (new favorite, new rating) does **not** reload either — only the 3 triggers above do; the screen picks up the new signal next time one of them fires.
+
+None of the 3 triggers re-fetches over the network unless the *derived* request (the `DiscoverFilter` "For you" would send, or the seed key "Because you like X" would use) actually changed since the last fetch — comparing that cheap, local, no-network derivation is what keeps "reload on language change" and "reload on pull-to-refresh" both cheap when nothing relevant to either section changed.
+
 ---
 
 ## 6. Group Matcher (v1.1)
@@ -417,6 +440,8 @@ lib/
     match_engine/    pure domain: MatchQuery, MatchResult, MatchEngine, vibes, relaxation
     match_hub/       B3 hub sheet opened from the center tab-bar button
     suggestion/      Surprise me (E1/E2/E3)
+    recommendations/ RecommendationBuilder (domain) + RecommendationsCubit
+                     + the "For you"/"Because you like X" section widgets (B1 F1b)
     you/             F9b You tab
     settings/        F11
     debug/           dev-only design-system preview screen, not shipped

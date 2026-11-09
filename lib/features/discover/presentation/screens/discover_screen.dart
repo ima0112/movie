@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
+import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
+import '../../../../core/domain/repositories/taste_profile_repository.dart';
+import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_halo.dart';
 import '../../../../shared/widgets/media_segmented_control.dart';
+import '../../../match_engine/domain/vibe_catalog.dart';
+import '../../../recommendations/presentation/cubit/recommendations_cubit.dart';
 import '../cubit/discover_cubit.dart';
 import '../cubit/saved_ids_cubit.dart';
 import '../widgets/discover_content_area.dart';
@@ -24,7 +29,8 @@ import '../widgets/discover_top_bar.dart';
 /// comment — see, in particular, `DiscoverContentArea` (the only
 /// `BlocBuilder` on the whole screen), `DiscoverHero` /
 /// `DiscoverSectionCarousel` (their own `BlocSelector` per data slice),
-/// and `DiscoverHeroSaveButton` (its own `BlocSelector` per item id).
+/// `DiscoverHeroSaveButton` (its own `BlocSelector` per item id), and
+/// `RecommendationSectionView` (its own, for `RecommendationsCubit`).
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
 
@@ -38,6 +44,15 @@ class DiscoverScreen extends StatelessWidget {
                 ..loadDiscover(MediaSegment.all),
         ),
         BlocProvider(create: (_) => SavedIdsCubit()),
+        BlocProvider(
+          create: (_) => RecommendationsCubit(
+            getIt<MediaRepository>(),
+            getIt<UserLibraryRepository>(),
+            getIt<TasteProfileRepository>(),
+            getIt<SettingsRepository>(),
+            VibeCatalog.loadFromAssets(),
+          )..load(MediaSegment.all),
+        ),
       ],
       child: const _DiscoverView(),
     );
@@ -47,6 +62,11 @@ class DiscoverScreen extends StatelessWidget {
 /// Owns the one piece of screen-level state that isn't a Cubit: which
 /// segment is selected. See `DiscoverSegmentedControl`'s doc comment for
 /// why this is local `setState` rather than `DiscoverCubit` state.
+///
+/// [RouteAware] + `app/router.dart`'s own `discoverRouteObserver`:
+/// `RecommendationsCubit.refresh()`'s own "returning from a pushed
+/// detail screen" trigger (`docs/SCREENS.md` B1) — see that Cubit's own
+/// doc comment for which 3 triggers exist and which don't.
 class _DiscoverView extends StatefulWidget {
   const _DiscoverView();
 
@@ -54,13 +74,31 @@ class _DiscoverView extends StatefulWidget {
   State<_DiscoverView> createState() => _DiscoverViewState();
 }
 
-class _DiscoverViewState extends State<_DiscoverView> {
+class _DiscoverViewState extends State<_DiscoverView> with RouteAware {
   MediaSegment _segment = MediaSegment.all;
 
   void _onSegmentSelected(MediaSegment segment) {
     if (segment == _segment) return;
     setState(() => _segment = segment);
     context.read<DiscoverCubit>().loadDiscover(segment);
+    context.read<RecommendationsCubit>().load(segment);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    discoverRouteObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  }
+
+  @override
+  void didPopNext() {
+    context.read<RecommendationsCubit>().refresh();
+  }
+
+  @override
+  void dispose() {
+    discoverRouteObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override
