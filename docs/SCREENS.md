@@ -141,7 +141,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 
 ### C6. Settings (pushed)
 - Access: gear icon in B5. Back button, no bottom bar.
-- Elements (grouped list; 52 px row, 16 px white label, 15 px gray value, chevron; no icons or group backgrounds; 13 px gray group header):
+- Elements (grouped list: each group is a `surfaceRaised` card (radius 16) with hairline dividers; 56 px row, 16 px white label, gray value, chevron; no icons; small spaced-out uppercase gray group header):
   - Preferences: Language ("Español" → H5) — one setting for both the app's own interface and TMDB's content, not two separate preferences — Region ("Spain" → H6, with search). No Theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` for why Family mode specifically was dropped rather than built partially.
   - Data: "Export My List" (JSON → the system share sheet); "Delete My List", "Delete My Tastes" in red → I1 (the dialog states how many items it deletes).
   - About: Version (long-press copies the build number), Source code (GitHub, external link), Licenses (`showLicensePage`), TMDB attribution block with the official logo (the one exception to using a color that isn't ours) and 11 px text.

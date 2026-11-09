@@ -34,9 +34,9 @@ class _SettingsAboutSectionState extends State<SettingsAboutSection> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Column(
+    return SettingsGroup(
+      title: l10n.settingsAboutHeader,
       children: [
-        SettingsGroupHeader(title: l10n.settingsAboutHeader),
         FutureBuilder<PackageInfo>(
           future: _packageInfo,
           builder: (context, snapshot) {

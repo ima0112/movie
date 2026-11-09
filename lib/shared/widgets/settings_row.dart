@@ -5,10 +5,10 @@ import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 
-/// One row of C6 (Settings)'s grouped list — `docs/SCREENS.md` C6: "52 px
-/// row, 16 px white label, 15 px gray value, chevron; no icons or group
-/// backgrounds". Shared by every C6 section (Data, About, and — once
-/// built — Preferences), not feature-specific.
+/// One row of C6 (Settings)'s grouped list — `docs/SCREENS.md` C6: 56 px
+/// row, 16 px white label, gray value, chevron; no icons. Always lives
+/// inside a [SettingsGroup]. Shared by every C6 section, not
+/// feature-specific.
 class SettingsRow extends StatelessWidget {
   const SettingsRow({
     super.key,
@@ -31,15 +31,17 @@ class SettingsRow extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
+  static const double _height = 56;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       onLongPress: onLongPress,
       child: SizedBox(
-        height: 52,
+        height: _height,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Row(
             children: [
               Expanded(
@@ -69,7 +71,7 @@ class SettingsRow extends StatelessWidget {
               if (showChevron)
                 const Icon(
                   AppIcons.chevronRight,
-                  size: 16,
+                  size: 20,
                   color: AppColors.inkMuted,
                 ),
             ],
@@ -80,11 +82,16 @@ class SettingsRow extends StatelessWidget {
   }
 }
 
-/// C6's "13 px gray group header" — e.g. "Preferences", "Data", "About".
-class SettingsGroupHeader extends StatelessWidget {
-  const SettingsGroupHeader({super.key, required this.title});
+/// One C6 group: a small spaced-out gray header over a rounded
+/// `surfaceRaised` card holding [children] (usually [SettingsRow]s),
+/// separated by hairline dividers — the "Ajustes" design.
+class SettingsGroup extends StatelessWidget {
+  const SettingsGroup({super.key, required this.title, required this.children});
 
   final String title;
+  final List<Widget> children;
+
+  static const double _headerSpacing = 0.6;
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +102,39 @@ class SettingsGroupHeader extends StatelessWidget {
         AppSpacing.xl,
         AppSpacing.sm,
       ),
-      child: Text(
-        title,
-        style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Text(
+              title.toUpperCase(),
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.inkMuted,
+                letterSpacing: _headerSpacing,
+              ),
+            ),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+            child: ColoredBox(
+              color: AppColors.surfaceRaised,
+              child: Column(
+                children: [
+                  for (var i = 0; i < children.length; i++) ...[
+                    if (i > 0)
+                      const Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: AppColors.line,
+                      ),
+                    children[i],
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

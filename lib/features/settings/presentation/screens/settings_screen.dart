@@ -49,11 +49,12 @@ class _SettingsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        title: Text(context.l10n.settingsTitle, style: AppTextStyles.h2),
+        title: Text(context.l10n.settingsTitle, style: AppTextStyles.h3),
       ),
       body: SafeArea(
         child: ListView(
