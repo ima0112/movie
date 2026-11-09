@@ -57,7 +57,7 @@ void main() {
       expect(find.text('Biography in English'), findsOneWidget);
     });
 
-    testWidgets('starts folded to 5 lines and expands on "Read more"', (
+    testWidgets('starts folded to 3 lines and expands on "Read more"', (
       tester,
     ) async {
       const bio = 'A short bio.';
@@ -75,7 +75,7 @@ void main() {
       );
 
       final textWidget = tester.widget<Text>(find.text(bio));
-      expect(textWidget.maxLines, 5);
+      expect(textWidget.maxLines, 3);
       expect(find.text('Read more'), findsOneWidget);
 
       await tester.tap(find.text('Read more'));

@@ -29,26 +29,27 @@ void main() {
       expect(find.text('Acting'), findsOneWidget);
     });
 
-    testWidgets('joins the age label and place of birth with " · "', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: PersonDetailHeader(
-              person: _person,
-              ageLabel: '28 years old',
-              placeOfBirth: 'New York City, New York, USA',
+    testWidgets(
+      'joins the department, age label and place of birth with " · "',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: PersonDetailHeader(
+                person: _person,
+                ageLabel: '28 years old',
+                placeOfBirth: 'New York City, New York, USA',
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      expect(
-        find.text('28 years old · New York City, New York, USA'),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.text('Acting · 28 years old · New York City, New York, USA'),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('shows just the age label when place of birth is '
         'unknown', (tester) async {
@@ -64,7 +65,32 @@ void main() {
         ),
       );
 
-      expect(find.text('28 years old'), findsOneWidget);
+      expect(find.text('Acting · 28 years old'), findsOneWidget);
+    });
+
+    testWidgets('survives a small device at 200% text scale with a long '
+        'details line', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(320, 568),
+              textScaler: TextScaler.linear(2),
+            ),
+            child: const Scaffold(
+              body: SingleChildScrollView(
+                child: PersonDetailHeader(
+                  person: _person,
+                  ageLabel: '28 years old',
+                  placeOfBirth: 'New York City, New York, United States',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
     });
   });
 }
