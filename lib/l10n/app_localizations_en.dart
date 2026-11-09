@@ -271,13 +271,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingTastesSavedSnackbar => 'Tastes saved · Edit in You';
 
   @override
-  String get onboardingGenreStep2Label => 'Step 2 of 3';
-
-  @override
   String get onboardingGenreStep3Label => 'Step 3 of 3';
 
   @override
-  String get onboardingGenreStep2Headline => 'What genres do you like?';
+  String get onboardingLikedEyebrow => 'Make it yours';
+
+  @override
+  String get onboardingLikedHeadline => 'What do you like?';
+
+  @override
+  String get onboardingLikedHighlight => 'like';
+
+  @override
+  String get onboardingLikedBody =>
+      'Pick a few genres to personalize Discover. You can fine-tune later in You › My Tastes.';
 
   @override
   String get onboardingGenreStep3Headline => 'And which ones never?';

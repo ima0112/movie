@@ -242,9 +242,14 @@
     "description": "A2's exit snackbar when finish() succeeds and at least one genre was picked (docs/SCREENS.md A2). \"You\" here is the same word as navTabYou — keep them matching."
   },
 
-  "onboardingGenreStep2Label": "Step 2 of 3",
   "onboardingGenreStep3Label": "Step 3 of 3",
-  "onboardingGenreStep2Headline": "What genres do you like?",
+  "onboardingLikedEyebrow": "Make it yours",
+  "onboardingLikedHeadline": "What do you like?",
+  "onboardingLikedHighlight": "like",
+  "@onboardingLikedHighlight": {
+    "description": "The word inside onboardingLikedHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact word as a substring of its own translated headline."
+  },
+  "onboardingLikedBody": "Pick a few genres to personalize Discover. You can fine-tune later in You › My Tastes.",
   "onboardingGenreStep3Headline": "And which ones never?",
   "onboardingGenreStep3HighlightWord": "never",
   "@onboardingGenreStep3HighlightWord": {

@@ -578,23 +578,35 @@ abstract class AppLocalizations {
   /// **'Tastes saved · Edit in You'**
   String get onboardingTastesSavedSnackbar;
 
-  /// No description provided for @onboardingGenreStep2Label.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 2 of 3'**
-  String get onboardingGenreStep2Label;
-
   /// No description provided for @onboardingGenreStep3Label.
   ///
   /// In en, this message translates to:
   /// **'Step 3 of 3'**
   String get onboardingGenreStep3Label;
 
-  /// No description provided for @onboardingGenreStep2Headline.
+  /// No description provided for @onboardingLikedEyebrow.
   ///
   /// In en, this message translates to:
-  /// **'What genres do you like?'**
-  String get onboardingGenreStep2Headline;
+  /// **'Make it yours'**
+  String get onboardingLikedEyebrow;
+
+  /// No description provided for @onboardingLikedHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you like?'**
+  String get onboardingLikedHeadline;
+
+  /// The word inside onboardingLikedHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact word as a substring of its own translated headline.
+  ///
+  /// In en, this message translates to:
+  /// **'like'**
+  String get onboardingLikedHighlight;
+
+  /// No description provided for @onboardingLikedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a few genres to personalize Discover. You can fine-tune later in You › My Tastes.'**
+  String get onboardingLikedBody;
 
   /// No description provided for @onboardingGenreStep3Headline.
   ///
