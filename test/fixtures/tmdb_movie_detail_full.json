@@ -115,9 +115,9 @@
       },
       "ES": {
         "link": "https://www.themoviedb.org/movie/693134-dune-part-two/watch?locale=ES",
-        "flatrate": [{ "provider_name": "Movistar Plus+" }],
-        "rent": [{ "provider_name": "Apple TV" }],
-        "buy": [{ "provider_name": "Apple TV" }]
+        "flatrate": [{ "provider_name": "Movistar Plus+", "logo_path": "/movistar.png" }],
+        "rent": [{ "provider_name": "Apple TV", "logo_path": "/apple.png" }],
+        "buy": [{ "provider_name": "Apple TV", "logo_path": "/apple.png" }]
       }
     }
   }

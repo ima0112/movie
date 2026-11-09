@@ -117,6 +117,18 @@ void main() {
       );
     });
 
+    test(
+      'maps each provider logo_path to a w92 logo URL, by provider name',
+      () {
+        final detail = load('tmdb_movie_detail_full.json');
+
+        expect(detail.watchProviders.logos, {
+          'Movistar Plus+': 'https://image.tmdb.org/t/p/w92/movistar.png',
+          'Apple TV': 'https://image.tmdb.org/t/p/w92/apple.png',
+        });
+      },
+    );
+
     test('maps backdrop_path to a w780 backdrop URL', () {
       final detail = load('tmdb_movie_detail_full.json');
 

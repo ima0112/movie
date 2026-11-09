@@ -55,7 +55,11 @@ MovieDetail mediaDetailFromMovieDto(
     imdbId: dto.imdbId,
     tagline: _nullIfEmpty(dto.tagline),
     status: dto.status,
-    watchProviders: _watchProvidersFrom(dto.watchProviders, region),
+    watchProviders: _watchProvidersFrom(
+      dto.watchProviders,
+      region,
+      imagesConfig,
+    ),
     backdropUrl: _backdropUrl(dto.backdropPath, imagesConfig),
     runtimeMinutes: dto.runtime,
     releaseDate: parseTmdbDate(dto.releaseDate),
@@ -95,7 +99,11 @@ TvShowDetail mediaDetailFromTvDto(
     imdbId: null, // TMDB's TV detail doesn't carry an imdb_id directly.
     tagline: null, // ...nor a tagline.
     status: dto.status,
-    watchProviders: _watchProvidersFrom(dto.watchProviders, region),
+    watchProviders: _watchProvidersFrom(
+      dto.watchProviders,
+      region,
+      imagesConfig,
+    ),
     backdropUrl: _backdropUrl(dto.backdropPath, imagesConfig),
     creators: dto.createdBy
         .map(
@@ -206,15 +214,36 @@ List<Video> _videosFrom(List<TmdbVideoDto> videos) {
       .toList();
 }
 
-WatchProviders _watchProvidersFrom(TmdbWatchProvidersDto dto, String region) {
+WatchProviders _watchProvidersFrom(
+  TmdbWatchProvidersDto dto,
+  String region,
+  TmdbImagesConfig imagesConfig,
+) {
   final forRegion = dto.results[region];
   if (forRegion == null) return WatchProviders.empty;
+
+  // `w92` is in TMDB's poster-size list and is also one of its logo sizes,
+  // so the poster list validates it — no separate logo-size config needed.
+  final logos = <String, String>{
+    for (final p in [
+      ...forRegion.flatrate,
+      ...forRegion.rent,
+      ...forRegion.buy,
+    ])
+      p.providerName: ?buildTmdbImageUrl(
+        config: imagesConfig,
+        kind: TmdbImageKind.poster,
+        path: p.logoPath,
+        size: 'w92',
+      ),
+  };
 
   return WatchProviders(
     flatrate: forRegion.flatrate.map((p) => p.providerName).toList(),
     rent: forRegion.rent.map((p) => p.providerName).toList(),
     buy: forRegion.buy.map((p) => p.providerName).toList(),
     link: forRegion.link,
+    logos: logos,
   );
 }
 
