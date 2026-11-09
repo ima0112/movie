@@ -146,6 +146,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get vibeFantasy => 'Fantasía';
 
   @override
+  String get tvStatusCardLabel => 'Estado';
+
+  @override
   String get tvStatusAiring => 'En emisión';
 
   @override
@@ -820,6 +823,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get mediaSimilarMoviesTitle => 'Películas similares';
+
+  @override
+  String get mediaSimilarTvTitle => 'Series similares';
 
   @override
   String get mediaSimilarTitle => 'Similares';

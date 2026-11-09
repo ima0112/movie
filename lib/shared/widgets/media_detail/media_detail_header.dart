@@ -10,7 +10,6 @@ import '../scrim_share_button.dart';
 /// backdrop, or the poster when there isn't one) that fades into the page,
 /// the back button on top, and over the fade the left-aligned title with
 /// the italic tagline under it ("Detalle" design). D2 puts its "Airing" /
-/// "Ended" pill next to the title via [statusPill].
 ///
 /// Year, genres, rating and the action toggles live in the info card below
 /// (`media_detail_info_card.dart`), not here.
@@ -20,7 +19,6 @@ class MediaDetailHeader extends StatelessWidget {
     required this.imageUrl,
     required this.title,
     this.tagline,
-    this.statusPill,
     this.onShare,
   });
 
@@ -29,10 +27,6 @@ class MediaDetailHeader extends StatelessWidget {
   final String? imageUrl;
   final String title;
   final String? tagline;
-
-  /// D2's "Airing"/"Ended" pill next to the title. `null` renders nothing
-  /// extra — D1's own shape.
-  final Widget? statusPill;
 
   /// Share button, top right. `null` shows none.
   final VoidCallback? onShare;
@@ -83,15 +77,7 @@ class MediaDetailHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                statusPill == null
-                    ? titleText
-                    : Row(
-                        children: [
-                          Flexible(child: titleText),
-                          const SizedBox(width: AppSpacing.sm),
-                          statusPill!,
-                        ],
-                      ),
+                titleText,
                 if (tagline != null && tagline.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.xs),
                   Text(

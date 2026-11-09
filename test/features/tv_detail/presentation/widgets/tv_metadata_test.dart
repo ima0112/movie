@@ -4,7 +4,6 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/tv_metadata.dart';
-import 'package:movies/l10n/app_localizations_en.dart';
 
 TvShowDetail _show({
   DateTime? firstAirDate,
@@ -42,74 +41,35 @@ TvShowDetail _show({
   );
 }
 
-const _season1 = SeasonSummary(
-  seasonNumber: 1,
-  name: 'Season 1',
-  episodeCount: 8,
-  posterPath: null,
-  airDate: null,
-);
-const _season2 = SeasonSummary(
-  seasonNumber: 2,
-  name: 'Season 2',
-  episodeCount: 10,
-  posterPath: null,
-  airDate: null,
-);
-
 void main() {
-  final l10n = AppLocalizationsEn();
-
-  group('tvMetadataLine', () {
-    test('a multi-year, multi-season show joins year range, seasons, '
-        'episodes, and certification', () {
-      final line = tvMetadataLine(
-        _show(
-          firstAirDate: DateTime(2022, 6, 23),
-          lastAirDate: DateTime(2024, 6, 27),
-          seasons: [_season1, _season2],
-          numberOfEpisodes: 18,
-          certification: 'TV-MA',
+  group('tvYearRange', () {
+    test('a multi-year show shows first–last', () {
+      expect(
+        tvYearRange(
+          _show(
+            firstAirDate: DateTime(2008, 1, 20),
+            lastAirDate: DateTime(2013, 9, 29),
+          ),
         ),
-        l10n,
+        '2008–2013',
       );
-
-      expect(line, '2022–2024 · 2 seasons · 18 episodes · TV-MA');
     });
 
-    test('collapses to a single year when first and last air dates fall '
-        'in the same year', () {
-      final line = tvMetadataLine(
-        _show(
-          firstAirDate: DateTime(2024, 1, 1),
-          lastAirDate: DateTime(2024, 12, 1),
-          seasons: [_season1],
-          numberOfEpisodes: 8,
+    test('a single year, or an unknown last year, shows just the first', () {
+      expect(
+        tvYearRange(
+          _show(
+            firstAirDate: DateTime(2024, 1, 1),
+            lastAirDate: DateTime(2024, 12, 1),
+          ),
         ),
-        l10n,
+        '2024',
       );
-
-      expect(line, startsWith('2024 ·'));
+      expect(tvYearRange(_show(firstAirDate: DateTime(2024, 1, 1))), '2024');
     });
 
-    test('singular "season"/"episode" for a one-of-each show', () {
-      final line = tvMetadataLine(
-        _show(
-          firstAirDate: DateTime(2024, 1, 1),
-          seasons: [_season1],
-          numberOfEpisodes: 1,
-        ),
-        l10n,
-      );
-
-      expect(line, contains('1 season ·'));
-      expect(line, contains('1 episode'));
-    });
-
-    test('omits whatever field has no data, with no stray separators', () {
-      final line = tvMetadataLine(_show(), l10n);
-
-      expect(line, '');
+    test('no first air date: null', () {
+      expect(tvYearRange(_show()), isNull);
     });
   });
 }

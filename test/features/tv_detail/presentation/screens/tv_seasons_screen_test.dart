@@ -5,7 +5,6 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/tv_detail/presentation/screens/tv_seasons_screen.dart';
-import 'package:movies/features/tv_detail/presentation/widgets/tv_seasons_link_card.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
 const _s1 = SeasonSummary(
@@ -184,31 +183,6 @@ void main() {
       );
 
       expect(tester.takeException(), isNull);
-    });
-  });
-
-  group('TvSeasonsLinkCard', () {
-    testWidgets('shows "Seasons" and "5 (62 ep.)", and tapping calls onTap', (
-      tester,
-    ) async {
-      var taps = 0;
-      await tester.pumpWidget(
-        _app(
-          Scaffold(
-            body: TvSeasonsLinkCard(
-              seasonCount: 5,
-              episodeCount: 62,
-              onTap: () => taps++,
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Seasons'), findsOneWidget);
-      expect(find.text('5 (62 ep.)'), findsOneWidget);
-
-      await tester.tap(find.text('5 (62 ep.)'));
-      expect(taps, 1);
     });
   });
 }

@@ -1,48 +1,31 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
-import '../../../../core/domain/entities/country.dart';
-import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
-import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../../../core/launch/launch_external_link.dart';
-import '../../../../core/launch/media_share.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/locale_names.dart';
-import '../../../../shared/widgets/media_detail/media_cast_row.dart';
-import '../../../../shared/widgets/tmdb_footer.dart';
-import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
-import '../../../../shared/widgets/media_detail/media_detail_header.dart';
-import '../../../../shared/widgets/media_detail/media_similar_section.dart';
-import '../../../../shared/widgets/media_detail/media_synopsis_section.dart';
-import '../../../../shared/widgets/media_detail/where_to_watch_section.dart';
-import '../../../../shared/widgets/region_sheet.dart';
+import '../../../../shared/widgets/media_detail/media_detail_scroll_view.dart';
+import '../../../../shared/widgets/media_detail/media_stat_cards.dart';
 import '../cubit/tv_detail_cubit.dart';
 import 'tv_creators_section.dart';
 import 'tv_metadata.dart';
-import 'tv_seasons_link_card.dart';
-import 'tv_status_pill.dart';
+import 'tv_status.dart';
 
-/// D2 once `TvDetailCubit` has loaded — assembles the shared, generic
-/// `media_detail` widgets exactly like `MovieDetailContent` (D1), plus
-/// D2's own additions: a status pill, "Created by", and "Seasons" →
-/// H4 (`docs/SCREENS.md` D2).
+/// D2 once `TvDetailCubit` has loaded: hands `MediaDetailScrollView` (the
+/// assembly D1 and D2 share) the show's own values — the air years and
+/// country, the language chip, the Status / Seasons cards (Seasons → D2b)
+/// and "Created by" between the cast and the similar shows
+/// (`docs/SCREENS.md` D2).
 ///
-/// [detail] arrives already loaded and already narrowed to
-/// [TvShowDetail] — same "only this content widget reads the loaded
-/// state" discipline as D1 (CLAUDE.md rule 9): `TvDetailScreen`'s own
-/// top-level `BlocBuilder` is the only place `TvDetailCubit`'s state is
-/// read at all.
+/// [detail] arrives already loaded and narrowed to [TvShowDetail] — the only
+/// place that reads `TvDetailCubit`'s state at all is
+/// `tv_detail_screen.dart`'s top-level `BlocBuilder` (CLAUDE.md rule 9).
 class TvDetailContent extends StatelessWidget {
   const TvDetailContent({
     super.key,
@@ -61,145 +44,51 @@ class TvDetailContent extends StatelessWidget {
   /// `null` = the saved region (see `*DetailLoaded.regionCode`).
   final String? regionCode;
 
-  void _scrollToSimilar() {
-    final similarContext = similarSectionKey.currentContext;
-    if (similarContext != null) {
-      Scrollable.ensureVisible(
-        similarContext,
-        duration: const Duration(milliseconds: 300),
-      );
-    }
-  }
-
-  void _openFullCast(BuildContext context) => unawaited(
-    context.push(
-      AppRoutes.fullCast,
-      extra: FullCastRouteArgs(
-        title: detail.item.title,
-        cast: detail.cast,
-        crew: detail.crew,
+  /// D2's Status and Seasons cards; Seasons is the tappable one (→ D2b) and
+  /// only exists when the show has regular seasons.
+  List<MediaStat> _stats(BuildContext context) {
+    final l10n = context.l10n;
+    final seasonCount = detail.seasons.where((s) => s.seasonNumber != 0).length;
+    return [
+      MediaStat(
+        label: l10n.tvStatusCardLabel,
+        value: tvStatusLabel(detail.status, l10n),
       ),
-    ),
-  );
-
-  /// The country picked on this screen, else the saved one.
-  String get _effectiveRegion =>
-      regionCode ?? getIt<SettingsRepository>().current.regionCode;
-
-  void _openRegionSheet(BuildContext context) {
-    final cubit = context.read<TvDetailCubit>();
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => RegionSheet(
-        selectedRegionCode: _effectiveRegion,
-        // Only this screen: the saved region stays as it was.
-        onSelected: (code) => unawaited(cubit.setRegion(mediaKey, code)),
-      ),
-    );
+      if (seasonCount > 0)
+        MediaStat(
+          label: l10n.tvSeasonsLinkLabel,
+          value: l10n.tvSeasonsLinkValue(seasonCount, detail.numberOfEpisodes),
+          onTap: () => context.push(
+            AppRoutes.tvSeasons,
+            extra: TvSeasonsRouteArgs(detail: detail),
+          ),
+        ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final userLibraryRepository = getIt<UserLibraryRepository>();
-    return CustomScrollView(
-      controller: scrollController,
-      slivers: [
-        SliverToBoxAdapter(
-          child: MediaDetailHeader(
-            imageUrl: detail.backdropUrl ?? detail.item.posterUrl,
-            title: detail.item.title,
-            tagline: detail.tagline,
-            statusPill: TvStatusPill(status: detail.status),
-            onShare: () => unawaited(
-              shareMedia(context, title: detail.item.title, key: mediaKey),
-            ),
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl,
-            AppSpacing.xl,
-            AppSpacing.xl,
-            0,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: MediaDetailActionRow(
-              mediaKey: mediaKey,
-              userLibraryRepository: userLibraryRepository,
-              mediaDetail: detail,
-              metaPrefix: [
-                tvMetadataLine(detail, context.l10n),
-                if (detail.countryCodes.isNotEmpty)
-                  countryDisplayName(context, detail.countryCodes.first),
-              ].where((part) => part.isNotEmpty).join(' · '),
-              extraChips: [
-                if (detail.originalLanguage?.trim().isNotEmpty ?? false)
-                  languageDisplayName(context, detail.originalLanguage!),
-              ],
-              onGenreTap: (genre) => context.push(
-                AppRoutes.filteredList,
-                extra: FilteredListRouteArgs(
-                  filter: DiscoverFilter(
-                    type: MediaType.tvShow,
-                    withGenres: {genre},
-                  ),
-                  title: genre.localizedName(context.l10n),
-                ),
-              ),
-              onPlayTrailer: (trailer) =>
-                  unawaited(launchYoutubeTrailer(context, trailer.key)),
-              onSeeSimilar: _scrollToSimilar,
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: TvSeasonsLinkCard(
-            seasonCount: detail.seasons
-                .where((s) => s.seasonNumber != 0)
-                .length,
-            episodeCount: detail.numberOfEpisodes,
-            onTap: () => context.push(
-              AppRoutes.tvSeasons,
-              extra: TvSeasonsRouteArgs(detail: detail),
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: WhereToWatchSection(
-            providers: detail.watchProviders,
-            regionName: countryName(_effectiveRegion),
-            onRegionTap: () => _openRegionSheet(context),
-            onProviderTap: (link) =>
-                unawaited(launchExternalLink(context, link)),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: MediaSynopsisSection(overview: detail.overview),
-        ),
-        SliverToBoxAdapter(
-          child: MediaCastRow(
-            cast: detail.cast,
-            crew: detail.crew,
-            onPersonTap: (person) => context.pushPersonDetail(person.id),
-            onSeeFullCastTap: () => _openFullCast(context),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: TvCreatorsSection(
-            creators: detail.creators,
-            onPersonTap: (person) => context.pushPersonDetail(person.id),
-          ),
-        ),
-        SliverToBoxAdapter(
-          key: similarSectionKey,
-          child: MediaSimilarSection(
-            similar: detail.similar,
-            onItemTap: (item) => context.pushMediaDetail(item.key),
-          ),
-        ),
-        const SliverToBoxAdapter(child: TmdbFooter()),
+    final language = detail.originalLanguage;
+    return MediaDetailScrollView(
+      detail: detail,
+      mediaKey: mediaKey,
+      scrollController: scrollController,
+      similarSectionKey: similarSectionKey,
+      userLibraryRepository: getIt<UserLibraryRepository>(),
+      regionCode: regionCode ?? getIt<SettingsRepository>().current.regionCode,
+      onRegionSelected: (code) =>
+          context.read<TvDetailCubit>().setRegion(mediaKey, code),
+      metaPrefix: tvMetaPrefix(context, detail),
+      extraChips: [
+        if (language != null && language.trim().isNotEmpty)
+          languageDisplayName(context, language),
       ],
+      stats: _stats(context),
+      afterCast: TvCreatorsSection(
+        creators: detail.creators,
+        onPersonTap: (person) => context.pushPersonDetail(person.id),
+      ),
+      similarTitle: context.l10n.mediaSimilarTvTitle,
     );
   }
 }

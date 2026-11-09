@@ -90,17 +90,21 @@
   "vibeMusical": "Musical",
   "vibeFantasy": "Fantasy",
 
+  "tvStatusCardLabel": "Status",
+  "@tvStatusCardLabel": {
+    "description": "D2's Status stat card label above Airing / Ended / Cancelled (docs/SCREENS.md D2)."
+  },
   "tvStatusAiring": "Airing",
   "@tvStatusAiring": {
-    "description": "D2's status pill, and DiscoverTvStatus.airing in H8's filter/the TV status toggle."
+    "description": "D2's Status card, and DiscoverTvStatus.airing in H8's filter/the TV status toggle."
   },
   "tvStatusEnded": "Ended",
   "@tvStatusEnded": {
-    "description": "D2's status pill, and DiscoverTvStatus.ended in H8's filter/the TV status toggle."
+    "description": "D2's Status card, and DiscoverTvStatus.ended in H8's filter/the TV status toggle."
   },
   "tvStatusCancelled": "Cancelled",
   "@tvStatusCancelled": {
-    "description": "D2's status pill only — TvStatusPill's own raw-TMDB-string branch for \"Canceled\"; DiscoverTvStatus (the H8 filter enum) has no cancelled value."
+    "description": "D2's Status card only — the raw-TMDB-string branch for \"Canceled\"; DiscoverTvStatus (the H8 filter enum) has no cancelled value."
   },
   "quizFinishedToggleFinished": "Finished",
   "@quizFinishedToggleFinished": {
@@ -779,6 +783,7 @@
   "fullCastSearchHint": "Search cast and crew",
 
   "mediaSimilarMoviesTitle": "Similar movies",
+  "mediaSimilarTvTitle": "Similar TV shows",
   "mediaSimilarTitle": "Similar",
   "@mediaSimilarTitle": {
     "description": "D1/D2's own \"Similar\" carousel header (docs/SCREENS.md D1)."
