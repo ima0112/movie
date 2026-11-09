@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Artwork for the first onboarding slide's phone mock (a mini Discover):
+     the hero card and two poster rows, as gradient placeholders. No text:
+     labels are widgets so they stay localized. Frame: 244x634. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="244" height="634" viewBox="0 0 244 634">
+<defs><linearGradient id="hero" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#6A4624"/><stop offset="0.5" stop-color="#2C1B12"/><stop offset="1" stop-color="#101014"/></linearGradient><linearGradient id="p0" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#2F4A6B"/><stop offset="1" stop-color="#16202E"/></linearGradient><linearGradient id="p1" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#6B2F3A"/><stop offset="1" stop-color="#2A1218"/></linearGradient><linearGradient id="p2" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#2F6B58"/><stop offset="1" stop-color="#12261F"/></linearGradient><linearGradient id="p3" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#5B4A8A"/><stop offset="1" stop-color="#1D1830"/></linearGradient><linearGradient id="p4" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#6B5A2F"/><stop offset="1" stop-color="#2A2210"/></linearGradient><linearGradient id="p5" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#3A3A6B"/><stop offset="1" stop-color="#14142A"/></linearGradient></defs>
+<rect x="16" y="94" width="212" height="150" rx="14" fill="url(#hero)"/>
+<rect x="16" y="286" width="64" height="96" rx="8" fill="url(#p0)"/>
+<rect x="88" y="286" width="64" height="96" rx="8" fill="url(#p1)"/>
+<rect x="160" y="286" width="64" height="96" rx="8" fill="url(#p2)"/>
+<rect x="16" y="424" width="64" height="96" rx="8" fill="url(#p3)"/>
+<rect x="88" y="424" width="64" height="96" rx="8" fill="url(#p4)"/>
+<rect x="160" y="424" width="64" height="96" rx="8" fill="url(#p5)"/>
+</svg>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Artwork for the second onboarding slide's phone mock (a mini Surprise-me
+     result): the teal backdrop and its fade to the app's surface color.
+     No text: labels and buttons are widgets so they stay localized.
+     Frame: 244x634. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="244" height="634" viewBox="0 0 244 634">
+<defs>
+<linearGradient id="backdrop" x1="0.33" y1="0" x2="0.67" y2="1"><stop offset="0" stop-color="#2F5A6B"/><stop offset="0.55" stop-color="#12222A"/><stop offset="1" stop-color="#241A1C"/></linearGradient>
+<linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B0B0D" stop-opacity="0.3"/><stop offset="0.3" stop-color="#0B0B0D" stop-opacity="0"/><stop offset="1" stop-color="#0B0B0D"/></linearGradient>
+</defs>
+<rect x="0" y="0" width="244" height="330" fill="url(#backdrop)"/>
+<rect x="0" y="0" width="244" height="330" fill="url(#fade)"/>
+</svg>

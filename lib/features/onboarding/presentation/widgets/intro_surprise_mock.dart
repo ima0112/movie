@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
-import 'intro_mock_palette.dart';
 
 /// The second slide's mini Surprise-me result, drawn inside the phone
 /// frame: a backdrop that fades to black, a "based on your tastes" tag,
@@ -13,7 +13,6 @@ import 'intro_mock_palette.dart';
 class IntroSurpriseMock extends StatelessWidget {
   const IntroSurpriseMock({super.key});
 
-  static const double _backdropHeight = 330;
   static const double _buttonHeight = 40;
 
   @override
@@ -21,33 +20,11 @@ class IntroSurpriseMock extends StatelessWidget {
     final l10n = context.l10n;
     return Stack(
       children: [
-        const Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          height: _backdropHeight,
-          child: DecoratedBox(
-            decoration: BoxDecoration(gradient: IntroMockPalette.backdropTeal),
-          ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          height: _backdropHeight,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: const [0, 0.3, 1],
-                colors: [
-                  AppColors.surface.withValues(alpha: 0.3),
-                  AppColors.surface.withValues(alpha: 0),
-                  AppColors.surface,
-                ],
-              ),
-            ),
+        // Backdrop and its fade to black, as artwork (no text).
+        Positioned.fill(
+          child: SvgPicture.asset(
+            'assets/illustrations/onboarding/intro_surprise.svg', // l10n-exempt: asset-path
+            fit: BoxFit.fill,
           ),
         ),
         Positioned(

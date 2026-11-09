@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -7,8 +8,6 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/media_segment_localization.dart';
 import '../../../../shared/widgets/app_wordmark.dart';
-import 'intro_mock_palette.dart';
-import 'intro_poster_row.dart';
 
 /// The first slide's mini Discover, drawn inside the phone frame: the
 /// wordmark, segment chips, a hero card and two poster rows. Positions
@@ -19,15 +18,20 @@ class IntroDiscoverMock extends StatelessWidget {
   static const double _chipHeight = 24;
   // Frame inner width (244) minus the 16 px side margins.
   static const double _contentWidth = 212;
-  static const double _heroHeight = 150;
   static const double _wordmarkSize = 16;
-  static const double _heroRadius = 14;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Stack(
       children: [
+        // Hero card + poster rows, as artwork (no text).
+        Positioned.fill(
+          child: SvgPicture.asset(
+            'assets/illustrations/onboarding/intro_discover.svg', // l10n-exempt: asset-path
+            fit: BoxFit.fill,
+          ),
+        ),
         const Positioned(
           left: AppSpacing.lg,
           top: 22,
@@ -56,53 +60,35 @@ class IntroDiscoverMock extends StatelessWidget {
             ),
           ),
         ),
+        // The hero card's title, over the artwork's hero card (y 94-244).
         Positioned(
-          left: AppSpacing.lg,
-          right: AppSpacing.lg,
-          top: 94,
-          height: _heroHeight,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: IntroMockPalette.heroWarm,
-              borderRadius: BorderRadius.circular(_heroRadius),
-            ),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                // Sample title, not UI copy.
-                child: Text(
-                  'The Odyssey',
-                  style: AppTextStyles.h3,
-                ), // l10n-exempt: sample-title
-              ),
-            ),
-          ),
+          left: 28,
+          top: 214,
+          // Sample title, not UI copy.
+          child: Text(
+            'The Odyssey',
+            style: AppTextStyles.h3,
+          ), // l10n-exempt: sample-title
         ),
-        _Section(top: 262, title: l10n.carouselSectionForYou, offset: 0),
-        _Section(
+        _SectionTitle(top: 262, title: l10n.carouselSectionForYou),
+        _SectionTitle(
           top: 400,
           // Sample title, not UI copy.
           title: l10n.carouselSectionBecauseYouLike(
             'Inception',
           ), // l10n-exempt: sample-title
-          offset: 3,
         ),
       ],
     );
   }
 }
 
-class _Section extends StatelessWidget {
-  const _Section({
-    required this.top,
-    required this.title,
-    required this.offset,
-  });
+/// A carousel title; its poster row is part of the artwork.
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.top, required this.title});
 
   final double top;
   final String title;
-  final int offset;
 
   @override
   Widget build(BuildContext context) {
@@ -110,18 +96,11 @@ class _Section extends StatelessWidget {
       left: AppSpacing.lg,
       right: AppSpacing.lg,
       top: top,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.bodySm.copyWith(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          IntroPosterRow(offset: offset),
-        ],
+      child: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: AppTextStyles.bodySm.copyWith(fontWeight: FontWeight.w600),
       ),
     );
   }
