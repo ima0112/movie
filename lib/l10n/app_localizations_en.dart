@@ -299,6 +299,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingNameHint => 'Your name';
 
   @override
+  String get onboardingIntroDiscoverHeadline =>
+      'Find what to watch\nin seconds';
+
+  @override
+  String get onboardingIntroDiscoverHighlight => 'in seconds';
+
+  @override
+  String get onboardingIntroDiscoverBody =>
+      'Explore TMDB\'s catalog. It\'s not a streaming app: we tell you where to watch it.';
+
+  @override
+  String get onboardingIntroSurpriseHeadline => 'No idea? Surprise me';
+
+  @override
+  String get onboardingIntroSurpriseHighlight => 'Surprise me';
+
+  @override
+  String get onboardingIntroSurpriseBody =>
+      'Answer a few questions or use your tastes and we\'ll suggest what to watch.';
+
+  @override
   String get onboardingWelcomeTagline => 'Find what to watch';
 
   @override

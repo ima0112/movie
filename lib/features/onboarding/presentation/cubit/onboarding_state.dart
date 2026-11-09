@@ -1,8 +1,15 @@
 import '../../../../core/domain/entities/genre.dart';
 
-/// A2's own 4 screens — `docs/SCREENS.md` A2: "1 flow, 4 screens:
-/// welcome + 3 steps."
-enum OnboardingStep { welcome, name, likedGenres, vetoedGenres }
+/// A2's own screens, in order — `docs/SCREENS.md` A2: welcome, two intro
+/// slides (skippable as a pair), then the name and two genre steps.
+enum OnboardingStep {
+  welcome,
+  introDiscover,
+  introSurprise,
+  name,
+  likedGenres,
+  vetoedGenres,
+}
 
 /// A2's own in-progress form — never saved anywhere until
 /// `OnboardingCubit.finish()` is called; every field here is a draft.

@@ -113,6 +113,12 @@
   "onboardingNameBody": "Así te llamaré, y así te verán los demás en las salas.",
   "onboardingNameHint": "Tu nombre",
 
+  "onboardingIntroDiscoverHeadline": "Encuentra qué ver\nen segundos",
+  "onboardingIntroDiscoverHighlight": "en segundos",
+  "onboardingIntroDiscoverBody": "Explora el catálogo de TMDB. No es una app de streaming: te decimos dónde verlo.",
+  "onboardingIntroSurpriseHeadline": "¿Sin idea? Sorpréndeme",
+  "onboardingIntroSurpriseHighlight": "Sorpréndeme",
+  "onboardingIntroSurpriseBody": "Responde unas preguntas o usa tus gustos y te sugerimos qué ver.",
   "onboardingWelcomeTagline": "Encuentra qué ver",
   "onboardingWelcomeGetStarted": "Empezar",
   "onboardingWelcomeTmdbAttribution": "Datos de TMDB",

@@ -21,10 +21,13 @@ Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and th
 - Duration: max 1.5 s; while theme, language, `/configuration`, and `/trending/all/week` load.
 - Exits: A2 if it's the first launch, otherwise → B1.
 
-### A2. Onboarding (1 flow, 4 screens: welcome + 3 steps)
+### A2. Onboarding (1 flow, 6 screens: welcome + 2 intro slides + 3 steps)
 - Access: first launch only.
 - Purpose: introduce Pako, collect the minimal user profile, and feed `TasteProfile`.
-- Step 0 — Welcome (skippable → skips only the taste steps, not step 1): poster wall (4 staggered columns, 55% opacity, slow vertical drift; static with "reduce motion"), dark overlay over the wall (55% at the top, 35% at 30%, 90% at 62%, solid at 78%), the "PakoTV" wordmark at 48 px with a spaced-out uppercase tagline ("Find what to watch"), TMDB's required attribution line at 12 px, "Get started" button. No pagination dots. Offline: same wall with placeholders.
+- Step 0 — Welcome (skippable → skips only the taste steps, not step 1): poster wall (4 staggered columns, 55% opacity, slow vertical drift; static with "reduce motion"), dark overlay over the wall (55% at the top, 35% at 30%, 90% at 62%, solid at 78%), the "PakoTV" wordmark at 48 px with a spaced-out uppercase tagline ("Find what to watch"), TMDB's required attribution line at 12 px, "Get started" button. Offline: same wall with placeholders.
+- Steps 0a and 0b — **Intro slides** ("Skip" top right jumps straight to the name step; "Next" advances): a 34 px centered headline with one amber phrase, a 15 px muted body, an amber-outlined phone illustration (250×640, built from widgets — no image assets — clipped at the bottom and faded out) with floating badges, **four pagination dots** (slides 1–2 are dots 1–2; the name step and the genres are dots 3–4) and a "Next" button.
+  - 0a: "Find what to watch in seconds" — "Explore TMDB's catalog. It's not a streaming app: we tell you where to watch it." Illustration: a mini Discover.
+  - 0b: "No idea? Surprise me" — "Answer a few questions or use your tastes and we'll suggest what to watch." Illustration: a mini result screen.
 - Step 1 — **What's your name? (required, no "Skip")**: small Pako in `idle` up top, headline "What's your name?", subtitle "That's what I'll call you, and how others will see you in rooms."; auto-focused field; typing reveals a circular initial and a 4-color picker (amber, coral, mint, lilac). "Next" disabled until there are at least 2 characters (and, ≤ 20 — trimmed either way). Saves `UserProfile { displayName, initialColor }`. No age or gender is asked.
 - Steps 2 and 3 — Genres (skippable): "Step X of 3" and "Skip" in gray at 13 px, 24 px headline, 14 px subtitle, **3-column** grid of normalized genres (square tile, 12 px radius, `surfaceRaised` background, 24 px outline icon + 13 px label; selected = amber with `onAccent` text), white pill button fixed at the bottom with a 24 px fade over the grid. No poster wall. No counter. Transition between steps: 24 px slide with fade, 250 ms.
 - Step 2: "What genres do you like?" — multi-select, no limit.

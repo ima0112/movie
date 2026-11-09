@@ -122,7 +122,9 @@ void main() {
     });
 
     test('next() refuses to leave the name step while invalid', () {
-      cubit.next(); // welcome -> name
+      cubit.next(); // welcome -> introDiscover
+      cubit.next(); // -> introSurprise
+      cubit.next(); // -> name
       expect(cubit.state.step, OnboardingStep.name);
 
       cubit.setDisplayName('A');
@@ -132,6 +134,34 @@ void main() {
       cubit.setDisplayName('Al');
       cubit.next();
       expect(cubit.state.step, OnboardingStep.likedGenres);
+    });
+
+    test('welcome leads through both intro slides to the name step', () {
+      expect(cubit.state.step, OnboardingStep.welcome);
+      cubit.next();
+      expect(cubit.state.step, OnboardingStep.introDiscover);
+      cubit.next();
+      expect(cubit.state.step, OnboardingStep.introSurprise);
+      cubit.next();
+      expect(cubit.state.step, OnboardingStep.name);
+    });
+
+    test('skipIntro() jumps from the first slide to the name step', () {
+      cubit.next(); // introDiscover
+      cubit.skipIntro();
+      expect(cubit.state.step, OnboardingStep.name);
+    });
+
+    test('skipIntro() jumps from the second slide to the name step', () {
+      cubit.next();
+      cubit.next(); // introSurprise
+      cubit.skipIntro();
+      expect(cubit.state.step, OnboardingStep.name);
+    });
+
+    test('skipIntro() does nothing outside the intro slides', () {
+      cubit.skipIntro(); // welcome
+      expect(cubit.state.step, OnboardingStep.welcome);
     });
 
     test('typing a first character auto-picks a color preset', () {
