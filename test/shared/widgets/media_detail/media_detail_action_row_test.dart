@@ -110,7 +110,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Favorite'));
+        await tester.tap(find.bySemanticsLabel('Favorite'));
         await tester.pumpAndSettle();
 
         // FakeMediaRepository's sample movie (tmdbId 1) has

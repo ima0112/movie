@@ -98,6 +98,7 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         PrimaryButton(
+          icon: trailer != null ? AppIcons.play : null,
           label: trailer != null
               ? l10n.mediaDetailActionTrailer
               : l10n.mediaDetailActionSeeSimilar,
@@ -106,30 +107,30 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
               : widget.onSeeSimilar,
         ),
         const SizedBox(height: AppSpacing.lg),
+        // Favorite and Watch later as square icon buttons, Watched as the
+        // wide one (it opens H2) — as in the "Detalle" designs.
         Row(
           children: [
-            Expanded(
-              child: _ToggleActionButton(
-                entryStream: _entryStream,
-                select: (entry) => entry?.isFavorite ?? false,
-                iconOutline: AppIcons.favorite,
-                iconFill: AppIcons.favoriteFill,
-                label: l10n.mediaDetailActionFavorite,
-                onTap: () =>
-                    _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
-              ),
+            _ToggleActionButton(
+              entryStream: _entryStream,
+              select: (entry) => entry?.isFavorite ?? false,
+              iconOutline: AppIcons.favorite,
+              iconFill: AppIcons.favoriteFill,
+              label: l10n.mediaDetailActionFavorite,
+              onTap: () =>
+                  _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
             ),
-            Expanded(
-              child: _ToggleActionButton(
-                entryStream: _entryStream,
-                select: (entry) => entry?.isWatchLater ?? false,
-                iconOutline: AppIcons.watchLater,
-                iconFill: AppIcons.watchLaterFill,
-                label: LibraryTab.watchLater.localizedLabel(l10n),
-                onTap: () =>
-                    _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
-              ),
+            const SizedBox(width: AppSpacing.sm),
+            _ToggleActionButton(
+              entryStream: _entryStream,
+              select: (entry) => entry?.isWatchLater ?? false,
+              iconOutline: AppIcons.watchLater,
+              iconFill: AppIcons.watchLaterFill,
+              label: LibraryTab.watchLater.localizedLabel(l10n),
+              onTap: () =>
+                  _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
             ),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: _ToggleActionButton(
                 entryStream: _entryStream,
@@ -137,6 +138,7 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
                 iconOutline: AppIcons.watched,
                 iconFill: AppIcons.watchedFill,
                 label: LibraryTab.watched.localizedLabel(l10n),
+                showLabel: true,
                 // Always opens H2 first, even when re-tapping an
                 // already-watched entry (SCREENS.md D1) — never
                 // upserts directly.
@@ -156,17 +158,19 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
     // doc comment follows for genres.
     final snapshot = catalogSnapshotFrom(widget.mediaDetail.item);
     final duration = durationFieldsFrom(widget.mediaDetail);
-    final current = (_latestEntry ?? UserMediaEntry(key: widget.mediaKey, title: snapshot.title))
-        .copyWith(
-          title: snapshot.title,
-          genres: snapshot.genres,
-          posterUrl: snapshot.posterUrl,
-          voteAverage: snapshot.voteAverage,
-          year: snapshot.year,
-          runtimeMinutes: duration.runtimeMinutes,
-          episodeCount: duration.episodeCount,
-          episodeRuntimeMinutes: duration.episodeRuntimeMinutes,
-        );
+    final current =
+        (_latestEntry ??
+                UserMediaEntry(key: widget.mediaKey, title: snapshot.title))
+            .copyWith(
+              title: snapshot.title,
+              genres: snapshot.genres,
+              posterUrl: snapshot.posterUrl,
+              voteAverage: snapshot.voteAverage,
+              year: snapshot.year,
+              runtimeMinutes: duration.runtimeMinutes,
+              episodeCount: duration.episodeCount,
+              episodeRuntimeMinutes: duration.episodeRuntimeMinutes,
+            );
     unawaited(widget.userLibraryRepository.upsert(transform(current)));
   }
 
@@ -196,6 +200,7 @@ class _ToggleActionButton extends StatelessWidget {
     required this.iconFill,
     required this.label,
     required this.onTap,
+    this.showLabel = false,
   });
 
   final Stream<UserMediaEntry?> entryStream;
@@ -204,6 +209,7 @@ class _ToggleActionButton extends StatelessWidget {
   final IconData iconFill;
   final String label;
   final VoidCallback onTap;
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -216,6 +222,7 @@ class _ToggleActionButton extends StatelessWidget {
           label: label,
           isActive: snapshot.data ?? false,
           onTap: onTap,
+          showLabel: showLabel,
         );
       },
     );

@@ -104,7 +104,7 @@ void main() {
         if (message != null) captured.add(message);
       };
       try {
-        await tester.tap(find.text('Favorite'));
+        await tester.tap(find.bySemanticsLabel('Favorite'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 50));
       } finally {
