@@ -21,7 +21,11 @@ class ScrimShareButton extends StatelessWidget {
       alignment: Alignment.topRight,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          // Lines up with the screen's content margin.
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenMargin,
+            vertical: AppSpacing.lg,
+          ),
           child: Semantics(
             button: true,
             excludeSemantics: true,

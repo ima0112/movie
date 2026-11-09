@@ -204,7 +204,8 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Elements:
   - Top bar with back; a compact bar with the name appears once scrolled past the header, same as D1/D2.
   - A warm glow behind the header; 112 px circular photo, 26 px name, and one muted line "department · age · place of birth" ("Acting" / "Directing"; age computed from `birthday` or, once there's a `deathday`, years lived instead — no raw date shown for either; place of birth with no date attached).
-  - Biography folded to 3 lines with "Read more". A "Biography in English" note appears above it when TMDB had no translation in the user's own language and the repository fell back to English.
+  - Layout: everything is centered in the header and left-aligned to the 20 px screen margin below it, which the back circle shares; the header adds no space below, so the biography, "Known for" and "Filmography" are each one `sectionGap` (24) apart.
+  - Biography folded to 3 lines; the amber "Read more" appears only when the text is really cut, turns into "Read less" once expanded and folds it back. A "Biography in English" note appears above it when TMDB had no translation in the user's own language and the repository fell back to English.
   - "Known for": row of their 6 most popular titles, each poster with its title underneath (by `voteAverage`, the closest proxy — `MediaItem` has no dedicated popularity field).
   - "Filmography": the title and one card, "View full filmography · N titles ›" → D3b (the inline list moved there).
 - States: skeleton, error, offline.
