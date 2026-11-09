@@ -240,6 +240,7 @@
   "mediaDetailRemoveFromWatched": "Quitar de Vistos",
 
   "regionSheetTitle": "Región",
+  "regionSheetSubtitle": "Define qué plataformas ves en \"Dónde ver\".",
   "regionSheetSearchHint": "Buscar países",
 
   "fullCastSheetTitle": "Reparto completo",

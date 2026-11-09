@@ -30,14 +30,15 @@ class LanguageSheet extends StatelessWidget {
     ];
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.settingsLanguageLabel, style: AppTextStyles.h2),
-            const SizedBox(height: AppSpacing.md),
-            for (final option in options)
+            Text(l10n.settingsLanguageLabel, style: AppTextStyles.h1),
+            const SizedBox(height: AppSpacing.lg),
+            for (final (i, option) in options.indexed) ...[
+              if (i > 0) const Divider(height: 1),
               CheckableOptionRow(
                 label: option.label,
                 isSelected: option.code == selectedLanguageCode,
@@ -46,6 +47,7 @@ class LanguageSheet extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
               ),
+            ],
           ],
         ),
       ),

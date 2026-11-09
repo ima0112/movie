@@ -695,6 +695,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get regionSheetTitle => 'Región';
 
   @override
+  String get regionSheetSubtitle =>
+      'Define qué plataformas ves en \"Dónde ver\".';
+
+  @override
   String get regionSheetSearchHint => 'Buscar países';
 
   @override

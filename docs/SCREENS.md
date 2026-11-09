@@ -291,7 +291,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 | H3 | Full cast | "See all" in D1/D2 | Cast and crew list with an internal search box |
 | H4 | Season N | Season row in D2 | Title, season synopsis, episode list (number, name, runtime, date, still) |
 | H5 | Language | B5 | Single-select list: Español / English — one setting for the interface and TMDB's content |
-| H6 | Region | B5 | Searchable list of countries |
+| H6 | Region | B5 | Searchable list of countries, with a one-line subtitle ("Sets which services you see in Where to watch") |
 | H7 | Theme | B5 | Dark / Light / System |
 | H8 | Filters | B2, C1 | Type (All/Movies/TV Shows); multi-select genres; year (range slider 1950–present); minimum rating (0–9 slider, `vote_count.gte=100` fixed); max runtime (movies only); status Airing/Ended (TV shows only); sort by Popularity/Rating/Date/Title; "Hide what I've watched" toggle (client-side). "Reset" and "See N results" (N live) buttons. Only applies to `/discover`, not text search. |
 | H9 | Sort and filter My List | B4 | Type (All/Movies/TV Shows); sort by Title A–Z / Year / TMDB rating and, in Watched, My rating / Date watched; in Watched, minimum rating (★1–5); in Favorites and Watch later, "Hide what I've watched". Remembers state per tab. "Reset" (only if something's active) and "Apply"; swiping to close discards. |

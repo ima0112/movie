@@ -677,6 +677,7 @@
   "@regionSheetTitle": {
     "description": "H6's own title (docs/SCREENS.md H6)."
   },
+  "regionSheetSubtitle": "Sets which services you see in \"Where to watch\".",
   "regionSheetSearchHint": "Search countries",
 
   "fullCastSheetTitle": "Full cast",
