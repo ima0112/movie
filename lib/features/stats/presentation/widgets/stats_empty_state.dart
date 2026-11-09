@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../../../core/theme/app_icons.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 
@@ -22,6 +23,7 @@ class StatsEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateView(
+      icon: AppIcons.stats,
       title: context.l10n.statsEmptyTitle,
       body: context.l10n.statsEmptyBody,
       ctaLabel: context.l10n.navTabExplore,
