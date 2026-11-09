@@ -296,8 +296,8 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 | H1 | Quick actions | Long-press a card | Thumbnail + title, three rows: Favorite / Watch later / Mark watched |
 | H2 | Mark as watched | "Watched" button in D1/D2, swipe in B4, H1 | Title ("Mark as watched" for a movie, "Have you finished {title}?" for a TV show — asking about a show commits to having finished it, not just pressed a button), 5-star selector (optional), date (today by default, editable), "Save" button, "Remove from Watched" link if it already was |
 | H3 | Full cast | "See all" in D1/D2 | Sheet with a "Cast | Crew" pill, an internal search box (filters the selected tab by name) and a 3-column grid of 4:5 portraits with name and character/job; tap → D3 |
-| H4 | Season N | Season row in D2 | Header card (poster, show name, "Season N", episode-count chip); season synopsis folded to 2 lines with "Read more"; "EPISODES" list of compact rows (112×64 still with a number badge, name, date · runtime, 2-line synopsis) |
-| H4b | Episode | Episode row in H4 | Sheet over H4: a 16:9 still, "S1 · E1" caption ("Specials · E1" for season 0), the episode name, info chips (air date, runtime), and the full synopsis. No guest stars or rating yet (not in the model) |
+| H4 | Season N | Season row in D2 | Header card (poster, show name, "Season N", episode-count chip and, when TMDB has one, a ★ rating chip); season synopsis folded to 2 lines with "Read more"; "EPISODES" list of compact rows (112×64 still with a number badge, name, date · runtime, 2-line synopsis) |
+| H4b | Episode | Episode row in H4 | Sheet over H4: a 16:9 still, "S1 · E1" caption ("Specials · E1" for season 0), the episode name, info chips (air date, runtime, ★ rating when TMDB has one), the full synopsis, and a "GUEST STARS" row of 64 px circles with name and character (→ D3) when the episode lists any |
 | H5 | Language | B5 | Single-select list: Español / English — one setting for the interface and TMDB's content |
 | H6 | Region | B5 | Searchable list of countries, with a one-line subtitle ("Sets which services you see in Where to watch") |
 | H7 | Theme | B5 | Dark / Light / System |

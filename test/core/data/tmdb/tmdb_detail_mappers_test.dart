@@ -197,6 +197,13 @@ void main() {
       );
     }
 
+    test('maps each season summary\'s vote_average; none -> null', () {
+      final seasons = load().seasons;
+
+      expect(seasons.first.voteAverage, 8.7);
+      expect(seasons.last.voteAverage, isNull);
+    });
+
     test('maps original_language and origin_country', () {
       final detail = load();
 
@@ -276,6 +283,25 @@ void main() {
       expect(second.stillPath, isNull);
       expect(second.airDate, isNull);
       expect(second.runtimeMinutes, isNull);
+    });
+
+    test('maps vote_average and guest_stars; a missing rating is null, no '
+        'guests is empty', () {
+      final dto = TmdbSeasonDetailDto.fromJson(
+        _loadFixture('tmdb_season_detail.json'),
+      );
+      final episodes = episodesFromSeasonDetail(dto);
+
+      expect(episodes.first.voteAverage, 8.5);
+      expect(episodes.first.guestStars, hasLength(1));
+      final guest = episodes.first.guestStars.single;
+      expect(guest.person.id, 11);
+      expect(guest.person.name, 'Ana Soto');
+      expect(guest.person.profilePath, '/ana.jpg');
+      expect(guest.character, 'Dr. Vega');
+
+      expect(episodes.last.voteAverage, isNull);
+      expect(episodes.last.guestStars, isEmpty);
     });
   });
 

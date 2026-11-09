@@ -239,6 +239,7 @@
   "tvEpisodesSectionTitle": "Episodios",
   "tvEpisodeCode": "T{season} · E{episode}",
   "tvEpisodeCodeSpecials": "Especiales · E{episode}",
+  "tvEpisodeGuestStars": "Estrellas invitadas",
   "tvSeasonsSectionTitle": "Temporadas",
   "tvSpecialsLabel": "Especiales",
   "tvSeasonLabel": "Temporada {number}",

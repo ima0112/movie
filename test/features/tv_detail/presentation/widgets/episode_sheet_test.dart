@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
+import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/episode_sheet.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
@@ -84,6 +86,61 @@ void main() {
 
     expect(find.text('TBA'), findsOneWidget);
     expect(find.textContaining('min'), findsNothing);
+  });
+
+  testWidgets('shows a rating chip and the guest stars, and tapping a guest '
+      'calls onPersonTap', (tester) async {
+    _usePhoneScreen(tester);
+    Person? tapped;
+    final rated = Episode(
+      episodeNumber: 4,
+      name: 'Hands',
+      overview: 'Short.',
+      stillPath: null,
+      airDate: DateTime(2022, 6, 23),
+      runtimeMinutes: 32,
+      voteAverage: 8.5,
+      guestStars: const [
+        CastMember(
+          person: Person(
+            id: 11,
+            name: 'Ana Soto',
+            profilePath: null,
+            knownForDepartment: null,
+          ),
+          character: 'Dr. Vega',
+          order: 0,
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      _wrap(
+        EpisodeSheet(
+          seasonNumber: 1,
+          episode: rated,
+          onPersonTap: (p) => tapped = p,
+        ),
+      ),
+    );
+
+    expect(find.text('8.5'), findsOneWidget);
+    expect(find.byIcon(AppIcons.starFill), findsOneWidget);
+    expect(find.text('GUEST STARS'), findsOneWidget);
+    expect(find.text('Dr. Vega'), findsOneWidget);
+
+    await tester.tap(find.text('Ana Soto'));
+    expect(tapped?.id, 11);
+  });
+
+  testWidgets('no rating chip and no guest-stars section when there is '
+      'neither', (tester) async {
+    _usePhoneScreen(tester);
+    await tester.pumpWidget(
+      _wrap(EpisodeSheet(seasonNumber: 1, episode: _episode)),
+    );
+
+    expect(find.text('GUEST STARS'), findsNothing);
+    expect(find.byIcon(AppIcons.starFill), findsNothing);
   });
 
   testWidgets('survives a small device at 200% text scale (es)', (

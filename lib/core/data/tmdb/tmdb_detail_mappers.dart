@@ -127,6 +127,7 @@ TvShowDetail mediaDetailFromTvDto(
             episodeCount: s.episodeCount,
             posterPath: s.posterPath,
             airDate: parseTmdbDate(s.airDate),
+            voteAverage: _ratingOrNull(s.voteAverage),
           ),
         )
         .toList(),
@@ -164,6 +165,20 @@ List<Episode> episodesFromSeasonDetail(TmdbSeasonDetailDto dto) {
           stillPath: e.stillPath,
           airDate: parseTmdbDate(e.airDate),
           runtimeMinutes: e.runtime,
+          voteAverage: _ratingOrNull(e.voteAverage),
+          guestStars: [
+            for (final g in e.guestStars)
+              CastMember(
+                person: Person(
+                  id: g.id,
+                  name: g.name,
+                  profilePath: g.profilePath,
+                  knownForDepartment: null,
+                ),
+                character: g.character,
+                order: g.order,
+              ),
+          ],
         ),
       )
       .toList();
@@ -287,3 +302,7 @@ String? _backdropUrl(String? path, TmdbImagesConfig config) =>
       path: path,
       size: TmdbImageSizes.backdropMedium,
     );
+
+/// TMDB reports `0` for "nobody has voted" — treated as no rating.
+double? _ratingOrNull(double? value) =>
+    value == null || value <= 0 ? null : value;

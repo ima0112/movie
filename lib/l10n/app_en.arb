@@ -650,6 +650,7 @@
       "episode": {"type": "int"}
     }
   },
+  "tvEpisodeGuestStars": "Guest stars",
   "tvSeasonsSectionTitle": "Seasons",
   "tvSpecialsLabel": "Specials",
   "@tvSpecialsLabel": {

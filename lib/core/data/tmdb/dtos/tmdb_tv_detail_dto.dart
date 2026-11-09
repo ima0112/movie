@@ -130,6 +130,7 @@ class TmdbSeasonSummaryDto {
     required this.episodeCount,
     required this.posterPath,
     required this.airDate,
+    this.voteAverage,
   });
 
   @JsonKey(name: 'season_number')
@@ -145,6 +146,9 @@ class TmdbSeasonSummaryDto {
 
   @JsonKey(name: 'air_date', defaultValue: '')
   final String airDate;
+
+  @JsonKey(name: 'vote_average')
+  final double? voteAverage;
 
   factory TmdbSeasonSummaryDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbSeasonSummaryDtoFromJson(json);

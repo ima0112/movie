@@ -703,6 +703,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get tvEpisodeGuestStars => 'Estrellas invitadas';
+
+  @override
   String get tvSeasonsSectionTitle => 'Temporadas';
 
   @override

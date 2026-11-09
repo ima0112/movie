@@ -9,7 +9,11 @@
       "overview": "The crew notices the first anomaly.",
       "still_path": "/signal-lost-s1e1.jpg",
       "air_date": "2024-09-12",
-      "runtime": 54
+      "runtime": 54,
+      "vote_average": 8.5,
+      "guest_stars": [
+        { "id": 11, "name": "Ana Soto", "character": "Dr. Vega", "profile_path": "/ana.jpg", "order": 0 }
+      ]
     },
     {
       "episode_number": 2,
