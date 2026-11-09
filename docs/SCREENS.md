@@ -144,9 +144,14 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Elements (grouped list: each group is a `surfaceRaised` card (radius 16) with hairline dividers; 56 px row, 16 px white label, gray value, chevron; no icons; small spaced-out uppercase gray group header):
   - Preferences: Language ("Español" → H5) — one setting for both the app's own interface and TMDB's content, not two separate preferences — Region ("Spain" → H6, with search). No Theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` for why Family mode specifically was dropped rather than built partially.
   - Data: "Export My List" (JSON → the system share sheet); "Delete My List", "Delete My Tastes" in red → I1 (the dialog states how many items it deletes).
-  - About: Version (long-press copies the build number), Source code (GitHub, external link), Licenses (`showLicensePage`), TMDB attribution block with the official logo (the one exception to using a color that isn't ours) and 11 px text.
+  - About: "Attribution and credits" (→ C7), Version (long-press copies the build number), Source code (GitHub, external link), Licenses (`showLicensePage`).
 - Sheets H5–H6 are lists with an amber check on the active option; tapping applies and closes.
 - No Pako.
+
+### C7. Attribution and credits (pushed)
+- Access: "Attribution and credits" in C6's About group. Back button, no bottom bar.
+- Elements: two `surfaceRaised` cards, each a neutral name chip ("TMDB", "JustWatch"), one 15 px line and one 13 px gray line. TMDB: the required wording "This product uses the TMDB API but is not endorsed or certified by TMDB." + "Posters, images, synopses, cast and ratings." JustWatch: "Streaming availability data is provided by JustWatch." + "Streaming, rent and buy options for your region." Below: 13 px gray note "PakoTV is a free personal project. All trademarks belong to their respective owners."
+- Provider names are never translated. No Pako.
 
 ---
 
