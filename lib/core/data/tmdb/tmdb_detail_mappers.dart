@@ -138,6 +138,8 @@ TvShowDetail mediaDetailFromTvDto(
     firstAirDate: parseTmdbDate(dto.firstAirDate),
     lastAirDate: parseTmdbDate(dto.lastAirDate),
     inProduction: dto.inProduction,
+    lastEpisode: _episodeRefFrom(dto.lastEpisodeToAir),
+    nextEpisode: _episodeRefFrom(dto.nextEpisodeToAir),
     certification: _certificationFromContentRatings(dto.contentRatings, region),
   );
 }
@@ -306,3 +308,14 @@ String? _backdropUrl(String? path, TmdbImagesConfig config) =>
 /// TMDB reports `0` for "nobody has voted" — treated as no rating.
 double? _ratingOrNull(double? value) =>
     value == null || value <= 0 ? null : value;
+
+EpisodeRef? _episodeRefFrom(TmdbEpisodeToAirDto? dto) => dto == null
+    ? null
+    : EpisodeRef(
+        seasonNumber: dto.seasonNumber,
+        episodeNumber: dto.episodeNumber,
+        name: dto.name,
+        airDate: parseTmdbDate(dto.airDate),
+        stillPath: dto.stillPath,
+        voteAverage: _ratingOrNull(dto.voteAverage),
+      );

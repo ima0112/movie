@@ -39,6 +39,8 @@ class TmdbTvDetailDto {
     this.backdropPath,
     this.originalLanguage,
     this.originCountry = const [],
+    this.lastEpisodeToAir,
+    this.nextEpisodeToAir,
   });
 
   final int id;
@@ -51,6 +53,12 @@ class TmdbTvDetailDto {
   /// The 16:9 backdrop, for D2's header (`null` when TMDB has none).
   @JsonKey(name: 'backdrop_path')
   final String? backdropPath;
+
+  @JsonKey(name: 'last_episode_to_air')
+  final TmdbEpisodeToAirDto? lastEpisodeToAir;
+
+  @JsonKey(name: 'next_episode_to_air')
+  final TmdbEpisodeToAirDto? nextEpisodeToAir;
 
   /// ISO 639-1 code of the original language (`en`).
   @JsonKey(name: 'original_language')
@@ -182,4 +190,38 @@ class TmdbContentRatingEntryDto {
 
   factory TmdbContentRatingEntryDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbContentRatingEntryDtoFromJson(json);
+}
+
+/// `last_episode_to_air` / `next_episode_to_air` of `/tv/{id}` — a compact
+/// episode (no overview needed here).
+@JsonSerializable(createToJson: false)
+class TmdbEpisodeToAirDto {
+  const TmdbEpisodeToAirDto({
+    required this.seasonNumber,
+    required this.episodeNumber,
+    required this.name,
+    this.airDate = '',
+    this.stillPath,
+    this.voteAverage,
+  });
+
+  @JsonKey(name: 'season_number')
+  final int seasonNumber;
+
+  @JsonKey(name: 'episode_number')
+  final int episodeNumber;
+
+  final String name;
+
+  @JsonKey(name: 'air_date', defaultValue: '')
+  final String airDate;
+
+  @JsonKey(name: 'still_path')
+  final String? stillPath;
+
+  @JsonKey(name: 'vote_average')
+  final double? voteAverage;
+
+  factory TmdbEpisodeToAirDto.fromJson(Map<String, dynamic> json) =>
+      _$TmdbEpisodeToAirDtoFromJson(json);
 }

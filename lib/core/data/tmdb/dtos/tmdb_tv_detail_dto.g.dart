@@ -53,6 +53,16 @@ TmdbTvDetailDto _$TmdbTvDetailDtoFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           [],
+      lastEpisodeToAir: json['last_episode_to_air'] == null
+          ? null
+          : TmdbEpisodeToAirDto.fromJson(
+              json['last_episode_to_air'] as Map<String, dynamic>,
+            ),
+      nextEpisodeToAir: json['next_episode_to_air'] == null
+          ? null
+          : TmdbEpisodeToAirDto.fromJson(
+              json['next_episode_to_air'] as Map<String, dynamic>,
+            ),
     );
 
 TmdbCreatorDto _$TmdbCreatorDtoFromJson(Map<String, dynamic> json) =>
@@ -87,3 +97,13 @@ TmdbContentRatingEntryDto _$TmdbContentRatingEntryDtoFromJson(
   iso31661: json['iso_3166_1'] as String,
   rating: json['rating'] as String? ?? '',
 );
+
+TmdbEpisodeToAirDto _$TmdbEpisodeToAirDtoFromJson(Map<String, dynamic> json) =>
+    TmdbEpisodeToAirDto(
+      seasonNumber: (json['season_number'] as num).toInt(),
+      episodeNumber: (json['episode_number'] as num).toInt(),
+      name: json['name'] as String,
+      airDate: json['air_date'] as String? ?? '',
+      stillPath: json['still_path'] as String?,
+      voteAverage: (json['vote_average'] as num?)?.toDouble(),
+    );

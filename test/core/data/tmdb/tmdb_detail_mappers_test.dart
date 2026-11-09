@@ -204,6 +204,38 @@ void main() {
       expect(seasons.last.voteAverage, isNull);
     });
 
+    test('maps last_episode_to_air and next_episode_to_air; a 0 rating is '
+        'null', () {
+      final detail = load();
+
+      final last = detail.lastEpisode!;
+      expect(last.seasonNumber, 2);
+      expect(last.episodeNumber, 5);
+      expect(last.name, 'Static');
+      expect(last.airDate, DateTime(2025, 10, 16));
+      expect(last.stillPath, '/static.jpg');
+      expect(last.voteAverage, 8.9);
+
+      final next = detail.nextEpisode!;
+      expect(next.name, 'Reboot');
+      expect(next.stillPath, isNull);
+      expect(next.voteAverage, isNull);
+    });
+
+    test('a show with no last/next episode maps both to null', () {
+      final json = _loadFixture('tmdb_tv_detail_full.json')
+        ..['last_episode_to_air'] = null
+        ..['next_episode_to_air'] = null;
+      final detail = mediaDetailFromTvDto(
+        TmdbTvDetailDto.fromJson(json),
+        imagesConfig: imagesConfig,
+        region: 'ES',
+      );
+
+      expect(detail.lastEpisode, isNull);
+      expect(detail.nextEpisode, isNull);
+    });
+
     test('maps original_language and origin_country', () {
       final detail = load();
 

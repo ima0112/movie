@@ -129,6 +129,8 @@ final class TvShowDetail extends MediaDetail {
     required this.lastAirDate,
     required this.inProduction,
     required this.certification,
+    this.lastEpisode,
+    this.nextEpisode,
   });
 
   final List<Person> creators;
@@ -138,6 +140,10 @@ final class TvShowDetail extends MediaDetail {
   final DateTime? firstAirDate;
   final DateTime? lastAirDate;
   final bool inProduction;
+
+  /// The most recently aired / next scheduled episode, or `null`.
+  final EpisodeRef? lastEpisode;
+  final EpisodeRef? nextEpisode;
 
   /// D2's own metadata-line rating, e.g. "TV-14" — TMDB's `content_
   /// ratings`, the show-level equivalent of [MovieDetail.certification]
