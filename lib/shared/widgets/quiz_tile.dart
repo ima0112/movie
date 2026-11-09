@@ -78,10 +78,14 @@ class _QuizTileState extends State<QuizTile> {
             children: [
               Icon(widget.icon, size: _iconSize, color: foreground),
               const SizedBox(height: AppSpacing.xs),
-              Text(
-                widget.label,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.bodySm.copyWith(color: foreground),
+              Flexible(
+                child: Text(
+                  widget.label,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.bodySm.copyWith(color: foreground),
+                ),
               ),
             ],
           ),

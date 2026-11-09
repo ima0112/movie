@@ -78,11 +78,12 @@ class QuizFinalStep extends StatelessWidget {
         ],
         const SizedBox(height: AppSpacing.xl),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              context.l10n.quizExcludeWatchedToggle,
-              style: AppTextStyles.body,
+            Expanded(
+              child: Text(
+                context.l10n.quizExcludeWatchedToggle,
+                style: AppTextStyles.body,
+              ),
             ),
             Switch(
               value: excludeWatched,

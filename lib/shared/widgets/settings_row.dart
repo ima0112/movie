@@ -45,16 +45,23 @@ class SettingsRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.body.copyWith(
                     color: labelColor ?? AppColors.ink,
                   ),
                 ),
               ),
               if (value != null) ...[
-                Text(
-                  value!,
-                  style: AppTextStyles.bodySm.copyWith(
-                    color: AppColors.inkMuted,
+                Flexible(
+                  child: Text(
+                    value!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.right,
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
+                    ),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),

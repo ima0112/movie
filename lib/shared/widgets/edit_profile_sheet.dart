@@ -74,7 +74,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
     final l10n = context.l10n;
     final name = _nameController.text;
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,

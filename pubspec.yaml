@@ -37,7 +37,7 @@ dependencies:
   google_fonts: ^8.2.1
   remixicon: ^4.9.3
   flutter_svg: ^2.3.0
-  flutter_bloc: ^9.1.1
+  flutter_bloc: ^8.0.1
   get_it: ^9.2.1
   injectable: ^3.0.0
   injectable_generator: ^3.1.0

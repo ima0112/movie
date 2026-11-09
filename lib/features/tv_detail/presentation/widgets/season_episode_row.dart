@@ -53,29 +53,30 @@ class _SeasonEpisodeRowState extends State<SeasonEpisodeRow> {
             style: AppTextStyles.h3,
           ),
           const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              Text(
-                airDate == null ? l10n.tvEpisodeTba : _formatDate(airDate),
-                style: AppTextStyles.bodySm.copyWith(
-                  color: hasAired ? AppColors.inkMuted : AppColors.accent,
-                ),
-              ),
-              if (episode.runtimeMinutes != null) ...[
-                Text(
-                  ' · ',
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: airDate == null
+                      ? l10n.tvEpisodeTba
+                      : _formatDate(airDate),
                   style: AppTextStyles.bodySm.copyWith(
-                    color: AppColors.inkMuted,
+                    color: hasAired ? AppColors.inkMuted : AppColors.accent,
                   ),
                 ),
-                Text(
-                  l10n.myListRuntimeMinutesOnly(episode.runtimeMinutes!),
-                  style: AppTextStyles.bodySm.copyWith(
-                    color: AppColors.inkMuted,
+                if (episode.runtimeMinutes != null)
+                  TextSpan(
+                    text:
+                        ' · '
+                        '${l10n.myListRuntimeMinutesOnly(episode.runtimeMinutes!)}',
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
+                    ),
                   ),
-                ),
               ],
-            ],
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           if (episode.overview.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
