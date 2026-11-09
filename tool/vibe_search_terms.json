@@ -1,12 +1,46 @@
 {
-  "indie": ["indie", "independent film"],
-  "tearjerker": ["tearjerker", "grief", "terminal illness"],
-  "sports": ["sports", "sport", "athlete"],
-  "true_story": ["based on true story", "biography", "true story"],
-  "superhero": ["superhero", "based on comic", "comic book"],
-  "gangster": ["gangster", "mafia", "mob"],
-  "gritty": ["neo-noir", "gritty", "crime drama"],
-  "cult": ["cult film", "cult classic"],
-  "monster": ["monster", "creature"],
-  "musical": ["musical", "music"]
+  "indie": { "terms": ["indie", "independent film"] },
+  "tearjerker": { "terms": ["tearjerker", "grief", "terminal illness"] },
+  "sports": { "terms": ["sports", "sport", "athlete"] },
+  "true_story": {
+    "terms": ["based on true story", "biography", "true story"]
+  },
+  "superhero": {
+    "terms": ["superhero", "based on comic", "comic book"]
+  },
+  "gangster": { "terms": ["gangster", "mafia", "mob"] },
+  "gritty": { "terms": ["neo-noir", "gritty", "crime drama"] },
+  "cult": { "terms": ["cult film", "cult classic"] },
+  "monster": { "terms": ["monster", "creature"] },
+  "musical": { "terms": ["musical", "music"] },
+
+  "mind_bending": {
+    "terms": [
+      "twist ending",
+      "mind bending",
+      "psychological thriller",
+      "dream",
+      "time loop",
+      "unreliable narrator",
+      "surreal",
+      "parallel universe"
+    ],
+    "genres": {
+      "movie": [878, 53],
+      "tv": [10765, 9648]
+    }
+  },
+
+  "feel_good": { "terms": [] },
+  "detective": { "terms": [] },
+  "date": { "terms": [] },
+  "future": { "terms": [] },
+  "explosive": { "terms": [] },
+  "fantasy": {
+    "terms": [],
+    "genres": {
+      "movie": [14],
+      "tv": [10765]
+    }
+  }
 }
