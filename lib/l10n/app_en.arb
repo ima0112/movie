@@ -836,6 +836,14 @@
   "@personKnownForTitle": {
     "description": "D3's own carousel header (docs/SCREENS.md D3)."
   },
+  "personFilmographyLinkLabel": "View full filmography",
+  "personFilmographyTitleCount": "{count, plural, =1{1 title} other{{count} titles}}",
+  "@personFilmographyTitleCount": {
+    "description": "D3's filmography card: how many titles the full list has (e.g. \"64 titles\").",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "personFilmographyTitle": "Filmography",
   "@personFilmographyTitle": {
     "description": "D3's own section header (docs/SCREENS.md D3)."

@@ -846,6 +846,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personKnownForTitle => 'Known for';
 
   @override
+  String get personFilmographyLinkLabel => 'View full filmography';
+
+  @override
+  String personFilmographyTitleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count titles',
+      one: '1 title',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get personFilmographyTitle => 'Filmography';
 
   @override

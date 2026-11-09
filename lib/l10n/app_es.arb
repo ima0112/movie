@@ -295,6 +295,8 @@
   "personBiographyInEnglish": "Biografía en inglés",
   "personFilmographyComingSoon": "Próximamente",
   "personKnownForTitle": "Conocido por",
+  "personFilmographyLinkLabel": "Ver filmografía completa",
+  "personFilmographyTitleCount": "{count, plural, =1{1 título} other{{count} títulos}}",
   "personFilmographyTitle": "Filmografía",
 
   "quizExcludeWatchedToggle": "Excluir lo que ya he visto",

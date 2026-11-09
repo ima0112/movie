@@ -1538,6 +1538,18 @@ abstract class AppLocalizations {
   /// **'Known for'**
   String get personKnownForTitle;
 
+  /// No description provided for @personFilmographyLinkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'View full filmography'**
+  String get personFilmographyLinkLabel;
+
+  /// D3's filmography card: how many titles the full list has (e.g. "64 titles").
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 title} other{{count} titles}}'**
+  String personFilmographyTitleCount(int count);
+
   /// D3's own section header (docs/SCREENS.md D3).
   ///
   /// In en, this message translates to:

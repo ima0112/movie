@@ -20,8 +20,8 @@ class PersonFilmographyRow extends StatelessWidget {
   final MediaCredit credit;
   final VoidCallback onTap;
 
-  static const double _posterWidth = 56;
-  static const double _posterHeight = 84;
+  static const double _posterWidth = 48;
+  static const double _posterHeight = 72;
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +30,15 @@ class PersonFilmographyRow extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.line)),
+        ),
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
               child: SizedBox(
                 width: _posterWidth,
                 height: _posterHeight,
