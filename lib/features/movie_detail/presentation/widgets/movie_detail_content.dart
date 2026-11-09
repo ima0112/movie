@@ -106,21 +106,9 @@ class MovieDetailContent extends StatelessWidget {
       slivers: [
         SliverToBoxAdapter(
           child: MediaDetailHeader(
-            posterUrl: detail.item.posterUrl,
+            imageUrl: detail.backdropUrl ?? detail.item.posterUrl,
             title: detail.item.title,
-            metadataLine: movieMetadataLine(detail, context.l10n),
-            voteAverage: detail.item.voteAverage,
-            genres: detail.item.genres,
-            onGenreTap: (genre) => context.push(
-              AppRoutes.filteredList,
-              extra: FilteredListRouteArgs(
-                filter: DiscoverFilter(
-                  type: MediaType.movie,
-                  withGenres: {genre},
-                ),
-                title: genre.localizedName(context.l10n),
-              ),
-            ),
+            tagline: detail.tagline,
           ),
         ),
         SliverPadding(
@@ -135,6 +123,18 @@ class MovieDetailContent extends StatelessWidget {
               mediaKey: mediaKey,
               userLibraryRepository: userLibraryRepository,
               mediaDetail: detail,
+              metaPrefix: [?detail.releaseDate?.year].join(),
+              extraChips: movieInfoChips(detail, context.l10n),
+              onGenreTap: (genre) => context.push(
+                AppRoutes.filteredList,
+                extra: FilteredListRouteArgs(
+                  filter: DiscoverFilter(
+                    type: MediaType.movie,
+                    withGenres: {genre},
+                  ),
+                  title: genre.localizedName(context.l10n),
+                ),
+              ),
               onPlayTrailer: (trailer) =>
                   unawaited(launchYoutubeTrailer(context, trailer.key)),
               onSeeSimilar: _scrollToSimilar,
@@ -153,10 +153,7 @@ class MovieDetailContent extends StatelessWidget {
           ),
         ),
         SliverToBoxAdapter(
-          child: MediaSynopsisSection(
-            overview: detail.overview,
-            tagline: detail.tagline,
-          ),
+          child: MediaSynopsisSection(overview: detail.overview),
         ),
         SliverToBoxAdapter(
           child: MediaCastRow(

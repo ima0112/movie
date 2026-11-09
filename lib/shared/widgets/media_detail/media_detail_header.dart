@@ -1,71 +1,70 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/domain/entities/genre.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../scrim_back_button.dart';
-import 'media_detail_title_block.dart';
 
-/// D1/D2's header: full-bleed poster, fade to black, back button, and the
-/// centered title/metadata/rating/genres block ([MediaDetailTitleBlock]).
+/// D1/D2's header — `docs/SCREENS.md` D1: a 320 px backdrop (TMDB's 16:9
+/// backdrop, or the poster when there isn't one) that fades into the page,
+/// the back button on top, and over the fade the left-aligned title with
+/// the italic tagline under it ("Detalle" design). D2 puts its "Airing" /
+/// "Ended" pill next to the title via [statusPill].
 ///
-/// Source of truth: `docs/SCREENS.md` D1 ("Header (55% of the height):
-/// full-bleed poster... fade to black starting at 60%...") and D2 (same
-/// shell, plus a status pill next to the title). Pure presentation —
-/// [metadataLine] arrives pre-formatted (each screen's own per-field
-/// logic differs — D1's "year · runtime · certification" vs. D2's
-/// "years · seasons · episodes · rating") and [statusPill] is an opaque
-/// slot the caller fills only for D2. No Bloc subscription of its own —
-/// the assembling screen already knows it's loaded by the time this is
-/// built (CLAUDE.md rule 9) and passes plain values down.
+/// Year, genres, rating and the action toggles live in the info card below
+/// (`media_detail_info_card.dart`), not here.
 class MediaDetailHeader extends StatelessWidget {
   const MediaDetailHeader({
     super.key,
-    required this.posterUrl,
+    required this.imageUrl,
     required this.title,
-    required this.metadataLine,
-    required this.voteAverage,
-    required this.genres,
-    this.onGenreTap,
+    this.tagline,
     this.statusPill,
   });
 
-  final String? posterUrl;
+  /// Backdrop URL, or the poster's when TMDB has no backdrop; `null` shows
+  /// a flat placeholder.
+  final String? imageUrl;
   final String title;
-  final String metadataLine;
-  final double voteAverage;
-  final List<Genre> genres;
+  final String? tagline;
 
-  /// Tapping a genre → C1 with that genre (and the screen's own media
-  /// type). `null` until the assembled screen wires real navigation.
-  final void Function(Genre genre)? onGenreTap;
-
-  /// D2's "Airing"/"Ended" pill next to the title (`docs/SCREENS.md`
-  /// D2). `null` renders nothing extra — D1's own shape.
+  /// D2's "Airing"/"Ended" pill next to the title. `null` renders nothing
+  /// extra — D1's own shape.
   final Widget? statusPill;
 
-  // docs/SCREENS.md D1: "Header (55% of the height)". Public: the
-  // assembled screen needs the same value to know when the title has
-  // "scrolled past the top" and the compact bar should appear.
-  static const double heightFraction = 0.55;
-  static const List<double> _fadeStops = [0.6, 1];
+  /// Public: the assembled screens need the same value to know when the
+  /// title has "scrolled past the top" and the compact bar should appear.
+  static const double height = 320;
+
+  static const double _topScrim = 0.35;
 
   @override
   Widget build(BuildContext context) {
+    final tagline = this.tagline;
+    final titleText = Text(
+      title,
+      style: AppTextStyles.display,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
     return SizedBox(
-      height: MediaQuery.sizeOf(context).height * heightFraction,
+      height: height,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          _Poster(posterUrl: posterUrl),
-          const DecoratedBox(
+          _Backdrop(imageUrl: imageUrl),
+          DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: _fadeStops,
-                colors: [Colors.transparent, Color(0xFF000000)],
+                stops: const [0, 0.3, 1],
+                colors: [
+                  AppColors.surface.withValues(alpha: _topScrim),
+                  AppColors.surface.withValues(alpha: 0),
+                  AppColors.surface,
+                ],
               ),
             ),
           ),
@@ -73,14 +72,31 @@ class MediaDetailHeader extends StatelessWidget {
           Positioned(
             left: AppSpacing.xl,
             right: AppSpacing.xl,
-            bottom: AppSpacing.xl,
-            child: MediaDetailTitleBlock(
-              title: title,
-              metadataLine: metadataLine,
-              voteAverage: voteAverage,
-              genres: genres,
-              onGenreTap: onGenreTap,
-              statusPill: statusPill,
+            bottom: AppSpacing.lg,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                statusPill == null
+                    ? titleText
+                    : Row(
+                        children: [
+                          Flexible(child: titleText),
+                          const SizedBox(width: AppSpacing.sm),
+                          statusPill!,
+                        ],
+                      ),
+                if (tagline != null && tagline.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    tagline,
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ],
@@ -89,18 +105,19 @@ class MediaDetailHeader extends StatelessWidget {
   }
 }
 
-class _Poster extends StatelessWidget {
-  const _Poster({required this.posterUrl});
+class _Backdrop extends StatelessWidget {
+  const _Backdrop({required this.imageUrl});
 
-  final String? posterUrl;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
-    final url = posterUrl;
+    final url = imageUrl;
     if (url == null) return const ColoredBox(color: AppColors.surfaceRaised2);
     return Image.network(
       url,
       fit: BoxFit.cover,
+      alignment: Alignment.topCenter,
       errorBuilder: (context, error, stackTrace) =>
           const ColoredBox(color: AppColors.surfaceRaised2),
     );

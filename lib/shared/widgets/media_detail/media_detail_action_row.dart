@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_key.dart';
 import '../../../core/domain/entities/user_media_entry.dart';
@@ -15,6 +16,7 @@ import '../app_buttons.dart';
 import '../mark_as_watched_sheet.dart';
 import '../media_detail_duration.dart';
 import 'media_action_button.dart';
+import 'media_detail_info_card.dart';
 
 /// D1/D2's Trailer button + the Favorite / Watch later / Watched row.
 ///
@@ -45,6 +47,9 @@ class MediaDetailActionRow extends StatefulWidget {
     required this.mediaKey,
     required this.userLibraryRepository,
     required this.mediaDetail,
+    this.metaPrefix = '',
+    this.extraChips = const [],
+    this.onGenreTap,
     this.onPlayTrailer,
     this.onSeeSimilar,
   });
@@ -52,6 +57,15 @@ class MediaDetailActionRow extends StatefulWidget {
   final MediaKey mediaKey;
   final UserLibraryRepository userLibraryRepository;
   final MediaDetail mediaDetail;
+
+  /// The info card's text before the genres (a year, D2's year range…).
+  final String metaPrefix;
+
+  /// Extra info chips after the rating (runtime, certification…).
+  final List<String> extraChips;
+
+  /// Tapping a genre → C1 with that genre (the assembling screen owns it).
+  final void Function(Genre genre)? onGenreTap;
 
   /// No trailer → "See similar" scrolls there instead (SCREENS.md D1);
   /// the assembled screen owns that scroll.
@@ -107,45 +121,53 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
               : widget.onSeeSimilar,
         ),
         const SizedBox(height: AppSpacing.lg),
-        // Favorite and Watch later as square icon buttons, Watched as the
-        // wide one (it opens H2) — as in the "Detalle" designs.
-        Row(
-          children: [
-            _ToggleActionButton(
-              entryStream: _entryStream,
-              select: (entry) => entry?.isFavorite ?? false,
-              iconOutline: AppIcons.favorite,
-              iconFill: AppIcons.favoriteFill,
-              label: l10n.mediaDetailActionFavorite,
-              onTap: () =>
-                  _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            _ToggleActionButton(
-              entryStream: _entryStream,
-              select: (entry) => entry?.isWatchLater ?? false,
-              iconOutline: AppIcons.watchLater,
-              iconFill: AppIcons.watchLaterFill,
-              label: LibraryTab.watchLater.localizedLabel(l10n),
-              onTap: () =>
-                  _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: _ToggleActionButton(
+        MediaDetailInfoCard(
+          posterUrl: widget.mediaDetail.item.posterUrl,
+          metaPrefix: widget.metaPrefix,
+          genres: widget.mediaDetail.item.genres,
+          voteAverage: widget.mediaDetail.item.voteAverage,
+          extraChips: widget.extraChips,
+          onGenreTap: widget.onGenreTap,
+          // Favorite and Watch later as square icon buttons, Watched as the
+          // wide one (it opens H2) — inside the card, as in the designs.
+          actions: Row(
+            children: [
+              _ToggleActionButton(
                 entryStream: _entryStream,
-                select: (entry) => entry?.isWatched ?? false,
-                iconOutline: AppIcons.watched,
-                iconFill: AppIcons.watchedFill,
-                label: LibraryTab.watched.localizedLabel(l10n),
-                showLabel: true,
-                // Always opens H2 first, even when re-tapping an
-                // already-watched entry (SCREENS.md D1) — never
-                // upserts directly.
-                onTap: _openMarkAsWatchedSheet,
+                select: (entry) => entry?.isFavorite ?? false,
+                iconOutline: AppIcons.favorite,
+                iconFill: AppIcons.favoriteFill,
+                label: l10n.mediaDetailActionFavorite,
+                onTap: () =>
+                    _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
               ),
-            ),
-          ],
+              const SizedBox(width: AppSpacing.sm),
+              _ToggleActionButton(
+                entryStream: _entryStream,
+                select: (entry) => entry?.isWatchLater ?? false,
+                iconOutline: AppIcons.watchLater,
+                iconFill: AppIcons.watchLaterFill,
+                label: LibraryTab.watchLater.localizedLabel(l10n),
+                onTap: () =>
+                    _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _ToggleActionButton(
+                  entryStream: _entryStream,
+                  select: (entry) => entry?.isWatched ?? false,
+                  iconOutline: AppIcons.watched,
+                  iconFill: AppIcons.watchedFill,
+                  label: LibraryTab.watched.localizedLabel(l10n),
+                  showLabel: true,
+                  // Always opens H2 first, even when re-tapping an
+                  // already-watched entry (SCREENS.md D1) — never
+                  // upserts directly.
+                  onTap: _openMarkAsWatchedSheet,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
