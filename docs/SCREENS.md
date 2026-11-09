@@ -280,9 +280,9 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 ## G. Global state pattern (designed once)
 
 - **Skeleton**: version for carousel, grid, row list, detail.
-- **Empty**: outline icon, one-line headline, one-line body, optional CTA.
+- **Empty**: outline icon in a 72 px `surfaceRaised` circle (no mascot), one-line headline, one-line body, optional CTA.
 - **Error**: same layout with "Retry".
-- **Offline**: persistent top banner "Offline" + screens use local data when available.
+- **Offline**: persistent top banner "Offline" (rounded box with a wifi-off icon, neutral colors) + screens use local data when available.
 - **Snackbar**: short confirmations ("Added to Watch later", "Copied") with an "Undo" action when applicable.
 
 ---

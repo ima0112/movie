@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/theme/app_icons.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/genre_catalog.dart';
@@ -34,6 +35,7 @@ class ExploreContent extends StatelessWidget {
           ExploreAtRest() => _AtRestContent(state: state),
           ExploreSearchLoading() => const ExploreSearchSkeleton(),
           ExploreSearchLoaded() when state.results.isEmpty => EmptyStateView(
+            icon: AppIcons.search,
             title: context.l10n.exploreNoResults,
             body: context.l10n.exploreTryAnotherTitle,
           ),

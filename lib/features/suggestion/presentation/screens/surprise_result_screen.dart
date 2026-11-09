@@ -62,6 +62,7 @@ class _SurpriseResultView extends StatelessWidget {
                 Searching() => const SurpriseSearchingContent(),
                 SurpriseResult() => SurpriseResultContent(state: state),
                 Exhausted() => EmptyStateView(
+                  icon: AppIcons.dice,
                   title: context.l10n.surpriseNoMoreSuggestionsTitle,
                   body: context.l10n.surpriseNoMoreSuggestionsBody,
                   ctaLabel: context.l10n.surpriseSearchAgain,

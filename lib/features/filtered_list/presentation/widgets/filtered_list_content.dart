@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/theme/app_icons.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -41,6 +42,7 @@ class FilteredListContent extends StatelessWidget {
             onRetry: () => context.read<FilteredListCubit>().retry(),
           ),
           FilteredListLoaded() when state.allItems.isEmpty => EmptyStateView(
+            icon: AppIcons.filter,
             title: context.l10n.filteredListEmptyTitle,
             body: context.l10n.filteredListEmptyBody,
             ctaLabel: state.filter.isDefault ? null : context.l10n.commonReset,

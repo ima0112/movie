@@ -862,6 +862,7 @@ class _StateViewsSection extends StatelessWidget {
         DecoratedBox(
           decoration: const BoxDecoration(color: AppColors.surfaceRaised),
           child: EmptyStateView(
+            icon: AppIcons.watchLater,
             title: 'Nothing for later yet',
             body: 'Save a movie or show and it will show up here.',
             ctaLabel: 'Explore',

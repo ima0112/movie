@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/library_tab_localization.dart';
 import '../../../../shared/widgets/state_views.dart';
@@ -30,6 +31,11 @@ class MyListEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateView(
+      icon: switch (tab) {
+        LibraryTab.favorites => AppIcons.favorite,
+        LibraryTab.watchLater => AppIcons.watchLater,
+        LibraryTab.watched => AppIcons.watched,
+      },
       title: tab.localizedEmptyHeadline(context.l10n),
       body: otherTabsNote,
       ctaLabel: context.l10n.navTabExplore,
@@ -58,6 +64,7 @@ class MyListFilteredEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateView(
+      icon: AppIcons.filter,
       title: title,
       body: context.l10n.filteredListEmptyBody,
       ctaLabel: context.l10n.discoverSeeAll,

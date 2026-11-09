@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'app_buttons.dart';
-import 'pako_state.dart';
 
 /// A skeleton placeholder block with a subtle shimmer sweep.
 ///
@@ -126,20 +126,25 @@ class _SlidingGradientTransform extends GradientTransform {
 /// Shared icon + title + body + optional CTA layout for [EmptyStateView]
 /// and [ErrorStateView] — see `docs/SCREENS.md` G ("Empty: outline icon,
 /// one-line headline, one-line body, optional CTA. Error: same layout
-/// with 'Retry'."). Concrete screens use Pako asleep for this icon (e.g.
-/// B4, B2's "No results").
+/// with 'Retry'."). The icon sits in a 72 px `surfaceRaised` circle, as in
+/// the "Estado" designs (no mascot).
 class _StateLayout extends StatelessWidget {
   const _StateLayout({
+    required this.icon,
     required this.title,
     required this.body,
     this.ctaLabel,
     this.onCtaTap,
   });
 
+  final IconData icon;
   final String title;
   final String body;
   final String? ctaLabel;
   final VoidCallback? onCtaTap;
+
+  static const double _badgeSize = 72;
+  static const double _iconSize = 32;
 
   @override
   Widget build(BuildContext context) {
@@ -169,8 +174,22 @@ class _StateLayout extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const PakoState(mood: PakoMood.asleep),
-                  const SizedBox(height: AppSpacing.lg),
+                  ExcludeSemantics(
+                    child: Container(
+                      width: _badgeSize,
+                      height: _badgeSize,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.surfaceRaised,
+                      ),
+                      child: Icon(
+                        icon,
+                        size: _iconSize,
+                        color: AppColors.inkMuted,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
                   Text(
                     title,
                     style: AppTextStyles.h2,
@@ -179,13 +198,13 @@ class _StateLayout extends StatelessWidget {
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     body,
-                    style: AppTextStyles.bodySm.copyWith(
+                    style: AppTextStyles.body.copyWith(
                       color: AppColors.inkMuted,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   if (cta != null) ...[
-                    const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.xxl),
                     SecondaryButton(
                       label: cta,
                       onTap: onCtaTap,
@@ -202,19 +221,21 @@ class _StateLayout extends StatelessWidget {
   }
 }
 
-/// Empty state: Pako asleep, a headline, a body line, and an optional CTA.
+/// Empty state: an icon badge, a headline, a body line, and an optional CTA.
 ///
 /// Pure presentation — no feature dependency, everything comes in by
 /// parameter.
 class EmptyStateView extends StatelessWidget {
   const EmptyStateView({
     super.key,
+    required this.icon,
     required this.title,
     required this.body,
     this.ctaLabel,
     this.onCtaTap,
   });
 
+  final IconData icon;
   final String title;
   final String body;
   final String? ctaLabel;
@@ -223,6 +244,7 @@ class EmptyStateView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _StateLayout(
+      icon: icon,
       title: title,
       body: body,
       ctaLabel: ctaLabel,
@@ -251,6 +273,7 @@ class ErrorStateView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _StateLayout(
+      icon: AppIcons.cloudOff,
       title: title,
       body: body,
       ctaLabel: context.l10n.commonRetry,
@@ -271,20 +294,34 @@ class ErrorStateView extends StatelessWidget {
 class OfflineBanner extends StatelessWidget {
   const OfflineBanner({super.key});
 
+  static const double _height = 48;
+  static const double _iconSize = 18;
+
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.surfaceRaised2,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs,
-        ),
-        child: Text(
-          context.l10n.offlineBannerMessage,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
-        ),
+    return Container(
+      constraints: const BoxConstraints(minHeight: _height),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceRaised2,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        border: Border.all(color: AppColors.lineStrong),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            AppIcons.wifiOff,
+            size: _iconSize,
+            color: AppColors.inkMuted,
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              context.l10n.offlineBannerMessage,
+              style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+            ),
+          ),
+        ],
       ),
     );
   }
