@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/domain/entities/discover_filter.dart';
+import '../core/domain/entities/media_detail.dart';
 import '../core/domain/entities/media_key.dart';
 import '../core/domain/entities/media_type.dart';
 import '../core/domain/repositories/media_repository.dart';
@@ -17,6 +18,7 @@ import '../features/tv_detail/presentation/screens/tv_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
 import '../features/settings/presentation/screens/attribution_screen.dart';
+import '../features/tv_detail/presentation/screens/tv_seasons_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
 import '../features/suggestion/presentation/cubit/surprise_cubit.dart';
@@ -58,6 +60,10 @@ class AppRoutes {
   /// C7 (Attribution and credits), pushed from C6's About group.
   static const String attribution = '/attribution';
 
+  /// D2b (Seasons), pushed from D2's Seasons card — carries the loaded show
+  /// via `extra` ([TvSeasonsRouteArgs]).
+  static const String tvSeasons = '/tv-seasons';
+
   /// C1 (Filtered listing) — reached from B1's "See all"
   /// (`discover_section_carousel.dart`), a B2 genre tile, D1/D2's own
   /// genre chips, or H8's "See N results" (all go through here,
@@ -91,6 +97,14 @@ class AppRoutes {
 /// see `FilteredListCubit`'s own doc comment on the field it feeds.
 /// `null` for every other origin (a genre tile, H8), which already
 /// arrive with a real [DiscoverFilter].
+/// What D2b needs: the show D2 already loaded, so the screen makes no
+/// network call of its own.
+class TvSeasonsRouteArgs {
+  const TvSeasonsRouteArgs({required this.detail});
+
+  final TvShowDetail detail;
+}
+
 class FilteredListRouteArgs {
   const FilteredListRouteArgs({
     required this.filter,
@@ -242,6 +256,14 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.attribution,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const AttributionScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.tvSeasons,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final args = state.extra! as TvSeasonsRouteArgs;
+        return TvSeasonsScreen(detail: args.detail);
+      },
     ),
     GoRoute(
       path: AppRoutes.filteredList,

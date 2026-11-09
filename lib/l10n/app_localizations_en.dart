@@ -685,6 +685,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tvEpisodeGuestStars => 'Guest stars';
 
   @override
+  String get tvSeasonsLinkLabel => 'Seasons';
+
+  @override
+  String tvSeasonsLinkValue(int seasons, int episodes) {
+    return '$seasons ($episodes ep.)';
+  }
+
+  @override
+  String get tvNextEpisodeCaption => 'Next episode';
+
+  @override
+  String get tvLastAiredEpisodeCaption => 'Last aired episode';
+
+  @override
+  String get tvNoNextEpisodeTitle => 'No next episode';
+
+  @override
+  String get tvNoNextEpisodeEnded =>
+      'This show has ended and has no new episodes planned.';
+
+  @override
+  String get tvNoNextEpisodeUnknown =>
+      'No upcoming episode has been announced yet.';
+
+  @override
+  String tvEpisodeCodeAndName(int season, int episode, String name) {
+    return 'S$season · E$episode · $name';
+  }
+
+  @override
+  String tvEpisodeCodeSpecialsAndName(int episode, String name) {
+    return 'Specials · E$episode · $name';
+  }
+
+  @override
   String get tvSeasonsSectionTitle => 'Seasons';
 
   @override

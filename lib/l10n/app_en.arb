@@ -651,6 +651,37 @@
     }
   },
   "tvEpisodeGuestStars": "Guest stars",
+  "tvSeasonsLinkLabel": "Seasons",
+  "tvSeasonsLinkValue": "{seasons} ({episodes} ep.)",
+  "@tvSeasonsLinkValue": {
+    "description": "D2's Seasons card value, e.g. \"5 (62 ep.)\" — season count and total episodes.",
+    "placeholders": {
+      "seasons": {"type": "int"},
+      "episodes": {"type": "int"}
+    }
+  },
+  "tvNextEpisodeCaption": "Next episode",
+  "tvLastAiredEpisodeCaption": "Last aired episode",
+  "tvNoNextEpisodeTitle": "No next episode",
+  "tvNoNextEpisodeEnded": "This show has ended and has no new episodes planned.",
+  "tvNoNextEpisodeUnknown": "No upcoming episode has been announced yet.",
+  "tvEpisodeCodeAndName": "S{season} · E{episode} · {name}",
+  "@tvEpisodeCodeAndName": {
+    "description": "D2b's episode card title, e.g. \"S5 · E16 · Felina\".",
+    "placeholders": {
+      "season": {"type": "int"},
+      "episode": {"type": "int"},
+      "name": {"type": "String"}
+    }
+  },
+  "tvEpisodeCodeSpecialsAndName": "Specials · E{episode} · {name}",
+  "@tvEpisodeCodeSpecialsAndName": {
+    "description": "D2b's episode card title for season 0 (TMDB's specials).",
+    "placeholders": {
+      "episode": {"type": "int"},
+      "name": {"type": "String"}
+    }
+  },
   "tvSeasonsSectionTitle": "Seasons",
   "tvSpecialsLabel": "Specials",
   "@tvSpecialsLabel": {

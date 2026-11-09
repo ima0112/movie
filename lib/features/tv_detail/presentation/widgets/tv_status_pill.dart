@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_chip.dart';
 
@@ -36,3 +37,15 @@ class TvStatusPill extends StatelessWidget {
     return AppChip(label: label, state: state);
   }
 }
+
+/// The localized status text ("Airing" / "Ended" / "Cancelled") for TMDB's
+/// raw `status` string — shared by [TvStatusPill] and D2b's header chip.
+String tvStatusLabel(String status, AppLocalizations l10n) => switch (status) {
+  'Ended' => l10n.tvStatusEnded,
+  'Canceled' => l10n.tvStatusCancelled,
+  _ => l10n.tvStatusAiring,
+};
+
+/// Whether a show with this status will never get a new episode.
+bool tvStatusIsFinished(String status) =>
+    status == 'Ended' || status == 'Canceled';

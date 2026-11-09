@@ -19,10 +19,27 @@ import '../../../../shared/widgets/poster_image.dart';
 /// season, which is always shown even at 0 episodes (e.g. announced but
 /// not yet aired).
 class TvSeasonsSection extends StatelessWidget {
-  const TvSeasonsSection({super.key, required this.seasons, this.onSeasonTap});
+  const TvSeasonsSection({
+    super.key,
+    required this.seasons,
+    this.onSeasonTap,
+    this.showTitle = true,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: AppSpacing.xl,
+      vertical: AppSpacing.lg,
+    ),
+  });
 
   final List<SeasonSummary> seasons;
   final void Function(SeasonSummary season)? onSeasonTap;
+
+  /// D2b draws its own "SEASONS" caption above this list, so it hides the
+  /// section's own title.
+  final bool showTitle;
+
+  /// Defaults to the detail screen's side/vertical padding; D2b, which pads
+  /// its own list, passes [EdgeInsets.zero].
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +47,14 @@ class TvSeasonsSection extends StatelessWidget {
     if (ordered.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.lg,
-      ),
+      padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.l10n.tvSeasonsSectionTitle, style: AppTextStyles.h2),
-          const SizedBox(height: AppSpacing.md),
+          if (showTitle) ...[
+            Text(context.l10n.tvSeasonsSectionTitle, style: AppTextStyles.h2),
+            const SizedBox(height: AppSpacing.md),
+          ],
           for (final (i, season) in ordered.indexed) ...[
             if (i > 0) const SizedBox(height: AppSpacing.md),
             _SeasonRow(season: season, onTap: () => onSeasonTap?.call(season)),

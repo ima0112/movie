@@ -1262,6 +1262,60 @@ abstract class AppLocalizations {
   /// **'Guest stars'**
   String get tvEpisodeGuestStars;
 
+  /// No description provided for @tvSeasonsLinkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Seasons'**
+  String get tvSeasonsLinkLabel;
+
+  /// D2's Seasons card value, e.g. "5 (62 ep.)" — season count and total episodes.
+  ///
+  /// In en, this message translates to:
+  /// **'{seasons} ({episodes} ep.)'**
+  String tvSeasonsLinkValue(int seasons, int episodes);
+
+  /// No description provided for @tvNextEpisodeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Next episode'**
+  String get tvNextEpisodeCaption;
+
+  /// No description provided for @tvLastAiredEpisodeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Last aired episode'**
+  String get tvLastAiredEpisodeCaption;
+
+  /// No description provided for @tvNoNextEpisodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No next episode'**
+  String get tvNoNextEpisodeTitle;
+
+  /// No description provided for @tvNoNextEpisodeEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'This show has ended and has no new episodes planned.'**
+  String get tvNoNextEpisodeEnded;
+
+  /// No description provided for @tvNoNextEpisodeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming episode has been announced yet.'**
+  String get tvNoNextEpisodeUnknown;
+
+  /// D2b's episode card title, e.g. "S5 · E16 · Felina".
+  ///
+  /// In en, this message translates to:
+  /// **'S{season} · E{episode} · {name}'**
+  String tvEpisodeCodeAndName(int season, int episode, String name);
+
+  /// D2b's episode card title for season 0 (TMDB's specials).
+  ///
+  /// In en, this message translates to:
+  /// **'Specials · E{episode} · {name}'**
+  String tvEpisodeCodeSpecialsAndName(int episode, String name);
+
   /// No description provided for @tvSeasonsSectionTitle.
   ///
   /// In en, this message translates to:
