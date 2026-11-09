@@ -85,7 +85,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Access: tab 3. 100% local data: no skeleton or network error.
 - Elements:
   - Top bar: "My List" title and a single icon on the right, filters (→ H9; amber if filters are active).
-  - Segmented Favorites · Watch later · Watched, each with a live counter.
+  - Segmented Favorites · Watch later · Watched, each with a live counter, drawn as a contained pill (same as B2's).
   - Row of amber chips with active filters (each with "×"), only when something differs from the default.
   - Rows: 56×84 poster, 16/500 title, gray 13 px line ("2022 · TV Show · 24 episodes" / "2023 · Movie · 1 h 46 min") — rendered entirely from the saved entry's own catalog snapshot, no network call; the episode count/runtime segment only appears once the entry has picked one up (a toggle or Save from the detail screen, or the detail screen's own lazy refresh on reopening) — until then the line is just "year · type". Right-hand column per tab: Favorites and Watch later → relative date saved; Watched → 1–5 amber stars (empty ones in dark gray; unrated shows all five in gray) and a short date. Tapping the stars → H2 directly.
   - Swipe left → "Remove" (red, snackbar with "Undo" for 4 s, no dialog); swipe right → "Watched" (amber → H2) in Favorites/Watch later, "Favorite" in Watched. Long-press → H1.

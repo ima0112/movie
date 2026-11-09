@@ -34,8 +34,10 @@ class MediaSegmentedControl extends StatelessWidget {
   final MediaSegmentedStyle style;
 
   static const Duration _crossFade = Duration(milliseconds: 200);
-  static const double _pillHeight = 40;
-  static const double _pillInset = 4;
+  /// Shared with every other contained-pill segmented control (My List's
+  /// tabs), so they all stay the same size.
+  static const double pillHeight = 40;
+  static const double pillInset = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +54,8 @@ class MediaSegmentedControl extends StatelessWidget {
           ],
         ),
         MediaSegmentedStyle.pill => Container(
-          height: _pillHeight,
-          padding: const EdgeInsets.all(_pillInset),
+          height: pillHeight,
+          padding: const EdgeInsets.all(pillInset),
           decoration: BoxDecoration(
             color: AppColors.surfaceRaised,
             borderRadius: BorderRadius.circular(AppSpacing.radiusPill),

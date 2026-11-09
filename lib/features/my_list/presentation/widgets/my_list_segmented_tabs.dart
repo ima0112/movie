@@ -8,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/library_tab_localization.dart';
+import '../../../../shared/widgets/media_segmented_control.dart';
 import '../cubit/my_list_cubit.dart';
 
 /// B4's "Segmented Favorites · Watch later · Watched, each with a live
@@ -29,17 +30,27 @@ class MyListSegmentedTabs extends StatelessWidget {
     final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Row(
-        children: [
-          for (final tab in LibraryTab.values)
-            Expanded(
-              child: _Segment(
-                tab: tab,
-                label: tab.localizedLabel(l10n),
-                userLibraryRepository: userLibraryRepository,
+      // Contained pill, like Explore's segmented control (the design's
+      // "Mi lista" tabs) — same height/inset via MediaSegmentedControl.
+      child: Container(
+        height: MediaSegmentedControl.pillHeight,
+        padding: const EdgeInsets.all(MediaSegmentedControl.pillInset),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceRaised,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+        ),
+        child: Row(
+          children: [
+            for (final tab in LibraryTab.values)
+              Expanded(
+                child: _Segment(
+                  tab: tab,
+                  label: tab.localizedLabel(l10n),
+                  userLibraryRepository: userLibraryRepository,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -65,9 +76,10 @@ class _Segment extends StatelessWidget {
       builder: (context, isSelected) {
         return GestureDetector(
           onTap: () => context.read<MyListCubit>().selectTab(tab),
+          behavior: HitTestBehavior.opaque,
           child: AnimatedContainer(
             duration: _crossFade,
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: isSelected ? AppColors.ink : Colors.transparent,
               borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
@@ -79,6 +91,7 @@ class _Segment extends StatelessWidget {
                 return AnimatedDefaultTextStyle(
                   duration: _crossFade,
                   style: AppTextStyles.bodySm.copyWith(
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     color: isSelected ? AppColors.surface : AppColors.inkMuted,
                   ),
                   child: Text(
