@@ -652,9 +652,13 @@
       }
     }
   },
-  "tvCreatedByLabel": "Created by ",
-  "@tvCreatedByLabel": {
-    "description": "D2's creator credit (docs/SCREENS.md D2: \"'Created by': names (→ D3)\") — trailing space is deliberate, it precedes the first tappable name with no separator of its own."
+  "mediaCreatedByLabel": "Created by ",
+  "@mediaCreatedByLabel": {
+    "description": "D2's creator credit under the Cast heading (docs/SCREENS.md D2) — trailing space is deliberate, it precedes the first tappable name with no separator of its own."
+  },
+  "mediaDirectedByLabel": "Directed by ",
+  "@mediaDirectedByLabel": {
+    "description": "D1's director credit under the Cast heading (the film's counterpart of D2's Created by) - trailing space is deliberate, same as mediaCreatedByLabel."
   },
   "tvEpisodesSectionTitle": "Episodes",
   "tvEpisodeCode": "S{season} · E{episode}",

@@ -8,6 +8,8 @@ import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/locale_names.dart';
+import '../../../../app/router.dart';
+import '../../../../shared/widgets/media_detail/media_byline.dart';
 import '../../../../shared/widgets/media_detail/media_detail_scroll_view.dart';
 import '../../../../shared/widgets/media_detail/media_stat_cards.dart';
 import '../cubit/movie_detail_cubit.dart';
@@ -72,6 +74,11 @@ class MovieDetailContent extends StatelessWidget {
           languageDisplayName(context, language),
       ],
       stats: _stats(context),
+      castByline: MediaByline(
+        label: context.l10n.mediaDirectedByLabel,
+        people: movieDirectors(detail),
+        onPersonTap: (person) => context.pushPersonDetail(person.id),
+      ),
       similarTitle: context.l10n.mediaSimilarMoviesTitle,
     );
   }

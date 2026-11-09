@@ -1262,11 +1262,17 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 episode} other{{count} episodes}}'**
   String tvEpisodeCount(int count);
 
-  /// D2's creator credit (docs/SCREENS.md D2: "'Created by': names (→ D3)") — trailing space is deliberate, it precedes the first tappable name with no separator of its own.
+  /// D2's creator credit under the Cast heading (docs/SCREENS.md D2) — trailing space is deliberate, it precedes the first tappable name with no separator of its own.
   ///
   /// In en, this message translates to:
   /// **'Created by '**
-  String get tvCreatedByLabel;
+  String get mediaCreatedByLabel;
+
+  /// D1's director credit under the Cast heading (the film's counterpart of D2's Created by) - trailing space is deliberate, same as mediaCreatedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Directed by '**
+  String get mediaDirectedByLabel;
 
   /// No description provided for @tvEpisodesSectionTitle.
   ///

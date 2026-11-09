@@ -3,6 +3,7 @@ import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
+import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/movie_detail/presentation/widgets/movie_metadata.dart';
 import 'package:movies/l10n/app_localizations.dart';
@@ -14,6 +15,7 @@ MovieDetail _detail({
   int? runtime,
   String? certification,
   DateTime? release,
+  List<CrewMember> crew = const [],
 }) => MovieDetail(
   item: Movie(
     id: 1,
@@ -25,7 +27,7 @@ MovieDetail _detail({
   ),
   overview: '',
   cast: const [],
-  crew: const [],
+  crew: crew,
   videos: const [],
   similar: const [],
   imdbId: null,
@@ -120,5 +122,40 @@ void main() {
     expect(territoryFromLocaleName('English (United States)'), 'United States');
     expect(territoryFromLocaleName('Chinese (Simplified, China)'), 'China');
     expect(territoryFromLocaleName('English'), isNull);
+  });
+
+  test('movieDirectors: crew with job Director, each person once', () {
+    const nolan = Person(
+      id: 7,
+      name: 'Christopher Nolan',
+      profilePath: null,
+      knownForDepartment: 'Directing',
+    );
+    const thomas = Person(
+      id: 8,
+      name: 'Emma Thomas',
+      profilePath: null,
+      knownForDepartment: 'Production',
+    );
+    final detail = _detail(
+      crew: [
+        const CrewMember(
+          person: nolan,
+          job: 'Director',
+          department: 'Directing',
+        ),
+        const CrewMember(
+          person: thomas,
+          job: 'Producer',
+          department: 'Production',
+        ),
+        const CrewMember(
+          person: nolan,
+          job: 'Director',
+          department: 'Directing',
+        ),
+      ],
+    );
+    expect(movieDirectors(detail), [nolan]);
   });
 }

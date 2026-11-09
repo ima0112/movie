@@ -10,17 +10,17 @@ import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/locale_names.dart';
+import '../../../../shared/widgets/media_detail/media_byline.dart';
 import '../../../../shared/widgets/media_detail/media_detail_scroll_view.dart';
 import '../../../../shared/widgets/media_detail/media_stat_cards.dart';
 import '../cubit/tv_detail_cubit.dart';
-import 'tv_creators_section.dart';
 import 'tv_metadata.dart';
 import 'tv_status.dart';
 
 /// D2 once `TvDetailCubit` has loaded: hands `MediaDetailScrollView` (the
 /// assembly D1 and D2 share) the show's own values — the air years and
 /// country, the language chip, the Status / Seasons cards (Seasons → D2b)
-/// and "Created by" between the cast and the similar shows
+/// and "Created by" under the Cast heading
 /// (`docs/SCREENS.md` D2).
 ///
 /// [detail] arrives already loaded and narrowed to [TvShowDetail] — the only
@@ -84,8 +84,9 @@ class TvDetailContent extends StatelessWidget {
           languageDisplayName(context, language),
       ],
       stats: _stats(context),
-      afterCast: TvCreatorsSection(
-        creators: detail.creators,
+      castByline: MediaByline(
+        label: context.l10n.mediaCreatedByLabel,
+        people: detail.creators,
         onPersonTap: (person) => context.pushPersonDetail(person.id),
       ),
       similarTitle: context.l10n.mediaSimilarTvTitle,
