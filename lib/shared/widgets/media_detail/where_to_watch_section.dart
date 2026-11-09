@@ -8,12 +8,13 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
 import 'provider_group_box.dart';
 
-/// D1/D2's "Where to watch" card — Streaming / Rent / Buy groups, shown
-/// only when TMDB (via JustWatch) has data for at least one of them (the
+/// D1/D2's "Where to watch" card — Streaming / Rent / Buy groups, (the
 /// "Dónde ver" design): a `surfaceRaised` card with the title and a
 /// JustWatch badge, the Streaming box on top (56 px logos with names), Rent
-/// and Buy side by side underneath (36 px logos), and a hint line with the
-/// region in gray — tappable → H6. Tapping any service opens TMDB's `link`.
+/// and Buy side by side underneath (36 px logos), and a hint line. The
+/// region is a visible pill under the title (→ H6), so it can be changed
+/// even when the region has no data — then the card says so instead of
+/// disappearing. Tapping any service opens TMDB's `link`.
 ///
 /// Pure presentation — [providers] arrives as a plain value (CLAUDE.md rule
 /// 9 — the assembling screen already knows it's loaded).
@@ -44,8 +45,6 @@ class WhereToWatchSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!providers.hasAny) return const SizedBox.shrink();
-
     final l10n = context.l10n;
     final link = providers.link;
     final onTap = link == null ? null : () => onProviderTap?.call(link);
@@ -74,6 +73,13 @@ class WhereToWatchSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
+            _RegionButton(name: regionName, onTap: onRegionTap),
+            const SizedBox(height: AppSpacing.md),
+            if (!providers.hasAny)
+              Text(
+                l10n.whereToWatchNoProviders(regionName),
+                style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
+              ),
             if (providers.flatrate.isNotEmpty)
               ProviderGroupBox(
                 label: l10n.whereToWatchSubscription,
@@ -120,26 +126,15 @@ class WhereToWatchSection extends StatelessWidget {
                 ],
               ),
             ],
-            const SizedBox(height: AppSpacing.md),
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(
-                  '${l10n.whereToWatchTapHint} · ',
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.inkMuted,
-                  ),
+            if (providers.hasAny) ...[
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                l10n.whereToWatchTapHint,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.inkMuted,
                 ),
-                GestureDetector(
-                  onTap: onRegionTap,
-                  behavior: HitTestBehavior.opaque,
-                  child: Text(
-                    regionName,
-                    style: AppTextStyles.caption.copyWith(color: AppColors.ink),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             // Mandatory attribution.
             Text(
@@ -182,6 +177,60 @@ class _JustWatchBadge extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The tappable country pill: globe, name and a chevron, so it reads as a
+/// control (opens H6).
+class _RegionButton extends StatelessWidget {
+  const _RegionButton({required this.name, required this.onTap});
+
+  final String name;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Semantics(
+        button: true,
+        label: context.l10n.whereToWatchChangeRegion(name),
+        excludeSemantics: true,
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 36),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+              border: Border.all(color: AppColors.lineStrong),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(AppIcons.globe, size: 16, color: AppColors.inkMuted),
+                const SizedBox(width: AppSpacing.xs + 2),
+                Flexible(
+                  child: Text(
+                    name,
+                    style: AppTextStyles.bodySm.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                const Icon(
+                  AppIcons.chevronDown,
+                  size: 16,
+                  color: AppColors.inkMuted,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

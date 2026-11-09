@@ -1238,6 +1238,12 @@ abstract class AppLocalizations {
   /// **'Synopsis'**
   String get mediaDetailSynopsis;
 
+  /// The tap-to-collapse link shown after an expanded synopsis (the opposite of commonReadMore).
+  ///
+  /// In en, this message translates to:
+  /// **'Read less'**
+  String get commonReadLess;
+
   /// The tap-to-expand link at the end of a folded synopsis/biography (docs/SCREENS.md D1: "Synopsis folded to 4 lines with an amber 'Read more'") — shared by D1/D2's synopsis, D3's biography, and H4's episode overview.
   ///
   /// In en, this message translates to:
@@ -1507,6 +1513,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap a service to open it in JustWatch'**
   String get whereToWatchTapHint;
+
+  /// D1/D2's Where to watch card when JustWatch has no service for the chosen country; the country pill above stays so the user can pick another.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available to stream, rent or buy in {region}. Try another country.'**
+  String whereToWatchNoProviders(String region);
+
+  /// Accessibility label of the country pill in Where to watch (opens the country picker).
+  ///
+  /// In en, this message translates to:
+  /// **'Country: {region}. Change country'**
+  String whereToWatchChangeRegion(String region);
 
   /// No description provided for @whereToWatchSubscription.
   ///

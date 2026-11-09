@@ -661,6 +661,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaDetailSynopsis => 'Synopsis';
 
   @override
+  String get commonReadLess => 'Read less';
+
+  @override
   String get commonReadMore => 'Read more';
 
   @override
@@ -823,6 +826,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whereToWatchTapHint => 'Tap a service to open it in JustWatch';
+
+  @override
+  String whereToWatchNoProviders(String region) {
+    return 'Not available to stream, rent or buy in $region. Try another country.';
+  }
+
+  @override
+  String whereToWatchChangeRegion(String region) {
+    return 'Country: $region. Change country';
+  }
 
   @override
   String get whereToWatchSubscription => 'Subscription';

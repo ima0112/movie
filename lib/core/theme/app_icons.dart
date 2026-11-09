@@ -51,6 +51,7 @@ class AppIcons {
   static const IconData retry = RemixIcons.refresh_line;
   static const IconData check = RemixIcons.check_line;
   static const IconData chevronRight = RemixIcons.arrow_right_s_line;
+  static const IconData globe = RemixIcons.global_line;
   static const IconData chevronDown = RemixIcons.arrow_down_s_line;
   static const IconData info = RemixIcons.information_line;
   static const IconData hourglass = RemixIcons.hourglass_line;

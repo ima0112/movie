@@ -682,6 +682,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mediaDetailSynopsis => 'Sinopsis';
 
   @override
+  String get commonReadLess => 'Leer menos';
+
+  @override
   String get commonReadMore => 'Leer más';
 
   @override
@@ -845,6 +848,16 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get whereToWatchTapHint =>
       'Toca un servicio para abrirlo en JustWatch';
+
+  @override
+  String whereToWatchNoProviders(String region) {
+    return 'No disponible para ver, alquilar o comprar en $region. Prueba con otro país.';
+  }
+
+  @override
+  String whereToWatchChangeRegion(String region) {
+    return 'País: $region. Cambiar país';
+  }
 
   @override
   String get whereToWatchSubscription => 'Suscripción';
