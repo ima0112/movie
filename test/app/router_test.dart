@@ -10,6 +10,7 @@ import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/features/explore/presentation/screens/explore_screen.dart';
 import 'package:movies/features/my_list/presentation/screens/my_list_screen.dart';
 import 'package:movies/features/you/presentation/screens/you_screen.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
@@ -62,7 +63,7 @@ void main() {
     // Explore (/explore).
     await tester.tap(_tab('Explore'));
     await tester.pumpAndSettle();
-    expect(find.text('Explore'), findsWidgets);
+    expect(find.byType(ExploreScreen), findsOneWidget);
     expect(find.text('Dune: Part Two'), findsNothing);
 
     // My List (/my-list) — placeholder.
