@@ -45,7 +45,7 @@ class MyTastesCard extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surfaceRaised,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),

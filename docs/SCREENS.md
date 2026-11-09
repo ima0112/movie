@@ -96,9 +96,9 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 ### B5. You
 - Access: tab 4.
 - Elements:
-  - Header: initial in a circle with the chosen color (36 px), "Hi, Daniel" 24/500 (no name: Pako's silhouette in the circle, "Hi" and subtitle "Tap to set your name"); tapping the header edits name and color in a sheet (H10). Gear icon top right → C6.
-  - **My Tastes** card (`surfaceRaised`, radius 14): liked genres as small chips (max 3 + "+N"), line "3 vibes · since 1990 · never Horror"; tap → C5. No taste profile: the invitation card with a small Pako and a "My Tastes" button.
-  - **Your Activity** card: four large numbers (watched · hours · favorites · watch later) and an amber "See stats" link → C4. No charts.
+  - Header: initial in a circle with the chosen color (48 px, small pencil badge bottom right), "Hi, Daniel" 26/600 (no name: Pako's silhouette in the circle, "Hi" and subtitle "Tap to set your name"); tapping the header edits name and color in a sheet (H10). Gear icon top right → C6.
+  - **My Tastes** card (`surfaceRaised`, radius 16): liked genres as small chips (max 3 + "+N"), line "3 vibes · since 1990 · never Horror"; tap → C5. No taste profile: the invitation card with a small Pako and a "My Tastes" button.
+  - **Your Activity** card: four large numbers in a strip with hairline dividers (watched · hours · favorites · watch later) and an amber "See stats" link → C4. No charts.
   - **Recent Rooms** card (v1.1): up to 10 local matches (thumbnail, title, "with Ana and Luis · yesterday"); tap → D1/D2. Not shown if there are none.
 - No halo, no large Pako. Amber only on the initial's circle and the stats link.
 - Exits: C4, C5, C6, H10, D1/D2.

@@ -59,7 +59,7 @@ class YourActivityCard extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surfaceRaised,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -81,33 +81,40 @@ class YourActivityCard extends StatelessWidget {
                         .where((e) => e.isWatched)
                         .fold<int>(0, (sum, e) => sum + _minutesFor(e)) /
                     60;
-                return Row(
-                  children: [
-                    Expanded(
-                      child: _Metric(
-                        value: watched.localizedCount(l10n),
-                        label: LibraryTab.watched.localizedLabel(l10n),
-                      ),
-                    ),
-                    Expanded(
-                      child: _Metric(
-                        value: hours.round().localizedCount(l10n),
-                        label: l10n.yourActivityHoursLabel,
-                      ),
-                    ),
-                    Expanded(
-                      child: _Metric(
-                        value: favorites.localizedCount(l10n),
-                        label: LibraryTab.favorites.localizedLabel(l10n),
-                      ),
-                    ),
-                    Expanded(
-                      child: _Metric(
-                        value: watchLater.localizedCount(l10n),
-                        label: LibraryTab.watchLater.localizedLabel(l10n),
-                      ),
-                    ),
-                  ],
+                final metrics = [
+                  _Metric(
+                    value: watched.localizedCount(l10n),
+                    label: LibraryTab.watched.localizedLabel(l10n),
+                  ),
+                  _Metric(
+                    value: hours.round().localizedCount(l10n),
+                    label: l10n.yourActivityHoursLabel,
+                  ),
+                  _Metric(
+                    value: favorites.localizedCount(l10n),
+                    label: LibraryTab.favorites.localizedLabel(l10n),
+                  ),
+                  _Metric(
+                    value: watchLater.localizedCount(l10n),
+                    label: LibraryTab.watchLater.localizedLabel(l10n),
+                  ),
+                ];
+                // A strip with hairline dividers between the four
+                // numbers, as in the "Tú · Perfil" design.
+                return IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      for (var i = 0; i < metrics.length; i++) ...[
+                        if (i > 0)
+                          const VerticalDivider(
+                            width: 1,
+                            thickness: 1,
+                            color: AppColors.line,
+                          ),
+                        Expanded(child: metrics[i]),
+                      ],
+                    ],
+                  ),
                 );
               },
             ),
@@ -149,7 +156,7 @@ class _Metric extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(value, style: AppTextStyles.h2),
+        Text(value, style: AppTextStyles.h1),
         const SizedBox(height: AppSpacing.xs),
         Text(
           label,

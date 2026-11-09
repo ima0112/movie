@@ -10,7 +10,9 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/profile_avatar.dart';
 
-const double _avatarSize = 36;
+const double _avatarSize = 48;
+const double _badgeSize = 20;
+const double _badgeIconSize = 11;
 
 /// B5 ("You")'s header row: the user's initial + name, or Pako's
 /// silhouette + "Tap to set your name" if no profile has been saved yet.
@@ -28,10 +30,8 @@ const double _avatarSize = 36;
 /// [UserProfileCubit] — the gear icon is static and must never sit
 /// inside that `BlocBuilder` (CLAUDE.md rule 9).
 ///
-/// SCREENS.md's "24/500" for the name doesn't match any
-/// [AppTextStyles] token exactly (the nearest are `h1` 26/600 and `h2`
-/// 20/600); this uses `h2` as the closest fit rather than hardcoding a
-/// one-off size (rule 4).
+/// The name uses `h1` (26/600), the "Tú · Perfil" design's size, with
+/// a 48 px avatar carrying a small edit badge.
 class YouHeader extends StatelessWidget {
   const YouHeader({
     super.key,
@@ -56,11 +56,7 @@ class YouHeader extends StatelessWidget {
             child: BlocBuilder<UserProfileCubit, UserProfile?>(
               builder: (context, profile) => Row(
                 children: [
-                  ProfileAvatar(
-                    displayName: profile?.displayName,
-                    initialColor: profile?.initialColor,
-                    size: _avatarSize,
-                  ),
+                  _AvatarWithEditBadge(profile: profile),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(child: _Greeting(profile: profile)),
                 ],
@@ -91,7 +87,7 @@ class _Greeting extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(l10n.youHeaderGreetingNoProfile, style: AppTextStyles.h2),
+          Text(l10n.youHeaderGreetingNoProfile, style: AppTextStyles.h1),
           const SizedBox(height: AppSpacing.xs),
           Text(
             l10n.youHeaderTapToSetName,
@@ -102,8 +98,50 @@ class _Greeting extends StatelessWidget {
     }
     return Text(
       l10n.youHeaderGreetingWithName(profile.displayName),
-      style: AppTextStyles.h2,
+      style: AppTextStyles.h1,
       overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+/// The avatar with a small pencil badge, bottom right — signals that the
+/// header opens the edit sheet (H10).
+class _AvatarWithEditBadge extends StatelessWidget {
+  const _AvatarWithEditBadge({required this.profile});
+
+  final UserProfile? profile;
+
+  static const double _badgeOffset = -4;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        ProfileAvatar(
+          displayName: profile?.displayName,
+          initialColor: profile?.initialColor,
+          size: _avatarSize,
+        ),
+        Positioned(
+          right: _badgeOffset,
+          bottom: _badgeOffset,
+          child: Container(
+            width: _badgeSize,
+            height: _badgeSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.surface,
+              border: Border.all(color: AppColors.lineStrong),
+            ),
+            child: const Icon(
+              AppIcons.edit,
+              size: _badgeIconSize,
+              color: AppColors.ink,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
