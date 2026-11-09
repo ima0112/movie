@@ -13,6 +13,7 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/launch/launch_external_link.dart';
+import '../../../../core/launch/media_share.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -109,6 +110,9 @@ class MovieDetailContent extends StatelessWidget {
             imageUrl: detail.backdropUrl ?? detail.item.posterUrl,
             title: detail.item.title,
             tagline: detail.tagline,
+            onShare: () => unawaited(
+              shareMedia(context, title: detail.item.title, key: mediaKey),
+            ),
           ),
         ),
         SliverPadding(

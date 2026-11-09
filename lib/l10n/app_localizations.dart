@@ -1442,6 +1442,18 @@ abstract class AppLocalizations {
   /// **'Similar'**
   String get mediaSimilarTitle;
 
+  /// No description provided for @mediaDetailShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get mediaDetailShare;
+
+  /// No description provided for @mediaDetailShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t share'**
+  String get mediaDetailShareFailed;
+
   /// D1/D2's primary action button when a trailer exists (docs/SCREENS.md D1) — mediaDetailActionSeeSimilar replaces it when there's no trailer.
   ///
   /// In en, this message translates to:

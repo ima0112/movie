@@ -26,8 +26,8 @@ class ScrimBackButton extends StatelessWidget {
 
   // "Not a brand color, so it isn't part of AppColors" — same reasoning
   // as media_card.dart's own `_scrim` (the poster tag/save button).
-  static const Color _scrim = Color(0x99000000);
-  static const double _diameter = 40;
+  static const Color scrim = Color(0x99000000);
+  static const double diameter = 40;
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +39,10 @@ class ScrimBackButton extends StatelessWidget {
           child: GestureDetector(
             onTap: () => context.pop(),
             child: Container(
-              width: _diameter,
-              height: _diameter,
+              width: diameter,
+              height: diameter,
               decoration: const BoxDecoration(
-                color: _scrim,
+                color: scrim,
                 shape: BoxShape.circle,
               ),
               child: const Icon(AppIcons.back, color: AppColors.ink, size: 20),

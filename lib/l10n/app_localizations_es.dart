@@ -813,6 +813,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mediaSimilarTitle => 'Similares';
 
   @override
+  String get mediaDetailShare => 'Compartir';
+
+  @override
+  String get mediaDetailShareFailed => 'No se pudo compartir';
+
+  @override
   String get mediaDetailActionTrailer => 'Tráiler';
 
   @override

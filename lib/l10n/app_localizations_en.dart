@@ -792,6 +792,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaSimilarTitle => 'Similar';
 
   @override
+  String get mediaDetailShare => 'Share';
+
+  @override
+  String get mediaDetailShareFailed => 'Couldn\'t share';
+
+  @override
   String get mediaDetailActionTrailer => 'Trailer';
 
   @override
