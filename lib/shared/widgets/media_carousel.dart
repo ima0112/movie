@@ -27,7 +27,7 @@ String _heroMetadata(MediaItem item, AppLocalizations l10n) {
 ///
 /// Source of truth: `docs/SCREENS.md` B1 (Discover) and
 /// `docs/DECISIONS.md` section 9 ("110×165 posters with 12 px gaps, 3.2
-/// visible... up to 8 cards, 330×440... with snap and a 24 px peek of the
+/// visible... up to 8 cards, 330×290... with snap and a 24 px peek of the
 /// next one.").
 ///
 /// Pure presentation — no feature or Bloc dependency, everything comes in
@@ -51,7 +51,7 @@ class MediaCarousel extends StatelessWidget {
        onSaveTap = null,
        saveButtonBuilder = null;
 
-  /// The Discover hero: 330×440 cards, snapping, a 24 px peek of the next
+  /// The Discover hero: 330×290 cards, snapping, a 24 px peek of the next
   /// card. [onSaveTap] is called with the item whose save button was
   /// tapped — ignored when [saveButtonBuilder] is provided. [onItemTap]
   /// is called with the tapped item (tapping the card itself, not its

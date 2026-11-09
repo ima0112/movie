@@ -16,8 +16,8 @@ enum MediaCardSize {
   /// 110×165. Carousel rows (3.2 cards visible).
   carousel(width: 110, height: 165, aspectRatio: null),
 
-  /// 330×440 (3:4). The Discover hero.
-  hero(width: 330, height: 440, aspectRatio: null),
+  /// 330×290. The Discover hero.
+  hero(width: 330, height: 290, aspectRatio: null),
 
   /// 2:3, fluid — C1's 3-column grid. Unlike [carousel]/[hero], this
   /// variant has no fixed pixel size of its own — [width]/[height] are
@@ -112,7 +112,9 @@ class MediaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final poster = ClipRRect(
-      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      borderRadius: BorderRadius.circular(
+        _isHero ? AppSpacing.radiusXl : AppSpacing.radiusMd,
+      ),
       child: GestureDetector(
         onTap: onTap,
         onLongPress: onLongPress,
@@ -123,9 +125,9 @@ class MediaCard extends StatelessWidget {
             if (_isHero) const _HeroFade(),
             if (_isHero)
               Positioned(
-                left: AppSpacing.md,
-                right: AppSpacing.md,
-                bottom: AppSpacing.md,
+                left: AppSpacing.xl,
+                right: AppSpacing.xl,
+                bottom: AppSpacing.xl,
                 child: _HeroCaption(
                   title: title,
                   reasonTag: reasonTag,
