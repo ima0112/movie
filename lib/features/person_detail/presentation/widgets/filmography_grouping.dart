@@ -4,9 +4,8 @@ import '../../../../core/domain/entities/person.dart';
 /// D3's filmography segmented control — `docs/SCREENS.md` D3: "filter
 /// chips All · Movies · TV Shows". [asDirector] is the one option this
 /// task's own task description adds beyond that: offered only when
-/// [PersonFilmography.hasBothCastAndCrew] says so, and narrows to
-/// directing credits specifically (not every crew department) once
-/// picked — see that getter's own doc comment for why.
+/// [PersonFilmography.availableSegments] says it has directing credits, and
+/// narrows to directing credits specifically (not every crew department).
 enum FilmographySegment { all, movies, tvShows, asDirector }
 
 /// One year's worth of filmography rows, already in the order D3 shows
@@ -28,15 +27,29 @@ class FilmographyYearGroup {
 /// task's own "test de la agrupación por año", can exercise it with no
 /// Flutter import at all.
 extension PersonFilmography on List<MediaCredit> {
-  /// The segmented control's own "and only then" rule
-  /// (`docs/SCREENS.md` D3, this task's own addition): an "As director"
-  /// option appears only when this person has *both* a cast credit
-  /// (acted in something) and a crew credit (worked on something) among
-  /// **all** their credits — independent of whatever segment is
-  /// currently selected, so switching segments never makes the tab
-  /// itself appear or disappear.
-  bool get hasBothCastAndCrew =>
-      any((c) => c.character != null) && any((c) => c.job != null);
+  /// The tabs worth showing for these credits: "All", plus each other
+  /// segment only when it has credits **and** isn't the same list as "All"
+  /// (a person with only movies gets no "Movies" tab, one who never directed
+  /// gets no "As director" tab). A single tab ("All" alone) means no tabs at
+  /// all — the caller hides the control then.
+  List<FilmographySegment> get availableSegments => [
+    FilmographySegment.all,
+    for (final segment in [
+      FilmographySegment.movies,
+      FilmographySegment.tvShows,
+      FilmographySegment.asDirector,
+    ])
+      if (_isProperSubset(filteredBy(segment))) segment,
+  ];
+
+  bool _isProperSubset(List<MediaCredit> subset) =>
+      subset.isNotEmpty && subset.length < length;
+
+  /// Newest first: undated ("Coming soon") credits ahead of every dated one,
+  /// then by release year descending (stable within a year).
+  List<MediaCredit> get newestFirst => [
+    for (final group in groupedByYear) ...group.credits,
+  ];
 
   /// [segment]'s own subset. [FilmographySegment.asDirector] narrows to
   /// `job == 'Director'` specifically — the segment is called "As

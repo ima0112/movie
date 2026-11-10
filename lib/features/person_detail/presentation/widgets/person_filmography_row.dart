@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/person.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/number_format_extension.dart';
 
-/// D3's filmography row — `docs/SCREENS.md` D3: "reverse-chronological
-/// list (thumbnail, title, year, role)." Grouped under a year header by
-/// the section above this (`PersonFilmography.groupedByYear`), so this
-/// row itself only shows the title and the role (character or job) —
-/// not the year again, already said once per group.
+/// D3b's filmography row (`docs/SCREENS.md` D3b, the "Filmografía"
+/// design): the poster, the title, a muted "role · year" line ("Coming soon"
+/// in place of the year for an undated credit), and the ★ rating at the far
+/// end (hidden while TMDB has no score), with a hairline underneath.
 class PersonFilmographyRow extends StatelessWidget {
   const PersonFilmographyRow({
     super.key,
@@ -20,12 +22,19 @@ class PersonFilmographyRow extends StatelessWidget {
   final MediaCredit credit;
   final VoidCallback onTap;
 
-  static const double _posterWidth = 48;
-  static const double _posterHeight = 72;
+  static const double _posterWidth = 52;
+  static const double _posterHeight = 76;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final role = credit.character ?? credit.job ?? '';
+    final year = credit.item.releaseDate?.year;
+    final subtitle = [
+      if (role.isNotEmpty) role,
+      year == null ? l10n.personFilmographyComingSoon : '$year',
+    ].join(' · ');
+    final rating = credit.item.voteAverage;
 
     return GestureDetector(
       onTap: onTap,
@@ -64,23 +73,30 @@ class PersonFilmographyRow extends StatelessWidget {
                   Text(
                     credit.item.title,
                     style: AppTextStyles.h3,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (role.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      role,
-                      style: AppTextStyles.bodySm.copyWith(
-                        color: AppColors.inkMuted,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    subtitle,
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
                     ),
-                  ],
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
+            if (rating > 0) ...[
+              const SizedBox(width: AppSpacing.md),
+              const Icon(AppIcons.starFill, size: 12, color: AppColors.accent),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                rating.localizedRating(l10n),
+                style: AppTextStyles.bodySmStrong,
+              ),
+            ],
           ],
         ),
       ),
