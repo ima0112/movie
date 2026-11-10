@@ -7,102 +7,133 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/still_image.dart';
 
-/// One H4 episode row — `docs/SCREENS.md` H4: "episode list (number,
-/// name, runtime, date, still)". A 16:9 still, "N. Title", a date/
-/// duration line (date in amber if the episode hasn't aired yet), and
-/// the episode's own synopsis folded to 2 lines with a tap-to-expand —
-/// the same "fold, expand on tap" idea `MediaSynopsisSection` already
-/// uses for D1/D2's own synopsis, just smaller (2 lines, not 4) and
-/// local to this one row rather than the whole screen.
-class SeasonEpisodeRow extends StatefulWidget {
-  const SeasonEpisodeRow({super.key, required this.episode});
+/// One episode in H4's list: a 112×64 still with its number in a small
+/// badge, the title, "date · runtime" (amber if it hasn't aired yet, "TBA"
+/// with no date), and a 2-line synopsis. Hairline divider underneath.
+class SeasonEpisodeRow extends StatelessWidget {
+  const SeasonEpisodeRow({super.key, required this.episode, this.onTap});
 
   final Episode episode;
+  final VoidCallback? onTap;
 
-  @override
-  State<SeasonEpisodeRow> createState() => _SeasonEpisodeRowState();
-}
-
-class _SeasonEpisodeRowState extends State<SeasonEpisodeRow> {
-  static const int _foldedMaxLines = 2;
-
-  bool _expanded = false;
+  static const double _stillWidth = 112;
+  static const double _stillHeight = 64;
+  static const double _badgeHeight = 22;
 
   @override
   Widget build(BuildContext context) {
-    final episode = widget.episode;
     final airDate = episode.airDate;
     final hasAired = airDate == null || !airDate.isAfter(DateTime.now());
     final l10n = context.l10n;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: StillImage(stillPath: episode.stillPath),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            l10n.tvEpisodeRowTitle(episode.episodeNumber, episode.name),
-            style: AppTextStyles.h3,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text.rich(
-            TextSpan(
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.line)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                TextSpan(
-                  text: airDate == null
-                      ? l10n.tvEpisodeTba
-                      : _formatDate(airDate),
-                  style: AppTextStyles.bodySm.copyWith(
-                    color: hasAired ? AppColors.inkMuted : AppColors.accent,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  child: SizedBox(
+                    width: _stillWidth,
+                    height: _stillHeight,
+                    child: StillImage(stillPath: episode.stillPath),
                   ),
                 ),
-                if (episode.runtimeMinutes != null)
-                  TextSpan(
-                    text:
-                        ' · '
-                        '${l10n.myListRuntimeMinutesOnly(episode.runtimeMinutes!)}',
-                    style: AppTextStyles.bodySm.copyWith(
-                      color: AppColors.inkMuted,
+                Positioned(
+                  left: AppSpacing.xs + 2,
+                  top: AppSpacing.xs + 2,
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      minWidth: _badgeHeight,
+                      minHeight: _badgeHeight,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs + 2,
+                    ),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(_badgeHeight / 2),
+                    ),
+                    child: Text(
+                      '${episode.episodeNumber}',
+                      style: AppTextStyles.caption.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
+                ),
               ],
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          if (episode.overview.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              episode.overview,
-              style: AppTextStyles.bodySm,
-              maxLines: _expanded ? null : _foldedMaxLines,
-              overflow: _expanded ? null : TextOverflow.ellipsis,
-            ),
-            if (!_expanded) ...[
-              const SizedBox(height: AppSpacing.xs),
-              GestureDetector(
-                onTap: () => setState(() => _expanded = true),
-                child: Text(
-                  l10n.commonReadMore,
-                  style: AppTextStyles.bodySm.copyWith(color: AppColors.accent),
-                ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    episode.name,
+                    style: AppTextStyles.h3,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: airDate == null
+                              ? l10n.tvEpisodeTba
+                              : formatEpisodeDate(airDate),
+                          style: AppTextStyles.caption.copyWith(
+                            color: hasAired
+                                ? AppColors.inkMuted
+                                : AppColors.accent,
+                          ),
+                        ),
+                        if (episode.runtimeMinutes != null)
+                          TextSpan(
+                            text:
+                                ' · '
+                                '${l10n.myListRuntimeMinutesOnly(episode.runtimeMinutes!)}',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.inkMuted,
+                            ),
+                          ),
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (episode.overview.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      episode.overview,
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.inkMuted,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
               ),
-            ],
+            ),
           ],
-        ],
+        ),
       ),
     );
   }
-
-  static String _formatDate(DateTime date) =>
-      '${date.year}-${date.month.toString().padLeft(2, '0')}-'
-      '${date.day.toString().padLeft(2, '0')}';
 }
+
+/// `YYYY-MM-DD` — the format both the row and the episode sheet use.
+String formatEpisodeDate(DateTime date) =>
+    '${date.year}-${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';

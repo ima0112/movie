@@ -1238,6 +1238,12 @@ abstract class AppLocalizations {
   /// **'Created by '**
   String get tvCreatedByLabel;
 
+  /// No description provided for @tvEpisodesSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Episodes'**
+  String get tvEpisodesSectionTitle;
+
   /// No description provided for @tvSeasonsSectionTitle.
   ///
   /// In en, this message translates to:
