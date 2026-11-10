@@ -597,6 +597,9 @@
   "statsTvShowsWatchedLabel": "TV shows watched",
   "statsEstimatedTvHoursLabel": "Estimated TV hours",
 
+  "myTastesIntro": "The more we know, the better your recommendations and Surprise me. Everything is saved only on your device.",
+  "myTastesGenresLikeHint": "Choose as many as you like.",
+  "myTastesGenresNeverHint": "We won't show them in recommendations.",
   "myTastesGenresLikeTitle": "Genres you like",
   "myTastesGenresNeverTitle": "Genres you never want",
   "myTastesSavedIndicator": "Saved",

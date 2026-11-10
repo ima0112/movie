@@ -18,6 +18,10 @@ enum ChipState {
   /// Dashed `lineStrong` border, no fill — a suggestion the user can tap
   /// to add (e.g. a suggested genre).
   suggestion,
+
+  /// An avoided option (C5's "Genres you never want"): `danger` border
+  /// and tint, struck-through semibold label.
+  vetoed,
 }
 
 /// Generic chip used for genres, recent searches, and active filters.
@@ -41,10 +45,12 @@ class AppChip extends StatelessWidget {
   // docs/DESIGN_SYSTEM.md section 4: "20: chips, campos, elementos
   // secundarios" — an icon size, not part of the AppSpacing scale.
   static const double _iconSize = 20;
+  static const double _vetoedTint = 0.16;
 
   @override
   Widget build(BuildContext context) {
     final isSelected = state == ChipState.selected;
+    final isVetoed = state == ChipState.vetoed;
     final textColor = isSelected ? AppColors.onAccent : AppColors.ink;
 
     final content = Padding(
@@ -59,7 +65,15 @@ class AppChip extends StatelessWidget {
             Icon(icon, size: _iconSize, color: textColor),
             const SizedBox(width: AppSpacing.xs),
           ],
-          Text(label, style: AppTextStyles.caption.copyWith(color: textColor)),
+          Text(
+            label,
+            style: AppTextStyles.caption.copyWith(
+              color: textColor,
+              fontWeight: isVetoed ? FontWeight.w600 : null,
+              decoration: isVetoed ? TextDecoration.lineThrough : null,
+              decorationColor: textColor,
+            ),
+          ),
         ],
       ),
     );
@@ -77,6 +91,14 @@ class AppChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.accent,
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+        ),
+        child: content,
+      ),
+      ChipState.vetoed => DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.danger.withValues(alpha: _vetoedTint),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+          border: Border.all(color: AppColors.danger),
         ),
         child: content,
       ),

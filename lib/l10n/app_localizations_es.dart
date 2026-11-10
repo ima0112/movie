@@ -643,6 +643,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get statsEstimatedTvHoursLabel => 'Horas estimadas de series';
 
   @override
+  String get myTastesIntro =>
+      'Cuanto más sepamos, mejores serán tus recomendaciones y el modo Sorpréndeme. Todo se guarda solo en tu dispositivo.';
+
+  @override
+  String get myTastesGenresLikeHint => 'Elige los que quieras.';
+
+  @override
+  String get myTastesGenresNeverHint => 'No los mostramos en recomendaciones.';
+
+  @override
   String get myTastesGenresLikeTitle => 'Géneros que te gustan';
 
   @override

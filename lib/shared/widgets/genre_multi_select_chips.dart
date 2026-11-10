@@ -19,11 +19,15 @@ class GenreMultiSelectChips extends StatelessWidget {
     required this.genres,
     required this.selected,
     required this.onToggle,
+    this.selectedState = ChipState.selected,
   });
 
   final List<Genre> genres;
   final Set<Genre> selected;
   final ValueChanged<Genre> onToggle;
+
+  /// How a selected genre looks — [ChipState.vetoed] for "never" lists.
+  final ChipState selectedState;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +38,7 @@ class GenreMultiSelectChips extends StatelessWidget {
         for (final genre in genres)
           AppChip(
             label: genre.localizedName(context.l10n),
-            state: selected.contains(genre)
-                ? ChipState.selected
-                : ChipState.normal,
+            state: selected.contains(genre) ? selectedState : ChipState.normal,
             onTap: () => onToggle(genre),
           ),
       ],
