@@ -8,6 +8,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/genre_localization.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/number_format_extension.dart';
+import 'info_chip.dart';
 
 /// The card under D1/D2's trailer button ("Detalle" design): the poster,
 /// "year · genres" (each genre tappable → C1 with that genre), small info
@@ -79,11 +80,11 @@ class MediaDetailInfoCard extends StatelessWidget {
                   spacing: AppSpacing.xs + 2,
                   runSpacing: AppSpacing.xs + 2,
                   children: [
-                    _InfoChip(
+                    InfoChip(
                       label: voteAverage.localizedRating(l10n),
                       icon: AppIcons.starFill,
                     ),
-                    for (final chip in extraChips) _InfoChip(label: chip),
+                    for (final chip in extraChips) InfoChip(label: chip),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -123,42 +124,6 @@ class _MetaLine extends StatelessWidget {
           ),
         ],
       ],
-    );
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  const _InfoChip({required this.label, this.icon});
-
-  final String label;
-  final IconData? icon;
-
-  static const double _height = 28;
-  static const double _iconSize = 12;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: _height),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 1),
-      decoration: BoxDecoration(
-        color: AppColors.ink.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-        border: Border.all(color: AppColors.glassBorder),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: _iconSize, color: AppColors.accent),
-            const SizedBox(width: AppSpacing.xs),
-          ],
-          Text(
-            label,
-            style: AppTextStyles.bodySm.copyWith(fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
     );
   }
 }

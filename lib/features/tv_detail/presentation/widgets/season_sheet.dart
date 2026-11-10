@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
+import '../../../../app/router.dart';
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -67,6 +68,7 @@ class _SeasonSheetView extends StatelessWidget {
       builder: (_) => EpisodeSheet(
         seasonNumber: seasonSummary.seasonNumber,
         episode: episode,
+        onPersonTap: (person) => context.pushPersonDetail(person.id),
       ),
     );
   }
@@ -89,6 +91,7 @@ class _SeasonSheetView extends StatelessWidget {
                 title: title,
                 showTitle: showTitle,
                 posterPath: seasonSummary.posterPath,
+                voteAverage: seasonSummary.voteAverage,
                 episodeCountLabel: l10n.tvEpisodeCount(
                   seasonSummary.episodeCount,
                 ),

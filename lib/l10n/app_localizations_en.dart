@@ -682,6 +682,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tvEpisodeGuestStars => 'Guest stars';
+
+  @override
   String get tvSeasonsSectionTitle => 'Seasons';
 
   @override

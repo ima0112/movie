@@ -70,6 +70,7 @@ TmdbSeasonSummaryDto _$TmdbSeasonSummaryDtoFromJson(
   episodeCount: (json['episode_count'] as num?)?.toInt() ?? 0,
   posterPath: json['poster_path'] as String?,
   airDate: json['air_date'] as String? ?? '',
+  voteAverage: (json['vote_average'] as num?)?.toDouble(),
 );
 
 TmdbContentRatingsDto _$TmdbContentRatingsDtoFromJson(

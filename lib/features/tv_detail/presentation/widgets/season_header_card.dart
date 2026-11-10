@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/app_chip.dart';
+import '../../../../core/theme/app_icons.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/number_format_extension.dart';
+import '../../../../shared/widgets/media_detail/info_chip.dart';
 import '../../../../shared/widgets/poster_image.dart';
 
 /// H4's header: the season's poster, the show's name in small muted text,
@@ -16,12 +19,16 @@ class SeasonHeaderCard extends StatelessWidget {
     required this.episodeCountLabel,
     this.showTitle,
     this.posterPath,
+    this.voteAverage,
   });
 
   final String title;
   final String episodeCountLabel;
   final String? showTitle;
   final String? posterPath;
+
+  /// The season's TMDB rating; no rating chip when `null`.
+  final double? voteAverage;
 
   static const double _posterWidth = 76;
   static const double _posterHeight = 114;
@@ -68,7 +75,14 @@ class SeasonHeaderCard extends StatelessWidget {
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
-                  children: [AppChip(label: episodeCountLabel)],
+                  children: [
+                    InfoChip(label: episodeCountLabel),
+                    if (voteAverage != null)
+                      InfoChip(
+                        label: voteAverage!.localizedRating(context.l10n),
+                        icon: AppIcons.starFill,
+                      ),
+                  ],
                 ),
               ],
             ),

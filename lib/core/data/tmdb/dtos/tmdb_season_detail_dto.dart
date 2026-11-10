@@ -37,6 +37,8 @@ class TmdbEpisodeDto {
     required this.stillPath,
     required this.airDate,
     required this.runtime,
+    this.voteAverage,
+    this.guestStars = const [],
   });
 
   @JsonKey(name: 'episode_number')
@@ -55,6 +57,39 @@ class TmdbEpisodeDto {
 
   final int? runtime;
 
+  /// TMDB's average rating; `0` (or missing) when nobody has voted.
+  @JsonKey(name: 'vote_average')
+  final double? voteAverage;
+
+  @JsonKey(name: 'guest_stars', defaultValue: <TmdbGuestStarDto>[])
+  final List<TmdbGuestStarDto> guestStars;
+
   factory TmdbEpisodeDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbEpisodeDtoFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
+class TmdbGuestStarDto {
+  const TmdbGuestStarDto({
+    required this.id,
+    required this.name,
+    this.character = '',
+    this.profilePath,
+    this.order = 0,
+  });
+
+  final int id;
+  final String name;
+
+  @JsonKey(defaultValue: '')
+  final String character;
+
+  @JsonKey(name: 'profile_path')
+  final String? profilePath;
+
+  @JsonKey(defaultValue: 0)
+  final int order;
+
+  factory TmdbGuestStarDto.fromJson(Map<String, dynamic> json) =>
+      _$TmdbGuestStarDtoFromJson(json);
 }

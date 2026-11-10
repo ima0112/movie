@@ -1,3 +1,5 @@
+import 'person.dart';
+
 /// A TV show's season, as listed in D2's "Seasons" section.
 ///
 /// Grouped with [Episode] per CLAUDE.md rule 13: both are season-related
@@ -11,6 +13,7 @@ final class SeasonSummary {
     required this.episodeCount,
     required this.posterPath,
     required this.airDate,
+    this.voteAverage,
   });
 
   final int seasonNumber;
@@ -18,6 +21,9 @@ final class SeasonSummary {
   final int episodeCount;
   final String? posterPath;
   final DateTime? airDate;
+
+  /// TMDB's average rating for the season, or `null` when nobody has voted.
+  final double? voteAverage;
 }
 
 /// One episode within a season — the future H4 season sheet's episode
@@ -30,6 +36,8 @@ final class Episode {
     required this.stillPath,
     required this.airDate,
     required this.runtimeMinutes,
+    this.voteAverage,
+    this.guestStars = const [],
   });
 
   final int episodeNumber;
@@ -38,6 +46,12 @@ final class Episode {
   final String? stillPath;
   final DateTime? airDate;
   final int? runtimeMinutes;
+
+  /// TMDB's average rating, or `null` when nobody has voted.
+  final double? voteAverage;
+
+  /// The episode's guest stars (empty when TMDB lists none).
+  final List<CastMember> guestStars;
 }
 
 /// `MediaRepository.season(tvId, n)`'s own result — H4's "Title, season

@@ -5,7 +5,11 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/app_chip.dart';
+import '../../../../core/domain/entities/person.dart';
+import '../../../../core/theme/app_icons.dart';
+import '../../../../l10n/number_format_extension.dart';
+import '../../../../shared/widgets/media_detail/info_chip.dart';
+import '../../../../shared/widgets/media_detail/media_cast_circle.dart';
 import '../../../../shared/widgets/still_image.dart';
 import 'season_episode_row.dart';
 
@@ -18,13 +22,18 @@ class EpisodeSheet extends StatelessWidget {
     super.key,
     required this.seasonNumber,
     required this.episode,
+    this.onPersonTap,
   });
 
   final int seasonNumber;
   final Episode episode;
 
+  /// A guest star was tapped → D3.
+  final void Function(Person person)? onPersonTap;
+
   static const double _heightFactor = 0.85;
   static const double _captionSpacing = 0.6;
+  static const double _guestSize = 64;
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +72,50 @@ class EpisodeSheet extends StatelessWidget {
               spacing: AppSpacing.sm,
               runSpacing: AppSpacing.sm,
               children: [
-                AppChip(
+                InfoChip(
                   label: airDate == null
                       ? l10n.tvEpisodeTba
                       : formatEpisodeDate(airDate),
                 ),
                 if (runtime != null)
-                  AppChip(label: l10n.myListRuntimeMinutesOnly(runtime)),
+                  InfoChip(label: l10n.myListRuntimeMinutesOnly(runtime)),
+                if (episode.voteAverage != null)
+                  InfoChip(
+                    label: episode.voteAverage!.localizedRating(l10n),
+                    icon: AppIcons.starFill,
+                  ),
               ],
             ),
             if (episode.overview.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.lg),
               Text(episode.overview, style: AppTextStyles.body),
+            ],
+            if (episode.guestStars.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xl),
+              Text(
+                l10n.tvEpisodeGuestStars.toUpperCase(),
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.inkMuted,
+                  letterSpacing: _captionSpacing,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final (i, member) in episode.guestStars.indexed) ...[
+                      if (i > 0) const SizedBox(width: AppSpacing.lg),
+                      MediaCastCircle(
+                        member: member,
+                        size: _guestSize,
+                        onTap: () => onPersonTap?.call(member.person),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ],
           ],
         ),

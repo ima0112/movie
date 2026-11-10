@@ -1256,6 +1256,12 @@ abstract class AppLocalizations {
   /// **'Specials · E{episode}'**
   String tvEpisodeCodeSpecials(int episode);
 
+  /// No description provided for @tvEpisodeGuestStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest stars'**
+  String get tvEpisodeGuestStars;
+
   /// No description provided for @tvSeasonsSectionTitle.
   ///
   /// In en, this message translates to:

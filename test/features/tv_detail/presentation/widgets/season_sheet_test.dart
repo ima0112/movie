@@ -82,6 +82,29 @@ void main() {
       expect(find.text('EPISODIOS'), findsOneWidget);
     });
 
+    testWidgets('the header card shows the season rating when TMDB has one', (
+      tester,
+    ) async {
+      const rated = SeasonSummary(
+        seasonNumber: 1,
+        name: 'Season 1',
+        episodeCount: 8,
+        posterPath: null,
+        airDate: null,
+        voteAverage: 8.7,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SeasonSheet(tvId: 101, seasonSummary: rated),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('8.7'), findsOneWidget);
+    });
+
     testWidgets('a specials season titles itself "Specials", not '
         '"Season 0"', (tester) async {
       await tester.pumpWidget(
