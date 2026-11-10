@@ -48,7 +48,7 @@ class EpisodeRefCard extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(emptyTitle, style: AppTextStyles.h3),
-      const SizedBox(height: 2),
+      const SizedBox(height: AppSpacing.xxs),
       Text(
         emptyBody,
         style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),

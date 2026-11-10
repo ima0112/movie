@@ -67,12 +67,13 @@ class AppChip extends StatelessWidget {
           ],
           Text(
             label,
-            style: AppTextStyles.caption.copyWith(
-              color: textColor,
-              fontWeight: isVetoed ? FontWeight.w600 : null,
-              decoration: isVetoed ? TextDecoration.lineThrough : null,
-              decorationColor: textColor,
-            ),
+            style:
+                (isVetoed ? AppTextStyles.captionStrong : AppTextStyles.caption)
+                    .copyWith(
+                      color: textColor,
+                      decoration: isVetoed ? TextDecoration.lineThrough : null,
+                      decorationColor: textColor,
+                    ),
           ),
         ],
       ),

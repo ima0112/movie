@@ -90,8 +90,7 @@ class _Segment extends StatelessWidget {
                 final count = snapshot.data?.length ?? 0;
                 return AnimatedDefaultTextStyle(
                   duration: _crossFade,
-                  style: AppTextStyles.bodySm.copyWith(
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  style: AppTextStyles.bodySmToggle(isSelected).copyWith(
                     color: isSelected ? AppColors.surface : AppColors.inkMuted,
                   ),
                   child: Text(

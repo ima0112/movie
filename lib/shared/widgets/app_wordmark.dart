@@ -11,9 +11,9 @@ import '../../core/theme/app_text_styles.dart';
 /// the exact same mark so the splash's exit genuinely reads as landing
 /// on Home's own.
 class AppWordmark extends StatelessWidget {
-  const AppWordmark({super.key, this.fontSize = 24});
+  const AppWordmark({super.key, this.size = 24});
 
-  final double fontSize;
+  final double size;
 
   // docs/SCREENS.md B1: "'PakoTV' wordmark at 24 px" — a one-off literal
   // for this specific brand mark (reuses h2's family/weight/line-height,
@@ -21,7 +21,10 @@ class AppWordmark extends StatelessWidget {
   // scale.
   @override
   Widget build(BuildContext context) {
-    final style = AppTextStyles.h2.copyWith(fontSize: fontSize);
+    final style = AppTextStyles.h2.copyWith(
+      // type-exempt: the wordmark scales per placement
+      fontSize: size,
+    );
     return Text.rich(
       TextSpan(
         children: [

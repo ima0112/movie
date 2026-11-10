@@ -28,10 +28,6 @@ class PakoState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      _pakoAssets[mood]!,
-      width: size,
-      height: size,
-    );
+    return SvgPicture.asset(_pakoAssets[mood]!, width: size, height: size);
   }
 }

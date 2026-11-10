@@ -45,8 +45,7 @@ class AttributionCard extends StatelessWidget {
               ),
               child: Text(
                 providerName,
-                style: AppTextStyles.bodySm.copyWith(
-                  fontWeight: FontWeight.w600,
+                style: AppTextStyles.bodySmStrong.copyWith(
                   letterSpacing: _chipLetterSpacing,
                 ),
               ),

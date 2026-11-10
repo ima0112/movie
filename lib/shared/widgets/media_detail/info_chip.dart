@@ -34,10 +34,7 @@ class InfoChip extends StatelessWidget {
             Icon(icon, size: _iconSize, color: AppColors.accent),
             const SizedBox(width: AppSpacing.xs),
           ],
-          Text(
-            label,
-            style: AppTextStyles.bodySm.copyWith(fontWeight: FontWeight.w600),
-          ),
+          Text(label, style: AppTextStyles.bodySmStrong),
         ],
       ),
     );

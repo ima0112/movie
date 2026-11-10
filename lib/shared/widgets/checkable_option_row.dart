@@ -36,12 +36,7 @@ class CheckableOptionRow extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  label,
-                  style: AppTextStyles.h3.copyWith(
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
-                ),
+                child: Text(label, style: AppTextStyles.h3Toggle(isSelected)),
               ),
               if (isSelected)
                 const Icon(

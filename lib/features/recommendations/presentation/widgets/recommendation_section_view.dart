@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_segment.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 import '../../../discover/presentation/widgets/discover_content_error.dart';
 import '../../../discover/presentation/widgets/discover_section_skeleton.dart';
@@ -32,8 +31,11 @@ class RecommendationSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<RecommendationsCubit, RecommendationsState,
-        RecommendationSectionState?>(
+    return BlocSelector<
+      RecommendationsCubit,
+      RecommendationsState,
+      RecommendationSectionState?
+    >(
       selector: (state) {
         if (state.segment != segment) return null;
         return switch (slot) {
@@ -44,33 +46,21 @@ class RecommendationSectionView extends StatelessWidget {
       builder: (context, sectionState) {
         return switch (sectionState) {
           null || RecommendationSectionHidden() => const SizedBox.shrink(),
-          RecommendationSectionLoading() => const Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          RecommendationSectionLoading() => const AppSection(
             child: DiscoverSectionSkeleton(),
           ),
-          RecommendationSectionError() => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          RecommendationSectionError() => AppSection(
             child: DiscoverContentError(
               onRetry: () => context.read<RecommendationsCubit>().retry(slot),
             ),
           ),
           RecommendationSectionLoaded(:final items, :final seedTitle) =>
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _header(context, seedTitle),
-                    style: AppTextStyles.h2,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  MediaCarousel.standard(
-                    items: items,
-                    showTypeTag: segment == MediaSegment.all,
-                    onItemTap: (item) => context.pushMediaDetail(item.key),
-                  ),
-                ],
+            AppSection(
+              title: _header(context, seedTitle),
+              child: MediaCarousel.standard(
+                items: items,
+                showTypeTag: segment == MediaSegment.all,
+                onItemTap: (item) => context.pushMediaDetail(item.key),
               ),
             ),
         };
@@ -85,8 +75,9 @@ class RecommendationSectionView extends StatelessWidget {
       // seedTitle is always set by RecommendationsCubit alongside
       // RecommendationSectionLoaded for this slot — never read for
       // .forYou, which never sets it.
-      RecommendationSlot.becauseYouLike =>
-        l10n.carouselSectionBecauseYouLike(seedTitle!),
+      RecommendationSlot.becauseYouLike => l10n.carouselSectionBecauseYouLike(
+        seedTitle!,
+      ),
     };
   }
 }

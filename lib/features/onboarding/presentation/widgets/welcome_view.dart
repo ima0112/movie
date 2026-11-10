@@ -82,7 +82,7 @@ class WelcomeView extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        const AppWordmark(fontSize: _wordmarkSize),
+                        const AppWordmark(size: _wordmarkSize),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
                           l10n.onboardingWelcomeTagline.toUpperCase(),

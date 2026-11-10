@@ -81,10 +81,7 @@ class _MyTastesView extends StatelessWidget {
               onPressed: context.read<MyTastesCubit>().reset,
               child: Text(
                 context.l10n.commonReset,
-                style: AppTextStyles.bodySm.copyWith(
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.action,
               ),
             ),
           ),

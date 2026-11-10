@@ -34,6 +34,7 @@ class MediaSegmentedControl extends StatelessWidget {
   final MediaSegmentedStyle style;
 
   static const Duration _crossFade = Duration(milliseconds: 200);
+
   /// Shared with every other contained-pill segmented control (My List's
   /// tabs), so they all stay the same size.
   static const double pillHeight = 40;
@@ -103,8 +104,7 @@ class MediaSegmentedControl extends StatelessWidget {
           ),
           child: AnimatedDefaultTextStyle(
             duration: _crossFade,
-            style: AppTextStyles.bodySm.copyWith(
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            style: AppTextStyles.bodySmToggle(selected).copyWith(
               color: selected
                   ? AppColors.surface
                   : (outlined ? AppColors.ink : AppColors.inkMuted),

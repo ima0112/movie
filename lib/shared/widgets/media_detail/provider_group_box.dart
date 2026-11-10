@@ -34,7 +34,6 @@ class ProviderGroupBox extends StatelessWidget {
   final bool showNames;
   final VoidCallback? onTap;
 
-  static const double _labelSpacing = 0.8;
   static const double _dot = 6;
   static const double _borderAlpha = 0.4;
   static const double _tintAlpha = 0.04;
@@ -75,10 +74,8 @@ class ProviderGroupBox extends StatelessWidget {
                   label.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.caption.copyWith(
+                  style: AppTextStyles.overline.copyWith(
                     color: highlighted ? AppColors.accent : AppColors.inkMuted,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: _labelSpacing,
                   ),
                 ),
               ),
