@@ -57,9 +57,12 @@ class PersonDetailHeader extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xl,
-              vertical: AppSpacing.xxxl,
+            // No bottom padding: the section below owns the gap above it.
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.screenMargin,
+              AppSpacing.xxxl,
+              AppSpacing.screenMargin,
+              0,
             ),
             child: Column(
               children: [

@@ -35,7 +35,11 @@ class ScrimBackButton extends StatelessWidget {
       alignment: Alignment.topLeft,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          // Lines up with the screen's content margin.
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenMargin,
+            vertical: AppSpacing.lg,
+          ),
           child: GestureDetector(
             onTap: () => context.pop(),
             child: Container(
