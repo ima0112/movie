@@ -6,6 +6,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../recommendations/presentation/cubit/recommendations_cubit.dart';
 import '../../../recommendations/presentation/widgets/recommendation_section_view.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
+import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero.dart';
 import 'discover_search_field.dart';
@@ -31,35 +32,42 @@ class DiscoverContentLoaded extends StatelessWidget {
 
   final MediaSegment segment;
 
+  static const double _fade = AppSpacing.lg;
+
   @override
   Widget build(BuildContext context) {
     final sections = DiscoverCubit.sectionsBySegment[segment]!;
-    return RefreshIndicator(
-      onRefresh: () => Future.wait([
-        context.read<DiscoverCubit>().loadDiscover(segment),
-        context.read<RecommendationsCubit>().refresh(),
-      ]),
-      child: ListView(
-        padding: EdgeInsets.only(
-          top: AppSpacing.md,
-          bottom: AppTabBar.scrollInset(context),
+    return ScrollEdgeFade(
+      top: _fade,
+      // Content scrolling up under the title and tabs dissolves instead of
+      // being cut by a hard line.
+      child: RefreshIndicator(
+        onRefresh: () => Future.wait([
+          context.read<DiscoverCubit>().loadDiscover(segment),
+          context.read<RecommendationsCubit>().refresh(),
+        ]),
+        child: ListView(
+          padding: EdgeInsets.only(
+            top: AppSpacing.md,
+            bottom: AppTabBar.scrollInset(context),
+          ),
+          children: [
+            DiscoverHero(segment: segment),
+            const SizedBox(height: AppSpacing.xl),
+            const DiscoverSearchField(),
+            // Each section below owns its own gap above it.
+            RecommendationSectionView(
+              slot: RecommendationSlot.forYou,
+              segment: segment,
+            ),
+            RecommendationSectionView(
+              slot: RecommendationSlot.becauseYouLike,
+              segment: segment,
+            ),
+            for (final section in sections)
+              DiscoverSectionCarousel(segment: segment, section: section),
+          ],
         ),
-        children: [
-          DiscoverHero(segment: segment),
-          const SizedBox(height: AppSpacing.xl),
-          const DiscoverSearchField(),
-          // Each section below owns its own gap above it.
-          RecommendationSectionView(
-            slot: RecommendationSlot.forYou,
-            segment: segment,
-          ),
-          RecommendationSectionView(
-            slot: RecommendationSlot.becauseYouLike,
-            segment: segment,
-          ),
-          for (final section in sections)
-            DiscoverSectionCarousel(segment: segment, section: section),
-        ],
       ),
     );
   }

@@ -20,7 +20,7 @@ class RootShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   /// How far above the bar the fade starts.
-  static const double _fadeReach = 40;
+  static const double _fadeReach = 72;
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +61,11 @@ class RootShell extends StatelessWidget {
   }
 }
 
-/// Transparent at the top to (almost) the page color at the bottom.
+/// Transparent at the top to the page color at the bottom, on an eased
+/// curve: it darkens slowly at first and most of the way down, so content
+/// disappears gradually behind the glass pill rather than at one line.
 class _BarFade extends StatelessWidget {
   const _BarFade();
-
-  static const double _bottomOpacity = 0.9;
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +74,13 @@ class _BarFade extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
+          stops: const [0, 0.3, 0.55, 0.8, 1],
           colors: [
             AppColors.surface.withValues(alpha: 0),
-            AppColors.surface.withValues(alpha: _bottomOpacity),
+            AppColors.surface.withValues(alpha: 0.35),
+            AppColors.surface.withValues(alpha: 0.7),
+            AppColors.surface.withValues(alpha: 0.94),
+            AppColors.surface,
           ],
         ),
       ),

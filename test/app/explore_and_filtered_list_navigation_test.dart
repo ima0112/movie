@@ -76,6 +76,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // Discover: the look-alike field.
+    // The taller hero can push the bar below the fold of the test screen.
+    await tester.ensureVisible(find.byType(DiscoverSearchField));
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(DiscoverSearchField));
     await tester.pumpAndSettle();
     expect(find.byType(ExploreSearchField), findsOneWidget);
@@ -85,6 +88,9 @@ void main() {
     FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
     appRouter.go('/');
+    await tester.pumpAndSettle();
+    // The taller hero can push the bar below the fold of the test screen.
+    await tester.ensureVisible(find.byType(DiscoverSearchField));
     await tester.pumpAndSettle();
     await tester.tap(find.byType(DiscoverSearchField));
     await tester.pumpAndSettle();

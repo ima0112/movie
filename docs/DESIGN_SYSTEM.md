@@ -235,7 +235,7 @@ Construir estos ocho antes que ninguna pantalla completa, en una ruta de
 depuración (`/debug/components`) que los liste todos:
 
 1. **Tarjeta de póster** — carrusel (110×165) y grid (2:3 fluido), con
-   variante "grande" (330×290, radio 20) para la portada de Descubrir.
+   variante "grande" (330×380, radio 20) para la portada de Descubrir.
 2. **Chip** — default / seleccionado (fondo `accent`) / con borde punteado
    (sugerencia).
 3. **Tile de cuestionario/género** — default / seleccionado / deshabilitado
