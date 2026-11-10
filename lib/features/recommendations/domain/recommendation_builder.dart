@@ -82,7 +82,8 @@ class RecommendationBuilder {
         for (final vibe in vibes) ...vibe.genresFor(type ?? MediaType.movie),
       };
       keywordIds = {
-        for (final vibe in vibes) ...vibe.keywordIdsFor(type ?? MediaType.movie),
+        for (final vibe in vibes)
+          ...vibe.keywordIdsFor(type ?? MediaType.movie),
       };
       vetoedGenres = profile.vetoedGenres;
     } else {

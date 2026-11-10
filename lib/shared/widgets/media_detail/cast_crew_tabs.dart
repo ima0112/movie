@@ -5,7 +5,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../media_segmented_control.dart';
 
-/// Which list [FullCastSheet] is showing.
+/// Which list [FullCastScreen] is showing.
 enum CastCrewTab { cast, crew }
 
 /// The sheet's "Cast | Crew" contained pill — same shape and size as

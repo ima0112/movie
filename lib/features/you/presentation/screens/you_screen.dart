@@ -28,9 +28,8 @@ import '../widgets/your_activity_card.dart';
 /// `AppRoutes.stats`/`AppRoutes.myTastes` are registered on the root
 /// navigator in `app/router.dart`, the same way `/movie/:id` is).
 ///
-/// Between-card spacing uses [AppSpacing.xxl], not `xxxl` — that token's
-/// own doc comment ties it specifically to Discover's sections, and this
-/// isn't Discover.
+/// Between-card spacing is [AppSpacing.sectionGap], the same as every other
+/// screen of sections.
 class YouScreen extends StatelessWidget {
   const YouScreen({super.key});
 
@@ -54,9 +53,9 @@ class YouScreen extends StatelessWidget {
               onEditProfile: () => _openEditProfile(context),
               onOpenSettings: () => context.push(AppRoutes.settings),
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.sectionGap),
             MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.sectionGap),
             YourActivityCard(
               userLibraryRepository: getIt<UserLibraryRepository>(),
               onSeeStats: () => context.push(AppRoutes.stats),

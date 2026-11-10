@@ -21,7 +21,6 @@ class AttributionCard extends StatelessWidget {
   final String detail;
 
   static const double _chipHeight = 32;
-  static const double _chipLetterSpacing = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +42,7 @@ class AttributionCard extends StatelessWidget {
                 color: AppColors.surfaceRaised2,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
               ),
-              child: Text(
-                providerName,
-                style: AppTextStyles.bodySmStrong.copyWith(
-                  letterSpacing: _chipLetterSpacing,
-                ),
-              ),
+              child: Text(providerName, style: AppTextStyles.bodySmStrong),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(body, style: AppTextStyles.body),

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/l10n/app_localizations.dart';
-import 'package:movies/shared/widgets/media_detail/media_synopsis_section.dart';
+import 'package:movies/shared/widgets/expandable_text.dart';
 
 Widget _host(String overview) => MaterialApp(
   localizationsDelegates: AppLocalizations.localizationsDelegates,
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
-    body: SingleChildScrollView(
-      child: MediaSynopsisSection(overview: overview),
-    ),
+    body: SingleChildScrollView(child: ExpandableText(overview, maxLines: 4)),
   ),
 );
 

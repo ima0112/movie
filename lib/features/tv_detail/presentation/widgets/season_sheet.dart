@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/widgets/overline_label.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
@@ -116,13 +115,7 @@ class _SeasonSheetView extends StatelessWidget {
                           SeasonOverview(overview: season.overview),
                         ],
                         const SizedBox(height: AppSpacing.xl),
-                        Text(
-                          l10n.tvEpisodesSectionTitle.toUpperCase(),
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.inkMuted,
-                            letterSpacing: 0.6,
-                          ),
-                        ),
+                        OverlineLabel(l10n.tvEpisodesSectionTitle),
                         for (final episode in season.episodes)
                           SeasonEpisodeRow(
                             episode: episode,

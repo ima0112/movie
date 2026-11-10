@@ -44,9 +44,7 @@ class MyListEntryTile extends StatelessWidget {
       tab: tab,
       userLibraryRepository: userLibraryRepository,
       posterUrl: entry.posterUrl,
-      title: entry.title.isEmpty
-          ? _fallbackTitle(context.l10n)
-          : entry.title,
+      title: entry.title.isEmpty ? _fallbackTitle(context.l10n) : entry.title,
       metadata: _metadata(entry, context.l10n),
       trailing: tab == LibraryTab.watched
           ? LibraryRowTrailing.starsWithDate(
@@ -69,16 +67,20 @@ class MyListEntryTile extends StatelessWidget {
   static String _metadata(UserMediaEntry entry, AppLocalizations l10n) {
     final typeLabel = entry.key.type.localizedSingular(l10n);
     final extra = switch (entry.key.type) {
-      MediaType.movie => entry.runtimeMinutes == null
-          ? null
-          : _formatRuntime(entry.runtimeMinutes!, l10n),
-      MediaType.tvShow => entry.episodeCount == null
-          ? null
-          : l10n.myListEpisodesCount(entry.episodeCount!),
+      MediaType.movie =>
+        entry.runtimeMinutes == null
+            ? null
+            : _formatRuntime(entry.runtimeMinutes!, l10n),
+      MediaType.tvShow =>
+        entry.episodeCount == null
+            ? null
+            : l10n.myListEpisodesCount(entry.episodeCount!),
     };
-    return [if (entry.year != null) '${entry.year}', typeLabel, ?extra].join(
-      ' · ',
-    );
+    return [
+      if (entry.year != null) '${entry.year}',
+      typeLabel,
+      ?extra,
+    ].join(' · ');
   }
 
   static String _formatRuntime(int minutes, AppLocalizations l10n) {

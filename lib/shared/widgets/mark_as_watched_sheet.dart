@@ -11,6 +11,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'app_buttons.dart';
+import 'overline_label.dart';
 import 'mark_as_watched_date_field.dart';
 import 'media_detail_duration.dart';
 import 'rating_stars_selector.dart';
@@ -181,16 +182,8 @@ class _FieldLabel extends StatelessWidget {
 
   final String text;
 
-  static const double _letterSpacing = 0.6;
-
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text.toUpperCase(),
-      style: AppTextStyles.caption.copyWith(
-        color: AppColors.inkMuted,
-        letterSpacing: _letterSpacing,
-      ),
-    );
+    return OverlineLabel(text);
   }
 }
