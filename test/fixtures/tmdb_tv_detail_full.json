@@ -22,6 +22,22 @@
   "name": "Signal Lost",
   "number_of_episodes": 24,
   "origin_country": ["US"],
+  "last_episode_to_air": {
+    "season_number": 2,
+    "episode_number": 5,
+    "name": "Static",
+    "air_date": "2025-10-16",
+    "still_path": "/static.jpg",
+    "vote_average": 8.9
+  },
+  "next_episode_to_air": {
+    "season_number": 2,
+    "episode_number": 6,
+    "name": "Reboot",
+    "air_date": "2025-10-23",
+    "still_path": null,
+    "vote_average": 0
+  },
   "original_language": "en",
   "original_name": "Signal Lost",
   "overview": "A submarine crew loses contact with the surface.",

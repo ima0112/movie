@@ -73,3 +73,24 @@ final class SeasonDetail {
   final String overview;
   final List<Episode> episodes;
 }
+
+/// A show's most recently aired or next scheduled episode, as `/tv/{id}`
+/// reports it (D2's "Seasons" screen) — just enough to label it and show its
+/// still, not a full [Episode] (no synopsis or runtime).
+final class EpisodeRef {
+  const EpisodeRef({
+    required this.seasonNumber,
+    required this.episodeNumber,
+    required this.name,
+    required this.airDate,
+    required this.stillPath,
+    required this.voteAverage,
+  });
+
+  final int seasonNumber;
+  final int episodeNumber;
+  final String name;
+  final DateTime? airDate;
+  final String? stillPath;
+  final double? voteAverage;
+}
