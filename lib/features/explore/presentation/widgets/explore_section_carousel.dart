@@ -20,7 +20,7 @@ import '../../domain/explore_section.dart';
 /// | Top today | large posters (150×225) with a big rank number |
 /// | Popular | the standard poster (110×165), the plain baseline |
 /// | Top rated | wide backdrop cards (the lead section) |
-/// | New releases | medium posters (130×195) with a "NEW" badge |
+/// | New releases | medium posters (130×195), no badge (the heading says it) |
 /// | Coming soon | small posters (90×135) with the release date under each |
 /// | Hidden gems | medium posters with an amber rating badge |
 class ExploreSectionCarousel extends StatelessWidget {
@@ -62,8 +62,6 @@ class ExploreSectionCarousel extends StatelessWidget {
         items: items,
         size: MediaCardSize.carouselMedium,
         showTypeTag: tvTag,
-        overlayBuilder: (_) =>
-            PosterBadge(label: l10n.exploreNewTag, amber: true),
         onItemTap: onItemTap,
       ),
       ExploreSection.comingSoon => MediaCarousel.standard(
