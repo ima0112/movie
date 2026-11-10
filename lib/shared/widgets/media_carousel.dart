@@ -5,6 +5,7 @@ import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import 'focus_zoom_list.dart';
 import 'media_card.dart';
 import 'ranked_poster.dart';
 
@@ -37,6 +38,7 @@ class MediaCarousel extends StatelessWidget {
     this.size = MediaCardSize.carousel,
     this.overlayBuilder,
     this.captionBuilder,
+    this.focusZoom = false,
   });
 
   final List<MediaItem> items;
@@ -44,6 +46,10 @@ class MediaCarousel extends StatelessWidget {
 
   /// A big 1, 2, 3… over each poster's bottom-left corner (B2's "Top today").
   final bool ranked;
+
+  /// The poster at the leading edge is full size and the others shrink a
+  /// little with distance as it scrolls ([FocusZoomList]).
+  final bool focusZoom;
 
   /// The poster size: [MediaCardSize.carousel] (default), or the larger and
   /// smaller `carousel*` variants B2 uses to give its sections different
@@ -67,13 +73,26 @@ class MediaCarousel extends StatelessWidget {
   /// Room under a poster for [captionBuilder]'s one line of text.
   static const double _captionHeight = 28;
 
+  Widget _list({required IndexedWidgetBuilder itemBuilder}) {
+    if (focusZoom) {
+      return FocusZoomList(
+        itemCount: items.length,
+        itemExtent: size.width + AppSpacing.md,
+        itemBuilder: itemBuilder,
+      );
+    }
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: items.length,
+      itemBuilder: itemBuilder,
+    );
+  }
+
   Widget _buildStandard(BuildContext context) {
     final hasCaption = captionBuilder != null;
     return SizedBox(
       height: size.height + (hasCaption ? _captionHeight : 0),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
+      child: _list(
         itemBuilder: (context, index) {
           final item = items[index];
           final onTap = onItemTap;

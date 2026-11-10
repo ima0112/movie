@@ -21,6 +21,7 @@ class AppTextStyles {
 
   static const FontWeight _regular = FontWeight.w400;
   static const FontWeight _semibold = FontWeight.w600;
+  static const FontWeight _extraBold = FontWeight.w800;
 
   /// Detail title (movie/show). 32 / 1.15, semibold.
   static final TextStyle display = GoogleFonts.manrope(
@@ -116,6 +117,16 @@ class AppTextStyles {
     height: 1.5,
     fontWeight: _semibold,
     color: AppColors.accent,
+  );
+
+  /// The big rank numbers of a "Top N" row (B2's Top today): 96 / 1,
+  /// extra-bold, tightly tracked. Drawn as an outline by `OutlinedText`.
+  static final TextStyle rank = GoogleFonts.manrope(
+    fontSize: 96,
+    height: 1,
+    letterSpacing: -6,
+    fontWeight: _extraBold,
+    color: AppColors.ink,
   );
 
   /// Text inside very small pills. 9 / 1.3, regular.
