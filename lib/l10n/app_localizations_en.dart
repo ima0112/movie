@@ -789,6 +789,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fullCastSheetSearchHint => 'Search cast and crew';
 
   @override
+  String get mediaSimilarMoviesTitle => 'Similar movies';
+
+  @override
   String get mediaSimilarTitle => 'Similar';
 
   @override
@@ -805,9 +808,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mediaDetailActionFavorite => 'Favorite';
-
-  @override
-  String get mediaCastRowSeeFullCast => 'See full cast';
 
   @override
   String get whereToWatchTitle => 'Where to watch';

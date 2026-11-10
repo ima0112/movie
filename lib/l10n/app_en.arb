@@ -764,6 +764,7 @@
   "fullCastSheetCrewLabel": "Crew",
   "fullCastSheetSearchHint": "Search cast and crew",
 
+  "mediaSimilarMoviesTitle": "Similar movies",
   "mediaSimilarTitle": "Similar",
   "@mediaSimilarTitle": {
     "description": "D1/D2's own \"Similar\" carousel header (docs/SCREENS.md D1)."
@@ -781,10 +782,6 @@
     "description": "D1/D2's own Favorite toggle (docs/SCREENS.md D1: \"Favorite · Watch later · Watched\"). The other two reuse myListTabWatchLater/myListTabWatched — same words, same meaning."
   },
 
-  "mediaCastRowSeeFullCast": "See full cast",
-  "@mediaCastRowSeeFullCast": {
-    "description": "D1/D2's link into H3 (docs/SCREENS.md D1)."
-  },
 
   "whereToWatchTitle": "Where to watch",
   "@whereToWatchTitle": {

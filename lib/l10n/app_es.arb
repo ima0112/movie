@@ -274,6 +274,7 @@
   "fullCastSheetCrewLabel": "Equipo",
   "fullCastSheetSearchHint": "Buscar en reparto y equipo",
 
+  "mediaSimilarMoviesTitle": "Películas similares",
   "mediaSimilarTitle": "Similares",
 
   "mediaDetailShare": "Compartir",
@@ -282,7 +283,6 @@
   "mediaDetailActionSeeSimilar": "Ver similares",
   "mediaDetailActionFavorite": "Favorito",
 
-  "mediaCastRowSeeFullCast": "Ver reparto completo",
 
   "whereToWatchTitle": "Dónde ver",
   "whereToWatchTapHint": "Toca un servicio para abrirlo en JustWatch",

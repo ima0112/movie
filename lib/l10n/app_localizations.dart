@@ -1436,6 +1436,12 @@ abstract class AppLocalizations {
   /// **'Search cast and crew'**
   String get fullCastSheetSearchHint;
 
+  /// No description provided for @mediaSimilarMoviesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar movies'**
+  String get mediaSimilarMoviesTitle;
+
   /// D1/D2's own "Similar" carousel header (docs/SCREENS.md D1).
   ///
   /// In en, this message translates to:
@@ -1471,12 +1477,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Favorite'**
   String get mediaDetailActionFavorite;
-
-  /// D1/D2's link into H3 (docs/SCREENS.md D1).
-  ///
-  /// In en, this message translates to:
-  /// **'See full cast'**
-  String get mediaCastRowSeeFullCast;
 
   /// D1/D2's own section title (docs/SCREENS.md D1).
   ///
