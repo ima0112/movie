@@ -220,6 +220,14 @@ icono a ojo, para que quede consistente entre pantallas.
 
 ## 5. Componentes base (hoja de componentes)
 
+**Carga bajo demanda — `LazyLoad`** (`shared/widgets/lazy_load.dart`): envuelve
+un bloque de una página larga y llama a `onNear` una sola vez cuando el
+bloque está a menos de ~400 px del área visible (antes o después), en
+cualquier scroll (lista perezosa, `Column` en `SingleChildScrollView`,
+slivers). Un `loadKey` nuevo lo vuelve a armar (los filtros de los que
+depende el bloque). Es lógica de presentación pura; el trabajo de datos es el
+callback. Regla 17 de `CLAUDE.md`.
+
 **Tabs / segmented control — un solo diseño.** `AppSegmentedControl`
 (`shared/widgets/app_segmented_control.dart`): una pastilla contenedora
 (`surfaceRaised`, radio pill, 4 de margen interior, 40 de alto que crece con
