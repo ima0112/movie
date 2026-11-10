@@ -706,6 +706,41 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tvEpisodeGuestStars => 'Estrellas invitadas';
 
   @override
+  String get tvSeasonsLinkLabel => 'Temporadas';
+
+  @override
+  String tvSeasonsLinkValue(int seasons, int episodes) {
+    return '$seasons ($episodes ep.)';
+  }
+
+  @override
+  String get tvNextEpisodeCaption => 'Próximo episodio';
+
+  @override
+  String get tvLastAiredEpisodeCaption => 'Último episodio emitido';
+
+  @override
+  String get tvNoNextEpisodeTitle => 'Sin próximo episodio';
+
+  @override
+  String get tvNoNextEpisodeEnded =>
+      'Esta serie ya terminó y no tiene nuevos episodios previstos.';
+
+  @override
+  String get tvNoNextEpisodeUnknown =>
+      'Aún no se ha anunciado ningún episodio próximo.';
+
+  @override
+  String tvEpisodeCodeAndName(int season, int episode, String name) {
+    return 'T$season · E$episode · $name';
+  }
+
+  @override
+  String tvEpisodeCodeSpecialsAndName(int episode, String name) {
+    return 'Especiales · E$episode · $name';
+  }
+
+  @override
   String get tvSeasonsSectionTitle => 'Temporadas';
 
   @override

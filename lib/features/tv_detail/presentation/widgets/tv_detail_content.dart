@@ -10,7 +10,6 @@ import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
-import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/launch/launch_external_link.dart';
@@ -27,10 +26,9 @@ import '../../../../shared/widgets/media_detail/media_similar_section.dart';
 import '../../../../shared/widgets/media_detail/media_synopsis_section.dart';
 import '../../../../shared/widgets/media_detail/where_to_watch_section.dart';
 import '../../../../shared/widgets/region_sheet.dart';
-import 'season_sheet.dart';
 import 'tv_creators_section.dart';
 import 'tv_metadata.dart';
-import 'tv_seasons_section.dart';
+import 'tv_seasons_link_card.dart';
 import 'tv_status_pill.dart';
 
 /// D2 once `TvDetailCubit` has loaded — assembles the shared, generic
@@ -65,18 +63,6 @@ class TvDetailContent extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
       );
     }
-  }
-
-  void _openSeasonSheet(BuildContext context, SeasonSummary season) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => SeasonSheet(
-        tvId: mediaKey.tmdbId,
-        seasonSummary: season,
-        showTitle: detail.item.title,
-      ),
-    );
   }
 
   void _openFullCastSheet(BuildContext context) {
@@ -155,6 +141,18 @@ class TvDetailContent extends StatelessWidget {
           ),
         ),
         SliverToBoxAdapter(
+          child: TvSeasonsLinkCard(
+            seasonCount: detail.seasons
+                .where((s) => s.seasonNumber != 0)
+                .length,
+            episodeCount: detail.numberOfEpisodes,
+            onTap: () => context.push(
+              AppRoutes.tvSeasons,
+              extra: TvSeasonsRouteArgs(detail: detail),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
           child: WhereToWatchSection(
             providers: detail.watchProviders,
             regionName: countryName(
@@ -180,12 +178,6 @@ class TvDetailContent extends StatelessWidget {
           child: TvCreatorsSection(
             creators: detail.creators,
             onPersonTap: (person) => context.pushPersonDetail(person.id),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: TvSeasonsSection(
-            seasons: detail.seasons,
-            onSeasonTap: (season) => _openSeasonSheet(context, season),
           ),
         ),
         SliverToBoxAdapter(

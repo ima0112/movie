@@ -178,10 +178,20 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
   - The info card's meta line: "Year–Year · N seasons · M episodes · Rating", then the main origin country's ISO code and the genres; D2's chips are the rating and the original-language code (no runtime/certification chips).
   - Status pill next to the title: "Airing" (accent) / "Ended" / "Cancelled" (neutral).
   - "Created by": names (→ D3).
-  - "Seasons" section: one bordered `surfaceRaised` card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
+  - **Seasons** card under the info card: "Seasons · 5 (62 ep.)" with a chevron → D2b (it replaces the inline season list).
   - No runtime; shows "≈ 45 min per episode" instead — not on this screen itself (the metadata line above has no runtime slot to begin with), already covered by C4's "Estimated TV hours" (`TvShowDetail.estimatedHours`).
   - "Where to watch" same as D1 (the show's own providers; a season's own providers, if they ever differ, aren't modeled yet — `MediaRepository.season()`'s `SeasonDetail` has no `watchProviders` field).
 - Exits: D3, H4, H2.
+
+### D2b. Seasons (pushed)
+- Access: the "Seasons" card in D2. Pushed screen: back button, centered "Seasons" title, no bottom bar. Receives the already-loaded show (no network call of its own).
+- Elements (vertical scroll):
+  - Header card (`surfaceRaised`): the show's name and three info chips — status ("Airing" / "Ended" / "Cancelled"), "N seasons", "M episodes".
+  - "NEXT EPISODE" caption + card: the next scheduled episode (still, "S2 · E6 · Name", air date chip) or, with none, "No next episode" and a line — "This show has ended and has no new episodes planned." when ended or cancelled, otherwise "No upcoming episode has been announced yet."
+  - "LAST AIRED EPISODE" caption + card: still (92×56), "S5 · E16 · Name", air-date and ★ rating chips (rating only if TMDB has one). Omitted when TMDB reports none.
+  - "SEASONS" caption + one bordered card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
+- No Pako.
+- Exits: H4.
 
 ### D3. Person detail
 - Access: cast, crew, or search result.
@@ -296,7 +306,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 | H1 | Quick actions | Long-press a card | Thumbnail + title, three rows: Favorite / Watch later / Mark watched |
 | H2 | Mark as watched | "Watched" button in D1/D2, swipe in B4, H1 | Title ("Mark as watched" for a movie, "Have you finished {title}?" for a TV show — asking about a show commits to having finished it, not just pressed a button), 5-star selector (optional), date (today by default, editable), "Save" button, "Remove from Watched" link if it already was |
 | H3 | Full cast | "See all" in D1/D2 | Sheet with a "Cast | Crew" pill, an internal search box (filters the selected tab by name) and a 3-column grid of 4:5 portraits with name and character/job; tap → D3 |
-| H4 | Season N | Season row in D2 | Header card (poster, show name, "Season N", episode-count chip and, when TMDB has one, a ★ rating chip); season synopsis folded to 2 lines with "Read more"; "EPISODES" list of compact rows (112×64 still with a number badge, name, date · runtime, 2-line synopsis) |
+| H4 | Season N | Season card in D2b | Header card (poster, show name, "Season N", episode-count chip and, when TMDB has one, a ★ rating chip); season synopsis folded to 2 lines with "Read more"; "EPISODES" list of compact rows (112×64 still with a number badge, name, date · runtime, 2-line synopsis) |
 | H4b | Episode | Episode row in H4 | Sheet over H4: a 16:9 still, "S1 · E1" caption ("Specials · E1" for season 0), the episode name, info chips (air date, runtime, ★ rating when TMDB has one), the full synopsis, and a "GUEST STARS" row of 64 px circles with name and character (→ D3) when the episode lists any |
 | H5 | Language | B5 | Single-select list: Español / English — one setting for the interface and TMDB's content |
 | H6 | Region | B5 | Searchable list of countries, with a one-line subtitle ("Sets which services you see in Where to watch") |
