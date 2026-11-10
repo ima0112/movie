@@ -1412,6 +1412,12 @@ abstract class AppLocalizations {
   /// **'Where to watch'**
   String get whereToWatchTitle;
 
+  /// No description provided for @whereToWatchTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a service to open it in JustWatch'**
+  String get whereToWatchTapHint;
+
   /// No description provided for @whereToWatchSubscription.
   ///
   /// In en, this message translates to:

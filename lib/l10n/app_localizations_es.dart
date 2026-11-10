@@ -790,6 +790,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get whereToWatchTitle => 'Dónde ver';
 
   @override
+  String get whereToWatchTapHint =>
+      'Toca un servicio para abrirlo en JustWatch';
+
+  @override
   String get whereToWatchSubscription => 'Suscripción';
 
   @override

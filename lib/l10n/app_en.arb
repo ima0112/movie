@@ -756,6 +756,7 @@
   "@whereToWatchTitle": {
     "description": "D1/D2's own section title (docs/SCREENS.md D1)."
   },
+  "whereToWatchTapHint": "Tap a service to open it in JustWatch",
   "whereToWatchSubscription": "Subscription",
   "whereToWatchRent": "Rent",
   "whereToWatchBuy": "Buy",
