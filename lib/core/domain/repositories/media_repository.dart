@@ -77,7 +77,11 @@ abstract interface class MediaRepository {
   Future<Result<List<MediaItem>>> recommendationsFor(MediaKey seed);
 
   /// D1 (movie) / D2 (TV show) full detail for one catalog item.
-  Future<Result<MediaDetail>> detail(MediaKey key);
+  ///
+  /// [regionCode] (ISO 3166-1) overrides the user's saved region for this one
+  /// read only — where-to-watch and the certification are per region. `null`
+  /// means the saved region.
+  Future<Result<MediaDetail>> detail(MediaKey key, {String? regionCode});
 
   /// H4 (season sheet), fetched on demand once a D2 "Seasons" row is
   /// tapped — never bundled into [detail]'s own `TvShowDetail.seasons`

@@ -110,12 +110,14 @@ class _TvDetailViewState extends State<_TvDetailView> {
                     const ScrimBackButton(),
                   ],
                 ),
-                TvDetailLoaded(:final detail) => TvDetailContent(
-                  detail: detail as TvShowDetail,
-                  mediaKey: widget.mediaKey,
-                  scrollController: _scrollController,
-                  similarSectionKey: _similarSectionKey,
-                ),
+                TvDetailLoaded(:final detail, :final regionCode) =>
+                  TvDetailContent(
+                    detail: detail as TvShowDetail,
+                    mediaKey: widget.mediaKey,
+                    scrollController: _scrollController,
+                    similarSectionKey: _similarSectionKey,
+                    regionCode: regionCode,
+                  ),
               };
             },
           ),

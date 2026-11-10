@@ -214,18 +214,19 @@ class TmdbMediaRepository implements MediaRepository {
   }
 
   @override
-  Future<Result<MediaDetail>> detail(MediaKey key) async {
+  Future<Result<MediaDetail>> detail(MediaKey key, {String? regionCode}) async {
+    final region = regionCode ?? _region;
     try {
       final MediaDetail detail = switch (key.type) {
         MediaType.movie => mediaDetailFromMovieDto(
           await _datasource.movieDetail(key.tmdbId),
           imagesConfig: _imagesConfig,
-          region: _region,
+          region: region,
         ),
         MediaType.tvShow => mediaDetailFromTvDto(
           await _datasource.tvDetail(key.tmdbId),
           imagesConfig: _imagesConfig,
-          region: _region,
+          region: region,
         ),
       };
       return Success(detail);

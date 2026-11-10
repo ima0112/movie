@@ -985,7 +985,7 @@ class FakeMediaRepository implements MediaRepository {
   }
 
   @override
-  Future<Result<MediaDetail>> detail(MediaKey key) async {
+  Future<Result<MediaDetail>> detail(MediaKey key, {String? regionCode}) async {
     await Future.delayed(_delay);
 
     switch (key.type) {

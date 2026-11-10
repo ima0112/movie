@@ -120,12 +120,14 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
                     const ScrimBackButton(),
                   ],
                 ),
-                MovieDetailLoaded(:final detail) => MovieDetailContent(
-                  detail: detail as MovieDetail,
-                  mediaKey: widget.mediaKey,
-                  scrollController: _scrollController,
-                  similarSectionKey: _similarSectionKey,
-                ),
+                MovieDetailLoaded(:final detail, :final regionCode) =>
+                  MovieDetailContent(
+                    detail: detail as MovieDetail,
+                    mediaKey: widget.mediaKey,
+                    scrollController: _scrollController,
+                    similarSectionKey: _similarSectionKey,
+                    regionCode: regionCode,
+                  ),
               };
             },
           ),

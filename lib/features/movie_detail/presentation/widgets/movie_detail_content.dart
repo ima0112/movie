@@ -58,12 +58,16 @@ class MovieDetailContent extends StatelessWidget {
     required this.mediaKey,
     required this.scrollController,
     required this.similarSectionKey,
+    this.regionCode,
   });
 
   final MovieDetail detail;
   final MediaKey mediaKey;
   final ScrollController scrollController;
   final GlobalKey similarSectionKey;
+
+  /// `null` = the saved region (see `*DetailLoaded.regionCode`).
+  final String? regionCode;
 
   void _scrollToSimilar() {
     final similarContext = similarSectionKey.currentContext;
@@ -75,29 +79,19 @@ class MovieDetailContent extends StatelessWidget {
     }
   }
 
-  /// Saves the new region, then reloads this detail so "Where to watch"
-  /// shows that country's services right away.
-  Future<void> _changeRegion(
-    SettingsRepository settingsRepository,
-    MovieDetailCubit cubit,
-    String code,
-  ) async {
-    await settingsRepository.save(
-      settingsRepository.current.copyWith(regionCode: code),
-    );
-    await cubit.refreshForRegion(mediaKey);
-  }
+  /// The country picked on this screen, else the saved one.
+  String get _effectiveRegion =>
+      regionCode ?? getIt<SettingsRepository>().current.regionCode;
 
   void _openRegionSheet(BuildContext context) {
-    final settingsRepository = getIt<SettingsRepository>();
     final cubit = context.read<MovieDetailCubit>();
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (_) => RegionSheet(
-        selectedRegionCode: settingsRepository.current.regionCode,
-        onSelected: (code) =>
-            unawaited(_changeRegion(settingsRepository, cubit, code)),
+        selectedRegionCode: _effectiveRegion,
+        // Only this screen: the saved region stays as it was.
+        onSelected: (code) => unawaited(cubit.setRegion(mediaKey, code)),
       ),
     );
   }
@@ -186,9 +180,7 @@ class MovieDetailContent extends StatelessWidget {
         SliverToBoxAdapter(
           child: WhereToWatchSection(
             providers: detail.watchProviders,
-            regionName: countryName(
-              getIt<SettingsRepository>().current.regionCode,
-            ),
+            regionName: countryName(_effectiveRegion),
             onRegionTap: () => _openRegionSheet(context),
             onProviderTap: (link) =>
                 unawaited(launchExternalLink(context, link)),

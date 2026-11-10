@@ -26,9 +26,13 @@ final class TvDetailLoading extends TvDetailState {
 
 /// Detail ready.
 final class TvDetailLoaded extends TvDetailState {
-  const TvDetailLoaded(this.detail);
+  const TvDetailLoaded(this.detail, {this.regionCode});
 
   final MediaDetail detail;
+
+  /// The country picked on this screen for "Where to watch", or `null` for
+  /// the saved (global) region. Lives only as long as this screen's Cubit.
+  final String? regionCode;
 }
 
 /// The load failed.
@@ -55,26 +59,29 @@ class TvDetailCubit extends Cubit<TvDetailState> {
 
   final MediaRepository _mediaRepository;
   final UserLibraryRepository _userLibraryRepository;
+  String? _regionCode;
 
-  /// Re-reads [key] after the region changed (providers and the certification
-  /// are per region) and swaps it in with no loading state, so the screen
-  /// keeps its scroll position. A failed refresh keeps what is on screen.
-  Future<void> refreshForRegion(MediaKey key) async {
+  /// Shows [key] for [regionCode] on this screen only (providers and the
+  /// certification are per region); the saved region is untouched, and
+  /// leaving the screen drops the choice. Swapped in with no loading state so
+  /// the scroll position stays; a failed read keeps what is on screen.
+  Future<void> setRegion(MediaKey key, String regionCode) async {
     if (state is! TvDetailLoaded) return;
-    final result = await _mediaRepository.detail(key);
+    final result = await _mediaRepository.detail(key, regionCode: regionCode);
     if (isClosed) return;
     if (result case Success<MediaDetail>(:final value)) {
-      emit(TvDetailLoaded(value));
+      _regionCode = regionCode;
+      emit(TvDetailLoaded(value, regionCode: regionCode));
     }
   }
 
   Future<void> loadDetail(MediaKey key) async {
     emit(const TvDetailLoading());
 
-    final result = await _mediaRepository.detail(key);
+    final result = await _mediaRepository.detail(key, regionCode: _regionCode);
     switch (result) {
       case Success<MediaDetail>(:final value):
-        emit(TvDetailLoaded(value));
+        emit(TvDetailLoaded(value, regionCode: _regionCode));
         await _refreshLibrarySnapshot(key, value);
       case Failure<MediaDetail>(:final reason):
         emit(TvDetailError(reason));
