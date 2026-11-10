@@ -24,8 +24,8 @@ import 'full_cast_person_tile.dart';
 ///
 /// The search box filters by person name only, case-insensitive substring,
 /// across cast *and* crew whichever tab is selected (results grouped under a
-/// Cast and a Crew heading);
-/// same convention `ExploreSearchField`'s own query uses.
+/// Cast and a Crew heading, the selected tab's group first; the tabs stay
+/// visible and show the match counts); same convention `ExploreSearchField`'s own query uses.
 class FullCastScreen extends StatefulWidget {
   const FullCastScreen({
     super.key,
@@ -96,17 +96,18 @@ class _FullCastScreenState extends State<FullCastScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // A search looks through cast AND crew, so the tab choice has
-              // no meaning while one is active: the pill steps aside.
-              if (!searching) ...[
-                CastCrewTabs(
-                  selected: _tab,
-                  castLabel: l10n.fullCastCastLabel,
-                  crewLabel: l10n.fullCastCrewLabel,
-                  onSelected: (tab) => setState(() => _tab = tab),
-                ),
-                const SizedBox(height: AppSpacing.md),
-              ],
+              CastCrewTabs(
+                selected: _tab,
+                // While searching, the labels carry each list's match count.
+                castLabel: searching
+                    ? '${l10n.fullCastCastLabel} · ${_filtered(_cast).length}'
+                    : l10n.fullCastCastLabel,
+                crewLabel: searching
+                    ? '${l10n.fullCastCrewLabel} · ${_filtered(_crew).length}'
+                    : l10n.fullCastCrewLabel,
+                onSelected: (tab) => setState(() => _tab = tab),
+              ),
+              const SizedBox(height: AppSpacing.md),
               _SearchField(
                 query: _query,
                 onChanged: (query) => setState(() => _query = query),
@@ -143,18 +144,24 @@ class _FullCastScreenState extends State<FullCastScreen> {
         ),
       );
     }
+    final castGroup = [
+      if (cast.isNotEmpty) ...[
+        _Heading(l10n.fullCastCastLabel),
+        ..._rows(cast),
+      ],
+    ];
+    final crewGroup = [
+      if (crew.isNotEmpty) ...[
+        _Heading(l10n.fullCastCrewLabel),
+        ..._rows(crew),
+      ],
+    ];
     return _PeopleList(
       key: const PageStorageKey<String>('search'),
-      rows: [
-        if (cast.isNotEmpty) ...[
-          _Heading(l10n.fullCastCastLabel),
-          ..._rows(cast),
-        ],
-        if (crew.isNotEmpty) ...[
-          _Heading(l10n.fullCastCrewLabel),
-          ..._rows(crew),
-        ],
-      ],
+      // The selected tab's matches come first.
+      rows: _tab == CastCrewTab.cast
+          ? [...castGroup, ...crewGroup]
+          : [...crewGroup, ...castGroup],
       onPersonTap: widget.onPersonTap,
     );
   }
