@@ -788,6 +788,12 @@ abstract class AppLocalizations {
   /// **'Latest trailers'**
   String get carouselSectionLatestTrailers;
 
+  /// Accessibility label of a Latest trailers card (docs/SCREENS.md B1); opens the trailer in YouTube.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the trailer for {title}'**
+  String trailerPlayLabel(String title);
+
   /// No description provided for @carouselSectionTrending.
   ///
   /// In en, this message translates to:
