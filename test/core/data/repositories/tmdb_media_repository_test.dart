@@ -16,6 +16,7 @@ import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/search_result.dart';
+import 'package:movies/core/domain/entities/streaming_service.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
@@ -55,6 +56,7 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
       '/discover/tv' => 'tmdb_tv_popular.json',
       '/discover/movie' => 'tmdb_movie_now_playing.json',
       '/search/multi' => 'tmdb_trending_all_week.json',
+      _ when path.startsWith('/watch/providers') => 'tmdb_watch_providers.json',
       _ when path.startsWith('/tv') || path == '/trending/tv/week' =>
         'tmdb_tv_popular.json',
       '/trending/all/week' => 'tmdb_trending_all_week.json',
@@ -318,6 +320,51 @@ void main() {
       expect(jordan.name, 'Jordan Ashworth');
       expect(jordan.profilePath, '/jordan-ashworth.jpg');
       expect(jordan.knownForDepartment, 'Acting');
+    });
+  });
+
+  group('streamingServices', () {
+    test('movies -> /watch/providers/movie with the region, most relevant '
+        'first, with logo URLs', () async {
+      await settingsRepository.save(
+        const AppSettings(languageCode: 'en', regionCode: 'ES'),
+      );
+      final result = await repository.streamingServices(type: MediaType.movie);
+
+      expect(adapter.requestedPaths, ['/watch/providers/movie']);
+      expect(adapter.lastQueryParameters?['watch_region'], 'ES');
+      final services = (result as Success<List<StreamingService>>).value;
+      expect(services.map((s) => s.name), [
+        'Netflix',
+        'Amazon Prime Video',
+        'Disney Plus',
+        'Obscure',
+      ]);
+      expect(services.first.id, 8);
+      expect(services.first.logoUrl, endsWith('/netflix.jpg'));
+      expect(services[2].logoUrl, isNull);
+    });
+
+    test('All -> both types, merged without repeats', () async {
+      final result = await repository.streamingServices();
+
+      expect(adapter.requestedPaths, [
+        '/watch/providers/movie',
+        '/watch/providers/tv',
+      ]);
+      final services = (result as Success<List<StreamingService>>).value;
+      expect(services.map((s) => s.id).toSet(), hasLength(services.length));
+    });
+
+    test('discover sends the provider filter with the saved region', () async {
+      await settingsRepository.save(
+        const AppSettings(languageCode: 'en', regionCode: 'ES'),
+      );
+      await repository.discover(
+        const DiscoverFilter(type: MediaType.movie, withWatchProviders: {8}),
+      );
+      expect(adapter.lastQueryParameters?['with_watch_providers'], '8');
+      expect(adapter.lastQueryParameters?['watch_region'], 'ES');
     });
   });
 

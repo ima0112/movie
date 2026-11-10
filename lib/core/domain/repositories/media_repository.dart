@@ -5,6 +5,7 @@ import '../entities/media_key.dart';
 import '../entities/media_type.dart';
 import '../entities/result.dart';
 import '../entities/search_result.dart';
+import '../entities/streaming_service.dart';
 import '../entities/season_summary.dart';
 
 /// One of Discover's named carousels.
@@ -101,6 +102,11 @@ abstract interface class MediaRepository {
   /// {movie|tv}` with [filter]'s criteria. `filter.type == null` means
   /// "All" (`docs/SCREENS.md` C1: "All = both interleaved").
   Future<Result<List<MediaItem>>> discover(DiscoverFilter filter);
+
+  /// B2's "Platform" pills: the streaming services available in the user's
+  /// region (Settings), most relevant first, capped to a short list. [type]
+  /// picks movies or TV shows; `null` (All) merges both without repeats.
+  Future<Result<List<StreamingService>>> streamingServices({MediaType? type});
 
   /// A2 step 0's own poster wall background — deliberately **not**
   /// `getCarouselSection(CarouselSection.popularThisWeek)`, which is

@@ -10,6 +10,7 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/search_result.dart';
+import '../../../../core/domain/entities/streaming_service.dart';
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/domain/entities/video.dart';
 import '../../../../core/domain/entities/watch_providers.dart';
@@ -1106,6 +1107,24 @@ class FakeMediaRepository implements MediaRepository {
     // closer stand-in until a real popularity field exists.
     if (comparator != null) results.sort(comparator);
     return Success(results);
+  }
+
+  /// A fixed sample list. `discover` here does not filter by provider (nor by
+  /// the release window or the vote ceiling): MediaItem carries none of those,
+  /// same reason as the runtime/status note above.
+  @override
+  Future<Result<List<StreamingService>>> streamingServices({
+    MediaType? type,
+  }) async {
+    await Future.delayed(_delay);
+    return const Success([
+      StreamingService(id: 8, name: 'Netflix'),
+      StreamingService(id: 1899, name: 'Max'),
+      StreamingService(id: 9, name: 'Prime Video'),
+      StreamingService(id: 337, name: 'Disney+'),
+      StreamingService(id: 350, name: 'Apple TV+'),
+      StreamingService(id: 15, name: 'Hulu'),
+    ]);
   }
 
   @override

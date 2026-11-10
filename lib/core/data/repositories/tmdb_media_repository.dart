@@ -9,6 +9,7 @@ import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
 import '../../domain/entities/search_result.dart';
+import '../../domain/entities/streaming_service.dart';
 import '../../domain/entities/season_summary.dart';
 import '../../domain/repositories/media_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
@@ -287,7 +288,7 @@ class TmdbMediaRepository implements MediaRepository {
 
   Future<List<MediaItem>> _discoverMovies(DiscoverFilter filter) async {
     final page = await _datasource.discoverMovie(
-      discoverQueryParams(filter, type: MediaType.movie),
+      discoverQueryParams(filter, type: MediaType.movie, watchRegion: _region),
     );
     return page.results
         .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig))
@@ -296,11 +297,40 @@ class TmdbMediaRepository implements MediaRepository {
 
   Future<List<MediaItem>> _discoverTv(DiscoverFilter filter) async {
     final page = await _datasource.discoverTv(
-      discoverQueryParams(filter, type: MediaType.tvShow),
+      discoverQueryParams(filter, type: MediaType.tvShow, watchRegion: _region),
     );
     return page.results
         .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig))
         .toList();
+  }
+
+  /// How many services B2's pill row offers.
+  static const int _maxStreamingServices = 15;
+
+  @override
+  Future<Result<List<StreamingService>>> streamingServices({
+    MediaType? type,
+  }) async {
+    try {
+      final types = switch (type) {
+        MediaType.movie => ['movie'],
+        MediaType.tvShow => ['tv'],
+        null => ['movie', 'tv'],
+      };
+      final raw = <Map<String, dynamic>>[];
+      for (final t in types) {
+        raw.addAll(await _datasource.watchProviders(t, region: _region));
+      }
+      return Success(
+        streamingServicesFromJson(
+          raw,
+          imagesConfig: _imagesConfig,
+          limit: _maxStreamingServices,
+        ),
+      );
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
   }
 
   @override

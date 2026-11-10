@@ -13,6 +13,7 @@ import 'tmdb_genre_mapper.dart';
 Map<String, dynamic> discoverQueryParams(
   DiscoverFilter filter, {
   required MediaType type,
+  String? watchRegion,
 }) {
   final isMovie = type == MediaType.movie;
   final params = <String, dynamic>{
@@ -61,6 +62,24 @@ Map<String, dynamic> discoverQueryParams(
     params['$dateField.lte'] = '${filter.yearTo}-12-31';
   }
 
+  // An exact window wins over the whole-year bounds above.
+  if (filter.releasedFrom case final from?) {
+    params['$dateField.gte'] = _isoDate(from);
+  }
+  if (filter.releasedTo case final to?) {
+    params['$dateField.lte'] = _isoDate(to);
+  }
+
+  if (filter.maxVoteCount != null) {
+    params['vote_count.lte'] = filter.maxVoteCount;
+  }
+
+  // A provider filter only means something within a region.
+  if (filter.withWatchProviders.isNotEmpty && watchRegion != null) {
+    params['with_watch_providers'] = filter.withWatchProviders.join('|');
+    params['watch_region'] = watchRegion;
+  }
+
   if (filter.minVoteAverage != null) {
     params['vote_average.gte'] = filter.minVoteAverage;
   }
@@ -84,6 +103,11 @@ Map<String, dynamic> discoverQueryParams(
 
   return params;
 }
+
+String _isoDate(DateTime date) =>
+    '${date.year.toString().padLeft(4, '0')}-'
+    '${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';
 
 String _sortBy(DiscoverSortBy sortBy, bool isMovie) => switch (sortBy) {
   DiscoverSortBy.popularity => 'popularity.desc',
