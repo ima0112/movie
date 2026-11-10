@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
-import '../../../../shared/widgets/media_carousel.dart';
+import '../../../../shared/widgets/media_hero_carousel.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero_save_button.dart';
 
@@ -34,7 +34,9 @@ class DiscoverHero extends StatelessWidget {
           // access to yet (no TasteProfileRepository/UserLibraryRepository).
           return const SizedBox.shrink();
         }
-        return MediaCarousel.hero(
+        return MediaHeroCarousel(
+          // A new segment starts again at its first banner.
+          key: ValueKey(segment),
           items: heroItems,
           saveButtonBuilder: (item) => DiscoverHeroSaveButton(itemId: item.id),
           // `pushMediaDetail` (→ `push`, not `go`): the detail screen's

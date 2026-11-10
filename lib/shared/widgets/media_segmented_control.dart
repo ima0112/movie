@@ -16,10 +16,14 @@ class MediaSegmentedControl extends StatelessWidget {
     super.key,
     required this.segment,
     required this.onSelected,
+    this.glass = false,
   });
 
   final MediaSegment segment;
   final ValueChanged<MediaSegment> onSelected;
+
+  /// The translucent track (Discover); see [AppSegmentedControl.glass].
+  final bool glass;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +35,7 @@ class MediaSegmentedControl extends StatelessWidget {
       ],
       selected: segment,
       onSelected: onSelected,
+      glass: glass,
     );
   }
 }

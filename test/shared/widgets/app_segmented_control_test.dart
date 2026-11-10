@@ -86,4 +86,54 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('the glass variant has a translucent, blurred track with a '
+      'hairline border — same options and behavior', (tester) async {
+    String? tapped;
+    await tester.pumpWidget(
+      _host(
+        AppSegmentedControl<String>(
+          glass: true,
+          segments: const [
+            AppSegment(value: 'a', label: 'Alpha'),
+            AppSegment(value: 'b', label: 'Beta'),
+          ],
+          selected: 'a',
+          onSelected: (v) => tapped = v,
+        ),
+      ),
+    );
+
+    expect(find.byType(BackdropFilter), findsOneWidget);
+    final track = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byType(BackdropFilter),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    final decoration = track.decoration! as BoxDecoration;
+    expect(decoration.color, AppColors.glass);
+    expect(decoration.border, isNotNull);
+
+    await tester.tap(find.text('Beta'));
+    expect(tapped, 'b');
+  });
+
+  testWidgets('the default (solid) track has no blur', (tester) async {
+    await tester.pumpWidget(
+      _host(
+        AppSegmentedControl<int>(
+          segments: const [
+            AppSegment(value: 1, label: 'One'),
+            AppSegment(value: 2, label: 'Two'),
+          ],
+          selected: 1,
+          onSelected: (_) {},
+        ),
+      ),
+    );
+    expect(find.byType(BackdropFilter), findsNothing);
+  });
 }
