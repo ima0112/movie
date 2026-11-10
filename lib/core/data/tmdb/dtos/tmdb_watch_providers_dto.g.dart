@@ -46,4 +46,7 @@ TmdbWatchProviderRegionDto _$TmdbWatchProviderRegionDtoFromJson(
 
 TmdbWatchProviderRefDto _$TmdbWatchProviderRefDtoFromJson(
   Map<String, dynamic> json,
-) => TmdbWatchProviderRefDto(providerName: json['provider_name'] as String);
+) => TmdbWatchProviderRefDto(
+  providerName: json['provider_name'] as String,
+  logoPath: json['logo_path'] as String?,
+);

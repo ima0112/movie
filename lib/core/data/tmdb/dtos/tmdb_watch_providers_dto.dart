@@ -43,10 +43,14 @@ class TmdbWatchProviderRegionDto {
 
 @JsonSerializable(createToJson: false)
 class TmdbWatchProviderRefDto {
-  const TmdbWatchProviderRefDto({required this.providerName});
+  const TmdbWatchProviderRefDto({required this.providerName, this.logoPath});
 
   @JsonKey(name: 'provider_name')
   final String providerName;
+
+  /// The service's logo (`/abc.png`), or `null` when TMDB has none.
+  @JsonKey(name: 'logo_path')
+  final String? logoPath;
 
   factory TmdbWatchProviderRefDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbWatchProviderRefDtoFromJson(json);
