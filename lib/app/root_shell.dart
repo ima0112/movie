@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/theme/app_colors.dart';
 import '../features/match_hub/presentation/widgets/match_hub_sheet.dart';
 import '../shared/widgets/app_tab_bar.dart';
 import '../shared/widgets/match_fab.dart';
@@ -18,6 +19,9 @@ class RootShell extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
+  /// How far above the bar the fade starts.
+  static const double _fadeReach = 40;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +32,15 @@ class RootShell extends StatelessWidget {
         alignment: Alignment.topCenter,
         clipBehavior: Clip.none,
         children: [
+          // Behind the bar: the page fades into the background as it passes
+          // under the glass pill, instead of showing through hard-edged.
+          const Positioned(
+            left: 0,
+            right: 0,
+            top: -_fadeReach,
+            bottom: 0,
+            child: IgnorePointer(child: _BarFade()),
+          ),
           AppTabBar(
             activeTab: AppTab.values[navigationShell.currentIndex],
             onTabSelected: (tab) =>
@@ -44,6 +57,29 @@ class RootShell extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       builder: (_) => const MatchHubSheet(),
+    );
+  }
+}
+
+/// Transparent at the top to (almost) the page color at the bottom.
+class _BarFade extends StatelessWidget {
+  const _BarFade();
+
+  static const double _bottomOpacity = 0.9;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.surface.withValues(alpha: 0),
+            AppColors.surface.withValues(alpha: _bottomOpacity),
+          ],
+        ),
+      ),
     );
   }
 }

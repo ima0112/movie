@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/widgets/app_tab_bar.dart';
+
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/media_type.dart';
@@ -54,6 +56,7 @@ class SearchResultsList extends StatelessWidget {
     }.toList();
 
     return ListView.builder(
+      padding: EdgeInsets.only(bottom: AppTabBar.scrollInset(context)),
       itemCount: visible.length,
       itemBuilder: (context, index) {
         final item = visible[index];
