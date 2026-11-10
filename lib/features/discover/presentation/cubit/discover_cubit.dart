@@ -6,6 +6,7 @@ import '../../../../core/domain/entities/app_settings.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/trailer_item.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
 
@@ -26,20 +27,56 @@ final class DiscoverLoading extends DiscoverState {
   final MediaSegment segment;
 }
 
-/// Hero + carousels ready for [segment].
+/// One lazily-loaded block of Discover: a named carousel or the trailers.
+sealed class DiscoverSlot<T> {
+  const DiscoverSlot();
+}
+
+final class DiscoverSlotLoading<T> extends DiscoverSlot<T> {
+  const DiscoverSlotLoading();
+}
+
+final class DiscoverSlotLoaded<T> extends DiscoverSlot<T> {
+  const DiscoverSlotLoaded(this.value);
+
+  final T value;
+}
+
+final class DiscoverSlotError<T> extends DiscoverSlot<T> {
+  const DiscoverSlotError(this.reason);
+
+  final FailureReason reason;
+}
+
+/// The hero is ready for [segment]; the carousels fill in as they are
+/// requested (CLAUDE.md rule 17).
 final class DiscoverLoaded extends DiscoverState {
   const DiscoverLoaded({
     required this.segment,
     required this.heroItems,
-    required this.carousels,
+    this.carousels = const {},
+    this.trailers,
   });
 
   final MediaSegment segment;
   final List<MediaItem> heroItems;
 
-  /// One entry per carousel shown for [segment], in display order — see
-  /// `docs/SCREENS.md` B1.
-  final Map<CarouselSection, List<MediaItem>> carousels;
+  /// Only the carousels that have been requested; absent = not asked yet
+  /// (which reads as loading) — see `docs/SCREENS.md` B1.
+  final Map<CarouselSection, DiscoverSlot<List<MediaItem>>> carousels;
+
+  /// "Latest trailers"; `null` until requested.
+  final DiscoverSlot<List<TrailerItem>>? trailers;
+
+  DiscoverLoaded copyWith({
+    Map<CarouselSection, DiscoverSlot<List<MediaItem>>>? carousels,
+    DiscoverSlot<List<TrailerItem>>? trailers,
+  }) => DiscoverLoaded(
+    segment: segment,
+    heroItems: heroItems,
+    carousels: carousels ?? this.carousels,
+    trailers: trailers ?? this.trailers,
+  );
 }
 
 /// The load for [segment] failed.
@@ -95,59 +132,109 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   static const Map<MediaSegment, List<CarouselSection>> sectionsBySegment = {
     MediaSegment.all: [
       CarouselSection.popularThisWeek,
+      CarouselSection.comingSoon,
+      CarouselSection.inTheaters,
       CarouselSection.watchLater,
     ],
     MediaSegment.movie: [
-      CarouselSection.inTheaters,
       CarouselSection.trending,
       CarouselSection.topRated,
       CarouselSection.upcoming,
     ],
     MediaSegment.tvShow: [
       CarouselSection.airingNow,
-      CarouselSection.trending,
+      CarouselSection.finishedShows,
       CarouselSection.topRated,
       CarouselSection.popular,
     ],
   };
 
+  /// Bumped by every [loadDiscover]; a slot response from an earlier load
+  /// (another segment, or before a locale change) is dropped.
+  int _generation = 0;
+
+  /// Loads the hero for [segment]. The carousels are *not* fetched here: each
+  /// asks for itself through [requestSection] / [requestTrailers] as it nears
+  /// the viewport (CLAUDE.md rule 17).
   Future<void> loadDiscover(MediaSegment segment) async {
+    final generation = ++_generation;
     emit(DiscoverLoading(segment));
 
     final heroResult = await _mediaRepository.getHeroItems(
       type: segment.mediaType,
     );
-    final List<MediaItem> heroItems;
+    if (generation != _generation || isClosed) return;
     switch (heroResult) {
       case Success<List<MediaItem>>(:final value):
-        heroItems = value;
+        emit(DiscoverLoaded(segment: segment, heroItems: value));
       case Failure<List<MediaItem>>(:final reason):
         emit(DiscoverError(segment: segment, reason: reason));
-        return;
     }
+  }
 
-    final carousels = <CarouselSection, List<MediaItem>>{};
-    for (final section in sectionsBySegment[segment]!) {
-      final result = await _mediaRepository.getCarouselSection(
-        section,
-        type: segment.mediaType,
-      );
-      switch (result) {
-        case Success<List<MediaItem>>(:final value):
-          carousels[section] = value;
-        case Failure<List<MediaItem>>(:final reason):
-          emit(DiscoverError(segment: segment, reason: reason));
-          return;
-      }
+  /// Loads [section] for the segment on screen, once. Idempotent.
+  Future<void> requestSection(CarouselSection section) async {
+    final current = state;
+    if (current is! DiscoverLoaded || current.carousels.containsKey(section)) {
+      return;
     }
+    await _loadSection(section);
+  }
 
-    emit(
-      DiscoverLoaded(
-        segment: segment,
-        heroItems: heroItems,
-        carousels: carousels,
-      ),
+  Future<void> retrySection(CarouselSection section) async {
+    if (state is! DiscoverLoaded) return;
+    await _loadSection(section);
+  }
+
+  Future<void> _loadSection(CarouselSection section) async {
+    final generation = _generation;
+    final segment = (state as DiscoverLoaded).segment;
+    _putSection(section, const DiscoverSlotLoading());
+    final result = await _mediaRepository.getCarouselSection(
+      section,
+      type: segment.mediaType,
     );
+    if (generation != _generation || isClosed) return;
+    _putSection(section, switch (result) {
+      Success<List<MediaItem>>(:final value) => DiscoverSlotLoaded(value),
+      Failure<List<MediaItem>>(:final reason) => DiscoverSlotError(reason),
+    });
+  }
+
+  void _putSection(
+    CarouselSection section,
+    DiscoverSlot<List<MediaItem>> slot,
+  ) {
+    final current = state;
+    if (current is! DiscoverLoaded) return;
+    emit(current.copyWith(carousels: {...current.carousels, section: slot}));
+  }
+
+  /// "Latest trailers", loaded once on demand (the All segment).
+  Future<void> requestTrailers() async {
+    final current = state;
+    if (current is! DiscoverLoaded || current.trailers != null) return;
+    await _loadTrailers();
+  }
+
+  Future<void> retryTrailers() async {
+    if (state is DiscoverLoaded) await _loadTrailers();
+  }
+
+  Future<void> _loadTrailers() async {
+    final generation = _generation;
+    _putTrailers(const DiscoverSlotLoading());
+    final result = await _mediaRepository.latestTrailers();
+    if (generation != _generation || isClosed) return;
+    _putTrailers(switch (result) {
+      Success<List<TrailerItem>>(:final value) => DiscoverSlotLoaded(value),
+      Failure<List<TrailerItem>>(:final reason) => DiscoverSlotError(reason),
+    });
+  }
+
+  void _putTrailers(DiscoverSlot<List<TrailerItem>> slot) {
+    final current = state;
+    if (current is DiscoverLoaded) emit(current.copyWith(trailers: slot));
   }
 
   /// Whichever segment is currently showing (loading, loaded, or

@@ -70,11 +70,11 @@ void main() {
     // The section is below the fold (after the full-height hero) — the
     // ListView only builds what's currently visible, so scroll to it.
     await tester.scrollUntilVisible(
-      find.text('In theaters'),
+      find.text('Trending'),
       200,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('In theaters'), findsOneWidget);
+    expect(find.text('Trending'), findsOneWidget);
     expect(find.text('Airing now'), findsNothing);
   });
 
