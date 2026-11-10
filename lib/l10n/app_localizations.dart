@@ -788,6 +788,18 @@ abstract class AppLocalizations {
   /// **'Latest trailers'**
   String get carouselSectionLatestTrailers;
 
+  /// Title of B1's taste-completion card, shown on the All tab while there is no taste profile and My List is empty (docs/SCREENS.md B1).
+  ///
+  /// In en, this message translates to:
+  /// **'Make Home yours'**
+  String get discoverTasteCardTitle;
+
+  /// No description provided for @discoverTasteCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what you like and we\'ll fill this page with picks for you.'**
+  String get discoverTasteCardBody;
+
   /// Accessibility label of a Latest trailers card (docs/SCREENS.md B1); opens the trailer in YouTube.
   ///
   /// In en, this message translates to:

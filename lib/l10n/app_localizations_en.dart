@@ -383,6 +383,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionLatestTrailers => 'Latest trailers';
 
   @override
+  String get discoverTasteCardTitle => 'Make Home yours';
+
+  @override
+  String get discoverTasteCardBody =>
+      'Tell us what you like and we\'ll fill this page with picks for you.';
+
+  @override
   String trailerPlayLabel(String title) {
     return 'Play the trailer for $title';
   }
