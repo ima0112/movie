@@ -374,6 +374,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionInTheaters => 'In theaters';
 
   @override
+  String get carouselSectionComingSoon => 'Coming soon';
+
+  @override
+  String get carouselSectionFinishedShows => 'Finished shows';
+
+  @override
+  String get carouselSectionLatestTrailers => 'Latest trailers';
+
+  @override
   String get carouselSectionTrending => 'Trending';
 
   @override

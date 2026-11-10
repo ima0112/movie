@@ -322,6 +322,9 @@
     }
   },
   "carouselSectionInTheaters": "In theaters",
+  "carouselSectionComingSoon": "Coming soon",
+  "carouselSectionFinishedShows": "Finished shows",
+  "carouselSectionLatestTrailers": "Latest trailers",
   "carouselSectionTrending": "Trending",
   "carouselSectionTopRated": "Top rated",
   "carouselSectionUpcoming": "Upcoming",

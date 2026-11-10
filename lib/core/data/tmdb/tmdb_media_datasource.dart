@@ -1,3 +1,4 @@
+import 'dtos/tmdb_video_dto.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../app/environments.dart';
@@ -181,6 +182,16 @@ class TmdbMediaDatasource {
       },
     );
     return TmdbPersonDetailDto.fromJson(response.data!);
+  }
+
+  /// A movie's videos in the user's language, English and unlabeled ones
+  /// (TMDB would otherwise return only the exact language).
+  Future<List<TmdbVideoDto>> movieVideos(int id) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/movie/$id/videos',
+      queryParameters: {'include_video_language': 'en,es,null'},
+    );
+    return TmdbVideosDto.fromJson(response.data!).results;
   }
 
   Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> _movies(

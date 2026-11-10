@@ -8,6 +8,7 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/trailer_item.dart';
 import 'package:movies/core/domain/entities/search_result.dart';
 import 'package:movies/core/domain/entities/streaming_service.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
@@ -47,6 +48,10 @@ class _RecordingMediaRepository implements MediaRepository {
   @override
   Future<Result<List<MediaItem>>> getHeroItems({MediaType? type}) =>
       throw UnimplementedError();
+
+  @override
+  Future<Result<List<TrailerItem>>> latestTrailers({int limit = 8}) async =>
+      const Success([]);
 
   @override
   Future<Result<List<MediaItem>>> getPosterWallItems() =>

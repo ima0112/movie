@@ -62,23 +62,7 @@ sealed class MediaDetail {
   /// Only ever a YouTube video (`docs/SCREENS.md` D1: "opens YouTube") —
   /// a non-YouTube video can't be "played" by this button at all, so it
   /// never competes with a YouTube one, at any tier.
-  Video? get trailer {
-    final youtube = videos.where((v) => v.isYoutube);
-    if (youtube.isEmpty) return null;
-
-    for (final v in youtube) {
-      if (v.official && v.type == 'Trailer' && v.iso6391 == _userLanguage) {
-        return v;
-      }
-    }
-    for (final v in youtube) {
-      if (v.official) return v;
-    }
-    for (final v in youtube) {
-      if (v.type == 'Teaser') return v;
-    }
-    return youtube.first;
-  }
+  Video? get trailer => Video.pickTrailer(videos, language: _userLanguage);
 }
 
 final class MovieDetail extends MediaDetail {
