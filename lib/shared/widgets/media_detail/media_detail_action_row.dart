@@ -18,6 +18,23 @@ import '../media_detail_duration.dart';
 import 'media_action_button.dart';
 import 'media_detail_info_card.dart';
 
+/// What the primary (white pill) button does.
+enum PrimaryAction { trailer, similar, whereToWatch, none }
+
+/// The first useful thing to offer: the trailer; without one, jump to the
+/// similar titles; without those, to where to watch; with none of them the
+/// button would lead nowhere, so there is none (`docs/SCREENS.md` D1).
+PrimaryAction primaryActionFor({
+  required bool hasTrailer,
+  required bool hasSimilar,
+  required bool hasWhereToWatch,
+}) {
+  if (hasTrailer) return PrimaryAction.trailer;
+  if (hasSimilar) return PrimaryAction.similar;
+  if (hasWhereToWatch) return PrimaryAction.whereToWatch;
+  return PrimaryAction.none;
+}
+
 /// D1/D2's Trailer button + the Favorite / Watch later / Watched row.
 ///
 /// Source of truth: `docs/SCREENS.md` D1, reused unchanged by D2. Per
@@ -52,6 +69,7 @@ class MediaDetailActionRow extends StatefulWidget {
     this.onGenreTap,
     this.onPlayTrailer,
     this.onSeeSimilar,
+    this.onSeeWhereToWatch,
   });
 
   final MediaKey mediaKey;
@@ -67,10 +85,14 @@ class MediaDetailActionRow extends StatefulWidget {
   /// Tapping a genre → C1 with that genre (the assembling screen owns it).
   final void Function(Genre genre)? onGenreTap;
 
-  /// No trailer → "See similar" scrolls there instead (SCREENS.md D1);
-  /// the assembled screen owns that scroll.
+  /// The primary button's fallbacks (see [primaryActionFor]): no trailer ->
+  /// "See similar" (scrolls there), only offered when there are similar
+  /// titles ([onSeeSimilar] `null` otherwise); neither -> "Where to watch"
+  /// ([onSeeWhereToWatch] `null` when no service is listed); none of them ->
+  /// no button at all.
   final void Function(Video trailer)? onPlayTrailer;
   final VoidCallback? onSeeSimilar;
+  final VoidCallback? onSeeWhereToWatch;
 
   @override
   State<MediaDetailActionRow> createState() => _MediaDetailActionRowState();
@@ -108,19 +130,32 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
   Widget build(BuildContext context) {
     final trailer = widget.mediaDetail.trailer;
     final l10n = context.l10n;
+    final primary = primaryActionFor(
+      hasTrailer: trailer != null,
+      hasSimilar: widget.onSeeSimilar != null,
+      hasWhereToWatch: widget.onSeeWhereToWatch != null,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        PrimaryButton(
-          icon: trailer != null ? AppIcons.play : null,
-          label: trailer != null
-              ? l10n.mediaDetailActionTrailer
-              : l10n.mediaDetailActionSeeSimilar,
-          onTap: trailer != null
-              ? () => widget.onPlayTrailer?.call(trailer)
-              : widget.onSeeSimilar,
-        ),
-        const SizedBox(height: AppSpacing.lg),
+        if (primary != PrimaryAction.none) ...[
+          PrimaryButton(
+            icon: primary == PrimaryAction.trailer ? AppIcons.play : null,
+            label: switch (primary) {
+              PrimaryAction.trailer => l10n.mediaDetailActionTrailer,
+              PrimaryAction.similar => l10n.mediaDetailActionSeeSimilar,
+              _ => l10n.whereToWatchTitle,
+            },
+            onTap: switch (primary) {
+              PrimaryAction.trailer => () => widget.onPlayTrailer?.call(
+                trailer!,
+              ),
+              PrimaryAction.similar => widget.onSeeSimilar,
+              _ => widget.onSeeWhereToWatch,
+            },
+          ),
+          const SizedBox(height: AppSpacing.lg),
+        ],
         MediaDetailInfoCard(
           posterUrl: widget.mediaDetail.item.posterUrl,
           metaPrefix: widget.metaPrefix,

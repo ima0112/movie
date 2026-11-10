@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
+import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/shared/widgets/app_buttons.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_action_row.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
@@ -146,6 +149,82 @@ void main() {
 
       final saved = await userLibraryRepository.watchEntry(_dune).first;
       expect(saved!.genres.map((g) => g.id), ['sci-fi', 'drama']);
+    });
+  });
+
+  group('primaryActionFor', () {
+    test('trailer first, then similar, then where to watch, else nothing', () {
+      PrimaryAction pick(bool t, bool s, bool w) =>
+          primaryActionFor(hasTrailer: t, hasSimilar: s, hasWhereToWatch: w);
+      expect(pick(true, true, true), PrimaryAction.trailer);
+      expect(pick(false, true, true), PrimaryAction.similar);
+      expect(pick(false, false, true), PrimaryAction.whereToWatch);
+      expect(pick(false, false, false), PrimaryAction.none);
+    });
+  });
+
+  group('MediaDetailActionRow without a trailer', () {
+    // A movie with no videos at all, so no trailer.
+    const bare = MovieDetail(
+      item: Movie(
+        id: 9,
+        title: 'Bare',
+        posterUrl: null,
+        genres: [],
+        releaseDate: null,
+        voteAverage: 7,
+      ),
+      overview: '',
+      cast: [],
+      crew: [],
+      videos: [],
+      similar: [],
+      imdbId: null,
+      tagline: null,
+      status: 'Released',
+      watchProviders: WatchProviders.empty,
+      runtimeMinutes: null,
+      releaseDate: null,
+      certification: null,
+    );
+
+    Widget host({VoidCallback? similar, VoidCallback? where}) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: MediaDetailActionRow(
+          mediaKey: const MediaKey(type: MediaType.movie, tmdbId: 9),
+          userLibraryRepository: InMemoryUserLibraryRepository(),
+          mediaDetail: bare,
+          onSeeSimilar: similar,
+          onSeeWhereToWatch: where,
+        ),
+      ),
+    );
+
+    testWidgets('similar titles exist: "See similar"', (tester) async {
+      var taps = 0;
+      await tester.pumpWidget(host(similar: () => taps++));
+      await tester.tap(find.text('See similar'));
+      expect(taps, 1);
+    });
+
+    testWidgets('no similar but services listed: "Where to watch"', (
+      tester,
+    ) async {
+      var taps = 0;
+      await tester.pumpWidget(host(where: () => taps++));
+      expect(find.text('See similar'), findsNothing);
+      await tester.tap(find.text('Where to watch'));
+      expect(taps, 1);
+    });
+
+    testWidgets('nothing to jump to: no primary button, the info card '
+        'still shows', (tester) async {
+      await tester.pumpWidget(host());
+      expect(find.byType(PrimaryButton), findsNothing);
+      expect(find.text('See similar'), findsNothing);
+      expect(find.text('Watched'), findsOneWidget);
     });
   });
 }

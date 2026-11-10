@@ -36,7 +36,7 @@ import 'where_to_watch_section.dart';
 /// Pure of any Cubit (CLAUDE.md rule 9): the screen's own top-level
 /// `BlocBuilder` is the only reader of the loaded state; the region choice
 /// goes back out through [onRegionSelected].
-class MediaDetailScrollView extends StatelessWidget {
+class MediaDetailScrollView extends StatefulWidget {
   const MediaDetailScrollView({
     super.key,
     required this.detail,
@@ -81,11 +81,20 @@ class MediaDetailScrollView extends StatelessWidget {
   /// Overrides the default "Similar" heading ("Similar movies").
   final String? similarTitle;
 
-  void _scrollToSimilar() {
-    final similarContext = similarSectionKey.currentContext;
-    if (similarContext != null) {
+  @override
+  State<MediaDetailScrollView> createState() => _MediaDetailScrollViewState();
+}
+
+class _MediaDetailScrollViewState extends State<MediaDetailScrollView> {
+  final GlobalKey _whereToWatchKey = GlobalKey();
+
+  MediaDetail get detail => widget.detail;
+
+  void _scrollTo(GlobalKey key) {
+    final target = key.currentContext;
+    if (target != null) {
       Scrollable.ensureVisible(
-        similarContext,
+        target,
         duration: const Duration(milliseconds: 300),
       );
     }
@@ -107,8 +116,8 @@ class MediaDetailScrollView extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       builder: (_) => RegionSheet(
-        selectedRegionCode: regionCode,
-        onSelected: onRegionSelected,
+        selectedRegionCode: widget.regionCode,
+        onSelected: widget.onRegionSelected,
       ),
     );
   }
@@ -116,7 +125,7 @@ class MediaDetailScrollView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      controller: scrollController,
+      controller: widget.scrollController,
       slivers: [
         SliverToBoxAdapter(
           child: MediaDetailHeader(
@@ -124,7 +133,11 @@ class MediaDetailScrollView extends StatelessWidget {
             title: detail.item.title,
             tagline: detail.tagline,
             onShare: () => unawaited(
-              shareMedia(context, title: detail.item.title, key: mediaKey),
+              shareMedia(
+                context,
+                title: detail.item.title,
+                key: widget.mediaKey,
+              ),
             ),
           ),
         ),
@@ -137,11 +150,11 @@ class MediaDetailScrollView extends StatelessWidget {
           ),
           sliver: SliverToBoxAdapter(
             child: MediaDetailActionRow(
-              mediaKey: mediaKey,
-              userLibraryRepository: userLibraryRepository,
+              mediaKey: widget.mediaKey,
+              userLibraryRepository: widget.userLibraryRepository,
               mediaDetail: detail,
-              metaPrefix: metaPrefix,
-              extraChips: extraChips,
+              metaPrefix: widget.metaPrefix,
+              extraChips: widget.extraChips,
               onGenreTap: (genre) => context.push(
                 AppRoutes.filteredList,
                 extra: FilteredListRouteArgs(
@@ -154,18 +167,24 @@ class MediaDetailScrollView extends StatelessWidget {
               ),
               onPlayTrailer: (trailer) =>
                   unawaited(launchYoutubeTrailer(context, trailer.key)),
-              onSeeSimilar: _scrollToSimilar,
+              onSeeSimilar: detail.similar.isEmpty
+                  ? null
+                  : () => _scrollTo(widget.similarSectionKey),
+              onSeeWhereToWatch: detail.watchProviders.hasAny
+                  ? () => _scrollTo(_whereToWatchKey)
+                  : null,
             ),
           ),
         ),
-        SliverToBoxAdapter(child: MediaStatCards(stats: stats)),
+        SliverToBoxAdapter(child: MediaStatCards(stats: widget.stats)),
         SliverToBoxAdapter(
           child: MediaSynopsisSection(overview: detail.overview),
         ),
         SliverToBoxAdapter(
+          key: _whereToWatchKey,
           child: WhereToWatchSection(
             providers: detail.watchProviders,
-            regionName: countryName(regionCode),
+            regionName: countryName(widget.regionCode),
             onRegionTap: () => _openRegionSheet(context),
             onProviderTap: (link) =>
                 unawaited(launchExternalLink(context, link)),
@@ -177,13 +196,13 @@ class MediaDetailScrollView extends StatelessWidget {
             crew: detail.crew,
             onPersonTap: (person) => context.pushPersonDetail(person.id),
             onSeeFullCastTap: () => _openFullCast(context),
-            byline: castByline,
+            byline: widget.castByline,
           ),
         ),
         SliverToBoxAdapter(
-          key: similarSectionKey,
+          key: widget.similarSectionKey,
           child: MediaSimilarSection(
-            title: similarTitle,
+            title: widget.similarTitle,
             similar: detail.similar,
             onItemTap: (item) => context.pushMediaDetail(item.key),
           ),
