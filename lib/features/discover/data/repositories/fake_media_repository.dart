@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:movies/app/environments.dart';
 
 import '../../../../core/domain/entities/discover_filter.dart';
+import '../../../../core/domain/entities/discover_page.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_item.dart';
@@ -989,6 +990,49 @@ class FakeMediaRepository implements MediaRepository {
           ),
         ),
     ]);
+  }
+
+  /// [discover]'s results cut into pages of [pageSize].
+  @override
+  Future<Result<DiscoverPage>> discoverPage(
+    DiscoverFilter filter, {
+    int page = 1,
+  }) async {
+    final all = switch (await discover(filter)) {
+      Success(:final value) => value,
+      Failure(:final reason) => throw StateError('$reason'),
+    };
+    return Success(_slice(all, page));
+  }
+
+  @override
+  Future<Result<DiscoverPage>> carouselSectionPage(
+    CarouselSection section, {
+    MediaType? type,
+    int page = 1,
+  }) async {
+    await Future.delayed(_delay);
+    final pool = switch (type) {
+      MediaType.movie => _movies,
+      MediaType.tvShow => _tvShows,
+      null => [..._movies, ..._tvShows],
+    };
+    return Success(_slice(pool, page));
+  }
+
+  static const int pageSize = 20;
+
+  DiscoverPage _slice(List<MediaItem> all, int page) {
+    final start = (page - 1) * pageSize;
+    final items = start >= all.length
+        ? const <MediaItem>[]
+        : all.sublist(start, (start + pageSize).clamp(0, all.length));
+    return DiscoverPage(
+      items: items,
+      page: page,
+      totalPages: (all.length / pageSize).ceil().clamp(1, 1 << 30),
+      totalResults: all.length,
+    );
   }
 
   /// A fixed, deterministic pool per type (everything but the seed

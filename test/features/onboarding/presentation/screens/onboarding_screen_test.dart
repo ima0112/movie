@@ -16,6 +16,7 @@ import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/entities/discover_page.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/trailer_item.dart';
 import 'package:movies/core/domain/entities/search_result.dart';
@@ -33,6 +34,19 @@ import 'package:movies/features/onboarding/presentation/widgets/poster_wall.dart
 /// what's pumped here, so it's left unimplemented rather than faked out
 /// in full, same as other narrow test doubles this app already has.
 class _FailingMediaRepository implements MediaRepository {
+  @override
+  Future<Result<DiscoverPage>> discoverPage(
+    DiscoverFilter filter, {
+    int page = 1,
+  }) async => const Success(DiscoverPage.empty);
+
+  @override
+  Future<Result<DiscoverPage>> carouselSectionPage(
+    CarouselSection section, {
+    MediaType? type,
+    int page = 1,
+  }) async => const Success(DiscoverPage.empty);
+
   @override
   Future<Result<List<TrailerItem>>> latestTrailers({int limit = 8}) async =>
       const Success([]);

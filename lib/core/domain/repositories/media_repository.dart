@@ -1,4 +1,5 @@
 import '../entities/discover_filter.dart';
+import '../entities/discover_page.dart';
 import '../entities/media_detail.dart';
 import '../entities/media_item.dart';
 import '../entities/media_key.dart';
@@ -109,6 +110,24 @@ abstract interface class MediaRepository {
   /// {movie|tv}` with [filter]'s criteria. `filter.type == null` means
   /// "All" (`docs/SCREENS.md` C1: "All = both interleaved").
   Future<Result<List<MediaItem>>> discover(DiscoverFilter filter);
+
+  /// One page of [discover]'s results, for a listing that loads as it
+  /// scrolls (B1/B2's "See all"). Same filter semantics as [discover];
+  /// `filter.type == null` interleaves both types, page by page. A [page]
+  /// past the end is an empty page, not a failure.
+  Future<Result<DiscoverPage>> discoverPage(
+    DiscoverFilter filter, {
+    int page = 1,
+  });
+
+  /// One page of a Discover collection's own endpoint (the list behind a B1
+  /// carousel), so "See all" opens with exactly the order the carousel
+  /// previewed. [type] is the segment (`null` = All).
+  Future<Result<DiscoverPage>> carouselSectionPage(
+    CarouselSection section, {
+    MediaType? type,
+    int page = 1,
+  });
 
   /// B2's "Platform" pills: the streaming services available in the user's
   /// region (Settings), most relevant first, capped to a short list. [type]

@@ -10,6 +10,7 @@ import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart';
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/discover_page.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -365,6 +366,65 @@ void main() {
       );
       expect(adapter.lastQueryParameters?['with_watch_providers'], '8');
       expect(adapter.lastQueryParameters?['watch_region'], 'ES');
+    });
+  });
+
+  group('pages', () {
+    test('discoverPage sends the page number and returns the totals', () async {
+      final result = await repository.discoverPage(
+        const DiscoverFilter(type: MediaType.movie),
+        page: 3,
+      );
+
+      expect(adapter.requestedPaths, ['/discover/movie']);
+      expect(adapter.lastQueryParameters!['page'], 3);
+      final page = (result as Success<DiscoverPage>).value;
+      expect(page.items, isNotEmpty);
+      expect(page.totalPages, 42); // from the fixture
+      expect(page.totalResults, greaterThan(0));
+      expect(page.hasMore, isTrue);
+    });
+
+    test('All merges both types for the same page', () async {
+      final result = await repository.discoverPage(
+        const DiscoverFilter(),
+        page: 2,
+      );
+      final page = (result as Success<DiscoverPage>).value;
+      expect(
+        adapter.requestedPaths,
+        containsAll(['/discover/movie', '/discover/tv']),
+      );
+      expect(page.page, 2);
+      expect(page.items.any((i) => i is Movie), isTrue);
+      expect(page.items.any((i) => i is TvShow), isTrue);
+    });
+
+    test("a collection's page uses its own endpoint with the page", () async {
+      final result = await repository.carouselSectionPage(
+        CarouselSection.inTheaters,
+        page: 2,
+      );
+      expect(adapter.requestedPaths, ['/movie/now_playing']);
+      expect(adapter.lastQueryParameters!['page'], 2);
+      expect(result, isA<Success<DiscoverPage>>());
+    });
+
+    test('Finished shows pages through /discover/tv; Watch later is empty '
+        'with no request', () async {
+      await repository.carouselSectionPage(
+        CarouselSection.finishedShows,
+        page: 2,
+      );
+      expect(adapter.requestedPaths, ['/discover/tv']);
+      expect(adapter.lastQueryParameters!['with_status'], '3');
+
+      adapter.requestedPaths.clear();
+      final none = await repository.carouselSectionPage(
+        CarouselSection.watchLater,
+      );
+      expect(adapter.requestedPaths, isEmpty);
+      expect((none as Success<DiscoverPage>).value.items, isEmpty);
     });
   });
 
