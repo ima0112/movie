@@ -29,61 +29,76 @@ class PersonDetailHeader extends StatelessWidget {
   final String? ageLabel;
   final String? placeOfBirth;
 
-  static const double photoSize = 120;
+  static const double photoSize = 112;
+
+  // `accentDeep` at this opacity, fading to the page color — the warm
+  // glow behind the header in the "Persona" design.
+  static const double _glowOpacity = 0.3;
+
+  List<String> get _details => [
+    ?person.knownForDepartment,
+    ?ageLabel,
+    ?placeOfBirth,
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xl,
-            vertical: AppSpacing.xxxl,
-          ),
-          child: Column(
-            children: [
-              // Clears the ScrimBackButton (top-left, 40 px + padding).
-              const SizedBox(height: AppSpacing.xxxl),
-              ClipOval(
-                child: SizedBox(
-                  width: photoSize,
-                  height: photoSize,
-                  child: ProfileImage(
-                    profilePath: person.profilePath,
-                    name: person.name,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.accentDeep.withValues(alpha: _glowOpacity),
+            AppColors.surface,
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xl,
+              vertical: AppSpacing.xxxl,
+            ),
+            child: Column(
+              children: [
+                // Clears the ScrimBackButton (top-left, 40 px + padding).
+                const SizedBox(height: AppSpacing.xxxl),
+                ClipOval(
+                  child: SizedBox(
+                    width: photoSize,
+                    height: photoSize,
+                    child: ProfileImage(
+                      profilePath: person.profilePath,
+                      name: person.name,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                person.name,
-                style: AppTextStyles.display,
-                textAlign: TextAlign.center,
-              ),
-              if (person.knownForDepartment != null) ...[
-                const SizedBox(height: AppSpacing.xs),
+                const SizedBox(height: AppSpacing.lg),
                 Text(
-                  person.knownForDepartment!,
-                  style: AppTextStyles.bodySm.copyWith(
-                    color: AppColors.inkMuted,
-                  ),
-                ),
-              ],
-              if (ageLabel != null || placeOfBirth != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  [?ageLabel, ?placeOfBirth].join(' · '),
-                  style: AppTextStyles.bodySm.copyWith(
-                    color: AppColors.inkMuted,
-                  ),
+                  person.name,
+                  style: AppTextStyles.h1,
                   textAlign: TextAlign.center,
                 ),
+                // "Acting · 51 years old · Los Angeles, USA" on one line, as
+                // in the design.
+                if (_details.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    _details.join(' · '),
+                    style: AppTextStyles.bodySm.copyWith(
+                      color: AppColors.inkMuted,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-        const ScrimBackButton(),
-      ],
+          const ScrimBackButton(),
+        ],
+      ),
     );
   }
 }

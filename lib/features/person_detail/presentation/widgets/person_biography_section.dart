@@ -5,7 +5,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 
-/// D3's biography — "folded to 5 lines with 'Read more'"
+/// D3's biography — "folded to 3 lines with 'Read more'"
 /// (`docs/SCREENS.md` D3; D1/D2's own synopsis folds to 4 — D3's own 5
 /// is this screen's own number, not a shared one). Shows a "Biography
 /// in English" note above the text when [isEnglishFallback] is set —
@@ -33,7 +33,7 @@ class PersonBiographySection extends StatefulWidget {
 }
 
 class _PersonBiographySectionState extends State<PersonBiographySection> {
-  static const int _foldedMaxLines = 5;
+  static const int _foldedMaxLines = 3;
 
   bool _expanded = false;
 

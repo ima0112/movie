@@ -187,9 +187,9 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Access: cast, crew, or search result.
 - Elements:
   - Top bar with back; a compact bar with the name appears once scrolled past the header, same as D1/D2.
-  - Large circular photo, name, department ("Acting" / "Directing"); age (computed from `birthday`) or, once there's a `deathday`, years lived instead — no raw date shown for either. Place of birth on its own, with no date attached.
-  - Biography folded to 5 lines with "Read more". A "Biography in English" note appears above it when TMDB had no translation in the user's own language and the repository fell back to English.
-  - "Known for": carousel of their 6 most popular titles (by `voteAverage`, the closest proxy — `MediaItem` has no dedicated popularity field).
+  - A warm glow behind the header; 112 px circular photo, 26 px name, and one muted line "department · age · place of birth" ("Acting" / "Directing"; age computed from `birthday` or, once there's a `deathday`, years lived instead — no raw date shown for either; place of birth with no date attached).
+  - Biography folded to 3 lines with "Read more". A "Biography in English" note appears above it when TMDB had no translation in the user's own language and the repository fell back to English.
+  - "Known for": row of their 6 most popular titles, each poster with its title underneath (by `voteAverage`, the closest proxy — `MediaItem` has no dedicated popularity field).
   - "Filmography": filter chips All · Movies · TV Shows, grouped by release year descending under a year header; credits with no release date group as "Coming soon", ahead of every real year. No infinite scroll — the one combined-credits call already has everything. An "As director" chip is added, and only then, when this person has both a cast credit and a crew credit among all their credits (not just the current filter) — picking it narrows to `job == 'Director'` specifically, not every crew department.
 - States: skeleton, error, offline.
 - Exits: D1/D2.
