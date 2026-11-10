@@ -312,6 +312,16 @@
 
   "carouselSectionForYou": "For You",
   "carouselSectionPopularThisWeek": "Popular this week",
+  "carouselSectionBecauseYouLikeGenre": "Because you like {genre}",
+  "@carouselSectionBecauseYouLikeGenre": {
+    "description": "B1's All tab: 'Because you like X' where X is one of the genres in the user's taste profile (docs/SCREENS.md B1).",
+    "placeholders": { "genre": { "type": "String" } }
+  },
+  "carouselSectionBecauseYouWantVibe": "Because you want {vibe}",
+  "@carouselSectionBecauseYouWantVibe": {
+    "description": "B1's All tab: 'Because you want X' where X is one of the vibes in the user's taste profile (docs/SCREENS.md B1).",
+    "placeholders": { "vibe": { "type": "String" } }
+  },
   "carouselSectionBecauseYouLike": "Because you like {title}",
   "@carouselSectionBecauseYouLike": {
     "description": "B1's \"Because you like X\" carousel header (docs/SCREENS.md B1) — X is RecommendationBuilder's own deterministic seed title, a real UserMediaEntry.title, never a genre.",

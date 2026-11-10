@@ -366,6 +366,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionPopularThisWeek => 'Popular this week';
 
   @override
+  String carouselSectionBecauseYouLikeGenre(String genre) {
+    return 'Because you like $genre';
+  }
+
+  @override
+  String carouselSectionBecauseYouWantVibe(String vibe) {
+    return 'Because you want $vibe';
+  }
+
+  @override
   String carouselSectionBecauseYouLike(String title) {
     return 'Because you like $title';
   }
