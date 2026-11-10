@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/app_settings.dart';
+import '../../../../core/domain/entities/discover_filter.dart';
+import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/streaming_service.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
+import '../../../../core/domain/services/daily_picker.dart';
 import '../../domain/explore_section.dart';
 import 'explore_browse_state.dart';
 
@@ -145,10 +148,29 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
     if (generation != _sectionsGeneration || isClosed) return;
     _emitSection(section, switch (result) {
       Success(:final value) => ExploreSectionLoaded(
-        value.take(sectionSize).toList(),
+        _preview(section, value, filter),
       ),
       Failure(:final reason) => ExploreSectionError(reason),
     });
+  }
+
+  /// The titles a section previews: the first [sectionSize], or — for the
+  /// sections that rotate — [sectionSize] of the whole page in today's
+  /// day-stable shuffle (a different slice tomorrow, the same one all day).
+  List<MediaItem> _preview(
+    ExploreSection section,
+    List<MediaItem> results,
+    DiscoverFilter filter,
+  ) {
+    if (!exploreSectionRotates(section)) {
+      return results.take(sectionSize).toList();
+    }
+    final salt =
+        'explore-${section.name}-${filter.type?.name}-'
+        '${filter.withWatchProviders.join(',')}';
+    return DailyPicker(
+      _clock(),
+    ).shuffled(results, salt: salt).take(sectionSize).toList();
   }
 
   void _emitSection(ExploreSection section, ExploreSectionState value) {

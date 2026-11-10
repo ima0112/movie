@@ -5,7 +5,7 @@ import '../../../core/domain/entities/taste_profile.dart';
 import '../../../core/domain/entities/user_media_entry.dart';
 import '../../match_engine/domain/vibe.dart';
 import '../../match_engine/domain/vibe_catalog.dart';
-import 'daily_picker.dart';
+import '../../../core/domain/services/daily_picker.dart';
 
 /// What a "Because you…" section is built around.
 sealed class BecauseSeed {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:movies/features/recommendations/domain/daily_picker.dart';
+import 'package:movies/core/domain/services/daily_picker.dart';
 
 void main() {
   final items = [
@@ -77,5 +77,32 @@ void main() {
     final two = day.pickMany(items, count: 2, salt: 'm');
     expect(two.toSet().length, 2);
     expect(day.pickMany([('a', 1)], count: 3, salt: 'm'), ['a']);
+  });
+
+  group('shuffled', () {
+    final list = List.generate(20, (i) => i);
+
+    test('a permutation, identical all day, different on another day', () {
+      final a = DailyPicker(DateTime(2026, 5, 4)).shuffled(list, salt: 's');
+      expect([...a]..sort(), list);
+      expect(
+        DailyPicker(DateTime(2026, 5, 4, 22)).shuffled(list, salt: 's'),
+        a,
+      );
+      final other = DailyPicker(DateTime(2026, 5, 5)).shuffled(list, salt: 's');
+      expect(other, isNot(a));
+    });
+
+    test('different salts shuffle differently', () {
+      final day = DailyPicker(DateTime(2026, 5, 4));
+      expect(
+        day.shuffled(list, salt: 'a'),
+        isNot(day.shuffled(list, salt: 'b')),
+      );
+    });
+
+    test('empty stays empty', () {
+      expect(DailyPicker(DateTime(2026)).shuffled(<int>[], salt: 's'), isEmpty);
+    });
   });
 }
