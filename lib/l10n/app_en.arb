@@ -769,6 +769,8 @@
     "description": "D1/D2's own \"Similar\" carousel header (docs/SCREENS.md D1)."
   },
 
+  "mediaDetailShare": "Share",
+  "mediaDetailShareFailed": "Couldn't share",
   "mediaDetailActionTrailer": "Trailer",
   "@mediaDetailActionTrailer": {
     "description": "D1/D2's primary action button when a trailer exists (docs/SCREENS.md D1) — mediaDetailActionSeeSimilar replaces it when there's no trailer."

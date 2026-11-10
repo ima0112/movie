@@ -276,6 +276,8 @@
 
   "mediaSimilarTitle": "Similares",
 
+  "mediaDetailShare": "Compartir",
+  "mediaDetailShareFailed": "No se pudo compartir",
   "mediaDetailActionTrailer": "Tráiler",
   "mediaDetailActionSeeSimilar": "Ver similares",
   "mediaDetailActionFavorite": "Favorito",
