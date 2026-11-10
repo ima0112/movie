@@ -13,9 +13,9 @@ const _providers = WatchProviders(
 
 void main() {
   group('WhereToWatchSection', () {
-    testWidgets('renders nothing when there is no provider data at all', (
-      tester,
-    ) async {
+    testWidgets('with no provider data it explains why and keeps the country '
+        'pill so another country can be picked', (tester) async {
+      var tapped = false;
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -23,13 +23,18 @@ void main() {
           home: Scaffold(
             body: WhereToWatchSection(
               providers: WatchProviders.empty,
-              regionName: 'Spain',
+              regionName: 'Cuba',
+              onRegionTap: () => tapped = true,
             ),
           ),
         ),
       );
 
-      expect(find.text('Where to watch'), findsNothing);
+      expect(find.text('Where to watch'), findsOneWidget);
+      expect(find.textContaining('Not available'), findsOneWidget);
+      expect(find.text('Data from JustWatch'), findsOneWidget);
+      await tester.tap(find.text('Cuba'));
+      expect(tapped, isTrue);
     });
 
     testWidgets('shows the region name in gray next to the title', (

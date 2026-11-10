@@ -56,6 +56,18 @@ class TvDetailCubit extends Cubit<TvDetailState> {
   final MediaRepository _mediaRepository;
   final UserLibraryRepository _userLibraryRepository;
 
+  /// Re-reads [key] after the region changed (providers and the certification
+  /// are per region) and swaps it in with no loading state, so the screen
+  /// keeps its scroll position. A failed refresh keeps what is on screen.
+  Future<void> refreshForRegion(MediaKey key) async {
+    if (state is! TvDetailLoaded) return;
+    final result = await _mediaRepository.detail(key);
+    if (isClosed) return;
+    if (result case Success<MediaDetail>(:final value)) {
+      emit(TvDetailLoaded(value));
+    }
+  }
+
   Future<void> loadDetail(MediaKey key) async {
     emit(const TvDetailLoading());
 

@@ -235,6 +235,7 @@
   "mediaDetailDuration": "Duración",
   "mediaDetailClassification": "Clasificación",
   "mediaDetailSynopsis": "Sinopsis",
+  "commonReadLess": "Leer menos",
   "commonReadMore": "Leer más",
 
   "tvEpisodeCount": "{count, plural, =1{1 episodio} other{{count} episodios}}",
@@ -289,6 +290,8 @@
 
   "whereToWatchTitle": "Dónde ver",
   "whereToWatchTapHint": "Toca un servicio para abrirlo en JustWatch",
+  "whereToWatchNoProviders": "No disponible para ver, alquilar o comprar en {region}. Prueba con otro país.",
+  "whereToWatchChangeRegion": "País: {region}. Cambiar país",
   "whereToWatchSubscription": "Suscripción",
   "whereToWatchRent": "Alquiler",
   "whereToWatchBuy": "Compra",

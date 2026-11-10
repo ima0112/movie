@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
@@ -28,6 +29,7 @@ import '../../../../shared/widgets/media_detail/media_similar_section.dart';
 import '../../../../shared/widgets/media_detail/media_synopsis_section.dart';
 import '../../../../shared/widgets/media_detail/where_to_watch_section.dart';
 import '../../../../shared/widgets/region_sheet.dart';
+import '../cubit/tv_detail_cubit.dart';
 import 'tv_creators_section.dart';
 import 'tv_metadata.dart';
 import 'tv_seasons_link_card.dart';
@@ -79,18 +81,29 @@ class TvDetailContent extends StatelessWidget {
     );
   }
 
+  /// Saves the new region, then reloads this detail so "Where to watch"
+  /// shows that country's services right away.
+  Future<void> _changeRegion(
+    SettingsRepository settingsRepository,
+    TvDetailCubit cubit,
+    String code,
+  ) async {
+    await settingsRepository.save(
+      settingsRepository.current.copyWith(regionCode: code),
+    );
+    await cubit.refreshForRegion(mediaKey);
+  }
+
   void _openRegionSheet(BuildContext context) {
     final settingsRepository = getIt<SettingsRepository>();
+    final cubit = context.read<TvDetailCubit>();
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (_) => RegionSheet(
         selectedRegionCode: settingsRepository.current.regionCode,
-        onSelected: (code) => unawaited(
-          settingsRepository.save(
-            settingsRepository.current.copyWith(regionCode: code),
-          ),
-        ),
+        onSelected: (code) =>
+            unawaited(_changeRegion(settingsRepository, cubit, code)),
       ),
     );
   }
