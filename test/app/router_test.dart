@@ -124,8 +124,7 @@ void main() {
       // generic fallback, or — D2 not being implemented yet — a TV show
       // that ends in an error state) always renders exactly one way back.
       final carouselCard = find.byWidgetPredicate(
-        (widget) =>
-            widget is MediaCard && widget.size == MediaCardSize.carousel,
+        (widget) => widget is MediaCard && widget.size != MediaCardSize.hero,
       );
       expect(carouselCard, findsWidgets);
       await tester.ensureVisible(carouselCard.first);

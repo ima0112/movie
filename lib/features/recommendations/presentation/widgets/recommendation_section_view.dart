@@ -5,6 +5,7 @@ import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
+import '../../../../shared/widgets/media_card.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 import '../../../discover/presentation/widgets/discover_content_error.dart';
 import '../../../discover/presentation/widgets/discover_section_skeleton.dart';
@@ -59,6 +60,10 @@ class RecommendationSectionView extends StatelessWidget {
               title: _header(context, seedTitle),
               child: MediaCarousel.standard(
                 items: items,
+                // "For you" leads the page: larger than "Because you like".
+                size: slot == RecommendationSlot.forYou
+                    ? MediaCardSize.carouselLarge
+                    : MediaCardSize.carousel,
                 showTypeTag: segment == MediaSegment.all,
                 onItemTap: (item) => context.pushMediaDetail(item.key),
               ),
