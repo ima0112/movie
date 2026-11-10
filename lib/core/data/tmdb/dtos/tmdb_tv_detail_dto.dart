@@ -9,7 +9,7 @@ import 'tmdb_watch_providers_dto.dart';
 
 part 'tmdb_tv_detail_dto.g.dart';
 
-/// `/tv/{id}?append_to_response=credits,videos,similar,content_ratings,
+/// `/tv/{id}?append_to_response=credits,aggregate_credits,videos,similar,content_ratings,
 /// watch/providers` — one call, per `docs/DECISIONS.md` §2. Season
 /// *episodes* are on demand (`/tv/{id}/season/{n}`, `tmdb_season_detail_
 /// dto.dart`) — `seasons` here is only the summary TMDB already embeds
@@ -41,6 +41,7 @@ class TmdbTvDetailDto {
     this.originCountry = const [],
     this.lastEpisodeToAir,
     this.nextEpisodeToAir,
+    this.aggregateCredits,
   });
 
   final int id;
@@ -95,6 +96,11 @@ class TmdbTvDetailDto {
 
   final List<TmdbSeasonSummaryDto> seasons;
   final TmdbCreditsDto credits;
+
+  /// The whole run's cast and crew; `credits` above is only the latest
+  /// season's regulars.
+  @JsonKey(name: 'aggregate_credits')
+  final TmdbAggregateCreditsDto? aggregateCredits;
   final TmdbVideosDto videos;
   final TmdbPagedResponseDto<TmdbTvListItemDto> similar;
 

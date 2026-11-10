@@ -236,6 +236,68 @@ void main() {
       expect(detail.nextEpisode, isNull);
     });
 
+    Map<String, dynamic> aggregate({int castCount = 150}) => {
+      'cast': [
+        for (var i = castCount - 1; i >= 0; i--)
+          {
+            'id': 1000 + i,
+            'name': 'Actor $i',
+            'profile_path': null,
+            'known_for_department': 'Acting',
+            'order': i,
+            'roles': [
+              {'character': 'Minor', 'episode_count': 1},
+              {'character': 'Main $i', 'episode_count': 50},
+            ],
+          },
+      ],
+      'crew': [
+        {
+          'id': 5,
+          'name': 'Showrunner',
+          'profile_path': null,
+          'known_for_department': 'Writing',
+          'department': 'Production',
+          'jobs': [
+            {'job': 'Writer', 'episode_count': 3},
+            {'job': 'Executive Producer', 'episode_count': 90},
+          ],
+        },
+      ],
+    };
+
+    test('uses the whole run\'s aggregate_credits: first 100 by order, the '
+        'most-played character, the most-held job', () {
+      final json = _loadFixture('tmdb_tv_detail_full.json')
+        ..['aggregate_credits'] = aggregate();
+      final detail = mediaDetailFromTvDto(
+        TmdbTvDetailDto.fromJson(json),
+        imagesConfig: imagesConfig,
+        region: 'ES',
+      );
+
+      expect(detail.cast, hasLength(100));
+      expect(detail.cast.first.person.name, 'Actor 0');
+      expect(detail.cast.first.character, 'Main 0');
+      expect(detail.cast.last.person.name, 'Actor 99');
+      expect(detail.crew.single.job, 'Executive Producer');
+      expect(detail.crew.single.department, 'Production');
+    });
+
+    test('with no aggregate_credits it falls back to the latest season\'s '
+        'credits', () {
+      final json = _loadFixture('tmdb_tv_detail_full.json')
+        ..remove('aggregate_credits');
+      final detail = mediaDetailFromTvDto(
+        TmdbTvDetailDto.fromJson(json),
+        imagesConfig: imagesConfig,
+        region: 'ES',
+      );
+      final dto = TmdbTvDetailDto.fromJson(json);
+
+      expect(detail.cast, hasLength(dto.credits.cast.length));
+    });
+
     test('maps original_language and origin_country', () {
       final detail = load();
 

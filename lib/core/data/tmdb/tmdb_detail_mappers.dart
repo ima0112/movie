@@ -92,8 +92,8 @@ TvShowDetail mediaDetailFromTvDto(
       voteAverage: dto.voteAverage,
     ),
     overview: dto.overview,
-    cast: _castFrom(dto.credits.cast),
-    crew: _crewFrom(dto.credits.crew),
+    cast: _tvCast(dto),
+    crew: _tvCrew(dto),
     videos: _videosFrom(dto.videos.results),
     similar: dto.similar.results
         .map((t) => mediaItemFromTvDto(t, imagesConfig: imagesConfig))
@@ -184,6 +184,66 @@ List<Episode> episodesFromSeasonDetail(TmdbSeasonDetailDto dto) {
         ),
       )
       .toList();
+}
+
+/// How many of a long-running show's cast to keep: TMDB's aggregate list for
+/// a show like Law & Order: SVU runs to thousands (mostly one-episode
+/// guests), ordered by importance, so the first 100 are the real cast.
+const int _maxTvCast = 100;
+
+/// A TV show's people over its whole run (`aggregate_credits`); falls back to
+/// the latest season's `credits` when TMDB has no aggregate yet (a brand-new
+/// show). The character is the one played in the most episodes.
+List<CastMember> _tvCast(TmdbTvDetailDto dto) {
+  final aggregate = dto.aggregateCredits?.cast ?? const [];
+  if (aggregate.isEmpty) return _castFrom(dto.credits.cast);
+  final sorted = [...aggregate]..sort((a, b) => a.order.compareTo(b.order));
+  return [
+    for (final c in sorted.take(_maxTvCast))
+      CastMember(
+        person: Person(
+          id: c.id,
+          name: c.name,
+          profilePath: c.profilePath,
+          knownForDepartment: c.knownForDepartment,
+        ),
+        character: _mostEpisodes(
+          c.roles.map((r) => (r.character, r.episodeCount)),
+        ),
+        order: c.order,
+      ),
+  ];
+}
+
+List<CrewMember> _tvCrew(TmdbTvDetailDto dto) {
+  final aggregate = dto.aggregateCredits?.crew ?? const [];
+  if (aggregate.isEmpty) return _crewFrom(dto.credits.crew);
+  return [
+    for (final c in aggregate)
+      CrewMember(
+        person: Person(
+          id: c.id,
+          name: c.name,
+          profilePath: c.profilePath,
+          knownForDepartment: c.knownForDepartment,
+        ),
+        job: _mostEpisodes(c.jobs.map((j) => (j.job, j.episodeCount))),
+        department: c.department,
+      ),
+  ];
+}
+
+/// The label with the highest episode count ('' for none).
+String _mostEpisodes(Iterable<(String, int)> entries) {
+  var best = '';
+  var bestCount = -1;
+  for (final (label, count) in entries) {
+    if (label.isNotEmpty && count > bestCount) {
+      best = label;
+      bestCount = count;
+    }
+  }
+  return best;
 }
 
 List<CastMember> _castFrom(List<TmdbCastMemberDto> cast) {

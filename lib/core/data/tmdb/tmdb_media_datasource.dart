@@ -99,7 +99,7 @@ class TmdbMediaDatasource {
       '/tv/$id',
       queryParameters: const {
         'append_to_response':
-            'credits,videos,similar,content_ratings,'
+            'credits,aggregate_credits,videos,similar,content_ratings,'
             'watch/providers',
       },
     );

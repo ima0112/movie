@@ -55,7 +55,7 @@ Each drop is documented as a short ADR in `docs/decisions/`.
 | Genres | `/genre/movie/list`, `/genre/tv/list` |
 | Explore by genre / engine | `/discover/movie`, `/discover/tv` |
 | Movie detail | `/movie/{id}?append_to_response=credits,videos,similar,release_dates,watch/providers` (one call) |
-| TV show detail | `/tv/{id}?append_to_response=credits,videos,similar,content_ratings,watch/providers`; seasons on demand via `/tv/{id}/season/{n}` |
+| TV show detail | `/tv/{id}?append_to_response=credits,aggregate_credits,videos,similar,content_ratings,watch/providers`; seasons on demand via `/tv/{id}/season/{n}`. Cast and crew come from `aggregate_credits` (the whole run: cast capped at the first 100 by order, the character/job played most), because `credits` for a TV show is only the latest season's regulars (Law & Order: SVU: 7 cast, no crew) — `credits` stays as the fallback for a show with no aggregate yet. Cost: a long-running show's aggregate is a few MB of JSON (SVU ≈ 2.7 MB). |
 | Where to watch | `watch/providers` (JustWatch via TMDB): `flatrate` / `rent` / `buy` by region + `link` to TMDB's /watch page. **"Data from JustWatch" attribution mandatory on every detail screen.** No deep links into apps. |
 | Person detail | `/person/{id}?append_to_response=movie_credits,tv_credits` |
 | Keywords for vibes | `/search/keyword` (resolve IDs once; fix them in the vibes JSON) |
