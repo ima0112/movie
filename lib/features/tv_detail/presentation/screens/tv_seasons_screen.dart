@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/domain/entities/media_detail.dart';
+import '../../../../app/router.dart';
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
@@ -10,7 +11,6 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
 import '../widgets/episode_ref_card.dart';
-import '../widgets/season_sheet.dart';
 import '../widgets/seasons_summary_card.dart';
 import '../widgets/tv_seasons_section.dart';
 import '../widgets/tv_status.dart';
@@ -25,17 +25,14 @@ class TvSeasonsScreen extends StatelessWidget {
 
   final TvShowDetail detail;
 
-  void _openSeason(BuildContext context, SeasonSummary season) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => SeasonSheet(
-        tvId: detail.item.id,
-        seasonSummary: season,
-        showTitle: detail.item.title,
-      ),
-    );
-  }
+  void _openSeason(BuildContext context, SeasonSummary season) => context.push(
+    AppRoutes.tvSeason,
+    extra: SeasonRouteArgs(
+      tvId: detail.item.id,
+      seasonSummary: season,
+      showTitle: detail.item.title,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
