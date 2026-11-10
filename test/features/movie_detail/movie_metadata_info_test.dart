@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/movie_detail/presentation/widgets/movie_metadata.dart';
-import 'package:movies/l10n/app_localizations_en.dart';
-import 'package:movies/shared/widgets/media_detail/language_chip_label.dart';
+import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/l10n/locale_names.dart';
 
 MovieDetail _detail({
   String? language,
@@ -37,35 +39,86 @@ MovieDetail _detail({
   certification: certification,
 );
 
+Future<String> _prefix(
+  WidgetTester tester,
+  MovieDetail detail,
+  String lang,
+) async {
+  late String result;
+  await tester.pumpWidget(
+    MaterialApp(
+      locale: Locale(lang),
+      localizationsDelegates: const [
+        ...AppLocalizations.localizationsDelegates,
+        LocaleNamesLocalizationsDelegate(),
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Builder(
+        builder: (context) {
+          result = movieMetaPrefix(context, detail);
+          return const SizedBox();
+        },
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return result;
+}
+
 void main() {
-  final l10n = AppLocalizationsEn();
-
-  test('languageChipLabel uppercases the code and drops empty ones', () {
-    expect(languageChipLabel('en'), 'EN');
-    expect(languageChipLabel(' fr '), 'FR');
-    expect(languageChipLabel(''), isNull);
-    expect(languageChipLabel(null), isNull);
+  testWidgets('movieMetaPrefix is "year · country name" in the app language', (
+    tester,
+  ) async {
+    final detail = _detail(
+      countries: ['US', 'GB'],
+      release: DateTime(2010, 7, 16),
+    );
+    expect(await _prefix(tester, detail, 'en'), '2010 · United States');
+    expect(await _prefix(tester, detail, 'es'), '2010 · Estados Unidos');
+    expect(
+      await _prefix(tester, _detail(release: DateTime(2010)), 'en'),
+      '2010',
+    );
   });
 
-  test('movieMetaPrefix is "year · main country code"', () {
-    expect(
-      movieMetaPrefix(
-        _detail(countries: ['US', 'GB'], release: DateTime(2010, 7, 16)),
-      ),
-      '2010 · US',
-    );
-    expect(movieMetaPrefix(_detail(release: DateTime(2010))), '2010');
-    expect(movieMetaPrefix(_detail(countries: ['US'])), 'US');
+  testWidgets('languageDisplayName uses the app language, then the code', (
+    tester,
+  ) async {
+    late String en;
+    late String es;
+    late String unknown;
+    for (final lang in ['en', 'es']) {
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: Locale(lang),
+          localizationsDelegates: const [
+            ...AppLocalizations.localizationsDelegates,
+            LocaleNamesLocalizationsDelegate(),
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) {
+              if (lang == 'en') {
+                en = languageDisplayName(context, 'fr');
+              } else {
+                es = languageDisplayName(context, 'en');
+                unknown = languageDisplayName(context, 'zz');
+              }
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+    expect(en, 'French');
+    expect(es, 'Inglés');
+    expect(unknown, 'ZZ');
   });
 
-  test('movieInfoChips: language first, then runtime and certification', () {
-    expect(
-      movieInfoChips(
-        _detail(language: 'en', runtime: 148, certification: 'PG-13'),
-        l10n,
-      ),
-      ['EN', '2 h 28 min', 'PG-13'],
-    );
-    expect(movieInfoChips(_detail(), l10n), isEmpty);
+  test('territoryFromLocaleName reads the last parenthesised part', () {
+    expect(territoryFromLocaleName('English (United States)'), 'United States');
+    expect(territoryFromLocaleName('Chinese (Simplified, China)'), 'China');
+    expect(territoryFromLocaleName('English'), isNull);
   });
 }

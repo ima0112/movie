@@ -232,6 +232,9 @@
 
   "statsHoursValue": "{hours} h",
 
+  "mediaDetailDuration": "Duración",
+  "mediaDetailClassification": "Clasificación",
+  "mediaDetailSynopsis": "Sinopsis",
   "commonReadMore": "Leer más",
 
   "tvEpisodeCount": "{count, plural, =1{1 episodio} other{{count} episodios}}",

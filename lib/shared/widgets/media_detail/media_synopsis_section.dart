@@ -42,6 +42,14 @@ class _MediaSynopsisSectionState extends State<MediaSynopsisSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            context.l10n.mediaDetailSynopsis.toUpperCase(),
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.inkMuted,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
           if (tagline != null && tagline.isNotEmpty) ...[
             Text(
               tagline,

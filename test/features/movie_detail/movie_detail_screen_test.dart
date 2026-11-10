@@ -76,6 +76,20 @@ void main() {
     expect(find.byType(MediaDetailCompactBar), findsOneWidget);
   });
 
+  testWidgets('shows the Duration and Classification stat cards and the '
+      'SYNOPSIS caption, from the app\'s own strings', (tester) async {
+    tester.view.physicalSize = const Size(390, 5000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await openDuneDetail(tester);
+
+    expect(find.text('Duration'), findsOneWidget);
+    expect(find.text('2 h 46 min'), findsOneWidget);
+    expect(find.text('Classification'), findsOneWidget);
+    expect(find.text('PG-13'), findsOneWidget);
+    expect(find.text('SYNOPSIS'), findsOneWidget);
+  });
+
   testWidgets('sections run synopsis -> where to watch -> cast -> similar, '
       'and the crew\'s names are not listed', (tester) async {
     // Tall enough that every sliver is built at once, so their positions can

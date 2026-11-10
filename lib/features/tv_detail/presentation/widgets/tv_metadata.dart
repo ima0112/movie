@@ -1,6 +1,5 @@
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../shared/widgets/media_detail/language_chip_label.dart';
 
 /// D2's metadata-line formatting — "2022–2024 · 3 seasons · 24 episodes ·
 /// TV-14" (`docs/SCREENS.md` D2), shown in the info card before the genres.
@@ -28,8 +27,3 @@ String tvMetadataLine(TvShowDetail detail, AppLocalizations l10n) {
     ?detail.certification,
   ].join(' · ');
 }
-
-/// D2's info-card chips after the rating: the original language ("EN").
-List<String> tvInfoChips(TvShowDetail detail) => [
-  ?languageChipLabel(detail.originalLanguage),
-];

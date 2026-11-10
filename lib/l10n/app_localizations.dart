@@ -1220,6 +1220,24 @@ abstract class AppLocalizations {
   /// **'{hours} h'**
   String statsHoursValue(String hours);
 
+  /// D1's stat card label above the movie's runtime (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get mediaDetailDuration;
+
+  /// D1's stat card label above the movie's age certification ("PG-13", "R"…), not the TMDB score (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'Classification'**
+  String get mediaDetailClassification;
+
+  /// The small caption above D1/D2's synopsis text; shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Synopsis'**
+  String get mediaDetailSynopsis;
+
   /// The tap-to-expand link at the end of a folded synopsis/biography (docs/SCREENS.md D1: "Synopsis folded to 4 lines with an amber 'Read more'") — shared by D1/D2's synopsis, D3's biography, and H4's episode overview.
   ///
   /// In en, this message translates to:
