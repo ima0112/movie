@@ -7,6 +7,8 @@ import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../l10n/app_localizations.dart';
+import '../overline_label.dart';
 import 'cast_crew_tabs.dart';
 import 'full_cast_person_tile.dart';
 
@@ -21,6 +23,8 @@ import 'full_cast_person_tile.dart';
 /// (CLAUDE.md rule 10) — they mean nothing outside this page.
 ///
 /// The search box filters by person name only, case-insensitive substring,
+/// across cast *and* crew whichever tab is selected (results grouped under a
+/// Cast and a Crew heading);
 /// same convention `ExploreSearchField`'s own query uses.
 class FullCastScreen extends StatefulWidget {
   const FullCastScreen({
@@ -41,6 +45,8 @@ class FullCastScreen extends StatefulWidget {
   State<FullCastScreen> createState() => _FullCastScreenState();
 }
 
+typedef _Entry = (Person person, String role);
+
 class _FullCastScreenState extends State<FullCastScreen> {
   String _query = '';
   CastCrewTab _tab = CastCrewTab.cast;
@@ -50,19 +56,20 @@ class _FullCastScreenState extends State<FullCastScreen> {
   bool _matches(String name) =>
       _query.isEmpty || name.toLowerCase().contains(_query.toLowerCase());
 
+  List<_Entry> get _cast => [
+    for (final m in widget.cast) (m.person, m.character),
+  ];
+  List<_Entry> get _crew => [for (final m in widget.crew) (m.person, m.job)];
+
+  List<_Entry> _filtered(List<_Entry> entries) => [
+    for (final e in entries)
+      if (_matches(e.$1.name)) e,
+  ];
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final people = switch (_tab) {
-      CastCrewTab.cast => [
-        for (final m in widget.cast)
-          if (_matches(m.person.name)) (m.person, m.character),
-      ],
-      CastCrewTab.crew => [
-        for (final m in widget.crew)
-          if (_matches(m.person.name)) (m.person, m.job),
-      ],
-    };
+    final searching = _query.isNotEmpty;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -89,62 +96,131 @@ class _FullCastScreenState extends State<FullCastScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CastCrewTabs(
-                selected: _tab,
-                castLabel: l10n.fullCastCastLabel,
-                crewLabel: l10n.fullCastCrewLabel,
-                onSelected: (tab) => setState(() => _tab = tab),
-              ),
-              const SizedBox(height: AppSpacing.md),
+              // A search looks through cast AND crew, so the tab choice has
+              // no meaning while one is active: the pill steps aside.
+              if (!searching) ...[
+                CastCrewTabs(
+                  selected: _tab,
+                  castLabel: l10n.fullCastCastLabel,
+                  crewLabel: l10n.fullCastCrewLabel,
+                  onSelected: (tab) => setState(() => _tab = tab),
+                ),
+                const SizedBox(height: AppSpacing.md),
+              ],
               _SearchField(
                 query: _query,
                 onChanged: (query) => setState(() => _query = query),
               ),
               const SizedBox(height: AppSpacing.lg),
-              Expanded(
-                child: people.isEmpty
-                    ? Center(
-                        child: Text(
-                          l10n.commonNoMatches,
-                          style: AppTextStyles.bodySm.copyWith(
-                            color: AppColors.inkMuted,
-                          ),
-                        ),
-                      )
-                    : LayoutBuilder(
-                        builder: (context, constraints) {
-                          const gap = AppSpacing.md;
-                          final tileWidth =
-                              (constraints.maxWidth - gap * (_columns - 1)) /
-                              _columns;
-                          return SingleChildScrollView(
-                            padding: const EdgeInsets.only(
-                              bottom: AppSpacing.sectionGap,
-                            ),
-                            child: Wrap(
-                              spacing: gap,
-                              runSpacing: AppSpacing.lg,
-                              children: [
-                                for (final (person, role) in people)
-                                  SizedBox(
-                                    width: tileWidth,
-                                    child: FullCastPersonTile(
-                                      person: person,
-                                      role: role,
-                                      onTap: () =>
-                                          widget.onPersonTap?.call(person),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-              ),
+              Expanded(child: searching ? _results(l10n) : _tabList()),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  /// The selected tab's own list. Each tab has its own `PageStorageKey`, so
+  /// it keeps its own scroll position: scrolling Cast never moves Crew.
+  Widget _tabList() {
+    final entries = _tab == CastCrewTab.cast ? _cast : _crew;
+    return _PeopleList(
+      key: PageStorageKey<CastCrewTab>(_tab),
+      rows: _rows(entries),
+      onPersonTap: widget.onPersonTap,
+    );
+  }
+
+  /// Search results from both lists, each under its own heading.
+  Widget _results(AppLocalizations l10n) {
+    final cast = _filtered(_cast);
+    final crew = _filtered(_crew);
+    if (cast.isEmpty && crew.isEmpty) {
+      return Center(
+        child: Text(
+          l10n.commonNoMatches,
+          style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+        ),
+      );
+    }
+    return _PeopleList(
+      key: const PageStorageKey<String>('search'),
+      rows: [
+        if (cast.isNotEmpty) ...[
+          _Heading(l10n.fullCastCastLabel),
+          ..._rows(cast),
+        ],
+        if (crew.isNotEmpty) ...[
+          _Heading(l10n.fullCastCrewLabel),
+          ..._rows(crew),
+        ],
+      ],
+      onPersonTap: widget.onPersonTap,
+    );
+  }
+
+  List<_ListItem> _rows(List<_Entry> entries) => [
+    for (var i = 0; i < entries.length; i += _columns)
+      _PeopleRow(entries.skip(i).take(_columns).toList(), _columns),
+  ];
+}
+
+sealed class _ListItem {
+  const _ListItem();
+}
+
+final class _Heading extends _ListItem {
+  const _Heading(this.label);
+
+  final String label;
+}
+
+final class _PeopleRow extends _ListItem {
+  const _PeopleRow(this.entries, this.columns);
+
+  final List<_Entry> entries;
+  final int columns;
+}
+
+/// A lazily built list of rows of portraits (a 735-person crew isn't built
+/// all at once). Rows size to their content, so large text never overflows.
+class _PeopleList extends StatelessWidget {
+  const _PeopleList({super.key, required this.rows, required this.onPersonTap});
+
+  final List<_ListItem> rows;
+  final void Function(Person person)? onPersonTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sectionGap),
+      itemCount: rows.length,
+      itemBuilder: (context, index) => switch (rows[index]) {
+        _Heading(:final label) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          child: OverlineLabel(label),
+        ),
+        _PeopleRow(:final entries, :final columns) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var i = 0; i < columns; i++) ...[
+                if (i > 0) const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: i < entries.length
+                      ? FullCastPersonTile(
+                          person: entries[i].$1,
+                          role: entries[i].$2,
+                          onTap: () => onPersonTap?.call(entries[i].$1),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ],
+          ),
+        ),
+      },
     );
   }
 }
