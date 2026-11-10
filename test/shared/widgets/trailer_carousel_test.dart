@@ -46,7 +46,11 @@ void main() {
     expect(tapped?.video.key, 'key1');
   });
 
-  test('without a backdrop the still is the YouTube thumbnail', () {
+  test('the card image is the YouTube thumbnail, 16:9 first', () {
+    expect(
+      TrailerCarousel.thumbnailUrl('abc', maxRes: true),
+      'https://img.youtube.com/vi/abc/maxresdefault.jpg',
+    );
     expect(
       TrailerCarousel.thumbnailUrl('abc'),
       'https://img.youtube.com/vi/abc/hqdefault.jpg',
