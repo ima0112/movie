@@ -4,6 +4,7 @@ import '../entities/media_item.dart';
 import '../entities/media_key.dart';
 import '../entities/media_type.dart';
 import '../entities/result.dart';
+import '../entities/search_result.dart';
 import '../entities/season_summary.dart';
 
 /// One of Discover's named carousels.
@@ -89,15 +90,12 @@ abstract interface class MediaRepository {
   /// `/tv/{id}/season/{n}`").
   Future<Result<SeasonDetail>> season(int tvId, int seasonNumber);
 
-  /// B2's typing-state `/search/multi` — matches on title.
-  ///
-  /// Movies/TV shows only for now, despite the name: full TMDB "multi"
-  /// search also returns people (`docs/SCREENS.md` B2: "Row = thumbnail
+  /// B2's typing-state `/search/multi` — movies, TV shows **and people**, in
+  /// TMDB's own ranked order (`docs/SCREENS.md` B2: "Row = thumbnail
   /// (circular for people), title, 'Year · Movie/TV Show' or
-  /// 'Department · Person'"), which needs `Person` search wired up
-  /// separately — a later branch's job. The method keeps the
-  /// TMDB-matching name since that's what it'll fully become.
-  Future<Result<List<MediaItem>>> searchMulti(String query);
+  /// 'Department · Person'"). A blank query is an empty success with no
+  /// request.
+  Future<Result<List<SearchResult>>> searchMulti(String query);
 
   /// C1 (Filtered listing) / B2's genre-tile listing — `/discover/
   /// {movie|tv}` with [filter]'s criteria. `filter.type == null` means

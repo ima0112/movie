@@ -9,6 +9,7 @@ import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/search_result.dart';
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/domain/entities/video.dart';
 import '../../../../core/domain/entities/watch_providers.dart';
@@ -1029,18 +1030,29 @@ class FakeMediaRepository implements MediaRepository {
   }
 
   @override
-  Future<Result<List<MediaItem>>> searchMulti(String query) async {
+  Future<Result<List<SearchResult>>> searchMulti(String query) async {
     await Future.delayed(_delay);
 
     final trimmed = query.trim().toLowerCase();
     if (trimmed.isEmpty) return const Success([]);
 
-    final items = [
-      ..._movies,
-      ..._tvShows,
-    ].where((item) => item.title.toLowerCase().contains(trimmed)).toList();
-
-    return Success(items);
+    final titles = [
+      for (final item in [..._movies, ..._tvShows])
+        if (item.title.toLowerCase().contains(trimmed)) MediaResult(item),
+    ];
+    // The people of the sample cast/crew, each once.
+    final seen = <int>{};
+    final people = [
+      for (final detail in [..._movieDetails.values, ..._tvShowDetails.values])
+        for (final person in [
+          ...detail.cast.map((c) => c.person),
+          ...detail.crew.map((c) => c.person),
+        ])
+          if (person.name.toLowerCase().contains(trimmed) &&
+              seen.add(person.id))
+            PersonResult(person),
+    ];
+    return Success([...titles, ...people]);
   }
 
   @override

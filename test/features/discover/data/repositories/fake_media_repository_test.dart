@@ -6,6 +6,7 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/search_result.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 
@@ -159,33 +160,39 @@ void main() {
   group('FakeMediaRepository.searchMulti', () {
     final repository = FakeMediaRepository();
 
-    test('matches a title substring, case-insensitively', () async {
-      final result = await repository.searchMulti('dune');
+    List<String> titles(Result<List<SearchResult>> r) => [
+      for (final x in (r as Success<List<SearchResult>>).value)
+        if (x is MediaResult) x.item.title,
+    ];
+    List<String> people(Result<List<SearchResult>> r) => [
+      for (final x in (r as Success<List<SearchResult>>).value)
+        if (x is PersonResult) x.person.name,
+    ];
 
-      final items = (result as Success<List<MediaItem>>).value;
-      expect(items.map((i) => i.title), ['Dune: Part Two']);
+    test('matches a title substring, case-insensitively', () async {
+      expect(titles(await repository.searchMulti('dune')), ['Dune: Part Two']);
     });
 
     test('matches across both movies and TV shows', () async {
-      final result = await repository.searchMulti('the');
-
-      final items = (result as Success<List<MediaItem>>).value;
       expect(
-        items.map((i) => i.title),
+        titles(await repository.searchMulti('the')),
         containsAll(['The Substance', 'The Bear', 'The Boys']),
       );
     });
 
-    test('returns nothing for a query matching no title', () async {
-      final result = await repository.searchMulti('xyz-not-a-title');
+    test('finds people by name, each once', () async {
+      final result = await repository.searchMulti('zendaya');
+      expect(people(result), ['Zendaya']);
+    });
 
-      expect((result as Success<List<MediaItem>>).value, isEmpty);
+    test('returns nothing for a query matching nothing', () async {
+      final result = await repository.searchMulti('xyz-not-a-title');
+      expect((result as Success<List<SearchResult>>).value, isEmpty);
     });
 
     test('a blank query returns nothing rather than everything', () async {
       final result = await repository.searchMulti('   ');
-
-      expect((result as Success<List<MediaItem>>).value, isEmpty);
+      expect((result as Success<List<SearchResult>>).value, isEmpty);
     });
   });
 

@@ -13,6 +13,9 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/discover/presentation/widgets/discover_search_field.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_search_field.dart';
+import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
+import 'package:movies/core/domain/entities/media_segment.dart';
+import 'package:movies/shared/widgets/app_segmented_control.dart';
 import 'package:movies/features/filtered_list/presentation/widgets/filtered_list_chips_row.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/shared/widgets/explore_filter_sheet.dart';
@@ -68,6 +71,7 @@ void main() {
   testWidgets('B1\'s search bar opens Explore with the search field focused '
       '(keyboard up), every time', (tester) async {
     appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
     await tester.pumpAndSettle();
 
@@ -90,12 +94,50 @@ void main() {
   testWidgets('opening Explore from its own tab does not grab the '
       'keyboard', (tester) async {
     appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
     await tester.pumpAndSettle();
 
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
     expect(searchFieldHasFocus(tester), isFalse);
+  });
+
+  testWidgets('searching finds people too: a circular row with "Department · '
+      'Person" that opens D3; the Movies segment hides them', (tester) async {
+    appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(_exploreTab());
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'zendaya');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Zendaya'), findsOneWidget);
+    expect(find.text('Acting · Person'), findsOneWidget);
+
+    // Movies / TV Shows hide people.
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppSegmentedControl<MediaSegment>),
+        matching: find.text('Movies'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Zendaya'), findsNothing);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppSegmentedControl<MediaSegment>),
+        matching: find.text('All'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Zendaya'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PersonDetailScreen), findsOneWidget);
   });
 
   testWidgets('typing in Explore debounces, then shows search results', (

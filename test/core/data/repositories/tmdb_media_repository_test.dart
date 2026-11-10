@@ -15,6 +15,7 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/search_result.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
@@ -299,17 +300,24 @@ void main() {
       final result = await repository.searchMulti('   ');
 
       expect(adapter.requestedPaths, isEmpty);
-      expect((result as Success<List<MediaItem>>).value, isEmpty);
+      expect((result as Success<List<SearchResult>>).value, isEmpty);
     });
 
-    test('hits /search/multi and drops person entries', () async {
+    test('hits /search/multi and keeps people alongside titles', () async {
       final result = await repository.searchMulti('dune');
 
       expect(adapter.requestedPaths, ['/search/multi']);
       expect(adapter.lastQueryParameters?['query'], 'dune');
-      final items = (result as Success<List<MediaItem>>).value;
-      expect(items, isNotEmpty);
-      expect(items.every((i) => i is Movie || i is TvShow), isTrue);
+      final results = (result as Success<List<SearchResult>>).value;
+      final titles = results.whereType<MediaResult>().map((r) => r.item);
+      final people = results.whereType<PersonResult>().map((r) => r.person);
+      expect(titles, isNotEmpty);
+      expect(titles.every((i) => i is Movie || i is TvShow), isTrue);
+      // The fixture's "person" entry now comes through, with its fields.
+      final jordan = people.singleWhere((p) => p.id == 301);
+      expect(jordan.name, 'Jordan Ashworth');
+      expect(jordan.profilePath, '/jordan-ashworth.jpg');
+      expect(jordan.knownForDepartment, 'Acting');
     });
   });
 

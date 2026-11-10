@@ -402,6 +402,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get exploreRecentSearchesLabel => 'Recientes';
 
   @override
+  String get explorePersonLabel => 'Persona';
+
+  @override
+  String explorePersonMetadata(String department) {
+    return '$department · Persona';
+  }
+
+  @override
   String exploreResultMetadata(int year, String typeLabel) {
     return '$year · $typeLabel';
   }

@@ -17,6 +17,7 @@ import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/search_result.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
@@ -57,7 +58,7 @@ class _FailingMediaRepository implements MediaRepository {
       throw UnimplementedError();
 
   @override
-  Future<Result<List<MediaItem>>> searchMulti(String query) =>
+  Future<Result<List<SearchResult>>> searchMulti(String query) =>
       throw UnimplementedError();
 
   @override

@@ -12,6 +12,7 @@ import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/search_result.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
@@ -101,7 +102,7 @@ class _FakeMediaRepository implements MediaRepository {
       throw UnimplementedError();
 
   @override
-  Future<Result<List<MediaItem>>> searchMulti(String query) =>
+  Future<Result<List<SearchResult>>> searchMulti(String query) =>
       throw UnimplementedError();
 }
 
@@ -158,10 +159,7 @@ void main() {
       await tester.pump();
 
       expect(tester.takeException(), isNull);
-      expect(
-        find.textContaining('Porque te gusta'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('Porque te gusta'), findsOneWidget);
       expect(find.textContaining(_longSpanishTitle), findsOneWidget);
     },
   );

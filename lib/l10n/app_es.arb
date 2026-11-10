@@ -148,6 +148,8 @@
   "exploreDefaultResultsTitle": "Resultados",
   "exploreSearchHint": "Películas, series, personas",
   "exploreRecentSearchesLabel": "Recientes",
+  "explorePersonLabel": "Persona",
+  "explorePersonMetadata": "{department} · Persona",
   "exploreResultMetadata": "{year} · {typeLabel}",
 
   "filteredListYearRangeChip": "{from}–{to}",

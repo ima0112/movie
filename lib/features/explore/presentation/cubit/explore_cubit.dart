@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/app_settings.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
-import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/search_result.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../domain/search_history_repository.dart';
+import '../../domain/search_result_order.dart';
 import 'explore_state.dart';
 
 /// B2 (Explore)'s state machine — `docs/SCREENS.md` B2. Owns the
@@ -126,16 +127,16 @@ class ExploreCubit extends Cubit<ExploreState> {
     if (generation != _searchGeneration || isClosed) return;
 
     switch (result) {
-      case Success<List<MediaItem>>(:final value):
+      case Success<List<SearchResult>>(:final value):
         unawaited(_searchHistoryRepository.record(query));
         emit(
           ExploreSearchLoaded(
             segment: state.segment,
             query: query,
-            results: value,
+            results: orderSearchResults(query, value),
           ),
         );
-      case Failure<List<MediaItem>>(:final reason):
+      case Failure<List<SearchResult>>(:final reason):
         emit(
           ExploreSearchError(
             segment: state.segment,

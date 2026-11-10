@@ -8,6 +8,7 @@ import '../../domain/entities/media_item.dart';
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
+import '../../domain/entities/search_result.dart';
 import '../../domain/entities/season_summary.dart';
 import '../../domain/repositories/media_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
@@ -246,7 +247,7 @@ class TmdbMediaRepository implements MediaRepository {
   }
 
   @override
-  Future<Result<List<MediaItem>>> searchMulti(String query) async {
+  Future<Result<List<SearchResult>>> searchMulti(String query) async {
     final trimmed = query.trim();
     if (trimmed.isEmpty) return const Success([]);
 
@@ -254,8 +255,7 @@ class TmdbMediaRepository implements MediaRepository {
       final results = await _datasource.searchMulti(trimmed);
       final items = results
           .map(
-            (json) =>
-                mediaItemFromTrendingJson(json, imagesConfig: _imagesConfig),
+            (json) => searchResultFromJson(json, imagesConfig: _imagesConfig),
           )
           .nonNulls
           .toList();
