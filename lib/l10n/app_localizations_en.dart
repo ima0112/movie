@@ -720,10 +720,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tvNoNextEpisodeTitle => 'No next episode';
 
   @override
-  String get tvNoNextEpisodeEnded =>
-      'This show has ended and has no new episodes planned.';
-
-  @override
   String get tvNoNextEpisodeUnknown =>
       'No upcoming episode has been announced yet.';
 

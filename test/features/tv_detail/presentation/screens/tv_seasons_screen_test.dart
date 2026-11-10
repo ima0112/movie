@@ -107,22 +107,35 @@ void main() {
       expect(find.text('9.9'), findsOneWidget);
     });
 
-    testWidgets('an ended show with no next episode says it has ended', (
+    testWidgets('an ended or cancelled show has no Next episode section at '
+        'all', (tester) async {
+      _phone(tester);
+      for (final status in ['Ended', 'Canceled']) {
+        await tester.pumpWidget(
+          _app(TvSeasonsScreen(detail: _show(status: status))),
+        );
+        expect(find.text('NEXT EPISODE'), findsNothing, reason: status);
+        expect(find.text('No next episode'), findsNothing, reason: status);
+        // The rest of the page is still there.
+        expect(find.text('SEASONS'), findsOneWidget, reason: status);
+      }
+    });
+
+    testWidgets('every card on the page is as wide as the others', (
       tester,
     ) async {
       _phone(tester);
       await tester.pumpWidget(
-        _app(TvSeasonsScreen(detail: _show(status: 'Ended'))),
+        _app(TvSeasonsScreen(detail: _show(status: 'Returning Series'))),
       );
 
-      expect(find.text('NEXT EPISODE'), findsOneWidget);
-      expect(find.text('No next episode'), findsOneWidget);
-      expect(
-        find.text('This show has ended and has no new episodes planned.'),
-        findsOneWidget,
+      // The "No next episode" card used to shrink to its text.
+      final cards = find.ancestor(
+        of: find.text('No next episode'),
+        matching: find.byType(Container),
       );
-      // No last episode reported -> that section is omitted.
-      expect(find.text('LAST AIRED EPISODE'), findsNothing);
+      final width = tester.getSize(cards.first).width;
+      expect(width, 390 - 2 * 20);
     });
 
     testWidgets('a returning show with no next episode says none has been '
