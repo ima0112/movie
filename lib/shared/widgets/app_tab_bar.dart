@@ -17,7 +17,7 @@ import '../../l10n/l10n_extension.dart';
 /// details, quiz, rooms, and inside the Match modal.").
 enum AppTab {
   discover(icon: AppIcons.home, iconFill: AppIcons.homeFill),
-  explore(icon: AppIcons.compass, iconFill: AppIcons.compassFill),
+  explore(icon: AppIcons.search, iconFill: AppIcons.searchFill),
   myList(icon: AppIcons.list, iconFill: AppIcons.listFill),
   you(icon: AppIcons.user, iconFill: AppIcons.userFill);
 

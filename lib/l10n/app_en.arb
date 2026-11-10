@@ -351,6 +351,14 @@
   "@exploreSectionComingSoon": {
     "description": "B2 body section: titles releasing in the next three months."
   },
+  "exploreNewTag": "NEW",
+  "@exploreNewTag": {
+    "description": "The small badge on a poster in B2's \"New releases\"."
+  },
+  "exploreSectionTopRatedSubtitle": "The best of all time, by score",
+  "@exploreSectionTopRatedSubtitle": {
+    "description": "The supporting line under B2's \"Top rated\" heading, the section that gets the most weight."
+  },
   "exploreSectionTopRated": "Top rated",
   "@exploreSectionTopRated": {
     "description": "B2 body section: the best rated titles."

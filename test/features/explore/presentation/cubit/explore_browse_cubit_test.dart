@@ -86,44 +86,83 @@ void main() {
   });
   tearDown(() => cubit.close());
 
-  test('start loads the platforms and every section', () async {
+  Future<void> requestAll() async {
+    for (final section in ExploreSection.values) {
+      await cubit.requestSection(section);
+    }
+  }
+
+  test(
+    'start loads only the platforms — sections wait to be requested',
+    () async {
+      await cubit.start(MediaSegment.all);
+
+      expect(cubit.state.services, isA<ExploreServicesLoaded>());
+      expect(repo.filters, isEmpty);
+      for (final section in ExploreSection.values) {
+        // Not requested: no entry, which reads as loading.
+        expect(cubit.state.sections.containsKey(section), isFalse);
+        expect(cubit.state.sectionState(section), isA<ExploreSectionLoading>());
+      }
+    },
+  );
+
+  test('requestSection loads just that section, and only once', () async {
     await cubit.start(MediaSegment.all);
 
-    expect(cubit.state.services, isA<ExploreServicesLoaded>());
-    for (final section in ExploreSection.values) {
-      expect(cubit.state.sectionState(section), isA<ExploreSectionLoaded>());
-    }
-    expect(repo.filters, hasLength(ExploreSection.values.length));
+    await cubit.requestSection(ExploreSection.topRated);
+    expect(repo.filters, hasLength(1));
+    expect(
+      cubit.state.sectionState(ExploreSection.topRated),
+      isA<ExploreSectionLoaded>(),
+    );
+
+    // Asking again (the widget rebuilt, scrolled back…) costs nothing.
+    await cubit.requestSection(ExploreSection.topRated);
+    expect(repo.filters, hasLength(1));
+    // The others were never asked for.
+    expect(
+      cubit.state.sections.containsKey(ExploreSection.hiddenGems),
+      isFalse,
+    );
   });
 
-  test('picking a platform sends its id; back to All clears it', () async {
+  test('picking a platform clears the sections and bumps the revision; the '
+      'next request uses the new filter', () async {
     await cubit.start(MediaSegment.all);
+    await requestAll();
+    final before = cubit.state.revision;
     repo.filters.clear();
 
     await cubit.selectService(_netflix);
+
+    expect(cubit.state.revision, before + 1);
+    expect(cubit.state.sections, isEmpty);
+    expect(repo.filters, isEmpty); // nothing fetched until requested
+
+    await cubit.requestSection(ExploreSection.topToday);
     expect(
-      repo.filters.every(
-        (f) =>
-            f.withWatchProviders.length == 1 &&
-            f.withWatchProviders.contains(8),
-      ),
+      repo.filters.single.withWatchProviders.length == 1 &&
+          repo.filters.single.withWatchProviders.contains(8),
       isTrue,
     );
 
-    repo.filters.clear();
     await cubit.selectService(null);
-    expect(repo.filters.every((f) => f.withWatchProviders.isEmpty), isTrue);
+    repo.filters.clear();
+    await cubit.requestSection(ExploreSection.topToday);
+    expect(repo.filters.single.withWatchProviders, isEmpty);
   });
 
   test('selecting what is already selected does nothing', () async {
     await cubit.start(MediaSegment.all);
-    repo.filters.clear();
+    final revision = cubit.state.revision;
     await cubit.selectService(null);
+    expect(cubit.state.revision, revision);
     expect(repo.filters, isEmpty);
   });
 
-  test('a segment change reloads for the new type and drops a platform the '
-      'new list lacks', () async {
+  test('a segment change clears the sections for the new type and drops a '
+      'platform the new list lacks', () async {
     await cubit.start(MediaSegment.all);
     await cubit.selectService(_netflix);
 
@@ -132,12 +171,16 @@ void main() {
 
     expect(cubit.state.segment, MediaSegment.movie);
     expect(cubit.state.service, isNull);
+    expect(cubit.state.sections, isEmpty);
+
+    await cubit.requestSection(ExploreSection.topToday);
     expect(repo.filters.last.type, isNotNull);
   });
 
   test('one section failing leaves the others loaded', () async {
     repo.failing = ExploreSection.hiddenGems;
     await cubit.start(MediaSegment.all);
+    await requestAll();
 
     expect(
       cubit.state.sectionState(ExploreSection.hiddenGems),
@@ -163,15 +206,19 @@ void main() {
 
       final gate = Completer<void>();
       repo.stall = gate;
-      final slow = cubit.selectService(_netflix); // stalls
+      final slow = cubit.requestSection(ExploreSection.topToday); // stalls
       repo.stall = null;
-      await cubit.selectService(_max); // finishes first
+      await cubit.selectService(_max); // filters changed meanwhile
+      await cubit.requestSection(ExploreSection.topToday); // the new request
       gate.complete();
       await slow;
 
       expect(cubit.state.service, _max);
       final top = cubit.state.sectionState(ExploreSection.topToday);
       expect(top, isA<ExploreSectionLoaded>());
+      // The stale response's filter (no platform) wasn't what ended up shown:
+      // the last applied result came from the _max request.
+      expect(repo.filters.last.withWatchProviders.contains(1899), isTrue);
     },
   );
 
@@ -179,6 +226,7 @@ void main() {
     'sections preview at most ${ExploreBrowseCubit.sectionSize} titles',
     () async {
       await cubit.start(MediaSegment.all);
+      await requestAll();
       for (final section in ExploreSection.values) {
         final s = cubit.state.sectionState(section) as ExploreSectionLoaded;
         expect(
@@ -193,6 +241,7 @@ void main() {
       'picked platform', () async {
     await cubit.start(MediaSegment.all);
     await cubit.selectService(_netflix);
+    final revision = cubit.state.revision;
     repo.filters.clear();
 
     settings.controller.add(
@@ -201,7 +250,8 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 50));
 
     expect(cubit.state.service, isNull);
-    expect(repo.filters, hasLength(ExploreSection.values.length));
+    expect(cubit.state.revision, greaterThan(revision));
+    expect(cubit.state.sections, isEmpty);
     expect(cubit.state.services, isA<ExploreServicesLoaded>());
   });
 }

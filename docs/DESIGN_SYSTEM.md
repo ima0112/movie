@@ -163,7 +163,7 @@ regular/fill para los 8 conceptos que lo necesitan.
 | Volver | `arrow_left_line` |
 | Cerrar | `close_line` |
 | Casa / Descubrir (inactivo/activo, tab bar) | `home_line` / `home_fill` |
-| Brújula / Explorar (inactivo/activo, tab bar) | `compass_line` / `compass_fill` |
+| Búsqueda / Explorar (inactivo/activo, tab bar) | `search_line` / `search_fill` |
 | Lista / Mi lista (inactivo/activo, tab bar) | `file_list_line` / `file_list_fill` |
 | Perfil / Tú (inactivo/activo, tab bar) | `user_line` / `user_fill` |
 | Ajustes | `settings_line` |
