@@ -178,7 +178,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
   - Metadata line: "Year–Year · N seasons · M episodes · Rating".
   - Status pill next to the title: "Airing" (accent) / "Ended" / "Cancelled" (neutral).
   - "Created by": names (→ D3).
-  - "Seasons" section: list of rows (thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
+  - "Seasons" section: one bordered `surfaceRaised` card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
   - No runtime; shows "≈ 45 min per episode" instead — not on this screen itself (the metadata line above has no runtime slot to begin with), already covered by C4's "Estimated TV hours" (`TvShowDetail.estimatedHours`).
   - "Where to watch" same as D1 (the show's own providers; a season's own providers, if they ever differ, aren't modeled yet — `MediaRepository.season()`'s `SeasonDetail` has no `watchProviders` field).
 - Exits: D3, H4, H2.

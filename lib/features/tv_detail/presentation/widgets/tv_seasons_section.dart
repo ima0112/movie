@@ -38,9 +38,11 @@ class TvSeasonsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(context.l10n.tvSeasonsSectionTitle, style: AppTextStyles.h2),
-          const SizedBox(height: AppSpacing.sm),
-          for (final season in ordered)
+          const SizedBox(height: AppSpacing.md),
+          for (final (i, season) in ordered.indexed) ...[
+            if (i > 0) const SizedBox(height: AppSpacing.md),
             _SeasonRow(season: season, onTap: () => onSeasonTap?.call(season)),
+          ],
         ],
       ),
     );
@@ -61,8 +63,8 @@ class _SeasonRow extends StatelessWidget {
   final SeasonSummary season;
   final VoidCallback onTap;
 
-  static const double _posterWidth = 56;
-  static const double _posterHeight = 84;
+  static const double _posterWidth = 44;
+  static const double _posterHeight = 64;
 
   @override
   Widget build(BuildContext context) {
@@ -77,12 +79,21 @@ class _SeasonRow extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      // Each season is its own bordered card (the "Temporadas" design).
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceRaised,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          border: Border.all(color: AppColors.glassBorder),
+        ),
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
               child: SizedBox(
                 width: _posterWidth,
                 height: _posterHeight,
@@ -107,11 +118,7 @@ class _SeasonRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.md),
-            const Icon(
-              AppIcons.chevronRight,
-              size: 20,
-              color: AppColors.inkMuted,
-            ),
+            const Icon(AppIcons.chevronRight, size: 20, color: AppColors.ink),
           ],
         ),
       ),
