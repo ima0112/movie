@@ -5,6 +5,7 @@ import '../core/domain/entities/discover_filter.dart';
 import '../core/domain/entities/media_detail.dart';
 import '../core/domain/entities/media_key.dart';
 import '../core/domain/entities/media_type.dart';
+import '../core/domain/entities/person.dart';
 import '../core/domain/repositories/media_repository.dart';
 import '../core/domain/repositories/onboarding_repository.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
@@ -18,6 +19,7 @@ import '../features/tv_detail/presentation/screens/tv_detail_screen.dart';
 import '../features/my_list/presentation/screens/my_list_screen.dart';
 import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
 import '../features/settings/presentation/screens/attribution_screen.dart';
+import '../features/person_detail/presentation/screens/person_filmography_screen.dart';
 import '../features/tv_detail/presentation/screens/tv_seasons_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
@@ -60,6 +62,10 @@ class AppRoutes {
   /// C7 (Attribution and credits), pushed from C6's About group.
   static const String attribution = '/attribution';
 
+  /// D3b (Filmography), pushed from D3's "View full filmography" card —
+  /// carries the loaded person via `extra` ([PersonFilmographyRouteArgs]).
+  static const String personFilmography = '/person-filmography';
+
   /// D2b (Seasons), pushed from D2's Seasons card — carries the loaded show
   /// via `extra` ([TvSeasonsRouteArgs]).
   static const String tvSeasons = '/tv-seasons';
@@ -97,6 +103,14 @@ class AppRoutes {
 /// see `FilteredListCubit`'s own doc comment on the field it feeds.
 /// `null` for every other origin (a genre tile, H8), which already
 /// arrive with a real [DiscoverFilter].
+/// What D3b needs: the person D3 already loaded, so the screen makes no
+/// network call of its own.
+class PersonFilmographyRouteArgs {
+  const PersonFilmographyRouteArgs({required this.detail});
+
+  final PersonDetail detail;
+}
+
 /// What D2b needs: the show D2 already loaded, so the screen makes no
 /// network call of its own.
 class TvSeasonsRouteArgs {
@@ -256,6 +270,14 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.attribution,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const AttributionScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.personFilmography,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final args = state.extra! as PersonFilmographyRouteArgs;
+        return PersonFilmographyScreen(detail: args.detail);
+      },
     ),
     GoRoute(
       path: AppRoutes.tvSeasons,

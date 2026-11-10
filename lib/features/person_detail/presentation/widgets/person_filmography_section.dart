@@ -25,10 +25,15 @@ class PersonFilmographySection extends StatefulWidget {
     super.key,
     required this.credits,
     this.onCreditTap,
+    this.showTitle = true,
   });
 
   final List<MediaCredit> credits;
   final void Function(MediaCredit credit)? onCreditTap;
+
+  /// D3b has the person's name as its screen title, so it hides the
+  /// section's own "Filmography" heading.
+  final bool showTitle;
 
   @override
   State<PersonFilmographySection> createState() =>
@@ -51,11 +56,13 @@ class _PersonFilmographySectionState extends State<PersonFilmographySection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            child: Text(l10n.personFilmographyTitle, style: AppTextStyles.h2),
-          ),
-          const SizedBox(height: AppSpacing.md),
+          if (widget.showTitle) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              child: Text(l10n.personFilmographyTitle, style: AppTextStyles.h2),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
           PersonFilmographySegmentedControl(
             segment: _segment,
             showAsDirector: showAsDirector,

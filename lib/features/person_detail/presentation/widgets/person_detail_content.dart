@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/person.dart';
@@ -10,7 +11,7 @@ import 'known_for.dart';
 import 'person_age_label.dart';
 import 'person_biography_section.dart';
 import 'person_detail_header.dart';
-import 'person_filmography_section.dart';
+import 'person_filmography_link_card.dart';
 import 'person_known_for_section.dart';
 
 /// D3 once `PersonDetailCubit` has loaded — assembles the header,
@@ -57,9 +58,12 @@ class PersonDetailContent extends StatelessWidget {
           items: detail.credits.knownForItems(),
           onItemTap: (item) => context.pushMediaDetail(item.key),
         ),
-        PersonFilmographySection(
-          credits: detail.credits,
-          onCreditTap: (credit) => context.pushMediaDetail(credit.item.key),
+        PersonFilmographyLinkCard(
+          titleCount: detail.credits.length,
+          onTap: () => context.push(
+            AppRoutes.personFilmography,
+            extra: PersonFilmographyRouteArgs(detail: detail),
+          ),
         ),
         const _Footer(),
       ],
