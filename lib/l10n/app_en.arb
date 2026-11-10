@@ -264,6 +264,7 @@
   "@onboardingIntroDiscoverHighlight": {
     "description": "The phrase inside onboardingIntroDiscoverHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact phrase as a substring of its own translated headline."
   },
+  "onboardingIntroRatingLabel": "rating",
   "onboardingIntroDiscoverBody": "Explore TMDB's catalog. It's not a streaming app: we tell you where to watch it.",
   "onboardingIntroSurpriseHeadline": "No idea? Surprise me",
   "onboardingIntroSurpriseHighlight": "Surprise me",

@@ -644,6 +644,12 @@ abstract class AppLocalizations {
   /// **'in seconds'**
   String get onboardingIntroDiscoverHighlight;
 
+  /// No description provided for @onboardingIntroRatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'rating'**
+  String get onboardingIntroRatingLabel;
+
   /// No description provided for @onboardingIntroDiscoverBody.
   ///
   /// In en, this message translates to:
