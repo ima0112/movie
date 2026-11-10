@@ -21,7 +21,6 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/locale_names.dart';
-import '../../../../shared/widgets/media_detail/full_cast_sheet.dart';
 import '../../../../shared/widgets/media_detail/media_cast_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
 import '../../../../shared/widgets/media_detail/media_detail_header.dart';
@@ -96,17 +95,16 @@ class MovieDetailContent extends StatelessWidget {
     );
   }
 
-  void _openFullCastSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => FullCastSheet(
+  void _openFullCast(BuildContext context) => unawaited(
+    context.push(
+      AppRoutes.fullCast,
+      extra: FullCastRouteArgs(
+        title: detail.item.title,
         cast: detail.cast,
         crew: detail.crew,
-        onPersonTap: (person) => context.pushPersonDetail(person.id),
       ),
-    );
-  }
+    ),
+  );
 
   /// D1's Duration / Classification stat cards — each only when TMDB has it.
   List<MediaStat> _stats(BuildContext context) {
@@ -191,7 +189,7 @@ class MovieDetailContent extends StatelessWidget {
             cast: detail.cast,
             crew: detail.crew,
             onPersonTap: (person) => context.pushPersonDetail(person.id),
-            onSeeFullCastTap: () => _openFullCastSheet(context),
+            onSeeFullCastTap: () => _openFullCast(context),
             showCrew: false,
           ),
         ),

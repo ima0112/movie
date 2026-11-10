@@ -810,16 +810,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get regionSheetSearchHint => 'Buscar países';
 
   @override
-  String get fullCastSheetTitle => 'Reparto completo';
+  String get fullCastCastLabel => 'Reparto';
 
   @override
-  String get fullCastSheetCastLabel => 'Reparto';
+  String get fullCastCrewLabel => 'Equipo';
 
   @override
-  String get fullCastSheetCrewLabel => 'Equipo';
-
-  @override
-  String get fullCastSheetSearchHint => 'Buscar en reparto y equipo';
+  String get fullCastSearchHint => 'Buscar en reparto y equipo';
 
   @override
   String get mediaSimilarMoviesTitle => 'Películas similares';

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/app/router.dart';
+import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/shared/widgets/media_detail/full_cast_screen.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
@@ -117,6 +121,30 @@ void main() {
       tester.getTopLeft(find.text('Where to watch')).dy - top(sections[1]),
       greaterThanOrEqualTo(AppSpacing.sectionGap),
     );
+  });
+
+  testWidgets('the full cast route opens a page (not a sheet) titled with the '
+      'movie, and back returns to the detail', (tester) async {
+    await openDuneDetail(tester);
+
+    unawaited(
+      appRouter.push(
+        AppRoutes.fullCast,
+        extra: const FullCastRouteArgs(
+          title: 'Dune: Part Two',
+          cast: [],
+          crew: [],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FullCastScreen), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
+
+    await tester.tap(find.byIcon(AppIcons.back));
+    await tester.pumpAndSettle();
+    expect(find.byType(FullCastScreen), findsNothing);
   });
 
   testWidgets('sections run synopsis -> where to watch -> cast -> similar, '

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/l10n/app_localizations.dart';
-import 'package:movies/shared/widgets/media_detail/full_cast_sheet.dart';
+import 'package:movies/shared/widgets/media_detail/full_cast_screen.dart';
 
 const _chalamet = Person(
   id: 1,
@@ -40,19 +40,18 @@ void _usePhoneScreen(WidgetTester tester) {
 }
 
 void main() {
-  group('FullCastSheet', () {
+  group('FullCastScreen', () {
     testWidgets('starts on Cast; the Crew tab swaps the list', (tester) async {
       _usePhoneScreen(tester);
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: FullCastSheet(cast: _cast, crew: _crew),
-          ),
+          home: FullCastScreen(title: 'Dune', cast: _cast, crew: _crew),
         ),
       );
 
+      expect(find.text('Dune'), findsOneWidget);
       expect(find.text('Cast'), findsOneWidget);
       expect(find.text('Crew'), findsOneWidget);
       expect(find.text('Timothée Chalamet'), findsOneWidget);
@@ -83,7 +82,7 @@ void main() {
               textScaler: TextScaler.linear(2),
             ),
             child: Scaffold(
-              body: FullCastSheet(cast: _cast, crew: _crew),
+              body: FullCastScreen(title: 'Dune', cast: _cast, crew: _crew),
             ),
           ),
         ),
@@ -100,9 +99,7 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: FullCastSheet(cast: _cast, crew: _crew),
-          ),
+          home: FullCastScreen(title: 'Dune', cast: _cast, crew: _crew),
         ),
       );
 
@@ -119,9 +116,7 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: FullCastSheet(cast: _cast, crew: _crew),
-          ),
+          home: FullCastScreen(title: 'Dune', cast: _cast, crew: _crew),
         ),
       );
 
@@ -140,12 +135,11 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: FullCastSheet(
-              cast: _cast,
-              crew: _crew,
-              onPersonTap: (person) => tapped = person,
-            ),
+          home: FullCastScreen(
+            title: 'Dune',
+            cast: _cast,
+            crew: _crew,
+            onPersonTap: (person) => tapped = person,
           ),
         ),
       );
