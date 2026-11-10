@@ -21,7 +21,10 @@ import 'explore_search_field.dart';
 /// widgets; each still carries its own narrowly-scoped `BlocSelector`
 /// (CLAUDE.md rule 9) rather than sharing one `BlocBuilder`.
 class ExploreHeader extends StatelessWidget {
-  const ExploreHeader({super.key});
+  const ExploreHeader({super.key, this.focusToken});
+
+  /// A new value focuses the search field (see `ExploreScreen.focusToken`).
+  final String? focusToken;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class ExploreHeader extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [const _ExploreSearchBar()],
+            children: [_ExploreSearchBar(focusToken: focusToken)],
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -46,7 +49,9 @@ class ExploreHeader extends StatelessWidget {
 }
 
 class _ExploreSearchBar extends StatelessWidget {
-  const _ExploreSearchBar();
+  const _ExploreSearchBar({this.focusToken});
+
+  final String? focusToken;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,7 @@ class _ExploreSearchBar extends StatelessWidget {
       selector: (state) => state is ExploreSearching ? state.query : '',
       builder: (context, query) {
         return ExploreSearchField(
+          focusToken: focusToken,
           query: query,
           onChanged: (value) =>
               context.read<ExploreCubit>().onQueryChanged(value),

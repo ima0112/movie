@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
+import 'package:movies/app/router.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
@@ -10,6 +11,7 @@ import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/features/discover/presentation/widgets/discover_search_field.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_search_field.dart';
 import 'package:movies/features/filtered_list/presentation/widgets/filtered_list_chips_row.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
@@ -55,6 +57,45 @@ void main() {
     getIt.registerLazySingleton<OnboardingRepository>(
       InMemoryOnboardingRepository.new,
     );
+  });
+
+  /// The text field that is the primary focus right now, if any.
+  bool searchFieldHasFocus(WidgetTester tester) {
+    final field = tester.widget<TextField>(find.byType(TextField));
+    return field.focusNode?.hasFocus ?? false;
+  }
+
+  testWidgets('B1\'s search bar opens Explore with the search field focused '
+      '(keyboard up), every time', (tester) async {
+    appRouter.go('/');
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+
+    // Discover: the look-alike field.
+    await tester.tap(find.byType(DiscoverSearchField));
+    await tester.pumpAndSettle();
+    expect(find.byType(ExploreSearchField), findsOneWidget);
+    expect(searchFieldHasFocus(tester), isTrue);
+
+    // Leave the field and the tab, come back through the shortcut again.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    appRouter.go('/');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(DiscoverSearchField));
+    await tester.pumpAndSettle();
+    expect(searchFieldHasFocus(tester), isTrue);
+  });
+
+  testWidgets('opening Explore from its own tab does not grab the '
+      'keyboard', (tester) async {
+    appRouter.go('/');
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(_exploreTab());
+    await tester.pumpAndSettle();
+    expect(searchFieldHasFocus(tester), isFalse);
   });
 
   testWidgets('typing in Explore debounces, then shows search results', (

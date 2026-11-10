@@ -26,6 +26,7 @@ class ExploreSearchField extends StatefulWidget {
     required this.onClear,
     required this.hasActiveFilters,
     required this.onFilterTap,
+    this.focusToken,
   });
 
   final String query;
@@ -42,6 +43,11 @@ class ExploreSearchField extends StatefulWidget {
   /// once a search is running; "Cancel" takes that slot instead.
   final VoidCallback onFilterTap;
 
+  /// Focuses the field (cursor in, keyboard up) whenever it changes to a new
+  /// non-null value, including on first build — B1's search bar uses this to
+  /// be a shortcut to this field.
+  final String? focusToken;
+
   @override
   State<ExploreSearchField> createState() => _ExploreSearchFieldState();
 }
@@ -51,9 +57,29 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
     text: widget.query,
   );
 
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.focusToken != null) _focusAfterFrame();
+  }
+
+  /// After the frame, so the field is on stage when the request is made (the
+  /// Explore tab may only be switching in right now).
+  void _focusAfterFrame() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _focusNode.requestFocus();
+    });
+  }
+
   @override
   void didUpdateWidget(covariant ExploreSearchField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.focusToken != null &&
+        widget.focusToken != oldWidget.focusToken) {
+      _focusAfterFrame();
+    }
     if (widget.query != _controller.text) {
       _controller.value = TextEditingValue(
         text: widget.query,
@@ -64,6 +90,7 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -77,6 +104,7 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
         Expanded(
           child: TextField(
             controller: _controller,
+            focusNode: _focusNode,
             onChanged: widget.onChanged,
             style: AppTextStyles.body,
             decoration: InputDecoration(
