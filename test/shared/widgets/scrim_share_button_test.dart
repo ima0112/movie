@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/l10n/app_localizations.dart';
-import 'package:movies/shared/widgets/media_detail/media_detail_header.dart';
+import 'package:movies/shared/widgets/media_detail/detail_top_controls.dart';
 import 'package:movies/shared/widgets/scrim_back_button.dart';
 import 'package:movies/shared/widgets/scrim_share_button.dart';
 
@@ -56,10 +56,18 @@ void main() {
     });
   });
 
-  group('MediaDetailHeader share button', () {
+  group('DetailTopControls share button', () {
     testWidgets('shown only when onShare is given', (tester) async {
+      final compact = ValueNotifier(false);
+      addTearDown(compact.dispose);
       await tester.pumpWidget(
-        _app(const MediaDetailHeader(imageUrl: null, title: 'Inception')),
+        _app(
+          Stack(
+            children: [
+              DetailTopControls(showCompact: compact, title: 'Inception'),
+            ],
+          ),
+        ),
       );
       expect(find.byType(ScrimShareButton), findsNothing);
       expect(find.byType(ScrimBackButton), findsOneWidget);
@@ -67,10 +75,14 @@ void main() {
       var shared = 0;
       await tester.pumpWidget(
         _app(
-          MediaDetailHeader(
-            imageUrl: null,
-            title: 'Inception',
-            onShare: () => shared++,
+          Stack(
+            children: [
+              DetailTopControls(
+                showCompact: compact,
+                title: 'Inception',
+                onShare: () => shared++,
+              ),
+            ],
           ),
         ),
       );

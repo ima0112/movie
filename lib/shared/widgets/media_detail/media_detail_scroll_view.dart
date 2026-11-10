@@ -10,7 +10,6 @@ import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_key.dart';
 import '../../../core/domain/repositories/user_library_repository.dart';
 import '../../../core/launch/launch_external_link.dart';
-import '../../../core/launch/media_share.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/genre_localization.dart';
 import '../../../l10n/l10n_extension.dart';
@@ -132,13 +131,6 @@ class _MediaDetailScrollViewState extends State<MediaDetailScrollView> {
             imageUrl: detail.backdropUrl ?? detail.item.posterUrl,
             title: detail.item.title,
             tagline: detail.tagline,
-            onShare: () => unawaited(
-              shareMedia(
-                context,
-                title: detail.item.title,
-                key: widget.mediaKey,
-              ),
-            ),
           ),
         ),
         SliverPadding(

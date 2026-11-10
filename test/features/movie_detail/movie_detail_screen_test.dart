@@ -16,6 +16,7 @@ import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_spacing.dart';
 import 'package:movies/shared/widgets/app_buttons.dart';
+import 'package:movies/shared/widgets/scrim_back_button.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_action_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
@@ -175,6 +176,25 @@ void main() {
     expect(find.byType(PrimaryButton), findsNothing);
     expect(find.text('See similar'), findsNothing);
     expect(find.text('Watched'), findsOneWidget);
+  });
+
+  testWidgets('the back button stays pinned while the header scrolls away', (
+    tester,
+  ) async {
+    await openDuneDetail(tester);
+    Offset backPos() => tester.getTopLeft(
+      find.descendant(
+        of: find.byType(ScrimBackButton),
+        matching: find.byType(Container),
+      ),
+    );
+    final rest = backPos();
+
+    // A partial scroll, header still half on screen, no compact bar yet.
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -150));
+    await tester.pumpAndSettle();
+    expect(find.byType(MediaDetailCompactBar), findsNothing);
+    expect(backPos(), rest);
   });
 
   testWidgets('sections run synopsis -> where to watch -> cast -> similar, '

@@ -129,15 +129,10 @@ void main() {
       expect(tester.getCenter(find.text('Al')).dx, 195);
       expect(tester.getCenter(find.text('Acting')).dx, 195);
 
-      final backCircle = tester.getRect(
-        find.descendant(
-          of: find.byType(ScrimBackButton),
-          matching: find.byType(Container),
-        ),
-      );
+      // Below the safe area plus the pinned back button's footprint.
       expect(
         tester.getTopLeft(find.byType(ProfileImage)).dy,
-        greaterThan(backCircle.bottom),
+        greaterThan(47 + ScrimBackButton.footprint),
       );
     });
   });

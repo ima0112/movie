@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../scrim_back_button.dart';
-import '../scrim_share_button.dart';
 
 /// D1/D2's header — `docs/SCREENS.md` D1: a 320 px backdrop (TMDB's 16:9
 /// backdrop, or the poster when there isn't one) that fades into the page,
@@ -19,7 +17,6 @@ class MediaDetailHeader extends StatelessWidget {
     required this.imageUrl,
     required this.title,
     this.tagline,
-    this.onShare,
   });
 
   /// Backdrop URL, or the poster's when TMDB has no backdrop; `null` shows
@@ -27,9 +24,6 @@ class MediaDetailHeader extends StatelessWidget {
   final String? imageUrl;
   final String title;
   final String? tagline;
-
-  /// Share button, top right. `null` shows none.
-  final VoidCallback? onShare;
 
   /// Public: the assembled screens need the same value to know when the
   /// title has "scrolled past the top" and the compact bar should appear.
@@ -67,8 +61,6 @@ class MediaDetailHeader extends StatelessWidget {
               ),
             ),
           ),
-          const ScrimBackButton(),
-          if (onShare != null) ScrimShareButton(onTap: onShare!),
           Positioned(
             left: AppSpacing.xl,
             right: AppSpacing.xl,
