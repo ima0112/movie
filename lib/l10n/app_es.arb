@@ -247,7 +247,7 @@
   "tvEpisodeCodeSpecials": "Especiales · E{episode}",
   "tvEpisodeGuestStars": "Estrellas invitadas",
   "tvSeasonsLinkLabel": "Temporadas",
-  "tvSeasonsLinkValue": "{seasons} ({episodes} ep.)",
+  "tvSeasonsLinkValue": "{seasons} · {episodes, plural, =1{1 episodio} other{{episodes} episodios}}",
   "tvNextEpisodeCaption": "Próximo episodio",
   "tvLastAiredEpisodeCaption": "Último episodio emitido",
   "tvNoNextEpisodeTitle": "Sin próximo episodio",

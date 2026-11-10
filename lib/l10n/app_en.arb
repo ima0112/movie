@@ -678,9 +678,9 @@
   },
   "tvEpisodeGuestStars": "Guest stars",
   "tvSeasonsLinkLabel": "Seasons",
-  "tvSeasonsLinkValue": "{seasons} ({episodes} ep.)",
+  "tvSeasonsLinkValue": "{seasons} · {episodes, plural, =1{1 episode} other{{episodes} episodes}}",
   "@tvSeasonsLinkValue": {
-    "description": "D2's Seasons card value, e.g. \"5 (62 ep.)\" — season count and total episodes.",
+    "description": "D2's Seasons card value, e.g. \"5 · 62 episodes\" — season count, a dot, then the total episodes with their word (pluralised).",
     "placeholders": {
       "seasons": {"type": "int"},
       "episodes": {"type": "int"}

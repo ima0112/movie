@@ -101,6 +101,11 @@ void main() {
 
     expect(find.text('Status'), findsOneWidget);
     expect(find.text('Seasons'), findsOneWidget);
+    // "seasons · episodes" with the word, e.g. "3 · 24 episodes".
+    expect(
+      find.textContaining(RegExp(r'^\d+ · \d+ episodes?$')),
+      findsOneWidget,
+    );
     // No status pill in the header any more.
     expect(find.byType(AppChip), findsNothing);
 

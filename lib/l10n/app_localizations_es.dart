@@ -728,7 +728,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String tvSeasonsLinkValue(int seasons, int episodes) {
-    return '$seasons ($episodes ep.)';
+    String _temp0 = intl.Intl.pluralLogic(
+      episodes,
+      locale: localeName,
+      other: '$episodes episodios',
+      one: '1 episodio',
+    );
+    return '$seasons · $_temp0';
   }
 
   @override
