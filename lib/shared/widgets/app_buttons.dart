@@ -22,6 +22,7 @@ class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
     required this.label,
+    this.icon,
     this.onTap,
     this.isLoading = false,
     this.isDisabled = false,
@@ -29,6 +30,9 @@ class PrimaryButton extends StatelessWidget {
   });
 
   final String label;
+
+  /// Optional leading icon (the detail screens' play icon on "Trailer").
+  final IconData? icon;
   final VoidCallback? onTap;
   final bool isLoading;
   final bool isDisabled;
@@ -38,6 +42,7 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return _BaseButton(
       label: label,
+      icon: icon,
       onTap: onTap,
       isLoading: isLoading,
       isDisabled: isDisabled,
@@ -151,6 +156,7 @@ class DestructiveButton extends StatelessWidget {
 class _BaseButton extends StatelessWidget {
   const _BaseButton({
     required this.label,
+    this.icon,
     required this.backgroundColor,
     required this.foregroundColor,
     this.borderColor,
@@ -161,6 +167,7 @@ class _BaseButton extends StatelessWidget {
   });
 
   final String label;
+  final IconData? icon;
   final Color backgroundColor;
   final Color foregroundColor;
   final Color? borderColor;
@@ -170,6 +177,7 @@ class _BaseButton extends StatelessWidget {
   final bool fullWidth;
 
   static const double _spinnerSize = 18;
+  static const double _iconSize = 18;
 
   // Same convention as QuizTileState.disabled — see quiz_tile.dart.
   static const double _disabledOpacity = 0.3;
@@ -200,9 +208,23 @@ class _BaseButton extends StatelessWidget {
                     color: foregroundColor,
                   ),
                 )
-              : Text(
-                  label,
-                  style: AppTextStyles.h3.copyWith(color: foregroundColor),
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, size: _iconSize, color: foregroundColor),
+                      const SizedBox(width: AppSpacing.sm),
+                    ],
+                    Flexible(
+                      child: Text(
+                        label,
+                        style: AppTextStyles.h3.copyWith(
+                          color: foregroundColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
         ),
       ),
