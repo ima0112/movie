@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/features/explore/domain/explore_section.dart';
 
@@ -18,6 +19,15 @@ void main() {
     final none = filter(ExploreSection.topToday);
     expect(none.type, isNull);
     expect(none.withWatchProviders, isEmpty);
+  });
+
+  test('every section carries the picked genre too', () {
+    const comedy = Genre(id: 'comedy');
+    for (final section in ExploreSection.values) {
+      final f = exploreSectionFilter(section, today: today, genre: comedy);
+      expect(f.withGenres, {comedy}, reason: '$section');
+    }
+    expect(filter(ExploreSection.topToday).withGenres, isEmpty);
   });
 
   test('top today is plain popularity', () {

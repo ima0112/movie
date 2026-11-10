@@ -152,6 +152,8 @@
   "carouselSectionAiringNow": "En emisión ahora",
   "carouselSectionPopular": "Populares",
 
+  "exploreGenreLabel": "Género",
+  "exploreGenreAll": "Todos",
   "explorePlatformLabel": "Plataforma",
   "explorePlatformAll": "Todas",
   "exploreSectionTopToday": "Top de hoy",

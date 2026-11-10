@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/result.dart';
@@ -157,6 +158,44 @@ void main() {
     await cubit.requestSection(ExploreSection.topToday);
     expect(repo.filters.single.withWatchProviders, isEmpty);
   });
+
+  test('picking a genre clears the sections and the next request carries it, '
+      'together with a platform', () async {
+    await cubit.start(MediaSegment.all);
+    await requestAll();
+    final before = cubit.state.revision;
+    repo.filters.clear();
+
+    await cubit.selectGenre(const Genre(id: 'comedy'));
+    expect(cubit.state.revision, before + 1);
+    expect(cubit.state.sections, isEmpty);
+    expect(repo.filters, isEmpty);
+
+    await cubit.selectService(_netflix);
+    await cubit.requestSection(ExploreSection.topToday);
+    final filter = repo.filters.single;
+    expect(filter.withGenres, {const Genre(id: 'comedy')});
+    expect(filter.withWatchProviders.contains(8), isTrue);
+
+    await cubit.selectGenre(null);
+    repo.filters.clear();
+    await cubit.requestSection(ExploreSection.topToday);
+    expect(repo.filters.single.withGenres, isEmpty);
+  });
+
+  test(
+    'a genre survives a segment change; picking it twice is a no-op',
+    () async {
+      await cubit.start(MediaSegment.all);
+      await cubit.selectGenre(const Genre(id: 'drama'));
+      final revision = cubit.state.revision;
+      await cubit.selectGenre(const Genre(id: 'drama'));
+      expect(cubit.state.revision, revision);
+
+      await cubit.setSegment(MediaSegment.movie);
+      expect(cubit.state.genre, const Genre(id: 'drama'));
+    },
+  );
 
   test('selecting what is already selected does nothing', () async {
     await cubit.start(MediaSegment.all);

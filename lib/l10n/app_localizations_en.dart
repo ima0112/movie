@@ -420,6 +420,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionPopular => 'Popular';
 
   @override
+  String get exploreGenreLabel => 'Genre';
+
+  @override
+  String get exploreGenreAll => 'All';
+
+  @override
   String get explorePlatformLabel => 'Platform';
 
   @override
