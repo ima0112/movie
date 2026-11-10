@@ -57,24 +57,31 @@ class PersonDetailHeader extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            // No bottom padding: the section below owns the gap above it.
-            padding: const EdgeInsets.fromLTRB(
+            // Starts below the back button's row (status bar + button), and
+            // adds no space below: the section after the header owns the gap
+            // above it.
+            padding: EdgeInsets.fromLTRB(
               AppSpacing.screenMargin,
-              AppSpacing.xxxl,
+              MediaQuery.paddingOf(context).top +
+                  ScrimBackButton.footprint +
+                  AppSpacing.sm,
               AppSpacing.screenMargin,
               0,
             ),
             child: Column(
+              // A Stack hands its child *loose* constraints, so without this
+              // the column shrinks to its widest line and sits at the left.
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Clears the ScrimBackButton (top-left, 40 px + padding).
-                const SizedBox(height: AppSpacing.xxxl),
-                ClipOval(
-                  child: SizedBox(
-                    width: photoSize,
-                    height: photoSize,
-                    child: ProfileImage(
-                      profilePath: person.profilePath,
-                      name: person.name,
+                Center(
+                  child: ClipOval(
+                    child: SizedBox(
+                      width: photoSize,
+                      height: photoSize,
+                      child: ProfileImage(
+                        profilePath: person.profilePath,
+                        name: person.name,
+                      ),
                     ),
                   ),
                 ),

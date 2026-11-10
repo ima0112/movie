@@ -29,6 +29,11 @@ class ScrimBackButton extends StatelessWidget {
   static const Color scrim = Color(0x99000000);
   static const double diameter = 40;
 
+  /// The vertical room the button takes below the status bar (its padding
+  /// included): content that starts under it begins at the safe-area top plus
+  /// this.
+  static const double footprint = diameter + 2 * AppSpacing.lg;
+
   @override
   Widget build(BuildContext context) {
     return Align(

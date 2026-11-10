@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/features/person_detail/presentation/widgets/person_detail_header.dart';
+import 'package:movies/shared/widgets/profile_image.dart';
+import 'package:movies/shared/widgets/scrim_back_button.dart';
 
 const _person = Person(
   id: 1,
@@ -91,6 +93,52 @@ void main() {
       );
 
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('with short text everything is still centered in the column, '
+        'and starts below the back button even under a notch', (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      const person = Person(
+        id: 2,
+        name: 'Al',
+        profilePath: null,
+        knownForDepartment: 'Acting',
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(390, 844),
+              padding: EdgeInsets.only(top: 47),
+            ),
+            child: const Scaffold(
+              body: PersonDetailHeader(
+                person: person,
+                ageLabel: null,
+                placeOfBirth: null,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Short lines used to pull the whole column to the left.
+      expect(tester.getCenter(find.byType(ProfileImage)).dx, 195);
+      expect(tester.getCenter(find.text('Al')).dx, 195);
+      expect(tester.getCenter(find.text('Acting')).dx, 195);
+
+      final backCircle = tester.getRect(
+        find.descendant(
+          of: find.byType(ScrimBackButton),
+          matching: find.byType(Container),
+        ),
+      );
+      expect(
+        tester.getTopLeft(find.byType(ProfileImage)).dy,
+        greaterThan(backCircle.bottom),
+      );
     });
   });
 }
