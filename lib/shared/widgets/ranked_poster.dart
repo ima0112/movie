@@ -53,7 +53,16 @@ class RankedPoster extends StatelessWidget {
                           left: AppSpacing.sm,
                           bottom: 0,
                         ),
-                        child: OutlinedText('$rank', style: AppTextStyles.rank),
+                        // A narrow grid cell (or a 3-digit rank) shrinks the
+                        // number instead of overflowing.
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.bottomLeft,
+                          child: OutlinedText(
+                            '$rank',
+                            style: AppTextStyles.rank,
+                          ),
+                        ),
                       ),
                     ),
                   ),

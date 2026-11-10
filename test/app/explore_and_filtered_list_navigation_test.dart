@@ -17,9 +17,9 @@ import 'package:movies/features/explore/presentation/widgets/explore_search_fiel
 import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';
-import 'package:movies/features/filtered_list/presentation/widgets/filtered_list_chips_row.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
-import 'package:movies/shared/widgets/explore_filter_sheet.dart';
+import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
+import 'package:movies/shared/widgets/media_card.dart';
 
 /// End-to-end coverage for the flows this branch's own task asked to be
 /// manually verified: typing in Explore's search field with its 400 ms
@@ -274,40 +274,67 @@ void main() {
     expect(find.text('Dune: Part Two'), findsOneWidget);
   });
 
-  testWidgets(
-    'a section\'s "See all" reaches C1 with that section\'s filter; applying '
-    'a filter from H8 adds a chip',
-    (tester) async {
-      appRouter.go('/');
-      addTearDown(() => appRouter.go('/'));
-      await tester.pumpWidget(const PakoTvApp());
-      await tester.pumpAndSettle();
+  testWidgets('a section\'s "See all" reaches C1b: the title, what Explore had '
+      'set, the sort icon, and the grid', (tester) async {
+    appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
 
-      await tester.tap(_exploreTab());
-      await tester.pumpAndSettle();
+    await tester.tap(_exploreTab());
+    await tester.pumpAndSettle();
+    // Narrow Explore first, so the pill has something to say.
+    await tester.tap(find.text('Action'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Netflix'));
+    await tester.pumpAndSettle();
 
-      await tester.tap(find.text('See all').first);
-      await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(AppIcons.filter));
-      await tester.pumpAndSettle();
-      final sheet = find.byType(ExploreFilterSheet);
-      await tester.tap(
-        find.descendant(of: sheet, matching: find.text('Horror')),
-      );
-      await tester.pumpAndSettle();
-      final applyButton = find.descendant(
-        of: sheet,
-        matching: find.textContaining('results'),
-      );
-      await tester.ensureVisible(applyButton);
-      await tester.tap(applyButton);
-      await tester.pumpAndSettle();
+    await tester.tap(find.text('See all').first);
+    await tester.pumpAndSettle();
 
-      final chipsRow = find.byType(FilteredListChipsRow);
-      expect(
-        find.descendant(of: chipsRow, matching: find.text('Horror')),
-        findsOneWidget,
-      );
-    },
-  );
+    expect(find.byType(SectionListingScreen), findsOneWidget);
+    expect(find.text('Top today'), findsOneWidget); // the bar's title
+    expect(find.text('Action · Netflix'), findsOneWidget);
+    expect(find.byIcon(AppIcons.sort), findsOneWidget);
+    expect(find.byType(MediaCard), findsWidgets);
+
+    // The sort sheet offers the short list, the section's own order first.
+    await tester.tap(find.byIcon(AppIcons.sort));
+    await tester.pumpAndSettle();
+    for (final label in [
+      'Default order',
+      'Popularity',
+      'Rating',
+      'Most voted',
+      'Newest first',
+    ]) {
+      expect(find.text(label), findsOneWidget, reason: label);
+    }
+    await tester.tap(find.text('Rating'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Rating'), findsOneWidget); // the summary line
+  });
+
+  testWidgets('Home\'s "See all" reaches the same listing, with the segment '
+      'in the pill and no genre or platform', (tester) async {
+    appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+
+    final seeAll = find.text('See all');
+    await tester.scrollUntilVisible(
+      seeAll,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(seeAll.first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SectionListingScreen), findsOneWidget);
+    expect(find.byIcon(AppIcons.sort), findsOneWidget);
+    expect(find.textContaining('genres'), findsNothing);
+    expect(find.textContaining('platforms'), findsNothing);
+  });
 }

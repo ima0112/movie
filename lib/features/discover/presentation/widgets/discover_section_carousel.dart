@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
-import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
@@ -12,6 +11,8 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/lazy_load.dart';
 import 'discover_content_error.dart';
+import '../../../section_listing/domain/listing_source.dart';
+import '../../../section_listing/domain/listing_style.dart';
 import 'discover_section_body.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_section_skeleton.dart';
@@ -65,15 +66,15 @@ class DiscoverSectionCarousel extends StatelessWidget {
             DiscoverSlotLoaded(:final value) => AppSection(
               title: label,
               actionLabel: context.l10n.discoverSeeAll,
-              // C1: "'See all' from B1 (arrives with the collection's name and
-              // no filters)" — `collectionSection` lets C1 fetch this exact
-              // collection until a filter gets touched.
+              // C1b: the collection's own list, a page at a time; another
+              // sort switches to the equivalent /discover.
               onAction: () => context.push(
-                AppRoutes.filteredList,
-                extra: FilteredListRouteArgs(
-                  filter: DiscoverFilter(type: segment.mediaType),
+                AppRoutes.sectionListing,
+                extra: SectionListingRouteArgs(
                   title: label,
-                  collectionSection: section,
+                  source: CollectionListing(section, type: segment.mediaType),
+                  style: _style(section),
+                  listingContext: ListingContext.home(segment),
                 ),
               ),
               child: DiscoverSectionBody(
@@ -88,3 +89,11 @@ class DiscoverSectionCarousel extends StatelessWidget {
     );
   }
 }
+
+/// How a collection's grid posters are dressed — as in its carousel.
+ListingStyle _style(CarouselSection section) => switch (section) {
+  CarouselSection.topRated ||
+  CarouselSection.finishedShows => ListingStyle.rating,
+  CarouselSection.comingSoon || CarouselSection.upcoming => ListingStyle.dated,
+  _ => ListingStyle.plain,
+};

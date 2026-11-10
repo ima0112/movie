@@ -14,6 +14,9 @@ import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'di.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/filtered_list/presentation/screens/filtered_list_screen.dart';
+import '../features/section_listing/domain/listing_source.dart';
+import '../features/section_listing/domain/listing_style.dart';
+import '../features/section_listing/presentation/screens/section_listing_screen.dart';
 import '../features/movie_detail/presentation/screens/movie_detail_screen.dart';
 import '../features/person_detail/presentation/screens/person_detail_screen.dart';
 import '../features/tv_detail/presentation/screens/tv_detail_screen.dart';
@@ -101,6 +104,7 @@ class AppRoutes {
   /// doesn't have — and isn't meant to have, see its own doc comment —
   /// a lossless URL-string encoding).
   static const String filteredList = '/list';
+  static const String sectionListing = '/section-listing';
 
   /// E1 (Choose type) — `match_hub_sheet.dart`'s own "Surprise me" card.
   static const String surprise = '/surprise';
@@ -169,6 +173,22 @@ class TvSeasonsRouteArgs {
   const TvSeasonsRouteArgs({required this.detail});
 
   final TvShowDetail detail;
+}
+
+/// What C1b ("See all" of a section) needs: its title, where its titles come
+/// from, how its posters are dressed, and what the previous screen had set.
+class SectionListingRouteArgs {
+  const SectionListingRouteArgs({
+    required this.title,
+    required this.source,
+    required this.style,
+    required this.listingContext,
+  });
+
+  final String title;
+  final ListingSource source;
+  final ListingStyle style;
+  final ListingContext listingContext;
 }
 
 class FilteredListRouteArgs {
@@ -365,6 +385,19 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final args = state.extra! as TvSeasonsRouteArgs;
         return TvSeasonsScreen(detail: args.detail);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.sectionListing,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final args = state.extra! as SectionListingRouteArgs;
+        return SectionListingScreen(
+          title: args.title,
+          source: args.source,
+          style: args.style,
+          listingContext: args.listingContext,
+        );
       },
     ),
     GoRoute(
