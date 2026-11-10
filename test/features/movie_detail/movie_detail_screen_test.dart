@@ -79,6 +79,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(MediaDetailCompactBar), findsOneWidget);
+    // The bar keeps the Share action (the header's circle has scrolled away).
+    expect(
+      find.descendant(
+        of: find.byType(MediaDetailCompactBar),
+        matching: find.byIcon(AppIcons.share),
+      ),
+      findsOneWidget,
+    );
+
+    // And it stays however far down the page goes.
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -5000));
+    await tester.pumpAndSettle();
+    expect(find.byType(MediaDetailCompactBar), findsOneWidget);
   });
 
   testWidgets('shows the Duration and Classification stat cards and the '
