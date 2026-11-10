@@ -213,7 +213,9 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+      padding: AppSpacing.sectionPadding.copyWith(
+        bottom: AppSpacing.sectionGap,
+      ),
       child: Center(
         child: Text(
           context.l10n.onboardingWelcomeTmdbAttribution,

@@ -26,9 +26,9 @@ class MediaStatCards extends StatelessWidget {
     if (stats.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.md,
-        AppSpacing.xl,
+        AppSpacing.screenMargin,
+        AppSpacing.cardGap,
+        AppSpacing.screenMargin,
         0,
       ),
       child: IntrinsicHeight(
@@ -36,7 +36,7 @@ class MediaStatCards extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             for (var i = 0; i < stats.length; i++) ...[
-              if (i > 0) const SizedBox(width: AppSpacing.md),
+              if (i > 0) const SizedBox(width: AppSpacing.cardGap),
               Expanded(child: _StatCard(stat: stats[i])),
             ],
           ],
@@ -54,7 +54,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.cardPadding),
       decoration: BoxDecoration(
         color: AppColors.surfaceRaised,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),

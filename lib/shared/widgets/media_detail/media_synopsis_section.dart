@@ -48,21 +48,15 @@ class _MediaSynopsisSectionState extends State<MediaSynopsisSection> {
 
     final tagline = widget.tagline;
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.lg,
-      ),
+      padding: AppSpacing.sectionPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             context.l10n.mediaDetailSynopsis.toUpperCase(),
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.inkMuted,
-              letterSpacing: 1,
-            ),
+            style: AppTextStyles.overline,
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.itemGap),
           if (tagline != null && tagline.isNotEmpty) ...[
             Text(
               tagline,
@@ -95,9 +89,7 @@ class _MediaSynopsisSectionState extends State<MediaSynopsisSection> {
                         _expanded
                             ? context.l10n.commonReadLess
                             : context.l10n.commonReadMore,
-                        style: AppTextStyles.bodySm.copyWith(
-                          color: AppColors.accent,
-                        ),
+                        style: AppTextStyles.action,
                       ),
                     ),
                   ],

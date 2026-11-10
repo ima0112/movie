@@ -27,9 +27,11 @@ class TvSeasonsLinkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.lg,
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.screenMargin,
+        AppSpacing.cardGap,
+        AppSpacing.screenMargin,
+        0,
       ),
       child: Semantics(
         button: true,

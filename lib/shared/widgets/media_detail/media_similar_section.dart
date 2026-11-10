@@ -29,7 +29,7 @@ class MediaSimilarSection extends StatelessWidget {
     if (similar.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      padding: AppSpacing.sectionPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -37,7 +37,7 @@ class MediaSimilarSection extends StatelessWidget {
             title ?? context.l10n.mediaSimilarTitle,
             style: AppTextStyles.h2,
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.headingGap),
           MediaCarousel.standard(
             items: similar,
             showTypeTag: true,

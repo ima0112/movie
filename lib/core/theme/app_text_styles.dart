@@ -78,6 +78,24 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// Small caps label above a block ("SYNOPSIS"): 11, semibold, tracked,
+  /// muted. Callers pass the text already upper-cased.
+  static final TextStyle overline = GoogleFonts.manrope(
+    fontSize: 11,
+    height: 1.4,
+    letterSpacing: 1,
+    fontWeight: _semibold,
+    color: AppColors.inkMuted,
+  );
+
+  /// A text action in amber ("Read more", "See all"): 13, semibold.
+  static final TextStyle action = GoogleFonts.manrope(
+    fontSize: 13,
+    height: 1.5,
+    fontWeight: _semibold,
+    color: AppColors.accent,
+  );
+
   /// Text inside very small pills. 9 / 1.3, regular.
   static final TextStyle micro = GoogleFonts.manrope(
     fontSize: 9,

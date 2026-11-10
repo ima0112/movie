@@ -28,10 +28,7 @@ class TvCreatorsSection extends StatelessWidget {
     if (creators.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.md,
-      ),
+      padding: AppSpacing.sectionPadding,
       child: Wrap(
         children: [
           Text(

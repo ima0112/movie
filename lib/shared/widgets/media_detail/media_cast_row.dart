@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/domain/entities/person.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
@@ -48,7 +47,7 @@ class MediaCastRow extends StatelessWidget {
 
     final visibleCast = cast.take(_visibleCount).toList();
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+      padding: AppSpacing.sectionTopPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,16 +67,13 @@ class MediaCastRow extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     child: Text(
                       context.l10n.discoverSeeAll,
-                      style: AppTextStyles.bodySm.copyWith(
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.action,
                     ),
                   ),
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.headingGap),
           SizedBox(
             // Avatar + gap + two lines of `caption` (name, character) —
             // `xxl` alone (used for the "See full cast"/crew spacing

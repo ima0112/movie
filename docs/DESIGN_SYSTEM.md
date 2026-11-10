@@ -57,7 +57,14 @@ Familia única: **Manrope** (Google Fonts), pesos 400 (regular) y 600
 | `body` | 14–15 / 1.5 | 400 | Sinopsis, texto de tarjeta |
 | `bodySm` | 13 / 1.5 | 400 | Metadatos, subtítulos |
 | `caption` | 11–12 / 1.4 | 400 | Etiquetas, pies, atribución |
+| `overline` | 11 / 1.4, tracking 1 | 600 | Etiqueta en mayúsculas sobre un bloque ("SINOPSIS"), en gris |
+| `action` | 13 / 1.5 | 600 | Acción de texto en ámbar ("Leer más", "Ver todo") |
 | `micro` | 9–10 / 1.3 | 400 | Texto dentro de pills muy pequeñas |
+
+Regla: el tamaño, el peso y el interlineado salen siempre de un estilo de
+la tabla; `copyWith` solo cambia el **color** (o el decorado puntual). Si
+hace falta otro peso o tamaño, falta un estilo aquí: se añade, no se
+improvisa en el widget.
 
 Regla: nunca introducir una segunda familia tipográfica, ni para números
 (las cifras de Estadísticas usan la misma Manrope). Nunca usar cursiva salvo
@@ -78,6 +85,26 @@ Escala nombrada — usar siempre el nombre, nunca el número suelto:
 | `xl` | 20 (margen lateral estándar de pantalla) |
 | `xxl` | 24 |
 | `xxxl` | 32 (separación entre secciones de Descubrir) |
+
+### Roles de espaciado (distancias con nombre)
+
+Las pantallas hechas de secciones usan estos nombres en vez de elegir un
+número de la escala cada vez:
+
+| Rol | Valor | Dónde |
+|---|---|---|
+| `screenMargin` | 20 (`xl`) | Margen lateral del contenido |
+| `sectionGap` | 24 (`xxl`) | Espacio **encima** de cada sección (sinopsis, dónde ver, reparto, similares…) |
+| `headingGap` | 12 (`md`) | Título de sección → su contenido |
+| `cardGap` | 12 (`md`) | Entre tarjetas apiladas del mismo grupo (tarjeta de info → tarjetas Duración/Clasificación, Temporadas) |
+| `cardPadding` | 16 (`lg`) | Relleno interior de una tarjeta |
+| `itemGap` | 8 (`sm`) | Entre elementos pequeños relacionados |
+
+Una sección es dueña de su espacio **superior** (`sectionPadding` si su
+contenido va dentro del margen, `sectionTopPadding` si desplaza de borde a
+borde) y nunca lleva espacio inferior: así, una sección que se oculta por
+no tener datos no deja un hueco, y el ritmo vertical es idéntico en todas
+las pantallas. El pie de la pantalla usa el mismo `sectionGap`.
 
 Radios: `radiusSm` 8 · `radiusMd` 12 (pósters, tarjetas, tiles) ·
 `radiusLg` 16 (tarjetas grandes, hojas del resultado) · `radiusXl` 20
