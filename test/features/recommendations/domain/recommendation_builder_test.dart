@@ -265,7 +265,10 @@ void main() {
       );
 
       expect(result, isNotNull);
-      expect(result, isNot(contains(isA<Movie>().having((m) => m.id, 'id', 0))));
+      expect(
+        result,
+        isNot(contains(isA<Movie>().having((m) => m.id, 'id', 0))),
+      );
       expect(result!.every((m) => m.posterUrl != null), isTrue);
     });
 
