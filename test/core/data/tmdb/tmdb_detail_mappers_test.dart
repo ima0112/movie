@@ -129,6 +129,13 @@ void main() {
       },
     );
 
+    test('maps original_language and production country codes', () {
+      final detail = load('tmdb_movie_detail_full.json');
+
+      expect(detail.originalLanguage, 'en');
+      expect(detail.countryCodes, ['US', 'GB']);
+    });
+
     test('maps backdrop_path to a w780 backdrop URL', () {
       final detail = load('tmdb_movie_detail_full.json');
 
@@ -189,6 +196,13 @@ void main() {
         region: 'ES',
       );
     }
+
+    test('maps original_language and origin_country', () {
+      final detail = load();
+
+      expect(detail.originalLanguage, 'en');
+      expect(detail.countryCodes, ['US']);
+    });
 
     test('maps backdrop_path to a w780 backdrop URL', () {
       expect(

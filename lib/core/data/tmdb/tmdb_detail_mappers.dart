@@ -61,6 +61,8 @@ MovieDetail mediaDetailFromMovieDto(
       imagesConfig,
     ),
     backdropUrl: _backdropUrl(dto.backdropPath, imagesConfig),
+    originalLanguage: dto.originalLanguage,
+    countryCodes: dto.productionCountries.map((c) => c.iso31661).toList(),
     runtimeMinutes: dto.runtime,
     releaseDate: parseTmdbDate(dto.releaseDate),
     certification: _certificationFromReleaseDates(dto.releaseDates, region),
@@ -105,6 +107,8 @@ TvShowDetail mediaDetailFromTvDto(
       imagesConfig,
     ),
     backdropUrl: _backdropUrl(dto.backdropPath, imagesConfig),
+    originalLanguage: dto.originalLanguage,
+    countryCodes: dto.originCountry,
     creators: dto.createdBy
         .map(
           (c) => Person(

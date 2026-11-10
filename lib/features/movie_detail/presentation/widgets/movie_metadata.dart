@@ -1,5 +1,6 @@
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/media_detail/language_chip_label.dart';
 
 /// D1's metadata-line formatting — "2019 · 2 h 10 min · PG-13". D1's info
 /// card itself now shows just the year before the genres plus
@@ -27,12 +28,21 @@ String _formatRuntime(int minutes, AppLocalizations l10n) {
       : l10n.myListRuntimeMinutesOnly(m);
 }
 
-/// The info card's extra chips after the rating: runtime ("2 h 28 min") and
-/// the certification ("PG-13"), whichever exist.
+/// The info card's extra chips after the rating: the original language
+/// ("EN"), runtime ("2 h 28 min") and the certification ("PG-13"),
+/// whichever exist.
 List<String> movieInfoChips(MovieDetail detail, AppLocalizations l10n) {
   final runtime = detail.runtimeMinutes;
   return [
+    ?languageChipLabel(detail.originalLanguage),
     if (runtime != null) _formatRuntime(runtime, l10n),
     ?detail.certification,
   ];
 }
+
+/// The info card's text before the genres: "2010 · US" — the release year
+/// and the main production country's ISO code (codes need no translation).
+String movieMetaPrefix(MovieDetail detail) => [
+  ?detail.releaseDate?.year,
+  if (detail.countryCodes.isNotEmpty) detail.countryCodes.first,
+].join(' · ');

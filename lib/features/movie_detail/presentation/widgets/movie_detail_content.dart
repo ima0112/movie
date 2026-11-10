@@ -123,7 +123,7 @@ class MovieDetailContent extends StatelessWidget {
               mediaKey: mediaKey,
               userLibraryRepository: userLibraryRepository,
               mediaDetail: detail,
-              metaPrefix: [?detail.releaseDate?.year].join(),
+              metaPrefix: movieMetaPrefix(detail),
               extraChips: movieInfoChips(detail, context.l10n),
               onGenreTap: (genre) => context.push(
                 AppRoutes.filteredList,

@@ -23,6 +23,8 @@ sealed class MediaDetail {
     required this.status,
     required this.watchProviders,
     this.backdropUrl,
+    this.originalLanguage,
+    this.countryCodes = const [],
   });
 
   final MediaItem item;
@@ -43,6 +45,12 @@ sealed class MediaDetail {
   /// A full-width 16:9 backdrop URL for the detail header, or `null` when
   /// TMDB has none (the header then falls back to the poster).
   final String? backdropUrl;
+
+  /// ISO 639-1 code of the original language (`en`), or `null`.
+  final String? originalLanguage;
+
+  /// ISO 3166-1 codes of the production / origin countries, first = main.
+  final List<String> countryCodes;
 
   /// The user's own language, for [trailer]'s own "+ user's language"
   /// tier — matches `LocaleInterceptor`'s own `en`/`US` default, since
@@ -86,6 +94,8 @@ final class MovieDetail extends MediaDetail {
     required super.status,
     required super.watchProviders,
     super.backdropUrl,
+    super.originalLanguage,
+    super.countryCodes,
     required this.runtimeMinutes,
     required this.releaseDate,
     required this.certification,
@@ -109,6 +119,8 @@ final class TvShowDetail extends MediaDetail {
     required super.status,
     required super.watchProviders,
     super.backdropUrl,
+    super.originalLanguage,
+    super.countryCodes,
     required this.creators,
     required this.seasons,
     required this.numberOfEpisodes,

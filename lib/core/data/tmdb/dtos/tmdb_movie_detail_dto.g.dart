@@ -34,6 +34,14 @@ TmdbMovieDetailDto _$TmdbMovieDetailDtoFromJson(Map<String, dynamic> json) =>
         json['watch/providers'] as Map<String, dynamic>,
       ),
       backdropPath: json['backdrop_path'] as String?,
+      originalLanguage: json['original_language'] as String?,
+      productionCountries:
+          (json['production_countries'] as List<dynamic>?)
+              ?.map(
+                (e) => TmdbCountryRefDto.fromJson(e as Map<String, dynamic>),
+              )
+              .toList() ??
+          [],
     );
 
 TmdbReleaseDatesDto _$TmdbReleaseDatesDtoFromJson(Map<String, dynamic> json) =>
@@ -60,3 +68,6 @@ TmdbReleaseDateEntryDto _$TmdbReleaseDateEntryDtoFromJson(
 ) => TmdbReleaseDateEntryDto(
   certification: json['certification'] as String? ?? '',
 );
+
+TmdbCountryRefDto _$TmdbCountryRefDtoFromJson(Map<String, dynamic> json) =>
+    TmdbCountryRefDto(iso31661: json['iso_3166_1'] as String);
