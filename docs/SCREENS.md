@@ -161,11 +161,11 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 
 ### D1. Movie detail
 - Access: any movie card, poster, or row. Pushed screen; poster Hero transition.
-- Header (55% of the height): full-bleed poster with slow parallax on scroll, fade to black starting at 60% of the poster; back circle (60% black) top left. Over the fade, centered: 32/500 title (max 2 lines, then 28), "2019 · 2 h 10 min · PG-13", "★ 7.9 · 12k votes", genres as tappable amber text separated by "·" (→ C1 with that genre and type Movies). When the title scrolls past the top, a compact black bar appears with back and the title at 16 px.
+- Header (320 px): TMDB's 16:9 backdrop, full width (the poster when TMDB has no backdrop), with a 35% dark scrim at the top and a fade into the page color starting at 30%; back circle (translucent black) top left. Over the fade, left-aligned: the 32 px title (max 2 lines) with the italic muted tagline under it, if any. When the title scrolls past the top, a compact black bar appears with back and the title at 16 px.
 - White pill "Trailer" button with a play icon, full width (opens YouTube: app scheme, then browser; selection: official + Trailer + user's language → official → Teaser → first available). No trailer: the button becomes "See similar" and scrolls to that section. Multiple trailers: an icon on the right with a menu.
-- Row of three actions in 44 px bordered rounded boxes: Favorite and Watch later as icon-only squares (their names are accessibility labels), Watched as a wide button with icon and label. Active = filled icon, amber border and a faint amber tint. "Watched" opens H2; if it was in Watch later it's removed with a snackbar "Marked as watched · Removed from Watch later". Tapping "Watched" again opens H2 with current values and a red "Remove from Watched" link.
+- Info card under the button (`surfaceRaised`, radius 16, hairline border): the 100×150 poster on the left; on the right "year · genres" in muted text (each genre tappable → C1 with that genre and type Movies), info chips (★ rating, runtime "2 h 28 min", certification "PG-13", whichever exist), and the row of three actions in 44 px bordered rounded boxes: Favorite and Watch later as icon-only squares (their names are accessibility labels), Watched as a wide button with icon and label. Active = filled icon, amber border and a faint amber tint. "Watched" opens H2; if it was in Watch later it's removed with a snackbar "Marked as watched · Removed from Watch later". Tapping "Watched" again opens H2 with current values and a red "Remove from Watched" link.
 - **Where to watch**: title with the region in gray on the right (tappable → H6); Subscription / Rent / Buy rows shown only if they have data, with 40 px provider logos (8 px radius, max 6 and "+N"); tap → opens TMDB's `link` in the browser. No data for the region: "Not available to stream in Spain". No data anywhere: the section doesn't appear. Mandatory 11 px footer "Data from JustWatch".
-- Synopsis folded to 4 lines with an amber "Read more"; italic tagline if present.
+- Synopsis folded to 4 lines with an amber "Read more" (the tagline lives in the header).
 - Cast: 10 circles at 64 px with name and character (→ D3); "See full cast" → H3.
 - Director and writer: tappable names separated by "·" (→ D3).
 - Similar: standard carousel, no "See all".
@@ -175,7 +175,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 
 ### D2. TV show detail
 - Same as D1 with these changes:
-  - Metadata line: "Year–Year · N seasons · M episodes · Rating".
+  - The info card's meta line: "Year–Year · N seasons · M episodes · Rating", then the genres (D2 has no runtime/certification chips).
   - Status pill next to the title: "Airing" (accent) / "Ended" / "Cancelled" (neutral).
   - "Created by": names (→ D3).
   - "Seasons" section: one bordered `surfaceRaised` card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.

@@ -19,9 +19,7 @@ class MediaDetailSkeleton extends StatelessWidget {
       children: [
         SkeletonBlock(
           width: width,
-          height:
-              MediaQuery.sizeOf(context).height *
-              MediaDetailHeader.heightFraction,
+          height: MediaDetailHeader.height,
           borderRadius: BorderRadius.zero,
         ),
         const SizedBox(height: AppSpacing.xxl),

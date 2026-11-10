@@ -39,9 +39,10 @@ class TvDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaKey = MediaKey(type: MediaType.tvShow, tmdbId: tvId);
     return BlocProvider(
-      create: (_) =>
-          TvDetailCubit(getIt<MediaRepository>(), getIt<UserLibraryRepository>())
-            ..loadDetail(mediaKey),
+      create: (_) => TvDetailCubit(
+        getIt<MediaRepository>(),
+        getIt<UserLibraryRepository>(),
+      )..loadDetail(mediaKey),
       child: _TvDetailView(mediaKey: mediaKey),
     );
   }
@@ -68,8 +69,7 @@ class _TvDetailViewState extends State<_TvDetailView> {
   }
 
   void _onScroll() {
-    final headerHeight =
-        MediaQuery.sizeOf(context).height * MediaDetailHeader.heightFraction;
+    final headerHeight = MediaDetailHeader.height;
     _showCompactBar.value =
         _scrollController.offset > headerHeight - kToolbarHeight;
   }

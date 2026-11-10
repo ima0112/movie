@@ -37,9 +37,10 @@ class MovieDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaKey = MediaKey(type: MediaType.movie, tmdbId: movieId);
     return BlocProvider(
-      create: (_) =>
-          MovieDetailCubit(getIt<MediaRepository>(), getIt<UserLibraryRepository>())
-            ..loadDetail(mediaKey),
+      create: (_) => MovieDetailCubit(
+        getIt<MediaRepository>(),
+        getIt<UserLibraryRepository>(),
+      )..loadDetail(mediaKey),
       child: _MovieDetailView(mediaKey: mediaKey),
     );
   }
@@ -65,12 +66,11 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
     _scrollController.addListener(_onScroll);
   }
 
-  // The bar appears once the header (55% of the screen, per
-  // MediaDetailHeader.heightFraction) has scrolled past a compact bar's
+  // The bar appears once the header (320 px, per
+  // MediaDetailHeader.height) has scrolled past a compact bar's
   // worth of space — i.e. the title itself has left the top.
   void _onScroll() {
-    final headerHeight =
-        MediaQuery.sizeOf(context).height * MediaDetailHeader.heightFraction;
+    final headerHeight = MediaDetailHeader.height;
     _showCompactBar.value =
         _scrollController.offset > headerHeight - kToolbarHeight;
   }
