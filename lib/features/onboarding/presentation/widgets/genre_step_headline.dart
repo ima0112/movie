@@ -11,6 +11,7 @@ class GenreStepHeadline extends StatelessWidget {
     required this.text,
     this.highlightWord,
     this.style,
+    this.textAlign,
   });
 
   final String text;
@@ -19,15 +20,19 @@ class GenreStepHeadline extends StatelessWidget {
   /// Defaults to `h1`; the intro slides pass `display`.
   final TextStyle? style;
 
+  /// Defaults to start-aligned; the intro slides center it.
+  final TextAlign? textAlign;
+
   @override
   Widget build(BuildContext context) {
     final textStyle = style ?? AppTextStyles.h1;
     final word = highlightWord;
     final index = word == null ? -1 : text.indexOf(word);
     if (index == -1) {
-      return Text(text, style: textStyle);
+      return Text(text, style: textStyle, textAlign: textAlign);
     }
     return Text.rich(
+      textAlign: textAlign,
       TextSpan(
         style: textStyle,
         children: [

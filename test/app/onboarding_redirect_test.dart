@@ -106,7 +106,7 @@ void main() {
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Step 2 of 3'), findsOneWidget);
+    expect(find.text('What do you like?'), findsOneWidget);
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
 

@@ -7,6 +7,7 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import 'genre_step_headline.dart';
 import 'intro_phone_frame.dart';
+import 'onboarding_glow_background.dart';
 import 'onboarding_pager_dots.dart';
 
 /// Layout of one intro slide (`docs/SCREENS.md` A2): "Skip" top right, a
@@ -48,15 +49,7 @@ class OnboardingIntroSlide extends StatelessWidget {
     final l10n = context.l10n;
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.bottomCenter,
-            radius: 1.1,
-            colors: [AppColors.accentDeep, AppColors.surface],
-            stops: [0, 0.7],
-          ),
-        ),
+      body: OnboardingGlowBackground(
         child: SafeArea(
           // The text block may take up to half the screen (scrolling past
           // that with large text); the phone area gets everything left.
@@ -89,6 +82,7 @@ class OnboardingIntroSlide extends StatelessWidget {
                           text: headline,
                           highlightWord: highlightWord,
                           style: AppTextStyles.display,
+                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AppSpacing.md),
                         Text(

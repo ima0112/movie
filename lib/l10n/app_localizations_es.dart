@@ -272,13 +272,20 @@ class AppLocalizationsEs extends AppLocalizations {
       'Gustos guardados · Edítalos en Tú';
 
   @override
-  String get onboardingGenreStep2Label => 'Paso 2 de 3';
-
-  @override
   String get onboardingGenreStep3Label => 'Paso 3 de 3';
 
   @override
-  String get onboardingGenreStep2Headline => '¿Qué géneros te gustan?';
+  String get onboardingLikedEyebrow => 'Hazla tuya';
+
+  @override
+  String get onboardingLikedHeadline => '¿Qué te gusta?';
+
+  @override
+  String get onboardingLikedHighlight => 'gusta';
+
+  @override
+  String get onboardingLikedBody =>
+      'Elige algunos géneros para personalizar Descubrir. Podrás afinar más en Tú › Mis gustos.';
 
   @override
   String get onboardingGenreStep3Headline => '¿Y cuáles nunca?';
