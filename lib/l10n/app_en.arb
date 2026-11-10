@@ -330,6 +330,46 @@
     "description": "CarouselSection.popular — TV Shows segment only (docs/SCREENS.md B1). CarouselSection.watchLater reuses myListTabWatchLater instead of its own key."
   },
 
+  "exploreGenreLabel": "Genre",
+  "@exploreGenreLabel": {
+    "description": "The small caps label above B2's genre pills."
+  },
+  "explorePlatformLabel": "Platform",
+  "@explorePlatformLabel": {
+    "description": "The small caps label above B2's streaming-platform pills."
+  },
+  "exploreGenreAll": "All",
+  "@exploreGenreAll": {
+    "description": "The \"no genre filter\" pill (masculine in Spanish, like \"Géneros\")."
+  },
+  "explorePlatformAll": "All",
+  "@explorePlatformAll": {
+    "description": "The \"no platform filter\" pill (feminine in Spanish, like \"Plataformas\")."
+  },
+  "exploreSectionTopToday": "Top today",
+  "@exploreSectionTopToday": {
+    "description": "B2 body section: the most popular titles right now, numbered."
+  },
+  "exploreSectionTopRated": "Top rated",
+  "@exploreSectionTopRated": {
+    "description": "B2 body section: the best rated titles."
+  },
+  "exploreSectionNewReleases": "New releases",
+  "@exploreSectionNewReleases": {
+    "description": "B2 body section: titles released in the last two months."
+  },
+  "exploreSectionHiddenGems": "Hidden gems",
+  "@exploreSectionHiddenGems": {
+    "description": "B2 body section: well rated titles few people have voted on."
+  },
+  "exploreBrowseEmptyTitle": "Nothing for these filters",
+  "@exploreBrowseEmptyTitle": {
+    "description": "B2 body empty state when the chosen genre/platform leaves every section empty."
+  },
+  "exploreBrowseEmptyBody": "Try another genre or platform.",
+  "@exploreBrowseEmptyBody": {
+    "description": "Body of exploreBrowseEmptyTitle."
+  },
   "exploreNoResults": "No results",
   "exploreTryAnotherTitle": "Try another title",
   "exploreDefaultResultsTitle": "Results",

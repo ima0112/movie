@@ -387,6 +387,37 @@ class AppLocalizationsEs extends AppLocalizations {
   String get carouselSectionPopular => 'Populares';
 
   @override
+  String get exploreGenreLabel => 'Género';
+
+  @override
+  String get explorePlatformLabel => 'Plataforma';
+
+  @override
+  String get exploreGenreAll => 'Todos';
+
+  @override
+  String get explorePlatformAll => 'Todas';
+
+  @override
+  String get exploreSectionTopToday => 'Top de hoy';
+
+  @override
+  String get exploreSectionTopRated => 'Mejor valoradas';
+
+  @override
+  String get exploreSectionNewReleases => 'Estrenos';
+
+  @override
+  String get exploreSectionHiddenGems => 'Joyas ocultas';
+
+  @override
+  String get exploreBrowseEmptyTitle => 'Nada con estos filtros';
+
+  @override
+  String get exploreBrowseEmptyBody =>
+      'Prueba con otro género u otra plataforma.';
+
+  @override
   String get exploreNoResults => 'Sin resultados';
 
   @override

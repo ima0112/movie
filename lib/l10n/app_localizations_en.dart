@@ -386,6 +386,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionPopular => 'Popular';
 
   @override
+  String get exploreGenreLabel => 'Genre';
+
+  @override
+  String get explorePlatformLabel => 'Platform';
+
+  @override
+  String get exploreGenreAll => 'All';
+
+  @override
+  String get explorePlatformAll => 'All';
+
+  @override
+  String get exploreSectionTopToday => 'Top today';
+
+  @override
+  String get exploreSectionTopRated => 'Top rated';
+
+  @override
+  String get exploreSectionNewReleases => 'New releases';
+
+  @override
+  String get exploreSectionHiddenGems => 'Hidden gems';
+
+  @override
+  String get exploreBrowseEmptyTitle => 'Nothing for these filters';
+
+  @override
+  String get exploreBrowseEmptyBody => 'Try another genre or platform.';
+
+  @override
   String get exploreNoResults => 'No results';
 
   @override

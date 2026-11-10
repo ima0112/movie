@@ -794,6 +794,66 @@ abstract class AppLocalizations {
   /// **'Popular'**
   String get carouselSectionPopular;
 
+  /// The small caps label above B2's genre pills.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre'**
+  String get exploreGenreLabel;
+
+  /// The small caps label above B2's streaming-platform pills.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get explorePlatformLabel;
+
+  /// The "no genre filter" pill (masculine in Spanish, like "Géneros").
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get exploreGenreAll;
+
+  /// The "no platform filter" pill (feminine in Spanish, like "Plataformas").
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get explorePlatformAll;
+
+  /// B2 body section: the most popular titles right now, numbered.
+  ///
+  /// In en, this message translates to:
+  /// **'Top today'**
+  String get exploreSectionTopToday;
+
+  /// B2 body section: the best rated titles.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get exploreSectionTopRated;
+
+  /// B2 body section: titles released in the last two months.
+  ///
+  /// In en, this message translates to:
+  /// **'New releases'**
+  String get exploreSectionNewReleases;
+
+  /// B2 body section: well rated titles few people have voted on.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden gems'**
+  String get exploreSectionHiddenGems;
+
+  /// B2 body empty state when the chosen genre/platform leaves every section empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing for these filters'**
+  String get exploreBrowseEmptyTitle;
+
+  /// Body of exploreBrowseEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another genre or platform.'**
+  String get exploreBrowseEmptyBody;
+
   /// No description provided for @exploreNoResults.
   ///
   /// In en, this message translates to:
