@@ -73,7 +73,7 @@ class ExploreSectionCarousel extends StatelessWidget {
           final date = item.releaseDate;
           return date == null
               ? null
-              : DateFormat.MMMd(l10n.localeName).format(date);
+              : DateFormat.yMMMd(l10n.localeName).format(date);
         },
         onItemTap: onItemTap,
       ),

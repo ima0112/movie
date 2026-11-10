@@ -70,7 +70,7 @@ void main() {
   testWidgets('Coming soon shows the release date under each poster; '
       'Finished shows carry a rating badge', (tester) async {
     await _pump(tester, CarouselSection.comingSoon);
-    expect(find.text('Mar 1'), findsOneWidget);
+    expect(find.text('Mar 1, 2026'), findsOneWidget);
 
     await _pump(tester, CarouselSection.finishedShows);
     expect(find.text('7.5'), findsWidgets);

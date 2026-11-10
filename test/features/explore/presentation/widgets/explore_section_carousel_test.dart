@@ -81,7 +81,7 @@ void main() {
   ) async {
     await _pump(tester, ExploreSection.comingSoon);
     expect(_firstCard(tester), const Size(90, 135));
-    expect(find.text('Dec 16'), findsWidgets);
+    expect(find.textContaining('Dec 16, '), findsWidgets);
   });
 
   testWidgets('Hidden gems: medium posters with a rating badge', (
