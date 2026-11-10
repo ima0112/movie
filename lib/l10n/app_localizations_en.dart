@@ -672,6 +672,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tvEpisodesSectionTitle => 'Episodes';
 
   @override
+  String tvEpisodeCode(int season, int episode) {
+    return 'S$season · E$episode';
+  }
+
+  @override
+  String tvEpisodeCodeSpecials(int episode) {
+    return 'Specials · E$episode';
+  }
+
+  @override
   String get tvSeasonsSectionTitle => 'Seasons';
 
   @override

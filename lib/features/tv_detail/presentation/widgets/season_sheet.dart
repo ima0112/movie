@@ -11,6 +11,7 @@ import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/season_cubit.dart';
+import 'episode_sheet.dart';
 import 'season_episode_row.dart';
 import 'season_header_card.dart';
 import 'season_overview.dart';
@@ -58,6 +59,17 @@ class _SeasonSheetView extends StatelessWidget {
   final String? showTitle;
 
   static const double _heightFactor = 0.85;
+
+  void _openEpisode(BuildContext context, Episode episode) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => EpisodeSheet(
+        seasonNumber: seasonSummary.seasonNumber,
+        episode: episode,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +121,10 @@ class _SeasonSheetView extends StatelessWidget {
                           ),
                         ),
                         for (final episode in season.episodes)
-                          SeasonEpisodeRow(episode: episode),
+                          SeasonEpisodeRow(
+                            episode: episode,
+                            onTap: () => _openEpisode(context, episode),
+                          ),
                       ],
                     ),
                   };

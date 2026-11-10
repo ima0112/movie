@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -19,6 +20,7 @@ class SeasonEpisodeRow extends StatelessWidget {
   static const double _stillWidth = 112;
   static const double _stillHeight = 64;
   static const double _badgeHeight = 22;
+  static const double _chevronSize = 20;
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +128,14 @@ class SeasonEpisodeRow extends StatelessWidget {
                 ],
               ),
             ),
+            if (onTap != null) ...[
+              const SizedBox(width: AppSpacing.sm),
+              const Icon(
+                AppIcons.chevronRight,
+                size: _chevronSize,
+                color: AppColors.inkMuted,
+              ),
+            ],
           ],
         ),
       ),
