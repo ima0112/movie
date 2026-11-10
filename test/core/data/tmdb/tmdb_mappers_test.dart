@@ -138,4 +138,36 @@ void main() {
       });
     },
   );
+
+  group('list items carry the backdrop', () {
+    test('a movie and a TV show map backdrop_path to a w780 URL, or null', () {
+      final movie = mediaItemFromMovieDto(
+        TmdbMovieListItemDto.fromJson({
+          'id': 1,
+          'title': 'M',
+          'poster_path': '/p.jpg',
+          'backdrop_path': '/b.jpg',
+          'genre_ids': <int>[],
+          'release_date': '2026-01-01',
+          'vote_average': 8.0,
+        }),
+        imagesConfig: imagesConfig,
+      );
+      expect(movie.backdropUrl, endsWith('/w780/b.jpg'));
+
+      final tv = mediaItemFromTvDto(
+        TmdbTvListItemDto.fromJson({
+          'id': 2,
+          'name': 'T',
+          'poster_path': null,
+          'backdrop_path': null,
+          'genre_ids': <int>[],
+          'first_air_date': '2026-01-01',
+          'vote_average': 7.0,
+        }),
+        imagesConfig: imagesConfig,
+      );
+      expect(tv.backdropUrl, isNull);
+    });
+  });
 }

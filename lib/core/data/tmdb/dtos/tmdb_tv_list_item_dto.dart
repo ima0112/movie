@@ -17,6 +17,7 @@ class TmdbTvListItemDto {
     required this.genreIds,
     required this.firstAirDate,
     required this.voteAverage,
+    this.backdropPath,
     this.mediaType,
     this.character,
     this.job,
@@ -27,6 +28,9 @@ class TmdbTvListItemDto {
 
   @JsonKey(name: 'poster_path')
   final String? posterPath;
+
+  @JsonKey(name: 'backdrop_path')
+  final String? backdropPath;
 
   @JsonKey(name: 'genre_ids', defaultValue: <int>[])
   final List<int> genreIds;

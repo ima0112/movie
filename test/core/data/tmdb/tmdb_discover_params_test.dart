@@ -341,4 +341,14 @@ void main() {
       expect(a.isDefault, isFalse);
     });
   });
+
+  test('sorting by votes sends vote_count.desc for both types', () {
+    for (final type in MediaType.values) {
+      final params = discoverQueryParams(
+        const DiscoverFilter(sortBy: DiscoverSortBy.voteCount),
+        type: type,
+      );
+      expect(params['sort_by'], 'vote_count.desc');
+    }
+  });
 }

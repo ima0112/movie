@@ -1141,6 +1141,8 @@ class FakeMediaRepository implements MediaRepository {
   ) {
     return switch (sortBy) {
       DiscoverSortBy.popularity => null,
+      // The sample items carry no vote count: keep their declared order.
+      DiscoverSortBy.voteCount => null,
       DiscoverSortBy.rating => (a, b) => b.voteAverage.compareTo(a.voteAverage),
       DiscoverSortBy.releaseDate =>
         (a, b) => (b.releaseDate ?? DateTime(0)).compareTo(

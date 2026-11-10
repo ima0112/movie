@@ -1,4 +1,3 @@
-import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
@@ -49,19 +48,17 @@ final class ExploreServicesError extends ExploreServicesState {
   final FailureReason reason;
 }
 
-/// B2 at rest: the Genre and Platform pills and the four body sections they
-/// filter. `null` [genre] / [service] mean "All".
+/// B2 at rest: the Platform pills and the body sections they filter. A
+/// `null` [service] means "All".
 final class ExploreBrowseState {
   const ExploreBrowseState({
     required this.segment,
-    this.genre,
     this.service,
     this.services = const ExploreServicesLoading(),
     this.sections = const {},
   });
 
   final MediaSegment segment;
-  final Genre? genre;
   final StreamingService? service;
   final ExploreServicesState services;
 
@@ -73,14 +70,12 @@ final class ExploreBrowseState {
 
   ExploreBrowseState copyWith({
     MediaSegment? segment,
-    Genre? Function()? genre,
     StreamingService? Function()? service,
     ExploreServicesState? services,
     Map<ExploreSection, ExploreSectionState>? sections,
   }) {
     return ExploreBrowseState(
       segment: segment ?? this.segment,
-      genre: genre == null ? this.genre : genre(),
       service: service == null ? this.service : service(),
       services: services ?? this.services,
       sections: sections ?? this.sections,

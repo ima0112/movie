@@ -150,6 +150,7 @@
   "discoverSortRating": "Rating",
   "discoverSortDate": "Date",
   "discoverSortTitle": "Title",
+  "discoverSortVotes": "Most voted",
 
   "myListTabFavorites": "Favorites",
   "myListTabWatchLater": "Watch later",
@@ -330,17 +331,9 @@
     "description": "CarouselSection.popular — TV Shows segment only (docs/SCREENS.md B1). CarouselSection.watchLater reuses myListTabWatchLater instead of its own key."
   },
 
-  "exploreGenreLabel": "Genre",
-  "@exploreGenreLabel": {
-    "description": "The small caps label above B2's genre pills."
-  },
   "explorePlatformLabel": "Platform",
   "@explorePlatformLabel": {
     "description": "The small caps label above B2's streaming-platform pills."
-  },
-  "exploreGenreAll": "All",
-  "@exploreGenreAll": {
-    "description": "The \"no genre filter\" pill (masculine in Spanish, like \"Géneros\")."
   },
   "explorePlatformAll": "All",
   "@explorePlatformAll": {
@@ -349,6 +342,14 @@
   "exploreSectionTopToday": "Top today",
   "@exploreSectionTopToday": {
     "description": "B2 body section: the most popular titles right now, numbered."
+  },
+  "exploreSectionPopular": "Popular",
+  "@exploreSectionPopular": {
+    "description": "B2 body section: the most voted titles of all time (the classics)."
+  },
+  "exploreSectionComingSoon": "Coming soon",
+  "@exploreSectionComingSoon": {
+    "description": "B2 body section: titles releasing in the next three months."
   },
   "exploreSectionTopRated": "Top rated",
   "@exploreSectionTopRated": {

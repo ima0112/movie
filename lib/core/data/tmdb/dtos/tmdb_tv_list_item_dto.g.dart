@@ -18,6 +18,7 @@ TmdbTvListItemDto _$TmdbTvListItemDtoFromJson(Map<String, dynamic> json) =>
           [],
       firstAirDate: json['first_air_date'] as String? ?? '',
       voteAverage: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
+      backdropPath: json['backdrop_path'] as String?,
       mediaType: json['media_type'] as String?,
       character: json['character'] as String?,
       job: json['job'] as String?,

@@ -196,6 +196,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discoverSortTitle => 'Title';
 
   @override
+  String get discoverSortVotes => 'Most voted';
+
+  @override
   String get myListTabFavorites => 'Favorites';
 
   @override
@@ -386,19 +389,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionPopular => 'Popular';
 
   @override
-  String get exploreGenreLabel => 'Genre';
-
-  @override
   String get explorePlatformLabel => 'Platform';
-
-  @override
-  String get exploreGenreAll => 'All';
 
   @override
   String get explorePlatformAll => 'All';
 
   @override
   String get exploreSectionTopToday => 'Top today';
+
+  @override
+  String get exploreSectionPopular => 'Popular';
+
+  @override
+  String get exploreSectionComingSoon => 'Coming soon';
 
   @override
   String get exploreSectionTopRated => 'Top rated';
