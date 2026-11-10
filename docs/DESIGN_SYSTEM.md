@@ -220,6 +220,17 @@ icono a ojo, para que quede consistente entre pantallas.
 
 ## 5. Componentes base (hoja de componentes)
 
+**Tabs / segmented control — un solo diseño.** `AppSegmentedControl`
+(`shared/widgets/app_segmented_control.dart`): una pastilla contenedora
+(`surfaceRaised`, radio pill, 4 de margen interior, 40 de alto que crece con
+el tamaño de texto) con la opción elegida como pastilla blanca (`ink`, texto
+`surface`, `bodySm` seminegrita) y las demás en gris (`inkMuted`). Es el
+único componente de pestañas: Descubrir, Explorar, Mi lista (con contadores
+en vivo), Estadísticas, Filmografía y Reparto/Equipo lo usan, y cualquier
+lugar nuevo que necesite pestañas también. Los chips sueltos
+(`AppChip`) quedan para filtros de selección múltiple dentro de hojas de
+filtros, no para cambiar de vista.
+
 Construir estos ocho antes que ninguna pantalla completa, en una ruta de
 depuración (`/debug/components`) que los liste todos:
 

@@ -15,7 +15,7 @@ import '../widgets/stats_activity_strip.dart';
 import '../widgets/stats_empty_state.dart';
 import '../widgets/stats_genre_bars.dart';
 import '../widgets/stats_metric_grid.dart';
-import '../widgets/stats_type_filter_chips.dart';
+import '../widgets/stats_type_tabs.dart';
 
 /// Stats (C4) — pushed from B5's "See stats" link.
 ///
@@ -27,7 +27,7 @@ import '../widgets/stats_type_filter_chips.dart';
 ///
 /// Thin per CLAUDE.md rule 11: provides [StatsCubit] and assembles the
 /// widgets in `../widgets/`. Two scoped rebuilders, not one screen-wide
-/// `BlocBuilder` (rule 9): [StatsTypeFilterChips] only needs
+/// `BlocBuilder` (rule 9): [StatsTypeTabs] only needs
 /// `filterType`, the content area only needs `stats` — a filter change
 /// legitimately invalidates every number/bar at once, so one builder for
 /// "the content" is the same shape as `DiscoverContentArea` (the one
@@ -69,7 +69,7 @@ class _StatsView extends StatelessWidget {
             ),
             child: BlocSelector<StatsCubit, StatsState, MediaType?>(
               selector: (state) => state.filterType,
-              builder: (context, filterType) => StatsTypeFilterChips(
+              builder: (context, filterType) => StatsTypeTabs(
                 filterType: filterType,
                 onSelected: context.read<StatsCubit>().selectFilter,
               ),

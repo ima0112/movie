@@ -94,7 +94,6 @@ class _ExploreSegmentedControl extends StatelessWidget {
       selector: (state) => state.segment,
       builder: (context, segment) {
         return MediaSegmentedControl(
-          style: MediaSegmentedStyle.pill,
           segment: segment,
           onSelected: (value) =>
               context.read<ExploreCubit>().selectSegment(value),
