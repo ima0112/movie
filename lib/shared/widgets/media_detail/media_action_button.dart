@@ -30,6 +30,7 @@ class MediaActionButton extends StatelessWidget {
 
   static const double size = 44;
   static const double _iconSize = 20;
+  static const double _activeTint = 0.14;
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +56,15 @@ class MediaActionButton extends StatelessWidget {
               : null,
           alignment: Alignment.center,
           decoration: BoxDecoration(
+            // Active = amber border on a faint amber tint (the "Vista"
+            // state in the Detalle designs).
+            color: isActive
+                ? AppColors.accent.withValues(alpha: _activeTint)
+                : null,
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            border: Border.all(color: AppColors.lineStrong),
+            border: Border.all(
+              color: isActive ? AppColors.accent : AppColors.lineStrong,
+            ),
           ),
           child: showLabel
               ? Row(

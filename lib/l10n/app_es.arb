@@ -247,6 +247,8 @@
 
   "mediaDetailHaveYouFinished": "¿Has terminado {title}?",
   "mediaDetailMarkAsWatched": "Marcar como visto",
+  "mediaDetailDateLabel": "Fecha",
+  "mediaDetailRatingStarLabel": "{count} de 5",
   "mediaDetailYourRating": "Tu valoración",
   "mediaDetailRemoveFromWatched": "Quitar de Vistos",
 

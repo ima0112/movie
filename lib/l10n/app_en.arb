@@ -687,6 +687,14 @@
   "@mediaDetailMarkAsWatched": {
     "description": "H2's own heading for a movie (docs/SCREENS.md H2)."
   },
+  "mediaDetailDateLabel": "Date",
+  "mediaDetailRatingStarLabel": "{count} of 5",
+  "@mediaDetailRatingStarLabel": {
+    "description": "Accessibility label of one of H2's five rating stars (e.g. \"4 of 5\").",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "mediaDetailYourRating": "Your rating",
   "mediaDetailRemoveFromWatched": "Remove from Watched",
   "@mediaDetailRemoveFromWatched": {

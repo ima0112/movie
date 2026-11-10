@@ -702,6 +702,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaDetailMarkAsWatched => 'Mark as watched';
 
   @override
+  String get mediaDetailDateLabel => 'Date';
+
+  @override
+  String mediaDetailRatingStarLabel(int count) {
+    return '$count of 5';
+  }
+
+  @override
   String get mediaDetailYourRating => 'Your rating';
 
   @override
