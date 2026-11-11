@@ -848,12 +848,6 @@ abstract class AppLocalizations {
   /// **'All platforms'**
   String get sectionListingAllPlatforms;
 
-  /// C1b: how many titles the list has, under its title in the top bar (docs/SCREENS.md C1b).
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 title} other{{count} titles}}'**
-  String sectionListingCount(int count);
-
   /// No description provided for @sectionListingEmptyTitle.
   ///
   /// In en, this message translates to:

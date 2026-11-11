@@ -10,6 +10,7 @@ import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/streaming_service.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
@@ -112,8 +113,8 @@ void main() {
     await _settle(tester);
   }
 
-  testWidgets('shows the title with the count under it, the context pill, '
-      'the sort icon and a 3-column grid', (tester) async {
+  testWidgets('shows the title, an amber pill (platform, genre, count), the '
+      'sort icon and a 2-column grid', (tester) async {
     await pump(
       tester,
       context: const ListingContext.explore(
@@ -124,23 +125,44 @@ void main() {
     );
 
     expect(find.text('Hidden gems'), findsOneWidget);
-    expect(find.text('120 titles'), findsOneWidget); // under the title
-    expect(find.textContaining('Default order'), findsNothing); // no summary
+    expect(find.textContaining('titles'), findsNothing); // not under the title
     // The pill: the platform's logo (its initial, no image here), a dot, the
-    // genre — and not the segment.
+    // genre, a dot, and the bare count — not the segment.
     expect(find.text('N'), findsOneWidget);
-    expect(find.text('·'), findsOneWidget);
+    expect(find.text('·'), findsNWidgets(2));
     expect(find.text('Comedy'), findsOneWidget);
+    expect(find.text('120'), findsOneWidget);
     expect(find.text('Movies'), findsNothing);
+    // Amber background, black (onAccent) text.
+    final pill = tester.widget<Container>(
+      find
+          .ancestor(of: find.text('Comedy'), matching: find.byType(Container))
+          .first,
+    );
+    expect((pill.decoration! as BoxDecoration).color, AppColors.accent);
+    expect(
+      tester.widget<Text>(find.text('Comedy')).style!.color,
+      AppColors.onAccent,
+    );
     expect(find.byIcon(AppIcons.sort), findsOneWidget);
-    // Three posters share the first row.
+    // Two posters share the first row.
     final first = tester.getTopLeft(find.byType(MediaCard).at(0)).dy;
     expect(tester.getTopLeft(find.byType(MediaCard).at(1)).dy, first);
-    expect(tester.getTopLeft(find.byType(MediaCard).at(2)).dy, first);
     expect(
-      tester.getTopLeft(find.byType(MediaCard).at(3)).dy,
+      tester.getTopLeft(find.byType(MediaCard).at(2)).dy,
       greaterThan(first),
     );
+  });
+
+  testWidgets('the sort icon sits at the right end of the row, lined up with '
+      'the grid\'s right edge', (tester) async {
+    await pump(tester);
+    final icon = tester.getRect(find.byIcon(AppIcons.sort));
+    final grid = tester.getRect(find.byType(MediaCard).at(1));
+    expect(icon.right, closeTo(grid.right, 0.5));
+    // And the pill is at the left, on the page margin.
+    final pill = tester.getRect(find.text('All genres'));
+    expect(pill.left, greaterThan(20));
   });
 
   testWidgets('the grid fades out under the toolbar as it scrolls', (
@@ -161,10 +183,11 @@ void main() {
       'only the segment', (tester) async {
     await pump(tester);
     expect(find.text('All genres'), findsOneWidget);
-    expect(find.text('·'), findsNothing);
+    expect(find.text('·'), findsOneWidget); // just before the count
 
     await pump(tester, context: const ListingContext.home(MediaSegment.tvShow));
     expect(find.text('TV Shows'), findsOneWidget);
+    expect(find.text('120'), findsOneWidget);
     expect(find.textContaining('genres'), findsNothing);
   });
 
@@ -172,7 +195,7 @@ void main() {
     await pump(tester);
     expect(repo.pages, [1]);
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -2000));
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -6000));
     await _settle(tester);
 
     expect(repo.pages.length, greaterThan(1));
