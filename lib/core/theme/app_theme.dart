@@ -54,7 +54,9 @@ class AppTheme {
         surfaceTintColor: AppColors.surface,
         foregroundColor: AppColors.ink,
         elevation: 0,
-        titleTextStyle: AppTextStyles.h2,
+        // One size for every app bar title: `h3`, the one the detail screens'
+        // compact bar uses. Screens don't set their own.
+        titleTextStyle: AppTextStyles.h3,
       ),
       cardTheme: CardThemeData(
         color: AppColors.surfaceRaised,

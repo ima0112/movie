@@ -9,7 +9,6 @@ import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
@@ -94,12 +93,7 @@ class _SeasonView extends StatelessWidget {
         // repeating the season.
         title: showTitle == null
             ? null
-            : Text(
-                showTitle!,
-                style: AppTextStyles.h3,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+            : Text(showTitle!, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
       body: SafeArea(
         child: ListView(

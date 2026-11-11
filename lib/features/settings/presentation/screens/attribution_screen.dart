@@ -28,7 +28,7 @@ class AttributionScreen extends StatelessWidget {
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        title: Text(l10n.attributionTitle, style: AppTextStyles.h3),
+        title: Text(l10n.attributionTitle),
       ),
       body: SafeArea(
         child: ListView(

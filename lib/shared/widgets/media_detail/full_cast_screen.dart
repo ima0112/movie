@@ -83,12 +83,7 @@ class _FullCastScreenState extends State<FullCastScreen> {
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        title: Text(
-          widget.title,
-          style: AppTextStyles.h3,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        title: Text(widget.title, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
       body: SafeArea(
         child: Padding(
