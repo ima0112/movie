@@ -22,6 +22,8 @@ sealed class MediaItem {
     required this.releaseDate,
     required this.voteAverage,
     this.backdropUrl,
+    this.voteCount,
+    this.popularity,
   });
 
   final int id;
@@ -36,6 +38,15 @@ sealed class MediaItem {
   final String? backdropUrl;
 
   final List<Genre> genres;
+
+  /// How many votes [voteAverage] is based on, when the source says
+  /// (`vote_count`). `null` for sources that don't carry it (the fake, My List
+  /// snapshots). What the "See all" listing's "Most voted" order sorts by.
+  final int? voteCount;
+
+  /// TMDB's rolling popularity score, when the source says. `null` like
+  /// [voteCount]. What the listing's "Popularity" order sorts by.
+  final double? popularity;
 
   /// `release_date` for a movie, `first_air_date` for a TV show —
   /// normalized under one name. `null` when TMDB doesn't have it yet
@@ -72,6 +83,8 @@ final class Movie extends MediaItem {
     required super.releaseDate,
     required super.voteAverage,
     super.backdropUrl,
+    super.voteCount,
+    super.popularity,
   });
 }
 
@@ -84,5 +97,7 @@ final class TvShow extends MediaItem {
     required super.releaseDate,
     required super.voteAverage,
     super.backdropUrl,
+    super.voteCount,
+    super.popularity,
   });
 }
