@@ -129,6 +129,16 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// The rank number of a grid cell (the "See all" listing): the same face and
+  /// weight as [rank], small enough to sit in a poster's corner.
+  static final TextStyle rankCompact = GoogleFonts.manrope(
+    fontSize: 36,
+    height: 1,
+    letterSpacing: -2,
+    fontWeight: _extraBold,
+    color: AppColors.ink,
+  );
+
   /// Text inside very small pills. 9 / 1.3, regular.
   static final TextStyle micro = GoogleFonts.manrope(
     fontSize: 9,

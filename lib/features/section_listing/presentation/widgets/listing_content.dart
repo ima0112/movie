@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_icons.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../../domain/listing_style.dart';
 import '../cubit/section_listing_cubit.dart';
@@ -38,7 +40,11 @@ class ListingContent extends StatelessWidget {
               title: l10n.sectionListingEmptyTitle,
               body: l10n.sectionListingEmptyBody,
             ),
-          SectionListingLoaded() => ListingGrid(state: state, style: style),
+          // Posters scrolling up under the toolbar dissolve, as on Home.
+          SectionListingLoaded() => ScrollEdgeFade(
+            top: AppSpacing.lg,
+            child: ListingGrid(state: state, style: style),
+          ),
         };
       },
     );

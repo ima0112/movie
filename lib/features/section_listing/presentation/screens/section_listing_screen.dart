@@ -6,12 +6,11 @@ import '../../../../app/di.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/listing_source.dart';
 import '../../domain/listing_style.dart';
 import '../cubit/section_listing_cubit.dart';
 import '../widgets/listing_content.dart';
-import '../widgets/listing_summary.dart';
+import '../widgets/listing_title.dart';
 import '../widgets/listing_toolbar.dart';
 
 /// C1b — the "See all" listing of a section (Explore's six, Home's carousels):
@@ -50,7 +49,8 @@ class SectionListingScreen extends StatelessWidget {
             icon: const Icon(AppIcons.back, color: AppColors.ink),
             onPressed: () => context.pop(),
           ),
-          title: Text(title, style: AppTextStyles.h2),
+          centerTitle: true,
+          title: ListingTitle(title: title),
         ),
         body: SafeArea(
           bottom: false,
@@ -58,7 +58,6 @@ class SectionListingScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ListingToolbar(listingContext: listingContext),
-              const ListingSummary(),
               Expanded(child: ListingContent(style: style)),
             ],
           ),

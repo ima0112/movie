@@ -418,14 +418,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionListingAllPlatforms => 'All platforms';
 
   @override
-  String sectionListingSummary(int count, String sort) {
+  String sectionListingCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count titles',
+      other: '$countString titles',
       one: '1 title',
     );
-    return '$_temp0 · $sort';
+    return '$_temp0';
   }
 
   @override
