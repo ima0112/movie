@@ -47,6 +47,9 @@ class AppTheme {
         labelSmall: AppTextStyles.micro,
       ),
       appBarTheme: AppBarTheme(
+        // Every screen's title is centered, the same on iOS and Android (the
+        // Material default is platform-dependent). Screens don't repeat it.
+        centerTitle: true,
         backgroundColor: AppColors.surface,
         surfaceTintColor: AppColors.surface,
         foregroundColor: AppColors.ink,

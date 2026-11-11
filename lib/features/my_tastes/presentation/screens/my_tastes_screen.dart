@@ -72,7 +72,6 @@ class _MyTastesView extends StatelessWidget {
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        centerTitle: true,
         title: Text(context.l10n.myTastesTitle, style: AppTextStyles.h3),
         actions: [
           // "Reset" lives in the app bar (the "Mis gustos" design), amber

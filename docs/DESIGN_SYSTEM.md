@@ -264,6 +264,7 @@ depuración (`/debug/components`) que los liste todos:
 | Elemento | Comportamiento |
 |---|---|
 | Apariencia visual general | **Idéntica** en ambas plataformas. No usar Cupertino widgets por "verse nativo". |
+| Título de la barra superior | **Centrado en todas las pantallas**, igual en ambas plataformas (el default de Material es a la izquierda en Android). Lo fija `AppBarTheme.centerTitle` en `AppTheme`; ninguna pantalla lo repite. La barra compacta de los detalles (D1/D2/D3) lo respeta con un hueco simétrico al botón de volver, con o sin Share. |
 | Transiciones de pantalla | Custom (`PageTransitionsBuilder` compartido, deslizamiento 250 ms) — no el default de cada plataforma |
 | Gesto de "volver" | Se respeta el nativo de cada una (swipe-back iOS, gesto de sistema Android) |
 | Bottom sheets / diálogos | Un solo estilo custom Material re-skinado, igual en ambas |
