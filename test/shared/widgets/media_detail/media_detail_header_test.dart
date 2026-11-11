@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_header.dart';
+import 'package:movies/shared/widgets/poster_badge.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_info_card.dart';
 
 const _action = Genre(id: 'action');
@@ -44,6 +46,46 @@ void main() {
       expect(find.text('Inception'), findsOneWidget);
       final tagline = tester.widget<Text>(find.textContaining('scene of'));
       expect(tagline.style?.fontStyle, FontStyle.italic);
+    });
+
+    testWidgets('a status tag sits above the title: Coming soon, Coming with '
+        'its date, or In theaters; none for an ordinary title', (tester) async {
+      Future<void> pump(ReleaseStatus? status) => tester.pumpWidget(
+        _app(
+          MediaDetailHeader(
+            imageUrl: null,
+            title: 'Inception',
+            releaseStatus: status,
+          ),
+        ),
+      );
+
+      await pump(null);
+      expect(find.byType(PosterBadge), findsNothing);
+
+      await pump(const ReleaseStatus(ReleaseStage.upcoming));
+      expect(find.text('Coming soon'), findsOneWidget);
+
+      await pump(
+        ReleaseStatus(ReleaseStage.upcoming, date: DateTime(2026, 6, 12)),
+      );
+      expect(find.text('Coming Jun 12, 2026'), findsOneWidget);
+      // Amber for "not out yet", above the title.
+      final tag = tester.getRect(find.byType(PosterBadge));
+      expect(tag.bottom, lessThan(tester.getRect(find.text('Inception')).top));
+      expect(
+        tester.widget<PosterBadge>(find.byType(PosterBadge)).amber,
+        isTrue,
+      );
+
+      await pump(
+        ReleaseStatus(ReleaseStage.inTheaters, date: DateTime(2026, 4, 24)),
+      );
+      expect(find.text('In theaters'), findsOneWidget);
+      expect(
+        tester.widget<PosterBadge>(find.byType(PosterBadge)).amber,
+        isFalse,
+      );
     });
 
     testWidgets('no tagline still lays out', (tester) async {

@@ -5,7 +5,9 @@ import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/l10n/app_localizations.dart';
@@ -29,7 +31,78 @@ Future<MovieDetail> _loadDuneDetail(WidgetTester tester) async {
   return (await tester.runAsync(_duneDetail))!;
 }
 
+/// [d] with a release status (the fake's Dune is an ordinary released movie).
+MovieDetail _withStatus(MovieDetail d, ReleaseStatus? status) => MovieDetail(
+  item: d.item,
+  overview: d.overview,
+  cast: d.cast,
+  crew: d.crew,
+  videos: d.videos,
+  similar: d.similar,
+  imdbId: d.imdbId,
+  tagline: d.tagline,
+  status: d.status,
+  watchProviders: d.watchProviders,
+  releaseStatus: status,
+  runtimeMinutes: d.runtimeMinutes,
+  releaseDate: d.releaseDate,
+  certification: d.certification,
+);
+
+Future<void> _pumpRow(WidgetTester tester, MovieDetail detail) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: MediaDetailActionRow(
+          mediaKey: _dune,
+          userLibraryRepository: InMemoryUserLibraryRepository(),
+          mediaDetail: detail,
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
+  group('a title that is not out yet', () {
+    testWidgets('has no Watched button and no rating chip; Watch later '
+        'becomes the wide labeled action', (tester) async {
+      final detail = _withStatus(
+        await _loadDuneDetail(tester),
+        const ReleaseStatus(ReleaseStage.upcoming),
+      );
+      await _pumpRow(tester, detail);
+
+      expect(find.text('Watched'), findsNothing);
+      expect(find.text('Watch later'), findsOneWidget); // labeled, wide
+      expect(find.byIcon(AppIcons.starFill), findsNothing); // no rating chip
+      expect(find.bySemanticsLabel('Favorite'), findsOneWidget);
+    });
+
+    testWidgets('one only in theaters keeps Watched and the rating', (
+      tester,
+    ) async {
+      final detail = _withStatus(
+        await _loadDuneDetail(tester),
+        ReleaseStatus(ReleaseStage.inTheaters, date: DateTime(2026, 4, 24)),
+      );
+      await _pumpRow(tester, detail);
+
+      expect(find.text('Watched'), findsOneWidget);
+      expect(find.byIcon(AppIcons.starFill), findsOneWidget);
+    });
+
+    testWidgets('an ordinary released title is unchanged', (tester) async {
+      await _pumpRow(tester, await _loadDuneDetail(tester));
+
+      expect(find.text('Watched'), findsOneWidget);
+      expect(find.byIcon(AppIcons.starFill), findsOneWidget);
+    });
+  });
+
   group('MediaDetailActionRow', () {
     testWidgets('tapping Watched opens the Mark as watched sheet instead of '
         'upserting directly', (tester) async {

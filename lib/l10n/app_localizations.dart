@@ -866,6 +866,48 @@ abstract class AppLocalizations {
   /// **'Couldn\'t load more'**
   String get sectionListingLoadMoreFailed;
 
+  /// D1's header tag for a movie that is in cinemas but not yet on streaming/digital (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'In theaters'**
+  String get releaseStatusInTheaters;
+
+  /// D1/D2's header tag for a title that isn't out yet and has no known release date.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get releaseStatusComingSoon;
+
+  /// D1/D2's header tag for a title that isn't out yet, with its release date (docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'Coming {date}'**
+  String releaseStatusComingOn(String date);
+
+  /// D1/D2's Where to watch card for a title that isn't released and has no date.
+  ///
+  /// In en, this message translates to:
+  /// **'It isn\'t out yet, so it isn\'t on any service.'**
+  String get whereToWatchNotReleased;
+
+  /// D1/D2's Where to watch card for an unreleased title with a release date.
+  ///
+  /// In en, this message translates to:
+  /// **'It isn\'t out yet. It comes out on {date}.'**
+  String whereToWatchNotReleasedOn(String date);
+
+  /// D1's Where to watch card for a movie that is in cinemas only.
+  ///
+  /// In en, this message translates to:
+  /// **'In theaters now, and not on any service yet.'**
+  String get whereToWatchInTheaters;
+
+  /// D1's Where to watch card for a movie in cinemas whose digital release date is known.
+  ///
+  /// In en, this message translates to:
+  /// **'In theaters now. Expected on streaming on {date}.'**
+  String whereToWatchInTheatersStreamingOn(String date);
+
   /// Accessibility label of a Latest trailers card (docs/SCREENS.md B1); opens the trailer in YouTube.
   ///
   /// In en, this message translates to:

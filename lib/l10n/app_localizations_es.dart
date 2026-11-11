@@ -428,6 +428,35 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sectionListingLoadMoreFailed => 'No se pudo cargar más';
 
   @override
+  String get releaseStatusInTheaters => 'En cines';
+
+  @override
+  String get releaseStatusComingSoon => 'Próximamente';
+
+  @override
+  String releaseStatusComingOn(String date) {
+    return 'Estreno $date';
+  }
+
+  @override
+  String get whereToWatchNotReleased =>
+      'Aún no se ha estrenado, así que no está en ningún servicio.';
+
+  @override
+  String whereToWatchNotReleasedOn(String date) {
+    return 'Aún no se ha estrenado. Sale el $date.';
+  }
+
+  @override
+  String get whereToWatchInTheaters =>
+      'En cines ahora y todavía no en ningún servicio.';
+
+  @override
+  String whereToWatchInTheatersStreamingOn(String date) {
+    return 'En cines ahora. Se espera en plataformas el $date.';
+  }
+
+  @override
   String trailerPlayLabel(String title) {
     return 'Ver el tráiler de $title';
   }

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_key.dart';
+import '../../../core/domain/entities/release_status.dart';
 import '../../../core/domain/entities/user_media_entry.dart';
 import '../../../core/domain/entities/video.dart';
 import '../../../core/domain/repositories/user_library_repository.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/library_tab_localization.dart';
 import '../app_buttons.dart';
@@ -130,6 +132,9 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
   Widget build(BuildContext context) {
     final trailer = widget.mediaDetail.trailer;
     final l10n = context.l10n;
+    // Not out yet: nothing to rate and nothing to have watched.
+    final upcoming =
+        widget.mediaDetail.releaseStatus?.stage == ReleaseStage.upcoming;
     final primary = primaryActionFor(
       hasTrailer: trailer != null,
       hasSimilar: widget.onSeeSimilar != null,
@@ -161,6 +166,7 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
           metaPrefix: widget.metaPrefix,
           genres: widget.mediaDetail.item.genres,
           voteAverage: widget.mediaDetail.item.voteAverage,
+          showRating: !upcoming,
           extraChips: widget.extraChips,
           onGenreTap: widget.onGenreTap,
           // Favorite and Watch later as square icon buttons, Watched as the
@@ -177,36 +183,45 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
                     _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
               ),
               const SizedBox(width: AppSpacing.sm),
-              _ToggleActionButton(
-                entryStream: _entryStream,
-                select: (entry) => entry?.isWatchLater ?? false,
-                iconOutline: AppIcons.watchLater,
-                iconFill: AppIcons.watchLaterFill,
-                label: LibraryTab.watchLater.localizedLabel(l10n),
-                onTap: () =>
-                    _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _ToggleActionButton(
-                  entryStream: _entryStream,
-                  select: (entry) => entry?.isWatched ?? false,
-                  iconOutline: AppIcons.watched,
-                  iconFill: AppIcons.watchedFill,
-                  label: LibraryTab.watched.localizedLabel(l10n),
-                  showLabel: true,
-                  // Always opens H2 first, even when re-tapping an
-                  // already-watched entry (SCREENS.md D1) — never
-                  // upserts directly.
-                  onTap: _openMarkAsWatchedSheet,
+              // Watch later is the natural action for something not out yet,
+              // so it becomes the wide labeled one when Watched is hidden.
+              if (upcoming)
+                Expanded(child: _watchLater(l10n, wide: true))
+              else ...[
+                _watchLater(l10n),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: _ToggleActionButton(
+                    entryStream: _entryStream,
+                    select: (entry) => entry?.isWatched ?? false,
+                    iconOutline: AppIcons.watched,
+                    iconFill: AppIcons.watchedFill,
+                    label: LibraryTab.watched.localizedLabel(l10n),
+                    showLabel: true,
+                    // Always opens H2 first, even when re-tapping an
+                    // already-watched entry (SCREENS.md D1) — never
+                    // upserts directly.
+                    onTap: _openMarkAsWatchedSheet,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
       ],
     );
   }
+
+  Widget _watchLater(AppLocalizations l10n, {bool wide = false}) =>
+      _ToggleActionButton(
+        entryStream: _entryStream,
+        select: (entry) => entry?.isWatchLater ?? false,
+        iconOutline: AppIcons.watchLater,
+        iconFill: AppIcons.watchLaterFill,
+        label: LibraryTab.watchLater.localizedLabel(l10n),
+        showLabel: wide,
+        onTap: () => _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
+      );
 
   void _toggle(UserMediaEntry Function(UserMediaEntry) transform) {
     // Always re-stamps the catalog snapshot from what's already loaded
