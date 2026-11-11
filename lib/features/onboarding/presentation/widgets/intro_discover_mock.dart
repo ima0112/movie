@@ -48,7 +48,7 @@ class IntroDiscoverMock extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Row(
                 children: [
-                  for (final segment in MediaSegment.values) ...[
+                  for (final segment in MediaSegment.media) ...[
                     _MockChip(
                       label: segment.localizedLabel(l10n),
                       selected: segment == MediaSegment.all,

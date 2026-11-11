@@ -88,8 +88,12 @@ class _ExploreView extends StatelessWidget {
         BlocListener<ExploreCubit, ExploreState>(
           listenWhen: (previous, current) =>
               previous.segment != current.segment,
-          listener: (context, state) =>
-              context.read<ExploreBrowseCubit>().setSegment(state.segment),
+          // People has nothing to browse: the sections keep the last titles
+          // segment, so coming back to it costs nothing.
+          listener: (context, state) {
+            if (state.segment == MediaSegment.person) return;
+            context.read<ExploreBrowseCubit>().setSegment(state.segment);
+          },
         ),
         BlocListener<ExploreCubit, ExploreState>(
           listenWhen: (previous, current) => current is ExploreListing,
