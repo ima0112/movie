@@ -247,6 +247,10 @@ void main() {
     'of the screen (CLAUDE.md rule 9)',
     (tester) async {
       await openDuneDetail(tester);
+      // The taller header pushes the action row below the fold of the test
+      // view: scroll it into reach first (outside the capture).
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
+      await tester.pumpAndSettle();
 
       final captured = <String>[];
       final originalDebugPrint = debugPrint;
