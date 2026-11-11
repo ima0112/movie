@@ -19,20 +19,40 @@ import 'recent_search_row.dart';
 /// it; tapping the dim dismisses). Its first row — "RECENT" and "Clear all" —
 /// is fixed; the searches under it scroll when there are more than fit.
 ///
-/// **Adaptive**: it is as tall as its rows, up to the room the screen leaves
-/// between the field and the floating tab bar — which already excludes the
-/// keyboard (the body is resized) — so it never runs under the bar and fits a small phone with the keyboard up and
-/// uses a tall one fully. It only exists when the saved history has something
-/// in it and the field is empty (typing swaps it for the results).
+/// **A fixed size**: the header and five and a half rows ([visibleRows]),
+/// scrolling beyond that, so a good part of the dimmed page is always left to
+/// tap to dismiss it. **Adaptive** only where the screen is too short for that:
+/// it shrinks to leave the floating tab bar and [minDimBelow] free (the room
+/// already excludes the keyboard, the body being resized), so it fits a small
+/// phone with the keyboard up. It only exists when the saved history has
+/// something in it and the field is empty (typing swaps it for the results).
 ///
 /// Place it as a `Positioned.fill` child of a `Stack` that starts right under
-/// the search field. Watches
-/// only the recents (CLAUDE.md rule 9).
+/// the search field. Watches only the recents (CLAUDE.md rule 9).
 class ExploreRecentsPanel extends StatelessWidget {
   const ExploreRecentsPanel({super.key, required this.searchFocus});
 
   /// The search field's focus: the panel shows while it is focused.
   final FocusNode searchFocus;
+
+  /// How many rows show at once: five and a half, so the half-cut sixth row
+  /// tells the user there is more to scroll to. The panel has this fixed size
+  /// however many searches there are (at most ten are kept).
+  static const double visibleRows = 5.5;
+
+  /// The least room left under the panel for the user to tap the dimmed page
+  /// to dismiss it.
+  static const double minDimBelow = AppSpacing.xxxl * 2;
+
+  /// The panel's tallest size in [room] (the area under the field): a fixed
+  /// header plus [visibleRows] rows — and never more than leaves the floating
+  /// tab bar ([barInset]: its height, the safe area and a gap) and [minDimBelow]
+  /// free, so there is always page to tap under it, even on a small phone with
+  /// the keyboard up.
+  static double maxHeightIn(double room, {required double barInset}) {
+    final fixed = _Header.height + 1 + RecentSearchRow.height * visibleRows;
+    return math.max(0, math.min(fixed, room - barInset - minDimBelow));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,12 +115,9 @@ class _Panel extends StatelessWidget {
             top: 0,
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                // The page runs under the floating tab bar: the panel stops
-                // above it (the bar's height, the safe area and a gap — the
-                // same inset every scrolling page leaves).
-                maxHeight: math.max(
-                  0,
-                  room.maxHeight - AppTabBar.scrollInset(context),
+                maxHeight: ExploreRecentsPanel.maxHeightIn(
+                  room.maxHeight,
+                  barInset: AppTabBar.scrollInset(context),
                 ),
               ),
               child: DecoratedBox(
@@ -151,23 +168,27 @@ class _Header extends StatelessWidget {
   final String title;
   final VoidCallback onClearAll;
 
+  /// Fixed, so the panel's size doesn't depend on the button's own metrics.
+  static const double height = 56;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.sm,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          OverlineLabel(title),
-          TextLinkButton(
-            label: context.l10n.commonClearAll,
-            onTap: onClearAll,
-            fullWidth: false,
-          ),
-        ],
+    return SizedBox(
+      height: height,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            OverlineLabel(title),
+            TextLinkButton(
+              label: context.l10n.commonClearAll,
+              onTap: onClearAll,
+              fullWidth: false,
+            ),
+          ],
+        ),
       ),
     );
   }
