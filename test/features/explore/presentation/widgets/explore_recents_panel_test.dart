@@ -71,6 +71,7 @@ void main() {
     WidgetTester tester, {
     required List<String> recents,
     double height = 800,
+    double bottomInset = 0,
   }) async {
     tester.view.physicalSize = Size(390, height);
     tester.view.devicePixelRatio = 1;
@@ -91,32 +92,42 @@ void main() {
         theme: AppTheme.dark,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: BlocProvider.value(
-          value: cubit,
-          child: Scaffold(
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: TextField(focusNode: focus),
-                  ),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        const Column(
-                          children: [
-                            Text('SEGMENTED CONTROL'),
-                            Expanded(child: SizedBox.expand()),
-                          ],
-                        ),
-                        Positioned.fill(
-                          child: ExploreRecentsPanel(searchFocus: focus),
-                        ),
-                      ],
+        home: MediaQuery(
+          // What the root shell's floating tab bar adds to the body's bottom
+          // padding.
+          data: MediaQueryData(
+            size: Size(390, height),
+            padding: EdgeInsets.only(bottom: bottomInset),
+          ),
+          child: BlocProvider.value(
+            value: cubit,
+            child: Scaffold(
+              body: SafeArea(
+                bottom:
+                    false, // as the screen: the tab bar's inset stays in the padding
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextField(focusNode: focus),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          const Column(
+                            children: [
+                              Text('SEGMENTED CONTROL'),
+                              Expanded(child: SizedBox.expand()),
+                            ],
+                          ),
+                          Positioned.fill(
+                            child: ExploreRecentsPanel(searchFocus: focus),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -268,5 +279,31 @@ void main() {
     await settle(tester);
     expect(focus.hasFocus, isFalse);
     expect(find.text('RECENT'), findsNothing);
+  });
+
+  testWidgets('it stops above the floating tab bar, however many recents '
+      'there are, and still scrolls to the last one', (tester) async {
+    const bar = 100.0; // the shell adds the bar's height to the padding
+    await pump(tester, recents: many, height: 700, bottomInset: bar);
+    await focusField(tester);
+
+    final bottom = tester.getRect(find.byType(ListView)).bottom;
+    expect(bottom, lessThanOrEqualTo(700 - bar - 16));
+
+    // It does not grow past that: it scrolls to reach the rest.
+    final scrollable = tester.state<ScrollableState>(
+      find.descendant(
+        of: find.byType(ListView),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    expect(scrollable.position.maxScrollExtent, greaterThan(0));
+    await tester.drag(find.byType(ListView), const Offset(0, -3000));
+    await settle(tester);
+    expect(find.text('search 10'), findsOneWidget);
+    expect(
+      tester.getRect(find.byType(ListView)).bottom,
+      lessThanOrEqualTo(700 - bar - 16),
+    );
   });
 }
