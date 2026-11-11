@@ -182,13 +182,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mediaSegmentPeople => 'Personas';
 
   @override
-  String get explorePeopleHintTitle => 'Busca personas';
-
-  @override
-  String get explorePeopleHintBody =>
-      'Encuentra actores, directores y más por su nombre.';
-
-  @override
   String get mediaSegmentAll => 'Todo';
 
   @override

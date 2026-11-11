@@ -416,18 +416,6 @@ abstract class AppLocalizations {
   /// **'People'**
   String get mediaSegmentPeople;
 
-  /// B2 at rest in the People segment: there is nothing to browse, so it invites a search.
-  ///
-  /// In en, this message translates to:
-  /// **'Search for people'**
-  String get explorePeopleHintTitle;
-
-  /// No description provided for @explorePeopleHintBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Find actors, directors and more by name.'**
-  String get explorePeopleHintBody;
-
   /// MediaSegment.all / FilmographySegment.all — the "everything, no type filter" option in a segmented control.
   ///
   /// In en, this message translates to:

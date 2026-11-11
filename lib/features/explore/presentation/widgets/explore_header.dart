@@ -67,16 +67,20 @@ class _ExploreSearchBar extends StatelessWidget {
   }
 }
 
+/// All | Movies | TV Shows at rest, plus **People** while searching (people
+/// are only found by name, so there is nothing to browse for them). Watches
+/// only the segment and whether a search is on (CLAUDE.md rule 9).
 class ExploreSegmentedControl extends StatelessWidget {
   const ExploreSegmentedControl({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ExploreCubit, ExploreState, MediaSegment>(
-      selector: (state) => state.segment,
-      builder: (context, segment) {
+    return BlocSelector<ExploreCubit, ExploreState, (MediaSegment, bool)>(
+      selector: (state) => (state.segment, state is ExploreSearching),
+      builder: (context, selected) {
+        final (segment, searching) = selected;
         return MediaSegmentedControl(
-          segments: MediaSegment.explore,
+          segments: searching ? MediaSegment.explore : MediaSegment.media,
           segment: segment,
           onSelected: (value) =>
               context.read<ExploreCubit>().selectSegment(value),
