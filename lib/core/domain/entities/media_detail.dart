@@ -1,5 +1,6 @@
 import 'media_item.dart';
 import 'person.dart';
+import 'release_status.dart';
 import 'season_summary.dart';
 import 'video.dart';
 import 'watch_providers.dart';
@@ -25,6 +26,7 @@ sealed class MediaDetail {
     this.backdropUrl,
     this.originalLanguage,
     this.countryCodes = const [],
+    this.releaseStatus,
   });
 
   final MediaItem item;
@@ -51,6 +53,10 @@ sealed class MediaDetail {
 
   /// ISO 3166-1 codes of the production / origin countries, first = main.
   final List<String> countryCodes;
+
+  /// Not out yet, or only in cinemas for now — for the region the detail was
+  /// fetched for (`ReleaseStatus`); `null` for an ordinary released title.
+  final ReleaseStatus? releaseStatus;
 
   /// The user's own language, for [trailer]'s own "+ user's language"
   /// tier — matches `LocaleInterceptor`'s own `en`/`US` default, since
@@ -80,6 +86,7 @@ final class MovieDetail extends MediaDetail {
     super.backdropUrl,
     super.originalLanguage,
     super.countryCodes,
+    super.releaseStatus,
     required this.runtimeMinutes,
     required this.releaseDate,
     required this.certification,
@@ -105,6 +112,7 @@ final class TvShowDetail extends MediaDetail {
     super.backdropUrl,
     super.originalLanguage,
     super.countryCodes,
+    super.releaseStatus,
     required this.creators,
     required this.seasons,
     required this.numberOfEpisodes,

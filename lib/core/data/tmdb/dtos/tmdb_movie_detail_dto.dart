@@ -117,10 +117,22 @@ class TmdbReleaseDatesRegionDto {
 
 @JsonSerializable(createToJson: false)
 class TmdbReleaseDateEntryDto {
-  const TmdbReleaseDateEntryDto({required this.certification});
+  const TmdbReleaseDateEntryDto({
+    required this.certification,
+    this.type,
+    this.releaseDate,
+  });
 
   @JsonKey(defaultValue: '')
   final String certification;
+
+  /// TMDB's release type: 1 premiere, 2 limited theatrical, 3 theatrical,
+  /// 4 digital, 5 physical, 6 TV.
+  final int? type;
+
+  /// `"2026-06-12T00:00:00.000Z"` — only its date part is meaningful.
+  @JsonKey(name: 'release_date')
+  final String? releaseDate;
 
   factory TmdbReleaseDateEntryDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbReleaseDateEntryDtoFromJson(json);
