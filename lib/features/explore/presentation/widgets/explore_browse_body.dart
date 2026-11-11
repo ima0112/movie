@@ -11,66 +11,18 @@ import '../../../../shared/widgets/state_views.dart';
 import '../../domain/explore_section.dart';
 import '../cubit/explore_browse_cubit.dart';
 import '../cubit/explore_browse_state.dart';
-import '../cubit/explore_cubit.dart';
-import '../cubit/explore_state.dart';
 import 'explore_browse_section.dart';
 import 'explore_genre_pills.dart';
 import 'explore_platform_pills.dart';
-import 'recent_searches_chips.dart';
 
 /// B2 at rest (`docs/SCREENS.md` B2): the Genre and Platform pills, then the
-/// sections they filter. While the search field is focused and empty
-/// *and* there is a history, the recent searches show instead — the pills
-/// come back as soon as the field loses focus.
+/// sections they filter. (The recent searches are a panel over this, drawn by
+/// the screen — see `ExploreRecentsPanel`.)
 class ExploreBrowseBody extends StatelessWidget {
-  const ExploreBrowseBody({
-    super.key,
-    required this.state,
-    required this.searchFocus,
-  });
-
-  final ExploreAtRest state;
-  final FocusNode searchFocus;
+  const ExploreBrowseBody({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: searchFocus,
-      builder: (context, _) {
-        if (searchFocus.hasFocus && state.recentSearches.isNotEmpty) {
-          return _Recents(state: state);
-        }
-        return const _Browse();
-      },
-    );
-  }
-}
-
-class _Recents extends StatelessWidget {
-  const _Recents({required this.state});
-
-  final ExploreAtRest state;
-
-  @override
-  Widget build(BuildContext context) {
-    final cubit = context.read<ExploreCubit>();
-    return ListView(
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.screenMargin,
-        AppSpacing.lg,
-        AppSpacing.screenMargin,
-        AppTabBar.scrollInset(context),
-      ),
-      children: [
-        RecentSearchesChips(
-          recentSearches: state.recentSearches,
-          onTap: cubit.runRecentSearch,
-          onLongPress: cubit.removeRecentSearch,
-          onClearAll: cubit.clearRecentSearches,
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => const _Browse();
 }
 
 class _Browse extends StatelessWidget {

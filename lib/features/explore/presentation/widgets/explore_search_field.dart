@@ -8,7 +8,8 @@ import '../../../../l10n/l10n_extension.dart';
 
 /// B2's search field — `docs/SCREENS.md` B2: a real search field ('Movies,
 /// TV shows, people') across the **full content width**; once there is text
-/// it gains a "×" inside it that clears the search (there is no separate
+/// (or while it is focused) it gains a "×" inside it that clears the search
+/// (or, empty, dismisses it) (there is no separate
 /// filter icon or Cancel any more — genre and platform are pills below).
 ///
 /// [query] drives the field's text from the outside (`ExploreState`'s
@@ -54,7 +55,14 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
   @override
   void initState() {
     super.initState();
+    widget.focusNode.addListener(_onFocusChanged);
     if (widget.focusToken != null) _focusAfterFrame();
+  }
+
+  /// The "×" also shows while the field is focused, to close the recent
+  /// searches panel and the keyboard.
+  void _onFocusChanged() {
+    if (mounted) setState(() {});
   }
 
   /// After the frame, so the field is on stage when the request is made (the
@@ -82,6 +90,7 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
 
   @override
   void dispose() {
+    widget.focusNode.removeListener(_onFocusChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -107,10 +116,11 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: isTyping
+        suffixIcon: isTyping || widget.focusNode.hasFocus
             ? IconButton(
                 icon: const Icon(AppIcons.close, color: AppColors.inkMuted),
-                onPressed: widget.onClear,
+                // Typing: clear the search. Just focused: dismiss.
+                onPressed: isTyping ? widget.onClear : widget.focusNode.unfocus,
               )
             : null,
       ),

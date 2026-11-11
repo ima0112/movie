@@ -530,6 +530,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get exploreSearchHint => 'Películas, series, personas';
 
   @override
+  String exploreRecentRemove(String query) {
+    return 'Quitar $query de las búsquedas recientes';
+  }
+
+  @override
   String get exploreRecentSearchesLabel => 'Recientes';
 
   @override

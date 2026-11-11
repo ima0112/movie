@@ -8,15 +8,19 @@ import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
 import 'explore_search_field.dart';
 
-/// B2's header (no title — the design opens on the search field): its two Bloc-subscribed controls —
-/// the search field's live query and the segmented control's live
-/// segment. Grouped in one file since each is only a handful of lines,
-/// the same "not substantial enough on its own" call
-/// `discover_range_filters.dart` already makes for its own three small
-/// widgets; each still carries its own narrowly-scoped `BlocSelector`
-/// (CLAUDE.md rule 9) rather than sharing one `BlocBuilder`.
-class ExploreHeader extends StatelessWidget {
-  const ExploreHeader({super.key, required this.searchFocus, this.focusToken});
+/// B2's header (no title — the design opens on the search field): the search
+/// bar and the segmented control, two public widgets because the recent
+/// searches panel is anchored **between** them — it drops from under the
+/// search bar and covers the segmented control while the field is focused —
+/// so the screen needs to place them apart. Each carries its own
+/// narrowly-scoped `BlocSelector` (CLAUDE.md rule 9), the live query for the
+/// field and the live segment for the control.
+class ExploreSearchBar extends StatelessWidget {
+  const ExploreSearchBar({
+    super.key,
+    required this.searchFocus,
+    this.focusToken,
+  });
 
   /// The search field's focus, owned by the screen.
   final FocusNode searchFocus;
@@ -26,23 +30,15 @@ class ExploreHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Same page margin as Discover, the field across its full width.
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.screenMargin,
-            AppSpacing.md,
-            AppSpacing.screenMargin,
-            AppSpacing.md,
-          ),
-          child: _ExploreSearchBar(
-            focusNode: searchFocus,
-            focusToken: focusToken,
-          ),
-        ),
-        const _ExploreSegmentedControl(),
-      ],
+    // Same page margin as Discover, the field across its full width.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.screenMargin,
+        AppSpacing.md,
+        AppSpacing.screenMargin,
+        AppSpacing.md,
+      ),
+      child: _ExploreSearchBar(focusNode: searchFocus, focusToken: focusToken),
     );
   }
 }
@@ -71,8 +67,8 @@ class _ExploreSearchBar extends StatelessWidget {
   }
 }
 
-class _ExploreSegmentedControl extends StatelessWidget {
-  const _ExploreSegmentedControl();
+class ExploreSegmentedControl extends StatelessWidget {
+  const ExploreSegmentedControl({super.key});
 
   @override
   Widget build(BuildContext context) {
