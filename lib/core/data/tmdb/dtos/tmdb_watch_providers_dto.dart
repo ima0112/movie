@@ -43,7 +43,15 @@ class TmdbWatchProviderRegionDto {
 
 @JsonSerializable(createToJson: false)
 class TmdbWatchProviderRefDto {
-  const TmdbWatchProviderRefDto({required this.providerName, this.logoPath});
+  const TmdbWatchProviderRefDto({
+    required this.providerName,
+    this.logoPath,
+    this.providerId,
+  });
+
+  /// TMDB's provider id (what `with_watch_providers` takes).
+  @JsonKey(name: 'provider_id')
+  final int? providerId;
 
   @JsonKey(name: 'provider_name')
   final String providerName;

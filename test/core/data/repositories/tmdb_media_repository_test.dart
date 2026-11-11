@@ -54,6 +54,8 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
         'tmdb_movie_detail_full.json',
       _ when RegExp(r'^/person/\d+$').hasMatch(path) =>
         'tmdb_person_detail_full.json',
+      _ when RegExp(r'^/(movie|tv)/\d+/watch/providers$').hasMatch(path) =>
+        'tmdb_title_watch_providers.json',
       '/discover/tv' => 'tmdb_tv_popular.json',
       '/discover/movie' => 'tmdb_movie_now_playing.json',
       '/search/multi' => 'tmdb_trending_all_week.json',
@@ -366,6 +368,35 @@ void main() {
       );
       expect(adapter.lastQueryParameters?['with_watch_providers'], '8');
       expect(adapter.lastQueryParameters?['watch_region'], 'ES');
+    });
+  });
+
+  group('streamingProvidersFor', () {
+    test('a title\'s subscription services in the saved region, with logos, '
+        'and not its rent/buy ones', () async {
+      final result = await repository.streamingProvidersFor(
+        const MediaKey(type: MediaType.movie, tmdbId: 603),
+      );
+
+      expect(adapter.requestedPaths, ['/movie/603/watch/providers']);
+      final services = (result as Success<List<StreamingService>>).value;
+      expect(services.map((s) => s.name), ['Netflix', 'Hulu']);
+      expect(services.first.id, 8);
+      expect(services.first.logoUrl, endsWith('/w92/netflix.jpg'));
+      expect(services.last.logoUrl, isNull);
+    });
+
+    test('a TV show goes through /tv; a region with no subscription service '
+        'is an empty list', () async {
+      await settingsRepository.save(
+        const AppSettings(languageCode: 'es', regionCode: 'ES'),
+      );
+      final result = await repository.streamingProvidersFor(
+        const MediaKey(type: MediaType.tvShow, tmdbId: 1),
+      );
+
+      expect(adapter.requestedPaths, ['/tv/1/watch/providers']);
+      expect((result as Success<List<StreamingService>>).value, isEmpty);
     });
   });
 
