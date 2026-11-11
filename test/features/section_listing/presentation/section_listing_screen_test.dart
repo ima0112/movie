@@ -6,6 +6,10 @@ import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/discover_page.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
+import 'package:movies/core/domain/entities/media_key.dart';
+import 'package:movies/features/section_listing/presentation/widgets/listing_platform_logo.dart';
+import 'package:movies/shared/widgets/poster_badge.dart';
+import 'package:movies/shared/widgets/streaming_service_logo.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/streaming_service.dart';
@@ -34,6 +38,7 @@ class _Repo extends FakeMediaRepository {
   int totalPages = 4;
   static const perPage = 30;
   final pages = <int>[];
+  final providerAsks = <int>[];
   bool failFirst = false;
   bool empty = false;
 
@@ -56,6 +61,12 @@ class _Repo extends FakeMediaRepository {
         totalResults: totalPages * perPage,
       ),
     );
+  }
+
+  @override
+  Future<Result<List<StreamingService>>> streamingProvidersFor(MediaKey key) {
+    providerAsks.add(key.tmdbId);
+    return super.streamingProvidersFor(key);
   }
 
   @override
@@ -126,12 +137,12 @@ void main() {
 
     expect(find.text('Hidden gems'), findsOneWidget);
     expect(find.textContaining('titles'), findsNothing); // not under the title
-    // The pill: the platform's logo (its initial, no image here), a dot, the
-    // genre, a dot, and the bare count — not the segment.
+    // The pill: the platform's logo (its initial, no image here), a dot and
+    // the genre — no count (a listing is never longer than 100), no segment.
     expect(find.text('N'), findsOneWidget);
-    expect(find.text('·'), findsNWidgets(2));
+    expect(find.text('·'), findsOneWidget);
     expect(find.text('Comedy'), findsOneWidget);
-    expect(find.text('100'), findsOneWidget);
+    expect(find.text('100'), findsNothing);
     expect(find.text('Movies'), findsNothing);
     // Amber background, black (onAccent) text.
     final pill = tester.widget<Container>(
@@ -183,11 +194,10 @@ void main() {
       'only the segment', (tester) async {
     await pump(tester);
     expect(find.text('All genres'), findsOneWidget);
-    expect(find.text('·'), findsOneWidget); // just before the count
+    expect(find.text('·'), findsNothing);
 
     await pump(tester, context: const ListingContext.home(MediaSegment.tvShow));
     expect(find.text('TV Shows'), findsOneWidget);
-    expect(find.text('100'), findsOneWidget);
     expect(find.textContaining('genres'), findsNothing);
   });
 
@@ -235,22 +245,24 @@ void main() {
     expect(find.text('2026'), findsNothing);
   });
 
-  testWidgets('re-sorting keeps the same list: the count stays, the whole set '
-      'is there and nothing more is being paged in', (tester) async {
-    await pump(tester);
+  testWidgets(
+    're-sorting keeps the same list: the whole set is there and nothing '
+    'more is being paged in',
+    (tester) async {
+      await pump(tester);
 
-    await tester.tap(find.byIcon(AppIcons.sort));
-    await _settle(tester);
-    await tester.tap(find.text('Rating'));
-    await _settle(tester);
+      await tester.tap(find.byIcon(AppIcons.sort));
+      await _settle(tester);
+      await tester.tap(find.text('Rating'));
+      await _settle(tester);
 
-    expect(find.text('100'), findsOneWidget); // the same count
-    // Scrolled to the very end: no next-page spinner, the set is all there.
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -20000));
-    await _settle(tester);
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-    expect(repo.pages.toSet(), {1, 2, 3, 4}); // the pages the set needed
-  });
+      // Scrolled to the very end: no next-page spinner, the set is all there.
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -20000));
+      await _settle(tester);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(repo.pages.toSet(), {1, 2, 3, 4}); // the pages the set needed
+    },
+  );
 
   testWidgets('a section keeps its own dressing in its own order', (
     tester,
@@ -320,5 +332,100 @@ void main() {
     await tester.tap(find.text('Retry'));
     await _settle(tester);
     expect(find.text('Nothing to show here'), findsOneWidget);
+  });
+
+  group('the platform each title streams on', () {
+    testWidgets('with no genre and no platform picked, each poster shows its '
+        'platform\'s logo in the top-right corner', (tester) async {
+      await pump(tester);
+
+      final logos = find.byType(ListingPlatformLogo);
+      expect(logos, findsWidgets);
+      // Netflix (the fake gives it to even ids) — its initial, no image here.
+      expect(find.byType(StreamingServiceLogo), findsWidgets);
+      final poster = tester.getRect(find.byType(MediaCard).at(1)); // id 2
+      final logo = tester.getRect(
+        find.descendant(
+          of: find.byType(ListingPlatformLogo).at(1),
+          matching: find.byType(StreamingServiceLogo),
+        ),
+      );
+      expect(logo.right, lessThan(poster.right));
+      expect(logo.top, greaterThan(poster.top));
+      expect(logo.center.dx, greaterThan(poster.center.dx));
+      expect(logo.center.dy, lessThan(poster.center.dy));
+    });
+
+    testWidgets('a poster asks for its title\'s providers once, and only the '
+        'posters that are built ask', (tester) async {
+      await pump(tester);
+      final asked = [...repo.providerAsks];
+      expect(asked.toSet(), hasLength(asked.length));
+      expect(asked.length, lessThan(30)); // not every title of the list
+
+      await _settle(tester);
+      expect(repo.providerAsks, asked); // no repeats on rebuilds
+    });
+
+    testWidgets('never over another dressing: the rating badge, the rank and '
+        'the date sit on other corners', (tester) async {
+      Rect logoOf(int index) => tester.getRect(
+        find
+            .descendant(
+              of: find.byType(ListingPlatformLogo).at(index),
+              matching: find.byType(StreamingServiceLogo),
+            )
+            .first,
+      );
+
+      // Poster 2 (an even id: it has a logo) in each dressing, and the thing
+      // that dressing draws.
+      final cases = <(ListingStyle, Finder)>[
+        (ListingStyle.rating, find.byType(PosterBadge)),
+        (ListingStyle.ranked, find.text('2')),
+        (ListingStyle.dated, find.text('Dec 16, 2026')),
+      ];
+      for (final (style, dressing) in cases) {
+        await pump(tester, style: style);
+        final logo = logoOf(1);
+        final poster = tester.getRect(find.byType(MediaCard).at(1));
+        final onThatPoster = dressing.evaluate().where(
+          (e) => poster.overlaps(tester.getRect(find.byWidget(e.widget))),
+        );
+        expect(onThatPoster, isNotEmpty, reason: '$style draws something');
+        for (final e in onThatPoster) {
+          expect(
+            tester.getRect(find.byWidget(e.widget)).overlaps(logo),
+            isFalse,
+            reason: '$style overlaps the platform logo',
+          );
+        }
+      }
+    });
+
+    testWidgets('not shown when a platform is picked, when a genre is, or '
+        'from Home', (tester) async {
+      await pump(
+        tester,
+        context: const ListingContext.explore(
+          segment: MediaSegment.all,
+          platform: StreamingService(id: 8, name: 'Netflix'),
+        ),
+      );
+      expect(find.byType(ListingPlatformLogo), findsNothing);
+
+      await pump(
+        tester,
+        context: const ListingContext.explore(
+          segment: MediaSegment.all,
+          genre: Genre(id: 'comedy'),
+        ),
+      );
+      expect(find.byType(ListingPlatformLogo), findsNothing);
+
+      await pump(tester, context: const ListingContext.home(MediaSegment.all));
+      expect(find.byType(ListingPlatformLogo), findsNothing);
+      expect(repo.providerAsks, isEmpty);
+    });
   });
 }

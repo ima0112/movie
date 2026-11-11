@@ -45,7 +45,6 @@ class SectionListingCubit extends Cubit<SectionListingState> {
   final Set<MediaKey> _keys = {};
   int _page = 0;
   int _totalPages = 1;
-  int _totalResults = 0;
   FailureReason? _failure;
   int _generation = 0;
 
@@ -72,7 +71,6 @@ class SectionListingCubit extends Cubit<SectionListingState> {
     _keys.clear();
     _page = 0;
     _totalPages = 1;
-    _totalResults = 0;
 
     final result = await _fetch(1);
     if (generation != _generation || isClosed) return;
@@ -175,7 +173,6 @@ class SectionListingCubit extends Cubit<SectionListingState> {
   void _absorb(DiscoverPage page) {
     _page = math.max(_page, page.page);
     _totalPages = page.totalPages;
-    _totalResults = page.totalResults;
     for (final item in page.items) {
       if (_pool.length >= maxItems) break;
       if (_keys.add(item.key)) _pool.add(item);
@@ -187,7 +184,6 @@ class SectionListingCubit extends Cubit<SectionListingState> {
     items: sort == ListingSort.byDefault ? List.of(_pool) : _sorted(sort),
     page: _page,
     hasMore: sort == ListingSort.byDefault && !_complete,
-    count: _complete ? _pool.length : math.min(_totalResults, maxItems),
   );
 
   /// The pool in [sort]'s order; ties keep the section's own order.

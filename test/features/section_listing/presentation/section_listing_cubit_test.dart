@@ -103,7 +103,6 @@ void main() {
       expect(s.sort, ListingSort.byDefault);
       expect(_ids(cubit), List.generate(20, (i) => i + 1));
       expect(s.hasMore, isTrue);
-      expect(s.count, SectionListingCubit.maxItems); // capped: TMDB has 600
       expect(repo.pagesRequested, [1]);
     },
   );
@@ -131,7 +130,6 @@ void main() {
 
     final s = _loaded(cubit);
     expect(s.items, hasLength(40));
-    expect(s.count, 40);
     expect(s.hasMore, isFalse);
   });
 
@@ -221,7 +219,6 @@ void main() {
       expect(s.sort, ListingSort.popularity);
       expect(s.items, hasLength(100));
       expect(s.hasMore, isFalse); // the whole set is here: no pagination
-      expect(s.count, 100);
       expect(repo.pagesRequested, [3, 4, 5]); // just what was missing
       // The same hundred titles the own order reaches — only reordered.
       await cubit.setSort(ListingSort.byDefault);
@@ -334,7 +331,6 @@ void main() {
 
       expect(repo.pagesRequested, [2, 3]);
       expect(_loaded(cubit).items, hasLength(60));
-      expect(_loaded(cubit).count, 60);
     });
 
     test('a failure while completing the set is an error that retry '

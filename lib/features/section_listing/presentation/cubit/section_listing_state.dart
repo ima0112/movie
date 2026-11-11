@@ -30,7 +30,6 @@ final class SectionListingLoaded extends SectionListingState {
     required this.items,
     required this.page,
     required this.hasMore,
-    required this.count,
     this.loadingMore = false,
     this.moreFailed = false,
   });
@@ -44,9 +43,6 @@ final class SectionListingLoaded extends SectionListingState {
   /// More pages can still be fetched (only in the section's own order).
   final bool hasMore;
 
-  /// How many titles the list has (at most `SectionListingCubit.maxItems`).
-  final int count;
-
   /// A next page is being fetched (the grid shows a spinner footer).
   final bool loadingMore;
 
@@ -57,7 +53,6 @@ final class SectionListingLoaded extends SectionListingState {
     List<MediaItem>? items,
     int? page,
     bool? hasMore,
-    int? count,
     bool? loadingMore,
     bool? moreFailed,
   }) => SectionListingLoaded(
@@ -65,7 +60,6 @@ final class SectionListingLoaded extends SectionListingState {
     items: items ?? this.items,
     page: page ?? this.page,
     hasMore: hasMore ?? this.hasMore,
-    count: count ?? this.count,
     loadingMore: loadingMore ?? this.loadingMore,
     moreFailed: moreFailed ?? this.moreFailed,
   );

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -10,16 +8,12 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/media_segment_localization.dart';
 import '../../../../shared/widgets/streaming_service_logo.dart';
 import '../../domain/listing_style.dart';
-import '../cubit/section_listing_cubit.dart';
-import '../cubit/section_listing_state.dart';
 
 /// The amber pill under the title that says what the screen the user came from
-/// had set, and how many titles that gives. From Explore: the picked
-/// platform's logo (only when one was picked), a dot, the genre — or "All
-/// genres" — a dot and the count. From Home: the segment (All, Movies, TV
-/// Shows), a dot and the count. Informational — it isn't a control. The count
-/// appears once the first page is in; only it watches the cubit (CLAUDE.md
-/// rule 9).
+/// had set. From Explore: the picked platform's logo (only when one was
+/// picked), a dot and the genre — or "All genres". From Home: the segment (All,
+/// Movies, TV Shows). Informational — it isn't a control. (No count: a listing
+/// is never longer than 100 titles.)
 class ListingContextPill extends StatelessWidget {
   const ListingContextPill({super.key, required this.listingContext});
 
@@ -57,23 +51,6 @@ class ListingContextPill extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-          ),
-          BlocSelector<SectionListingCubit, SectionListingState, int?>(
-            selector: (state) =>
-                state is SectionListingLoaded ? state.count : null,
-            builder: (context, count) {
-              if (count == null) return const SizedBox.shrink();
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const _Dot(),
-                  Text(
-                    NumberFormat.decimalPattern(l10n.localeName).format(count),
-                    style: _style,
-                  ),
-                ],
-              );
-            },
           ),
         ],
       ),
