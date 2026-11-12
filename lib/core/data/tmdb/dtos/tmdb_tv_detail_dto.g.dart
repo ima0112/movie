@@ -63,6 +63,11 @@ TmdbTvDetailDto _$TmdbTvDetailDtoFromJson(Map<String, dynamic> json) =>
           : TmdbEpisodeToAirDto.fromJson(
               json['next_episode_to_air'] as Map<String, dynamic>,
             ),
+      aggregateCredits: json['aggregate_credits'] == null
+          ? null
+          : TmdbAggregateCreditsDto.fromJson(
+              json['aggregate_credits'] as Map<String, dynamic>,
+            ),
     );
 
 TmdbCreatorDto _$TmdbCreatorDtoFromJson(Map<String, dynamic> json) =>

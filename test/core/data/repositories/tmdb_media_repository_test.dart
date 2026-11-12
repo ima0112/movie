@@ -227,7 +227,7 @@ void main() {
       expect(adapter.requestedPaths, ['/tv/94997']);
       expect(
         adapter.lastQueryParameters?['append_to_response'],
-        'credits,videos,similar,content_ratings,watch/providers',
+        'credits,aggregate_credits,videos,similar,content_ratings,watch/providers',
       );
       expect((result as Success<MediaDetail>).value.item.title, 'Signal Lost');
     });
