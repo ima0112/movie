@@ -85,7 +85,6 @@ class _SeasonView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        centerTitle: true,
         leading: IconButton(
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),

@@ -35,10 +35,16 @@ void main() {
     return hits;
   }
 
-  test('no widget sets its own fontSize/fontWeight/letterSpacing — use an AppTextStyles '
-      'token (add one if it is missing)', () {
-    expect(scan(RegExp(r'\b(fontSize|fontWeight|letterSpacing):'), 'type-exempt:'), isEmpty);
-  });
+  test(
+    'no widget sets its own fontSize/fontWeight/letterSpacing — use an AppTextStyles '
+    'token (add one if it is missing)',
+    () {
+      expect(
+        scan(RegExp(r'\b(fontSize|fontWeight|letterSpacing):'), 'type-exempt:'),
+        isEmpty,
+      );
+    },
+  );
 
   test('no widget types a raw number as a gap or padding — use an '
       'AppSpacing token', () {

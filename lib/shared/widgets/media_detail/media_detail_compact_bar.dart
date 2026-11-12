@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
 
@@ -46,6 +45,7 @@ class MediaDetailCompactBar extends StatelessWidget {
               child: Text(
                 title,
                 style: AppTextStyles.h3,
+                textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -57,7 +57,8 @@ class MediaDetailCompactBar extends StatelessWidget {
                 icon: const Icon(AppIcons.share, color: AppColors.ink),
               )
             else
-              const SizedBox(width: AppSpacing.xl),
+              // As wide as the back button, so the title stays centered.
+              const SizedBox(width: kMinInteractiveDimension),
           ],
         ),
       ),

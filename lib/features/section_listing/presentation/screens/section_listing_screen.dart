@@ -62,7 +62,6 @@ class SectionListingScreen extends StatelessWidget {
             icon: const Icon(AppIcons.back, color: AppColors.ink),
             onPressed: () => context.pop(),
           ),
-          centerTitle: true,
           title: Text(title, style: AppTextStyles.h2),
         ),
         body: SafeArea(
