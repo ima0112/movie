@@ -11,8 +11,8 @@ import 'media_backdrop_carousel.dart';
 /// B1's "Latest trailers": the same wide cards as B2's "Top rated"
 /// ([MediaBackdropCarousel]'s size), but each is a still of the film under a
 /// centered play button — tapping calls [onTrailerTap] (the screen opens
-/// YouTube; nothing plays in the app). The still is the film's backdrop, or
-/// the video's own YouTube thumbnail when TMDB has no backdrop.
+/// YouTube; nothing plays in the app). The still is the video's own YouTube
+/// thumbnail, or the film's backdrop if that image can't load.
 ///
 /// Pure presentation: everything comes in by parameter.
 class TrailerCarousel extends StatelessWidget {
@@ -21,9 +21,9 @@ class TrailerCarousel extends StatelessWidget {
   final List<TrailerItem> trailers;
   final void Function(TrailerItem trailer)? onTrailerTap;
 
-  /// YouTube's own still for a video, used when the film has no backdrop.
-  static String thumbnailUrl(String videoKey) =>
-      'https://img.youtube.com/vi/$videoKey/hqdefault.jpg';
+  /// YouTube's own still for a video — the card's image.
+  static String thumbnailUrl(String videoKey, {bool maxRes = false}) =>
+      'https://img.youtube.com/vi/$videoKey/${maxRes ? 'maxresdefault' : 'hqdefault'}.jpg';
 
   static const double _peek = 36;
   static const double _playSize = 52;
@@ -71,8 +71,13 @@ class _TrailerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final item = trailer.item;
-    final image =
-        item.backdropUrl ?? TrailerCarousel.thumbnailUrl(trailer.video.key);
+    // The video's own YouTube still first (16:9, then the 4:3 one that every
+    // video has); the film's backdrop only if neither can load.
+    final sources = [
+      TrailerCarousel.thumbnailUrl(trailer.video.key, maxRes: true),
+      TrailerCarousel.thumbnailUrl(trailer.video.key),
+      ?item.backdropUrl,
+    ];
     return Semantics(
       button: onTap != null,
       label: context.l10n.trailerPlayLabel(item.title),
@@ -87,12 +92,7 @@ class _TrailerCard extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(
-                  image,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const ColoredBox(color: AppColors.surfaceRaised2),
-                ),
+                _FallbackImage(sources: sources),
                 DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -141,6 +141,26 @@ class _PlayButton extends StatelessWidget {
         border: Border.all(color: AppColors.glassBorder),
       ),
       child: const Icon(AppIcons.play, color: AppColors.ink),
+    );
+  }
+}
+
+/// The first of [sources] that loads; a plain dark block if none does.
+class _FallbackImage extends StatelessWidget {
+  const _FallbackImage({required this.sources});
+
+  final List<String> sources;
+
+  @override
+  Widget build(BuildContext context) {
+    if (sources.isEmpty) {
+      return const ColoredBox(color: AppColors.surfaceRaised2);
+    }
+    return Image.network(
+      sources.first,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) =>
+          _FallbackImage(sources: sources.sublist(1)),
     );
   }
 }
