@@ -1,5 +1,5 @@
 import '../../../../core/domain/entities/discover_filter.dart';
-import '../../../../core/domain/entities/media_item.dart';
+import '../../../../core/domain/entities/search_result.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
 
@@ -59,7 +59,7 @@ final class ExploreSearchLoaded extends ExploreSearching {
     required this.results,
   });
 
-  final List<MediaItem> results;
+  final List<SearchResult> results;
 }
 
 /// The search itself failed (not "no results" — an empty [Success] list

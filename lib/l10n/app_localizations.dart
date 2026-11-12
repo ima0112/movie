@@ -824,6 +824,18 @@ abstract class AppLocalizations {
   /// **'Recent'**
   String get exploreRecentSearchesLabel;
 
+  /// B2's search result row metadata for a person with no known department (docs/SCREENS.md B2: "'Department · Person'").
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get explorePersonLabel;
+
+  /// B2's search result row metadata for a person (docs/SCREENS.md B2: "'Department · Person'"). {department} is TMDB's own known-for department text ("Acting", "Directing"), already in the content language.
+  ///
+  /// In en, this message translates to:
+  /// **'{department} · Person'**
+  String explorePersonMetadata(String department);
+
   /// B2's search result row metadata line (docs/SCREENS.md B2: "'Year · Movie/TV Show'"). {typeLabel} is MediaType's own localized singular (mediaTypeMovieSingular/TvShowSingular).
   ///
   /// In en, this message translates to:

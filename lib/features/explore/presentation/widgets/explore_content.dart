@@ -43,7 +43,8 @@ class ExploreContent extends StatelessWidget {
           ExploreSearchLoaded() => SearchResultsList(
             results: state.results,
             segment: state.segment,
-            onTap: (item) => context.pushMediaDetail(item.key),
+            onMediaTap: (item) => context.pushMediaDetail(item.key),
+            onPersonTap: (person) => context.pushPersonDetail(person.id),
           ),
           ExploreSearchError(:final reason) => ErrorStateView(
             title: context.l10n.commonCouldntLoad,

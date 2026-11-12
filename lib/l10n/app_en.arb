@@ -338,6 +338,19 @@
   },
   "exploreSearchHint": "Movies, TV shows, people",
   "exploreRecentSearchesLabel": "Recent",
+  "explorePersonLabel": "Person",
+  "@explorePersonLabel": {
+    "description": "B2's search result row metadata for a person with no known department (docs/SCREENS.md B2: \"'Department · Person'\")."
+  },
+  "explorePersonMetadata": "{department} · Person",
+  "@explorePersonMetadata": {
+    "description": "B2's search result row metadata for a person (docs/SCREENS.md B2: \"'Department · Person'\"). {department} is TMDB's own known-for department text (\"Acting\", \"Directing\"), already in the content language.",
+    "placeholders": {
+      "department": {
+        "type": "String"
+      }
+    }
+  },
   "exploreResultMetadata": "{year} · {typeLabel}",
   "@exploreResultMetadata": {
     "description": "B2's search result row metadata line (docs/SCREENS.md B2: \"'Year · Movie/TV Show'\"). {typeLabel} is MediaType's own localized singular (mediaTypeMovieSingular/TvShowSingular).",

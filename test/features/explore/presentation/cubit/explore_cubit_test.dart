@@ -4,6 +4,7 @@ import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
+import 'package:movies/core/domain/entities/search_result.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
@@ -177,7 +178,10 @@ void main() {
         async.elapse(const Duration(milliseconds: 1) + _fakeRepositoryDelay);
         final loaded = cubit.state as ExploreSearchLoaded;
         expect(loaded.query, 'dune');
-        expect(loaded.results.map((i) => i.title), ['Dune: Part Two']);
+        expect(
+          loaded.results.whereType<MediaResult>().map((r) => r.item.title),
+          ['Dune: Part Two'],
+        );
 
         cubit.close();
       });
@@ -285,99 +289,94 @@ void main() {
     });
 
     group('refresh on locale change', () {
-      test(
-        'a region change repeats the active search exactly once',
-        () async {
-          final settingsRepository = _FakeSettingsRepository(
-            const AppSettings(languageCode: 'en', regionCode: 'US'),
-          );
-          final cubit = _exploreCubit(settingsRepository: settingsRepository);
-          final states = <ExploreState>[];
-          final subscription = cubit.stream.listen(states.add);
-
-          cubit.onQueryChanged('dune');
-          await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
-          expect((cubit.state as ExploreSearchLoaded).query, 'dune');
-          final loadingCountSoFar =
-              states.whereType<ExploreSearchLoading>().length;
-
-          settingsRepository.controller.add(
-            const AppSettings(languageCode: 'en', regionCode: 'MX'),
-          );
-          await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
-
-          expect(
-            states.whereType<ExploreSearchLoading>().length,
-            loadingCountSoFar + 1,
-          );
-          expect((cubit.state as ExploreSearchLoaded).query, 'dune');
-
-          await subscription.cancel();
-          await cubit.close();
-        },
-      );
-
-      test(
-        'an emission with the same language/region does not re-run the '
-        'search',
-        () async {
-          final settingsRepository = _FakeSettingsRepository(
-            const AppSettings(languageCode: 'en', regionCode: 'US'),
-          );
-          final cubit = _exploreCubit(settingsRepository: settingsRepository);
-
-          cubit.onQueryChanged('dune');
-          await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
-          final loadedBefore = cubit.state;
-
-          settingsRepository.controller.add(
-            const AppSettings(languageCode: 'en', regionCode: 'US'),
-          );
-          await pumpEventQueue();
-
-          // Cubit.emit always produces a new state instance — the exact
-          // same instance still showing means _onSettingsChanged never
-          // called emit() at all.
-          expect(cubit.state, same(loadedBefore));
-
-          await cubit.close();
-        },
-      );
-
-      test(
-        'ExploreAtRest (nothing typed) -> no-op, never touches what the '
-        'user is typing',
-        () async {
-          final settingsRepository = _FakeSettingsRepository(
-            const AppSettings(languageCode: 'en', regionCode: 'US'),
-          );
-          final cubit = _exploreCubit(settingsRepository: settingsRepository);
-          expect(cubit.state, isA<ExploreAtRest>());
-
-          settingsRepository.controller.add(
-            const AppSettings(languageCode: 'en', regionCode: 'MX'),
-          );
-          await pumpEventQueue();
-
-          expect(cubit.state, isA<ExploreAtRest>());
-
-          await cubit.close();
-        },
-      );
-
-      test('close() leaves no live subscription on SettingsRepository', () async {
+      test('a region change repeats the active search exactly once', () async {
         final settingsRepository = _FakeSettingsRepository(
           const AppSettings(languageCode: 'en', regionCode: 'US'),
         );
         final cubit = _exploreCubit(settingsRepository: settingsRepository);
+        final states = <ExploreState>[];
+        final subscription = cubit.stream.listen(states.add);
+
+        cubit.onQueryChanged('dune');
+        await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
+        expect((cubit.state as ExploreSearchLoaded).query, 'dune');
+        final loadingCountSoFar = states
+            .whereType<ExploreSearchLoading>()
+            .length;
+
+        settingsRepository.controller.add(
+          const AppSettings(languageCode: 'en', regionCode: 'MX'),
+        );
+        await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
+
+        expect(
+          states.whereType<ExploreSearchLoading>().length,
+          loadingCountSoFar + 1,
+        );
+        expect((cubit.state as ExploreSearchLoaded).query, 'dune');
+
+        await subscription.cancel();
+        await cubit.close();
+      });
+
+      test('an emission with the same language/region does not re-run the '
+          'search', () async {
+        final settingsRepository = _FakeSettingsRepository(
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+        );
+        final cubit = _exploreCubit(settingsRepository: settingsRepository);
+
+        cubit.onQueryChanged('dune');
+        await cubit.stream.firstWhere((s) => s is ExploreSearchLoaded);
+        final loadedBefore = cubit.state;
+
+        settingsRepository.controller.add(
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+        );
         await pumpEventQueue();
-        expect(settingsRepository.controller.hasListener, isTrue);
+
+        // Cubit.emit always produces a new state instance — the exact
+        // same instance still showing means _onSettingsChanged never
+        // called emit() at all.
+        expect(cubit.state, same(loadedBefore));
 
         await cubit.close();
+      });
+
+      test('ExploreAtRest (nothing typed) -> no-op, never touches what the '
+          'user is typing', () async {
+        final settingsRepository = _FakeSettingsRepository(
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+        );
+        final cubit = _exploreCubit(settingsRepository: settingsRepository);
+        expect(cubit.state, isA<ExploreAtRest>());
+
+        settingsRepository.controller.add(
+          const AppSettings(languageCode: 'en', regionCode: 'MX'),
+        );
         await pumpEventQueue();
 
-        expect(settingsRepository.controller.hasListener, isFalse);
+        expect(cubit.state, isA<ExploreAtRest>());
+
+        await cubit.close();
       });
+
+      test(
+        'close() leaves no live subscription on SettingsRepository',
+        () async {
+          final settingsRepository = _FakeSettingsRepository(
+            const AppSettings(languageCode: 'en', regionCode: 'US'),
+          );
+          final cubit = _exploreCubit(settingsRepository: settingsRepository);
+          await pumpEventQueue();
+          expect(settingsRepository.controller.hasListener, isTrue);
+
+          await cubit.close();
+          await pumpEventQueue();
+
+          expect(settingsRepository.controller.hasListener, isFalse);
+        },
+      );
     });
   });
 }

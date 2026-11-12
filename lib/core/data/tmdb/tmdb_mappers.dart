@@ -1,5 +1,7 @@
 import '../../domain/entities/genre.dart';
 import '../../domain/entities/media_item.dart';
+import '../../domain/entities/search_result.dart';
+import '../../domain/entities/person.dart';
 import '../../domain/entities/media_type.dart';
 import 'dtos/tmdb_movie_list_item_dto.dart';
 import 'dtos/tmdb_tv_list_item_dto.dart';
@@ -74,6 +76,30 @@ MediaItem? mediaItemFromTrendingJson(
     ),
     _ => null,
   };
+}
+
+/// One `/search/multi` entry as a [SearchResult]: a movie or TV show through
+/// [mediaItemFromTrendingJson], or a `"person"` as a [PersonResult] (id, name,
+/// photo path, known-for department). `null` for anything else.
+SearchResult? searchResultFromJson(
+  Map<String, dynamic> json, {
+  required TmdbImagesConfig imagesConfig,
+}) {
+  if (json['media_type'] == 'person') {
+    final name = json['name'];
+    final id = json['id'];
+    if (name is! String || id is! int) return null;
+    return PersonResult(
+      Person(
+        id: id,
+        name: name,
+        profilePath: json['profile_path'] as String?,
+        knownForDepartment: json['known_for_department'] as String?,
+      ),
+    );
+  }
+  final item = mediaItemFromTrendingJson(json, imagesConfig: imagesConfig);
+  return item == null ? null : MediaResult(item);
 }
 
 /// Public (not just this file's own concern): `tmdb_detail_mappers.dart`
