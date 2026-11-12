@@ -140,6 +140,11 @@ abstract interface class MediaRepository {
   /// the section nears the viewport.
   Future<Result<List<TrailerItem>>> latestTrailers({int limit = 8});
 
+  /// The subscription services [key] streams on in the user's region (most
+  /// relevant first; empty when none) — one small request, for a poster's
+  /// platform logo in the "See all" listing.
+  Future<Result<List<StreamingService>>> streamingProvidersFor(MediaKey key);
+
   /// A2 step 0's own poster wall background — deliberately **not**
   /// `getCarouselSection(CarouselSection.popularThisWeek)`, which is
   /// shared with B1's own small "Popular this week" carousel and capped

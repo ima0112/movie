@@ -572,6 +572,35 @@ class TmdbMediaRepository implements MediaRepository {
     );
   }
 
+  @override
+  Future<Result<List<StreamingService>>> streamingProvidersFor(
+    MediaKey key,
+  ) async {
+    try {
+      final dto = await _datasource.watchProvidersOf(
+        key.type == MediaType.movie ? 'movie' : 'tv',
+        key.tmdbId,
+      );
+      final flatrate = dto.results[_region]?.flatrate ?? const [];
+      return Success([
+        for (final ref in flatrate)
+          if (ref.providerId != null)
+            StreamingService(
+              id: ref.providerId!,
+              name: ref.providerName,
+              logoUrl: buildTmdbImageUrl(
+                config: _imagesConfig,
+                kind: TmdbImageKind.poster,
+                path: ref.logoPath,
+                size: 'w92',
+              ),
+            ),
+      ]);
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
+  }
+
   /// How many services B2's pill row offers.
   static const int _maxStreamingServices = 15;
 

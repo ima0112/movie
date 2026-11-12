@@ -106,6 +106,11 @@ class _FakeMediaRepository implements MediaRepository {
   }) async => const Success(DiscoverPage.empty);
 
   @override
+  Future<Result<List<StreamingService>>> streamingProvidersFor(
+    MediaKey key,
+  ) async => const Success([]);
+
+  @override
   Future<Result<List<TrailerItem>>> latestTrailers({int limit = 8}) async =>
       const Success([]);
 

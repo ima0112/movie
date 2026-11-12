@@ -1,4 +1,5 @@
 import 'dtos/tmdb_video_dto.dart';
+import 'dtos/tmdb_watch_providers_dto.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../app/environments.dart';
@@ -205,6 +206,16 @@ class TmdbMediaDatasource {
       },
     );
     return TmdbPersonDetailDto.fromJson(response.data!);
+  }
+
+  /// Where one title streams, per region (`/{movie|tv}/{id}/watch/providers`)
+  /// — the small call behind a poster's platform logo, instead of a whole
+  /// detail fetch.
+  Future<TmdbWatchProvidersDto> watchProvidersOf(String type, int id) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/$type/$id/watch/providers',
+    );
+    return TmdbWatchProvidersDto.fromJson(response.data!);
   }
 
   /// A movie's videos in the user's language, English and unlabeled ones

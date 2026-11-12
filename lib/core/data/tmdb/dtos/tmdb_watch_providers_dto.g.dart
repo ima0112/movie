@@ -49,4 +49,5 @@ TmdbWatchProviderRefDto _$TmdbWatchProviderRefDtoFromJson(
 ) => TmdbWatchProviderRefDto(
   providerName: json['provider_name'] as String,
   logoPath: json['logo_path'] as String?,
+  providerId: (json['provider_id'] as num?)?.toInt(),
 );

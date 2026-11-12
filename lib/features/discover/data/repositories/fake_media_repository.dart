@@ -992,6 +992,15 @@ class FakeMediaRepository implements MediaRepository {
     ]);
   }
 
+  @override
+  Future<Result<List<StreamingService>>> streamingProvidersFor(
+    MediaKey key,
+  ) async => Success(
+    key.tmdbId.isEven
+        ? const [StreamingService(id: 8, name: 'Netflix')]
+        : const [],
+  );
+
   /// [discover]'s results cut into pages of [pageSize].
   @override
   Future<Result<DiscoverPage>> discoverPage(
