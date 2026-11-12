@@ -20,6 +20,8 @@ TmdbMovieListItemDto _$TmdbMovieListItemDtoFromJson(
   releaseDate: json['release_date'] as String? ?? '',
   voteAverage: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
   backdropPath: json['backdrop_path'] as String?,
+  voteCount: (json['vote_count'] as num?)?.toInt(),
+  popularity: (json['popularity'] as num?)?.toDouble(),
   mediaType: json['media_type'] as String?,
   character: json['character'] as String?,
   job: json['job'] as String?,

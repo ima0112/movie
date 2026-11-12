@@ -34,6 +34,8 @@ Movie mediaItemFromMovieDto(
     genres: genresFromTmdbIds(dto.genreIds, MediaType.movie),
     releaseDate: parseTmdbDate(dto.releaseDate),
     voteAverage: dto.voteAverage,
+    voteCount: dto.voteCount,
+    popularity: dto.popularity,
   );
 }
 
@@ -54,6 +56,8 @@ TvShow mediaItemFromTvDto(
     genres: genresFromTmdbIds(dto.genreIds, MediaType.tvShow),
     releaseDate: parseTmdbDate(dto.firstAirDate),
     voteAverage: dto.voteAverage,
+    voteCount: dto.voteCount,
+    popularity: dto.popularity,
   );
 }
 

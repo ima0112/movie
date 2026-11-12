@@ -20,6 +20,8 @@ class TmdbMovieListItemDto {
     required this.releaseDate,
     required this.voteAverage,
     this.backdropPath,
+    this.voteCount,
+    this.popularity,
     this.mediaType,
     this.character,
     this.job,
@@ -44,6 +46,11 @@ class TmdbMovieListItemDto {
 
   @JsonKey(name: 'vote_average', defaultValue: 0.0)
   final double voteAverage;
+
+  @JsonKey(name: 'vote_count')
+  final int? voteCount;
+
+  final double? popularity;
 
   /// Only present on `/trending/all/week` entries — `"movie"`, `"tv"`,
   /// or `"person"`. `null` on every type-specific endpoint.

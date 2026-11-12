@@ -18,6 +18,8 @@ class TmdbTvListItemDto {
     required this.firstAirDate,
     required this.voteAverage,
     this.backdropPath,
+    this.voteCount,
+    this.popularity,
     this.mediaType,
     this.character,
     this.job,
@@ -40,6 +42,11 @@ class TmdbTvListItemDto {
 
   @JsonKey(name: 'vote_average', defaultValue: 0.0)
   final double voteAverage;
+
+  @JsonKey(name: 'vote_count')
+  final int? voteCount;
+
+  final double? popularity;
 
   @JsonKey(name: 'media_type')
   final String? mediaType;

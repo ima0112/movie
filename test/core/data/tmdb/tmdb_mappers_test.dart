@@ -139,6 +139,40 @@ void main() {
     },
   );
 
+  group('list items carry the vote count and popularity', () {
+    test('a movie and a TV show map vote_count and popularity, or null', () {
+      final movie = mediaItemFromMovieDto(
+        TmdbMovieListItemDto.fromJson({
+          'id': 1,
+          'title': 'M',
+          'poster_path': null,
+          'genre_ids': <int>[],
+          'release_date': '2026-01-01',
+          'vote_average': 8.0,
+          'vote_count': 1234,
+          'popularity': 87.5,
+        }),
+        imagesConfig: imagesConfig,
+      );
+      expect(movie.voteCount, 1234);
+      expect(movie.popularity, 87.5);
+
+      final tv = mediaItemFromTvDto(
+        TmdbTvListItemDto.fromJson({
+          'id': 2,
+          'name': 'T',
+          'poster_path': null,
+          'genre_ids': <int>[],
+          'first_air_date': '2026-01-01',
+          'vote_average': 7.0,
+        }),
+        imagesConfig: imagesConfig,
+      );
+      expect(tv.voteCount, isNull);
+      expect(tv.popularity, isNull);
+    });
+  });
+
   group('list items carry the backdrop', () {
     test('a movie and a TV show map backdrop_path to a w780 URL, or null', () {
       final movie = mediaItemFromMovieDto(
