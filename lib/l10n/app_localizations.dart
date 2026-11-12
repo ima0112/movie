@@ -848,6 +848,18 @@ abstract class AppLocalizations {
   /// **'Popular'**
   String get carouselSectionPopular;
 
+  /// B2's overline above the genre pill row at rest (docs/SCREENS.md B2).
+  ///
+  /// In en, this message translates to:
+  /// **'Genre'**
+  String get exploreGenreLabel;
+
+  /// B2's first genre pill: no genre filter.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get exploreGenreAll;
+
   /// The small caps label above B2's streaming-platform pills.
   ///
   /// In en, this message translates to:

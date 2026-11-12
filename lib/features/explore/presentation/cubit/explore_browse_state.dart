@@ -1,4 +1,5 @@
 import '../../../../core/domain/entities/media_item.dart';
+import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/streaming_service.dart';
@@ -48,11 +49,12 @@ final class ExploreServicesError extends ExploreServicesState {
   final FailureReason reason;
 }
 
-/// B2 at rest: the Platform pills and the body sections they filter. A
-/// `null` [service] means "All".
+/// B2 at rest: the Genre and Platform pills and the body sections they
+/// filter. A `null` [genre] / [service] means "All".
 final class ExploreBrowseState {
   const ExploreBrowseState({
     required this.segment,
+    this.genre,
     this.service,
     this.services = const ExploreServicesLoading(),
     this.sections = const {},
@@ -60,6 +62,7 @@ final class ExploreBrowseState {
   });
 
   final MediaSegment segment;
+  final Genre? genre;
   final StreamingService? service;
   final ExploreServicesState services;
 
@@ -67,7 +70,7 @@ final class ExploreBrowseState {
   /// when it nears the viewport) and shows as loading.
   final Map<ExploreSection, ExploreSectionState> sections;
 
-  /// Bumped whenever the filters change (segment, platform, region) and the
+  /// Bumped whenever the filters change (segment, genre, platform, region) and the
   /// sections are cleared — what tells a section that has already been seen
   /// to ask for its data again.
   final int revision;
@@ -77,6 +80,7 @@ final class ExploreBrowseState {
 
   ExploreBrowseState copyWith({
     MediaSegment? segment,
+    Genre? Function()? genre,
     StreamingService? Function()? service,
     ExploreServicesState? services,
     Map<ExploreSection, ExploreSectionState>? sections,
@@ -84,6 +88,7 @@ final class ExploreBrowseState {
   }) {
     return ExploreBrowseState(
       segment: segment ?? this.segment,
+      genre: genre == null ? this.genre : genre(),
       service: service == null ? this.service : service(),
       services: services ?? this.services,
       sections: sections ?? this.sections,

@@ -354,6 +354,14 @@
     "description": "CarouselSection.popular — TV Shows segment only (docs/SCREENS.md B1). CarouselSection.watchLater reuses myListTabWatchLater instead of its own key."
   },
 
+  "exploreGenreLabel": "Genre",
+  "@exploreGenreLabel": {
+    "description": "B2's overline above the genre pill row at rest (docs/SCREENS.md B2)."
+  },
+  "exploreGenreAll": "All",
+  "@exploreGenreAll": {
+    "description": "B2's first genre pill: no genre filter."
+  },
   "explorePlatformLabel": "Platform",
   "@explorePlatformLabel": {
     "description": "The small caps label above B2's streaming-platform pills."

@@ -1,4 +1,5 @@
 import '../../../core/domain/entities/discover_filter.dart';
+import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_type.dart';
 
 /// B2's body sections at rest (`docs/SCREENS.md` B2), in on-screen order.
@@ -48,9 +49,11 @@ DiscoverFilter exploreSectionFilter(
   required DateTime today,
   MediaType? type,
   int? providerId,
+  Genre? genre,
 }) {
   final base = DiscoverFilter(
     type: type,
+    withGenres: genre == null ? const {} : {genre},
     withWatchProviders: providerId == null ? const {} : {providerId},
   );
   return switch (section) {

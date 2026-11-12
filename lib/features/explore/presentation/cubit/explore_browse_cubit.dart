@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/app_settings.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
+import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
@@ -14,8 +15,8 @@ import '../../../../core/domain/services/daily_picker.dart';
 import '../../domain/explore_section.dart';
 import 'explore_browse_state.dart';
 
-/// B2 at rest (`docs/SCREENS.md` B2): the Platform pills and the sections
-/// they filter. Screen-local (CLAUDE.md rule 10), separate from
+/// B2 at rest (`docs/SCREENS.md` B2): the Genre and Platform pills and the
+/// sections they filter. Screen-local (CLAUDE.md rule 10), separate from
 /// [ExploreCubit] — typing a search and browsing share nothing but the
 /// segment, which the screen passes in through [setSegment].
 ///
@@ -67,6 +68,12 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
     if (segment == state.segment) return;
     _clearSections(segment: segment, services: const ExploreServicesLoading());
     await _loadServices();
+  }
+
+  /// A Genre pill: `null` = "All".
+  Future<void> selectGenre(Genre? genre) async {
+    if (genre == state.genre) return;
+    _clearSections(genre: () => genre);
   }
 
   /// A Platform pill: `null` = "All".
@@ -123,6 +130,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
   void _clearSections({
     MediaSegment? segment,
     ExploreServicesState? services,
+    Genre? Function()? genre,
     StreamingService? Function()? service,
   }) {
     _sectionsGeneration++;
@@ -130,6 +138,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
       state.copyWith(
         segment: segment,
         services: services,
+        genre: genre,
         service: service,
         sections: const {},
         revision: state.revision + 1,
@@ -143,6 +152,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
       today: _clock(),
       type: state.segment.mediaType,
       providerId: state.service?.id,
+      genre: state.genre,
     );
     final result = await _mediaRepository.discover(filter);
     if (generation != _sectionsGeneration || isClosed) return;
@@ -167,7 +177,8 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
     }
     final salt =
         'explore-${section.name}-${filter.type?.name}-'
-        '${filter.withWatchProviders.join(',')}';
+        '${filter.withWatchProviders.join(',')}-'
+        '${filter.withGenres.map((g) => g.id).join(',')}';
     return DailyPicker(
       _clock(),
     ).shuffled(results, salt: salt).take(sectionSize).toList();

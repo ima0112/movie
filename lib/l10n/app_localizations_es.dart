@@ -421,6 +421,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get carouselSectionPopular => 'Populares';
 
   @override
+  String get exploreGenreLabel => 'Género';
+
+  @override
+  String get exploreGenreAll => 'Todos';
+
+  @override
   String get explorePlatformLabel => 'Plataforma';
 
   @override

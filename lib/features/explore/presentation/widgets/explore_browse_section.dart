@@ -99,6 +99,7 @@ class ExploreBrowseSection extends StatelessWidget {
         today: DateTime.now(),
         type: browse.segment.mediaType,
         providerId: browse.service?.id,
+        genre: browse.genre,
       ),
       title: title,
     );

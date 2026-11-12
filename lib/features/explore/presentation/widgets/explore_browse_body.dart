@@ -14,11 +14,12 @@ import '../cubit/explore_browse_state.dart';
 import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
 import 'explore_browse_section.dart';
+import 'explore_genre_pills.dart';
 import 'explore_platform_pills.dart';
 import 'recent_searches_chips.dart';
 
-/// B2 at rest (`docs/SCREENS.md` B2): the Platform pills, then the sections
-/// they filter. While the search field is focused and empty
+/// B2 at rest (`docs/SCREENS.md` B2): the Genre and Platform pills, then the
+/// sections they filter. While the search field is focused and empty
 /// *and* there is a history, the recent searches show instead — the pills
 /// come back as soon as the field loses focus.
 class ExploreBrowseBody extends StatelessWidget {
@@ -88,6 +89,7 @@ class _Browse extends StatelessWidget {
           bottom: AppTabBar.scrollInset(context),
         ),
         children: [
+          const ExploreGenrePills(),
           const ExplorePlatformPills(),
           for (final section in ExploreSection.values)
             ExploreBrowseSection(section: section),

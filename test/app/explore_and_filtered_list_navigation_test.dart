@@ -160,7 +160,9 @@ void main() {
   }
 
   testWidgets('B2 at rest: a full-width search bar on the page margin, no '
-      'filter icon, the Platform pills and the six sections', (tester) async {
+      'filter icon, the Genre and Platform pills and the six sections', (
+    tester,
+  ) async {
     await openExplore(tester);
 
     // Search field: 20 px margins both sides = the content's full width.
@@ -175,7 +177,7 @@ void main() {
 
     // Pills.
     expect(find.text('PLATFORM'), findsOneWidget);
-    expect(find.text('GENRE'), findsNothing);
+    expect(find.text('GENRE'), findsOneWidget);
     expect(find.text('Netflix'), findsOneWidget);
 
     // The four sections, Top today numbered.
@@ -226,7 +228,28 @@ void main() {
     final all = tester
         .widgetList<ExplorePill>(find.byType(ExplorePill))
         .where((p) => p.label == 'All' && p.selected);
-    expect(all, isEmpty); // "All" is no longer the selected one
+    // Only the Genre row's "All" is still selected; the Platform one isn't.
+    expect(all, hasLength(1));
+  });
+
+  testWidgets('a genre pill becomes the selected one', (tester) async {
+    await openExplore(tester);
+
+    await tester.tap(find.text('Action'));
+    await tester.pumpAndSettle();
+
+    final pill = tester.widget<ExplorePill>(
+      find.ancestor(
+        of: find.text('Action'),
+        matching: find.byType(ExplorePill),
+      ),
+    );
+    expect(pill.selected, isTrue);
+    // The Platform row is untouched: its "All" is still the selected one.
+    final all = tester
+        .widgetList<ExplorePill>(find.byType(ExplorePill))
+        .where((p) => p.label == 'All' && p.selected);
+    expect(all, hasLength(1));
   });
 
   testWidgets('typing in Explore debounces, then shows search results', (
