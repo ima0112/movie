@@ -10,6 +10,8 @@ import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
 import '../../domain/entities/search_result.dart';
 import '../../domain/entities/streaming_service.dart';
+import '../../domain/entities/trailer_item.dart';
+import '../../domain/entities/video.dart';
 import '../../domain/entities/season_summary.dart';
 import '../../domain/repositories/media_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
@@ -148,6 +150,8 @@ class TmdbMediaRepository implements MediaRepository {
         CarouselSection.upcoming => await _mapMovies(_datasource.movieUpcoming),
         CarouselSection.airingNow => await _mapTv(_datasource.tvOnTheAir),
         CarouselSection.popular => await _mapTv(_datasource.tvPopular),
+        CarouselSection.comingSoon => await _comingSoon(),
+        CarouselSection.finishedShows => await _finishedShows(),
         CarouselSection.trending => await _trending(type),
         CarouselSection.topRated => await _topRated(type),
         // No TMDB endpoint hydrates this one — it's whatever's in
@@ -196,6 +200,88 @@ class TmdbMediaRepository implements MediaRepository {
     MediaType.tvShow => _mapTv(_datasource.tvTopRated),
     null => Future.value(const <MediaItem>[]),
   };
+
+  /// Movies and shows releasing from tomorrow up to 90 days ahead, most
+  /// popular first — the same window as B2's "Coming soon".
+  Future<List<MediaItem>> _comingSoon() async {
+    final today = DateTime.now();
+    final filter = DiscoverFilter(
+      releasedFrom: today.add(const Duration(days: 1)),
+      releasedTo: today.add(const Duration(days: 90)),
+      minVoteCount: 0,
+    );
+    return _interleaved([
+      await _discoverMovies(filter),
+      await _discoverTv(filter),
+    ], limit: 10);
+  }
+
+  Future<List<MediaItem>> _finishedShows() async {
+    final page = await _datasource.discoverTv(
+      discoverQueryParams(
+        const DiscoverFilter(
+          type: MediaType.tvShow,
+          tvStatus: DiscoverTvStatus.ended,
+          sortBy: DiscoverSortBy.rating,
+          minVoteCount: 500,
+        ),
+        type: MediaType.tvShow,
+        watchRegion: _region,
+      ),
+    );
+    return page.results
+        .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig))
+        .toList();
+  }
+
+  /// How many candidates `latestTrailers` probes per wanted title: some have
+  /// no YouTube video.
+  static const int _trailerCandidateFactor = 2;
+
+  @override
+  Future<Result<List<TrailerItem>>> latestTrailers({int limit = 8}) async {
+    try {
+      final sources = await Future.wait([
+        _datasource.movieNowPlaying(),
+        _datasource.movieUpcoming(),
+      ]);
+      final candidates = _interleaved(
+        sources.map(
+          (page) => page.results.map(
+            (dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig),
+          ),
+        ),
+        limit: limit * _trailerCandidateFactor,
+      );
+      final language = _settingsRepository.current.languageCode;
+      final found = await Future.wait(
+        candidates.map((item) async {
+          try {
+            final videos = await _datasource.movieVideos(item.id);
+            final video = Video.pickTrailer(
+              videos.map(
+                (v) => Video(
+                  key: v.key,
+                  site: v.site,
+                  type: v.type,
+                  name: v.name,
+                  official: v.official,
+                  iso6391: v.iso6391,
+                ),
+              ),
+              language: language,
+            );
+            return video == null ? null : TrailerItem(item: item, video: video);
+          } on DioException {
+            return null; // one title failing shouldn't sink the row
+          }
+        }),
+      );
+      return Success(found.nonNulls.take(limit).toList());
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
+  }
 
   Future<List<MediaItem>> _mapMovies(Future<dynamic> Function() fetch) async {
     final page = await fetch();

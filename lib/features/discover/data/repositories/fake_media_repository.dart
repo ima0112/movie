@@ -12,6 +12,7 @@ import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/search_result.dart';
 import '../../../../core/domain/entities/streaming_service.dart';
 import '../../../../core/domain/entities/season_summary.dart';
+import '../../../../core/domain/entities/trailer_item.dart';
 import '../../../../core/domain/entities/video.dart';
 import '../../../../core/domain/entities/watch_providers.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
@@ -969,6 +970,25 @@ class FakeMediaRepository implements MediaRepository {
     };
 
     return Success(pool.take(10).toList());
+  }
+
+  @override
+  Future<Result<List<TrailerItem>>> latestTrailers({int limit = 8}) async {
+    await Future.delayed(_delay);
+    return Success([
+      for (final m in _movies.take(limit))
+        TrailerItem(
+          item: m,
+          video: const Video(
+            key: 'dQw4w9WgXcQ',
+            site: 'YouTube',
+            type: 'Trailer',
+            name: 'Trailer',
+            official: true,
+            iso6391: 'en',
+          ),
+        ),
+    ]);
   }
 
   /// A fixed, deterministic pool per type (everything but the seed

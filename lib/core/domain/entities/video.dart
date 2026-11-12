@@ -27,4 +27,22 @@ final class Video {
   final String iso6391;
 
   bool get isYoutube => site == 'YouTube';
+
+  /// The trailer to offer among [videos] — `docs/SCREENS.md` D1: "official +
+  /// Trailer + [language] → official → Teaser → first available". Only ever a
+  /// YouTube video (the button opens YouTube); `null` when there is none.
+  static Video? pickTrailer(Iterable<Video> videos, {String language = 'en'}) {
+    final youtube = videos.where((v) => v.isYoutube).toList();
+    if (youtube.isEmpty) return null;
+    for (final v in youtube) {
+      if (v.official && v.type == 'Trailer' && v.iso6391 == language) return v;
+    }
+    for (final v in youtube) {
+      if (v.official) return v;
+    }
+    for (final v in youtube) {
+      if (v.type == 'Teaser') return v;
+    }
+    return youtube.first;
+  }
 }

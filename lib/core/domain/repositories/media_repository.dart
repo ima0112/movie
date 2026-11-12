@@ -6,6 +6,7 @@ import '../entities/media_type.dart';
 import '../entities/result.dart';
 import '../entities/search_result.dart';
 import '../entities/streaming_service.dart';
+import '../entities/trailer_item.dart';
 import '../entities/season_summary.dart';
 
 /// One of Discover's named carousels.
@@ -48,6 +49,12 @@ enum CarouselSection {
 
   /// TV shows only.
   popular,
+
+  /// "All" segment only — movies and shows releasing in the next 90 days.
+  comingSoon,
+
+  /// TV shows only — series that have ended, best rated first.
+  finishedShows,
 }
 
 /// Read access to the movie/TV catalog for Discover's hero and carousels.
@@ -107,6 +114,12 @@ abstract interface class MediaRepository {
   /// region (Settings), most relevant first, capped to a short list. [type]
   /// picks movies or TV shows; `null` (All) merges both without repeats.
   Future<Result<List<StreamingService>>> streamingServices({MediaType? type});
+
+  /// B1's "Latest trailers": up to [limit] current and upcoming movies, each
+  /// with its trailer (titles with no YouTube video are skipped). Needs one
+  /// `/movie/{id}/videos` call per candidate — so it is only fetched when
+  /// the section nears the viewport.
+  Future<Result<List<TrailerItem>>> latestTrailers({int limit = 8});
 
   /// A2 step 0's own poster wall background — deliberately **not**
   /// `getCarouselSection(CarouselSection.popularThisWeek)`, which is

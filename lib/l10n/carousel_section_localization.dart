@@ -15,5 +15,7 @@ extension CarouselSectionLocalization on CarouselSection {
     CarouselSection.upcoming => l10n.carouselSectionUpcoming,
     CarouselSection.airingNow => l10n.carouselSectionAiringNow,
     CarouselSection.popular => l10n.carouselSectionPopular,
+    CarouselSection.comingSoon => l10n.carouselSectionComingSoon,
+    CarouselSection.finishedShows => l10n.carouselSectionFinishedShows,
   };
 }

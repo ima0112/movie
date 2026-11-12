@@ -770,6 +770,24 @@ abstract class AppLocalizations {
   /// **'In theaters'**
   String get carouselSectionInTheaters;
 
+  /// No description provided for @carouselSectionComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get carouselSectionComingSoon;
+
+  /// No description provided for @carouselSectionFinishedShows.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished shows'**
+  String get carouselSectionFinishedShows;
+
+  /// No description provided for @carouselSectionLatestTrailers.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest trailers'**
+  String get carouselSectionLatestTrailers;
+
   /// No description provided for @carouselSectionTrending.
   ///
   /// In en, this message translates to:
