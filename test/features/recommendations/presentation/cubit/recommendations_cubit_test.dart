@@ -16,11 +16,14 @@ import 'package:movies/core/domain/entities/trailer_item.dart';
 import 'package:movies/core/domain/entities/search_result.dart';
 import 'package:movies/core/domain/entities/streaming_service.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
+import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
+import 'package:movies/features/match_engine/domain/vibe.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/recommendations/domain/recommendation_builder.dart';
+import 'package:movies/features/recommendations/domain/recommendation_planner.dart';
 import 'package:movies/features/recommendations/presentation/cubit/recommendations_cubit.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
@@ -142,236 +145,266 @@ class _CountingRecommendationsCubit extends RecommendationsCubit {
   }
 }
 
-RecommendationsCubit _cubit({
-  required _FakeMediaRepository mediaRepository,
-  required InMemoryUserLibraryRepository userLibraryRepository,
-  required InMemoryTasteProfileRepository tasteProfileRepository,
-  required _FakeSettingsRepository settingsRepository,
-}) {
-  return RecommendationsCubit(
-    mediaRepository,
-    userLibraryRepository,
-    tasteProfileRepository,
-    settingsRepository,
-    VibeCatalog(const []),
-  );
-}
+const _drama = Genre(id: 'drama');
+
+TasteProfile _profile({
+  Set<Genre> genres = const {},
+  Set<String> vibes = const {},
+}) => TasteProfile(
+  likedGenres: genres,
+  vetoedGenres: const {},
+  likedVibes: vibes,
+  yearFrom: 1990,
+  updatedAt: DateTime(2026),
+);
+
+final _vibes = VibeCatalog([
+  const Vibe(
+    id: 'explosive',
+    icon: 'vibeExplosive',
+    movie: VibeRule(genreIds: ['action'], keywordIds: []),
+    tv: VibeRule(genreIds: ['action'], keywordIds: []),
+  ),
+]);
+
+const _settings = AppSettings(languageCode: 'en', regionCode: 'US');
+
+RecommendationsCubit _make(
+  _FakeMediaRepository media, {
+  InMemoryUserLibraryRepository? library,
+  InMemoryTasteProfileRepository? tastes,
+  _FakeSettingsRepository? settings,
+  DateTime? today,
+}) => RecommendationsCubit(
+  media,
+  library ?? InMemoryUserLibraryRepository(),
+  tastes ?? InMemoryTasteProfileRepository(),
+  settings ?? _FakeSettingsRepository(_settings),
+  _vibes,
+  clock: () => today ?? DateTime(2026, 5, 4),
+);
+
+const _dune2 = UserMediaEntry(
+  key: _dune,
+  title: 'Dune',
+  isFavorite: true,
+  genres: [_action],
+);
 
 void main() {
-  group('RecommendationsCubit', () {
-    test('no profile, no library signal -> both sections Hidden, no '
-        'network call at all', () async {
-      final mediaRepository = _FakeMediaRepository();
-      final cubit = _cubit(
-        mediaRepository: mediaRepository,
-        userLibraryRepository: InMemoryUserLibraryRepository(),
-        tasteProfileRepository: InMemoryTasteProfileRepository(),
-        settingsRepository: _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        ),
-      );
+  group('All follows the taste profile', () {
+    test('no profile -> all three sections Hidden, no network, even with a '
+        'full My List', () async {
+      final media = _FakeMediaRepository();
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(_dune2);
+      final cubit = _make(media, library: library);
       addTearDown(cubit.close);
 
       await cubit.load(MediaSegment.all);
 
       expect(cubit.state.forYou, isA<RecommendationSectionHidden>());
       expect(cubit.state.becauseYouLike, isA<RecommendationSectionHidden>());
-      expect(mediaRepository.discoverCalls, 0);
-      expect(mediaRepository.recommendationsCalls, 0);
+      expect(cubit.state.becauseYouWant, isA<RecommendationSectionHidden>());
+      expect(media.discoverCalls + media.recommendationsCalls, 0);
     });
 
-    test('a favorite entry gives both sections a real signal and loads '
-        'independently', () async {
-      final mediaRepository = _FakeMediaRepository();
-      final userLibraryRepository = InMemoryUserLibraryRepository();
-      await userLibraryRepository.upsert(
-        const UserMediaEntry(
-          key: _dune,
-          title: 'Dune',
-          isFavorite: true,
-          genres: [_action],
-        ),
+    test('a profile gives For you, Because you like {genre} and Because '
+        'you want {vibe}', () async {
+      final media = _FakeMediaRepository();
+      final tastes = InMemoryTasteProfileRepository();
+      await tastes.save(
+        _profile(genres: {_action, _drama}, vibes: {'explosive'}),
       );
-      final cubit = _cubit(
-        mediaRepository: mediaRepository,
-        userLibraryRepository: userLibraryRepository,
-        tasteProfileRepository: InMemoryTasteProfileRepository(),
-        settingsRepository: _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        ),
-      );
+      final cubit = _make(media, tastes: tastes);
       addTearDown(cubit.close);
 
       await cubit.load(MediaSegment.all);
 
       expect(cubit.state.forYou, isA<RecommendationSectionLoaded>());
-      final becauseYouLike =
-          cubit.state.becauseYouLike as RecommendationSectionLoaded;
-      expect(becauseYouLike.seedTitle, 'Dune');
-      expect(mediaRepository.recommendationsCalls, 1);
+      final like = cubit.state.becauseYouLike as RecommendationSectionLoaded;
+      expect(like.seed, isA<GenreSeed>());
+      final want = cubit.state.becauseYouWant as RecommendationSectionLoaded;
+      expect((want.seed! as VibeSeed).vibe.id, 'explosive');
+      // Genre and vibe sections use /discover, never /recommendations.
+      expect(media.recommendationsCalls, 0);
     });
+  });
 
-    test('one section failing never blocks or clears the other', () async {
-      final mediaRepository = _FakeMediaRepository()
-        ..discoverResult = const Failure(FailureReason.network);
-      final userLibraryRepository = InMemoryUserLibraryRepository();
-      await userLibraryRepository.upsert(
-        const UserMediaEntry(
-          key: _dune,
-          title: 'Dune',
-          isFavorite: true,
-          genres: [_action],
-        ),
-      );
-      final cubit = _cubit(
-        mediaRepository: mediaRepository,
-        userLibraryRepository: userLibraryRepository,
-        tasteProfileRepository: InMemoryTasteProfileRepository(),
-        settingsRepository: _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        ),
-      );
+  group('Movies and TV Shows follow My List', () {
+    test('a favorite gives For you and Because you like {title}; the '
+        'taste profile is ignored', () async {
+      final media = _FakeMediaRepository();
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(_dune2);
+      final cubit = _make(media, library: library);
       addTearDown(cubit.close);
 
-      await cubit.load(MediaSegment.all);
+      await cubit.load(MediaSegment.movie);
+
+      expect(cubit.state.forYou, isA<RecommendationSectionLoaded>());
+      final like = cubit.state.becauseYouLike as RecommendationSectionLoaded;
+      expect(like.seedTitle, 'Dune');
+      expect(cubit.state.becauseYouWant, isA<RecommendationSectionHidden>());
+      expect(media.recommendationsCalls, 1);
+    });
+
+    test('something watched and rated badly never seeds a section', () async {
+      final media = _FakeMediaRepository();
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(
+        UserMediaEntry(
+          key: _dune,
+          title: 'Dune',
+          watchedAt: DateTime(2026),
+          rating: 2,
+          genres: const [_action],
+        ),
+      );
+      final cubit = _make(media, library: library);
+      addTearDown(cubit.close);
+
+      await cubit.load(MediaSegment.movie);
+
+      expect(cubit.state.becauseYouLike, isA<RecommendationSectionHidden>());
+      expect(cubit.state.forYou, isA<RecommendationSectionHidden>());
+      expect(media.discoverCalls + media.recommendationsCalls, 0);
+    });
+  });
+
+  group('behaviour', () {
+    Future<RecommendationsCubit> loadedMovieCubit(
+      _FakeMediaRepository media,
+      InMemoryUserLibraryRepository library, {
+      DateTime? today,
+      _FakeSettingsRepository? settings,
+    }) async {
+      final cubit = _make(
+        media,
+        library: library,
+        settings: settings,
+        today: today,
+      );
+      addTearDown(cubit.close);
+      await cubit.load(MediaSegment.movie);
+      return cubit;
+    }
+
+    test('one section failing never blocks or clears the other', () async {
+      final media = _FakeMediaRepository()
+        ..discoverResult = const Failure(FailureReason.network);
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(_dune2);
+      final cubit = await loadedMovieCubit(media, library);
 
       expect(cubit.state.forYou, isA<RecommendationSectionError>());
       expect(cubit.state.becauseYouLike, isA<RecommendationSectionLoaded>());
     });
 
     test('retry(forYou) re-fetches only that section', () async {
-      final mediaRepository = _FakeMediaRepository()
+      final media = _FakeMediaRepository()
         ..discoverResult = const Failure(FailureReason.network);
-      final userLibraryRepository = InMemoryUserLibraryRepository();
-      await userLibraryRepository.upsert(
-        const UserMediaEntry(
-          key: _dune,
-          title: 'Dune',
-          isFavorite: true,
-          genres: [_action],
-        ),
-      );
-      final cubit = _cubit(
-        mediaRepository: mediaRepository,
-        userLibraryRepository: userLibraryRepository,
-        tasteProfileRepository: InMemoryTasteProfileRepository(),
-        settingsRepository: _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        ),
-      );
-      addTearDown(cubit.close);
-      await cubit.load(MediaSegment.all);
-      expect(cubit.state.forYou, isA<RecommendationSectionError>());
-      final recommendationsCallsBefore = mediaRepository.recommendationsCalls;
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(_dune2);
+      final cubit = await loadedMovieCubit(media, library);
+      final before = media.recommendationsCalls;
 
-      mediaRepository.discoverResult = Success(_recommendationPool);
+      media.discoverResult = Success(_recommendationPool);
       await cubit.retry(RecommendationSlot.forYou);
 
       expect(cubit.state.forYou, isA<RecommendationSectionLoaded>());
-      // becauseYouLike was never touched by this retry.
-      expect(mediaRepository.recommendationsCalls, recommendationsCallsBefore);
+      expect(media.recommendationsCalls, before);
     });
 
-    test('refresh() skips the network call when the derived request '
-        "hasn't actually changed", () async {
-      final mediaRepository = _FakeMediaRepository();
-      final userLibraryRepository = InMemoryUserLibraryRepository();
-      await userLibraryRepository.upsert(
-        const UserMediaEntry(
-          key: _dune,
-          title: 'Dune',
-          isFavorite: true,
-          genres: [_action],
-        ),
-      );
-      final cubit = _cubit(
-        mediaRepository: mediaRepository,
-        userLibraryRepository: userLibraryRepository,
-        tasteProfileRepository: InMemoryTasteProfileRepository(),
-        settingsRepository: _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        ),
-      );
-      addTearDown(cubit.close);
-      await cubit.load(MediaSegment.all);
-      final discoverCallsAfterLoad = mediaRepository.discoverCalls;
-      final recommendationsCallsAfterLoad =
-          mediaRepository.recommendationsCalls;
+    test('refresh() on the same day with nothing changed costs no '
+        'network call', () async {
+      final media = _FakeMediaRepository();
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(_dune2);
+      final cubit = await loadedMovieCubit(media, library);
+      final discover = media.discoverCalls;
+      final recommendations = media.recommendationsCalls;
 
       await cubit.refresh();
 
-      expect(mediaRepository.discoverCalls, discoverCallsAfterLoad);
-      expect(
-        mediaRepository.recommendationsCalls,
-        recommendationsCallsAfterLoad,
-      );
+      expect(media.discoverCalls, discover);
+      expect(media.recommendationsCalls, recommendations);
     });
 
-    test('refresh() does re-fetch once the signal actually changes', () async {
-      final mediaRepository = _FakeMediaRepository();
-      final userLibraryRepository = InMemoryUserLibraryRepository();
-      await userLibraryRepository.upsert(
-        const UserMediaEntry(
-          key: _dune,
-          title: 'Dune',
-          isFavorite: true,
-          genres: [_action],
-        ),
-      );
-      final cubit = _cubit(
-        mediaRepository: mediaRepository,
-        userLibraryRepository: userLibraryRepository,
-        tasteProfileRepository: InMemoryTasteProfileRepository(),
-        settingsRepository: _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        ),
-      );
-      addTearDown(cubit.close);
-      await cubit.load(MediaSegment.all);
-      final discoverCallsAfterLoad = mediaRepository.discoverCalls;
+    test('refresh() picks up a new My List signal', () async {
+      final media = _FakeMediaRepository();
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(_dune2);
+      final cubit = await loadedMovieCubit(media, library);
+      final discover = media.discoverCalls;
 
-      // A new favorite changes the "For you" filter's own withGenres.
-      await userLibraryRepository.upsert(
+      await library.upsert(
         const UserMediaEntry(
-          key: MediaKey(type: MediaType.tvShow, tmdbId: 101),
-          title: 'The Bear',
+          key: MediaKey(type: MediaType.movie, tmdbId: 2),
+          title: 'Heat',
           isFavorite: true,
-          genres: [Genre(id: 'comedy')],
+          genres: [_drama],
         ),
       );
       await cubit.refresh();
 
-      expect(
-        mediaRepository.discoverCalls,
-        greaterThan(discoverCallsAfterLoad),
-      );
+      expect(media.discoverCalls, greaterThan(discover));
     });
+
+    test(
+      'the title seed changes from day to day, never the day before',
+      () async {
+        final library = InMemoryUserLibraryRepository();
+        for (var i = 1; i <= 5; i++) {
+          await library.upsert(
+            UserMediaEntry(
+              key: MediaKey(type: MediaType.movie, tmdbId: i),
+              title: 'Title $i',
+              isFavorite: true,
+              genres: const [_action],
+            ),
+          );
+        }
+        final titles = <String?>[];
+        for (var d = 1; d <= 6; d++) {
+          // Ids that don't collide with My List's (those are excluded).
+          final pool = List.generate(8, (i) => _movie(100 + i));
+          final media = _FakeMediaRepository()
+            ..recommendationsResult = Success(pool)
+            ..discoverResult = Success(pool);
+          final cubit = await loadedMovieCubit(
+            media,
+            library,
+            today: DateTime(2026, 5, d),
+          );
+          titles.add(
+            (cubit.state.becauseYouLike as RecommendationSectionLoaded)
+                .seedTitle,
+          );
+        }
+        for (var i = 1; i < titles.length; i++) {
+          expect(titles[i], isNot(titles[i - 1]));
+        }
+        expect(titles.toSet().length, greaterThan(2));
+      },
+    );
 
     test('a language/region change triggers refresh()', () async {
-      final mediaRepository = _FakeMediaRepository();
-      final userLibraryRepository = InMemoryUserLibraryRepository();
-      await userLibraryRepository.upsert(
-        const UserMediaEntry(
-          key: _dune,
-          title: 'Dune',
-          isFavorite: true,
-          genres: [_action],
-        ),
-      );
-      final settingsRepository = _FakeSettingsRepository(
-        const AppSettings(languageCode: 'en', regionCode: 'US'),
-      );
+      final media = _FakeMediaRepository();
+      final library = InMemoryUserLibraryRepository();
+      await library.upsert(_dune2);
+      final settings = _FakeSettingsRepository(_settings);
       final cubit = _CountingRecommendationsCubit(
-        mediaRepository,
-        userLibraryRepository,
+        media,
+        library,
         InMemoryTasteProfileRepository(),
-        settingsRepository,
-        VibeCatalog(const []),
+        settings,
+        _vibes,
       );
       addTearDown(cubit.close);
-      await cubit.load(MediaSegment.all);
+      await cubit.load(MediaSegment.movie);
 
-      settingsRepository.controller.add(
+      settings.controller.add(
         const AppSettings(languageCode: 'es', regionCode: 'ES'),
       );
       await Future<void>.delayed(Duration.zero);

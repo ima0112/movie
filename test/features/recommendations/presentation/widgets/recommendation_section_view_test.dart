@@ -140,7 +140,7 @@ void main() {
         VibeCatalog(const []),
       );
       addTearDown(cubit.close);
-      await cubit.load(MediaSegment.all);
+      await cubit.load(MediaSegment.movie);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -158,7 +158,7 @@ void main() {
                 child: const SingleChildScrollView(
                   child: RecommendationSectionView(
                     slot: RecommendationSlot.becauseYouLike,
-                    segment: MediaSegment.all,
+                    segment: MediaSegment.movie,
                   ),
                 ),
               ),

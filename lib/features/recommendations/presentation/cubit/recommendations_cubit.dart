@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/app_settings.dart';
-import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_item.dart';
-import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
@@ -15,11 +13,12 @@ import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../../domain/recommendation_builder.dart';
+import '../../domain/recommendation_planner.dart';
 
-/// Which of [RecommendationsState]'s two independent slots a call
+/// Which of [RecommendationsState]'s three independent slots a call
 /// targets — CLAUDE.md rule 9: loading/retrying one never touches the
 /// other.
-enum RecommendationSlot { forYou, becauseYouLike }
+enum RecommendationSlot { forYou, becauseYouLike, becauseYouWant }
 
 /// One slot's own load state.
 sealed class RecommendationSectionState {
@@ -30,8 +29,8 @@ final class RecommendationSectionLoading extends RecommendationSectionState {
   const RecommendationSectionLoading();
 }
 
-/// No usable signal (`RecommendationBuilder.forYouFilter`/
-/// `.becauseYouLikeSeed` returned `null`), or the result fell below
+/// No signal today (`RecommendationPlanner` planned nothing for this slot),
+/// or the result fell below
 /// `RecommendationBuilder.minRecommendationCount` once filtered — never
 /// shown as an empty or generic carousel (`docs/DECISIONS.md` F1b).
 final class RecommendationSectionHidden extends RecommendationSectionState {
@@ -45,14 +44,20 @@ final class RecommendationSectionError extends RecommendationSectionState {
 }
 
 final class RecommendationSectionLoaded extends RecommendationSectionState {
-  const RecommendationSectionLoaded(this.items, {this.seedTitle});
+  const RecommendationSectionLoaded(this.items, {this.seed});
 
   final List<MediaItem> items;
 
-  /// Set for [RecommendationSlot.becauseYouLike] only — B1's "Because
-  /// you like {title}" header (CLAUDE.md rule 15: a typed placeholder,
-  /// never baked into pre-formatted text here).
-  final String? seedTitle;
+  /// What a "Because you…" section is about (a title, a genre or a vibe) —
+  /// the header is built from it by the view (CLAUDE.md rule 15: a typed
+  /// placeholder, never pre-formatted text here). `null` for "For you".
+  final BecauseSeed? seed;
+
+  /// The seed's title, when it is a saved title.
+  String? get seedTitle => switch (seed) {
+    TitleSeed(:final entry) => entry.title,
+    _ => null,
+  };
 }
 
 class RecommendationsState {
@@ -60,72 +65,74 @@ class RecommendationsState {
     required this.segment,
     required this.forYou,
     required this.becauseYouLike,
+    required this.becauseYouWant,
   });
 
   final MediaSegment segment;
   final RecommendationSectionState forYou;
   final RecommendationSectionState becauseYouLike;
 
+  /// The All tab's "Because you want {vibe}" — hidden in the other tabs.
+  final RecommendationSectionState becauseYouWant;
+
   RecommendationsState copyWith({
     RecommendationSectionState? forYou,
     RecommendationSectionState? becauseYouLike,
+    RecommendationSectionState? becauseYouWant,
   }) => RecommendationsState(
     segment: segment,
     forYou: forYou ?? this.forYou,
     becauseYouLike: becauseYouLike ?? this.becauseYouLike,
+    becauseYouWant: becauseYouWant ?? this.becauseYouWant,
   );
+
+  RecommendationSectionState slot(RecommendationSlot slot) => switch (slot) {
+    RecommendationSlot.forYou => forYou,
+    RecommendationSlot.becauseYouLike => becauseYouLike,
+    RecommendationSlot.becauseYouWant => becauseYouWant,
+  };
 }
 
-/// B1's "For you"/"Because you like X" — `docs/DECISIONS.md` section
-/// 5/F1b. Deliberately separate from `DiscoverCubit`: that Cubit fetches
-/// its 8 named carousels in one sequential loop and emits a single
-/// `DiscoverLoaded` at the end — a failure in any one of them fails the
-/// whole segment, with no independent retry. These two sections need
-/// their own loading/error/retry per CLAUDE.md rule 9, so rather than
-/// reworking that loop (and risking the 8 sections that already work),
-/// they get their own Cubit with its own two independent slots.
+/// B1's "For you" / "Because you like …" / "Because you want …" —
+/// `docs/DECISIONS.md` section 5/F1b. Deliberately separate from
+/// `DiscoverCubit`: these sections have their own signal (tastes, My List) and
+/// need their own loading/error/retry per CLAUDE.md rule 9, so each is an
+/// independent slot.
+///
+/// **What each section shows is decided by [RecommendationPlanner]**, once
+/// per day (a deterministic, day-stable rotation — see [DailyPicker]): the
+/// All tab follows the taste profile, Movies/TV Shows follow My List. The
+/// plan is recomputed (locally, no network) on every reload trigger, and a
+/// slot only goes back to TMDB when its derived request actually changed —
+/// so a new day, new tastes or a new My List entry give something new, while
+/// an ordinary refresh costs nothing.
 ///
 /// Reload triggers, exactly 3, no others:
-/// 1. **Language/region change** — same `SettingsRepository.watch()
-///    .distinct().skip(1)` pattern `DiscoverCubit` already uses.
-/// 2. **Pull-to-refresh** — `DiscoverContentLoaded`'s own
-///    `RefreshIndicator.onRefresh` calls [refresh] alongside
-///    `DiscoverCubit.loadDiscover`.
-/// 3. **Returning from a pushed detail screen** — `DiscoverScreen`'s own
+/// 1. **Language/region change** — `SettingsRepository.watch()`.
+/// 2. **Pull-to-refresh** — `DiscoverContentLoaded`'s own `RefreshIndicator`.
+/// 3. **Returning from a pushed detail screen** — `DiscoverScreen`'s
 ///    `RouteAware.didPopNext` calls [refresh].
 ///
-/// Switching bottom tabs away and back does **not** reload — B1 lives
-/// under a `StatefulShellRoute.indexedStack` (`app/root_shell.dart`),
-/// which keeps every branch's widget tree (and this Cubit) alive
-/// without rebuilding it, so there's no lifecycle event to hook into
-/// for that case. Documented as a known, accepted gap in
-/// `docs/SCREENS.md` B1 rather than solved with a fragile workaround.
-///
-/// A library change (a new favorite, a new rating) does **not** reload
-/// either, by design — only the 3 triggers above do.
-///
-/// [refresh] never re-fetches over the network unless the *derived*
-/// request (the `DiscoverFilter` "For you" would send, or the seed key
-/// "Because you like X" would use) actually changed since the last
-/// fetch — comparing the cheap, local derivation (`RecommendationBuilder`,
-/// no network) is what makes "reload on language change" and "reload on
-/// pull-to-refresh" both cheap when nothing relevant to either section
-/// has actually changed, rather than always re-hitting TMDB.
+/// Switching bottom tabs away and back does **not** reload (the shell keeps
+/// the branch alive, with no lifecycle event to hook) — a known, accepted gap.
 class RecommendationsCubit extends Cubit<RecommendationsState> {
   RecommendationsCubit(
     this._mediaRepository,
     this._userLibraryRepository,
     this._tasteProfileRepository,
     this._settingsRepository,
-    FutureOr<VibeCatalog> vibeCatalog,
-  ) : _vibeCatalog = Future.value(vibeCatalog),
-      super(
-        const RecommendationsState(
-          segment: MediaSegment.all,
-          forYou: RecommendationSectionLoading(),
-          becauseYouLike: RecommendationSectionLoading(),
-        ),
-      ) {
+    FutureOr<VibeCatalog> vibeCatalog, {
+    DateTime Function()? clock,
+  }) : _vibeCatalog = Future.value(vibeCatalog),
+       _clock = clock ?? DateTime.now,
+       super(
+         const RecommendationsState(
+           segment: MediaSegment.all,
+           forYou: RecommendationSectionLoading(),
+           becauseYouLike: RecommendationSectionLoading(),
+           becauseYouWant: RecommendationSectionLoading(),
+         ),
+       ) {
     _settingsSubscription = _settingsRepository
         .watch()
         .distinct()
@@ -138,158 +145,145 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
   final TasteProfileRepository _tasteProfileRepository;
   final SettingsRepository _settingsRepository;
   final Future<VibeCatalog> _vibeCatalog;
+  final DateTime Function() _clock;
   late final StreamSubscription<AppSettings> _settingsSubscription;
 
   RecommendationBuilder? _cachedBuilder;
+  RecommendationPlanner? _cachedPlanner;
 
-  /// [VibeCatalog.loadFromAssets] is async (reads `assets/vibes.json`)
-  /// but `BlocProvider.create` must build this Cubit synchronously —
-  /// same constraint `MyTastesScreen`/`QuizScreen` already solve with
-  /// their own `FutureBuilder<VibeCatalog>`. Resolving it lazily here
-  /// instead means `DiscoverScreen` can provide this Cubit the same
-  /// synchronous way it already provides `DiscoverCubit`, with no
-  /// second loading state blocking the rest of B1 — only these two
-  /// sections wait on it, and only once, ever (cached after the first
-  /// resolve).
-  Future<RecommendationBuilder> get _builder async =>
-      _cachedBuilder ??= RecommendationBuilder(await _vibeCatalog);
+  /// [VibeCatalog.loadFromAssets] is async but `BlocProvider.create` must
+  /// build this Cubit synchronously, so it is resolved lazily here, once.
+  Future<(RecommendationBuilder, RecommendationPlanner)> get _tools async {
+    final catalog = await _vibeCatalog;
+    return (
+      _cachedBuilder ??= const RecommendationBuilder(),
+      _cachedPlanner ??= RecommendationPlanner(catalog),
+    );
+  }
 
-  /// What "For you" last actually fetched with, for [refresh]'s own
-  /// "skip if nothing changed" check. Reset to `null` by [load] (a
-  /// segment switch always re-fetches, since the filter's own `type`
-  /// differs).
-  DiscoverFilter? _lastForYouFilter;
-
-  /// Same idea as [_lastForYouFilter], for "Because you like X"'s seed.
-  MediaKey? _lastSeedKey;
+  /// What each slot last fetched with, for the "skip if nothing changed"
+  /// check: a `DiscoverFilter` or a seed key. Reset by [load].
+  final Map<RecommendationSlot, Object?> _last = {};
 
   Future<void> load(MediaSegment segment) async {
-    _lastForYouFilter = null;
-    _lastSeedKey = null;
+    _last.clear();
     emit(
       RecommendationsState(
         segment: segment,
         forYou: const RecommendationSectionLoading(),
         becauseYouLike: const RecommendationSectionLoading(),
+        becauseYouWant: const RecommendationSectionLoading(),
       ),
     );
-    await Future.wait([_runForYou(segment), _runBecauseYouLike(segment)]);
+    await _runAll(segment);
   }
 
-  /// Re-derives both sections' requests for the *current* segment and
-  /// only re-fetches whichever one actually changed — see this class's
-  /// own doc comment.
-  Future<void> refresh() async {
-    final segment = state.segment;
-    await Future.wait([_runForYou(segment), _runBecauseYouLike(segment)]);
-  }
+  /// Re-derives today's plan for the *current* segment and only re-fetches
+  /// the slots whose request actually changed.
+  Future<void> refresh() => _runAll(state.segment);
 
   Future<void> retry(RecommendationSlot slot) async {
-    switch (slot) {
-      case RecommendationSlot.forYou:
-        _lastForYouFilter = null;
-        emit(state.copyWith(forYou: const RecommendationSectionLoading()));
-        await _runForYou(state.segment);
-      case RecommendationSlot.becauseYouLike:
-        _lastSeedKey = null;
-        emit(
-          state.copyWith(becauseYouLike: const RecommendationSectionLoading()),
-        );
-        await _runBecauseYouLike(state.segment);
-    }
+    _last.remove(slot);
+    emit(_withSlot(slot, const RecommendationSectionLoading()));
+    await _runAll(state.segment, only: slot);
   }
 
-  Future<void> _runForYou(MediaSegment segment) async {
-    final builder = await _builder;
+  RecommendationsState _withSlot(
+    RecommendationSlot slot,
+    RecommendationSectionState value,
+  ) => switch (slot) {
+    RecommendationSlot.forYou => state.copyWith(forYou: value),
+    RecommendationSlot.becauseYouLike => state.copyWith(becauseYouLike: value),
+    RecommendationSlot.becauseYouWant => state.copyWith(becauseYouWant: value),
+  };
+
+  void _put(RecommendationSlot slot, RecommendationSectionState value) {
+    if (!isClosed) emit(_withSlot(slot, value));
+  }
+
+  Future<void> _runAll(MediaSegment segment, {RecommendationSlot? only}) async {
+    final (builder, planner) = await _tools;
     final profile = await _tasteProfileRepository.watch().first;
     final libraryResult = await _userLibraryRepository.all();
     final library = switch (libraryResult) {
       Success<List<UserMediaEntry>>(:final value) => value,
       Failure<List<UserMediaEntry>>() => const <UserMediaEntry>[],
     };
-
-    final filter = builder.forYouFilter(
+    final plan = planner.plan(
+      type: segment.mediaType,
       profile: profile,
-      libraryEntries: library,
-      type: segment.mediaType,
+      library: library,
+      today: _clock(),
     );
+    final libraryKeys = library.map((e) => e.key).toSet();
 
-    if (filter == null) {
-      _lastForYouFilter = null;
-      if (isClosed) return;
-      emit(state.copyWith(forYou: const RecommendationSectionHidden()));
-      return;
-    }
-
-    if (filter == _lastForYouFilter) return; // nothing relevant changed
-
-    if (isClosed) return;
-    emit(state.copyWith(forYou: const RecommendationSectionLoading()));
-
-    final result = await _mediaRepository.discover(filter);
-    if (isClosed) return;
-    switch (result) {
-      case Success<List<MediaItem>>(:final value):
-        final libraryKeys = library.map((e) => e.key).toSet();
-        final filtered = builder.filterAndThreshold(value, libraryKeys);
-        _lastForYouFilter = filter;
-        emit(
-          state.copyWith(
-            forYou: filtered == null
+    Future<void> run(
+      RecommendationSlot slot,
+      Object? request,
+      Future<Result<List<MediaItem>>> Function() fetch,
+      BecauseSeed? seed,
+    ) async {
+      if (only != null && only != slot) return;
+      if (request == null) {
+        _last.remove(slot);
+        _put(slot, const RecommendationSectionHidden());
+        return;
+      }
+      if (_last[slot] == request) return; // nothing relevant changed
+      _put(slot, const RecommendationSectionLoading());
+      final result = await fetch();
+      if (isClosed || state.segment != segment) return;
+      switch (result) {
+        case Success<List<MediaItem>>(:final value):
+          final filtered = builder.filterAndThreshold(value, libraryKeys);
+          _last[slot] = request;
+          _put(
+            slot,
+            filtered == null
                 ? const RecommendationSectionHidden()
-                : RecommendationSectionLoaded(filtered),
-          ),
-        );
-      case Failure<List<MediaItem>>(:final reason):
-        emit(state.copyWith(forYou: RecommendationSectionError(reason)));
+                : RecommendationSectionLoaded(filtered, seed: seed),
+          );
+        case Failure<List<MediaItem>>(:final reason):
+          _put(slot, RecommendationSectionError(reason));
+      }
     }
+
+    final like = plan.becauseLike;
+    final want = plan.becauseWant;
+    await Future.wait([
+      run(
+        RecommendationSlot.forYou,
+        plan.forYou,
+        () => _mediaRepository.discover(plan.forYou!),
+        null,
+      ),
+      run(
+        RecommendationSlot.becauseYouLike,
+        like == null ? null : _seedKey(like),
+        () => switch (like) {
+          TitleSeed(:final entry) => _mediaRepository.recommendationsFor(
+            entry.key,
+          ),
+          _ => _mediaRepository.discover(planner.filterForSeed(like!, profile)),
+        },
+        like,
+      ),
+      run(
+        RecommendationSlot.becauseYouWant,
+        want == null ? null : _seedKey(want),
+        () => _mediaRepository.discover(planner.filterForSeed(want!, profile)),
+        want,
+      ),
+    ]);
   }
 
-  Future<void> _runBecauseYouLike(MediaSegment segment) async {
-    final builder = await _builder;
-    final libraryResult = await _userLibraryRepository.all();
-    final library = switch (libraryResult) {
-      Success<List<UserMediaEntry>>(:final value) => value,
-      Failure<List<UserMediaEntry>>() => const <UserMediaEntry>[],
-    };
-
-    final seed = builder.becauseYouLikeSeed(
-      libraryEntries: library,
-      type: segment.mediaType,
-    );
-
-    if (seed == null) {
-      _lastSeedKey = null;
-      if (isClosed) return;
-      emit(state.copyWith(becauseYouLike: const RecommendationSectionHidden()));
-      return;
-    }
-
-    if (seed.key == _lastSeedKey) return; // nothing relevant changed
-
-    if (isClosed) return;
-    emit(state.copyWith(becauseYouLike: const RecommendationSectionLoading()));
-
-    final result = await _mediaRepository.recommendationsFor(seed.key);
-    if (isClosed) return;
-    switch (result) {
-      case Success<List<MediaItem>>(:final value):
-        final libraryKeys = library.map((e) => e.key).toSet();
-        final filtered = builder.filterAndThreshold(value, libraryKeys);
-        _lastSeedKey = seed.key;
-        emit(
-          state.copyWith(
-            becauseYouLike: filtered == null
-                ? const RecommendationSectionHidden()
-                : RecommendationSectionLoaded(filtered, seedTitle: seed.title),
-          ),
-        );
-      case Failure<List<MediaItem>>(:final reason):
-        emit(
-          state.copyWith(becauseYouLike: RecommendationSectionError(reason)),
-        );
-    }
-  }
+  /// A comparable identity for a seed (the request it makes).
+  static String _seedKey(BecauseSeed seed) => switch (seed) {
+    TitleSeed(:final entry) =>
+      'title:${entry.key.type.name}:${entry.key.tmdbId}',
+    GenreSeed(:final genre) => 'genre:${genre.id}',
+    VibeSeed(:final vibe) => 'vibe:${vibe.id}',
+  };
 
   @override
   Future<void> close() {

@@ -9,6 +9,9 @@ import '../../../../shared/widgets/media_card.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 import '../../../discover/presentation/widgets/discover_content_error.dart';
 import '../../../discover/presentation/widgets/discover_section_skeleton.dart';
+import '../../../../l10n/genre_localization.dart';
+import '../../../../l10n/vibe_localization.dart';
+import '../../domain/recommendation_planner.dart';
 import '../cubit/recommendations_cubit.dart';
 
 /// One of B1's "For you"/"Because you like X" sections — its own
@@ -39,10 +42,7 @@ class RecommendationSectionView extends StatelessWidget {
     >(
       selector: (state) {
         if (state.segment != segment) return null;
-        return switch (slot) {
-          RecommendationSlot.forYou => state.forYou,
-          RecommendationSlot.becauseYouLike => state.becauseYouLike,
-        };
+        return state.slot(slot);
       },
       builder: (context, sectionState) {
         return switch (sectionState) {
@@ -55,33 +55,37 @@ class RecommendationSectionView extends StatelessWidget {
               onRetry: () => context.read<RecommendationsCubit>().retry(slot),
             ),
           ),
-          RecommendationSectionLoaded(:final items, :final seedTitle) =>
-            AppSection(
-              title: _header(context, seedTitle),
-              child: MediaCarousel.standard(
-                items: items,
-                // "For you" leads the page: larger than "Because you like".
-                size: slot == RecommendationSlot.forYou
-                    ? MediaCardSize.carouselLarge
-                    : MediaCardSize.carousel,
-                showTypeTag: segment == MediaSegment.all,
-                onItemTap: (item) => context.pushMediaDetail(item.key),
-              ),
+          RecommendationSectionLoaded(:final items, :final seed) => AppSection(
+            title: _header(context, seed),
+            child: MediaCarousel.standard(
+              items: items,
+              // "For you" leads the page: larger than the "Because you…" ones.
+              size: slot == RecommendationSlot.forYou
+                  ? MediaCardSize.carouselLarge
+                  : MediaCardSize.carousel,
+              showTypeTag: segment == MediaSegment.all,
+              onItemTap: (item) => context.pushMediaDetail(item.key),
             ),
+          ),
         };
       },
     );
   }
 
-  String _header(BuildContext context, String? seedTitle) {
+  String _header(BuildContext context, BecauseSeed? seed) {
     final l10n = context.l10n;
-    return switch (slot) {
-      RecommendationSlot.forYou => l10n.carouselSectionForYou,
-      // seedTitle is always set by RecommendationsCubit alongside
-      // RecommendationSectionLoaded for this slot — never read for
-      // .forYou, which never sets it.
-      RecommendationSlot.becauseYouLike => l10n.carouselSectionBecauseYouLike(
-        seedTitle!,
+    // A "Because you…" section always has its seed (the cubit sets it with
+    // the loaded state); "For you" never does.
+    return switch (seed) {
+      null => l10n.carouselSectionForYou,
+      TitleSeed(:final entry) => l10n.carouselSectionBecauseYouLike(
+        entry.title,
+      ),
+      GenreSeed(:final genre) => l10n.carouselSectionBecauseYouLikeGenre(
+        genre.localizedName(l10n),
+      ),
+      VibeSeed(:final vibe) => l10n.carouselSectionBecauseYouWantVibe(
+        vibe.localizedName(l10n),
       ),
     };
   }

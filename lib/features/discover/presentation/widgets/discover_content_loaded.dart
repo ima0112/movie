@@ -66,6 +66,10 @@ class DiscoverContentLoaded extends StatelessWidget {
               slot: RecommendationSlot.becauseYouLike,
               segment: segment,
             ),
+            RecommendationSectionView(
+              slot: RecommendationSlot.becauseYouWant,
+              segment: segment,
+            ),
             for (final (i, section) in sections.indexed) ...[
               DiscoverSectionCarousel(segment: segment, section: section),
               // The trailers follow the lead section, in the All tab only.

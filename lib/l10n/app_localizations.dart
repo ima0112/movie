@@ -758,6 +758,18 @@ abstract class AppLocalizations {
   /// **'Popular this week'**
   String get carouselSectionPopularThisWeek;
 
+  /// B1's All tab: 'Because you like X' where X is one of the genres in the user's taste profile (docs/SCREENS.md B1).
+  ///
+  /// In en, this message translates to:
+  /// **'Because you like {genre}'**
+  String carouselSectionBecauseYouLikeGenre(String genre);
+
+  /// B1's All tab: 'Because you want X' where X is one of the vibes in the user's taste profile (docs/SCREENS.md B1).
+  ///
+  /// In en, this message translates to:
+  /// **'Because you want {vibe}'**
+  String carouselSectionBecauseYouWantVibe(String vibe);
+
   /// B1's "Because you like X" carousel header (docs/SCREENS.md B1) — X is RecommendationBuilder's own deterministic seed title, a real UserMediaEntry.title, never a genre.
   ///
   /// In en, this message translates to:
