@@ -9,7 +9,8 @@ import '../../../../l10n/l10n_extension.dart';
 /// B2's search field — `docs/SCREENS.md` B2: a real search field ('Movies,
 /// TV shows, people') across the **full content width**; once there is text
 /// (or while it is focused) it gains a "×" inside it that clears the search
-/// (or, empty, dismisses it) (there is no separate
+/// (or, empty, dismisses it); at rest — empty and not focused — it shows the
+/// filter icon instead (→ H8) (there is no separate
 /// filter icon or Cancel any more — genre and platform are pills below).
 ///
 /// [query] drives the field's text from the outside (`ExploreState`'s
@@ -25,6 +26,7 @@ class ExploreSearchField extends StatefulWidget {
     required this.onChanged,
     required this.onClear,
     required this.focusNode,
+    required this.onFilterTap,
     this.focusToken,
   });
 
@@ -33,6 +35,10 @@ class ExploreSearchField extends StatefulWidget {
 
   /// The "×" inside the field.
   final VoidCallback onClear;
+
+  /// The filter icon at the end of the field while it is empty and not
+  /// focused (→ H8).
+  final VoidCallback onFilterTap;
 
   /// Owned by the screen, which also reads it to know whether the field is
   /// focused (B2 shows the recent searches then).
@@ -116,13 +122,18 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           borderSide: BorderSide.none,
         ),
+        // Typing: × clears. Focused and empty: × dismisses. At rest (empty,
+        // not focused): the filter icon.
         suffixIcon: isTyping || widget.focusNode.hasFocus
             ? IconButton(
                 icon: const Icon(AppIcons.close, color: AppColors.inkMuted),
-                // Typing: clear the search. Just focused: dismiss.
                 onPressed: isTyping ? widget.onClear : widget.focusNode.unfocus,
               )
-            : null,
+            : IconButton(
+                tooltip: context.l10n.exploreFilterTooltip,
+                icon: const Icon(AppIcons.filter, color: AppColors.ink),
+                onPressed: widget.onFilterTap,
+              ),
       ),
     );
   }

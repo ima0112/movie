@@ -20,6 +20,7 @@ import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
+import 'package:movies/shared/widgets/explore_filter_sheet.dart';
 import 'package:movies/shared/widgets/media_card.dart';
 
 /// End-to-end coverage for the flows this branch's own task asked to be
@@ -213,7 +214,7 @@ void main() {
     final field = tester.getRect(find.byType(TextField));
     expect(field.left, 20);
     expect(field.right, 390 - 20);
-    expect(find.byIcon(AppIcons.filter), findsNothing);
+    expect(find.byIcon(AppIcons.filter), findsOneWidget); // trailing icon
 
     // The segmented control keeps its All | Movies | TV Shows.
     expect(find.text('All'), findsWidgets);
@@ -259,6 +260,50 @@ void main() {
     await tester.tap(find.byIcon(AppIcons.close));
     await tester.pumpAndSettle();
     expect(find.byIcon(AppIcons.close), findsNothing);
+    expect(find.byIcon(AppIcons.filter), findsOneWidget); // at rest again
+  });
+
+  testWidgets('the filter icon at the end of the field opens H8, and applying '
+      'a filter opens the listing', (tester) async {
+    await openExplore(tester);
+
+    await tester.tap(find.byIcon(AppIcons.filter));
+    await tester.pumpAndSettle();
+    expect(find.byType(ExploreFilterSheet), findsOneWidget);
+
+    await tester.tapAt(const Offset(10, 10)); // dismiss on the scrim
+    await tester.pumpAndSettle();
+    expect(find.byType(ExploreFilterSheet), findsNothing);
+  });
+
+  testWidgets('with nothing found: "No results", what was searched, and a '
+      'button that clears the search', (tester) async {
+    appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+    await tester.tap(_exploreTab());
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'xqzvw');
+    await tester.pumpAndSettle();
+
+    expect(find.text('No results'), findsOneWidget);
+    expect(
+      find.text(
+        'We couldn\'t find anything for “xqzvw”. Try another title, show or '
+        'person.',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Clear search'));
+    await tester.pumpAndSettle();
+    expect(find.text('No results'), findsNothing);
+    expect(find.text('Top today'), findsOneWidget); // back at rest
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      '',
+    );
   });
 
   testWidgets('a platform pill becomes the selected one', (tester) async {

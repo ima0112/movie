@@ -31,7 +31,9 @@ class ExploreContent extends StatelessWidget {
           ExploreSearchLoaded() when state.results.isEmpty => EmptyStateView(
             icon: AppIcons.search,
             title: context.l10n.exploreNoResults,
-            body: context.l10n.exploreTryAnotherTitle,
+            body: context.l10n.exploreNoResultsBody(state.query),
+            ctaLabel: context.l10n.exploreClearSearch,
+            onCtaTap: context.read<ExploreCubit>().clearQuery,
           ),
           ExploreSearchLoaded() => SearchResultsList(
             results: state.results,

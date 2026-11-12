@@ -1034,11 +1034,23 @@ abstract class AppLocalizations {
   /// **'No results'**
   String get exploreNoResults;
 
-  /// No description provided for @exploreTryAnotherTitle.
+  /// B2's no-results state under the search field: names what was searched (docs/SCREENS.md B2).
   ///
   /// In en, this message translates to:
-  /// **'Try another title'**
-  String get exploreTryAnotherTitle;
+  /// **'We couldn\'t find anything for “{query}”. Try another title, show or person.'**
+  String exploreNoResultsBody(String query);
+
+  /// No description provided for @exploreFilterTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get exploreFilterTooltip;
+
+  /// The no-results state's button: empties the search field and goes back to B2 at rest.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get exploreClearSearch;
 
   /// C1's page title fallback when B1/B2 open it without a more specific name (docs/SCREENS.md C1: "title ('In theaters' / 'Horror' / 'Results')").
   ///

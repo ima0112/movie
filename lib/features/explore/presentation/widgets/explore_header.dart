@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/di.dart';
+import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/explore_filter_sheet.dart';
 import '../../../../shared/widgets/media_segmented_control.dart';
 import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
@@ -61,10 +66,27 @@ class _ExploreSearchBar extends StatelessWidget {
           onChanged: (value) =>
               context.read<ExploreCubit>().onQueryChanged(value),
           onClear: () => context.read<ExploreCubit>().clearQuery(),
+          onFilterTap: () => _openFilterSheet(context),
         );
       },
     );
   }
+}
+
+/// The filter icon → H8, seeded with the current segment's kind; "See N
+/// results" there opens the filtered listing (`ExploreCubit.openListing`).
+void _openFilterSheet(BuildContext context) {
+  final cubit = context.read<ExploreCubit>();
+  final title = context.l10n.exploreDefaultResultsTitle;
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (_) => ExploreFilterSheet(
+      initialFilter: DiscoverFilter(type: cubit.state.segment.mediaType),
+      mediaRepository: getIt<MediaRepository>(),
+      onApply: (filter) => cubit.openListing(filter: filter, title: title),
+    ),
+  );
 }
 
 /// All | Movies | TV Shows at rest, plus **People** while searching (people

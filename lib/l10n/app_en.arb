@@ -457,7 +457,16 @@
     "description": "Body of exploreBrowseEmptyTitle."
   },
   "exploreNoResults": "No results",
-  "exploreTryAnotherTitle": "Try another title",
+  "exploreNoResultsBody": "We couldn't find anything for “{query}”. Try another title, show or person.",
+  "@exploreNoResultsBody": {
+    "description": "B2's no-results state under the search field: names what was searched (docs/SCREENS.md B2).",
+    "placeholders": { "query": { "type": "String" } }
+  },
+  "exploreFilterTooltip": "Filters",
+  "exploreClearSearch": "Clear search",
+  "@exploreClearSearch": {
+    "description": "The no-results state's button: empties the search field and goes back to B2 at rest."
+  },
   "exploreDefaultResultsTitle": "Results",
   "@exploreDefaultResultsTitle": {
     "description": "C1's page title fallback when B1/B2 open it without a more specific name (docs/SCREENS.md C1: \"title ('In theaters' / 'Horror' / 'Results')\")."
