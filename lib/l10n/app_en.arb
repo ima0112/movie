@@ -325,6 +325,11 @@
   "carouselSectionComingSoon": "Coming soon",
   "carouselSectionFinishedShows": "Finished shows",
   "carouselSectionLatestTrailers": "Latest trailers",
+  "trailerPlayLabel": "Play the trailer for {title}",
+  "@trailerPlayLabel": {
+    "description": "Accessibility label of a Latest trailers card (docs/SCREENS.md B1); opens the trailer in YouTube.",
+    "placeholders": { "title": { "type": "String" } }
+  },
   "carouselSectionTrending": "Trending",
   "carouselSectionTopRated": "Top rated",
   "carouselSectionUpcoming": "Upcoming",

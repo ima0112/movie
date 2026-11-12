@@ -384,6 +384,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get carouselSectionLatestTrailers => 'Últimos tráilers';
 
   @override
+  String trailerPlayLabel(String title) {
+    return 'Ver el tráiler de $title';
+  }
+
+  @override
   String get carouselSectionTrending => 'Tendencias';
 
   @override

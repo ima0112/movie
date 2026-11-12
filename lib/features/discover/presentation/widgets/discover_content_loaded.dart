@@ -10,6 +10,7 @@ import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero.dart';
 import 'discover_search_field.dart';
+import 'discover_trailers_section.dart';
 import 'discover_section_carousel.dart';
 
 /// The hero + every section, once `DiscoverCubit` has something loaded
@@ -64,8 +65,12 @@ class DiscoverContentLoaded extends StatelessWidget {
               slot: RecommendationSlot.becauseYouLike,
               segment: segment,
             ),
-            for (final section in sections)
+            for (final (i, section) in sections.indexed) ...[
               DiscoverSectionCarousel(segment: segment, section: section),
+              // The trailers follow the lead section, in the All tab only.
+              if (i == 0 && segment == MediaSegment.all)
+                const DiscoverTrailersSection(),
+            ],
           ],
         ),
       ),
