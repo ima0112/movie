@@ -1304,10 +1304,10 @@ abstract class AppLocalizations {
   /// **'Seasons'**
   String get tvSeasonsLinkLabel;
 
-  /// D2's Seasons card value, e.g. "5 (62 ep.)" — season count and total episodes.
+  /// D2's Seasons card value, e.g. "5 · 62 episodes" — season count, a dot, then the total episodes with their word (pluralised).
   ///
   /// In en, this message translates to:
-  /// **'{seasons} ({episodes} ep.)'**
+  /// **'{seasons} · {episodes, plural, =1{1 episode} other{{episodes} episodes}}'**
   String tvSeasonsLinkValue(int seasons, int episodes);
 
   /// No description provided for @tvNextEpisodeCaption.

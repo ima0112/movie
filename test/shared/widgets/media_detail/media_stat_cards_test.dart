@@ -39,12 +39,33 @@ void main() {
     await tester.pumpWidget(
       _host([
         const MediaStat(label: 'Status', value: 'Ended'),
-        MediaStat(label: 'Seasons', value: '5 (62 ep.)', onTap: () => taps++),
+        MediaStat(
+          label: 'Seasons',
+          value: '5 · 62 episodes',
+          onTap: () => taps++,
+        ),
       ]),
     );
 
     expect(find.byIcon(AppIcons.chevronRight), findsOneWidget);
-    await tester.tap(find.text('5 (62 ep.)'));
+    await tester.tap(find.text('5 · 62 episodes'));
     expect(taps, 1);
   });
+
+  testWidgets(
+    'a value too long for its card ends in an ellipsis, on one line',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(const [
+          MediaStat(label: 'Status', value: 'Airing'),
+          MediaStat(label: 'Seasons', value: '12 · 1204 episodios más largos'),
+        ]),
+      );
+
+      expect(tester.takeException(), isNull);
+      final text = tester.widget<Text>(find.textContaining('1204'));
+      expect(text.maxLines, 1);
+      expect(text.overflow, TextOverflow.ellipsis);
+    },
+  );
 }

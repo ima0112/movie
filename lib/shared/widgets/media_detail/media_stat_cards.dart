@@ -74,12 +74,21 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(
                   stat.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.caption.copyWith(
                     color: AppColors.inkMuted,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
-                Text(stat.value, style: AppTextStyles.h3),
+                // One line; a long value ("5 · 62 episodes" in a narrow card
+                // at a large text size) ends in an ellipsis.
+                Text(
+                  stat.value,
+                  style: AppTextStyles.h3,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
