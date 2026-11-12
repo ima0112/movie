@@ -13,7 +13,7 @@ import '../widgets/episode_ref_card.dart';
 import '../widgets/season_sheet.dart';
 import '../widgets/seasons_summary_card.dart';
 import '../widgets/tv_seasons_section.dart';
-import '../widgets/tv_status_pill.dart';
+import '../widgets/tv_status.dart';
 
 /// Seasons (D2b) — pushed from D2's Seasons card (`docs/SCREENS.md` D2b).
 ///

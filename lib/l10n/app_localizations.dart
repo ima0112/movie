@@ -344,19 +344,25 @@ abstract class AppLocalizations {
   /// **'Fantasy'**
   String get vibeFantasy;
 
-  /// D2's status pill, and DiscoverTvStatus.airing in H8's filter/the TV status toggle.
+  /// D2's Status stat card label above Airing / Ended / Cancelled (docs/SCREENS.md D2).
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get tvStatusCardLabel;
+
+  /// D2's Status card, and DiscoverTvStatus.airing in H8's filter/the TV status toggle.
   ///
   /// In en, this message translates to:
   /// **'Airing'**
   String get tvStatusAiring;
 
-  /// D2's status pill, and DiscoverTvStatus.ended in H8's filter/the TV status toggle.
+  /// D2's Status card, and DiscoverTvStatus.ended in H8's filter/the TV status toggle.
   ///
   /// In en, this message translates to:
   /// **'Ended'**
   String get tvStatusEnded;
 
-  /// D2's status pill only — TvStatusPill's own raw-TMDB-string branch for "Canceled"; DiscoverTvStatus (the H8 filter enum) has no cancelled value.
+  /// D2's Status card only — the raw-TMDB-string branch for "Canceled"; DiscoverTvStatus (the H8 filter enum) has no cancelled value.
   ///
   /// In en, this message translates to:
   /// **'Cancelled'**
@@ -1459,6 +1465,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Similar movies'**
   String get mediaSimilarMoviesTitle;
+
+  /// No description provided for @mediaSimilarTvTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar TV shows'**
+  String get mediaSimilarTvTitle;
 
   /// D1/D2's own "Similar" carousel header (docs/SCREENS.md D1).
   ///

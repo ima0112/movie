@@ -180,14 +180,13 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Exits: D3.
 
 ### D2. TV show detail
-- Same as D1 with these changes:
-  - The info card's meta line: "Year–Year · N seasons · M episodes · Rating", then the main origin country's name (in the app's language) and the genres; D2's chips are the rating and the original language's name (no runtime/certification chips or stat cards).
-  - Status pill next to the title: "Airing" (accent) / "Ended" / "Cancelled" (neutral).
-  - "Created by": names (→ D3).
-  - **Seasons** card under the info card: "Seasons · 5 (62 ep.)" with a chevron → D2b (it replaces the inline season list).
-  - No runtime; shows "≈ 45 min per episode" instead — not on this screen itself (the metadata line above has no runtime slot to begin with), already covered by C4's "Estimated TV hours" (`TvShowDetail.estimatedHours`).
-  - "Where to watch" same as D1 (the show's own providers; a season's own providers, if they ever differ, aren't modeled yet — `MediaRepository.season()`'s `SeasonDetail` has no `watchProviders` field).
-- Exits: D3, H4, H2.
+- Same as D1 (one shared assembly: header → trailer → info card → cards → synopsis → where to watch → cast → … → similar → footer) with these changes:
+  - The info card's meta line is "Year–Year · country · genres" (the country's name in the app's language; the air years, just the first when the last is unknown or the same); the chips are the rating and the original language's name. Seasons, episodes and status moved to the cards below, so the line no longer carries them or the certification.
+  - **Two cards** under the info card, side by side (the same stat cards as D1's Duration / Classification): **Status** ("Airing" / "Ended" / "Cancelled") and **Seasons** ("5 (62 ep.)") with a chevron → D2b (it replaces the inline season list; it's omitted when the show has no regular season). There is no status pill in the header.
+  - Section order: cards → **Synopsis → Where to watch → Cast** (a "Cast" heading, "See all" → D1b when there are more than 10; no list of crew names inline) → **"Created by"** (names → D3) → **Similar TV shows** → footer.
+  - No runtime; shows "≈ 45 min per episode" instead — not on this screen itself, already covered by C4's "Estimated TV hours" (`TvShowDetail.estimatedHours`).
+  - "Where to watch" same as D1 (the show's own providers, the region pill and picking a country for this screen only; a season's own providers, if they ever differ, aren't modeled yet — `MediaRepository.season()`'s `SeasonDetail` has no `watchProviders` field).
+- Exits: D1b, D2b, D3, H4, H2.
 
 ### D2b. Seasons (pushed)
 - Access: the "Seasons" card in D2. Pushed screen: back button, centered "Seasons" title, no bottom bar. Receives the already-loaded show (no network call of its own).

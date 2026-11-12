@@ -46,19 +46,17 @@ void main() {
       expect(tagline.style?.fontStyle, FontStyle.italic);
     });
 
-    testWidgets('no tagline and a status pill still lay out', (tester) async {
+    testWidgets('no tagline still lays out', (tester) async {
       await tester.pumpWidget(
         _app(
           const MediaDetailHeader(
             imageUrl: null,
             title: 'Breaking Bad',
-            statusPill: Text('Ended'),
           ),
         ),
       );
 
       expect(find.text('Breaking Bad'), findsOneWidget);
-      expect(find.text('Ended'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

@@ -75,35 +75,37 @@ void main() {
     });
 
     group('lazy My List snapshot refresh', () {
-      test('loadDetail refreshes an already-saved entry\'s catalog fields '
-          '(rating, year, episode count/runtime) without being asked',
-          () async {
-        final userLibraryRepository = InMemoryUserLibraryRepository();
-        await userLibraryRepository.upsert(
-          const UserMediaEntry(
-            key: _theBoys,
-            title: 'Stale title',
-            isWatchLater: true,
-          ),
-        );
-        final cubit = TvDetailCubit(
-          FakeMediaRepository(),
-          userLibraryRepository,
-        );
+      test(
+        'loadDetail refreshes an already-saved entry\'s catalog fields '
+        '(rating, year, episode count/runtime) without being asked',
+        () async {
+          final userLibraryRepository = InMemoryUserLibraryRepository();
+          await userLibraryRepository.upsert(
+            const UserMediaEntry(
+              key: _theBoys,
+              title: 'Stale title',
+              isWatchLater: true,
+            ),
+          );
+          final cubit = TvDetailCubit(
+            FakeMediaRepository(),
+            userLibraryRepository,
+          );
 
-        await cubit.loadDetail(_theBoys);
+          await cubit.loadDetail(_theBoys);
 
-        final refreshed = await userLibraryRepository
-            .watchEntry(_theBoys)
-            .first;
-        expect(refreshed!.title, 'The Boys');
-        expect(refreshed.voteAverage, 8.4);
-        expect(refreshed.year, 2019);
-        expect(refreshed.episodeCount, 32);
-        expect(refreshed.episodeRuntimeMinutes, 60);
+          final refreshed = await userLibraryRepository
+              .watchEntry(_theBoys)
+              .first;
+          expect(refreshed!.title, 'The Boys');
+          expect(refreshed.voteAverage, 8.4);
+          expect(refreshed.year, 2019);
+          expect(refreshed.episodeCount, 32);
+          expect(refreshed.episodeRuntimeMinutes, 60);
 
-        await cubit.close();
-      });
+          await cubit.close();
+        },
+      );
 
       test('a favorite toggle that lands while loadDetail is refreshing '
           'the catalog snapshot is not lost', () async {
