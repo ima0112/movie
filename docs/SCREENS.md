@@ -186,7 +186,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
   - Section order: cards → **Synopsis → Where to watch → Cast** (the "Cast" heading, then the **"Created by"** line with the creators' names → D3, then the circles; "See all" → D1b as in D1) → **Similar TV shows** → footer.
   - No runtime; shows "≈ 45 min per episode" instead — not on this screen itself, already covered by C4's "Estimated TV hours" (`TvShowDetail.estimatedHours`).
   - "Where to watch" same as D1 (the show's own providers, the region pill and picking a country for this screen only; a season's own providers, if they ever differ, aren't modeled yet — `MediaRepository.season()`'s `SeasonDetail` has no `watchProviders` field).
-- Exits: D1b, D2b, D3, H4, H2.
+- Exits: D1b, D2b, D3, H2.
 
 ### D2b. Seasons (pushed)
 - Access: the "Seasons" card in D2. Pushed screen: back button, centered "Seasons" title, no bottom bar. Receives the already-loaded show (no network call of its own).
@@ -195,9 +195,15 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
   - "NEXT EPISODE" caption + card: the next scheduled episode (still, "S2 · E6 · Name", air date chip) or, with none, "No next episode" and "No upcoming episode has been announced yet.". **Omitted entirely for a show that has ended or been cancelled** (it can't have one).
   - Every card (header, episode, season) is the full content width, whatever its text.
   - "LAST AIRED EPISODE" caption + card: still (92×56), "S5 · E16 · Name", air-date and ★ rating chips (rating only if TMDB has one). Omitted when TMDB reports none.
-  - "SEASONS" caption + one bordered card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
+  - "SEASONS" caption + one bordered card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → D2c. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
 - No Pako.
-- Exits: H4.
+- Exits: D2c.
+
+### D2c. Season (pushed)
+- Access: a season card in D2b (it replaces the old H4 bottom sheet). Pushed screen: back button and the show's name centered as the title (none when the name isn't known), no bottom bar. Receives the show's id and what D2b already has on the season, so the header shows at once; the synopsis and episodes are fetched on demand.
+- Elements (vertical scroll): header card (poster, "Season N" — "Specials" for season 0 —, an episode-count chip and, when TMDB has one, a ★ rating chip); the season synopsis folded to 2 lines (the amber Read more / Read less appears only when it is cut); an "EPISODES" caption and a list of compact rows (112×64 still with a number badge, name, date · runtime, 2-line synopsis, chevron) → H4b.
+- States: the header immediately, a skeleton for the episodes, an error with its message.
+- Exits: H4b.
 
 ### D3. Person detail
 - Access: cast, crew, or search result.
@@ -317,8 +323,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 |---|---|---|---|
 | H1 | Quick actions | Long-press a card | Thumbnail + title, three rows: Favorite / Watch later / Mark watched |
 | H2 | Mark as watched | "Watched" button in D1/D2, swipe in B4, H1 | Title ("Mark as watched" for a movie, "Have you finished {title}?" for a TV show — asking about a show commits to having finished it, not just pressed a button), 5-star selector (optional), date (today by default, editable), "Save" button, "Remove from Watched" link if it already was |
-| H4 | Season N | Season card in D2b | Header card (poster, show name, "Season N", episode-count chip and, when TMDB has one, a ★ rating chip); season synopsis folded to 2 lines with "Read more"; "EPISODES" list of compact rows (112×64 still with a number badge, name, date · runtime, 2-line synopsis) |
-| H4b | Episode | Episode row in H4 | Sheet over H4: a 16:9 still, "S1 · E1" caption ("Specials · E1" for season 0), the episode name, info chips (air date, runtime, ★ rating when TMDB has one), the full synopsis, and a "GUEST STARS" row of 64 px circles with name and character (→ D3) when the episode lists any |
+| H4b | Episode | Episode row in D2c | Sheet over D2c: a 16:9 still, "S1 · E1" caption ("Specials · E1" for season 0), the episode name, info chips (air date, runtime, ★ rating when TMDB has one), the full synopsis, and a "GUEST STARS" row of 64 px circles with name and character (→ D3) when the episode lists any |
 | H5 | Language | B5 | Single-select list: Español / English — one setting for the interface and TMDB's content |
 | H6 | Region | B5 | Searchable list of countries, with a one-line subtitle ("Sets which services you see in Where to watch") |
 | H7 | Theme | B5 | Dark / Light / System |
@@ -360,7 +365,7 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 ## K. Flows to wire up in the design
 - F-A: Splash → Onboarding → Discover.
 - F-B: Discover → Movie detail → Mark as watched sheet → snackbar.
-- F-C: Explore → chips → TV show detail → Season sheet.
+- F-C: Explore → chips → TV show detail → Seasons → Season page.
 - F-D: Match hub → Surprise me → (type) → Quiz → Result → Save tastes.
 - F-E: Match hub → Create room → Waiting room → Quiz → Waiting room → Result (host).
 - F-F: Match hub → Scanner → Name → Quiz → Waiting room → Result (guest).

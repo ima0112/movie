@@ -146,7 +146,7 @@ lib/
       presentation/
     tv_detail/                    cubit/ (TvDetailCubit, SeasonCubit) + widgets/
       presentation/               (status pill, seasons/creators sections,
-                                   season_sheet.dart = H4) + screens/
+                                   season_screen.dart = D2c in screens/) + screens/
                                    tv_detail_screen.dart (D2)
     person_detail/                cubit/ (PersonDetailCubit) + widgets/ (header,
       presentation/               biography, known-for, filmography sections +

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
-import 'package:movies/features/tv_detail/presentation/widgets/season_sheet.dart';
+import 'package:movies/features/tv_detail/presentation/screens/season_screen.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
 const _theBearSeason1 = SeasonSummary(
@@ -31,14 +31,14 @@ const _missingSeason = SeasonSummary(
 void main() {
   setUpAll(() => configureDependencies(fake.name));
 
-  group('SeasonSheet', () {
+  group('SeasonScreen', () {
     testWidgets('shows the season title immediately, then its episodes '
         'once loaded', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const SeasonSheet(tvId: 101, seasonSummary: _theBearSeason1),
+          home: const SeasonScreen(tvId: 101, seasonSummary: _theBearSeason1),
         ),
       );
 
@@ -67,7 +67,7 @@ void main() {
               size: Size(320, 568),
               textScaler: TextScaler.linear(2),
             ),
-            child: const SeasonSheet(
+            child: const SeasonScreen(
               tvId: 101,
               seasonSummary: _theBearSeason1,
               showTitle: 'The Bear',
@@ -97,7 +97,7 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const SeasonSheet(tvId: 101, seasonSummary: rated),
+          home: const SeasonScreen(tvId: 101, seasonSummary: rated),
         ),
       );
       await tester.pumpAndSettle();
@@ -111,7 +111,7 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const SeasonSheet(tvId: 101, seasonSummary: _theBearSpecials),
+          home: const SeasonScreen(tvId: 101, seasonSummary: _theBearSpecials),
         ),
       );
       await tester.pumpAndSettle();
@@ -127,7 +127,7 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const SeasonSheet(tvId: 101, seasonSummary: _missingSeason),
+          home: const SeasonScreen(tvId: 101, seasonSummary: _missingSeason),
         ),
       );
       await tester.pumpAndSettle();

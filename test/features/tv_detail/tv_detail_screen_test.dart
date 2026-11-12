@@ -14,6 +14,7 @@ import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_spacing.dart';
+import 'package:movies/features/tv_detail/presentation/screens/season_screen.dart';
 import 'package:movies/features/tv_detail/presentation/screens/tv_seasons_screen.dart';
 import 'package:movies/shared/widgets/app_chip.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_circle.dart';
@@ -152,5 +153,29 @@ void main() {
     await tester.drag(find.byType(Scrollable).first, const Offset(0, -5000));
     await tester.pumpAndSettle();
     expect(find.byType(MediaDetailCompactBar), findsOneWidget);
+  });
+
+  testWidgets('a season opens as a page (not a sheet), the episode over it as '
+      'a sheet, and back returns to the seasons', (tester) async {
+    tester.view.physicalSize = const Size(390, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await openTheBoys(tester);
+
+    await tester.tap(find.text('Seasons'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TvSeasonsScreen), findsOneWidget);
+
+    await tester.tap(find.text('Season 1').first);
+    await tester.pumpAndSettle();
+    expect(find.byType(SeasonScreen), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
+    // The show's name is the title, the season the big header.
+    expect(find.text('The Boys'), findsWidgets);
+
+    await tester.tap(find.byIcon(AppIcons.back).first);
+    await tester.pumpAndSettle();
+    expect(find.byType(SeasonScreen), findsNothing);
+    expect(find.byType(TvSeasonsScreen), findsOneWidget);
   });
 }

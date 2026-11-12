@@ -6,6 +6,7 @@ import '../core/domain/entities/media_detail.dart';
 import '../core/domain/entities/media_key.dart';
 import '../core/domain/entities/media_type.dart';
 import '../core/domain/entities/person.dart';
+import '../core/domain/entities/season_summary.dart';
 import '../core/domain/repositories/media_repository.dart';
 import '../core/domain/repositories/onboarding_repository.dart';
 import '../features/discover/presentation/screens/discover_screen.dart';
@@ -21,6 +22,7 @@ import '../features/my_tastes/presentation/screens/my_tastes_screen.dart';
 import '../features/settings/presentation/screens/attribution_screen.dart';
 import '../features/person_detail/presentation/screens/person_filmography_screen.dart';
 import '../shared/widgets/media_detail/full_cast_screen.dart';
+import '../features/tv_detail/presentation/screens/season_screen.dart';
 import '../features/tv_detail/presentation/screens/tv_seasons_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/stats/presentation/screens/stats_screen.dart';
@@ -74,6 +76,10 @@ class AppRoutes {
   /// D2b (Seasons), pushed from D2's Seasons card — carries the loaded show
   /// via `extra` ([TvSeasonsRouteArgs]).
   static const String tvSeasons = '/tv-seasons';
+
+  /// D2c (Season), pushed from a season card on D2b — carries the show's id
+  /// and name plus the season summary via `extra` ([SeasonRouteArgs]).
+  static const String tvSeason = '/tv-season';
 
   /// C1 (Filtered listing) — reached from B1's "See all"
   /// (`discover_section_carousel.dart`), a B2 genre tile, D1/D2's own
@@ -132,6 +138,20 @@ class FullCastRouteArgs {
 
 /// What D2b needs: the show D2 already loaded, so the screen makes no
 /// network call of its own.
+/// What D2c needs: the show's id (to fetch the season) and what D2b already
+/// knows about the season, so the header shows at once.
+class SeasonRouteArgs {
+  const SeasonRouteArgs({
+    required this.tvId,
+    required this.seasonSummary,
+    this.showTitle,
+  });
+
+  final int tvId;
+  final SeasonSummary seasonSummary;
+  final String? showTitle;
+}
+
 class TvSeasonsRouteArgs {
   const TvSeasonsRouteArgs({required this.detail});
 
@@ -308,6 +328,18 @@ final GoRouter appRouter = GoRouter(
           cast: args.cast,
           crew: args.crew,
           onPersonTap: (person) => context.pushPersonDetail(person.id),
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.tvSeason,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final args = state.extra! as SeasonRouteArgs;
+        return SeasonScreen(
+          tvId: args.tvId,
+          seasonSummary: args.seasonSummary,
+          showTitle: args.showTitle,
         );
       },
     ),
