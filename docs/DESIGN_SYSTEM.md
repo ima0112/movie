@@ -154,7 +154,7 @@ regular/fill para los 8 conceptos que lo necesitan.
 | Concepto | Icono RemixIcons |
 |---|---|
 | Buscar | `search_line` |
-| Filtros | `equalizer_line` |
+| Filtros | `equalizer_2_line` |
 | Favorito (inactivo/activo) | `heart_line` / `heart_fill` |
 | Ver después (inactivo/activo) | `bookmark_line` / `bookmark_fill` |
 | Vista (inactivo/activo) | `eye_line` / `eye_fill` |
