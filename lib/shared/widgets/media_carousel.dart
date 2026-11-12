@@ -4,6 +4,7 @@ import '../../core/domain/entities/media_item.dart';
 import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_spacing.dart';
 import 'media_card.dart';
+import 'ranked_poster.dart';
 
 /// A horizontal row of poster cards — the section carousels (the Discover
 /// hero is `MediaHeroCarousel`).
@@ -30,10 +31,14 @@ class MediaCarousel extends StatelessWidget {
     required this.items,
     this.showTypeTag = false,
     this.onItemTap,
+    this.ranked = false,
   });
 
   final List<MediaItem> items;
   final bool showTypeTag;
+
+  /// A big 1, 2, 3… over each poster's bottom-left corner (B2's "Top today").
+  final bool ranked;
   final void Function(MediaItem item)? onItemTap;
 
   @override
@@ -52,12 +57,15 @@ class MediaCarousel extends StatelessWidget {
           final onTap = onItemTap;
           return Padding(
             padding: EdgeInsets.only(left: index == 0 ? 0 : AppSpacing.md),
-            child: MediaCard(
-              size: MediaCardSize.carousel,
-              title: item.title,
-              posterUrl: item.posterUrl,
-              showTypeTag: showTypeTag && item.type == MediaType.tvShow,
-              onTap: onTap == null ? null : () => onTap(item),
+            child: RankedPoster(
+              rank: ranked ? index + 1 : null,
+              child: MediaCard(
+                size: MediaCardSize.carousel,
+                title: item.title,
+                posterUrl: item.posterUrl,
+                showTypeTag: showTypeTag && item.type == MediaType.tvShow,
+                onTap: onTap == null ? null : () => onTap(item),
+              ),
             ),
           );
         },

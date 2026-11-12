@@ -63,7 +63,13 @@ class ExploreCubit extends Cubit<ExploreState> {
 
   static const debounceDuration = Duration(milliseconds: 400);
 
+  /// The latest history, kept so every return to State 1 (clearing the
+  /// field, coming back from C1) shows the recent searches straight away —
+  /// not only after the next history change.
+  List<String> _recentSearches = const [];
+
   void _onHistoryChanged(List<String> history) {
+    _recentSearches = history;
     if (state case ExploreAtRest(:final segment)) {
       emit(ExploreAtRest(segment: segment, recentSearches: history));
     }
@@ -98,7 +104,7 @@ class ExploreCubit extends Cubit<ExploreState> {
     final segment = state.segment;
     if (query.trim().isEmpty) {
       _debounce?.cancel();
-      emit(ExploreAtRest(segment: segment));
+      emit(ExploreAtRest(segment: segment, recentSearches: _recentSearches));
       return;
     }
 
@@ -150,7 +156,9 @@ class ExploreCubit extends Cubit<ExploreState> {
   /// The field's "×" / "Cancel" — back to State 1.
   void clearQuery() {
     _debounce?.cancel();
-    emit(ExploreAtRest(segment: state.segment));
+    emit(
+      ExploreAtRest(segment: state.segment, recentSearches: _recentSearches),
+    );
   }
 
   /// A "Recent" chip's long-press. Fire-and-forget, same as [_runSearch]'s

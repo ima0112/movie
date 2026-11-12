@@ -12,6 +12,8 @@ import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/discover/presentation/widgets/discover_search_field.dart';
+import 'package:movies/features/explore/presentation/widgets/explore_pill.dart';
+import 'package:movies/features/explore/presentation/widgets/explore_genre_pills.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_search_field.dart';
 import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
@@ -146,6 +148,89 @@ void main() {
     expect(find.byType(PersonDetailScreen), findsOneWidget);
   });
 
+  Future<void> openExplore(WidgetTester tester) async {
+    tester.view.physicalSize = const Size(390, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+    await tester.tap(_exploreTab());
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('B2 at rest: a full-width search bar on the page margin, no '
+      'filter icon, the Genre and Platform pills and the four sections', (
+    tester,
+  ) async {
+    await openExplore(tester);
+
+    // Search field: 20 px margins both sides = the content's full width.
+    final field = tester.getRect(find.byType(TextField));
+    expect(field.left, 20);
+    expect(field.right, 390 - 20);
+    expect(find.byIcon(AppIcons.filter), findsNothing);
+
+    // The segmented control keeps its All | Movies | TV Shows.
+    expect(find.text('All'), findsWidgets);
+    expect(find.text('Movies'), findsWidgets);
+
+    // Pills.
+    expect(find.text('GENRE'), findsOneWidget);
+    expect(find.text('PLATFORM'), findsOneWidget);
+    expect(find.text('Netflix'), findsOneWidget);
+    expect(find.text('Action'), findsOneWidget);
+
+    // The four sections, Top today numbered.
+    for (final title in [
+      'Top today',
+      'Top rated',
+      'New releases',
+      'Hidden gems',
+    ]) {
+      await tester.ensureVisible(find.text(title));
+      expect(find.text(title), findsOneWidget, reason: title);
+    }
+    await tester.ensureVisible(find.text('Top today'));
+    expect(find.text('1'), findsWidgets);
+  });
+
+  testWidgets('typing puts an × inside the field (no Cancel); it clears', (
+    tester,
+  ) async {
+    await openExplore(tester);
+
+    await tester.enterText(find.byType(TextField), 'dune');
+    await tester.pump();
+    expect(find.byIcon(AppIcons.close), findsOneWidget);
+    expect(find.text('Cancel'), findsNothing);
+
+    await tester.tap(find.byIcon(AppIcons.close));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(AppIcons.close), findsNothing);
+    expect(find.text('Top today'), findsOneWidget);
+  });
+
+  testWidgets('a platform pill becomes the selected one', (tester) async {
+    await openExplore(tester);
+
+    await tester.tap(find.text('Netflix'));
+    await tester.pumpAndSettle();
+
+    final pill = tester.widget<ExplorePill>(
+      find.ancestor(
+        of: find.text('Netflix'),
+        matching: find.byType(ExplorePill),
+      ),
+    );
+    expect(pill.selected, isTrue);
+    final all = tester
+        .widgetList<ExplorePill>(find.byType(ExplorePill))
+        .where((p) => p.label == 'All' && p.selected);
+    expect(all, hasLength(1)); // only the genre "All" remains selected
+  });
+
   testWidgets('typing in Explore debounces, then shows search results', (
     tester,
   ) async {
@@ -169,25 +254,36 @@ void main() {
   });
 
   testWidgets(
-    'tapping a genre tile reaches C1 with that genre as an active chip; '
-    'applying a filter from H8 adds another chip',
+    'a genre pill filters Explore\'s sections in place; a section\'s "See all" '
+    'reaches C1 with that genre as an active chip; applying a filter from H8 '
+    'adds another chip',
     (tester) async {
+      appRouter.go('/');
+      addTearDown(() => appRouter.go('/'));
       await tester.pumpWidget(const PakoTvApp());
       await tester.pumpAndSettle();
 
       await tester.tap(_exploreTab());
       await tester.pumpAndSettle();
 
-      // Horror matches exactly one sample movie (see
-      // filtered_list_cubit_test.dart's own comment to the same effect) —
-      // enough to land in C1's loaded, non-empty state. It's alphabetically
-      // 10th in GenreCatalog.all, so it may start below the fold — scroll
-      // it into view first (`recent_searches_chips.dart`'s "Recent" row,
-      // possibly non-empty from an earlier test's search history, pushes
-      // it down further still).
-      await tester.ensureVisible(find.text('Horror'));
+      // Horror matches exactly one sample movie — enough to land in C1's
+      // loaded, non-empty state. The pill row scrolls sideways.
+      await tester.scrollUntilVisible(
+        find.text('Horror'),
+        200,
+        scrollable: find.descendant(
+          of: find.byType(ExploreGenrePills),
+          matching: find.byType(Scrollable),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Horror'));
+      await tester.pumpAndSettle();
+
+      // Still on Explore (the sections re-filtered in place): open the first
+      // section's "See all".
+      expect(find.byType(FilteredListChipsRow), findsNothing);
+      await tester.tap(find.text('See all').first);
       await tester.pumpAndSettle();
 
       // C1's app-bar title is the genre's own name (`ExploreCubit

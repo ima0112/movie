@@ -241,6 +241,27 @@ void main() {
       });
     });
 
+    test('returning to State 1 (× / clearing the field) still shows the '
+        'recent searches saved meanwhile', () async {
+      final history = _InMemorySearchHistoryRepository();
+      final cubit = _exploreCubit(searchHistoryRepository: history);
+      await Future<void>.delayed(Duration.zero);
+
+      // A search starts; its history entry lands while State 2 is showing.
+      cubit.runRecentSearch('dune');
+      await history.record('dune');
+      await Future<void>.delayed(Duration.zero);
+      expect(cubit.state, isA<ExploreSearching>());
+
+      cubit.clearQuery();
+      expect((cubit.state as ExploreAtRest).recentSearches, ['dune']);
+
+      cubit.onQueryChanged('x');
+      cubit.onQueryChanged('');
+      expect((cubit.state as ExploreAtRest).recentSearches, ['dune']);
+      await cubit.close();
+    });
+
     test('runRecentSearch() runs immediately, no debounce wait', () {
       fakeAsync((async) {
         final cubit = _exploreCubit();
