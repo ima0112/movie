@@ -9,6 +9,7 @@ import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/search_result.dart';
+import 'package:movies/core/domain/entities/streaming_service.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
@@ -61,6 +62,10 @@ class _RecordingMediaRepository implements MediaRepository {
 
   @override
   Future<Result<List<SearchResult>>> searchMulti(String query) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Result<List<StreamingService>>> streamingServices({MediaType? type}) =>
       throw UnimplementedError();
 }
 

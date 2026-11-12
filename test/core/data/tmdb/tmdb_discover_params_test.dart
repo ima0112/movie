@@ -269,4 +269,76 @@ void main() {
       expect(tv['sort_by'], 'name.asc');
     });
   });
+
+  group('discoverQueryParams — B2 browse fields', () {
+    test('with_watch_providers + watch_region only together, OR-joined', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(withWatchProviders: {8, 337}),
+        type: MediaType.movie,
+        watchRegion: 'ES',
+      );
+      expect(params['with_watch_providers'], '8|337');
+      expect(params['watch_region'], 'ES');
+
+      // No region -> a provider filter can't mean anything: left out.
+      final noRegion = discoverQueryParams(
+        const DiscoverFilter(withWatchProviders: {8}),
+        type: MediaType.movie,
+      );
+      expect(noRegion.containsKey('with_watch_providers'), isFalse);
+
+      // No providers -> no region either.
+      final none = discoverQueryParams(
+        const DiscoverFilter(),
+        type: MediaType.movie,
+        watchRegion: 'ES',
+      );
+      expect(none.containsKey('watch_region'), isFalse);
+    });
+
+    test('an exact release window uses the right date field per type, and '
+        'wins over the year bounds', () {
+      final filter = DiscoverFilter(
+        yearFrom: 1990,
+        releasedFrom: DateTime(2026, 3, 5),
+        releasedTo: DateTime(2026, 5, 4),
+      );
+      final movie = discoverQueryParams(filter, type: MediaType.movie);
+      expect(movie['primary_release_date.gte'], '2026-03-05');
+      expect(movie['primary_release_date.lte'], '2026-05-04');
+
+      final tv = discoverQueryParams(filter, type: MediaType.tvShow);
+      expect(tv['first_air_date.gte'], '2026-03-05');
+      expect(tv['first_air_date.lte'], '2026-05-04');
+    });
+
+    test('maxVoteCount becomes vote_count.lte', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(maxVoteCount: 1500),
+        type: MediaType.movie,
+      );
+      expect(params['vote_count.lte'], 1500);
+      expect(
+        discoverQueryParams(
+          const DiscoverFilter(),
+          type: MediaType.movie,
+        ).containsKey('vote_count.lte'),
+        isFalse,
+      );
+    });
+
+    test('the new fields take part in equality and copyWith', () {
+      const a = DiscoverFilter(withWatchProviders: {8}, maxVoteCount: 10);
+      expect(
+        a,
+        const DiscoverFilter(withWatchProviders: {8}, maxVoteCount: 10),
+      );
+      expect(
+        a == const DiscoverFilter(withWatchProviders: {9}, maxVoteCount: 10),
+        isFalse,
+      );
+      expect(a.copyWith(maxVoteCount: () => null).maxVoteCount, isNull);
+      expect(a.isDefault, isFalse);
+    });
+  });
 }

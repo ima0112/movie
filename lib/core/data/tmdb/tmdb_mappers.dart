@@ -1,6 +1,7 @@
 import '../../domain/entities/genre.dart';
 import '../../domain/entities/media_item.dart';
 import '../../domain/entities/search_result.dart';
+import '../../domain/entities/streaming_service.dart';
 import '../../domain/entities/person.dart';
 import '../../domain/entities/media_type.dart';
 import 'dtos/tmdb_movie_list_item_dto.dart';
@@ -100,6 +101,47 @@ SearchResult? searchResultFromJson(
   }
   final item = mediaItemFromTrendingJson(json, imagesConfig: imagesConfig);
   return item == null ? null : MediaResult(item);
+}
+
+/// `/watch/providers/{type}` entries as [StreamingService]s: duplicates across
+/// movie and TV merged by id, most relevant first (TMDB's `display_priority`,
+/// then name), at most [limit]. The logo uses the same `w92` size as D1/D2's
+/// own provider logos.
+List<StreamingService> streamingServicesFromJson(
+  List<Map<String, dynamic>> raw, {
+  required TmdbImagesConfig imagesConfig,
+  required int limit,
+}) {
+  final byId = <int, ({StreamingService service, int priority})>{};
+  for (final json in raw) {
+    final id = json['provider_id'];
+    final name = json['provider_name'];
+    if (id is! int || name is! String) continue;
+    final priority = (json['display_priority'] as num?)?.toInt() ?? 1 << 20;
+    final existing = byId[id];
+    if (existing != null && existing.priority <= priority) continue;
+    byId[id] = (
+      service: StreamingService(
+        id: id,
+        name: name,
+        logoUrl: buildTmdbImageUrl(
+          config: imagesConfig,
+          kind: TmdbImageKind.poster,
+          path: json['logo_path'] as String?,
+          size: 'w92',
+        ),
+      ),
+      priority: priority,
+    );
+  }
+  final sorted = byId.values.toList()
+    ..sort((a, b) {
+      final byPriority = a.priority.compareTo(b.priority);
+      return byPriority != 0
+          ? byPriority
+          : a.service.name.compareTo(b.service.name);
+    });
+  return [for (final e in sorted.take(limit)) e.service];
 }
 
 /// Public (not just this file's own concern): `tmdb_detail_mappers.dart`

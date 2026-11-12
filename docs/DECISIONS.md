@@ -164,7 +164,7 @@ What actually shipped, and where it diverges from the table above:
 
 ### v1.2+
 - Embedded trailer player (`youtube_player_iframe`).
-- "Only on my platforms" filter (`with_watch_providers`) in Explore and the quiz, with the user's platforms set in My Tastes (F1c).
+- "Only on my platforms" filter in the quiz, with the user's platforms set in My Tastes (F1c). (Explore's own **Platform pills** — a plain browse filter by streaming service in the user's region, `with_watch_providers` + `watch_region`, not tied to My Tastes — are v1.0: see B2.)
 - External ratings (OMDb).
 - Offline cache for carousels and images.
 - Share a title as an image or deep link.

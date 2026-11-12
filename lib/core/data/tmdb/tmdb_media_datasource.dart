@@ -126,6 +126,20 @@ class TmdbMediaDatasource {
     return List<Map<String, dynamic>>.from(response.data!['results'] as List);
   }
 
+  /// The streaming services TMDB lists for [type] in [region]
+  /// (`/watch/providers/{movie|tv}`), as raw maps: `provider_id`,
+  /// `provider_name`, `logo_path`, `display_priority`.
+  Future<List<Map<String, dynamic>>> watchProviders(
+    String type, {
+    required String region,
+  }) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/watch/providers/$type',
+      queryParameters: {'watch_region': region},
+    );
+    return List<Map<String, dynamic>>.from(response.data!['results'] as List);
+  }
+
   Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> discoverMovie(
     Map<String, dynamic> params,
   ) async {

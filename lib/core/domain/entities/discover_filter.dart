@@ -40,6 +40,10 @@ class DiscoverFilter {
     this.tvStatus,
     this.sortBy = DiscoverSortBy.popularity,
     this.minVoteCount = 100,
+    this.maxVoteCount,
+    this.withWatchProviders = const {},
+    this.releasedFrom,
+    this.releasedTo,
   });
 
   /// `null` = "All" (H8: "Type (All/Movies/TV Shows)"). C1: "All = both
@@ -102,6 +106,21 @@ class DiscoverFilter {
   /// (200 on the first attempt, 50 after relaxation step 4).
   final int minVoteCount;
 
+  /// An upper bound on the vote count (`vote_count.lte`) — B2's "Hidden gems"
+  /// (well rated but not widely voted). `null` = no ceiling.
+  final int? maxVoteCount;
+
+  /// TMDB provider ids (`with_watch_providers`): a title on *any* of these
+  /// qualifies. Needs the user's region, which the repository adds
+  /// (`watch_region`); B2's "Platform" pills set it.
+  final Set<int> withWatchProviders;
+
+  /// An exact release-date window (`primary_release_date` / `first_air_date`
+  /// `.gte`/`.lte`), finer than [yearFrom]/[yearTo] and winning over them:
+  /// B2's "New releases" is "the last two months", not a calendar year.
+  final DateTime? releasedFrom;
+  final DateTime? releasedTo;
+
   /// H8's "Reset" only shows "if something's active" — i.e. this isn't
   /// the default.
   bool get isDefault => this == const DiscoverFilter();
@@ -129,6 +148,10 @@ class DiscoverFilter {
     DiscoverTvStatus? Function()? tvStatus,
     DiscoverSortBy? sortBy,
     int? minVoteCount,
+    int? Function()? maxVoteCount,
+    Set<int>? withWatchProviders,
+    DateTime? Function()? releasedFrom,
+    DateTime? Function()? releasedTo,
   }) {
     return DiscoverFilter(
       type: type == null ? this.type : type(),
@@ -146,6 +169,10 @@ class DiscoverFilter {
       tvStatus: tvStatus == null ? this.tvStatus : tvStatus(),
       sortBy: sortBy ?? this.sortBy,
       minVoteCount: minVoteCount ?? this.minVoteCount,
+      maxVoteCount: maxVoteCount == null ? this.maxVoteCount : maxVoteCount(),
+      withWatchProviders: withWatchProviders ?? this.withWatchProviders,
+      releasedFrom: releasedFrom == null ? this.releasedFrom : releasedFrom(),
+      releasedTo: releasedTo == null ? this.releasedTo : releasedTo(),
     );
   }
 
@@ -162,7 +189,11 @@ class DiscoverFilter {
       other.maxRuntimeMinutes == maxRuntimeMinutes &&
       other.tvStatus == tvStatus &&
       other.sortBy == sortBy &&
-      other.minVoteCount == minVoteCount;
+      other.minVoteCount == minVoteCount &&
+      other.maxVoteCount == maxVoteCount &&
+      _setEquals(other.withWatchProviders, withWatchProviders) &&
+      other.releasedFrom == releasedFrom &&
+      other.releasedTo == releasedTo;
 
   @override
   int get hashCode => Object.hash(
@@ -177,6 +208,10 @@ class DiscoverFilter {
     tvStatus,
     sortBy,
     minVoteCount,
+    maxVoteCount,
+    Object.hashAllUnordered(withWatchProviders),
+    releasedFrom,
+    releasedTo,
   );
 
   @override
@@ -186,7 +221,10 @@ class DiscoverFilter {
       'yearFrom: $yearFrom, '
       'yearTo: $yearTo, minVoteAverage: $minVoteAverage, '
       'maxRuntimeMinutes: $maxRuntimeMinutes, tvStatus: $tvStatus, '
-      'sortBy: $sortBy, minVoteCount: $minVoteCount)';
+      'sortBy: $sortBy, minVoteCount: $minVoteCount, '
+      'maxVoteCount: $maxVoteCount, '
+      'withWatchProviders: $withWatchProviders, '
+      'releasedFrom: $releasedFrom, releasedTo: $releasedTo)';
 }
 
 /// Order-independent set content equality — same local stand-in for
