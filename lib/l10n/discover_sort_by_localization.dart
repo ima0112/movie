@@ -14,3 +14,15 @@ extension DiscoverSortByLocalization on DiscoverSortBy {
     DiscoverSortBy.voteCount => l10n.discoverSortVotes,
   };
 }
+
+/// The three orders H8 and C1's sort control offer, in their longer wording
+/// ("Popular", "Top rated", "Release date"); other values fall back to
+/// [localizedLabel].
+extension DiscoverSortBySheetLabel on DiscoverSortBy {
+  String sheetLabel(AppLocalizations l10n) => switch (this) {
+    DiscoverSortBy.popularity => l10n.filterSheetSortPopular,
+    DiscoverSortBy.rating => l10n.filterSheetSortTopRated,
+    DiscoverSortBy.releaseDate => l10n.filterSheetSortNewest,
+    _ => localizedLabel(l10n),
+  };
+}

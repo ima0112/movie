@@ -1,54 +1,53 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/discover_filter.dart';
 import '../../core/domain/entities/genre_catalog.dart';
-import '../../core/domain/entities/media_item.dart';
-import '../../core/domain/entities/media_type.dart';
 import '../../core/domain/entities/result.dart';
 import '../../core/domain/repositories/media_repository.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
+import 'app_buttons.dart';
 import 'discover_range_filters.dart';
 import 'discover_sort_chips.dart';
-import 'explore_filter_actions.dart';
-import 'filter_controls.dart';
+import 'filter_platform_chips.dart';
+import 'filter_section_header.dart';
 import 'genre_multi_select_chips.dart';
-import 'tv_status_toggle.dart';
 
-/// H8 (Filters) — `docs/SCREENS.md` H8. Used from both B2 and C1 (H8's
-/// own "Access: B2, C1"), so this takes an [initialFilter] and calls
-/// [onApply] rather than reading one specific screen's Cubit directly.
+/// H8 (Filters) — `docs/SCREENS.md` H8. Used from both B2 and C1, so it takes
+/// an [initialFilter] and calls [onApply] rather than reading one screen's
+/// Cubit.
 ///
-/// Edits a local draft — nothing reaches [onApply] until "Apply", and
-/// swiping closed discards it, the same "draft, not live" discipline
-/// `MyListFilterSheet` (H9) already established.
+/// **Five filters, in this order:** sort, streaming platform, genres, years,
+/// minimum rating. The kind of title (All / Movies / TV Shows) isn't one of
+/// them: it is the segment of the screen that opened the sheet, so
+/// [initialFilter] carries it and the sheet never changes it.
 ///
-/// "See N results (N live)": [mediaRepository] is queried with the
-/// current draft on every change, generation-guarded the same way
-/// `ExploreCubit` guards its own debounced search so a slow response to
-/// an old draft can't overwrite a newer one's count.
+/// Edits a local draft — nothing reaches [onApply] until "See N results", and
+/// swiping closed discards it. "Clear" (top right, only while something is
+/// set) puts the draft back to the default: every title of the segment, most
+/// popular first — never an empty state.
 ///
-/// Not modeled at all: "Hide what I've watched" — see `DiscoverFilter`'s
-/// own doc comment for why.
-///
-/// Promoted from `features/explore/presentation/widgets/` to
-/// `shared/widgets/` (along with its own supporting files:
-/// `discover_range_filters.dart`, `discover_sort_chips.dart`,
-/// `explore_filter_actions.dart`, `genre_multi_select_chips.dart`,
-/// `tv_status_toggle.dart`) once `filtered_list` (C1) became this
-/// widget's second real consumer — H8's own doc line above already
-/// called out both, this just makes the file location match it.
+/// The button's N is live: the draft's total is requested (debounced, so a
+/// dragged slider doesn't fire a request per tick) and a slow answer to an
+/// old draft can't overwrite a newer one's. With no match the button is
+/// disabled and says so.
 class ExploreFilterSheet extends StatefulWidget {
   const ExploreFilterSheet({
     super.key,
     required this.initialFilter,
     required this.mediaRepository,
+    required this.regionName,
     required this.onApply,
   });
 
   final DiscoverFilter initialFilter;
   final MediaRepository mediaRepository;
+
+  /// The Settings region's display name, shown next to the streaming row.
+  final String regionName;
   final ValueChanged<DiscoverFilter> onApply;
 
   @override
@@ -56,31 +55,44 @@ class ExploreFilterSheet extends StatefulWidget {
 }
 
 class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
+  static const Duration _countDebounce = Duration(milliseconds: 350);
+
   late DiscoverFilter _draft;
   int? _liveCount;
   int _queryGeneration = 0;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _draft = widget.initialFilter;
-    _refreshCount();
+    unawaited(_refreshCount());
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 
   void _setDraft(DiscoverFilter next) {
-    setState(() => _draft = next);
-    _refreshCount();
+    setState(() {
+      _draft = next;
+      _liveCount = null;
+    });
+    _debounce?.cancel();
+    _debounce = Timer(_countDebounce, _refreshCount);
   }
 
   Future<void> _refreshCount() async {
     final generation = ++_queryGeneration;
-    final result = await widget.mediaRepository.discover(_draft);
+    final result = await widget.mediaRepository.discoverPage(_draft);
     if (!mounted || generation != _queryGeneration) return;
 
     setState(() {
       _liveCount = switch (result) {
-        Success<List<MediaItem>>(:final value) => value.length,
-        Failure<List<MediaItem>>() => null,
+        Success(:final value) => value.totalResults,
+        Failure() => null,
       };
     });
   }
@@ -90,28 +102,56 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
     Navigator.of(context).pop();
   }
 
+  /// What "Clear" goes back to: the default filter of the same segment.
+  DiscoverFilter get _cleared =>
+      DiscoverFilter(type: widget.initialFilter.type);
+
   @override
   Widget build(BuildContext context) {
-    final isMovieOnly = _draft.type == MediaType.movie;
-    final isTvOnly = _draft.type == MediaType.tvShow;
     final l10n = context.l10n;
+    final count = _liveCount;
 
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.screenMargin,
+          0,
+          AppSpacing.screenMargin,
+          AppSpacing.xl,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l10n.filterSheetTitle, style: AppTextStyles.h2),
-            const SizedBox(height: AppSpacing.xl),
-            FilterSectionLabel(l10n.filterSheetSectionType),
-            TypeFilterChips(
-              type: _draft.type,
-              onChanged: (type) => _setDraft(_draft.copyWith(type: () => type)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(l10n.filterSheetTitle, style: AppTextStyles.h1),
+                if (_draft != _cleared)
+                  TextLinkButton(
+                    label: l10n.filterSheetClear,
+                    fullWidth: false,
+                    onTap: () => _setDraft(_cleared),
+                  ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.lg),
-            FilterSectionLabel(l10n.commonGenres),
+            const SizedBox(height: AppSpacing.sectionGap),
+            FilterSectionHeader(l10n.filterSheetSectionSortBy),
+            DiscoverSortChips(
+              sortBy: _draft.sortBy,
+              onChanged: (sortBy) => _setDraft(_draft.copyWith(sortBy: sortBy)),
+            ),
+            const SizedBox(height: AppSpacing.sectionGap),
+            FilterPlatformChips(
+              mediaRepository: widget.mediaRepository,
+              type: _draft.type,
+              regionName: widget.regionName,
+              selectedId: _draft.withWatchProviders.firstOrNull,
+              onChanged: (id) => _setDraft(
+                _draft.copyWith(withWatchProviders: id == null ? {} : {id}),
+              ),
+            ),
+            FilterSectionHeader(l10n.commonGenres),
             GenreMultiSelectChips(
               genres: GenreCatalog.all,
               selected: _draft.withGenres,
@@ -119,8 +159,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                 _draft.copyWith(withGenres: _toggled(_draft.withGenres, genre)),
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            FilterSectionLabel(l10n.filterSheetSectionYear),
+            const SizedBox(height: AppSpacing.sectionGap),
             YearRangeFilter(
               yearFrom: _draft.yearFrom,
               yearTo: _draft.yearTo,
@@ -128,43 +167,21 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                 _draft.copyWith(yearFrom: () => from, yearTo: () => to),
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            FilterSectionLabel(l10n.filterSheetSectionMinRating),
+            const SizedBox(height: AppSpacing.sectionGap),
             MinRatingFilter(
               minVoteAverage: _draft.minVoteAverage,
               onChanged: (value) =>
                   _setDraft(_draft.copyWith(minVoteAverage: () => value)),
             ),
-            if (isMovieOnly) ...[
-              const SizedBox(height: AppSpacing.lg),
-              FilterSectionLabel(l10n.filterSheetSectionMaxRuntime),
-              MaxRuntimeFilter(
-                maxRuntimeMinutes: _draft.maxRuntimeMinutes,
-                onChanged: (value) =>
-                    _setDraft(_draft.copyWith(maxRuntimeMinutes: () => value)),
-              ),
-            ],
-            if (isTvOnly) ...[
-              const SizedBox(height: AppSpacing.lg),
-              FilterSectionLabel(l10n.filterSheetSectionStatus),
-              TvStatusToggle(
-                status: _draft.tvStatus,
-                onChanged: (status) =>
-                    _setDraft(_draft.copyWith(tvStatus: () => status)),
-              ),
-            ],
-            const SizedBox(height: AppSpacing.lg),
-            FilterSectionLabel(l10n.filterSheetSectionSortBy),
-            DiscoverSortChips(
-              sortBy: _draft.sortBy,
-              onChanged: (sortBy) => _setDraft(_draft.copyWith(sortBy: sortBy)),
-            ),
-            const SizedBox(height: AppSpacing.xxl),
-            ExploreFilterActions(
-              showReset: !_draft.isDefault,
-              onReset: () => _setDraft(const DiscoverFilter()),
-              liveCount: _liveCount,
-              onApply: _apply,
+            const SizedBox(height: AppSpacing.sectionGap),
+            PrimaryButton(
+              label: switch (count) {
+                null => l10n.filterSheetSeeResultsLoading,
+                0 => l10n.filterSheetNoResults,
+                _ => l10n.filterSheetSeeResultsCount(count),
+              },
+              isDisabled: count == 0,
+              onTap: _apply,
             ),
           ],
         ),

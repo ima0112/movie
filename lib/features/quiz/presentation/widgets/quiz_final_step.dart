@@ -8,8 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_chip.dart';
-import '../../../../shared/widgets/discover_range_filters.dart'
-    show MaxRuntimeFilter;
+import '../../../../shared/widgets/max_runtime_filter.dart';
 import 'quiz_max_seasons_stepper.dart';
 
 /// E2 step 4 — `docs/SCREENS.md` E2: "Movie: 'Max runtime' slider

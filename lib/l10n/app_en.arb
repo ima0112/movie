@@ -553,8 +553,26 @@
   },
 
   "filterSheetTitle": "Filters",
+  "filterSheetClear": "Clear",
+  "@filterSheetClear": {
+    "description": "H8's header button that resets every filter (amber text, shown only while something is set)."
+  },
+  "filterSheetSectionStreaming": "Streaming on",
+  "filterSheetSortPopular": "Popular",
+  "filterSheetSortTopRated": "Top rated",
+  "filterSheetSortNewest": "Release date",
+  "filterSheetMinRatingValue": "{rating} or more",
+  "@filterSheetMinRatingValue": {
+    "description": "H8's minimum-rating slider value, shown next to a star, e.g. \"7.0 or more\".",
+    "placeholders": { "rating": { "type": "String" } }
+  },
+  "filterSheetMinRatingAny": "Any rating",
+  "filterSheetNoResults": "No results",
+  "@filterSheetNoResults": {
+    "description": "H8's apply button while the live count is 0 (disabled)."
+  },
   "filterSheetSectionType": "Type",
-  "filterSheetSectionYear": "Year",
+  "filterSheetSectionYear": "Years",
   "filterSheetSectionMinRating": "Minimum rating",
   "filterSheetSectionMaxRuntime": "Max runtime",
   "filterSheetSectionStatus": "Status",

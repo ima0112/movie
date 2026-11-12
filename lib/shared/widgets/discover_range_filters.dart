@@ -1,22 +1,52 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_icons.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
+import 'filter_section_header.dart';
 
-/// H8's three numeric-range controls — year range, minimum rating, and
-/// max runtime (`docs/SCREENS.md` H8). Grouped in one file: each is a
-/// small labeled slider over a fixed numeric range, not substantial
-/// enough on its own to need separate files under CLAUDE.md rule 11.
+/// H8's two numeric-range controls — the years and the minimum rating
+/// (`docs/SCREENS.md` H8). Each is a section header with its live value on the
+/// right, a slider with a white thumb and an amber active track (as in the
+/// mockups) and the two ends' values under it.
 ///
-/// All three use [AppColors.ink] (white) for the active track, not
-/// amber — matching `TasteYearSlider`'s own reasoning: DESIGN_SYSTEM.md's
-/// closed accent-usage list doesn't mention sliders, and its own rule is
-/// "if in doubt, the default is no".
+/// Both report `null` when they are back at their resting position (the
+/// whole range / no minimum), so "nothing is set" is one value, not a
+/// range that happens to cover everything.
 
-/// H8: "year (range slider 1950–present)" — reuses `TasteYearSlider`'s
-/// own 1950 lower bound for the same reason it picked it (H8 itself is
-/// where that literal bound comes from).
+SliderThemeData _sliderTheme(BuildContext context) =>
+    SliderTheme.of(context).copyWith(
+      activeTrackColor: AppColors.accent,
+      inactiveTrackColor: AppColors.lineStrong,
+      thumbColor: AppColors.ink,
+      overlayColor: AppColors.accent.withValues(alpha: 0.16),
+    );
+
+class _EndLabels extends StatelessWidget {
+  const _EndLabels(this.start, this.end);
+
+  final String start;
+  final String end;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = AppTextStyles.caption.copyWith(color: AppColors.inkMuted);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(start, style: style),
+          Text(end, style: style),
+        ],
+      ),
+    );
+  }
+}
+
+/// "Years": a range slider from [minYear] to the current year.
 class YearRangeFilter extends StatelessWidget {
   const YearRangeFilter({
     super.key,
@@ -27,7 +57,9 @@ class YearRangeFilter extends StatelessWidget {
 
   final int? yearFrom;
   final int? yearTo;
-  final void Function(int yearFrom, int yearTo) onChanged;
+
+  /// Both `null` when the slider covers the whole range.
+  final void Function(int? yearFrom, int? yearTo) onChanged;
 
   static const int minYear = 1950;
 
@@ -40,35 +72,36 @@ class YearRangeFilter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.l10n.discoverRangeFiltersYearRange(from, to),
-          style: AppTextStyles.h3,
+        FilterSectionHeader(
+          context.l10n.filterSheetSectionYear,
+          trailing: Text(
+            context.l10n.discoverRangeFiltersYearRange(from, to),
+            style: AppTextStyles.h3,
+          ),
         ),
         SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: AppColors.ink,
-            inactiveTrackColor: AppColors.lineStrong,
-            thumbColor: AppColors.ink,
-          ),
+          data: _sliderTheme(context),
           child: RangeSlider(
             values: RangeValues(from.toDouble(), to.toDouble()),
             min: minYear.toDouble(),
             max: maxYear.toDouble(),
             divisions: maxYear - minYear,
-            onChanged: (values) =>
-                onChanged(values.start.round(), values.end.round()),
+            onChanged: (values) {
+              final start = values.start.round();
+              final end = values.end.round();
+              final whole = start == minYear && end == maxYear;
+              onChanged(whole ? null : start, whole ? null : end);
+            },
           ),
         ),
+        _EndLabels('$minYear', '$maxYear'),
       ],
     );
   }
 }
 
-/// H8: "minimum rating (0–9 slider, `vote_count.gte=100` fixed)" — the
-/// `vote_count.gte` part is `DiscoverFilter.minVoteCount`'s own fixed
-/// default (`100`), not something this slider (or any other H8
-/// control) ever changes; `MatchEngine._filterForVibe` is the one real
-/// caller that varies it, via `MatchQuery.voteCountGte`.
+/// "Minimum rating": 0–10 in half points; `vote_count.gte` stays fixed
+/// (`DiscoverFilter.minVoteCount`), so a title with three 10s never passes.
 class MinRatingFilter extends StatelessWidget {
   const MinRatingFilter({
     super.key,
@@ -77,79 +110,51 @@ class MinRatingFilter extends StatelessWidget {
   });
 
   final double? minVoteAverage;
-  final ValueChanged<double> onChanged;
+
+  /// `null` at 0 (no minimum).
+  final ValueChanged<double?> onChanged;
+
+  static const double max = 10;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final value = minVoteAverage ?? 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(value.toStringAsFixed(1), style: AppTextStyles.h3),
+        FilterSectionHeader(
+          l10n.filterSheetSectionMinRating,
+          trailing: value == 0
+              ? Text(l10n.filterSheetMinRatingAny, style: AppTextStyles.h3)
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      AppIcons.starFill,
+                      size: AppSpacing.lg,
+                      color: AppColors.accent,
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Text(
+                      l10n.filterSheetMinRatingValue(value.toStringAsFixed(1)),
+                      style: AppTextStyles.h3,
+                    ),
+                  ],
+                ),
+        ),
         SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: AppColors.ink,
-            inactiveTrackColor: AppColors.lineStrong,
-            thumbColor: AppColors.ink,
-          ),
+          data: _sliderTheme(context),
           child: Slider(
             value: value,
             min: 0,
-            max: 9,
-            divisions: 18,
-            onChanged: onChanged,
+            max: max,
+            divisions: (max * 2).round(),
+            onChanged: (v) => onChanged(v == 0 ? null : v),
           ),
         ),
-      ],
-    );
-  }
-}
-
-/// H8: "max runtime (movies only)". Range/"No limit" wording matches
-/// A2's own quiz step 4 for the identical control ("'Max runtime' slider
-/// (60–240 min, large number, 'No limit' at the far end)").
-class MaxRuntimeFilter extends StatelessWidget {
-  const MaxRuntimeFilter({
-    super.key,
-    required this.maxRuntimeMinutes,
-    required this.onChanged,
-  });
-
-  final int? maxRuntimeMinutes;
-  final ValueChanged<int?> onChanged;
-
-  static const int _min = 60;
-  static const int _max = 240;
-
-  @override
-  Widget build(BuildContext context) {
-    final value = (maxRuntimeMinutes ?? _max).clamp(_min, _max);
-    final isNoLimit = value >= _max;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          isNoLimit
-              ? context.l10n.discoverRangeFiltersNoLimit
-              : context.l10n.discoverRangeFiltersMinutes(value),
-          style: AppTextStyles.h3,
-        ),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: AppColors.ink,
-            inactiveTrackColor: AppColors.lineStrong,
-            thumbColor: AppColors.ink,
-          ),
-          child: Slider(
-            value: value.toDouble(),
-            min: _min.toDouble(),
-            max: _max.toDouble(),
-            divisions: _max - _min,
-            onChanged: (v) => onChanged(v.round() >= _max ? null : v.round()),
-          ),
-        ),
+        _EndLabels('0', '${max.round()}'),
       ],
     );
   }

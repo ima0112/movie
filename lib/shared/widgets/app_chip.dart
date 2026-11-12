@@ -35,12 +35,16 @@ class AppChip extends StatelessWidget {
     this.state = ChipState.normal,
     this.onTap,
     this.icon,
+    this.leading,
   });
 
   final String label;
   final ChipState state;
   final VoidCallback? onTap;
   final IconData? icon;
+
+  /// A widget before the label — a streaming service's logo.
+  final Widget? leading;
 
   // docs/DESIGN_SYSTEM.md section 4: "20: chips, campos, elementos
   // secundarios" — an icon size, not part of the AppSpacing scale.
@@ -61,6 +65,10 @@ class AppChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (leading != null) ...[
+            leading!,
+            const SizedBox(width: AppSpacing.sm),
+          ],
           if (icon != null) ...[
             Icon(icon, size: _iconSize, color: textColor),
             const SizedBox(width: AppSpacing.xs),

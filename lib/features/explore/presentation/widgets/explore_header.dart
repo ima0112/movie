@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/di.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../core/domain/repositories/settings_repository.dart';
+import '../../../../core/domain/entities/country.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -84,6 +86,7 @@ void _openFilterSheet(BuildContext context) {
     builder: (_) => ExploreFilterSheet(
       initialFilter: DiscoverFilter(type: cubit.state.segment.mediaType),
       mediaRepository: getIt<MediaRepository>(),
+      regionName: countryName(getIt<SettingsRepository>().current.regionCode),
       onApply: (filter) => cubit.openListing(filter: filter, title: title),
     ),
   );
