@@ -82,10 +82,10 @@ class MediaDetailHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (releaseStatus case final status?) ...[
+                  // The same amber tag for "not out yet" and "in theaters".
                   PosterBadge(
                     label: status.headerLabel(context.l10n),
-                    // Amber for "not out yet"; the dark tag for "in theaters".
-                    amber: status.stage == ReleaseStage.upcoming,
+                    amber: true,
                   ),
                   const SizedBox(height: AppSpacing.sm),
                 ],

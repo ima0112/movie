@@ -70,7 +70,7 @@ void main() {
         ReleaseStatus(ReleaseStage.upcoming, date: DateTime(2026, 6, 12)),
       );
       expect(find.text('Coming Jun 12, 2026'), findsOneWidget);
-      // Amber for "not out yet", above the title.
+      // Amber, above the title.
       final tag = tester.getRect(find.byType(PosterBadge));
       expect(tag.bottom, lessThan(tester.getRect(find.text('Inception')).top));
       expect(
@@ -82,9 +82,10 @@ void main() {
         ReleaseStatus(ReleaseStage.inTheaters, date: DateTime(2026, 4, 24)),
       );
       expect(find.text('In theaters'), findsOneWidget);
+      // Same design as "Coming": the amber tag.
       expect(
         tester.widget<PosterBadge>(find.byType(PosterBadge)).amber,
-        isFalse,
+        isTrue,
       );
     });
 
