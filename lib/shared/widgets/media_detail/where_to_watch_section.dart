@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/domain/entities/release_status.dart';
 import '../../../core/domain/entities/watch_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../l10n/release_status_localization.dart';
 import 'provider_group_box.dart';
 
 /// D1/D2's "Where to watch" card — Streaming / Rent / Buy groups, (the
@@ -25,6 +27,7 @@ class WhereToWatchSection extends StatelessWidget {
     required this.regionName,
     this.onProviderTap,
     this.onRegionTap,
+    this.releaseStatus,
   });
 
   final WatchProviders providers;
@@ -36,6 +39,10 @@ class WhereToWatchSection extends StatelessWidget {
 
   /// Tap on the region name → H6.
   final VoidCallback? onRegionTap;
+
+  /// Not out yet / only in cinemas: with no service listed, the card says why
+  /// instead of a generic "not available".
+  final ReleaseStatus? releaseStatus;
 
   static const int _maxStreaming = 5;
   static const int _maxRentBuy = 3;
@@ -74,7 +81,8 @@ class WhereToWatchSection extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             if (!providers.hasAny)
               Text(
-                l10n.whereToWatchNoProviders(regionName),
+                releaseStatus?.whereToWatchMessage(l10n) ??
+                    l10n.whereToWatchNoProviders(regionName),
                 style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
               ),
             if (providers.flatrate.isNotEmpty)

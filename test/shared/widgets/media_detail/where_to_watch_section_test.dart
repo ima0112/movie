@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_detail/where_to_watch_section.dart';
@@ -212,6 +213,86 @@ void main() {
         );
 
         expect(tester.takeException(), isNull);
+      });
+    });
+
+    group('a title that is not out yet, or only in cinemas', () {
+      Future<void> pump(WidgetTester tester, ReleaseStatus status) =>
+          tester.pumpWidget(
+            MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Scaffold(
+                body: WhereToWatchSection(
+                  providers: WatchProviders.empty,
+                  regionName: 'Spain',
+                  releaseStatus: status,
+                ),
+              ),
+            ),
+          );
+
+      testWidgets('upcoming says it is not out, with the date when known', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          ReleaseStatus(ReleaseStage.upcoming, date: DateTime(2026, 6, 12)),
+        );
+        expect(
+          find.textContaining('comes out on Jun 12, 2026'),
+          findsOneWidget,
+        );
+        expect(find.textContaining('Not available'), findsNothing);
+
+        await pump(tester, const ReleaseStatus(ReleaseStage.upcoming));
+        expect(
+          find.text("It isn't out yet, so it isn't on any service."),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('in theaters says so, with the streaming date when known', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          ReleaseStatus(
+            ReleaseStage.inTheaters,
+            date: DateTime(2026, 4, 24),
+            streamingDate: DateTime(2026, 6, 25),
+          ),
+        );
+        expect(
+          find.textContaining('Expected on streaming on Jun 25, 2026'),
+          findsOneWidget,
+        );
+
+        await pump(
+          tester,
+          ReleaseStatus(ReleaseStage.inTheaters, date: DateTime(2026, 4, 24)),
+        );
+        expect(find.textContaining('not on any service yet'), findsOneWidget);
+      });
+
+      testWidgets('with services listed, the services win over the message', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: WhereToWatchSection(
+                providers: _providers,
+                regionName: 'Spain',
+                releaseStatus: const ReleaseStatus(ReleaseStage.inTheaters),
+              ),
+            ),
+          ),
+        );
+        expect(find.textContaining('not on any service'), findsNothing);
+        expect(find.text('Max'), findsWidgets);
       });
     });
   });

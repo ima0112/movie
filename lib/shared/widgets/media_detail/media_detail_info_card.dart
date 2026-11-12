@@ -27,6 +27,7 @@ class MediaDetailInfoCard extends StatelessWidget {
     required this.actions,
     this.extraChips = const [],
     this.onGenreTap,
+    this.showRating = true,
   });
 
   /// The poster's full URL (`MediaItem.posterUrl`), or `null` for a flat
@@ -37,6 +38,10 @@ class MediaDetailInfoCard extends StatelessWidget {
   final String metaPrefix;
   final List<Genre> genres;
   final double voteAverage;
+
+  /// `false` for a title that isn't out yet: it has no rating to show (TMDB
+  /// reports 0.0), so there is no star chip rather than a misleading "0.0".
+  final bool showRating;
   final List<String> extraChips;
   final void Function(Genre genre)? onGenreTap;
   final Widget actions;
@@ -80,10 +85,11 @@ class MediaDetailInfoCard extends StatelessWidget {
                   spacing: AppSpacing.xs + 2,
                   runSpacing: AppSpacing.xs + 2,
                   children: [
-                    InfoChip(
-                      label: voteAverage.localizedRating(l10n),
-                      icon: AppIcons.starFill,
-                    ),
+                    if (showRating)
+                      InfoChip(
+                        label: voteAverage.localizedRating(l10n),
+                        icon: AppIcons.starFill,
+                      ),
                     for (final chip in extraChips) InfoChip(label: chip),
                   ],
                 ),

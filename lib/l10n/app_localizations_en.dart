@@ -427,6 +427,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionListingLoadMoreFailed => 'Couldn\'t load more';
 
   @override
+  String get releaseStatusInTheaters => 'In theaters';
+
+  @override
+  String get releaseStatusComingSoon => 'Coming soon';
+
+  @override
+  String releaseStatusComingOn(String date) {
+    return 'Coming $date';
+  }
+
+  @override
+  String get whereToWatchNotReleased =>
+      'It isn\'t out yet, so it isn\'t on any service.';
+
+  @override
+  String whereToWatchNotReleasedOn(String date) {
+    return 'It isn\'t out yet. It comes out on $date.';
+  }
+
+  @override
+  String get whereToWatchInTheaters =>
+      'In theaters now, and not on any service yet.';
+
+  @override
+  String whereToWatchInTheatersStreamingOn(String date) {
+    return 'In theaters now. Expected on streaming on $date.';
+  }
+
+  @override
   String trailerPlayLabel(String title) {
     return 'Play the trailer for $title';
   }

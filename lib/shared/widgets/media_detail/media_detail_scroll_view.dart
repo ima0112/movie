@@ -131,6 +131,7 @@ class _MediaDetailScrollViewState extends State<MediaDetailScrollView> {
             imageUrl: detail.backdropUrl ?? detail.item.posterUrl,
             title: detail.item.title,
             tagline: detail.tagline,
+            releaseStatus: detail.releaseStatus,
           ),
         ),
         SliverPadding(
@@ -176,6 +177,7 @@ class _MediaDetailScrollViewState extends State<MediaDetailScrollView> {
           key: _whereToWatchKey,
           child: WhereToWatchSection(
             providers: detail.watchProviders,
+            releaseStatus: detail.releaseStatus,
             regionName: countryName(widget.regionCode),
             onRegionTap: () => _openRegionSheet(context),
             onProviderTap: (link) =>

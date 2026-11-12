@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/domain/entities/release_status.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/l10n_extension.dart';
+import '../../../l10n/release_status_localization.dart';
+import '../poster_badge.dart';
 
 /// D1/D2's header — `docs/SCREENS.md` D1: a 420 px backdrop (TMDB's 16:9
 /// backdrop, or the poster when there isn't one) that fades into the page,
 /// the back button on top, and over the fade the left-aligned title with
 /// the italic tagline under it ("Detalle" design). D2 puts its "Airing" /
+///
+/// A title that isn't out yet, or is only in cinemas, carries a tag above its
+/// title ([releaseStatus]).
 ///
 /// Year, genres, rating and the action toggles live in the info card below
 /// (`media_detail_info_card.dart`), not here.
@@ -17,6 +24,7 @@ class MediaDetailHeader extends StatelessWidget {
     required this.imageUrl,
     required this.title,
     this.tagline,
+    this.releaseStatus,
   });
 
   /// Backdrop URL, or the poster's when TMDB has no backdrop; `null` shows
@@ -24,6 +32,10 @@ class MediaDetailHeader extends StatelessWidget {
   final String? imageUrl;
   final String title;
   final String? tagline;
+
+  /// "Coming Mar 14" / "In theaters", as a tag above the title; `null` for
+  /// an ordinary released title.
+  final ReleaseStatus? releaseStatus;
 
   /// Public: the assembled screens need the same value to know when the
   /// title has "scrolled past the top" and the compact bar should appear.
@@ -69,6 +81,14 @@ class MediaDetailHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (releaseStatus case final status?) ...[
+                  PosterBadge(
+                    label: status.headerLabel(context.l10n),
+                    // Amber for "not out yet"; the dark tag for "in theaters".
+                    amber: status.stage == ReleaseStage.upcoming,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                ],
                 titleText,
                 if (tagline != null && tagline.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.xs),
