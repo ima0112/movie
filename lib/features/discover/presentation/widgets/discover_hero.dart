@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../shared/widgets/media_hero_carousel.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero_save_button.dart';
@@ -19,6 +21,7 @@ class DiscoverHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userLibraryRepository = getIt<UserLibraryRepository>();
     return BlocSelector<DiscoverCubit, DiscoverState, List<MediaItem>?>(
       selector: (state) {
         if (state is DiscoverLoaded && state.segment == segment) {
@@ -38,7 +41,10 @@ class DiscoverHero extends StatelessWidget {
           // A new segment starts again at its first banner.
           key: ValueKey(segment),
           items: heroItems,
-          saveButtonBuilder: (item) => DiscoverHeroSaveButton(itemId: item.id),
+          saveButtonBuilder: (item) => DiscoverHeroSaveButton(
+            item: item,
+            userLibraryRepository: userLibraryRepository,
+          ),
           // `pushMediaDetail` (→ `push`, not `go`): the detail screen's
           // back button should return to Discover with its scroll
           // position intact, not replace it in the stack.

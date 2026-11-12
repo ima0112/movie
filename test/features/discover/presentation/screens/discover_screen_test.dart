@@ -58,9 +58,7 @@ void main() {
     expect(find.text('TV Shows'), findsOneWidget);
   });
 
-  testWidgets('switching segments loads that segment\'s data', (
-    tester,
-  ) async {
+  testWidgets('switching segments loads that segment\'s data', (tester) async {
     await pumpDiscoverScreen(tester);
     await tester.pumpAndSettle();
 
@@ -89,10 +87,14 @@ void main() {
     // All hero save buttons start unsaved (outline icon); none filled yet.
     expect(find.byIcon(AppIcons.watchLater), findsWidgets);
     expect(find.byIcon(AppIcons.watchLaterFill), findsNothing);
-    final unsavedCountBefore = find.byIcon(AppIcons.watchLater).evaluate().length;
+    final unsavedCountBefore = find
+        .byIcon(AppIcons.watchLater)
+        .evaluate()
+        .length;
 
     await tester.tap(find.byIcon(AppIcons.watchLater).first);
-    await tester.pump();
+    // The write goes through the repository and comes back on its stream.
+    await tester.pumpAndSettle();
 
     // Exactly the tapped one flips to filled/saved — the rest stay put.
     expect(find.byIcon(AppIcons.watchLaterFill), findsOneWidget);
@@ -103,5 +105,18 @@ void main() {
 
     // Untouched content around it, e.g. the hero title, is unaffected.
     expect(find.text('Dune: Part Two'), findsOneWidget);
+
+    // And it really is in Watch later (it used to be a session-only icon).
+    final watchLater = await tester.runAsync(
+      () => getIt<UserLibraryRepository>()
+          .watch(tab: LibraryTab.watchLater)
+          .first,
+    );
+    expect(watchLater!.map((e) => e.title), contains('Dune: Part Two'));
+
+    // Tapping again takes it out.
+    await tester.tap(find.byIcon(AppIcons.watchLaterFill));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(AppIcons.watchLaterFill), findsNothing);
   });
 }

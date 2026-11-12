@@ -15,7 +15,6 @@ import '../../../../shared/widgets/media_segmented_control.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../../../recommendations/presentation/cubit/recommendations_cubit.dart';
 import '../cubit/discover_cubit.dart';
-import '../cubit/saved_ids_cubit.dart';
 import '../widgets/discover_content_area.dart';
 import '../widgets/discover_top_bar.dart';
 
@@ -44,7 +43,6 @@ class DiscoverScreen extends StatelessWidget {
             getIt<SettingsRepository>(),
           )..loadDiscover(MediaSegment.all),
         ),
-        BlocProvider(create: (_) => SavedIdsCubit()),
         BlocProvider(
           create: (_) => RecommendationsCubit(
             getIt<MediaRepository>(),
