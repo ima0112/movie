@@ -54,6 +54,14 @@ class AppTabBar extends StatelessWidget {
   /// takes above the pill.
   static const double height = 96;
 
+  /// The bottom padding a root tab's scrollable needs so its last item can
+  /// scroll up *above* the floating bar instead of staying hidden behind it:
+  /// the bar's real height (the shell's `Scaffold` adds it, safe area
+  /// included, to the body's `MediaQuery` bottom padding) plus a small
+  /// breathing gap. Outside the shell (tests, previews) it is just the gap.
+  static double scrollInset(BuildContext context) =>
+      MediaQuery.paddingOf(context).bottom + AppSpacing.lg;
+
   static const double _pillHeight = 68;
   static const double _pillTop = 12;
   static const double _pillRadius = 34;

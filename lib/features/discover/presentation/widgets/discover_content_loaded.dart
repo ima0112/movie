@@ -5,6 +5,7 @@ import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../recommendations/presentation/cubit/recommendations_cubit.dart';
 import '../../../recommendations/presentation/widgets/recommendation_section_view.dart';
+import '../../../../shared/widgets/app_tab_bar.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero.dart';
 import 'discover_search_field.dart';
@@ -39,7 +40,10 @@ class DiscoverContentLoaded extends StatelessWidget {
         context.read<RecommendationsCubit>().refresh(),
       ]),
       child: ListView(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+        padding: EdgeInsets.only(
+          top: AppSpacing.md,
+          bottom: AppTabBar.scrollInset(context),
+        ),
         children: [
           DiscoverHero(segment: segment),
           const SizedBox(height: AppSpacing.xl),
@@ -55,7 +59,6 @@ class DiscoverContentLoaded extends StatelessWidget {
           ),
           for (final section in sections)
             DiscoverSectionCarousel(segment: segment, section: section),
-          const SizedBox(height: AppSpacing.sectionGap),
         ],
       ),
     );

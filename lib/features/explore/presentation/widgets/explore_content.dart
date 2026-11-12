@@ -11,6 +11,7 @@ import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
+import '../../../../shared/widgets/app_tab_bar.dart';
 import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
 import 'explore_search_skeleton.dart';
@@ -67,7 +68,12 @@ class _AtRestContent extends StatelessWidget {
     final cubit = context.read<ExploreCubit>();
 
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.screenMargin,
+        AppSpacing.xl,
+        AppSpacing.screenMargin,
+        AppTabBar.scrollInset(context),
+      ),
       children: [
         RecentSearchesChips(
           recentSearches: state.recentSearches,

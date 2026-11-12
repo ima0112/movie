@@ -8,6 +8,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_tab_bar.dart';
 import '../cubit/my_list_cubit.dart';
 import 'my_list_empty_state.dart';
 import 'my_list_entry_tile.dart';
@@ -55,7 +56,12 @@ class MyListBody extends StatelessWidget {
 
             final sorted = _sort(filtered, tab, filter.sort);
             return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.screenMargin,
+                0,
+                AppSpacing.screenMargin,
+                AppTabBar.scrollInset(context),
+              ),
               itemCount: sorted.length,
               itemBuilder: (context, index) => MyListEntryTile(
                 key: ValueKey(sorted[index].key),

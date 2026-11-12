@@ -7,6 +7,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/edit_profile_sheet.dart';
+import '../../../../shared/widgets/app_tab_bar.dart';
 import '../widgets/my_tastes_card.dart';
 import '../widgets/you_header.dart';
 import '../widgets/your_activity_card.dart';
@@ -46,8 +47,16 @@ class YouScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
+        // The root shell's floating bar is accounted for in the list's own
+        // bottom padding, so the page can scroll under it.
+        bottom: false,
         child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.screenMargin,
+            AppSpacing.xl,
+            AppSpacing.screenMargin,
+            AppTabBar.scrollInset(context),
+          ),
           children: [
             YouHeader(
               onEditProfile: () => _openEditProfile(context),
