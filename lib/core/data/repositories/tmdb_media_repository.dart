@@ -15,6 +15,7 @@ import '../../domain/entities/video.dart';
 import '../../domain/entities/season_summary.dart';
 import '../../domain/repositories/media_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
+import '../../domain/services/daily_picker.dart';
 import '../../network/dio_failure_mapper.dart';
 import '../tmdb/tmdb_configuration_service.dart';
 import '../tmdb/tmdb_detail_mappers.dart';
@@ -161,7 +162,14 @@ class TmdbMediaRepository implements MediaRepository {
         // watch-later keys here instead of returning empty.
         CarouselSection.watchLater => const <MediaItem>[],
       };
-      return Success(items.take(10).toList());
+      // Finished shows is an all-time ranking whose top never moves: show a
+      // day-stable shuffle of the page instead, so Home isn't identical daily.
+      final shown = section == CarouselSection.finishedShows
+          ? DailyPicker(
+              DateTime.now(),
+            ).shuffled(items, salt: 'home-${section.name}')
+          : items;
+      return Success(shown.take(10).toList());
     } on DioException catch (e) {
       return mapDioExceptionToFailure(e);
     }

@@ -23,6 +23,9 @@ class _Repo extends FakeMediaRepository {
   Completer<void>? stall;
   List<StreamingService> services = const [_netflix, _max];
 
+  /// When set, every discover returns exactly this (a full 20-title page).
+  List<MediaItem>? pool;
+
   @override
   Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) async {
     filters.add(filter);
@@ -34,6 +37,8 @@ class _Repo extends FakeMediaRepository {
         failing == ExploreSection.hiddenGems) {
       return Failure(FailureReason.network);
     }
+    final fixed = pool;
+    if (fixed != null) return Success(fixed);
     return super.discover(filter.copyWith(sortBy: filter.sortBy));
   }
 
@@ -253,5 +258,67 @@ void main() {
     expect(cubit.state.revision, greaterThan(revision));
     expect(cubit.state.sections, isEmpty);
     expect(cubit.state.services, isA<ExploreServicesLoaded>());
+  });
+
+  group('rotation', () {
+    final page = List.generate(
+      20,
+      (i) => Movie(
+        id: i + 1,
+        title: 'Movie $i',
+        posterUrl: null,
+        genres: const [],
+        releaseDate: null,
+        voteAverage: 7,
+      ),
+    );
+
+    Future<List<int>> shown(ExploreSection section, DateTime day) async {
+      final repo = _Repo()..pool = page;
+      final cubit = ExploreBrowseCubit(
+        repo,
+        _Settings(const AppSettings(languageCode: 'en', regionCode: 'US')),
+        clock: () => day,
+      );
+      addTearDown(cubit.close);
+      await cubit.start(MediaSegment.all);
+      await cubit.requestSection(section);
+      final loaded = cubit.state.sectionState(section) as ExploreSectionLoaded;
+      return [for (final item in loaded.items) item.id];
+    }
+
+    test(
+      'Popular and Hidden gems show a day-stable shuffle of the page',
+      () async {
+        for (final section in [
+          ExploreSection.popular,
+          ExploreSection.hiddenGems,
+        ]) {
+          final monday = await shown(section, DateTime(2026, 5, 4));
+          expect(monday, hasLength(ExploreBrowseCubit.sectionSize));
+          expect(monday.toSet(), hasLength(monday.length));
+          // Not simply the first ten in TMDB's order…
+          expect(monday, isNot(List.generate(10, (i) => i + 1)));
+          // …the same all day…
+          expect(await shown(section, DateTime(2026, 5, 4, 21)), monday);
+          // …and a different slice another day.
+          expect(await shown(section, DateTime(2026, 5, 5)), isNot(monday));
+        }
+      },
+    );
+
+    test('Top rated and the other sections keep TMDB\'s order', () async {
+      for (final section in [
+        ExploreSection.topRated,
+        ExploreSection.topToday,
+        ExploreSection.newReleases,
+        ExploreSection.comingSoon,
+      ]) {
+        expect(
+          await shown(section, DateTime(2026, 5, 4)),
+          List.generate(10, (i) => i + 1),
+        );
+      }
+    });
   });
 }

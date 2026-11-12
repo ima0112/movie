@@ -11,6 +11,14 @@ enum ExploreSection {
   hiddenGems,
 }
 
+/// Whether [section] shows a day-stable shuffle of its results instead of
+/// TMDB's own order. Only the sections that would otherwise look the same
+/// every day (all-time lists whose top never moves): *Popular* and *Hidden
+/// gems*. *Top rated* stays in its true order — it is a ranking — and the
+/// others already move on their own.
+bool exploreSectionRotates(ExploreSection section) =>
+    section == ExploreSection.popular || section == ExploreSection.hiddenGems;
+
 /// The window "New releases" looks back over.
 const Duration newReleasesWindow = Duration(days: 60);
 

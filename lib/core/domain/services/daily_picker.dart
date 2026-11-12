@@ -41,6 +41,12 @@ class DailyPicker {
     return _sequence(slots, cycle, salt)[day % length];
   }
 
+  /// [items] in an order that is the same all day and different tomorrow —
+  /// for lists that would otherwise show the same first entries forever. The
+  /// order depends only on the date and [salt], never on the clock's time.
+  List<T> shuffled<T>(List<T> items, {required String salt}) =>
+      _shuffled(items, _epochDay(today), salt);
+
   /// Up to [count] distinct picks, each one drawn from what is left.
   List<T> pickMany<T>(
     List<(T, int)> candidates, {
