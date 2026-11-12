@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import 'outlined_text.dart';
 
 /// Puts a big rank number (1, 2, 3…) over the bottom-left corner of [child]
 /// (a poster card), on a soft fade to the page color so it stays legible on
@@ -16,7 +17,7 @@ class RankedPoster extends StatelessWidget {
   final Widget child;
 
   /// How much of the poster, from the bottom, the fade covers.
-  static const double _fadeShare = 0.45;
+  static const double _fadeShare = 0.6;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +51,9 @@ class RankedPoster extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(
                           left: AppSpacing.sm,
-                          bottom: AppSpacing.xs,
+                          bottom: 0,
                         ),
-                        child: Text('$rank', style: AppTextStyles.display),
+                        child: OutlinedText('$rank', style: AppTextStyles.rank),
                       ),
                     ),
                   ),

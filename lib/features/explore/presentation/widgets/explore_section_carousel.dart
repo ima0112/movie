@@ -46,6 +46,7 @@ class ExploreSectionCarousel extends StatelessWidget {
         items: items,
         size: MediaCardSize.carouselLarge,
         ranked: true,
+        focusZoom: true,
         showTypeTag: tvTag,
         onItemTap: onItemTap,
       ),

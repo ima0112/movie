@@ -44,8 +44,8 @@ void main() {
   testWidgets('Top today: large posters with a rank number', (tester) async {
     await _pump(tester, ExploreSection.topToday);
     expect(_firstCard(tester), const Size(150, 225));
-    expect(find.text('1'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
+    expect(find.text('1'), findsNWidgets(2));
+    expect(find.text('2'), findsNWidgets(2));
   });
 
   testWidgets('Popular: the plain standard poster', (tester) async {
