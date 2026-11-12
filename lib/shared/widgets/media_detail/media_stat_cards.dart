@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// One label/value pair of [MediaStatCards].
 class MediaStat {
-  const MediaStat({required this.label, required this.value});
+  const MediaStat({required this.label, required this.value, this.onTap});
 
   final String label;
   final String value;
+
+  /// A tappable stat (D2's "Seasons" → D2b): the card gets a chevron and the
+  /// whole card is a button.
+  final VoidCallback? onTap;
 }
 
-/// D1's two stat cards under the info card ("Duration" / "Classification"
-/// in the "Detalle" design): a small muted caption over a bold value, side by
-/// side. A stat with no value is simply not passed, and no stats means no
+/// The two stat cards under the info card ("Duration" / "Classification"
+/// in the "Detalle" design; D2's "Status" / "Seasons"): a small muted caption
+/// over a bold value, side by side, a card with an `onTap` ending in a chevron. A stat with no value is simply not passed, and no stats means no
 /// widget at all.
 class MediaStatCards extends StatelessWidget {
   const MediaStatCards({super.key, required this.stats});
@@ -53,23 +58,49 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final onTap = stat.onTap;
+    final card = Container(
       padding: const EdgeInsets.all(AppSpacing.cardPadding),
       decoration: BoxDecoration(
         color: AppColors.surfaceRaised,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         border: Border.all(color: AppColors.glassBorder),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            stat.label,
-            style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  stat.label,
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.inkMuted,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(stat.value, style: AppTextStyles.h3),
+              ],
+            ),
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(stat.value, style: AppTextStyles.h3),
+          if (onTap != null)
+            const Icon(
+              AppIcons.chevronRight,
+              size: 20,
+              color: AppColors.inkMuted,
+            ),
         ],
+      ),
+    );
+    if (onTap == null) return card;
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      label: '${stat.label} ${stat.value}',
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: card,
       ),
     );
   }

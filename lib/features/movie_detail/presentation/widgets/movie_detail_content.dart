@@ -1,54 +1,25 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
-import '../../../../app/router.dart';
-import '../../../../core/domain/entities/country.dart';
-import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/media_detail.dart';
 import '../../../../core/domain/entities/media_key.dart';
-import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../../../core/launch/launch_external_link.dart';
-import '../../../../core/launch/media_share.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/locale_names.dart';
-import '../../../../shared/widgets/media_detail/media_cast_row.dart';
-import '../../../../shared/widgets/tmdb_footer.dart';
-import '../../../../shared/widgets/media_detail/media_detail_action_row.dart';
-import '../../../../shared/widgets/media_detail/media_detail_header.dart';
-import '../../../../shared/widgets/media_detail/media_similar_section.dart';
-import '../cubit/movie_detail_cubit.dart';
+import '../../../../shared/widgets/media_detail/media_detail_scroll_view.dart';
 import '../../../../shared/widgets/media_detail/media_stat_cards.dart';
-import '../../../../shared/widgets/media_detail/media_synopsis_section.dart';
-import '../../../../shared/widgets/media_detail/where_to_watch_section.dart';
-import '../../../../shared/widgets/region_sheet.dart';
+import '../cubit/movie_detail_cubit.dart';
 import 'movie_metadata.dart';
 
-/// D1 once `MovieDetailCubit` has loaded — assembles the shared,
-/// generic `media_detail` widgets (`shared/widgets/media_detail/`) inside
-/// a `CustomScrollView`/slivers, which is what lets
-/// `MediaDetailHeader` scroll underneath the compact bar
-/// (`movie_detail_screen.dart` owns the shared `ScrollController` and the
-/// bar's visibility).
+/// D1 once `MovieDetailCubit` has loaded: hands `MediaDetailScrollView` (the
+/// assembly D1 and D2 share) the movie's own values — the meta line, the
+/// language chip and the Duration / Classification cards.
 ///
-/// [detail] arrives already loaded and already narrowed to [MovieDetail]
-/// — the *only* place in D1 that reads `MovieDetailCubit`'s state at all
-/// is `movie_detail_screen.dart`'s own top-level `BlocBuilder`; every
-/// widget below this one is a plain, Cubit-unaware function of the
-/// values passed in (CLAUDE.md rule 9 — there is nothing left to
-/// rebuild independently once the detail is loaded, since none of it
-/// changes again while this is mounted — the one exception,
-/// `MediaDetailActionRow`'s own favorite/watch-later state, keeps its
-/// own narrow `StreamBuilder` on `UserLibraryRepository` exactly as
-/// before).
-///
+/// [detail] arrives already loaded and narrowed to [MovieDetail] — the only
+/// place that reads `MovieDetailCubit`'s state at all is
+/// `movie_detail_screen.dart`'s top-level `BlocBuilder` (CLAUDE.md rule 9).
 class MovieDetailContent extends StatelessWidget {
   const MovieDetailContent({
     super.key,
@@ -66,44 +37,6 @@ class MovieDetailContent extends StatelessWidget {
 
   /// `null` = the saved region (see `*DetailLoaded.regionCode`).
   final String? regionCode;
-
-  void _scrollToSimilar() {
-    final similarContext = similarSectionKey.currentContext;
-    if (similarContext != null) {
-      Scrollable.ensureVisible(
-        similarContext,
-        duration: const Duration(milliseconds: 300),
-      );
-    }
-  }
-
-  /// The country picked on this screen, else the saved one.
-  String get _effectiveRegion =>
-      regionCode ?? getIt<SettingsRepository>().current.regionCode;
-
-  void _openRegionSheet(BuildContext context) {
-    final cubit = context.read<MovieDetailCubit>();
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => RegionSheet(
-        selectedRegionCode: _effectiveRegion,
-        // Only this screen: the saved region stays as it was.
-        onSelected: (code) => unawaited(cubit.setRegion(mediaKey, code)),
-      ),
-    );
-  }
-
-  void _openFullCast(BuildContext context) => unawaited(
-    context.push(
-      AppRoutes.fullCast,
-      extra: FullCastRouteArgs(
-        title: detail.item.title,
-        cast: detail.cast,
-        crew: detail.crew,
-      ),
-    ),
-  );
 
   /// D1's Duration / Classification stat cards — each only when TMDB has it.
   List<MediaStat> _stats(BuildContext context) {
@@ -123,85 +56,23 @@ class MovieDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userLibraryRepository = getIt<UserLibraryRepository>();
-    return CustomScrollView(
-      controller: scrollController,
-      slivers: [
-        SliverToBoxAdapter(
-          child: MediaDetailHeader(
-            imageUrl: detail.backdropUrl ?? detail.item.posterUrl,
-            title: detail.item.title,
-            tagline: detail.tagline,
-            onShare: () => unawaited(
-              shareMedia(context, title: detail.item.title, key: mediaKey),
-            ),
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl,
-            AppSpacing.xl,
-            AppSpacing.xl,
-            0,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: MediaDetailActionRow(
-              mediaKey: mediaKey,
-              userLibraryRepository: userLibraryRepository,
-              mediaDetail: detail,
-              metaPrefix: movieMetaPrefix(context, detail),
-              extraChips: [
-                if (detail.originalLanguage?.trim().isNotEmpty ?? false)
-                  languageDisplayName(context, detail.originalLanguage!),
-              ],
-              onGenreTap: (genre) => context.push(
-                AppRoutes.filteredList,
-                extra: FilteredListRouteArgs(
-                  filter: DiscoverFilter(
-                    type: MediaType.movie,
-                    withGenres: {genre},
-                  ),
-                  title: genre.localizedName(context.l10n),
-                ),
-              ),
-              onPlayTrailer: (trailer) =>
-                  unawaited(launchYoutubeTrailer(context, trailer.key)),
-              onSeeSimilar: _scrollToSimilar,
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(child: MediaStatCards(stats: _stats(context))),
-        SliverToBoxAdapter(
-          child: MediaSynopsisSection(overview: detail.overview),
-        ),
-        SliverToBoxAdapter(
-          child: WhereToWatchSection(
-            providers: detail.watchProviders,
-            regionName: countryName(_effectiveRegion),
-            onRegionTap: () => _openRegionSheet(context),
-            onProviderTap: (link) =>
-                unawaited(launchExternalLink(context, link)),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: MediaCastRow(
-            cast: detail.cast,
-            crew: detail.crew,
-            onPersonTap: (person) => context.pushPersonDetail(person.id),
-            onSeeFullCastTap: () => _openFullCast(context),
-            showCrew: false,
-          ),
-        ),
-        SliverToBoxAdapter(
-          key: similarSectionKey,
-          child: MediaSimilarSection(
-            title: context.l10n.mediaSimilarMoviesTitle,
-            similar: detail.similar,
-            onItemTap: (item) => context.pushMediaDetail(item.key),
-          ),
-        ),
-        const SliverToBoxAdapter(child: TmdbFooter()),
+    final language = detail.originalLanguage;
+    return MediaDetailScrollView(
+      detail: detail,
+      mediaKey: mediaKey,
+      scrollController: scrollController,
+      similarSectionKey: similarSectionKey,
+      userLibraryRepository: getIt<UserLibraryRepository>(),
+      regionCode: regionCode ?? getIt<SettingsRepository>().current.regionCode,
+      onRegionSelected: (code) =>
+          context.read<MovieDetailCubit>().setRegion(mediaKey, code),
+      metaPrefix: movieMetaPrefix(context, detail),
+      extraChips: [
+        if (language != null && language.trim().isNotEmpty)
+          languageDisplayName(context, language),
       ],
+      stats: _stats(context),
+      similarTitle: context.l10n.mediaSimilarMoviesTitle,
     );
   }
 }

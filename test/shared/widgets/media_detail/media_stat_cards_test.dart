@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/shared/widgets/media_detail/media_stat_cards.dart';
 
 Widget _host(List<MediaStat> stats) => MaterialApp(
@@ -31,5 +32,19 @@ void main() {
   testWidgets('no stats renders nothing', (tester) async {
     await tester.pumpWidget(_host(const []));
     expect(find.byType(Text), findsNothing);
+  });
+
+  testWidgets('a stat with onTap is a button with a chevron', (tester) async {
+    var taps = 0;
+    await tester.pumpWidget(
+      _host([
+        const MediaStat(label: 'Status', value: 'Ended'),
+        MediaStat(label: 'Seasons', value: '5 (62 ep.)', onTap: () => taps++),
+      ]),
+    );
+
+    expect(find.byIcon(AppIcons.chevronRight), findsOneWidget);
+    await tester.tap(find.text('5 (62 ep.)'));
+    expect(taps, 1);
   });
 }
