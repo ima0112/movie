@@ -45,6 +45,19 @@ class AppRoutes {
 
   static String personDetail(int id) => '/person/$id';
 
+  /// B2 (Explore), a root tab.
+  static const String explore = '/explore';
+
+  /// B2 with its search field focused and the keyboard up — B1's search bar is
+  /// a shortcut to it. The `focus` value is a fresh token on every call: the
+  /// Explore tab stays alive in the shell, so a repeated shortcut has to read
+  /// as a *new* request (the field only reacts when the token changes).
+  static String exploreSearch() =>
+      '$explore?$exploreFocusParam=${DateTime.now().microsecondsSinceEpoch}';
+
+  /// The query parameter [exploreSearch] sets.
+  static const String exploreFocusParam = 'focus';
+
   /// A2 (Onboarding) — the app's own top-level `redirect` sends every
   /// route here until `OnboardingRepository.isCompleted()` is `true`,
   /// and sends this one route to [DiscoverScreen] once it is.
@@ -243,8 +256,11 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/explore',
-              builder: (context, state) => const ExploreScreen(),
+              path: AppRoutes.explore,
+              builder: (context, state) => ExploreScreen(
+                focusToken:
+                    state.uri.queryParameters[AppRoutes.exploreFocusParam],
+              ),
             ),
           ],
         ),

@@ -22,7 +22,11 @@ import '../widgets/explore_header.dart';
 /// rebuild-granularity rationale (CLAUDE.md rule 9) in its own doc
 /// comment.
 class ExploreScreen extends StatelessWidget {
-  const ExploreScreen({super.key});
+  const ExploreScreen({super.key, this.focusToken});
+
+  /// A new value asks the search field to take focus (B1's search bar is a
+  /// shortcut to it); `null` or an unchanged value does nothing.
+  final String? focusToken;
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +36,15 @@ class ExploreScreen extends StatelessWidget {
         getIt<SearchHistoryRepository>(),
         getIt<SettingsRepository>(),
       ),
-      child: const _ExploreView(),
+      child: _ExploreView(focusToken: focusToken),
     );
   }
 }
 
 class _ExploreView extends StatelessWidget {
-  const _ExploreView();
+  const _ExploreView({this.focusToken});
+
+  final String? focusToken;
 
   @override
   Widget build(BuildContext context) {
@@ -65,13 +71,13 @@ class _ExploreView extends StatelessWidget {
               }),
         );
       },
-      child: const Scaffold(
+      child: Scaffold(
         backgroundColor: AppColors.surface,
         body: SafeArea(
           child: Column(
             children: [
-              ExploreHeader(),
-              Expanded(child: ExploreContent()),
+              ExploreHeader(focusToken: focusToken),
+              const Expanded(child: ExploreContent()),
             ],
           ),
         ),
