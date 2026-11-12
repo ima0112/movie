@@ -10,6 +10,7 @@ import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero.dart';
 import 'discover_search_field.dart';
+import 'discover_taste_card.dart';
 import 'discover_trailers_section.dart';
 import 'discover_section_carousel.dart';
 
@@ -68,8 +69,11 @@ class DiscoverContentLoaded extends StatelessWidget {
             for (final (i, section) in sections.indexed) ...[
               DiscoverSectionCarousel(segment: segment, section: section),
               // The trailers follow the lead section, in the All tab only.
-              if (i == 0 && segment == MediaSegment.all)
-                const DiscoverTrailersSection(),
+              if (i == 0 && segment == MediaSegment.all) ...const [
+                DiscoverTrailersSection(),
+                // Only while the app has nothing to personalise with.
+                DiscoverTasteCard(),
+              ],
             ],
           ],
         ),

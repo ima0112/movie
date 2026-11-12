@@ -325,6 +325,11 @@
   "carouselSectionComingSoon": "Coming soon",
   "carouselSectionFinishedShows": "Finished shows",
   "carouselSectionLatestTrailers": "Latest trailers",
+  "discoverTasteCardTitle": "Make Home yours",
+  "@discoverTasteCardTitle": {
+    "description": "Title of B1's taste-completion card, shown on the All tab while there is no taste profile and My List is empty (docs/SCREENS.md B1)."
+  },
+  "discoverTasteCardBody": "Tell us what you like and we'll fill this page with picks for you.",
   "trailerPlayLabel": "Play the trailer for {title}",
   "@trailerPlayLabel": {
     "description": "Accessibility label of a Latest trailers card (docs/SCREENS.md B1); opens the trailer in YouTube.",

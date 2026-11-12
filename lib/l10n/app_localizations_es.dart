@@ -384,6 +384,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get carouselSectionLatestTrailers => 'Últimos tráilers';
 
   @override
+  String get discoverTasteCardTitle => 'Haz que Inicio sea tuyo';
+
+  @override
+  String get discoverTasteCardBody =>
+      'Cuéntanos qué te gusta y llenaremos esta página con recomendaciones para ti.';
+
+  @override
   String trailerPlayLabel(String title) {
     return 'Ver el tráiler de $title';
   }
