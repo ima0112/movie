@@ -69,7 +69,7 @@ class _MovieDetailViewState extends State<_MovieDetailView> {
     _scrollController.addListener(_onScroll);
   }
 
-  // The bar appears once the header (320 px, per
+  // The bar appears once the header (420 px, per
   // MediaDetailHeader.height) has scrolled past a compact bar's
   // worth of space — i.e. the title itself has left the top.
   void _onScroll() {

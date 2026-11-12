@@ -25,7 +25,7 @@ Widget _app(
 
 void main() {
   group('MediaDetailHeader', () {
-    testWidgets('is 320 px tall with the title and tagline left-aligned '
+    testWidgets('is 420 px tall with the title and tagline left-aligned '
         'over it', (tester) async {
       await tester.pumpWidget(
         _app(
@@ -48,12 +48,7 @@ void main() {
 
     testWidgets('no tagline still lays out', (tester) async {
       await tester.pumpWidget(
-        _app(
-          const MediaDetailHeader(
-            imageUrl: null,
-            title: 'Breaking Bad',
-          ),
-        ),
+        _app(const MediaDetailHeader(imageUrl: null, title: 'Breaking Bad')),
       );
 
       expect(find.text('Breaking Bad'), findsOneWidget);

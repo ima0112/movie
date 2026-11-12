@@ -4,7 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 
-/// D1/D2's header — `docs/SCREENS.md` D1: a 320 px backdrop (TMDB's 16:9
+/// D1/D2's header — `docs/SCREENS.md` D1: a 420 px backdrop (TMDB's 16:9
 /// backdrop, or the poster when there isn't one) that fades into the page,
 /// the back button on top, and over the fade the left-aligned title with
 /// the italic tagline under it ("Detalle" design). D2 puts its "Airing" /
@@ -27,7 +27,7 @@ class MediaDetailHeader extends StatelessWidget {
 
   /// Public: the assembled screens need the same value to know when the
   /// title has "scrolled past the top" and the compact bar should appear.
-  static const double height = 320;
+  static const double height = 420;
 
   static const double _topScrim = 0.35;
 
