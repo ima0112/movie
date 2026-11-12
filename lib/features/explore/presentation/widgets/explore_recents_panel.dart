@@ -113,12 +113,17 @@ class _Panel extends StatelessWidget {
             left: AppSpacing.screenMargin,
             right: AppSpacing.screenMargin,
             top: 0,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: ExploreRecentsPanel.maxHeightIn(
+            // An explicit height (not a shrink-wrapped list in a constrained
+            // box): the list then has a real viewport, so its scrollbar's
+            // thumb always matches the scroll position, also after the
+            // keyboard resizes the panel.
+            child: SizedBox(
+              height: math.min(
+                ExploreRecentsPanel.maxHeightIn(
                   room.maxHeight,
                   barInset: AppTabBar.scrollInset(context),
                 ),
+                _Header.height + 1 + RecentSearchRow.height * recents.length,
               ),
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -129,14 +134,13 @@ class _Panel extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXxl),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       _Header(
                         title: l10n.exploreRecentSearchesLabel,
                         onClearAll: cubit.clearRecentSearches,
                       ),
                       const Divider(height: 1, color: AppColors.line),
-                      Flexible(
+                      Expanded(
                         child: _FadingList(
                           children: [
                             for (final query in recents)
@@ -243,7 +247,6 @@ class _FadingListState extends State<_FadingList> {
             controller: _controller,
             child: ListView(
               controller: _controller,
-              shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: widget.children,
             ),
