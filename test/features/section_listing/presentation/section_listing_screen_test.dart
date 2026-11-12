@@ -131,7 +131,7 @@ void main() {
     expect(find.text('N'), findsOneWidget);
     expect(find.text('·'), findsNWidgets(2));
     expect(find.text('Comedy'), findsOneWidget);
-    expect(find.text('120'), findsOneWidget);
+    expect(find.text('100'), findsOneWidget);
     expect(find.text('Movies'), findsNothing);
     // Amber background, black (onAccent) text.
     final pill = tester.widget<Container>(
@@ -187,7 +187,7 @@ void main() {
 
     await pump(tester, context: const ListingContext.home(MediaSegment.tvShow));
     expect(find.text('TV Shows'), findsOneWidget);
-    expect(find.text('120'), findsOneWidget);
+    expect(find.text('100'), findsOneWidget);
     expect(find.textContaining('genres'), findsNothing);
   });
 
@@ -233,6 +233,23 @@ void main() {
 
     await chooseSort('Default order'); // back to the section's own (plain)
     expect(find.text('2026'), findsNothing);
+  });
+
+  testWidgets('re-sorting keeps the same list: the count stays, the whole set '
+      'is there and nothing more is being paged in', (tester) async {
+    await pump(tester);
+
+    await tester.tap(find.byIcon(AppIcons.sort));
+    await _settle(tester);
+    await tester.tap(find.text('Rating'));
+    await _settle(tester);
+
+    expect(find.text('100'), findsOneWidget); // the same count
+    // Scrolled to the very end: no next-page spinner, the set is all there.
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -20000));
+    await _settle(tester);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(repo.pages.toSet(), {1, 2, 3, 4}); // the pages the set needed
   });
 
   testWidgets('a section keeps its own dressing in its own order', (

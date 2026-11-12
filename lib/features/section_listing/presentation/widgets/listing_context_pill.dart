@@ -60,7 +60,7 @@ class ListingContextPill extends StatelessWidget {
           ),
           BlocSelector<SectionListingCubit, SectionListingState, int?>(
             selector: (state) =>
-                state is SectionListingLoaded ? state.totalResults : null,
+                state is SectionListingLoaded ? state.count : null,
             builder: (context, count) {
               if (count == null) return const SizedBox.shrink();
               return Row(

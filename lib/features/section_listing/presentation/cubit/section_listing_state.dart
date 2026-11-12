@@ -10,7 +10,8 @@ sealed class SectionListingState {
   final ListingSort sort;
 }
 
-/// The first page is on its way (opening, or after a re-sort / retry).
+/// The first page is on its way (opening, a retry, or — for another order —
+/// the rest of the list, which has to be complete before it can be sorted).
 final class SectionListingLoading extends SectionListingState {
   const SectionListingLoading({required super.sort});
 }
@@ -21,24 +22,30 @@ final class SectionListingError extends SectionListingState {
   final FailureReason reason;
 }
 
-/// At least the first page is loaded; more arrive as the user scrolls.
+/// The list, in [sort]'s order. In the section's own order more arrives as the
+/// user scrolls; in any other order the whole list is already here.
 final class SectionListingLoaded extends SectionListingState {
   const SectionListingLoaded({
     required super.sort,
     required this.items,
     required this.page,
-    required this.totalPages,
-    required this.totalResults,
+    required this.hasMore,
+    required this.count,
     this.loadingMore = false,
     this.moreFailed = false,
   });
 
+  /// What is shown, in [sort]'s order.
   final List<MediaItem> items;
 
-  /// The last page that was loaded.
+  /// The last page that was loaded (what re-arms the next-page trigger).
   final int page;
-  final int totalPages;
-  final int totalResults;
+
+  /// More pages can still be fetched (only in the section's own order).
+  final bool hasMore;
+
+  /// How many titles the list has (at most `SectionListingCubit.maxItems`).
+  final int count;
 
   /// A next page is being fetched (the grid shows a spinner footer).
   final bool loadingMore;
@@ -46,21 +53,19 @@ final class SectionListingLoaded extends SectionListingState {
   /// The last attempt at a next page failed (the footer shows "Retry").
   final bool moreFailed;
 
-  bool get hasMore => page < totalPages;
-
   SectionListingLoaded copyWith({
     List<MediaItem>? items,
     int? page,
-    int? totalPages,
-    int? totalResults,
+    bool? hasMore,
+    int? count,
     bool? loadingMore,
     bool? moreFailed,
   }) => SectionListingLoaded(
     sort: sort,
     items: items ?? this.items,
     page: page ?? this.page,
-    totalPages: totalPages ?? this.totalPages,
-    totalResults: totalResults ?? this.totalResults,
+    hasMore: hasMore ?? this.hasMore,
+    count: count ?? this.count,
     loadingMore: loadingMore ?? this.loadingMore,
     moreFailed: moreFailed ?? this.moreFailed,
   );
