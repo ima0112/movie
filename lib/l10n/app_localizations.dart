@@ -812,6 +812,66 @@ abstract class AppLocalizations {
   /// **'Tell us what you like and we\'ll fill this page with picks for you.'**
   String get discoverTasteCardBody;
 
+  /// Title of the sheet that re-sorts a See all listing (docs/SCREENS.md C1b).
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sectionListingSortTitle;
+
+  /// No description provided for @sectionListingSortTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get sectionListingSortTooltip;
+
+  /// C1b's first sort option: the order the section previewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Default order'**
+  String get sectionListingSortDefault;
+
+  /// No description provided for @sectionListingSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get sectionListingSortNewest;
+
+  /// No description provided for @sectionListingAllGenres.
+  ///
+  /// In en, this message translates to:
+  /// **'All genres'**
+  String get sectionListingAllGenres;
+
+  /// No description provided for @sectionListingAllPlatforms.
+  ///
+  /// In en, this message translates to:
+  /// **'All platforms'**
+  String get sectionListingAllPlatforms;
+
+  /// C1b's line under the toolbar: how many titles the list has and how it is sorted (docs/SCREENS.md C1b).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 title} other{{count} titles}} · {sort}'**
+  String sectionListingSummary(int count, String sort);
+
+  /// No description provided for @sectionListingEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to show here'**
+  String get sectionListingEmptyTitle;
+
+  /// No description provided for @sectionListingEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another genre or platform.'**
+  String get sectionListingEmptyBody;
+
+  /// No description provided for @sectionListingLoadMoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load more'**
+  String get sectionListingLoadMoreFailed;
+
   /// Accessibility label of a Latest trailers card (docs/SCREENS.md B1); opens the trailer in YouTube.
   ///
   /// In en, this message translates to:

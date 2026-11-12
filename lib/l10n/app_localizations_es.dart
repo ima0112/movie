@@ -401,6 +401,44 @@ class AppLocalizationsEs extends AppLocalizations {
       'Cuéntanos qué te gusta y llenaremos esta página con recomendaciones para ti.';
 
   @override
+  String get sectionListingSortTitle => 'Ordenar por';
+
+  @override
+  String get sectionListingSortTooltip => 'Ordenar';
+
+  @override
+  String get sectionListingSortDefault => 'Orden predeterminado';
+
+  @override
+  String get sectionListingSortNewest => 'Más recientes primero';
+
+  @override
+  String get sectionListingAllGenres => 'Todos los géneros';
+
+  @override
+  String get sectionListingAllPlatforms => 'Todas las plataformas';
+
+  @override
+  String sectionListingSummary(int count, String sort) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count títulos',
+      one: '1 título',
+    );
+    return '$_temp0 · $sort';
+  }
+
+  @override
+  String get sectionListingEmptyTitle => 'No hay nada que mostrar';
+
+  @override
+  String get sectionListingEmptyBody => 'Prueba con otro género o plataforma.';
+
+  @override
+  String get sectionListingLoadMoreFailed => 'No se pudo cargar más';
+
+  @override
   String trailerPlayLabel(String title) {
     return 'Ver el tráiler de $title';
   }

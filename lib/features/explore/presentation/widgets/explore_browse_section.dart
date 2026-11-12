@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
@@ -12,7 +13,8 @@ import '../../../discover/presentation/widgets/discover_section_skeleton.dart';
 import '../../domain/explore_section.dart';
 import '../cubit/explore_browse_cubit.dart';
 import '../cubit/explore_browse_state.dart';
-import '../cubit/explore_cubit.dart';
+import '../../../section_listing/domain/listing_source.dart';
+import '../../../section_listing/domain/listing_style.dart';
 import 'explore_section_carousel.dart';
 
 /// The localized heading of a B2 body section.
@@ -90,18 +92,40 @@ class ExploreBrowseSection extends StatelessWidget {
     );
   }
 
-  /// C1 with the same filter the section previewed, in the current segment.
+  /// C1b with the same filter the section previewed, in the current segment.
   void _seeAll(BuildContext context, String title) {
     final browse = context.read<ExploreBrowseCubit>().state;
-    context.read<ExploreCubit>().openListing(
-      filter: exploreSectionFilter(
-        section,
-        today: DateTime.now(),
-        type: browse.segment.mediaType,
-        providerId: browse.service?.id,
-        genre: browse.genre,
+    final today = DateTime.now();
+    context.push(
+      AppRoutes.sectionListing,
+      extra: SectionListingRouteArgs(
+        title: title,
+        source: FilterListing(
+          exploreSectionFilter(
+            section,
+            today: today,
+            type: browse.segment.mediaType,
+            providerId: browse.service?.id,
+            genre: browse.genre,
+          ),
+          today: today,
+        ),
+        style: _style,
+        listingContext: ListingContext.explore(
+          segment: browse.segment,
+          genre: browse.genre,
+          platform: browse.service,
+        ),
       ),
-      title: title,
     );
   }
+
+  /// How the grid's posters are dressed — the same as the section's carousel.
+  ListingStyle get _style => switch (section) {
+    ExploreSection.topToday => ListingStyle.ranked,
+    ExploreSection.topRated || ExploreSection.hiddenGems => ListingStyle.rating,
+    ExploreSection.newReleases ||
+    ExploreSection.comingSoon => ListingStyle.dated,
+    ExploreSection.popular => ListingStyle.plain,
+  };
 }
