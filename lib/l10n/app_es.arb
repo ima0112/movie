@@ -251,7 +251,6 @@
   "tvNextEpisodeCaption": "Próximo episodio",
   "tvLastAiredEpisodeCaption": "Último episodio emitido",
   "tvNoNextEpisodeTitle": "Sin próximo episodio",
-  "tvNoNextEpisodeEnded": "Esta serie ya terminó y no tiene nuevos episodios previstos.",
   "tvNoNextEpisodeUnknown": "Aún no se ha anunciado ningún episodio próximo.",
   "tvEpisodeCodeAndName": "T{season} · E{episode} · {name}",
   "tvEpisodeCodeSpecialsAndName": "Especiales · E{episode} · {name}",

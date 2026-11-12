@@ -1328,12 +1328,6 @@ abstract class AppLocalizations {
   /// **'No next episode'**
   String get tvNoNextEpisodeTitle;
 
-  /// No description provided for @tvNoNextEpisodeEnded.
-  ///
-  /// In en, this message translates to:
-  /// **'This show has ended and has no new episodes planned.'**
-  String get tvNoNextEpisodeEnded;
-
   /// No description provided for @tvNoNextEpisodeUnknown.
   ///
   /// In en, this message translates to:

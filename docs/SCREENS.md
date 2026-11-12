@@ -192,7 +192,8 @@ Bottom bar: Discover · Explore · [Pako button] · My List · You. A floating g
 - Access: the "Seasons" card in D2. Pushed screen: back button, centered "Seasons" title, no bottom bar. Receives the already-loaded show (no network call of its own).
 - Elements (vertical scroll):
   - Header card (`surfaceRaised`): the show's name and three info chips — status ("Airing" / "Ended" / "Cancelled"), "N seasons", "M episodes".
-  - "NEXT EPISODE" caption + card: the next scheduled episode (still, "S2 · E6 · Name", air date chip) or, with none, "No next episode" and a line — "This show has ended and has no new episodes planned." when ended or cancelled, otherwise "No upcoming episode has been announced yet."
+  - "NEXT EPISODE" caption + card: the next scheduled episode (still, "S2 · E6 · Name", air date chip) or, with none, "No next episode" and "No upcoming episode has been announced yet.". **Omitted entirely for a show that has ended or been cancelled** (it can't have one).
+  - Every card (header, episode, season) is the full content width, whatever its text.
   - "LAST AIRED EPISODE" caption + card: still (92×56), "S5 · E16 · Name", air-date and ★ rating chips (rating only if TMDB has one). Omitted when TMDB reports none.
   - "SEASONS" caption + one bordered card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → H4. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
 - No Pako.

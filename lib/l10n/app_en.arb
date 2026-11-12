@@ -689,7 +689,6 @@
   "tvNextEpisodeCaption": "Next episode",
   "tvLastAiredEpisodeCaption": "Last aired episode",
   "tvNoNextEpisodeTitle": "No next episode",
-  "tvNoNextEpisodeEnded": "This show has ended and has no new episodes planned.",
   "tvNoNextEpisodeUnknown": "No upcoming episode has been announced yet.",
   "tvEpisodeCodeAndName": "S{season} · E{episode} · {name}",
   "@tvEpisodeCodeAndName": {

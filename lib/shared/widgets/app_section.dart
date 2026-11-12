@@ -54,7 +54,8 @@ class AppSection extends StatelessWidget {
     return Padding(
       padding: AppSpacing.sectionTopPadding,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // Full width, so a card in a section is as wide as every other one.
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (title != null) ...[
             Padding(

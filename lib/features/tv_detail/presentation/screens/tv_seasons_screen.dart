@@ -76,16 +76,17 @@ class TvSeasonsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            AppSection.overline(
-              title: l10n.tvNextEpisodeCaption,
-              child: EpisodeRefCard(
-                episode: detail.nextEpisode,
-                emptyTitle: l10n.tvNoNextEpisodeTitle,
-                emptyBody: finished
-                    ? l10n.tvNoNextEpisodeEnded
-                    : l10n.tvNoNextEpisodeUnknown,
+            // A show that has ended or been cancelled has no next episode to
+            // announce, so the section isn't drawn at all.
+            if (!finished)
+              AppSection.overline(
+                title: l10n.tvNextEpisodeCaption,
+                child: EpisodeRefCard(
+                  episode: detail.nextEpisode,
+                  emptyTitle: l10n.tvNoNextEpisodeTitle,
+                  emptyBody: l10n.tvNoNextEpisodeUnknown,
+                ),
               ),
-            ),
             if (detail.lastEpisode != null)
               AppSection.overline(
                 title: l10n.tvLastAiredEpisodeCaption,
