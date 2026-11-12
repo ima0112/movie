@@ -5,7 +5,6 @@ import '../../../../app/router.dart';
 import '../../../../core/domain/entities/person.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../widgets/person_filmography_section.dart';
 
 /// Filmography (D3b) — pushed from D3's "View full filmography" card
@@ -33,7 +32,6 @@ class PersonFilmographyScreen extends StatelessWidget {
         ),
         title: Text(
           detail.person.name,
-          style: AppTextStyles.h3,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

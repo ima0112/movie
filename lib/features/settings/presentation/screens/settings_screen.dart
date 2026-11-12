@@ -9,7 +9,6 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../cubit/settings_cubit.dart';
 import '../widgets/settings_about_section.dart';
@@ -53,7 +52,7 @@ class _SettingsView extends StatelessWidget {
           icon: const Icon(AppIcons.back, color: AppColors.ink),
           onPressed: () => context.pop(),
         ),
-        title: Text(context.l10n.settingsTitle, style: AppTextStyles.h3),
+        title: Text(context.l10n.settingsTitle),
       ),
       body: SafeArea(
         child: ListView(
