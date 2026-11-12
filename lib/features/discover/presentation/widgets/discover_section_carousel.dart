@@ -11,8 +11,8 @@ import '../../../../l10n/carousel_section_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/lazy_load.dart';
-import '../../../../shared/widgets/media_carousel.dart';
 import 'discover_content_error.dart';
+import 'discover_section_body.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_section_skeleton.dart';
 
@@ -76,14 +76,10 @@ class DiscoverSectionCarousel extends StatelessWidget {
                   collectionSection: section,
                 ),
               ),
-              child: MediaCarousel.standard(
+              child: DiscoverSectionBody(
+                section: section,
+                segment: segment,
                 items: value,
-                // TV posters carry a "TV" pill only in the mixed "All"
-                // segment — see docs/SCREENS.md B1.
-                showTypeTag: segment == MediaSegment.all,
-                // `push`, not `go`: back returns to Discover with its scroll
-                // position intact.
-                onItemTap: (item) => context.pushMediaDetail(item.key),
               ),
             ),
           },

@@ -66,7 +66,7 @@ void main() {
     appRouter.go('/');
     await tester.pumpWidget(const PakoTvApp());
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Dune: Part Two'));
+    await tester.tap(find.text('Dune: Part Two').first);
     await tester.pumpAndSettle();
   }
 
