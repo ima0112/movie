@@ -15,8 +15,8 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_spacing.dart';
 import 'package:movies/features/tv_detail/presentation/screens/tv_seasons_screen.dart';
-import 'package:movies/features/tv_detail/presentation/widgets/tv_creators_section.dart';
 import 'package:movies/shared/widgets/app_chip.dart';
+import 'package:movies/shared/widgets/media_detail/media_cast_circle.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_stat_cards.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
@@ -82,6 +82,10 @@ void main() {
     expect(where, lessThan(cast));
     expect(cast, lessThan(similar));
     expect(find.text('Similar TV shows'), findsOneWidget);
+    // "Created by" sits under the Cast heading, above the circles.
+    final created = top(find.textContaining('Created by'));
+    expect(created, greaterThan(top(find.text('Cast'))));
+    expect(created, lessThan(top(find.byType(MediaCastCircle).first)));
     // FakeMediaRepository's crew (a writer) is not printed.
     expect(find.textContaining('(Writer)'), findsNothing);
   });
@@ -117,7 +121,6 @@ void main() {
       find.byType(MediaSynopsisSection),
       find.byType(WhereToWatchSection),
       find.byType(MediaCastRow),
-      find.byType(TvCreatorsSection),
       find.byType(MediaSimilarSection),
     ];
     for (var i = 1; i < sections.length; i++) {

@@ -179,6 +179,8 @@ void main() {
     expect(where, lessThan(cast));
     expect(cast, lessThan(similar));
     expect(find.text('Similar movies'), findsOneWidget);
+    // The director(s) are credited under the Cast heading, not as a long list.
+    expect(find.textContaining('Directed by'), findsOneWidget);
     // FakeMediaRepository's crew (director, writer) is not printed.
     expect(find.textContaining('(Director)'), findsNothing);
     expect(find.textContaining('(Writer)'), findsNothing);

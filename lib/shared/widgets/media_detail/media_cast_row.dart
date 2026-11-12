@@ -5,7 +5,6 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../app_section.dart';
 import 'media_cast_circle.dart';
-import 'media_crew_line.dart';
 
 /// D1/D2's cast circles + the director/writer line.
 ///
@@ -23,7 +22,7 @@ class MediaCastRow extends StatelessWidget {
     required this.crew,
     this.onPersonTap,
     this.onSeeFullCastTap,
-    this.showCrew = true,
+    this.byline,
   });
 
   final List<CastMember> cast;
@@ -33,10 +32,9 @@ class MediaCastRow extends StatelessWidget {
   /// "See full cast" → H3 (not built yet).
   final VoidCallback? onSeeFullCastTap;
 
-  /// Whether to list the crew's names under the circles. D1 hides them (the
-  /// design has no such line, and a movie's crew runs to hundreds of names);
-  /// D2 still shows them.
-  final bool showCrew;
+  /// A credit line between the heading and the circles (`MediaByline`:
+  /// "Created by ..." / "Directed by ...").
+  final Widget? byline;
 
   static const double _circleSize = 64;
   static const int _visibleCount = 10;
@@ -48,7 +46,9 @@ class MediaCastRow extends StatelessWidget {
     final visibleCast = cast.take(_visibleCount).toList();
     return AppSection(
       title: context.l10n.fullCastCastLabel,
-      actionLabel: cast.length > _visibleCount
+      // The full page also has the Crew tab, so there is "more" whenever there
+      // are more than the circles shown, or any crew at all.
+      actionLabel: cast.length > _visibleCount || crew.isNotEmpty
           ? context.l10n.discoverSeeAll
           : null,
       onAction: onSeeFullCastTap,
@@ -56,6 +56,15 @@ class MediaCastRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (byline != null) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenMargin,
+              ),
+              child: byline,
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
           SizedBox(
             // Avatar + gap + two lines of `caption` (name, character) —
             // `xxl` alone (used for the "See full cast"/crew spacing
@@ -80,15 +89,6 @@ class MediaCastRow extends StatelessWidget {
               },
             ),
           ),
-          if (showCrew && crew.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.md),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.screenMargin,
-              ),
-              child: MediaCrewLine(crew: crew, onPersonTap: onPersonTap),
-            ),
-          ],
         ],
       ),
     );

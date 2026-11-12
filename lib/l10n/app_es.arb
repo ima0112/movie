@@ -240,7 +240,8 @@
   "commonReadMore": "Leer más",
 
   "tvEpisodeCount": "{count, plural, =1{1 episodio} other{{count} episodios}}",
-  "tvCreatedByLabel": "Creada por ",
+  "mediaCreatedByLabel": "Creada por ",
+  "mediaDirectedByLabel": "Dirigida por ",
   "tvEpisodesSectionTitle": "Episodios",
   "tvEpisodeCode": "T{season} · E{episode}",
   "tvEpisodeCodeSpecials": "Especiales · E{episode}",

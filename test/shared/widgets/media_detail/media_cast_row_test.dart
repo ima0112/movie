@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/shared/widgets/media_detail/media_cast_circle.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_similar_section.dart';
 
@@ -39,9 +40,8 @@ Widget _app(Widget child, {Locale? locale}) => MaterialApp(
 
 void main() {
   group('MediaCastRow', () {
-    testWidgets('has a "Cast" heading, and "See all" only past 10 people', (
-      tester,
-    ) async {
+    testWidgets('has a "Cast" heading, and "See all" only when there is more '
+        'to see: past 10 people, or any crew', (tester) async {
       await tester.pumpWidget(
         _app(
           MediaCastRow(
@@ -62,6 +62,37 @@ void main() {
         ),
       );
       expect(find.text('See all'), findsOneWidget);
+
+      // Few cast but a crew: the full page still has more (the Crew tab).
+      await tester.pumpWidget(
+        _app(
+          MediaCastRow(
+            cast: [for (var i = 0; i < 5; i++) _cast(i)],
+            crew: _crew,
+          ),
+        ),
+      );
+      expect(find.text('See all'), findsOneWidget);
+    });
+
+    testWidgets('the byline sits between the heading and the circles', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _app(
+          MediaCastRow(
+            cast: [for (var i = 0; i < 3; i++) _cast(i)],
+            crew: const [],
+            byline: const Text('Created by Someone'),
+          ),
+        ),
+      );
+
+      final heading = tester.getTopLeft(find.text('Cast')).dy;
+      final byline = tester.getTopLeft(find.text('Created by Someone')).dy;
+      final circle = tester.getTopLeft(find.byType(MediaCastCircle).first).dy;
+      expect(heading, lessThan(byline));
+      expect(byline, lessThan(circle));
     });
 
     testWidgets('"See all" calls onSeeFullCastTap', (tester) async {
@@ -97,21 +128,7 @@ void main() {
       expect(find.text('Ver todo'), findsOneWidget);
     });
 
-    testWidgets('crew names are listed by default, and hidden with '
-        'showCrew: false', (tester) async {
-      final cast = [for (var i = 0; i < 3; i++) _cast(i)];
-      await tester.pumpWidget(_app(MediaCastRow(cast: cast, crew: _crew)));
-      expect(find.textContaining('Christopher Nolan'), findsOneWidget);
-
-      await tester.pumpWidget(
-        _app(MediaCastRow(cast: cast, crew: _crew, showCrew: false)),
-      );
-      expect(find.textContaining('Christopher Nolan'), findsNothing);
-    });
-
-    testWidgets('a crew of hundreds is never printed when showCrew is false', (
-      tester,
-    ) async {
+    testWidgets('a crew of hundreds is never printed inline', (tester) async {
       final bigCrew = [
         for (var i = 0; i < 735; i++)
           CrewMember(
@@ -130,7 +147,6 @@ void main() {
           MediaCastRow(
             cast: [for (var i = 0; i < 3; i++) _cast(i)],
             crew: bigCrew,
-            showCrew: false,
           ),
         ),
       );

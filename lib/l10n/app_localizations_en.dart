@@ -681,7 +681,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tvCreatedByLabel => 'Created by ';
+  String get mediaCreatedByLabel => 'Created by ';
+
+  @override
+  String get mediaDirectedByLabel => 'Directed by ';
 
   @override
   String get tvEpisodesSectionTitle => 'Episodes';

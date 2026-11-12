@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../../core/domain/entities/media_detail.dart';
+import '../../../../core/domain/entities/person.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/locale_names.dart';
 
@@ -42,3 +43,14 @@ String movieMetaPrefix(BuildContext context, MovieDetail detail) => [
   if (detail.countryCodes.isNotEmpty)
     countryDisplayName(context, detail.countryCodes.first),
 ].join(' · ');
+
+/// The movie's director(s): crew with `job == 'Director'`, each person once,
+/// in TMDB's order. D1's "Directed by" line (the film's counterpart of D2's
+/// "Created by").
+List<Person> movieDirectors(MovieDetail detail) {
+  final seen = <int>{};
+  return [
+    for (final member in detail.crew)
+      if (member.job == 'Director' && seen.add(member.person.id)) member.person,
+  ];
+}

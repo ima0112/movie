@@ -26,10 +26,10 @@ import 'where_to_watch_section.dart';
 
 /// The whole loaded body of D1/D2, one assembly for both: backdrop header →
 /// trailer + info card → [stats] cards → synopsis → where to watch → cast →
-/// [afterCast] → similar → TMDB footer (`docs/SCREENS.md` D1/D2).
+/// [castByline] → similar → TMDB footer (`docs/SCREENS.md` D1/D2).
 ///
 /// Movie and TV differ only in what they pass in — [metaPrefix],
-/// [extraChips], [stats], [afterCast], [similarTitle] — so the order, the
+/// [extraChips], [stats], [castByline], [similarTitle] — so the order, the
 /// spacing and every navigation (genre → C1, "See all" cast → D1b, a person
 /// → D3, a title → D1/D2, region → H6) live here once.
 ///
@@ -49,7 +49,7 @@ class MediaDetailScrollView extends StatelessWidget {
     required this.metaPrefix,
     this.extraChips = const [],
     this.stats = const [],
-    this.afterCast,
+    this.castByline,
     this.similarTitle,
   });
 
@@ -74,9 +74,9 @@ class MediaDetailScrollView extends StatelessWidget {
   /// Status/Seasons).
   final List<MediaStat> stats;
 
-  /// An extra block between the cast and the similar carousel (D2's
-  /// "Created by").
-  final Widget? afterCast;
+  /// The credit line under the Cast heading (D1: "Directed by ...", D2:
+  /// "Created by ..."), a `MediaByline`.
+  final Widget? castByline;
 
   /// Overrides the default "Similar" heading ("Similar movies").
   final String? similarTitle;
@@ -177,11 +177,9 @@ class MediaDetailScrollView extends StatelessWidget {
             crew: detail.crew,
             onPersonTap: (person) => context.pushPersonDetail(person.id),
             onSeeFullCastTap: () => _openFullCast(context),
-            // The full list of names lives on D1b, never inline.
-            showCrew: false,
+            byline: castByline,
           ),
         ),
-        if (afterCast != null) SliverToBoxAdapter(child: afterCast),
         SliverToBoxAdapter(
           key: similarSectionKey,
           child: MediaSimilarSection(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/person.dart';
-import 'package:movies/features/tv_detail/presentation/widgets/tv_creators_section.dart';
+import 'package:movies/shared/widgets/media_detail/media_byline.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
 const _storer = Person(
@@ -18,13 +18,15 @@ const _kripke = Person(
 );
 
 void main() {
-  group('TvCreatorsSection', () {
+  group('MediaByline', () {
     testWidgets('renders nothing when there are no creators', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(body: TvCreatorsSection(creators: const [])),
+          home: Scaffold(
+            body: MediaByline(label: 'Created by ', people: const []),
+          ),
         ),
       );
 
@@ -36,7 +38,9 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(body: TvCreatorsSection(creators: const [_storer])),
+          home: Scaffold(
+            body: MediaByline(label: 'Created by ', people: const [_storer]),
+          ),
         ),
       );
 
@@ -51,7 +55,10 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
-            body: TvCreatorsSection(creators: const [_storer, _kripke]),
+            body: MediaByline(
+              label: 'Created by ',
+              people: const [_storer, _kripke],
+            ),
           ),
         ),
       );
@@ -70,8 +77,9 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
-            body: TvCreatorsSection(
-              creators: const [_storer],
+            body: MediaByline(
+              label: 'Created by ',
+              people: const [_storer],
               onPersonTap: (person) => tapped = person,
             ),
           ),
