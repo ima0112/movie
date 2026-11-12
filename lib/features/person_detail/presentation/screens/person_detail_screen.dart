@@ -7,7 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/media_detail/media_detail_compact_bar.dart';
+import '../../../../shared/widgets/media_detail/detail_top_controls.dart';
 import '../../../../shared/widgets/scrim_back_button.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/person_detail_cubit.dart';
@@ -119,18 +119,13 @@ class _PersonDetailViewState extends State<_PersonDetailView> {
               };
             },
           ),
-          ValueListenableBuilder<bool>(
-            valueListenable: _showCompactBar,
-            builder: (context, visible, child) =>
-                visible ? child! : const SizedBox.shrink(),
-            child: BlocSelector<PersonDetailCubit, PersonDetailState, String?>(
-              selector: (state) => switch (state) {
-                PersonDetailLoaded(:final detail) => detail.person.name,
-                _ => null,
-              },
-              builder: (context, name) =>
-                  MediaDetailCompactBar(title: name ?? ''),
-            ),
+          BlocSelector<PersonDetailCubit, PersonDetailState, String?>(
+            selector: (state) => switch (state) {
+              PersonDetailLoaded(:final detail) => detail.person.name,
+              _ => null,
+            },
+            builder: (context, name) =>
+                DetailTopControls(showCompact: _showCompactBar, title: name),
           ),
         ],
       ),

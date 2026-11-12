@@ -118,6 +118,30 @@ void main() {
     expect(bioHeight(), folded);
   });
 
+  testWidgets('the back button stays pinned in place while the page scrolls '
+      '(never carried up under the status bar)', (tester) async {
+    await open(tester, size: const Size(390, 500));
+    final back = find.byType(ScrimBackButton);
+    final rest = tester.getTopLeft(
+      find.descendant(of: back, matching: find.byType(Container)),
+    );
+
+    for (final dy in [-60.0, -120.0, -80.0]) {
+      await tester.drag(find.byType(ListView), Offset(0, dy));
+      await tester.pump();
+      // Either the same circle, exactly where it was, or the compact bar has
+      // taken over (its own back arrow) — never a drifting circle.
+      if (find.byType(MediaDetailCompactBar).evaluate().isNotEmpty) continue;
+      final now = tester.getTopLeft(
+        find.descendant(
+          of: find.byType(ScrimBackButton),
+          matching: find.byType(Container),
+        ),
+      );
+      expect(now, rest, reason: 'after dragging $dy');
+    }
+  });
+
   testWidgets('survives a small device at 200% text scale', (tester) async {
     await open(tester, size: const Size(320, 568), scale: 2);
     expect(tester.takeException(), isNull);

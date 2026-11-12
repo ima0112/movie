@@ -106,7 +106,6 @@ class PersonDetailHeader extends StatelessWidget {
               ],
             ),
           ),
-          const ScrimBackButton(),
         ],
       ),
     );

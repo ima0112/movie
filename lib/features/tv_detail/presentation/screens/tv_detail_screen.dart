@@ -13,7 +13,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/media_detail/media_detail_compact_bar.dart';
+import '../../../../shared/widgets/media_detail/detail_top_controls.dart';
 import '../../../../shared/widgets/media_detail/media_detail_header.dart';
 import '../../../../shared/widgets/media_detail/media_detail_skeleton.dart';
 import '../../../../shared/widgets/scrim_back_button.dart';
@@ -124,23 +124,19 @@ class _TvDetailViewState extends State<_TvDetailView> {
               };
             },
           ),
-          ValueListenableBuilder<bool>(
-            valueListenable: _showCompactBar,
-            builder: (context, visible, child) =>
-                visible ? child! : const SizedBox.shrink(),
-            child: BlocSelector<TvDetailCubit, TvDetailState, String?>(
-              selector: (state) => switch (state) {
-                TvDetailLoaded(:final detail) => detail.item.title,
-                _ => null,
-              },
-              builder: (context, title) => MediaDetailCompactBar(
-                title: title ?? '',
-                onShare: title == null
-                    ? null
-                    : () => unawaited(
-                        shareMedia(context, title: title, key: widget.mediaKey),
-                      ),
-              ),
+          BlocSelector<TvDetailCubit, TvDetailState, String?>(
+            selector: (state) => switch (state) {
+              TvDetailLoaded(:final detail) => detail.item.title,
+              _ => null,
+            },
+            builder: (context, title) => DetailTopControls(
+              showCompact: _showCompactBar,
+              title: title,
+              onShare: title == null
+                  ? null
+                  : () => unawaited(
+                      shareMedia(context, title: title, key: widget.mediaKey),
+                    ),
             ),
           ),
         ],
