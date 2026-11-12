@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
+import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
+import 'package:movies/core/domain/entities/trailer_item.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
@@ -89,91 +91,125 @@ void main() {
       await cubit.close();
     });
 
-    test(
-      'loadDiscover(movie) ends in DiscoverLoaded with movie-only data '
-      'and the Movies-segment carousels',
-      () async {
-        final cubit = DiscoverCubit(
-          FakeMediaRepository(),
-          _FakeSettingsRepository(
-            const AppSettings(languageCode: 'en', regionCode: 'US'),
-          ),
-        );
+    DiscoverCubit newCubit() => DiscoverCubit(
+      FakeMediaRepository(),
+      _FakeSettingsRepository(
+        const AppSettings(languageCode: 'en', regionCode: 'US'),
+      ),
+    );
 
+    test(
+      'loadDiscover(movie) loads the movie hero and no carousels yet',
+      () async {
+        final cubit = newCubit();
         await cubit.loadDiscover(MediaSegment.movie);
 
         final loaded = cubit.state as DiscoverLoaded;
         expect(loaded.segment, MediaSegment.movie);
-        expect(loaded.heroItems, isNotEmpty);
         expect(
           loaded.heroItems.every((item) => item.type == MediaType.movie),
           isTrue,
         );
-        expect(loaded.carousels.keys, [
-          CarouselSection.inTheaters,
-          CarouselSection.trending,
-          CarouselSection.topRated,
-          CarouselSection.upcoming,
-        ]);
-        for (final items in loaded.carousels.values) {
-          expect(items.every((item) => item.type == MediaType.movie), isTrue);
-        }
-
+        // On demand: nothing but the hero until a section is requested.
+        expect(loaded.carousels, isEmpty);
+        expect(loaded.trailers, isNull);
         await cubit.close();
       },
     );
 
-    test('loadDiscover(all) uses the All-segment carousels', () async {
-      final cubit = DiscoverCubit(
-        FakeMediaRepository(),
-        _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        ),
-      );
-
-      await cubit.loadDiscover(MediaSegment.all);
-
-      final loaded = cubit.state as DiscoverLoaded;
-      expect(loaded.carousels.keys, [
+    test('the sections per segment follow B1', () {
+      expect(DiscoverCubit.sectionsBySegment[MediaSegment.all], [
         CarouselSection.popularThisWeek,
+        CarouselSection.comingSoon,
+        CarouselSection.inTheaters,
         CarouselSection.watchLater,
       ]);
+      expect(DiscoverCubit.sectionsBySegment[MediaSegment.movie], [
+        CarouselSection.trending,
+        CarouselSection.topRated,
+        CarouselSection.upcoming,
+      ]);
+      expect(DiscoverCubit.sectionsBySegment[MediaSegment.tvShow], [
+        CarouselSection.airingNow,
+        CarouselSection.finishedShows,
+        CarouselSection.topRated,
+        CarouselSection.popular,
+      ]);
+    });
 
+    test('requestSection loads just that section, once', () async {
+      final cubit = newCubit();
+      await cubit.loadDiscover(MediaSegment.movie);
+
+      await cubit.requestSection(CarouselSection.topRated);
+      final loaded = cubit.state as DiscoverLoaded;
+      expect(loaded.carousels.keys, [CarouselSection.topRated]);
+      final slot = loaded.carousels[CarouselSection.topRated]!;
+      expect(slot, isA<DiscoverSlotLoaded<List<MediaItem>>>());
+
+      // A second ask changes nothing (same state instance).
+      final before = cubit.state;
+      await cubit.requestSection(CarouselSection.topRated);
+      expect(identical(cubit.state, before), isTrue);
+      await cubit.close();
+    });
+
+    test('requestTrailers loads the trailers once', () async {
+      final cubit = newCubit();
+      await cubit.loadDiscover(MediaSegment.all);
+
+      await cubit.requestTrailers();
+      final slot = (cubit.state as DiscoverLoaded).trailers;
+      expect(slot, isA<DiscoverSlotLoaded<List<TrailerItem>>>());
+      expect(
+        (slot! as DiscoverSlotLoaded<List<TrailerItem>>).value,
+        isNotEmpty,
+      );
+      await cubit.close();
+    });
+
+    test('a slow section for the old segment is dropped', () async {
+      final cubit = newCubit();
+      await cubit.loadDiscover(MediaSegment.movie);
+      final slow = cubit.requestSection(CarouselSection.topRated);
+      await cubit.loadDiscover(MediaSegment.tvShow);
+      await slow;
+
+      final loaded = cubit.state as DiscoverLoaded;
+      expect(loaded.segment, MediaSegment.tvShow);
+      expect(loaded.carousels, isEmpty);
       await cubit.close();
     });
 
     group('refresh on locale change', () {
-      test(
-        'a region change via SettingsRepository.watch() reloads the '
-        'current segment exactly once',
-        () async {
-          final settingsRepository = _FakeSettingsRepository(
-            const AppSettings(languageCode: 'en', regionCode: 'US'),
-          );
-          final cubit = _CountingDiscoverCubit(
-            FakeMediaRepository(),
-            settingsRepository,
-          );
-          await cubit.loadDiscover(MediaSegment.movie);
-          expect(cubit.loadCount, 1);
+      test('a region change via SettingsRepository.watch() reloads the '
+          'current segment exactly once', () async {
+        final settingsRepository = _FakeSettingsRepository(
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+        );
+        final cubit = _CountingDiscoverCubit(
+          FakeMediaRepository(),
+          settingsRepository,
+        );
+        await cubit.loadDiscover(MediaSegment.movie);
+        expect(cubit.loadCount, 1);
 
-          settingsRepository.controller.add(
-            const AppSettings(languageCode: 'en', regionCode: 'MX'),
-          );
-          await pumpEventQueue();
+        settingsRepository.controller.add(
+          const AppSettings(languageCode: 'en', regionCode: 'MX'),
+        );
+        await pumpEventQueue();
 
-          // The reload has started (exactly once) but the fake
-          // repository's own network delay hasn't resolved yet.
-          expect(cubit.loadCount, 2);
-          expect((cubit.state as DiscoverLoading).segment, MediaSegment.movie);
+        // The reload has started (exactly once) but the fake
+        // repository's own network delay hasn't resolved yet.
+        expect(cubit.loadCount, 2);
+        expect((cubit.state as DiscoverLoading).segment, MediaSegment.movie);
 
-          // Let it fully settle before close() — an in-flight
-          // loadDiscover() emitting after close() would be exactly the
-          // Cubit-used-after-close failure this branch exists to avoid.
-          await cubit.stream.firstWhere((s) => s is DiscoverLoaded);
-          await cubit.close();
-        },
-      );
+        // Let it fully settle before close() — an in-flight
+        // loadDiscover() emitting after close() would be exactly the
+        // Cubit-used-after-close failure this branch exists to avoid.
+        await cubit.stream.firstWhere((s) => s is DiscoverLoaded);
+        await cubit.close();
+      });
 
       test(
         'an emission with the same language/region does not reload',
@@ -199,43 +235,46 @@ void main() {
         },
       );
 
+      test('a settings change before any loadDiscover call is a no-op — '
+          'there is no segment yet to reload', () async {
+        final settingsRepository = _FakeSettingsRepository(
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+        );
+        final cubit = _CountingDiscoverCubit(
+          FakeMediaRepository(),
+          settingsRepository,
+        );
+
+        settingsRepository.controller.add(
+          const AppSettings(languageCode: 'en', regionCode: 'MX'),
+        );
+        await pumpEventQueue();
+
+        expect(cubit.loadCount, 0);
+        expect(cubit.state, isA<DiscoverInitial>());
+
+        await cubit.close();
+      });
+
       test(
-        'a settings change before any loadDiscover call is a no-op — '
-        'there is no segment yet to reload',
+        'close() leaves no live subscription on SettingsRepository',
         () async {
           final settingsRepository = _FakeSettingsRepository(
             const AppSettings(languageCode: 'en', regionCode: 'US'),
           );
-          final cubit = _CountingDiscoverCubit(
+          final cubit = DiscoverCubit(
             FakeMediaRepository(),
             settingsRepository,
           );
-
-          settingsRepository.controller.add(
-            const AppSettings(languageCode: 'en', regionCode: 'MX'),
-          );
           await pumpEventQueue();
-
-          expect(cubit.loadCount, 0);
-          expect(cubit.state, isA<DiscoverInitial>());
+          expect(settingsRepository.controller.hasListener, isTrue);
 
           await cubit.close();
+          await pumpEventQueue();
+
+          expect(settingsRepository.controller.hasListener, isFalse);
         },
       );
-
-      test('close() leaves no live subscription on SettingsRepository', () async {
-        final settingsRepository = _FakeSettingsRepository(
-          const AppSettings(languageCode: 'en', regionCode: 'US'),
-        );
-        final cubit = DiscoverCubit(FakeMediaRepository(), settingsRepository);
-        await pumpEventQueue();
-        expect(settingsRepository.controller.hasListener, isTrue);
-
-        await cubit.close();
-        await pumpEventQueue();
-
-        expect(settingsRepository.controller.hasListener, isFalse);
-      });
     });
   });
 }

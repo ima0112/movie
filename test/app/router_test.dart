@@ -117,10 +117,6 @@ void main() {
       final scrollable = find.byType(Scrollable).first;
       await tester.drag(scrollable, const Offset(0, -700));
       await tester.pumpAndSettle();
-      final scrollOffsetBefore = tester
-          .state<ScrollableState>(scrollable)
-          .position
-          .pixels;
 
       // A carousel card has no title text of its own (docs/SCREENS.md B1:
       // "no title or year underneath"), so find it structurally instead.
@@ -132,6 +128,12 @@ void main() {
             widget is MediaCard && widget.size == MediaCardSize.carousel,
       );
       expect(carouselCard, findsWidgets);
+      await tester.ensureVisible(carouselCard.first);
+      await tester.pumpAndSettle();
+      final scrollOffsetBefore = tester
+          .state<ScrollableState>(scrollable)
+          .position
+          .pixels;
       await tester.tap(carouselCard.first);
       await tester.pumpAndSettle();
       expect(find.byIcon(AppIcons.back), findsOneWidget);

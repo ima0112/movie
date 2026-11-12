@@ -10,18 +10,18 @@ import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../l10n/carousel_section_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
+import '../../../../shared/widgets/lazy_load.dart';
 import '../../../../shared/widgets/media_carousel.dart';
+import 'discover_content_error.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_section_skeleton.dart';
 
 /// One named carousel (see `docs/SCREENS.md` B1's per-segment section
-/// lists). Carries its own `BlocSelector` on just
-/// `DiscoverLoaded.carousels[section]` — the structure a future
-/// per-section-loading `DiscoverCubit` needs: an unaffected section's
-/// selected value stays equal across emissions, so only the section that
-/// actually changed rebuilds (CLAUDE.md rule 9). Renders its own
-/// [DiscoverSectionSkeleton] while that value is still `null` for this
-/// segment.
+/// lists). **Loads on demand** (CLAUDE.md rule 17): wrapped in `LazyLoad`, it
+/// asks the cubit for its data only when it nears the viewport. Carries its
+/// own `BlocSelector` on just its slot of `DiscoverLoaded.carousels`, so an
+/// unaffected section stays untouched when another one changes (rule 9);
+/// shows a skeleton while loading and a retry row on error.
 class DiscoverSectionCarousel extends StatelessWidget {
   const DiscoverSectionCarousel({
     super.key,
@@ -34,46 +34,59 @@ class DiscoverSectionCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<DiscoverCubit, DiscoverState, List<MediaItem>?>(
+    return BlocSelector<
+      DiscoverCubit,
+      DiscoverState,
+      DiscoverSlot<List<MediaItem>>?
+    >(
       selector: (state) {
         if (state is DiscoverLoaded && state.segment == segment) {
           return state.carousels[section];
         }
         return null;
       },
-      builder: (context, items) {
-        if (items != null && items.isEmpty) {
-          return const SizedBox.shrink();
-        }
-        if (items == null) {
-          return const AppSection(child: DiscoverSectionSkeleton());
-        }
+      builder: (context, slot) {
         final label = section.localizedLabel(context.l10n);
-        return AppSection(
-          title: label,
-          actionLabel: context.l10n.discoverSeeAll,
-          // C1: "'See all' from B1 (arrives with the collection's name and no
-          // filters)" — `collectionSection` is what lets C1 fetch this exact
-          // collection instead of a plain discover() call until a filter
-          // gets touched (see `FilteredListCubit`'s own doc comment).
-          onAction: () => context.push(
-            AppRoutes.filteredList,
-            extra: FilteredListRouteArgs(
-              filter: DiscoverFilter(type: segment.mediaType),
-              title: label,
-              collectionSection: section,
+        return LazyLoad(
+          onNear: () => context.read<DiscoverCubit>().requestSection(section),
+          child: switch (slot) {
+            null || DiscoverSlotLoading() => const AppSection(
+              child: DiscoverSectionSkeleton(),
             ),
-          ),
-          child: MediaCarousel.standard(
-            items: items,
-            // TV posters carry a "TV" pill only in the mixed "All" segment —
-            // see docs/SCREENS.md B1.
-            showTypeTag: segment == MediaSegment.all,
-            // `pushMediaDetail` (→ `push`, not `go`): the detail screen's back
-            // button should return to Discover with its scroll position
-            // intact, not replace it in the stack.
-            onItemTap: (item) => context.pushMediaDetail(item.key),
-          ),
+            DiscoverSlotError() => AppSection(
+              title: label,
+              child: DiscoverContentError(
+                onRetry: () =>
+                    context.read<DiscoverCubit>().retrySection(section),
+              ),
+            ),
+            DiscoverSlotLoaded(:final value) when value.isEmpty =>
+              const SizedBox.shrink(),
+            DiscoverSlotLoaded(:final value) => AppSection(
+              title: label,
+              actionLabel: context.l10n.discoverSeeAll,
+              // C1: "'See all' from B1 (arrives with the collection's name and
+              // no filters)" — `collectionSection` lets C1 fetch this exact
+              // collection until a filter gets touched.
+              onAction: () => context.push(
+                AppRoutes.filteredList,
+                extra: FilteredListRouteArgs(
+                  filter: DiscoverFilter(type: segment.mediaType),
+                  title: label,
+                  collectionSection: section,
+                ),
+              ),
+              child: MediaCarousel.standard(
+                items: value,
+                // TV posters carry a "TV" pill only in the mixed "All"
+                // segment — see docs/SCREENS.md B1.
+                showTypeTag: segment == MediaSegment.all,
+                // `push`, not `go`: back returns to Discover with its scroll
+                // position intact.
+                onItemTap: (item) => context.pushMediaDetail(item.key),
+              ),
+            ),
+          },
         );
       },
     );
