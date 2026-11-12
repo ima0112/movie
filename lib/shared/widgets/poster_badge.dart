@@ -53,9 +53,15 @@ class PosterBadge extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.xs),
           ],
-          Text(
-            label,
-            style: AppTextStyles.captionStrong.copyWith(color: foreground),
+          // Shrinks (with an ellipsis) instead of overflowing a narrow poster
+          // or a large text scale.
+          Flexible(
+            child: Text(
+              label,
+              style: AppTextStyles.captionStrong.copyWith(color: foreground),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

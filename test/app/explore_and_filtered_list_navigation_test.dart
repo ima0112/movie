@@ -20,6 +20,7 @@ import 'package:movies/shared/widgets/app_segmented_control.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
 import 'package:movies/shared/widgets/media_card.dart';
+import 'package:movies/shared/widgets/poster_badge.dart';
 
 /// End-to-end coverage for the flows this branch's own task asked to be
 /// manually verified: typing in Explore's search field with its 400 ms
@@ -294,7 +295,8 @@ void main() {
 
     expect(find.byType(SectionListingScreen), findsOneWidget);
     expect(find.text('Top today'), findsOneWidget); // the bar's title
-    expect(find.text('Action · Netflix'), findsOneWidget);
+    expect(find.text('Action'), findsWidgets); // the genre in the pill
+    expect(find.text('·'), findsOneWidget); // after the platform's logo
     expect(find.byIcon(AppIcons.sort), findsOneWidget);
     expect(find.byType(MediaCard), findsWidgets);
 
@@ -312,7 +314,7 @@ void main() {
     }
     await tester.tap(find.text('Rating'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Rating'), findsOneWidget); // the summary line
+    expect(find.byType(PosterBadge), findsWidgets); // the rating tags
   });
 
   testWidgets('Home\'s "See all" reaches the same listing, with the segment '

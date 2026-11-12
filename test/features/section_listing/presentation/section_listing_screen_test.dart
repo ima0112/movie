@@ -18,6 +18,7 @@ import 'package:movies/features/section_listing/domain/listing_style.dart';
 import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_card.dart';
+import 'package:movies/shared/widgets/scroll_edge_fade.dart';
 
 Movie _movie(int id) => Movie(
   id: id,
@@ -111,8 +112,8 @@ void main() {
     await _settle(tester);
   }
 
-  testWidgets('shows the title, the context pill, the sort icon and a 3-column '
-      'grid', (tester) async {
+  testWidgets('shows the title with the count under it, the context pill, '
+      'the sort icon and a 3-column grid', (tester) async {
     await pump(
       tester,
       context: const ListingContext.explore(
@@ -123,9 +124,15 @@ void main() {
     );
 
     expect(find.text('Hidden gems'), findsOneWidget);
-    expect(find.text('Movies · Comedy · Netflix'), findsOneWidget);
+    expect(find.text('120 titles'), findsOneWidget); // under the title
+    expect(find.textContaining('Default order'), findsNothing); // no summary
+    // The pill: the platform's logo (its initial, no image here), a dot, the
+    // genre — and not the segment.
+    expect(find.text('N'), findsOneWidget);
+    expect(find.text('·'), findsOneWidget);
+    expect(find.text('Comedy'), findsOneWidget);
+    expect(find.text('Movies'), findsNothing);
     expect(find.byIcon(AppIcons.sort), findsOneWidget);
-    expect(find.textContaining('120 titles'), findsOneWidget);
     // Three posters share the first row.
     final first = tester.getTopLeft(find.byType(MediaCard).at(0)).dy;
     expect(tester.getTopLeft(find.byType(MediaCard).at(1)).dy, first);
@@ -136,10 +143,25 @@ void main() {
     );
   });
 
-  testWidgets('Explore with nothing narrowed says so; Home shows only the '
-      'segment', (tester) async {
+  testWidgets('the grid fades out under the toolbar as it scrolls', (
+    tester,
+  ) async {
     await pump(tester);
-    expect(find.text('All genres · All platforms'), findsOneWidget);
+    expect(find.byType(ScrollEdgeFade), findsOneWidget);
+  });
+
+  testWidgets('the sort icon is smaller than a default icon button', (
+    tester,
+  ) async {
+    await pump(tester);
+    expect(tester.getSize(find.byIcon(AppIcons.sort)).width, lessThan(24));
+  });
+
+  testWidgets('Explore with no platform shows just the genre; Home shows '
+      'only the segment', (tester) async {
+    await pump(tester);
+    expect(find.text('All genres'), findsOneWidget);
+    expect(find.text('·'), findsNothing);
 
     await pump(tester, context: const ListingContext.home(MediaSegment.tvShow));
     expect(find.text('TV Shows'), findsOneWidget);
@@ -157,25 +179,77 @@ void main() {
     expect(repo.pages, containsAllInOrder([1, 2]));
   });
 
-  testWidgets('a rank shows in the section\'s own order and goes away once '
-      're-sorted', (tester) async {
-    await pump(tester, style: ListingStyle.ranked);
+  testWidgets('each sort dresses the posters its own way', (tester) async {
+    // The section's own style is plain: nothing on the posters.
+    await pump(tester);
+    expect(find.text('8.5'), findsNothing);
+    expect(find.text('2026'), findsNothing);
+
+    Future<void> chooseSort(String label) async {
+      await tester.tap(find.byIcon(AppIcons.sort));
+      await _settle(tester);
+      await tester.tap(find.text(label));
+      await _settle(tester);
+    }
+
+    await chooseSort('Popularity'); // a small rank in each corner
     expect(find.text('1'), findsWidgets);
+    expect(find.text('2'), findsWidgets);
 
-    await tester.tap(find.byIcon(AppIcons.sort));
-    await _settle(tester);
-    await tester.tap(find.text('Popularity'));
-    await _settle(tester);
-
+    await chooseSort('Rating'); // the star badge, no ranks
+    expect(find.text('8.5'), findsWidgets);
     expect(find.text('1'), findsNothing);
+
+    await chooseSort('Most voted'); // the title over each poster
+    expect(find.text('Movie 1'), findsWidgets);
+    expect(find.text('8.5'), findsNothing);
+
+    await chooseSort('Newest first'); // the year
+    expect(find.text('2026'), findsWidgets);
+    expect(find.text('Movie 1'), findsNothing);
+
+    await chooseSort('Default order'); // back to the section's own (plain)
+    expect(find.text('2026'), findsNothing);
   });
 
-  testWidgets('rating and dated styles dress the posters', (tester) async {
+  testWidgets('a section keeps its own dressing in its own order', (
+    tester,
+  ) async {
+    await pump(tester, style: ListingStyle.ranked);
+    expect(find.text('1'), findsWidgets);
     await pump(tester, style: ListingStyle.rating);
     expect(find.text('8.5'), findsWidgets);
-
     await pump(tester, style: ListingStyle.dated);
     expect(find.text('Dec 16, 2026'), findsWidgets);
+  });
+
+  test('listingStyleFor: each sort brings its style; the section\'s own '
+      'order keeps the section\'s', () {
+    expect(
+      listingStyleFor(ListingSort.byDefault, ListingStyle.dated),
+      ListingStyle.dated,
+    );
+    expect(
+      listingStyleFor(ListingSort.popularity, ListingStyle.plain),
+      ListingStyle.ranked,
+    );
+    expect(
+      listingStyleFor(ListingSort.rating, ListingStyle.plain),
+      ListingStyle.rating,
+    );
+    expect(
+      listingStyleFor(ListingSort.mostVoted, ListingStyle.rating),
+      ListingStyle.titled,
+    );
+    expect(
+      listingStyleFor(ListingSort.newest, ListingStyle.plain),
+      ListingStyle.year,
+    );
+    // A section that already shows dates keeps the full date.
+    expect(
+      listingStyleFor(ListingSort.newest, ListingStyle.dated),
+      ListingStyle.dated,
+    );
   });
 
   testWidgets('an unreleased window offers a shorter sort list', (

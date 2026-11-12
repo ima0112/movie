@@ -10,7 +10,6 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
 import '../../../../shared/widgets/lazy_load.dart';
 import '../../../../shared/widgets/media_card.dart';
-import '../../domain/listing_source.dart';
 import '../../domain/listing_style.dart';
 import '../cubit/section_listing_cubit.dart';
 import '../cubit/section_listing_state.dart';
@@ -20,7 +19,8 @@ import 'listing_poster.dart';
 /// rule 17): a footer wrapped in `LazyLoad` asks the cubit for the next page
 /// once it is within about a screen of the viewport, and again after every page
 /// that arrives (its `loadKey` is the page number) — including when the first
-/// page doesn't fill the screen. Pull to refresh starts over.
+/// page doesn't fill the screen. Pull to refresh starts over. [style] is the
+/// section's own dressing; the current sort may swap it (`listingStyleFor`).
 class ListingGrid extends StatelessWidget {
   const ListingGrid({super.key, required this.state, required this.style});
 
@@ -30,7 +30,7 @@ class ListingGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SectionListingCubit>();
-    final inOwnOrder = state.sort == ListingSort.byDefault;
+    final dressing = listingStyleFor(state.sort, style);
     return RefreshIndicator(
       onRefresh: cubit.refresh,
       child: CustomScrollView(
@@ -55,8 +55,8 @@ class ListingGrid extends StatelessWidget {
                 return ListingPoster(
                   key: ValueKey(item.key),
                   item: item,
-                  style: style,
-                  rank: inOwnOrder ? index + 1 : null,
+                  style: dressing,
+                  rank: index + 1,
                   onTap: () => context.pushMediaDetail(item.key),
                 );
               },

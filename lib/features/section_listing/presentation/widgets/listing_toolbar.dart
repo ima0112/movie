@@ -43,6 +43,8 @@ class ListingToolbar extends StatelessWidget {
 class _SortButton extends StatelessWidget {
   const _SortButton();
 
+  static const double _iconSize = 20;
+
   @override
   Widget build(BuildContext context) {
     return BlocSelector<SectionListingCubit, SectionListingState, ListingSort>(
@@ -50,6 +52,8 @@ class _SortButton extends StatelessWidget {
       builder: (context, sort) {
         return IconButton(
           tooltip: context.l10n.sectionListingSortTooltip,
+          iconSize: _iconSize,
+          visualDensity: VisualDensity.compact,
           icon: Icon(
             AppIcons.sort,
             color: sort == ListingSort.byDefault

@@ -5,6 +5,7 @@ import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
+import 'poster_badge.dart';
 
 /// The poster card sizes used across PakoTV.
 ///
@@ -248,7 +249,7 @@ class _HeroCaption extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (tag != null) ...[
-          _Pill(label: tag, amber: tag == 'For you'),
+          PosterBadge(label: tag, amber: tag == 'For you'),
           const SizedBox(height: AppSpacing.sm),
         ],
         Text(
@@ -278,34 +279,7 @@ class _TvTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Pill(label: context.l10n.mediaTypeTvTag, amber: false);
-  }
-}
-
-class _Pill extends StatelessWidget {
-  const _Pill({required this.label, required this.amber});
-
-  final String label;
-  final bool amber;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: amber ? AppColors.accent : _scrim,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-      ),
-      child: Text(
-        label,
-        style: AppTextStyles.caption.copyWith(
-          color: amber ? AppColors.onAccent : AppColors.ink,
-        ),
-      ),
-    );
+    return PosterBadge(label: context.l10n.mediaTypeTvTag);
   }
 }
 
