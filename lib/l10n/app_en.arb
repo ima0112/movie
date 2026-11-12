@@ -352,13 +352,6 @@
   "sectionListingSortNewest": "Newest first",
   "sectionListingAllGenres": "All genres",
   "sectionListingAllPlatforms": "All platforms",
-  "sectionListingCount": "{count, plural, =1{1 title} other{{count} titles}}",
-  "@sectionListingCount": {
-    "description": "C1b: how many titles the list has, under its title in the top bar (docs/SCREENS.md C1b).",
-    "placeholders": {
-      "count": { "type": "int", "format": "decimalPattern" }
-    }
-  },
   "sectionListingEmptyTitle": "Nothing to show here",
   "sectionListingEmptyBody": "Try another genre or platform.",
   "sectionListingLoadMoreFailed": "Couldn't load more",

@@ -23,16 +23,18 @@ class ListingToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      // The icon's glyph lines up with the grid's right edge: the page margin
+      // minus the empty space around the glyph inside its touch target.
+      padding: EdgeInsets.fromLTRB(
         AppSpacing.screenMargin,
         AppSpacing.sm,
-        AppSpacing.sm,
+        AppSpacing.screenMargin - (_SortButton.target - _SortButton.glyph) / 2,
         0,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(child: ListingContextPill(listingContext: listingContext)),
-          const Spacer(),
           const _SortButton(),
         ],
       ),
@@ -43,7 +45,8 @@ class ListingToolbar extends StatelessWidget {
 class _SortButton extends StatelessWidget {
   const _SortButton();
 
-  static const double _iconSize = 20;
+  static const double glyph = 20;
+  static const double target = 40;
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +55,15 @@ class _SortButton extends StatelessWidget {
       builder: (context, sort) {
         return IconButton(
           tooltip: context.l10n.sectionListingSortTooltip,
-          iconSize: _iconSize,
-          visualDensity: VisualDensity.compact,
+          iconSize: glyph,
+          // Exactly [target] square (no padded 48 px minimum), so the glyph's
+          // position is the one the row's padding was worked out for.
+          style: IconButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: const Size.square(target),
+            fixedSize: const Size.square(target),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
           icon: Icon(
             AppIcons.sort,
             color: sort == ListingSort.byDefault

@@ -151,7 +151,6 @@
   "sectionListingSortNewest": "Más recientes primero",
   "sectionListingAllGenres": "Todos los géneros",
   "sectionListingAllPlatforms": "Todas las plataformas",
-  "sectionListingCount": "{count, plural, =1{1 título} other{{count} títulos}}",
   "sectionListingEmptyTitle": "No hay nada que mostrar",
   "sectionListingEmptyBody": "Prueba con otro género o plataforma.",
   "sectionListingLoadMoreFailed": "No se pudo cargar más",

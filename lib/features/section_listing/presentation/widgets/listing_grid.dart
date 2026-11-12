@@ -44,7 +44,7 @@ class ListingGrid extends StatelessWidget {
             ),
             sliver: SliverGrid.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+                crossAxisCount: 2,
                 mainAxisSpacing: AppSpacing.md,
                 crossAxisSpacing: AppSpacing.md,
                 childAspectRatio: MediaCardSize.grid.aspectRatio!,

@@ -419,21 +419,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sectionListingAllPlatforms => 'Todas las plataformas';
 
   @override
-  String sectionListingCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
-    final String countString = countNumberFormat.format(count);
-
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$countString títulos',
-      one: '1 título',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get sectionListingEmptyTitle => 'No hay nada que mostrar';
 
   @override
