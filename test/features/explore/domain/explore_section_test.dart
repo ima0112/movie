@@ -1,46 +1,41 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
-import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/features/explore/domain/explore_section.dart';
 
 void main() {
   final today = DateTime(2026, 5, 4);
-  const action = Genre(id: 'action');
 
-  DiscoverFilter filter(
-    ExploreSection s, {
-    MediaType? type,
-    Genre? genre,
-    int? provider,
-  }) => exploreSectionFilter(
-    s,
-    today: today,
-    type: type,
-    genre: genre,
-    providerId: provider,
-  );
+  DiscoverFilter filter(ExploreSection s, {MediaType? type, int? provider}) =>
+      exploreSectionFilter(s, today: today, type: type, providerId: provider);
 
-  test('every section carries the segment, genre and platform picked', () {
+  test('every section carries the segment and the platform picked', () {
     for (final section in ExploreSection.values) {
-      final f = filter(
-        section,
-        type: MediaType.movie,
-        genre: action,
-        provider: 8,
-      );
+      final f = filter(section, type: MediaType.movie, provider: 8);
       expect(f.type, MediaType.movie, reason: '$section');
-      expect(f.withGenres, {action}, reason: '$section');
       expect(f.withWatchProviders, {8}, reason: '$section');
     }
     final none = filter(ExploreSection.topToday);
     expect(none.type, isNull);
-    expect(none.withGenres, isEmpty);
     expect(none.withWatchProviders, isEmpty);
   });
 
   test('top today is plain popularity', () {
     expect(filter(ExploreSection.topToday).sortBy, DiscoverSortBy.popularity);
+  });
+
+  test('popular is the most voted of all time', () {
+    final f = filter(ExploreSection.popular);
+    expect(f.sortBy, DiscoverSortBy.voteCount);
+    expect(f.minVoteCount, 1000);
+  });
+
+  test('coming soon: from tomorrow to 90 days ahead, popular first', () {
+    final f = filter(ExploreSection.comingSoon);
+    expect(f.releasedFrom, DateTime(2026, 5, 5));
+    expect(f.releasedTo, DateTime(2026, 8, 2));
+    expect(f.sortBy, DiscoverSortBy.popularity);
+    expect(f.minVoteCount, 0);
   });
 
   test('top rated sorts by rating among well-voted titles', () {

@@ -118,4 +118,7 @@ String _sortBy(DiscoverSortBy sortBy, bool isMovie) => switch (sortBy) {
   // "Title" — a user sorting alphabetically expects the title they're
   // shown, not whatever language TMDB first logged it in.
   DiscoverSortBy.title => isMovie ? 'title.asc' : 'name.asc',
+  // The most voted of all time — the "Popular" classics, unlike
+  // `popularity`, which is TMDB's rolling current-interest figure.
+  DiscoverSortBy.voteCount => 'vote_count.desc',
 };

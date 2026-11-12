@@ -21,6 +21,7 @@ sealed class MediaItem {
     required this.genres,
     required this.releaseDate,
     required this.voteAverage,
+    this.backdropUrl,
   });
 
   final int id;
@@ -28,6 +29,11 @@ sealed class MediaItem {
 
   /// `null` when TMDB has no poster for this item.
   final String? posterUrl;
+
+  /// The 16:9 backdrop's full URL, when TMDB has one — the wide cards of B2's
+  /// "Top rated" use it. `null` for sources that don't carry it (the fake,
+  /// My List snapshots): callers fall back to the poster.
+  final String? backdropUrl;
 
   final List<Genre> genres;
 
@@ -51,9 +57,7 @@ sealed class MediaItem {
 
   @override
   bool operator ==(Object other) =>
-      other is MediaItem &&
-      other.runtimeType == runtimeType &&
-      other.id == id;
+      other is MediaItem && other.runtimeType == runtimeType && other.id == id;
 
   @override
   int get hashCode => Object.hash(runtimeType, id);
@@ -67,6 +71,7 @@ final class Movie extends MediaItem {
     required super.genres,
     required super.releaseDate,
     required super.voteAverage,
+    super.backdropUrl,
   });
 }
 
@@ -78,5 +83,6 @@ final class TvShow extends MediaItem {
     required super.genres,
     required super.releaseDate,
     required super.voteAverage,
+    super.backdropUrl,
   });
 }

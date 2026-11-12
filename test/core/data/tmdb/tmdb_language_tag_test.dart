@@ -21,13 +21,10 @@ void main() {
       expect(tmdbLanguageTag('es', 'CO'), 'es-MX');
     });
 
-    test(
-      'es with neither Spain nor a recognized Latin American region '
-      'falls back to es-ES',
-      () {
-        expect(tmdbLanguageTag('es', 'US'), 'es-ES');
-      },
-    );
+    test('es with neither Spain nor a recognized Latin American region '
+        'falls back to es-ES', () {
+      expect(tmdbLanguageTag('es', 'US'), 'es-ES');
+    });
 
     test('an unrecognized language code falls back to en-US', () {
       expect(tmdbLanguageTag('fr', 'FR'), 'en-US');

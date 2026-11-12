@@ -19,8 +19,10 @@ import '../cubit/explore_cubit.dart';
 String exploreSectionTitle(ExploreSection section, AppLocalizations l10n) =>
     switch (section) {
       ExploreSection.topToday => l10n.exploreSectionTopToday,
+      ExploreSection.popular => l10n.exploreSectionPopular,
       ExploreSection.topRated => l10n.exploreSectionTopRated,
       ExploreSection.newReleases => l10n.exploreSectionNewReleases,
+      ExploreSection.comingSoon => l10n.exploreSectionComingSoon,
       ExploreSection.hiddenGems => l10n.exploreSectionHiddenGems,
     };
 
@@ -84,7 +86,6 @@ class ExploreBrowseSection extends StatelessWidget {
         section,
         today: DateTime.now(),
         type: browse.segment.mediaType,
-        genre: browse.genre,
         providerId: browse.service?.id,
       ),
       title: title,

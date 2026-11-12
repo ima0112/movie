@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/app_settings.dart';
-import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/streaming_service.dart';
@@ -12,8 +11,8 @@ import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../domain/explore_section.dart';
 import 'explore_browse_state.dart';
 
-/// B2 at rest (`docs/SCREENS.md` B2): the Genre and Platform pills and the
-/// four sections they filter. Screen-local (CLAUDE.md rule 10), separate from
+/// B2 at rest (`docs/SCREENS.md` B2): the Platform pills and the
+/// sections they filter. Screen-local (CLAUDE.md rule 10), separate from
 /// [ExploreCubit] — typing a search and browsing share nothing but the
 /// segment, which the screen passes in through [setSegment].
 ///
@@ -66,13 +65,6 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
       ),
     );
     await Future.wait([_loadServices(), _loadSections()]);
-  }
-
-  /// A Genre pill: `null` = "All".
-  Future<void> selectGenre(Genre? genre) async {
-    if (genre == state.genre) return;
-    emit(state.copyWith(genre: () => genre, sections: const {}));
-    await _loadSections();
   }
 
   /// A Platform pill: `null` = "All".
@@ -128,7 +120,6 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
       section,
       today: _clock(),
       type: state.segment.mediaType,
-      genre: state.genre,
       providerId: state.service?.id,
     );
     final result = await _mediaRepository.discover(filter);

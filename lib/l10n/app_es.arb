@@ -69,6 +69,7 @@
   "discoverSortRating": "Valoración",
   "discoverSortDate": "Fecha",
   "discoverSortTitle": "Título",
+  "discoverSortVotes": "Más votadas",
 
   "myListTabFavorites": "Favoritos",
   "myListTabWatchLater": "Ver después",
@@ -143,11 +144,11 @@
   "carouselSectionAiringNow": "En emisión ahora",
   "carouselSectionPopular": "Populares",
 
-  "exploreGenreLabel": "Género",
   "explorePlatformLabel": "Plataforma",
-  "exploreGenreAll": "Todos",
   "explorePlatformAll": "Todas",
   "exploreSectionTopToday": "Top de hoy",
+  "exploreSectionPopular": "Popular",
+  "exploreSectionComingSoon": "Próximamente",
   "exploreSectionTopRated": "Mejor valoradas",
   "exploreSectionNewReleases": "Estrenos",
   "exploreSectionHiddenGems": "Joyas ocultas",

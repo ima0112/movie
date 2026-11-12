@@ -11,5 +11,6 @@ extension DiscoverSortByLocalization on DiscoverSortBy {
     DiscoverSortBy.rating => l10n.discoverSortRating,
     DiscoverSortBy.releaseDate => l10n.discoverSortDate,
     DiscoverSortBy.title => l10n.discoverSortTitle,
+    DiscoverSortBy.voteCount => l10n.discoverSortVotes,
   };
 }

@@ -13,7 +13,6 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/discover/presentation/widgets/discover_search_field.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_pill.dart';
-import 'package:movies/features/explore/presentation/widgets/explore_genre_pills.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_search_field.dart';
 import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
@@ -161,9 +160,7 @@ void main() {
   }
 
   testWidgets('B2 at rest: a full-width search bar on the page margin, no '
-      'filter icon, the Genre and Platform pills and the four sections', (
-    tester,
-  ) async {
+      'filter icon, the Platform pills and the six sections', (tester) async {
     await openExplore(tester);
 
     // Search field: 20 px margins both sides = the content's full width.
@@ -177,16 +174,17 @@ void main() {
     expect(find.text('Movies'), findsWidgets);
 
     // Pills.
-    expect(find.text('GENRE'), findsOneWidget);
     expect(find.text('PLATFORM'), findsOneWidget);
+    expect(find.text('GENRE'), findsNothing);
     expect(find.text('Netflix'), findsOneWidget);
-    expect(find.text('Action'), findsOneWidget);
 
     // The four sections, Top today numbered.
     for (final title in [
       'Top today',
+      'Popular',
       'Top rated',
       'New releases',
+      'Coming soon',
       'Hidden gems',
     ]) {
       await tester.ensureVisible(find.text(title));
@@ -228,7 +226,7 @@ void main() {
     final all = tester
         .widgetList<ExplorePill>(find.byType(ExplorePill))
         .where((p) => p.label == 'All' && p.selected);
-    expect(all, hasLength(1)); // only the genre "All" remains selected
+    expect(all, isEmpty); // "All" is no longer the selected one
   });
 
   testWidgets('typing in Explore debounces, then shows search results', (
@@ -254,9 +252,8 @@ void main() {
   });
 
   testWidgets(
-    'a genre pill filters Explore\'s sections in place; a section\'s "See all" '
-    'reaches C1 with that genre as an active chip; applying a filter from H8 '
-    'adds another chip',
+    'a section\'s "See all" reaches C1 with that section\'s filter; applying '
+    'a filter from H8 adds a chip',
     (tester) async {
       appRouter.go('/');
       addTearDown(() => appRouter.go('/'));
@@ -266,48 +263,13 @@ void main() {
       await tester.tap(_exploreTab());
       await tester.pumpAndSettle();
 
-      // Horror matches exactly one sample movie — enough to land in C1's
-      // loaded, non-empty state. The pill row scrolls sideways.
-      await tester.scrollUntilVisible(
-        find.text('Horror'),
-        200,
-        scrollable: find.descendant(
-          of: find.byType(ExploreGenrePills),
-          matching: find.byType(Scrollable),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Horror'));
-      await tester.pumpAndSettle();
-
-      // Still on Explore (the sections re-filtered in place): open the first
-      // section's "See all".
-      expect(find.byType(FilteredListChipsRow), findsNothing);
       await tester.tap(find.text('See all').first);
       await tester.pumpAndSettle();
-
-      // C1's app-bar title is the genre's own name (`ExploreCubit
-      // .openListing`'s `title: genre.name`), and its chips row shows it
-      // again as a removable chip — scoped finders below because of that
-      // overlap, and because H8 (opened next) reuses `GenreMultiSelectChips`
-      // to show the same genre already selected.
-      final chipsRow = find.byType(FilteredListChipsRow);
-      expect(
-        find.descendant(of: chipsRow, matching: find.text('Horror')),
-        findsOneWidget,
-      );
-      expect(find.text('1 results · Popularity'), findsOneWidget);
-
-      // Open H8 and add "Comedy" as a second included genre — genres are
-      // OR'd together (`DiscoverFilter.withGenres`'s own doc comment), so
-      // this only ever *adds* results, unlike switching type to TV Shows
-      // (which would zero out Horror's one movie-only match instead of
-      // combining with it).
       await tester.tap(find.byIcon(AppIcons.filter));
       await tester.pumpAndSettle();
       final sheet = find.byType(ExploreFilterSheet);
       await tester.tap(
-        find.descendant(of: sheet, matching: find.text('Comedy')),
+        find.descendant(of: sheet, matching: find.text('Horror')),
       );
       await tester.pumpAndSettle();
       final applyButton = find.descendant(
@@ -318,11 +280,7 @@ void main() {
       await tester.tap(applyButton);
       await tester.pumpAndSettle();
 
-      // Both dimensions now show as removable chips on C1.
-      expect(
-        find.descendant(of: chipsRow, matching: find.text('Comedy')),
-        findsOneWidget,
-      );
+      final chipsRow = find.byType(FilteredListChipsRow);
       expect(
         find.descendant(of: chipsRow, matching: find.text('Horror')),
         findsOneWidget,

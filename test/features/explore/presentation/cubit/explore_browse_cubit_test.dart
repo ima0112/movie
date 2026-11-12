@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
-import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/result.dart';
@@ -87,30 +86,14 @@ void main() {
   });
   tearDown(() => cubit.close());
 
-  test('start loads the platforms and all four sections', () async {
+  test('start loads the platforms and every section', () async {
     await cubit.start(MediaSegment.all);
 
     expect(cubit.state.services, isA<ExploreServicesLoaded>());
     for (final section in ExploreSection.values) {
       expect(cubit.state.sectionState(section), isA<ExploreSectionLoaded>());
     }
-    expect(repo.filters, hasLength(4));
-  });
-
-  test('picking a genre reloads the sections with that genre', () async {
-    await cubit.start(MediaSegment.all);
-    repo.filters.clear();
-
-    await cubit.selectGenre(const Genre(id: 'action'));
-
-    expect(cubit.state.genre, const Genre(id: 'action'));
-    expect(repo.filters, hasLength(4));
-    expect(
-      repo.filters.every(
-        (f) => f.withGenres.contains(const Genre(id: 'action')),
-      ),
-      isTrue,
-    );
+    expect(repo.filters, hasLength(ExploreSection.values.length));
   });
 
   test('picking a platform sends its id; back to All clears it', () async {
@@ -135,7 +118,6 @@ void main() {
   test('selecting what is already selected does nothing', () async {
     await cubit.start(MediaSegment.all);
     repo.filters.clear();
-    await cubit.selectGenre(null);
     await cubit.selectService(null);
     expect(repo.filters, isEmpty);
   });
@@ -181,13 +163,13 @@ void main() {
 
       final gate = Completer<void>();
       repo.stall = gate;
-      final slow = cubit.selectGenre(const Genre(id: 'drama')); // stalls
+      final slow = cubit.selectService(_netflix); // stalls
       repo.stall = null;
-      await cubit.selectGenre(const Genre(id: 'comedy')); // finishes first
+      await cubit.selectService(_max); // finishes first
       gate.complete();
       await slow;
 
-      expect(cubit.state.genre, const Genre(id: 'comedy'));
+      expect(cubit.state.service, _max);
       final top = cubit.state.sectionState(ExploreSection.topToday);
       expect(top, isA<ExploreSectionLoaded>());
     },
@@ -219,7 +201,7 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 50));
 
     expect(cubit.state.service, isNull);
-    expect(repo.filters, hasLength(4));
+    expect(repo.filters, hasLength(ExploreSection.values.length));
     expect(cubit.state.services, isA<ExploreServicesLoaded>());
   });
 }

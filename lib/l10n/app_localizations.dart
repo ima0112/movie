@@ -446,6 +446,12 @@ abstract class AppLocalizations {
   /// **'Title'**
   String get discoverSortTitle;
 
+  /// No description provided for @discoverSortVotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Most voted'**
+  String get discoverSortVotes;
+
   /// No description provided for @myListTabFavorites.
   ///
   /// In en, this message translates to:
@@ -794,23 +800,11 @@ abstract class AppLocalizations {
   /// **'Popular'**
   String get carouselSectionPopular;
 
-  /// The small caps label above B2's genre pills.
-  ///
-  /// In en, this message translates to:
-  /// **'Genre'**
-  String get exploreGenreLabel;
-
   /// The small caps label above B2's streaming-platform pills.
   ///
   /// In en, this message translates to:
   /// **'Platform'**
   String get explorePlatformLabel;
-
-  /// The "no genre filter" pill (masculine in Spanish, like "Géneros").
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get exploreGenreAll;
 
   /// The "no platform filter" pill (feminine in Spanish, like "Plataformas").
   ///
@@ -823,6 +817,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Top today'**
   String get exploreSectionTopToday;
+
+  /// B2 body section: the most voted titles of all time (the classics).
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get exploreSectionPopular;
+
+  /// B2 body section: titles releasing in the next three months.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get exploreSectionComingSoon;
 
   /// B2 body section: the best rated titles.
   ///

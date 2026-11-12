@@ -30,6 +30,7 @@ Movie mediaItemFromMovieDto(
       path: dto.posterPath,
       size: TmdbImageSizes.posterMedium,
     ),
+    backdropUrl: _listBackdropUrl(dto.backdropPath, imagesConfig),
     genres: genresFromTmdbIds(dto.genreIds, MediaType.movie),
     releaseDate: parseTmdbDate(dto.releaseDate),
     voteAverage: dto.voteAverage,
@@ -49,11 +50,22 @@ TvShow mediaItemFromTvDto(
       path: dto.posterPath,
       size: TmdbImageSizes.posterMedium,
     ),
+    backdropUrl: _listBackdropUrl(dto.backdropPath, imagesConfig),
     genres: genresFromTmdbIds(dto.genreIds, MediaType.tvShow),
     releaseDate: parseTmdbDate(dto.firstAirDate),
     voteAverage: dto.voteAverage,
   );
 }
+
+/// A list item's backdrop at the "medium" (w780) size — wide enough for a
+/// ~300 px card at 2x.
+String? _listBackdropUrl(String? path, TmdbImagesConfig config) =>
+    buildTmdbImageUrl(
+      config: config,
+      kind: TmdbImageKind.backdrop,
+      path: path,
+      size: TmdbImageSizes.backdropMedium,
+    );
 
 /// `/trending/all/week`'s own entries carry a `media_type` TMDB uses to
 /// tell movies, TV shows, and people apart in one mixed list — read
