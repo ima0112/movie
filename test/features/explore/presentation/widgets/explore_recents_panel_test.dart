@@ -14,7 +14,6 @@ import 'package:movies/features/explore/presentation/cubit/explore_state.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_recents_panel.dart';
 import 'package:movies/features/explore/presentation/widgets/recent_search_row.dart';
 import 'package:movies/l10n/app_localizations.dart';
-import 'package:movies/shared/widgets/scroll_edge_fade.dart';
 
 class _History implements SearchHistoryRepository {
   _History(this._items);
@@ -258,20 +257,15 @@ void main() {
     );
   });
 
-  testWidgets('the bottom fade only shows when there is more below', (
-    tester,
-  ) async {
-    await pump(tester, recents: ['a', 'b'], height: 800);
+  testWidgets('the scrollbar is not inset by the floating bar: its thumb can '
+      'reach the end of the list', (tester) async {
+    await pump(tester, recents: many, height: 900, bottomInset: 100);
     await focusField(tester);
     await settle(tester);
-    var fade = tester.widget<ScrollEdgeFade>(find.byType(ScrollEdgeFade));
-    expect(fade.bottom, 0); // everything fits: nothing is faded
 
-    await pump(tester, recents: many, height: 480);
-    await focusField(tester);
-    await settle(tester);
-    fade = tester.widget<ScrollEdgeFade>(find.byType(ScrollEdgeFade));
-    expect(fade.bottom, greaterThan(0));
+    final scrollbar = tester.element(find.byType(Scrollbar));
+    expect(MediaQuery.paddingOf(scrollbar).bottom, 0);
+    expect(MediaQuery.paddingOf(scrollbar).top, 0);
   });
 
   testWidgets('the × removes a row; tapping a row runs that search', (
@@ -333,38 +327,6 @@ void main() {
     expect(
       tester.getRect(find.byType(ListView)).bottom,
       lessThanOrEqualTo(700 - bar - 16),
-    );
-  });
-
-  testWidgets('scrolling down to the end stays at the end: the list does not '
-      'jump back to the first row when the bottom fade goes', (tester) async {
-    await pump(tester, recents: many, height: 700, bottomInset: 100);
-    await focusField(tester);
-    ScrollableState scrollable() => tester.state<ScrollableState>(
-      find.descendant(
-        of: find.byType(ListView),
-        matching: find.byType(Scrollable),
-      ),
-    );
-    final before = scrollable();
-    final max = before.position.maxScrollExtent;
-    expect(max, greaterThan(0));
-
-    // Like a finger: small steps all the way down, and a few more at the end.
-    for (var i = 0; i < 12; i++) {
-      await tester.drag(find.byType(ListView), const Offset(0, -80));
-      await tester.pump(const Duration(milliseconds: 50));
-    }
-    await settle(tester);
-
-    expect(identical(scrollable(), before), isTrue); // never rebuilt
-    expect(scrollable().position.pixels, max); // still at the end
-    expect(find.text('search 10'), findsOneWidget);
-    expect(find.text('search 1'), findsNothing); // not back on the first
-    // And the fade is gone: nothing more below.
-    expect(
-      tester.widget<ScrollEdgeFade>(find.byType(ScrollEdgeFade)).bottom,
-      0,
     );
   });
 }
