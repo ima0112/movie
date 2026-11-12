@@ -26,6 +26,24 @@ class TmdbMediaDatasource {
   /// of through [TmdbPagedResponseDto], since that generic wrapper needs
   /// one single item type. See `tmdb_mappers.dart`'s
   /// `mediaItemFromTrendingJson`, which reads `media_type` itself.
+  /// One page of `/trending/all/week` with its totals, raw like
+  /// [trendingAllWeek].
+  Future<
+    ({List<Map<String, dynamic>> results, int totalPages, int totalResults})
+  >
+  trendingAllWeekPage(int page) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      '/trending/all/week',
+      queryParameters: {'page': page},
+    );
+    final data = response.data!;
+    return (
+      results: List<Map<String, dynamic>>.from(data['results'] as List),
+      totalPages: (data['total_pages'] as num?)?.toInt() ?? 1,
+      totalResults: (data['total_results'] as num?)?.toInt() ?? 0,
+    );
+  }
+
   Future<List<Map<String, dynamic>>> trendingAllWeek() async {
     final response = await _apiClient.dio.get<Map<String, dynamic>>(
       '/trending/all/week',
@@ -33,14 +51,17 @@ class TmdbMediaDatasource {
     return List<Map<String, dynamic>>.from(response.data!['results'] as List);
   }
 
-  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieNowPlaying() =>
-      _movies('/movie/now_playing');
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieNowPlaying({
+    int page = 1,
+  }) => _movies('/movie/now_playing', page);
 
-  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieTopRated() =>
-      _movies('/movie/top_rated');
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieTopRated({
+    int page = 1,
+  }) => _movies('/movie/top_rated', page);
 
-  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieUpcoming() =>
-      _movies('/movie/upcoming');
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> movieUpcoming({
+    int page = 1,
+  }) => _movies('/movie/upcoming', page);
 
   // Not in this branch's own original endpoint list, but added anyway:
   // `CarouselSection.trending` (`docs/DECISIONS.md` §2's "Movies home" /
@@ -49,20 +70,22 @@ class TmdbMediaDatasource {
   // plain `UnimplementedError` here would crash `loadDiscover` for either
   // segment, making this branch's own "Discover shows real TMDB data"
   // manual-verification step impossible to pass at all.
-  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> trendingMovieWeek() =>
-      _movies('/trending/movie/week');
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> trendingMovieWeek({
+    int page = 1,
+  }) => _movies('/trending/movie/week', page);
 
-  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvOnTheAir() =>
-      _tv('/tv/on_the_air');
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvOnTheAir({int page = 1}) =>
+      _tv('/tv/on_the_air', page);
 
-  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvTopRated() =>
-      _tv('/tv/top_rated');
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvTopRated({int page = 1}) =>
+      _tv('/tv/top_rated', page);
 
-  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvPopular() =>
-      _tv('/tv/popular');
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> tvPopular({int page = 1}) =>
+      _tv('/tv/popular', page);
 
-  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> trendingTvWeek() =>
-      _tv('/trending/tv/week');
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> trendingTvWeek({
+    int page = 1,
+  }) => _tv('/trending/tv/week', page);
 
   /// B1's "Because you like X" — `RecommendationBuilder`'s own seed.
   /// Collaborative-filtering based (TMDB's own description), not the
@@ -195,17 +218,27 @@ class TmdbMediaDatasource {
   }
 
   Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> _movies(
-    String path,
-  ) async {
-    final response = await _apiClient.dio.get<Map<String, dynamic>>(path);
+    String path, [
+    int page = 1,
+  ]) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      path,
+      queryParameters: {'page': page},
+    );
     return TmdbPagedResponseDto.fromJson(
       response.data!,
       (json) => TmdbMovieListItemDto.fromJson(json! as Map<String, dynamic>),
     );
   }
 
-  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> _tv(String path) async {
-    final response = await _apiClient.dio.get<Map<String, dynamic>>(path);
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> _tv(
+    String path, [
+    int page = 1,
+  ]) async {
+    final response = await _apiClient.dio.get<Map<String, dynamic>>(
+      path,
+      queryParameters: {'page': page},
+    );
     return TmdbPagedResponseDto.fromJson(
       response.data!,
       (json) => TmdbTvListItemDto.fromJson(json! as Map<String, dynamic>),

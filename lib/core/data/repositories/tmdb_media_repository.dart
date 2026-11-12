@@ -1,8 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../app/environments.dart';
 import '../../domain/entities/discover_filter.dart';
+import '../../domain/entities/discover_page.dart';
 import '../../domain/entities/media_detail.dart';
 import '../../domain/entities/media_item.dart';
 import '../../domain/entities/media_key.dart';
@@ -17,6 +20,9 @@ import '../../domain/repositories/media_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../../domain/services/daily_picker.dart';
 import '../../network/dio_failure_mapper.dart';
+import '../tmdb/dtos/tmdb_movie_list_item_dto.dart';
+import '../tmdb/dtos/tmdb_paged_response_dto.dart';
+import '../tmdb/dtos/tmdb_tv_list_item_dto.dart';
 import '../tmdb/tmdb_configuration_service.dart';
 import '../tmdb/tmdb_detail_mappers.dart';
 import '../tmdb/tmdb_discover_params.dart';
@@ -211,36 +217,32 @@ class TmdbMediaRepository implements MediaRepository {
 
   /// Movies and shows releasing from tomorrow up to 90 days ahead, most
   /// popular first — the same window as B2's "Coming soon".
-  Future<List<MediaItem>> _comingSoon() async {
+  /// Movies and shows releasing from tomorrow up to 90 days ahead — the same
+  /// window as B2's "Coming soon".
+  DiscoverFilter _comingSoonFilter() {
     final today = DateTime.now();
-    final filter = DiscoverFilter(
+    return DiscoverFilter(
       releasedFrom: today.add(const Duration(days: 1)),
       releasedTo: today.add(const Duration(days: 90)),
       minVoteCount: 0,
     );
-    return _interleaved([
-      await _discoverMovies(filter),
-      await _discoverTv(filter),
-    ], limit: 10);
   }
 
-  Future<List<MediaItem>> _finishedShows() async {
-    final page = await _datasource.discoverTv(
-      discoverQueryParams(
-        const DiscoverFilter(
-          type: MediaType.tvShow,
-          tvStatus: DiscoverTvStatus.ended,
-          sortBy: DiscoverSortBy.rating,
-          minVoteCount: 500,
-        ),
-        type: MediaType.tvShow,
-        watchRegion: _region,
-      ),
-    );
-    return page.results
-        .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig))
-        .toList();
+  Future<List<MediaItem>> _comingSoon() async {
+    final filter = _comingSoonFilter();
+    final page = await _discoverPage(filter, 1);
+    return page.items.take(10).toList();
   }
+
+  static const DiscoverFilter _finishedShowsFilter = DiscoverFilter(
+    type: MediaType.tvShow,
+    tvStatus: DiscoverTvStatus.ended,
+    sortBy: DiscoverSortBy.rating,
+    minVoteCount: 500,
+  );
+
+  Future<List<MediaItem>> _finishedShows() async =>
+      (await _discoverPage(_finishedShowsFilter, 1)).items;
 
   /// How many candidates `latestTrailers` probes per wanted title: some have
   /// no YouTube video.
@@ -362,40 +364,212 @@ class TmdbMediaRepository implements MediaRepository {
 
   @override
   Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) async {
+    final result = await discoverPage(filter);
+    return switch (result) {
+      Success(:final value) => Success(value.items),
+      Failure(:final reason) => Failure(reason),
+    };
+  }
+
+  @override
+  Future<Result<DiscoverPage>> discoverPage(
+    DiscoverFilter filter, {
+    int page = 1,
+  }) async {
     try {
-      final items = switch (filter.type) {
-        MediaType.movie => await _discoverMovies(filter),
-        MediaType.tvShow => await _discoverTv(filter),
-        // C1: "All = both interleaved" — only the first page of each
-        // (no pagination concept on this interface today; see
-        // tmdb_discover_params.dart's own doc comment).
-        null => _interleaved([
-          (await _discoverMovies(filter)),
-          (await _discoverTv(filter)),
-        ], limit: 40),
-      };
-      return Success(items);
+      return Success(await _discoverPage(filter, page));
     } on DioException catch (e) {
       return mapDioExceptionToFailure(e);
     }
   }
 
-  Future<List<MediaItem>> _discoverMovies(DiscoverFilter filter) async {
-    final page = await _datasource.discoverMovie(
-      discoverQueryParams(filter, type: MediaType.movie, watchRegion: _region),
-    );
-    return page.results
-        .map((dto) => mediaItemFromMovieDto(dto, imagesConfig: _imagesConfig))
-        .toList();
+  Future<DiscoverPage> _discoverPage(DiscoverFilter filter, int page) async {
+    switch (filter.type) {
+      case MediaType.movie:
+        return _moviesPage((p) => _discoverMovies(filter, p), page);
+      case MediaType.tvShow:
+        return _tvPage((p) => _discoverTv(filter, p), page);
+      case null:
+        // C1: "All = both interleaved" — the same page of each type, woven
+        // together. A type that has run out of pages contributes nothing.
+        final parts = await Future.wait([
+          _moviesPageOrEnd((p) => _discoverMovies(filter, p), page),
+          _tvPageOrEnd((p) => _discoverTv(filter, p), page),
+        ]);
+        return _mergedPage(parts, page);
+    }
   }
 
-  Future<List<MediaItem>> _discoverTv(DiscoverFilter filter) async {
-    final page = await _datasource.discoverTv(
-      discoverQueryParams(filter, type: MediaType.tvShow, watchRegion: _region),
+  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> _discoverMovies(
+    DiscoverFilter filter,
+    int page,
+  ) => _datasource.discoverMovie({
+    ...discoverQueryParams(filter, type: MediaType.movie, watchRegion: _region),
+    'page': page,
+  });
+
+  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> _discoverTv(
+    DiscoverFilter filter,
+    int page,
+  ) => _datasource.discoverTv({
+    ...discoverQueryParams(
+      filter,
+      type: MediaType.tvShow,
+      watchRegion: _region,
+    ),
+    'page': page,
+  });
+
+  Future<DiscoverPage> _moviesPage(
+    Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> Function(int page) fetch,
+    int page,
+  ) async {
+    final dto = await fetch(page);
+    return DiscoverPage(
+      items: [
+        for (final d in dto.results)
+          mediaItemFromMovieDto(d, imagesConfig: _imagesConfig),
+      ],
+      page: dto.page,
+      totalPages: dto.totalPages,
+      totalResults: dto.totalResults,
     );
-    return page.results
-        .map((dto) => mediaItemFromTvDto(dto, imagesConfig: _imagesConfig))
-        .toList();
+  }
+
+  Future<DiscoverPage> _tvPage(
+    Future<TmdbPagedResponseDto<TmdbTvListItemDto>> Function(int page) fetch,
+    int page,
+  ) async {
+    final dto = await fetch(page);
+    return DiscoverPage(
+      items: [
+        for (final d in dto.results)
+          mediaItemFromTvDto(d, imagesConfig: _imagesConfig),
+      ],
+      page: dto.page,
+      totalPages: dto.totalPages,
+      totalResults: dto.totalResults,
+    );
+  }
+
+  /// A page past a type's last one makes TMDB answer 400; in a merged "All"
+  /// list that just means that type has ended.
+  Future<DiscoverPage> _moviesPageOrEnd(
+    Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> Function(int page) fetch,
+    int page,
+  ) => _orEnd(() => _moviesPage(fetch, page), page);
+
+  Future<DiscoverPage> _tvPageOrEnd(
+    Future<TmdbPagedResponseDto<TmdbTvListItemDto>> Function(int page) fetch,
+    int page,
+  ) => _orEnd(() => _tvPage(fetch, page), page);
+
+  Future<DiscoverPage> _orEnd(
+    Future<DiscoverPage> Function() fetch,
+    int page,
+  ) async {
+    try {
+      return await fetch();
+    } on DioException catch (e) {
+      if (page > 1 && e.response?.statusCode == 400) {
+        return DiscoverPage(
+          items: const [],
+          page: page,
+          totalPages: page - 1,
+          totalResults: 0,
+        );
+      }
+      rethrow;
+    }
+  }
+
+  DiscoverPage _mergedPage(List<DiscoverPage> parts, int page) {
+    final items = _interleaved(
+      parts.map((p) => p.items),
+      limit: parts.fold<int>(0, (sum, p) => sum + p.items.length),
+    );
+    return DiscoverPage(
+      items: items,
+      page: page,
+      totalPages: parts.map((p) => p.totalPages).reduce(math.max),
+      totalResults: parts.fold<int>(0, (sum, p) => sum + p.totalResults),
+    );
+  }
+
+  @override
+  Future<Result<DiscoverPage>> carouselSectionPage(
+    CarouselSection section, {
+    MediaType? type,
+    int page = 1,
+  }) async {
+    try {
+      final result = switch (section) {
+        CarouselSection.popularThisWeek => await _trendingAllPage(page),
+        CarouselSection.inTheaters => await _moviesPage(
+          (p) => _datasource.movieNowPlaying(page: p),
+          page,
+        ),
+        CarouselSection.upcoming => await _moviesPage(
+          (p) => _datasource.movieUpcoming(page: p),
+          page,
+        ),
+        CarouselSection.airingNow => await _tvPage(
+          (p) => _datasource.tvOnTheAir(page: p),
+          page,
+        ),
+        CarouselSection.popular => await _tvPage(
+          (p) => _datasource.tvPopular(page: p),
+          page,
+        ),
+        CarouselSection.trending => switch (type) {
+          MediaType.movie => await _moviesPage(
+            (p) => _datasource.trendingMovieWeek(page: p),
+            page,
+          ),
+          MediaType.tvShow => await _tvPage(
+            (p) => _datasource.trendingTvWeek(page: p),
+            page,
+          ),
+          null => DiscoverPage.empty,
+        },
+        CarouselSection.topRated => switch (type) {
+          MediaType.movie => await _moviesPage(
+            (p) => _datasource.movieTopRated(page: p),
+            page,
+          ),
+          MediaType.tvShow => await _tvPage(
+            (p) => _datasource.tvTopRated(page: p),
+            page,
+          ),
+          null => DiscoverPage.empty,
+        },
+        CarouselSection.comingSoon => await _discoverPage(
+          _comingSoonFilter(),
+          page,
+        ),
+        CarouselSection.finishedShows => await _discoverPage(
+          _finishedShowsFilter,
+          page,
+        ),
+        CarouselSection.watchLater => DiscoverPage.empty,
+      };
+      return Success(result);
+    } on DioException catch (e) {
+      return mapDioExceptionToFailure(e);
+    }
+  }
+
+  Future<DiscoverPage> _trendingAllPage(int page) async {
+    final data = await _datasource.trendingAllWeekPage(page);
+    return DiscoverPage(
+      items: [
+        for (final json in data.results)
+          ?mediaItemFromTrendingJson(json, imagesConfig: _imagesConfig),
+      ],
+      page: page,
+      totalPages: data.totalPages,
+      totalResults: data.totalResults,
+    );
   }
 
   /// How many services B2's pill row offers.
