@@ -15,7 +15,9 @@ import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_spacing.dart';
+import 'package:movies/shared/widgets/app_buttons.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
+import 'package:movies/shared/widgets/media_detail/media_detail_action_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 import 'package:movies/shared/widgets/media_detail/media_similar_section.dart';
 import 'package:movies/shared/widgets/media_detail/media_synopsis_section.dart';
@@ -158,6 +160,21 @@ void main() {
     await tester.tap(find.byIcon(AppIcons.back));
     await tester.pumpAndSettle();
     expect(find.byType(FullCastScreen), findsNothing);
+  });
+
+  testWidgets('a movie with no trailer, no similar titles and no services has '
+      'no primary button (it would lead nowhere)', (tester) async {
+    // Movie 4 has no sample detail, so the fake gives it a bare one.
+    appRouter.go('/');
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+    unawaited(appRouter.push(AppRoutes.movieDetail(4)));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MediaDetailActionRow), findsOneWidget);
+    expect(find.byType(PrimaryButton), findsNothing);
+    expect(find.text('See similar'), findsNothing);
+    expect(find.text('Watched'), findsOneWidget);
   });
 
   testWidgets('sections run synopsis -> where to watch -> cast -> similar, '
