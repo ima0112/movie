@@ -70,10 +70,10 @@ void main() {
     expect(carousel.height, MediaBackdropCarousel.cardHeight);
   });
 
-  testWidgets('New releases: medium posters with a NEW badge', (tester) async {
+  testWidgets('New releases: medium posters, no badge', (tester) async {
     await _pump(tester, ExploreSection.newReleases);
     expect(_firstCard(tester), const Size(130, 195));
-    expect(find.text('NEW'), findsWidgets);
+    expect(find.text('NEW'), findsNothing);
   });
 
   testWidgets('Coming soon: small posters with the release date under each', (

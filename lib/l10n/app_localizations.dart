@@ -830,12 +830,6 @@ abstract class AppLocalizations {
   /// **'Coming soon'**
   String get exploreSectionComingSoon;
 
-  /// The small badge on a poster in B2's "New releases".
-  ///
-  /// In en, this message translates to:
-  /// **'NEW'**
-  String get exploreNewTag;
-
   /// The supporting line under B2's "Top rated" heading, the section that gets the most weight.
   ///
   /// In en, this message translates to:
