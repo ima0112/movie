@@ -165,6 +165,15 @@ ask before inventing it.
     `copyWith(fontWeight/fontSize)`). `test/core/theme/design_tokens_guard_test.dart`
     fails on raw numbers and font overrides. See `docs/DESIGN_SYSTEM.md` §2–3.
 
+17. **Long pages load on demand.** A page made of several network-backed
+    blocks (carousels, sections) must not fetch them all when it opens:
+    each block that is below the fold is wrapped in `LazyLoad`
+    (`shared/widgets/lazy_load.dart`), which calls its callback once the
+    block is within about a screen of the visible area (and again when its
+    `loadKey` — the filters it depends on — changes). The Cubit exposes an
+    idempotent per-block "request" method for it to call. See B2 for the
+    reference use.
+
 ## Code conventions
 
 - State: `flutter_bloc` — one `Cubit` per screen (plain `Bloc` only if the screen has a real event-driven flow, e.g. the Matcher's room lifecycle).
