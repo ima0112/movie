@@ -62,4 +62,10 @@ class ListingContext {
 
   /// Whether the genre / platform parts are shown at all (Explore only).
   final bool showsFilters;
+
+  /// Whether each poster shows the platform it streams on: from Explore, when
+  /// neither a genre nor a platform narrowed the list (with a platform picked
+  /// every title is on it, so a logo would say nothing).
+  bool get showsPlatformLogos =>
+      showsFilters && genre == null && platform == null;
 }

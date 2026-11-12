@@ -296,7 +296,7 @@ void main() {
     expect(find.byType(SectionListingScreen), findsOneWidget);
     expect(find.text('Top today'), findsOneWidget); // the bar's title
     expect(find.text('Action'), findsWidgets); // the genre in the pill
-    expect(find.text('·'), findsNWidgets(2)); // logo · genre · count
+    expect(find.text('·'), findsOneWidget); // logo · genre
     expect(find.byIcon(AppIcons.sort), findsOneWidget);
     expect(find.byType(MediaCard), findsWidgets);
 

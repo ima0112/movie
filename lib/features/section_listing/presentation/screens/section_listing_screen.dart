@@ -9,6 +9,7 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/listing_source.dart';
 import '../../domain/listing_style.dart';
+import '../cubit/listing_providers_cubit.dart';
 import '../cubit/section_listing_cubit.dart';
 import '../widgets/listing_content.dart';
 import '../widgets/listing_toolbar.dart';
@@ -37,9 +38,16 @@ class SectionListingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          SectionListingCubit(getIt<MediaRepository>(), source)..load(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              SectionListingCubit(getIt<MediaRepository>(), source)..load(),
+        ),
+        BlocProvider(
+          create: (_) => ListingProvidersCubit(getIt<MediaRepository>()),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.surface,
         appBar: AppBar(
@@ -58,7 +66,12 @@ class SectionListingScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ListingToolbar(listingContext: listingContext),
-              Expanded(child: ListingContent(style: style)),
+              Expanded(
+                child: ListingContent(
+                  style: style,
+                  showPlatform: listingContext.showsPlatformLogos,
+                ),
+              ),
             ],
           ),
         ),

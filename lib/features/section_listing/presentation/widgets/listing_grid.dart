@@ -22,10 +22,18 @@ import 'listing_poster.dart';
 /// page doesn't fill the screen. Pull to refresh starts over. [style] is the
 /// section's own dressing; the current sort may swap it (`listingStyleFor`).
 class ListingGrid extends StatelessWidget {
-  const ListingGrid({super.key, required this.state, required this.style});
+  const ListingGrid({
+    super.key,
+    required this.state,
+    required this.style,
+    required this.showPlatform,
+  });
 
   final SectionListingLoaded state;
   final ListingStyle style;
+
+  /// Each poster shows the platform it streams on (top-right).
+  final bool showPlatform;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +65,7 @@ class ListingGrid extends StatelessWidget {
                   item: item,
                   style: dressing,
                   rank: index + 1,
+                  showPlatform: showPlatform,
                   onTap: () => context.pushMediaDetail(item.key),
                 );
               },

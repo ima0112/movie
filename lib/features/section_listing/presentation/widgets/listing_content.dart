@@ -18,9 +18,14 @@ import 'listing_skeleton.dart';
 /// the *kind* of state changes or a new page/sort arrives; the toolbar and
 /// summary above it never rebuild with it (CLAUDE.md rule 9).
 class ListingContent extends StatelessWidget {
-  const ListingContent({super.key, required this.style});
+  const ListingContent({
+    super.key,
+    required this.style,
+    required this.showPlatform,
+  });
 
   final ListingStyle style;
+  final bool showPlatform;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,11 @@ class ListingContent extends StatelessWidget {
           // Posters scrolling up under the toolbar dissolve, as on Home.
           SectionListingLoaded() => ScrollEdgeFade(
             top: AppSpacing.lg,
-            child: ListingGrid(state: state, style: style),
+            child: ListingGrid(
+              state: state,
+              style: style,
+              showPlatform: showPlatform,
+            ),
           ),
         };
       },

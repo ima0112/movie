@@ -12,6 +12,7 @@ import '../../../../shared/widgets/media_card.dart';
 import '../../../../shared/widgets/poster_badge.dart';
 import '../../../../shared/widgets/ranked_poster.dart';
 import '../../domain/listing_style.dart';
+import 'listing_platform_logo.dart';
 
 /// One poster of the "See all" grid, dressed by [style] (see
 /// `listingStyleFor`): a rank, a rating badge, the date or year, or the title.
@@ -24,6 +25,7 @@ class ListingPoster extends StatelessWidget {
     required this.style,
     required this.rank,
     required this.onTap,
+    this.showPlatform = false,
   });
 
   final MediaItem item;
@@ -32,6 +34,9 @@ class ListingPoster extends StatelessWidget {
   /// 1-based position, used by [ListingStyle.ranked].
   final int rank;
   final VoidCallback onTap;
+
+  /// Show the platform the title streams on, top-right.
+  final bool showPlatform;
 
   static const Duration _fade = Duration(milliseconds: 220);
 
@@ -62,6 +67,12 @@ class ListingPoster extends StatelessWidget {
             ),
           ),
         ),
+        if (showPlatform)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: ListingPlatformLogo(titleKey: item.key),
+            ),
+          ),
       ],
     );
   }
