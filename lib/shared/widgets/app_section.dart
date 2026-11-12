@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'overline_label.dart';
@@ -24,6 +25,7 @@ class AppSection extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.inset = true,
+    this.subtitle,
   }) : _overline = false;
 
   /// A section headed by a small capitalised [OverlineLabel] instead of an
@@ -35,12 +37,17 @@ class AppSection extends StatelessWidget {
     this.inset = true,
   }) : actionLabel = null,
        onAction = null,
+       subtitle = null,
        _overline = true;
 
   final bool _overline;
 
   final Widget child;
   final String? title;
+
+  /// A muted line under the heading that gives a section more weight (B2's
+  /// "Top rated"). Only with a [title].
+  final String? subtitle;
 
   /// The amber text action at the end of the heading ("See all"). Shown only
   /// with a [title]; [onAction] may be null (then it is only a label).
@@ -68,6 +75,7 @@ class AppSection extends StatelessWidget {
                       title: title,
                       actionLabel: actionLabel,
                       onAction: onAction,
+                      subtitle: subtitle,
                     ),
             ),
             const SizedBox(height: AppSpacing.headingGap),
@@ -91,16 +99,18 @@ class _Heading extends StatelessWidget {
     required this.title,
     required this.actionLabel,
     required this.onAction,
+    required this.subtitle,
   });
 
   final String title;
   final String? actionLabel;
   final VoidCallback? onAction;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
     final actionLabel = this.actionLabel;
-    return Row(
+    final heading = Row(
       children: [
         Expanded(
           child: Text(
@@ -118,6 +128,19 @@ class _Heading extends StatelessWidget {
             child: Text(actionLabel, style: AppTextStyles.action),
           ),
         ],
+      ],
+    );
+    final subtitle = this.subtitle;
+    if (subtitle == null) return heading;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        heading,
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          subtitle,
+          style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+        ),
       ],
     );
   }

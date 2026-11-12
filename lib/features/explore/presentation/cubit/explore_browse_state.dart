@@ -56,14 +56,21 @@ final class ExploreBrowseState {
     this.service,
     this.services = const ExploreServicesLoading(),
     this.sections = const {},
+    this.revision = 0,
   });
 
   final MediaSegment segment;
   final StreamingService? service;
   final ExploreServicesState services;
 
-  /// A section with no entry yet counts as loading.
+  /// A section with no entry has not been requested yet (it loads on demand,
+  /// when it nears the viewport) and shows as loading.
   final Map<ExploreSection, ExploreSectionState> sections;
+
+  /// Bumped whenever the filters change (segment, platform, region) and the
+  /// sections are cleared — what tells a section that has already been seen
+  /// to ask for its data again.
+  final int revision;
 
   ExploreSectionState sectionState(ExploreSection section) =>
       sections[section] ?? const ExploreSectionLoading();
@@ -73,12 +80,14 @@ final class ExploreBrowseState {
     StreamingService? Function()? service,
     ExploreServicesState? services,
     Map<ExploreSection, ExploreSectionState>? sections,
+    int? revision,
   }) {
     return ExploreBrowseState(
       segment: segment ?? this.segment,
       service: service == null ? this.service : service(),
       services: services ?? this.services,
       sections: sections ?? this.sections,
+      revision: revision ?? this.revision,
     );
   }
 }

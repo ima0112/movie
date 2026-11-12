@@ -830,6 +830,18 @@ abstract class AppLocalizations {
   /// **'Coming soon'**
   String get exploreSectionComingSoon;
 
+  /// The small badge on a poster in B2's "New releases".
+  ///
+  /// In en, this message translates to:
+  /// **'NEW'**
+  String get exploreNewTag;
+
+  /// The supporting line under B2's "Top rated" heading, the section that gets the most weight.
+  ///
+  /// In en, this message translates to:
+  /// **'The best of all time, by score'**
+  String get exploreSectionTopRatedSubtitle;
+
   /// B2 body section: the best rated titles.
   ///
   /// In en, this message translates to:

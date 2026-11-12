@@ -405,6 +405,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get exploreSectionComingSoon => 'Próximamente';
 
   @override
+  String get exploreNewTag => 'NUEVO';
+
+  @override
+  String get exploreSectionTopRatedSubtitle =>
+      'Lo mejor de todos los tiempos, por nota';
+
+  @override
   String get exploreSectionTopRated => 'Mejor valoradas';
 
   @override

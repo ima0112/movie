@@ -3,17 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
-import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
-import '../../../../shared/widgets/media_carousel.dart';
+import '../../../../shared/widgets/lazy_load.dart';
 import '../../../discover/presentation/widgets/discover_content_error.dart';
 import '../../../discover/presentation/widgets/discover_section_skeleton.dart';
 import '../../domain/explore_section.dart';
 import '../cubit/explore_browse_cubit.dart';
 import '../cubit/explore_browse_state.dart';
 import '../cubit/explore_cubit.dart';
+import 'explore_section_carousel.dart';
 
 /// The localized heading of a B2 body section.
 String exploreSectionTitle(ExploreSection section, AppLocalizations l10n) =>
@@ -27,10 +27,14 @@ String exploreSectionTitle(ExploreSection section, AppLocalizations l10n) =>
     };
 
 /// One of B2's body sections: its own heading with "See all" (→ C1 with the
-/// very filter that produced the carousel), a carousel — numbered for "Top
-/// today" — a skeleton while loading, or a retry row on error. A section that
-/// loads empty draws nothing. Watches only its own slot of the state
-/// (CLAUDE.md rule 9).
+/// very filter that produced the carousel), its own kind of carousel (see
+/// `ExploreSectionCarousel`), a skeleton while loading, or a retry row on
+/// error. A section that loads empty draws nothing.
+///
+/// **Loads on demand** (CLAUDE.md rule 17): wrapped in `LazyLoad`, it asks the
+/// cubit for its data only when it nears the viewport — and again when the
+/// filters change (`revision`) while it is near. Watches only its own slot of
+/// the state (CLAUDE.md rule 9).
 class ExploreBrowseSection extends StatelessWidget {
   const ExploreBrowseSection({super.key, required this.section});
 
@@ -41,39 +45,47 @@ class ExploreBrowseSection extends StatelessWidget {
     return BlocSelector<
       ExploreBrowseCubit,
       ExploreBrowseState,
-      ExploreSectionState
+      (int, ExploreSectionState)
     >(
-      selector: (state) => state.sectionState(section),
-      builder: (context, state) {
+      selector: (state) => (state.revision, state.sectionState(section)),
+      builder: (context, selected) {
+        final (revision, state) = selected;
         final l10n = context.l10n;
         final title = exploreSectionTitle(section, l10n);
-        return switch (state) {
-          ExploreSectionLoading() => const AppSection(
-            child: DiscoverSectionSkeleton(),
-          ),
-          ExploreSectionError() => AppSection(
-            title: title,
-            child: DiscoverContentError(
-              onRetry: () =>
-                  context.read<ExploreBrowseCubit>().retrySection(section),
+        return LazyLoad(
+          loadKey: revision,
+          onNear: () =>
+              context.read<ExploreBrowseCubit>().requestSection(section),
+          child: switch (state) {
+            ExploreSectionLoading() => const AppSection(
+              child: DiscoverSectionSkeleton(),
             ),
-          ),
-          ExploreSectionLoaded(:final items) when items.isEmpty =>
-            const SizedBox.shrink(),
-          ExploreSectionLoaded(:final items) => AppSection(
-            title: title,
-            actionLabel: l10n.discoverSeeAll,
-            onAction: () => _seeAll(context, title),
-            child: MediaCarousel.standard(
-              items: items,
-              showTypeTag:
-                  context.read<ExploreBrowseCubit>().state.segment ==
-                  MediaSegment.all,
-              ranked: section == ExploreSection.topToday,
-              onItemTap: (MediaItem item) => context.pushMediaDetail(item.key),
+            ExploreSectionError() => AppSection(
+              title: title,
+              child: DiscoverContentError(
+                onRetry: () =>
+                    context.read<ExploreBrowseCubit>().retrySection(section),
+              ),
             ),
-          ),
-        };
+            ExploreSectionLoaded(:final items) when items.isEmpty =>
+              const SizedBox.shrink(),
+            ExploreSectionLoaded(:final items) => AppSection(
+              title: title,
+              subtitle: section == ExploreSection.topRated
+                  ? l10n.exploreSectionTopRatedSubtitle
+                  : null,
+              actionLabel: l10n.discoverSeeAll,
+              onAction: () => _seeAll(context, title),
+              child: ExploreSectionCarousel(
+                section: section,
+                items: items,
+                segment: context.read<ExploreBrowseCubit>().state.segment,
+                onItemTap: (MediaItem item) =>
+                    context.pushMediaDetail(item.key),
+              ),
+            ),
+          },
+        );
       },
     );
   }

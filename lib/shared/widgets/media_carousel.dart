@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/domain/entities/media_item.dart';
 import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
 import 'media_card.dart';
 import 'ranked_poster.dart';
 
@@ -32,6 +34,9 @@ class MediaCarousel extends StatelessWidget {
     this.showTypeTag = false,
     this.onItemTap,
     this.ranked = false,
+    this.size = MediaCardSize.carousel,
+    this.overlayBuilder,
+    this.captionBuilder,
   });
 
   final List<MediaItem> items;
@@ -39,6 +44,19 @@ class MediaCarousel extends StatelessWidget {
 
   /// A big 1, 2, 3… over each poster's bottom-left corner (B2's "Top today").
   final bool ranked;
+
+  /// The poster size: [MediaCardSize.carousel] (default), or the larger and
+  /// smaller `carousel*` variants B2 uses to give its sections different
+  /// weight.
+  final MediaCardSize size;
+
+  /// A widget laid over each poster's top-left corner (a "NEW" or rating
+  /// badge); `null` result = none for that item.
+  final Widget? Function(MediaItem item)? overlayBuilder;
+
+  /// A line of text under each poster (Coming soon's release date); `null`
+  /// result = none for that item.
+  final String? Function(MediaItem item)? captionBuilder;
   final void Function(MediaItem item)? onItemTap;
 
   @override
@@ -46,25 +64,62 @@ class MediaCarousel extends StatelessWidget {
     return _buildStandard(context);
   }
 
+  /// Room under a poster for [captionBuilder]'s one line of text.
+  static const double _captionHeight = 28;
+
   Widget _buildStandard(BuildContext context) {
+    final hasCaption = captionBuilder != null;
     return SizedBox(
-      height: MediaCardSize.carousel.height,
+      height: size.height + (hasCaption ? _captionHeight : 0),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
           final onTap = onItemTap;
+          final overlay = overlayBuilder?.call(item);
+          final caption = captionBuilder?.call(item);
+          final card = RankedPoster(
+            rank: ranked ? index + 1 : null,
+            child: MediaCard(
+              size: size,
+              title: item.title,
+              posterUrl: item.posterUrl,
+              showTypeTag: showTypeTag && item.type == MediaType.tvShow,
+              onTap: onTap == null ? null : () => onTap(item),
+            ),
+          );
           return Padding(
             padding: EdgeInsets.only(left: index == 0 ? 0 : AppSpacing.md),
-            child: RankedPoster(
-              rank: ranked ? index + 1 : null,
-              child: MediaCard(
-                size: MediaCardSize.carousel,
-                title: item.title,
-                posterUrl: item.posterUrl,
-                showTypeTag: showTypeTag && item.type == MediaType.tvShow,
-                onTap: onTap == null ? null : () => onTap(item),
+            child: SizedBox(
+              width: size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      card,
+                      if (overlay != null)
+                        Positioned(
+                          left: AppSpacing.xs,
+                          top: AppSpacing.xs,
+                          child: IgnorePointer(child: overlay),
+                        ),
+                    ],
+                  ),
+                  if (hasCaption)
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xs),
+                      child: Text(
+                        caption ?? '',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.inkMuted,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
               ),
             ),
           );

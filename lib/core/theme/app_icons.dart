@@ -13,6 +13,7 @@ class AppIcons {
   const AppIcons._();
 
   static const IconData search = RemixIcons.search_line;
+  static const IconData searchFill = RemixIcons.search_fill;
   static const IconData filter = RemixIcons.equalizer_line;
 
   static const IconData favorite = RemixIcons.heart_line;

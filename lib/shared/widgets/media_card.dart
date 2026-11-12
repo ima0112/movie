@@ -16,6 +16,15 @@ enum MediaCardSize {
   /// 110×165. Carousel rows (3.2 cards visible).
   carousel(width: 110, height: 165, aspectRatio: null),
 
+  /// 150×225. B2's "Top today" (the lead section).
+  carouselLarge(width: 150, height: 225, aspectRatio: null),
+
+  /// 130×195. B2's "New releases" and "Hidden gems".
+  carouselMedium(width: 130, height: 195, aspectRatio: null),
+
+  /// 90×135. B2's "Coming soon" (a compact strip).
+  carouselSmall(width: 90, height: 135, aspectRatio: null),
+
   /// 330×380. The Discover hero.
   hero(width: 330, height: 380, aspectRatio: null),
 
