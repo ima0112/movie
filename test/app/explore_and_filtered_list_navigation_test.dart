@@ -20,7 +20,6 @@ import 'package:movies/shared/widgets/app_segmented_control.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
 import 'package:movies/shared/widgets/media_card.dart';
-import 'package:movies/shared/widgets/poster_badge.dart';
 
 /// End-to-end coverage for the flows this branch's own task asked to be
 /// manually verified: typing in Explore's search field with its 400 ms
@@ -276,7 +275,7 @@ void main() {
   });
 
   testWidgets('a section\'s "See all" reaches C1b: the title, what Explore had '
-      'set, the sort icon, and the grid', (tester) async {
+      'set, and the grid (no sort icon for now)', (tester) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
@@ -297,24 +296,8 @@ void main() {
     expect(find.text('Top today'), findsOneWidget); // the bar's title
     expect(find.text('Action'), findsWidgets); // the genre in the pill
     expect(find.text('·'), findsOneWidget); // logo · genre
-    expect(find.byIcon(AppIcons.sort), findsOneWidget);
+    expect(find.byIcon(AppIcons.sort), findsNothing); // off for now
     expect(find.byType(MediaCard), findsWidgets);
-
-    // The sort sheet offers the short list, the section's own order first.
-    await tester.tap(find.byIcon(AppIcons.sort));
-    await tester.pumpAndSettle();
-    for (final label in [
-      'Default order',
-      'Popularity',
-      'Rating',
-      'Most voted',
-      'Newest first',
-    ]) {
-      expect(find.text(label), findsOneWidget, reason: label);
-    }
-    await tester.tap(find.text('Rating'));
-    await tester.pumpAndSettle();
-    expect(find.byType(PosterBadge), findsWidgets); // the rating tags
   });
 
   testWidgets('Home\'s "See all" reaches the same listing, with the segment '
@@ -335,7 +318,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SectionListingScreen), findsOneWidget);
-    expect(find.byIcon(AppIcons.sort), findsOneWidget);
+    expect(find.byIcon(AppIcons.sort), findsNothing);
     expect(find.textContaining('genres'), findsNothing);
     expect(find.textContaining('platforms'), findsNothing);
   });

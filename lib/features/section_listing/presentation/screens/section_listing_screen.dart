@@ -29,12 +29,17 @@ class SectionListingScreen extends StatelessWidget {
     required this.source,
     required this.style,
     required this.listingContext,
+    this.sortEnabled = false,
   });
 
   final String title;
   final ListingSource source;
   final ListingStyle style;
   final ListingContext listingContext;
+
+  /// Whether the sort icon (and so re-sorting) is available. Off for now: the
+  /// Cubit and the sheet are built and tested, the entry point is just hidden.
+  final bool sortEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +70,10 @@ class SectionListingScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ListingToolbar(listingContext: listingContext),
+              ListingToolbar(
+                listingContext: listingContext,
+                sortEnabled: sortEnabled,
+              ),
               Expanded(
                 child: ListingContent(
                   style: style,

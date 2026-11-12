@@ -12,32 +12,48 @@ import '../cubit/section_listing_state.dart';
 import 'listing_context_pill.dart';
 import 'listing_sort_sheet.dart';
 
-/// Under the title bar: the context pill on the left, the sort icon on the
-/// right. The pill is static (built once); only the icon watches the sort, to
+/// Under the title bar: the context pill and, when [sortEnabled], the sort
+/// icon. With sorting on, the pill sits on the left and the icon on the right;
+/// with it off (the screen's default for now) the pill is **centered** in the
+/// row. The pill is static (built once); only the icon watches the sort, to
 /// turn amber when the list is not in its own order (CLAUDE.md rule 9).
 class ListingToolbar extends StatelessWidget {
-  const ListingToolbar({super.key, required this.listingContext});
+  const ListingToolbar({
+    super.key,
+    required this.listingContext,
+    required this.sortEnabled,
+  });
 
   final ListingContext listingContext;
+  final bool sortEnabled;
+
+  /// Room under the pill, so it clears the grid's top fade.
+  static const double _gapBelow = AppSpacing.lg;
 
   @override
   Widget build(BuildContext context) {
+    final pill = ListingContextPill(listingContext: listingContext);
     return Padding(
-      // The icon's glyph lines up with the grid's right edge: the page margin
-      // minus the empty space around the glyph inside its touch target.
+      // With the icon, its glyph lines up with the grid's right edge: the page
+      // margin minus the empty space around the glyph in its touch target.
       padding: EdgeInsets.fromLTRB(
         AppSpacing.screenMargin,
         AppSpacing.sm,
-        AppSpacing.screenMargin - (_SortButton.target - _SortButton.glyph) / 2,
-        0,
+        sortEnabled
+            ? AppSpacing.screenMargin -
+                  (_SortButton.target - _SortButton.glyph) / 2
+            : AppSpacing.screenMargin,
+        _gapBelow,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(child: ListingContextPill(listingContext: listingContext)),
-          const _SortButton(),
-        ],
-      ),
+      child: sortEnabled
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(child: pill),
+                const _SortButton(),
+              ],
+            )
+          : Center(child: pill),
     );
   }
 }

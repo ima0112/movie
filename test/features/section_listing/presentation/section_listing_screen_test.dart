@@ -102,6 +102,7 @@ void main() {
     ListingSource? source,
     ListingStyle style = ListingStyle.plain,
     ListingContext? context,
+    bool sort = false,
   }) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
@@ -118,14 +119,15 @@ void main() {
           listingContext:
               context ??
               const ListingContext.explore(segment: MediaSegment.all),
+          sortEnabled: sort,
         ),
       ),
     );
     await _settle(tester);
   }
 
-  testWidgets('shows the title, an amber pill (platform, genre, count), the '
-      'sort icon and a 2-column grid', (tester) async {
+  testWidgets('shows the title, an amber pill (platform, genre) and a 2-column '
+      'grid — and, for now, no sort icon', (tester) async {
     await pump(
       tester,
       context: const ListingContext.explore(
@@ -155,7 +157,7 @@ void main() {
       tester.widget<Text>(find.text('Comedy')).style!.color,
       AppColors.onAccent,
     );
-    expect(find.byIcon(AppIcons.sort), findsOneWidget);
+    expect(find.byIcon(AppIcons.sort), findsNothing); // off for now
     // Two posters share the first row.
     final first = tester.getTopLeft(find.byType(MediaCard).at(0)).dy;
     expect(tester.getTopLeft(find.byType(MediaCard).at(1)).dy, first);
@@ -165,9 +167,26 @@ void main() {
     );
   });
 
+  testWidgets('with sorting off the pill is centered in the row, with room '
+      'below it before the grid', (tester) async {
+    await pump(tester);
+    final pill = tester.getRect(
+      find
+          .ancestor(
+            of: find.text('All genres'),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    expect(pill.center.dx, closeTo(390 / 2, 1));
+    final firstPoster = tester.getRect(find.byType(MediaCard).first);
+    // Clear of the grid's top fade (a page gap) plus the grid's own padding.
+    expect(firstPoster.top - pill.bottom, greaterThanOrEqualTo(32));
+  });
+
   testWidgets('the sort icon sits at the right end of the row, lined up with '
       'the grid\'s right edge', (tester) async {
-    await pump(tester);
+    await pump(tester, sort: true);
     final icon = tester.getRect(find.byIcon(AppIcons.sort));
     final grid = tester.getRect(find.byType(MediaCard).at(1));
     expect(icon.right, closeTo(grid.right, 0.5));
@@ -186,7 +205,7 @@ void main() {
   testWidgets('the sort icon is smaller than a default icon button', (
     tester,
   ) async {
-    await pump(tester);
+    await pump(tester, sort: true);
     expect(tester.getSize(find.byIcon(AppIcons.sort)).width, lessThan(24));
   });
 
@@ -214,7 +233,7 @@ void main() {
 
   testWidgets('each sort dresses the posters its own way', (tester) async {
     // The section's own style is plain: nothing on the posters.
-    await pump(tester);
+    await pump(tester, sort: true);
     expect(find.text('8.5'), findsNothing);
     expect(find.text('2026'), findsNothing);
 
@@ -249,7 +268,7 @@ void main() {
     're-sorting keeps the same list: the whole set is there and nothing '
     'more is being paged in',
     (tester) async {
-      await pump(tester);
+      await pump(tester, sort: true);
 
       await tester.tap(find.byIcon(AppIcons.sort));
       await _settle(tester);
@@ -313,6 +332,7 @@ void main() {
         DiscoverFilter(releasedFrom: DateTime(2026, 6, 1)),
         today: today,
       ),
+      sort: true,
     );
     await tester.tap(find.byIcon(AppIcons.sort));
     await _settle(tester);
@@ -403,22 +423,25 @@ void main() {
       }
     });
 
-    testWidgets('not shown when a platform is picked, when a genre is, or '
-        'from Home', (tester) async {
-      await pump(
-        tester,
-        context: const ListingContext.explore(
-          segment: MediaSegment.all,
-          platform: StreamingService(id: 8, name: 'Netflix'),
-        ),
-      );
-      expect(find.byType(ListingPlatformLogo), findsNothing);
-
+    testWidgets('a genre picked with the platform left on All still shows '
+        'the logos; a platform picked, or Home, does not', (tester) async {
       await pump(
         tester,
         context: const ListingContext.explore(
           segment: MediaSegment.all,
           genre: Genre(id: 'comedy'),
+        ),
+      );
+      expect(find.byType(ListingPlatformLogo), findsWidgets);
+      expect(find.text('Comedy'), findsOneWidget); // the pill still says so
+
+      repo.providerAsks.clear();
+      await pump(
+        tester,
+        context: const ListingContext.explore(
+          segment: MediaSegment.all,
+          genre: Genre(id: 'comedy'),
+          platform: StreamingService(id: 8, name: 'Netflix'),
         ),
       );
       expect(find.byType(ListingPlatformLogo), findsNothing);
