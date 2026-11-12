@@ -2,6 +2,7 @@ import '../../domain/entities/media_detail.dart';
 import '../../domain/entities/media_item.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/person.dart';
+import '../../domain/entities/release_status.dart';
 import '../../domain/entities/season_summary.dart';
 import '../../domain/entities/video.dart';
 import '../../domain/entities/watch_providers.dart';
@@ -27,6 +28,7 @@ MovieDetail mediaDetailFromMovieDto(
   TmdbMovieDetailDto dto, {
   required TmdbImagesConfig imagesConfig,
   required String region,
+  DateTime? today,
 }) {
   return MovieDetail(
     item: Movie(
@@ -66,6 +68,11 @@ MovieDetail mediaDetailFromMovieDto(
     runtimeMinutes: dto.runtime,
     releaseDate: parseTmdbDate(dto.releaseDate),
     certification: _certificationFromReleaseDates(dto.releaseDates, region),
+    releaseStatus: releaseStatusForMovie(
+      _releaseEntriesFor(dto.releaseDates, region),
+      today: today ?? DateTime.now(),
+      tmdbStatus: dto.status,
+    ),
   );
 }
 
@@ -73,6 +80,7 @@ TvShowDetail mediaDetailFromTvDto(
   TmdbTvDetailDto dto, {
   required TmdbImagesConfig imagesConfig,
   required String region,
+  DateTime? today,
 }) {
   return TvShowDetail(
     item: TvShow(
@@ -109,6 +117,11 @@ TvShowDetail mediaDetailFromTvDto(
     backdropUrl: _backdropUrl(dto.backdropPath, imagesConfig),
     originalLanguage: dto.originalLanguage,
     countryCodes: dto.originCountry,
+    releaseStatus: releaseStatusForTv(
+      firstAirDate: parseTmdbDate(dto.firstAirDate),
+      today: today ?? DateTime.now(),
+      tmdbStatus: dto.status,
+    ),
     creators: dto.createdBy
         .map(
           (c) => Person(
@@ -332,6 +345,26 @@ WatchProviders _watchProvidersFrom(
 /// region can list more than one `release_dates` entry (re-releases,
 /// different release types); the first with an actual value is good
 /// enough, since D1 only ever shows one certification string.
+/// One region's release dates with a type and a parseable date.
+List<ReleaseDateEntry> _releaseEntriesFor(
+  TmdbReleaseDatesDto dto,
+  String region,
+) {
+  return [
+    for (final r in dto.results)
+      if (r.iso31661 == region)
+        for (final entry in r.releaseDates)
+          if (entry.type != null && entry.releaseDate != null)
+            if (_dayOf(entry.releaseDate!) case final date?)
+              ReleaseDateEntry(type: entry.type!, date: date),
+  ];
+}
+
+/// The calendar date of `"2026-06-12T00:00:00.000Z"`, read as written (no
+/// timezone shift), or `null` when it doesn't parse.
+DateTime? _dayOf(String iso) =>
+    iso.length < 10 ? null : DateTime.tryParse(iso.substring(0, 10));
+
 String? _certificationFromReleaseDates(TmdbReleaseDatesDto dto, String region) {
   for (final r in dto.results) {
     if (r.iso31661 != region) continue;

@@ -8,6 +8,7 @@ import 'package:movies/core/data/tmdb/dtos/tmdb_tv_detail_dto.dart';
 import 'package:movies/core/data/tmdb/tmdb_detail_mappers.dart';
 import 'package:movies/core/data/tmdb/tmdb_image_urls.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
+import 'package:movies/core/domain/entities/release_status.dart';
 
 Map<String, dynamic> _loadFixture(String name) =>
     jsonDecode(File('test/fixtures/$name').readAsStringSync())
@@ -15,6 +16,97 @@ Map<String, dynamic> _loadFixture(String name) =>
 
 void main() {
   const imagesConfig = TmdbImagesConfig.fallback();
+
+  group('release status', () {
+    final today = DateTime(2026, 5, 10);
+
+    MovieDetail movie(
+      List<Map<String, dynamic>> entries, {
+      String status = 'Released',
+      String region = 'US',
+    }) {
+      final json = _loadFixture('tmdb_movie_detail_full.json');
+      json['status'] = status;
+      json['release_dates'] = {
+        'results': [
+          {'iso_3166_1': region, 'release_dates': entries},
+          // Another region's dates must never leak in.
+          {
+            'iso_3166_1': 'FR',
+            'release_dates': [
+              {
+                'certification': '',
+                'type': 4,
+                'release_date': '2020-01-01T00:00:00.000Z',
+              },
+            ],
+          },
+        ],
+      };
+      return mediaDetailFromMovieDto(
+        TmdbMovieDetailDto.fromJson(json),
+        imagesConfig: imagesConfig,
+        region: region,
+        today: today,
+      );
+    }
+
+    test('a cinema date ahead is upcoming, read as written (no timezone '
+        'shift)', () {
+      final detail = movie([
+        {
+          'certification': '',
+          'type': 3,
+          'release_date': '2026-06-12T00:00:00.000Z',
+        },
+      ], status: 'Post Production');
+      expect(detail.releaseStatus?.stage, ReleaseStage.upcoming);
+      expect(detail.releaseStatus?.date, DateTime(2026, 6, 12));
+    });
+
+    test('in cinemas now, with the digital date when TMDB has it', () {
+      final detail = movie([
+        {
+          'certification': 'PG',
+          'type': 3,
+          'release_date': '2026-04-30T00:00:00.000Z',
+        },
+        {
+          'certification': '',
+          'type': 4,
+          'release_date': '2026-06-25T00:00:00.000Z',
+        },
+      ]);
+      expect(detail.releaseStatus?.stage, ReleaseStage.inTheaters);
+      expect(detail.releaseStatus?.streamingDate, DateTime(2026, 6, 25));
+    });
+
+    test('an ordinary released movie has no status, and a TV show with a '
+        'future first episode is upcoming', () {
+      expect(
+        movie([
+          {
+            'certification': 'PG',
+            'type': 4,
+            'release_date': '2020-01-01T00:00:00.000Z',
+          },
+        ]).releaseStatus,
+        isNull,
+      );
+
+      final tvJson = _loadFixture('tmdb_tv_detail_full.json');
+      tvJson['first_air_date'] = '2026-09-01';
+      tvJson['status'] = 'Planned';
+      final tv = mediaDetailFromTvDto(
+        TmdbTvDetailDto.fromJson(tvJson),
+        imagesConfig: imagesConfig,
+        region: 'US',
+        today: today,
+      );
+      expect(tv.releaseStatus?.stage, ReleaseStage.upcoming);
+      expect(tv.releaseStatus?.date, DateTime(2026, 9, 1));
+    });
+  });
 
   group('mediaDetailFromMovieDto', () {
     MovieDetail load(String fixture, {String region = 'ES'}) {

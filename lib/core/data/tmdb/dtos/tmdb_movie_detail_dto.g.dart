@@ -67,6 +67,8 @@ TmdbReleaseDateEntryDto _$TmdbReleaseDateEntryDtoFromJson(
   Map<String, dynamic> json,
 ) => TmdbReleaseDateEntryDto(
   certification: json['certification'] as String? ?? '',
+  type: (json['type'] as num?)?.toInt(),
+  releaseDate: json['release_date'] as String?,
 );
 
 TmdbCountryRefDto _$TmdbCountryRefDtoFromJson(Map<String, dynamic> json) =>
