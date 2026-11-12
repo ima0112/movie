@@ -21,7 +21,7 @@ class DiscoverContentSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final sectionCount = DiscoverCubit.sectionsBySegment[segment]!.length;
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),

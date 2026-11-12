@@ -95,4 +95,19 @@ void main() {
     expect(_card('Movie 1'), findsOneWidget);
     expect(tester.getRect(_card('Movie 1')).left, 20);
   });
+
+  testWidgets('the hero card is taller and its title is centered at the '
+      'bottom', (tester) async {
+    _phone(tester);
+    await tester.pumpWidget(_host([_movie(1), _movie(2)]));
+
+    final card = tester.getRect(_card('Movie 1'));
+    expect(card.height, MediaCardSize.hero.height);
+    expect(MediaCardSize.hero.height, greaterThan(290));
+
+    final title = tester.getCenter(find.text('Movie 1'));
+    expect(title.dx, moreOrLessEquals(card.center.dx, epsilon: 1));
+    // In the lower part of the card.
+    expect(title.dy, greaterThan(card.top + card.height * 0.6));
+  });
 }

@@ -16,8 +16,8 @@ enum MediaCardSize {
   /// 110×165. Carousel rows (3.2 cards visible).
   carousel(width: 110, height: 165, aspectRatio: null),
 
-  /// 330×290. The Discover hero.
-  hero(width: 330, height: 290, aspectRatio: null),
+  /// 330×380. The Discover hero.
+  hero(width: 330, height: 380, aspectRatio: null),
 
   /// 2:3, fluid — C1's 3-column grid. Unlike [carousel]/[hero], this
   /// variant has no fixed pixel size of its own — [width]/[height] are
@@ -193,20 +193,25 @@ class _Poster extends StatelessWidget {
   }
 }
 
-/// Fade to black over the bottom 40% of the hero poster, so the caption
-/// stays legible.
+/// The hero poster's bottom melts into the page: transparent over the top
+/// half, then to the page color, fully opaque at the very bottom so the card
+/// has no visible lower edge and the caption sits on a dark, legible fade.
 class _HeroFade extends StatelessWidget {
   const _HeroFade();
 
   @override
   Widget build(BuildContext context) {
-    return const DecoratedBox(
+    return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: [0.6, 1],
-          colors: [Colors.transparent, Color(0xFF000000)],
+          stops: const [0.45, 0.75, 1],
+          colors: [
+            AppColors.surface.withValues(alpha: 0),
+            AppColors.surface.withValues(alpha: 0.78),
+            AppColors.surface,
+          ],
         ),
       ),
     );
@@ -228,8 +233,9 @@ class _HeroCaption extends StatelessWidget {
   Widget build(BuildContext context) {
     final tag = reasonTag;
     final meta = metadata;
+    // Centered at the bottom of the card.
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
         if (tag != null) ...[
@@ -239,6 +245,7 @@ class _HeroCaption extends StatelessWidget {
         Text(
           title,
           style: AppTextStyles.h1,
+          textAlign: TextAlign.center,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -247,6 +254,7 @@ class _HeroCaption extends StatelessWidget {
           Text(
             meta,
             style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+            textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

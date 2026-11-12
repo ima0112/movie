@@ -118,7 +118,8 @@ class _DiscoverViewState extends State<_DiscoverView> with RouteAware {
                   segment: _segment,
                   onSelected: _onSegmentSelected,
                 ),
-                const SizedBox(height: AppSpacing.lg),
+                // The content area adds its own top gap (the fade's height).
+                const SizedBox(height: AppSpacing.md),
                 // Only this part shows a skeleton while loading — the
                 // halo, top bar, and segmented control above it are
                 // untouched. The tab bar + Match FAB now live in

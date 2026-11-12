@@ -10,7 +10,7 @@ import 'media_card.dart';
 ///
 /// Source of truth: `docs/SCREENS.md` B1 (Discover) and
 /// `docs/DECISIONS.md` section 9 ("110×165 posters with 12 px gaps, 3.2
-/// visible... up to 8 cards, 330×290... with snap and a 24 px peek of the
+/// visible... up to 8 cards, 330×380... with snap and a 24 px peek of the
 /// next one.").
 ///
 /// Pure presentation — no feature or Bloc dependency, everything comes in
