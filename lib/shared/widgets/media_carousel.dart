@@ -3,27 +3,10 @@ import 'package:flutter/material.dart';
 import '../../core/domain/entities/media_item.dart';
 import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../l10n/app_localizations.dart';
-import '../../l10n/genre_localization.dart';
-import '../../l10n/l10n_extension.dart';
-import '../../l10n/media_type_localization.dart';
 import 'media_card.dart';
 
-/// "2019 · Mystery, Comedy · Movie" — the hero's metadata line, per
-/// `docs/SCREENS.md` B1. Local to this file: it only reads fields
-/// [MediaItem] already carries, no extra data needed from the caller.
-String _heroMetadata(MediaItem item, AppLocalizations l10n) {
-  final parts = <String>[
-    if (item.releaseDate != null) '${item.releaseDate!.year}',
-    if (item.genres.isNotEmpty)
-      item.genres.map((genre) => genre.localizedName(l10n)).join(', '),
-    item.type.localizedSingular(l10n),
-  ];
-  return parts.join(' · ');
-}
-
-/// A horizontal row of poster cards — the section carousels and the
-/// Discover hero.
+/// A horizontal row of poster cards — the section carousels (the Discover
+/// hero is `MediaHeroCarousel`).
 ///
 /// Source of truth: `docs/SCREENS.md` B1 (Discover) and
 /// `docs/DECISIONS.md` section 9 ("110×165 posters with 12 px gaps, 3.2
@@ -47,44 +30,15 @@ class MediaCarousel extends StatelessWidget {
     required this.items,
     this.showTypeTag = false,
     this.onItemTap,
-  }) : _isHero = false,
-       onSaveTap = null,
-       saveButtonBuilder = null;
-
-  /// The Discover hero: 330×290 cards, snapping, a 24 px peek of the next
-  /// card. [onSaveTap] is called with the item whose save button was
-  /// tapped — ignored when [saveButtonBuilder] is provided. [onItemTap]
-  /// is called with the tapped item (tapping the card itself, not its
-  /// save button).
-  ///
-  /// [saveButtonBuilder], when provided, replaces the save button
-  /// entirely with whatever widget it returns for that item — use this
-  /// when the button's look needs to react to state this carousel has no
-  /// business knowing about (e.g. a `BlocSelector` watching "is this item
-  /// saved"), without this carousel — or any card other than the one
-  /// whose state actually changed — rebuilding for it.
-  const MediaCarousel.hero({
-    super.key,
-    required this.items,
-    this.onSaveTap,
-    this.saveButtonBuilder,
-    this.onItemTap,
-  }) : _isHero = true,
-       showTypeTag = false;
+  });
 
   final List<MediaItem> items;
   final bool showTypeTag;
-  final void Function(MediaItem item)? onSaveTap;
-  final Widget Function(MediaItem item)? saveButtonBuilder;
   final void Function(MediaItem item)? onItemTap;
-  final bool _isHero;
-
-  // docs/SCREENS.md B1: "24 px peek of the next one".
-  static const double _heroPeek = 24;
 
   @override
   Widget build(BuildContext context) {
-    return _isHero ? _buildHero(context) : _buildStandard(context);
+    return _buildStandard(context);
   }
 
   Widget _buildStandard(BuildContext context) {
@@ -103,48 +57,6 @@ class MediaCarousel extends StatelessWidget {
               title: item.title,
               posterUrl: item.posterUrl,
               showTypeTag: showTypeTag && item.type == MediaType.tvShow,
-              onTap: onTap == null ? null : () => onTap(item),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildHero(BuildContext context) {
-    // The PageView spans the full available width, so a fraction computed
-    // from that same width — rather than a fixed literal — keeps the
-    // rendered page exactly `card width + peek` wide on any device.
-    final availableWidth = MediaQuery.sizeOf(context).width;
-    final viewportFraction =
-        (MediaCardSize.hero.width + _heroPeek) / availableWidth;
-
-    return SizedBox(
-      height: MediaCardSize.hero.height,
-      child: PageView.builder(
-        controller: PageController(viewportFraction: viewportFraction),
-        // Without this, PageView adds a leading/trailing gap so the first
-        // and last cards can center when scrolled to an end — that would
-        // pull the first card in from the edge, breaking the full-bleed
-        // look and shifting the 24 px peek measurement.
-        padEnds: false,
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final item = items[index];
-          final onSave = onSaveTap;
-          final buildSaveButton = saveButtonBuilder;
-          final onTap = onItemTap;
-          return Padding(
-            padding: const EdgeInsets.only(right: _heroPeek),
-            child: MediaCard(
-              size: MediaCardSize.hero,
-              title: item.title,
-              posterUrl: item.posterUrl,
-              metadata: _heroMetadata(item, context.l10n),
-              saveButton: buildSaveButton?.call(item),
-              onSaveTap: buildSaveButton == null && onSave != null
-                  ? () => onSave(item)
-                  : null,
               onTap: onTap == null ? null : () => onTap(item),
             ),
           );

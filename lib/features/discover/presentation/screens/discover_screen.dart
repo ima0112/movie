@@ -115,6 +115,8 @@ class _DiscoverViewState extends State<_DiscoverView> with RouteAware {
               children: [
                 const DiscoverTopBar(),
                 MediaSegmentedControl(
+                  // Floats over the halo: translucent, like the bottom bar.
+                  glass: true,
                   segment: _segment,
                   onSelected: _onSegmentSelected,
                 ),

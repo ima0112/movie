@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -42,6 +44,7 @@ class AppSegmentedControl<T> extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(
       horizontal: AppSpacing.screenMargin,
     ),
+    this.glass = false,
   });
 
   final List<AppSegment<T>> segments;
@@ -52,6 +55,13 @@ class AppSegmentedControl<T> extends StatelessWidget {
   /// on the screen margin.
   final EdgeInsets padding;
 
+  /// The translucent look for a control floating over a backdrop (Discover's,
+  /// over the amber halo): the track uses the floating tab bar's blurred
+  /// glass and hairline border instead of the solid `surfaceRaised`, so the
+  /// background shows through while the white pill and the labels keep their
+  /// contrast. Same shape, size and behavior.
+  final bool glass;
+
   static const Duration _crossFade = Duration(milliseconds: 200);
   static const double pillHeight = 40;
   static const double pillInset = 4;
@@ -60,13 +70,8 @@ class AppSegmentedControl<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: Container(
-        constraints: const BoxConstraints(minHeight: pillHeight),
-        padding: const EdgeInsets.all(pillInset),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceRaised,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-        ),
+      child: _Track(
+        glass: glass,
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -82,6 +87,41 @@ class AppSegmentedControl<T> extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The contained pill's track: solid, or [AppSegmentedControl.glass].
+class _Track extends StatelessWidget {
+  const _Track({required this.glass, required this.child});
+
+  final bool glass;
+  final Widget child;
+
+  static const double _blur = 24;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppSpacing.radiusPill);
+    final track = Container(
+      constraints: const BoxConstraints(
+        minHeight: AppSegmentedControl.pillHeight,
+      ),
+      padding: const EdgeInsets.all(AppSegmentedControl.pillInset),
+      decoration: BoxDecoration(
+        color: glass ? AppColors.glass : AppColors.surfaceRaised,
+        borderRadius: radius,
+        border: glass ? Border.all(color: AppColors.glassBorder) : null,
+      ),
+      child: child,
+    );
+    if (!glass) return track;
+    return ClipRRect(
+      borderRadius: radius,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: _blur, sigmaY: _blur),
+        child: track,
       ),
     );
   }

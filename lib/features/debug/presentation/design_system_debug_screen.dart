@@ -13,6 +13,7 @@ import '../../../shared/widgets/library_row.dart';
 import '../../../shared/widgets/match_fab.dart';
 import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/media_carousel.dart';
+import '../../../shared/widgets/media_hero_carousel.dart';
 import '../../../shared/widgets/metric_card.dart';
 import '../../../shared/widgets/pako_state.dart';
 import '../../../shared/widgets/quiz_tile.dart';
@@ -978,7 +979,7 @@ class _MediaCarouselSection extends StatelessWidget {
             minWidth: 0,
             maxWidth: MediaQuery.sizeOf(context).width,
             alignment: Alignment.centerLeft,
-            child: MediaCarousel.hero(items: _movies, onSaveTap: (item) {}),
+            child: MediaHeroCarousel(items: _movies, onSaveTap: (item) {}),
           ),
         ),
       ],

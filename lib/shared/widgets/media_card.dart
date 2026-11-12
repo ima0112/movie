@@ -64,9 +64,14 @@ class MediaCard extends StatelessWidget {
     this.saveButton,
     this.onTap,
     this.onLongPress,
+    this.width,
   });
 
   final MediaCardSize size;
+
+  /// Overrides the fixed [MediaCardSize] width (the hero narrows on a small
+  /// phone). Ignored by [MediaCardSize.grid].
+  final double? width;
 
   /// Used as the card's accessibility label. Only rendered visually on
   /// [MediaCardSize.hero] — carousel cards show no title or year
@@ -158,7 +163,11 @@ class MediaCard extends StatelessWidget {
       image: true,
       child: size.aspectRatio != null
           ? AspectRatio(aspectRatio: size.aspectRatio!, child: poster)
-          : SizedBox(width: size.width, height: size.height, child: poster),
+          : SizedBox(
+              width: width ?? size.width,
+              height: size.height,
+              child: poster,
+            ),
     );
   }
 }
