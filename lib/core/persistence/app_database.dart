@@ -193,6 +193,38 @@ class SearchHistoryTable extends Table {
   Set<Column> get primaryKey => {query};
 }
 
+/// Home's "Recently viewed" (`docs/SCREENS.md` B1, All tab): the last titles
+/// whose detail was opened, with the small snapshot the section draws without
+/// a network call. One row per `(mediaType, tmdbId)` — re-opening a title
+/// updates [viewedAtMicros] in place — and the repository keeps the table to
+/// its 10 newest rows.
+@DataClassName('RecentlyViewedRow')
+class RecentlyViewedTable extends Table {
+  /// `MediaKey.type`, stored as the enum's name (like `UserMediaEntries`).
+  TextColumn get mediaType => textEnum<MediaType>()();
+
+  /// `MediaKey.tmdbId`.
+  IntColumn get tmdbId => integer()();
+
+  TextColumn get title => text()();
+
+  /// The fully resolved poster URL (as in `UserMediaEntries.posterPath`).
+  TextColumn get posterUrl => text().nullable()();
+
+  RealColumn get voteAverage => real()();
+
+  DateTimeColumn get releaseDate => dateTime().nullable()();
+
+  /// When the detail was opened, in microseconds since the epoch. An integer
+  /// rather than a `DateTimeColumn`: SQLite's datetime storage rounds to
+  /// whole seconds, and two titles opened within a second must still order
+  /// correctly.
+  IntColumn get viewedAtMicros => integer()();
+
+  @override
+  Set<Column> get primaryKey => {mediaType, tmdbId};
+}
+
 /// The app's single SQLite (drift) database.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/persistence/
@@ -210,6 +242,7 @@ class SearchHistoryTable extends Table {
     SearchHistoryTable,
     OnboardingTable,
     SettingsTable,
+    RecentlyViewedTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -226,12 +259,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, and to 7 when [RecentlyViewedTable] was — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -257,6 +290,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 6) {
         await m.createTable(settingsTable);
+      }
+      if (from < 7) {
+        await m.createTable(recentlyViewedTable);
       }
     },
   );

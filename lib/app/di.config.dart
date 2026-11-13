@@ -14,6 +14,8 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:movies/core/data/local/drift_onboarding_repository.dart'
     as _i116;
+import 'package:movies/core/data/local/drift_recently_viewed_repository.dart'
+    as _i433;
 import 'package:movies/core/data/local/drift_settings_repository.dart' as _i448;
 import 'package:movies/core/data/local/drift_taste_profile_repository.dart'
     as _i985;
@@ -32,6 +34,8 @@ import 'package:movies/core/domain/repositories/onboarding_repository.dart'
     as _i725;
 import 'package:movies/core/domain/repositories/person_repository.dart'
     as _i263;
+import 'package:movies/core/domain/repositories/recently_viewed_repository.dart'
+    as _i608;
 import 'package:movies/core/domain/repositories/settings_repository.dart'
     as _i780;
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart'
@@ -74,6 +78,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i824.UserProfileRepository>(
       () => _i311.DriftUserProfileRepository(gh<_i231.AppDatabase>()),
+    );
+    gh.lazySingleton<_i608.RecentlyViewedRepository>(
+      () => _i433.DriftRecentlyViewedRepository(gh<_i231.AppDatabase>()),
     );
     gh.lazySingleton<_i780.SettingsRepository>(
       () => _i448.DriftSettingsRepository(gh<_i231.AppDatabase>()),

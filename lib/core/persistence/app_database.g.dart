@@ -2489,6 +2489,504 @@ class SettingsTableCompanion extends UpdateCompanion<SettingsRow> {
   }
 }
 
+class $RecentlyViewedTableTable extends RecentlyViewedTable
+    with TableInfo<$RecentlyViewedTableTable, RecentlyViewedRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RecentlyViewedTableTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumnWithTypeConverter<MediaType, String> mediaType =
+      GeneratedColumn<String>(
+        'media_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<MediaType>($RecentlyViewedTableTable.$convertermediaType);
+  static const VerificationMeta _tmdbIdMeta = const VerificationMeta('tmdbId');
+  @override
+  late final GeneratedColumn<int> tmdbId = GeneratedColumn<int>(
+    'tmdb_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _posterUrlMeta = const VerificationMeta(
+    'posterUrl',
+  );
+  @override
+  late final GeneratedColumn<String> posterUrl = GeneratedColumn<String>(
+    'poster_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _voteAverageMeta = const VerificationMeta(
+    'voteAverage',
+  );
+  @override
+  late final GeneratedColumn<double> voteAverage = GeneratedColumn<double>(
+    'vote_average',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _releaseDateMeta = const VerificationMeta(
+    'releaseDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> releaseDate = GeneratedColumn<DateTime>(
+    'release_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _viewedAtMicrosMeta = const VerificationMeta(
+    'viewedAtMicros',
+  );
+  @override
+  late final GeneratedColumn<int> viewedAtMicros = GeneratedColumn<int>(
+    'viewed_at_micros',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    mediaType,
+    tmdbId,
+    title,
+    posterUrl,
+    voteAverage,
+    releaseDate,
+    viewedAtMicros,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'recently_viewed_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RecentlyViewedRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('tmdb_id')) {
+      context.handle(
+        _tmdbIdMeta,
+        tmdbId.isAcceptableOrUnknown(data['tmdb_id']!, _tmdbIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tmdbIdMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('poster_url')) {
+      context.handle(
+        _posterUrlMeta,
+        posterUrl.isAcceptableOrUnknown(data['poster_url']!, _posterUrlMeta),
+      );
+    }
+    if (data.containsKey('vote_average')) {
+      context.handle(
+        _voteAverageMeta,
+        voteAverage.isAcceptableOrUnknown(
+          data['vote_average']!,
+          _voteAverageMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_voteAverageMeta);
+    }
+    if (data.containsKey('release_date')) {
+      context.handle(
+        _releaseDateMeta,
+        releaseDate.isAcceptableOrUnknown(
+          data['release_date']!,
+          _releaseDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('viewed_at_micros')) {
+      context.handle(
+        _viewedAtMicrosMeta,
+        viewedAtMicros.isAcceptableOrUnknown(
+          data['viewed_at_micros']!,
+          _viewedAtMicrosMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_viewedAtMicrosMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {mediaType, tmdbId};
+  @override
+  RecentlyViewedRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RecentlyViewedRow(
+      mediaType: $RecentlyViewedTableTable.$convertermediaType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}media_type'],
+        )!,
+      ),
+      tmdbId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tmdb_id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      posterUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}poster_url'],
+      ),
+      voteAverage: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}vote_average'],
+      )!,
+      releaseDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}release_date'],
+      ),
+      viewedAtMicros: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}viewed_at_micros'],
+      )!,
+    );
+  }
+
+  @override
+  $RecentlyViewedTableTable createAlias(String alias) {
+    return $RecentlyViewedTableTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<MediaType, String, String> $convertermediaType =
+      const EnumNameConverter<MediaType>(MediaType.values);
+}
+
+class RecentlyViewedRow extends DataClass
+    implements Insertable<RecentlyViewedRow> {
+  /// `MediaKey.type`, stored as the enum's name (like `UserMediaEntries`).
+  final MediaType mediaType;
+
+  /// `MediaKey.tmdbId`.
+  final int tmdbId;
+  final String title;
+
+  /// The fully resolved poster URL (as in `UserMediaEntries.posterPath`).
+  final String? posterUrl;
+  final double voteAverage;
+  final DateTime? releaseDate;
+
+  /// When the detail was opened, in microseconds since the epoch. An integer
+  /// rather than a `DateTimeColumn`: SQLite's datetime storage rounds to
+  /// whole seconds, and two titles opened within a second must still order
+  /// correctly.
+  final int viewedAtMicros;
+  const RecentlyViewedRow({
+    required this.mediaType,
+    required this.tmdbId,
+    required this.title,
+    this.posterUrl,
+    required this.voteAverage,
+    this.releaseDate,
+    required this.viewedAtMicros,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    {
+      map['media_type'] = Variable<String>(
+        $RecentlyViewedTableTable.$convertermediaType.toSql(mediaType),
+      );
+    }
+    map['tmdb_id'] = Variable<int>(tmdbId);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || posterUrl != null) {
+      map['poster_url'] = Variable<String>(posterUrl);
+    }
+    map['vote_average'] = Variable<double>(voteAverage);
+    if (!nullToAbsent || releaseDate != null) {
+      map['release_date'] = Variable<DateTime>(releaseDate);
+    }
+    map['viewed_at_micros'] = Variable<int>(viewedAtMicros);
+    return map;
+  }
+
+  RecentlyViewedTableCompanion toCompanion(bool nullToAbsent) {
+    return RecentlyViewedTableCompanion(
+      mediaType: Value(mediaType),
+      tmdbId: Value(tmdbId),
+      title: Value(title),
+      posterUrl: posterUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(posterUrl),
+      voteAverage: Value(voteAverage),
+      releaseDate: releaseDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(releaseDate),
+      viewedAtMicros: Value(viewedAtMicros),
+    );
+  }
+
+  factory RecentlyViewedRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RecentlyViewedRow(
+      mediaType: $RecentlyViewedTableTable.$convertermediaType.fromJson(
+        serializer.fromJson<String>(json['mediaType']),
+      ),
+      tmdbId: serializer.fromJson<int>(json['tmdbId']),
+      title: serializer.fromJson<String>(json['title']),
+      posterUrl: serializer.fromJson<String?>(json['posterUrl']),
+      voteAverage: serializer.fromJson<double>(json['voteAverage']),
+      releaseDate: serializer.fromJson<DateTime?>(json['releaseDate']),
+      viewedAtMicros: serializer.fromJson<int>(json['viewedAtMicros']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'mediaType': serializer.toJson<String>(
+        $RecentlyViewedTableTable.$convertermediaType.toJson(mediaType),
+      ),
+      'tmdbId': serializer.toJson<int>(tmdbId),
+      'title': serializer.toJson<String>(title),
+      'posterUrl': serializer.toJson<String?>(posterUrl),
+      'voteAverage': serializer.toJson<double>(voteAverage),
+      'releaseDate': serializer.toJson<DateTime?>(releaseDate),
+      'viewedAtMicros': serializer.toJson<int>(viewedAtMicros),
+    };
+  }
+
+  RecentlyViewedRow copyWith({
+    MediaType? mediaType,
+    int? tmdbId,
+    String? title,
+    Value<String?> posterUrl = const Value.absent(),
+    double? voteAverage,
+    Value<DateTime?> releaseDate = const Value.absent(),
+    int? viewedAtMicros,
+  }) => RecentlyViewedRow(
+    mediaType: mediaType ?? this.mediaType,
+    tmdbId: tmdbId ?? this.tmdbId,
+    title: title ?? this.title,
+    posterUrl: posterUrl.present ? posterUrl.value : this.posterUrl,
+    voteAverage: voteAverage ?? this.voteAverage,
+    releaseDate: releaseDate.present ? releaseDate.value : this.releaseDate,
+    viewedAtMicros: viewedAtMicros ?? this.viewedAtMicros,
+  );
+  RecentlyViewedRow copyWithCompanion(RecentlyViewedTableCompanion data) {
+    return RecentlyViewedRow(
+      mediaType: data.mediaType.present ? data.mediaType.value : this.mediaType,
+      tmdbId: data.tmdbId.present ? data.tmdbId.value : this.tmdbId,
+      title: data.title.present ? data.title.value : this.title,
+      posterUrl: data.posterUrl.present ? data.posterUrl.value : this.posterUrl,
+      voteAverage: data.voteAverage.present
+          ? data.voteAverage.value
+          : this.voteAverage,
+      releaseDate: data.releaseDate.present
+          ? data.releaseDate.value
+          : this.releaseDate,
+      viewedAtMicros: data.viewedAtMicros.present
+          ? data.viewedAtMicros.value
+          : this.viewedAtMicros,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecentlyViewedRow(')
+          ..write('mediaType: $mediaType, ')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('title: $title, ')
+          ..write('posterUrl: $posterUrl, ')
+          ..write('voteAverage: $voteAverage, ')
+          ..write('releaseDate: $releaseDate, ')
+          ..write('viewedAtMicros: $viewedAtMicros')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    mediaType,
+    tmdbId,
+    title,
+    posterUrl,
+    voteAverage,
+    releaseDate,
+    viewedAtMicros,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RecentlyViewedRow &&
+          other.mediaType == this.mediaType &&
+          other.tmdbId == this.tmdbId &&
+          other.title == this.title &&
+          other.posterUrl == this.posterUrl &&
+          other.voteAverage == this.voteAverage &&
+          other.releaseDate == this.releaseDate &&
+          other.viewedAtMicros == this.viewedAtMicros);
+}
+
+class RecentlyViewedTableCompanion extends UpdateCompanion<RecentlyViewedRow> {
+  final Value<MediaType> mediaType;
+  final Value<int> tmdbId;
+  final Value<String> title;
+  final Value<String?> posterUrl;
+  final Value<double> voteAverage;
+  final Value<DateTime?> releaseDate;
+  final Value<int> viewedAtMicros;
+  final Value<int> rowid;
+  const RecentlyViewedTableCompanion({
+    this.mediaType = const Value.absent(),
+    this.tmdbId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.posterUrl = const Value.absent(),
+    this.voteAverage = const Value.absent(),
+    this.releaseDate = const Value.absent(),
+    this.viewedAtMicros = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RecentlyViewedTableCompanion.insert({
+    required MediaType mediaType,
+    required int tmdbId,
+    required String title,
+    this.posterUrl = const Value.absent(),
+    required double voteAverage,
+    this.releaseDate = const Value.absent(),
+    required int viewedAtMicros,
+    this.rowid = const Value.absent(),
+  }) : mediaType = Value(mediaType),
+       tmdbId = Value(tmdbId),
+       title = Value(title),
+       voteAverage = Value(voteAverage),
+       viewedAtMicros = Value(viewedAtMicros);
+  static Insertable<RecentlyViewedRow> custom({
+    Expression<String>? mediaType,
+    Expression<int>? tmdbId,
+    Expression<String>? title,
+    Expression<String>? posterUrl,
+    Expression<double>? voteAverage,
+    Expression<DateTime>? releaseDate,
+    Expression<int>? viewedAtMicros,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (mediaType != null) 'media_type': mediaType,
+      if (tmdbId != null) 'tmdb_id': tmdbId,
+      if (title != null) 'title': title,
+      if (posterUrl != null) 'poster_url': posterUrl,
+      if (voteAverage != null) 'vote_average': voteAverage,
+      if (releaseDate != null) 'release_date': releaseDate,
+      if (viewedAtMicros != null) 'viewed_at_micros': viewedAtMicros,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RecentlyViewedTableCompanion copyWith({
+    Value<MediaType>? mediaType,
+    Value<int>? tmdbId,
+    Value<String>? title,
+    Value<String?>? posterUrl,
+    Value<double>? voteAverage,
+    Value<DateTime?>? releaseDate,
+    Value<int>? viewedAtMicros,
+    Value<int>? rowid,
+  }) {
+    return RecentlyViewedTableCompanion(
+      mediaType: mediaType ?? this.mediaType,
+      tmdbId: tmdbId ?? this.tmdbId,
+      title: title ?? this.title,
+      posterUrl: posterUrl ?? this.posterUrl,
+      voteAverage: voteAverage ?? this.voteAverage,
+      releaseDate: releaseDate ?? this.releaseDate,
+      viewedAtMicros: viewedAtMicros ?? this.viewedAtMicros,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (mediaType.present) {
+      map['media_type'] = Variable<String>(
+        $RecentlyViewedTableTable.$convertermediaType.toSql(mediaType.value),
+      );
+    }
+    if (tmdbId.present) {
+      map['tmdb_id'] = Variable<int>(tmdbId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (posterUrl.present) {
+      map['poster_url'] = Variable<String>(posterUrl.value);
+    }
+    if (voteAverage.present) {
+      map['vote_average'] = Variable<double>(voteAverage.value);
+    }
+    if (releaseDate.present) {
+      map['release_date'] = Variable<DateTime>(releaseDate.value);
+    }
+    if (viewedAtMicros.present) {
+      map['viewed_at_micros'] = Variable<int>(viewedAtMicros.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecentlyViewedTableCompanion(')
+          ..write('mediaType: $mediaType, ')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('title: $title, ')
+          ..write('posterUrl: $posterUrl, ')
+          ..write('voteAverage: $voteAverage, ')
+          ..write('releaseDate: $releaseDate, ')
+          ..write('viewedAtMicros: $viewedAtMicros, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2506,6 +3004,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $SettingsTableTable settingsTable = $SettingsTableTable(this);
+  late final $RecentlyViewedTableTable recentlyViewedTable =
+      $RecentlyViewedTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2517,6 +3017,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     searchHistoryTable,
     onboardingTable,
     settingsTable,
+    recentlyViewedTable,
   ];
 }
 
@@ -3911,6 +4412,278 @@ typedef $$SettingsTableTableProcessedTableManager =
       SettingsRow,
       PrefetchHooks Function()
     >;
+typedef $$RecentlyViewedTableTableCreateCompanionBuilder =
+    RecentlyViewedTableCompanion Function({
+      required MediaType mediaType,
+      required int tmdbId,
+      required String title,
+      Value<String?> posterUrl,
+      required double voteAverage,
+      Value<DateTime?> releaseDate,
+      required int viewedAtMicros,
+      Value<int> rowid,
+    });
+typedef $$RecentlyViewedTableTableUpdateCompanionBuilder =
+    RecentlyViewedTableCompanion Function({
+      Value<MediaType> mediaType,
+      Value<int> tmdbId,
+      Value<String> title,
+      Value<String?> posterUrl,
+      Value<double> voteAverage,
+      Value<DateTime?> releaseDate,
+      Value<int> viewedAtMicros,
+      Value<int> rowid,
+    });
+
+class $$RecentlyViewedTableTableFilterComposer
+    extends Composer<_$AppDatabase, $RecentlyViewedTableTable> {
+  $$RecentlyViewedTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnWithTypeConverterFilters<MediaType, MediaType, String> get mediaType =>
+      $composableBuilder(
+        column: $table.mediaType,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<int> get tmdbId => $composableBuilder(
+    column: $table.tmdbId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get posterUrl => $composableBuilder(
+    column: $table.posterUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get voteAverage => $composableBuilder(
+    column: $table.voteAverage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get releaseDate => $composableBuilder(
+    column: $table.releaseDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get viewedAtMicros => $composableBuilder(
+    column: $table.viewedAtMicros,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RecentlyViewedTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $RecentlyViewedTableTable> {
+  $$RecentlyViewedTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get mediaType => $composableBuilder(
+    column: $table.mediaType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get tmdbId => $composableBuilder(
+    column: $table.tmdbId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get posterUrl => $composableBuilder(
+    column: $table.posterUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get voteAverage => $composableBuilder(
+    column: $table.voteAverage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get releaseDate => $composableBuilder(
+    column: $table.releaseDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get viewedAtMicros => $composableBuilder(
+    column: $table.viewedAtMicros,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RecentlyViewedTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RecentlyViewedTableTable> {
+  $$RecentlyViewedTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumnWithTypeConverter<MediaType, String> get mediaType =>
+      $composableBuilder(column: $table.mediaType, builder: (column) => column);
+
+  GeneratedColumn<int> get tmdbId =>
+      $composableBuilder(column: $table.tmdbId, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get posterUrl =>
+      $composableBuilder(column: $table.posterUrl, builder: (column) => column);
+
+  GeneratedColumn<double> get voteAverage => $composableBuilder(
+    column: $table.voteAverage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get releaseDate => $composableBuilder(
+    column: $table.releaseDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get viewedAtMicros => $composableBuilder(
+    column: $table.viewedAtMicros,
+    builder: (column) => column,
+  );
+}
+
+class $$RecentlyViewedTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RecentlyViewedTableTable,
+          RecentlyViewedRow,
+          $$RecentlyViewedTableTableFilterComposer,
+          $$RecentlyViewedTableTableOrderingComposer,
+          $$RecentlyViewedTableTableAnnotationComposer,
+          $$RecentlyViewedTableTableCreateCompanionBuilder,
+          $$RecentlyViewedTableTableUpdateCompanionBuilder,
+          (
+            RecentlyViewedRow,
+            BaseReferences<
+              _$AppDatabase,
+              $RecentlyViewedTableTable,
+              RecentlyViewedRow
+            >,
+          ),
+          RecentlyViewedRow,
+          PrefetchHooks Function()
+        > {
+  $$RecentlyViewedTableTableTableManager(
+    _$AppDatabase db,
+    $RecentlyViewedTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RecentlyViewedTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RecentlyViewedTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$RecentlyViewedTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<MediaType> mediaType = const Value.absent(),
+                Value<int> tmdbId = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> posterUrl = const Value.absent(),
+                Value<double> voteAverage = const Value.absent(),
+                Value<DateTime?> releaseDate = const Value.absent(),
+                Value<int> viewedAtMicros = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RecentlyViewedTableCompanion(
+                mediaType: mediaType,
+                tmdbId: tmdbId,
+                title: title,
+                posterUrl: posterUrl,
+                voteAverage: voteAverage,
+                releaseDate: releaseDate,
+                viewedAtMicros: viewedAtMicros,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required MediaType mediaType,
+                required int tmdbId,
+                required String title,
+                Value<String?> posterUrl = const Value.absent(),
+                required double voteAverage,
+                Value<DateTime?> releaseDate = const Value.absent(),
+                required int viewedAtMicros,
+                Value<int> rowid = const Value.absent(),
+              }) => RecentlyViewedTableCompanion.insert(
+                mediaType: mediaType,
+                tmdbId: tmdbId,
+                title: title,
+                posterUrl: posterUrl,
+                voteAverage: voteAverage,
+                releaseDate: releaseDate,
+                viewedAtMicros: viewedAtMicros,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$RecentlyViewedTableTable, RecentlyViewedRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $RecentlyViewedTableTable,
+                    RecentlyViewedRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RecentlyViewedTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RecentlyViewedTableTable,
+      RecentlyViewedRow,
+      $$RecentlyViewedTableTableFilterComposer,
+      $$RecentlyViewedTableTableOrderingComposer,
+      $$RecentlyViewedTableTableAnnotationComposer,
+      $$RecentlyViewedTableTableCreateCompanionBuilder,
+      $$RecentlyViewedTableTableUpdateCompanionBuilder,
+      (
+        RecentlyViewedRow,
+        BaseReferences<
+          _$AppDatabase,
+          $RecentlyViewedTableTable,
+          RecentlyViewedRow
+        >,
+      ),
+      RecentlyViewedRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3927,4 +4700,6 @@ class $AppDatabaseManager {
       $$OnboardingTableTableTableManager(_db, _db.onboardingTable);
   $$SettingsTableTableTableManager get settingsTable =>
       $$SettingsTableTableTableManager(_db, _db.settingsTable);
+  $$RecentlyViewedTableTableTableManager get recentlyViewedTable =>
+      $$RecentlyViewedTableTableTableManager(_db, _db.recentlyViewedTable);
 }
