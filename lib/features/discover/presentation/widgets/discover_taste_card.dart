@@ -9,14 +9,11 @@ import '../../../../core/domain/entities/taste_profile.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../l10n/l10n_extension.dart';
+import 'discover_taste_card_body.dart';
 
-/// B1's taste-completion card (All tab): a full-width, quiet invitation in the
-/// feed to tell the app what you like (→ C5). It is only there while the app
+/// B1's taste-completion card (All tab): a full-width invitation in the feed to
+/// tell the app what you like (→ C5) — see [DiscoverTasteCardBody] for its look. It is only there while the app
 /// has nothing to personalise with — no usable taste profile *and* an empty
 /// My List — and disappears the moment either exists.
 ///
@@ -75,73 +72,8 @@ class _DiscoverTasteCardState extends State<DiscoverTasteCard> {
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.screenMargin,
         ),
-        child: _TasteCardBody(onTap: () => context.push(AppRoutes.myTastes)),
-      ),
-    );
-  }
-}
-
-class _TasteCardBody extends StatelessWidget {
-  const _TasteCardBody({required this.onTap});
-
-  final VoidCallback onTap;
-
-  static const double _iconSize = 44;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Semantics(
-      button: true,
-      label: '${l10n.discoverTasteCardTitle}. ${l10n.discoverTasteCardBody}',
-      excludeSemantics: true,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.cardPadding),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-            border: Border.all(color: AppColors.lineStrong),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.accentDeep.withValues(alpha: 0.55),
-                AppColors.surfaceRaised,
-              ],
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: _iconSize,
-                height: _iconSize,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.accent,
-                ),
-                child: const Icon(AppIcons.match, color: AppColors.onAccent),
-              ),
-              const SizedBox(width: AppSpacing.lg),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.discoverTasteCardTitle, style: AppTextStyles.h3),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      l10n.discoverTasteCardBody,
-                      style: AppTextStyles.bodySm.copyWith(
-                        color: AppColors.inkMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              const Icon(AppIcons.chevronRight, color: AppColors.accent),
-            ],
-          ),
+        child: DiscoverTasteCardBody(
+          onPickTastes: () => context.push(AppRoutes.myTastes),
         ),
       ),
     );

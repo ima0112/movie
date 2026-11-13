@@ -340,11 +340,12 @@
   "carouselSectionFinishedShows": "Finished shows",
   "carouselSectionLatestTrailers": "Latest trailers",
   "carouselSectionRecentlyViewed": "Recently viewed",
-  "discoverTasteCardTitle": "Make Home yours",
+  "discoverTasteCardTitle": "Recommendations tailored to you",
   "@discoverTasteCardTitle": {
     "description": "Title of B1's taste-completion card, shown on the All tab while there is no taste profile and My List is empty (docs/SCREENS.md B1)."
   },
-  "discoverTasteCardBody": "Tell us what you like and we'll fill this page with picks for you.",
+  "discoverTasteCardEyebrow": "For you",
+  "discoverTasteCardCta": "Choose my tastes",
   "sectionListingSortTitle": "Sort by",
   "@sectionListingSortTitle": {
     "description": "Title of the sheet that re-sorts a See all listing (docs/SCREENS.md C1b)."

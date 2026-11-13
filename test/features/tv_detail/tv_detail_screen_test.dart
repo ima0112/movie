@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../../helpers/settle_home.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
@@ -59,7 +60,7 @@ void main() {
   Future<void> openTheBoys(WidgetTester tester) async {
     appRouter.go('/');
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     unawaited(appRouter.push(AppRoutes.tvDetail(106)));
     await tester.pumpAndSettle();
   }

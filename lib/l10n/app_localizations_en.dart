@@ -399,11 +399,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionRecentlyViewed => 'Recently viewed';
 
   @override
-  String get discoverTasteCardTitle => 'Make Home yours';
+  String get discoverTasteCardTitle => 'Recommendations tailored to you';
 
   @override
-  String get discoverTasteCardBody =>
-      'Tell us what you like and we\'ll fill this page with picks for you.';
+  String get discoverTasteCardEyebrow => 'For you';
+
+  @override
+  String get discoverTasteCardCta => 'Choose my tastes';
 
   @override
   String get sectionListingSortTitle => 'Sort by';

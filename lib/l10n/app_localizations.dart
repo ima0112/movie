@@ -815,14 +815,20 @@ abstract class AppLocalizations {
   /// Title of B1's taste-completion card, shown on the All tab while there is no taste profile and My List is empty (docs/SCREENS.md B1).
   ///
   /// In en, this message translates to:
-  /// **'Make Home yours'**
+  /// **'Recommendations tailored to you'**
   String get discoverTasteCardTitle;
 
-  /// No description provided for @discoverTasteCardBody.
+  /// No description provided for @discoverTasteCardEyebrow.
   ///
   /// In en, this message translates to:
-  /// **'Tell us what you like and we\'ll fill this page with picks for you.'**
-  String get discoverTasteCardBody;
+  /// **'For you'**
+  String get discoverTasteCardEyebrow;
+
+  /// No description provided for @discoverTasteCardCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose my tastes'**
+  String get discoverTasteCardCta;
 
   /// Title of the sheet that re-sorts a See all listing (docs/SCREENS.md C1b).
   ///

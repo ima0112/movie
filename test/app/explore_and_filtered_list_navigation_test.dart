@@ -18,6 +18,7 @@ import 'package:movies/features/explore/presentation/widgets/explore_search_fiel
 import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';
+import '../helpers/settle_home.dart';
 import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
 import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/shared/widgets/explore_filter_sheet.dart';
@@ -76,12 +77,12 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
 
     // Discover: the look-alike field.
     // The taller hero can push the bar below the fold of the test screen.
     await tester.ensureVisible(find.byType(DiscoverSearchField));
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     await tester.tap(find.byType(DiscoverSearchField));
     await tester.pumpAndSettle();
     expect(find.byType(ExploreSearchField), findsOneWidget);
@@ -91,10 +92,10 @@ void main() {
     FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
     appRouter.go('/');
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     // The taller hero can push the bar below the fold of the test screen.
     await tester.ensureVisible(find.byType(DiscoverSearchField));
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     await tester.tap(find.byType(DiscoverSearchField));
     await tester.pumpAndSettle();
     expect(searchFieldHasFocus(tester), isTrue);
@@ -105,7 +106,7 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
 
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
@@ -117,7 +118,7 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
 
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
@@ -156,7 +157,7 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
 
@@ -199,7 +200,7 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
   }
@@ -284,7 +285,7 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
 
@@ -353,7 +354,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
 
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
@@ -376,7 +377,7 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
 
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
@@ -402,7 +403,7 @@ void main() {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
 
     final seeAll = find.text('See all');
     await tester.scrollUntilVisible(
@@ -410,7 +411,7 @@ void main() {
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     await tester.tap(seeAll.first);
     await tester.pumpAndSettle();
 

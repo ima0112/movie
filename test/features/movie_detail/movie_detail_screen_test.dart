@@ -20,6 +20,7 @@ import 'package:movies/shared/widgets/scrim_back_button.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_action_row.dart';
 import 'package:movies/shared/widgets/media_card.dart';
+import '../../helpers/settle_home.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 import 'package:movies/shared/widgets/media_detail/media_similar_section.dart';
 import 'package:movies/shared/widgets/media_detail/media_synopsis_section.dart';
@@ -66,7 +67,7 @@ void main() {
     // `MovieDetailCubit` this reset is about to dispose).
     appRouter.go('/');
     await tester.pumpWidget(const PakoTvApp());
-    await tester.pumpAndSettle();
+    await settleHome(tester);
     await tester.tap(find.text('Dune: Part Two').first);
     await tester.pumpAndSettle();
   }
