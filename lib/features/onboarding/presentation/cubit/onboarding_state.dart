@@ -20,7 +20,7 @@ class OnboardingState {
   const OnboardingState({
     this.step = OnboardingStep.welcome,
     this.displayName = '',
-    this.initialColor,
+    this.initialColor = _defaultColor,
     this.likedGenres = const {},
     this.vetoedGenres = const {},
   });
@@ -28,12 +28,14 @@ class OnboardingState {
   final OnboardingStep step;
   final String displayName;
 
-  /// One of `AppColors.profileColors`' 4 presets, as a 32-bit ARGB int
-  /// — same representation `UserProfile.initialColor` itself uses.
-  /// `null` until [OnboardingCubit.setDisplayName] auto-picks the first
-  /// preset, the same "no color ever picked → default to the first
-  /// swatch" behavior `EditProfileSheet`'s own "Save" already has.
+  /// One of `AppColors.profileColors`' six colors, as a 32-bit ARGB int — the
+  /// same representation `UserProfile.initialColor` itself uses. Amber (the
+  /// first) from the start, so the avatar and the picker show a choice before
+  /// the first key.
   final int? initialColor;
+
+  /// `AppColors.profileAmber`.
+  static const int _defaultColor = 0xFFF2B441;
 
   final Set<Genre> likedGenres;
   final Set<Genre> vetoedGenres;

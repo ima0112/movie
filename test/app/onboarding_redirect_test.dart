@@ -103,7 +103,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField), 'Dani');
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Next'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(find.text('What do you like?'), findsOneWidget);

@@ -650,10 +650,28 @@ abstract class AppLocalizations {
   /// **'What\'s your name?'**
   String get onboardingNameHeadline;
 
+  /// No description provided for @onboardingNameEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile'**
+  String get onboardingNameEyebrow;
+
+  /// The word inside onboardingNameHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact word as a substring of the headline.
+  ///
+  /// In en, this message translates to:
+  /// **'name'**
+  String get onboardingNameHighlight;
+
+  /// The name step's button (docs/SCREENS.md A2) — disabled until the name is valid.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onboardingNameContinue;
+
   /// No description provided for @onboardingNameBody.
   ///
   /// In en, this message translates to:
-  /// **'That\'s what I\'ll call you, and how others will see you in rooms.'**
+  /// **'That\'s what you\'ll be called in the app, and how others will see you in rooms.'**
   String get onboardingNameBody;
 
   /// No description provided for @onboardingNameHint.
@@ -661,6 +679,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your name'**
   String get onboardingNameHint;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileColorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get profileColorLabel;
 
   /// No description provided for @onboardingIntroDiscoverHeadline.
   ///

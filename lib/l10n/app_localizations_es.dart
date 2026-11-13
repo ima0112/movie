@@ -309,11 +309,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboardingNameHeadline => '¿Cómo te llamas?';
 
   @override
+  String get onboardingNameEyebrow => 'Tu perfil';
+
+  @override
+  String get onboardingNameHighlight => 'llamas';
+
+  @override
+  String get onboardingNameContinue => 'Continuar';
+
+  @override
   String get onboardingNameBody =>
-      'Así te llamaré, y así te verán los demás en las salas.';
+      'Así te llamarás en la app, y así te verán los demás en las salas.';
 
   @override
   String get onboardingNameHint => 'Tu nombre';
+
+  @override
+  String get profileNameLabel => 'Nombre';
+
+  @override
+  String get profileColorLabel => 'Color';
 
   @override
   String get onboardingIntroDiscoverHeadline =>
