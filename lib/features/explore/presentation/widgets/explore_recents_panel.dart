@@ -197,20 +197,41 @@ class _Header extends StatelessWidget {
 /// The scrolling rows. A [Scrollbar] insets its track by the ambient
 /// `MediaQuery` padding — which on a root tab includes the floating tab bar —
 /// so that padding is removed here, or the thumb would stop short of the end.
-class _RecentsList extends StatelessWidget {
+///
+/// It has its **own** [ScrollController]: without one, the scrollbar and the
+/// list both fall back to the `PrimaryScrollController`, which the page
+/// behind the panel is already attached to — two positions on one primary
+/// controller, which the scrollbar rejects.
+class _RecentsList extends StatefulWidget {
   const _RecentsList({required this.recents});
 
   final List<String> recents;
 
   @override
+  State<_RecentsList> createState() => _RecentsListState();
+}
+
+class _RecentsListState extends State<_RecentsList> {
+  final _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cubit = context.read<ExploreCubit>();
+    final recents = widget.recents;
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
       removeBottom: true,
       child: Scrollbar(
+        controller: _controller,
         child: ListView.builder(
+          controller: _controller,
           padding: EdgeInsets.zero,
           itemExtent: RecentSearchRow.height,
           itemCount: recents.length,

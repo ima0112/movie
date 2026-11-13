@@ -268,6 +268,28 @@ void main() {
     expect(MediaQuery.paddingOf(scrollbar).top, 0);
   });
 
+  testWidgets('the list has its own scroll controller, not the primary one the '
+      'page behind is attached to (two positions would break the '
+      'scrollbar)', (tester) async {
+    await pump(tester, recents: many, height: 900);
+    await focusField(tester);
+    await settle(tester);
+
+    final scrollbar = tester.widget<Scrollbar>(find.byType(Scrollbar));
+    final list = tester.widget<ListView>(find.byType(ListView));
+    expect(scrollbar.controller, isNotNull);
+    expect(list.controller, same(scrollbar.controller));
+    expect(
+      scrollbar.controller,
+      isNot(PrimaryScrollController.of(tester.element(find.byType(Scrollbar)))),
+    );
+
+    // Scrolling it raises nothing.
+    await tester.drag(find.byType(ListView), const Offset(0, -200));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('the × removes a row; tapping a row runs that search', (
     tester,
   ) async {
