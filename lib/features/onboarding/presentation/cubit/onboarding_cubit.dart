@@ -49,23 +49,24 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   void next() {
     final nextIndex = state.step.index + 1;
     if (nextIndex >= OnboardingStep.values.length) return;
-    // Step 1 (name) is the one required step — `docs/SCREENS.md` A2:
-    // "required, no 'Skip'" — so `next()` itself refuses to leave it
-    // while invalid, the same guarantee the real screen's own disabled
-    // "Next" button would give, just enforced here too so nothing can
-    // bypass it.
+    // The name step is the one required step — `docs/SCREENS.md` A2:
+    // "required, no 'Skip'" — so `next()` itself refuses to leave it while
+    // invalid, the same guarantee the real screen's own disabled button
+    // gives, just enforced here too so nothing can bypass it.
     if (state.step == OnboardingStep.name && !state.isNameValid) return;
     emit(state.copyWith(step: OnboardingStep.values[nextIndex]));
   }
 
-  /// "Skip" on either intro slide — jumps straight to the (required) name
-  /// step. A no-op anywhere else.
+  /// "Skip" on either intro slide — jumps past the pair, straight to the first
+  /// genre step ("Make it yours"). The name was already asked (it comes right
+  /// after the welcome), so there is nothing required left to jump over. A
+  /// no-op anywhere else.
   void skipIntro() {
     if (state.step != OnboardingStep.introDiscover &&
         state.step != OnboardingStep.introSurprise) {
       return;
     }
-    emit(state.copyWith(step: OnboardingStep.name));
+    emit(state.copyWith(step: OnboardingStep.likedGenres));
   }
 
   void back() {

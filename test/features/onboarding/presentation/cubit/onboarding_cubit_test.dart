@@ -123,9 +123,7 @@ void main() {
     });
 
     test('next() refuses to leave the name step while invalid', () {
-      cubit.next(); // welcome -> introDiscover
-      cubit.next(); // -> introSurprise
-      cubit.next(); // -> name
+      cubit.next(); // welcome -> name
       expect(cubit.state.step, OnboardingStep.name);
 
       cubit.setDisplayName('A');
@@ -134,28 +132,45 @@ void main() {
 
       cubit.setDisplayName('Al');
       cubit.next();
-      expect(cubit.state.step, OnboardingStep.likedGenres);
+      expect(cubit.state.step, OnboardingStep.introDiscover);
     });
 
-    test('welcome leads through both intro slides to the name step', () {
+    test('the name comes right after the welcome, then the two intro slides, '
+        'then the genre steps', () {
       expect(cubit.state.step, OnboardingStep.welcome);
+      cubit.next();
+      expect(cubit.state.step, OnboardingStep.name);
+      cubit.setDisplayName('Dani');
       cubit.next();
       expect(cubit.state.step, OnboardingStep.introDiscover);
       cubit.next();
       expect(cubit.state.step, OnboardingStep.introSurprise);
       cubit.next();
-      expect(cubit.state.step, OnboardingStep.name);
+      expect(cubit.state.step, OnboardingStep.likedGenres);
+      cubit.next();
+      expect(cubit.state.step, OnboardingStep.vetoedGenres);
     });
 
-    test('skipIntro() jumps from the first slide to the name step', () {
+    test('skipIntro() jumps from the first slide to the first genre step', () {
+      cubit.next();
+      cubit.setDisplayName('Dani');
       cubit.next(); // introDiscover
       cubit.skipIntro();
-      expect(cubit.state.step, OnboardingStep.name);
+      expect(cubit.state.step, OnboardingStep.likedGenres);
     });
 
-    test('skipIntro() jumps from the second slide to the name step', () {
+    test('skipIntro() jumps from the second slide to the first genre step', () {
+      cubit.next();
+      cubit.setDisplayName('Dani');
       cubit.next();
       cubit.next(); // introSurprise
+      cubit.skipIntro();
+      expect(cubit.state.step, OnboardingStep.likedGenres);
+    });
+
+    test('there is no way past the name step without a valid name — not even '
+        'through skipIntro()', () {
+      cubit.next(); // name
       cubit.skipIntro();
       expect(cubit.state.step, OnboardingStep.name);
     });

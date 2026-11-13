@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 import 'name_step.dart';
+import 'onboarding_pager_dots.dart';
 
 /// Binds [NameStep] (pure presentation) to `OnboardingCubit` — scoped to
 /// exactly the 3 fields it reads (CLAUDE.md rule 9), so typing a color
@@ -27,6 +28,10 @@ class OnboardingNameStep extends StatelessWidget {
           onNameChanged: cubit.setDisplayName,
           onColorChanged: cubit.setInitialColor,
           onNext: cubit.next,
+          footerTop: const OnboardingPagerDots(
+            count: OnboardingPagerDots.total,
+            activeIndex: OnboardingPagerDots.nameDot,
+          ),
         );
       },
     );

@@ -11,7 +11,6 @@ import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import 'genre_step_headline.dart';
 import 'onboarding_glow_background.dart';
-import 'onboarding_intro_slide.dart';
 import 'onboarding_pager_dots.dart';
 import 'step_transition.dart';
 
@@ -119,8 +118,8 @@ class GenreChipsStep extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 const OnboardingPagerDots(
-                  count: OnboardingIntroSlide.dotCount,
-                  activeIndex: 3,
+                  count: OnboardingPagerDots.total,
+                  activeIndex: OnboardingPagerDots.likedDot,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(AppSpacing.xxl),

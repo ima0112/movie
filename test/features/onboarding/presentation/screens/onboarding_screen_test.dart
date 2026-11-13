@@ -28,6 +28,8 @@ import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/domain/repositories/user_profile_repository.dart';
 import 'package:movies/features/onboarding/presentation/widgets/poster_wall.dart';
+import 'package:movies/features/onboarding/presentation/widgets/onboarding_pager_dots.dart';
+import 'package:movies/shared/widgets/app_buttons.dart';
 
 /// Only `getPosterWallItems` matters for these tests (the welcome
 /// step's own poster fetch) — every other method is unreachable from
@@ -119,6 +121,16 @@ void main() {
     );
   });
 
+  /// Welcome -> the name step (typed and confirmed) -> the first intro slide.
+  Future<void> throughName(WidgetTester tester) async {
+    await tester.tap(find.text('Get started'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Dani');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('picking a genre then finishing shows the "Tastes saved" '
       'snackbar and actually persists a TasteProfile', (tester) async {
     appRouter.go('/');
@@ -126,16 +138,11 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    await tester.tap(find.text('Get started'));
-    await tester.pumpAndSettle();
+    await throughName(tester);
     // The two intro slides: Next, Next.
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Dani');
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(find.text('What do you like?'), findsOneWidget);
@@ -163,7 +170,7 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 1));
   });
 
-  testWidgets('Skip on the first intro slide lands on the name step', (
+  testWidgets('Skip on the first intro slide lands on "Make it yours"', (
     tester,
   ) async {
     appRouter.go('/');
@@ -171,16 +178,15 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    await tester.tap(find.text('Get started'));
-    await tester.pumpAndSettle();
+    await throughName(tester);
     expect(find.text('Find what to watch\nin seconds'), findsOneWidget);
 
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
-    expect(find.byType(TextField), findsOneWidget); // the name field
+    expect(find.text('What do you like?'), findsOneWidget);
   });
 
-  testWidgets('Skip on the second intro slide lands on the name step', (
+  testWidgets('Skip on the second intro slide lands on "Make it yours"', (
     tester,
   ) async {
     appRouter.go('/');
@@ -188,15 +194,82 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    await tester.tap(find.text('Get started'));
-    await tester.pumpAndSettle();
+    await throughName(tester);
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
     expect(find.text('No idea? Surprise me'), findsOneWidget);
 
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
-    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('What do you like?'), findsOneWidget);
+  });
+
+  testWidgets('right after the welcome comes the required name step: no Skip, '
+      'Continue disabled until the name is valid', (tester) async {
+    appRouter.go('/');
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.text('Get started'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('YOUR PROFILE'), findsOneWidget);
+    expect(find.text('Skip'), findsNothing);
+    expect(
+      tester.widget<AccentButton>(find.byType(AccentButton)).isDisabled,
+      isTrue,
+    );
+
+    await tester.enterText(find.byType(TextField), 'D');
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<AccentButton>(find.byType(AccentButton)).isDisabled,
+      isTrue,
+    );
+
+    await tester.enterText(find.byType(TextField), 'Dani');
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<AccentButton>(find.byType(AccentButton)).isDisabled,
+      isFalse,
+    );
+    // The avatar shows the initial.
+    expect(find.text('D'), findsOneWidget);
+  });
+
+  testWidgets('the pagination dots run through the five steps after the '
+      'welcome: name, two slides, the genres', (tester) async {
+    appRouter.go('/');
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    int activeDot() {
+      final dots = tester.widget<OnboardingPagerDots>(
+        find.byType(OnboardingPagerDots),
+      );
+      expect(dots.count, 5);
+      return dots.activeIndex;
+    }
+
+    await tester.tap(find.text('Get started'));
+    await tester.pumpAndSettle();
+    expect(activeDot(), 0); // name
+    await tester.enterText(find.byType(TextField), 'Dani');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(activeDot(), 1); // slide 1
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(activeDot(), 2); // slide 2
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(activeDot(), 3); // make it yours
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(activeDot(), 4); // never
   });
 
   testWidgets('a failed poster fetch on welcome (offline) falls back to '
