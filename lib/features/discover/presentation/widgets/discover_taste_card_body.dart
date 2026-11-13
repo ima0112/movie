@@ -103,6 +103,7 @@ class DiscoverTasteCardBody extends StatelessWidget {
                     AccentButton(
                       label: l10n.discoverTasteCardCta,
                       fullWidth: false,
+                      dense: true,
                       onTap: onPickTastes,
                     ),
                   ],
