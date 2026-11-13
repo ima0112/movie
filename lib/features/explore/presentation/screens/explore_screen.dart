@@ -15,12 +15,14 @@ import '../cubit/explore_browse_cubit.dart';
 import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
 import '../widgets/explore_content.dart';
+import '../widgets/explore_recents_panel.dart';
 import '../widgets/explore_header.dart';
 
 /// Explore (B2) — `docs/SCREENS.md` B2.
 ///
 /// Thin per CLAUDE.md rule 11: provides the Cubit and assembles
-/// `ExploreHeader`/`ExploreContent`, each carrying its own
+/// `ExploreSearchBar`/`ExploreSegmentedControl`/`ExploreContent` and the
+/// recent searches panel, each carrying its own
 /// rebuild-granularity rationale (CLAUDE.md rule 9) in its own doc
 /// comment.
 class ExploreScreen extends StatefulWidget {
@@ -121,8 +123,28 @@ class _ExploreView extends StatelessWidget {
           bottom: false,
           child: Column(
             children: [
-              ExploreHeader(searchFocus: searchFocus, focusToken: focusToken),
-              Expanded(child: ExploreContent(searchFocus: searchFocus)),
+              ExploreSearchBar(
+                searchFocus: searchFocus,
+                focusToken: focusToken,
+              ),
+              // Everything under the field. The recent searches panel is the
+              // last child: it drops from the field over the segmented control
+              // and the page, using this area as its height budget.
+              Expanded(
+                child: Stack(
+                  children: [
+                    const Column(
+                      children: [
+                        ExploreSegmentedControl(),
+                        Expanded(child: ExploreContent()),
+                      ],
+                    ),
+                    Positioned.fill(
+                      child: ExploreRecentsPanel(searchFocus: searchFocus),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

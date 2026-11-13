@@ -459,6 +459,11 @@
     "description": "C1's page title fallback when B1/B2 open it without a more specific name (docs/SCREENS.md C1: \"title ('In theaters' / 'Horror' / 'Results')\")."
   },
   "exploreSearchHint": "Movies, TV shows, people",
+  "exploreRecentRemove": "Remove {query} from recent searches",
+  "@exploreRecentRemove": {
+    "description": "Tooltip/accessibility label of the × on a recent search row (docs/SCREENS.md B2).",
+    "placeholders": { "query": { "type": "String" } }
+  },
   "exploreRecentSearchesLabel": "Recent",
   "explorePersonLabel": "Person",
   "@explorePersonLabel": {

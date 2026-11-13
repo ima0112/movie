@@ -19,20 +19,14 @@ import 'search_results_list.dart';
 /// reacts to, not something this widget draws (see `ExploreState.dart`'s
 /// own doc comment on it).
 class ExploreContent extends StatelessWidget {
-  const ExploreContent({super.key, required this.searchFocus});
-
-  /// The search field's focus (the at-rest body shows recents while focused).
-  final FocusNode searchFocus;
+  const ExploreContent({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ExploreCubit, ExploreState>(
       builder: (context, state) {
         return switch (state) {
-          ExploreAtRest() => ExploreBrowseBody(
-            state: state,
-            searchFocus: searchFocus,
-          ),
+          ExploreAtRest() => const ExploreBrowseBody(),
           ExploreSearchLoading() => const ExploreSearchSkeleton(),
           ExploreSearchLoaded() when state.results.isEmpty => EmptyStateView(
             icon: AppIcons.search,

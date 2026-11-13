@@ -208,8 +208,13 @@ void main() {
 
     await tester.tap(find.byIcon(AppIcons.close));
     await tester.pumpAndSettle();
+    expect(find.text('Top today'), findsOneWidget); // back at rest
+    // Still focused, empty: the × stays, now to dismiss the field.
+    expect(find.byIcon(AppIcons.close), findsOneWidget);
+
+    await tester.tap(find.byIcon(AppIcons.close));
+    await tester.pumpAndSettle();
     expect(find.byIcon(AppIcons.close), findsNothing);
-    expect(find.text('Top today'), findsOneWidget);
   });
 
   testWidgets('a platform pill becomes the selected one', (tester) async {

@@ -1046,6 +1046,12 @@ abstract class AppLocalizations {
   /// **'Movies, TV shows, people'**
   String get exploreSearchHint;
 
+  /// Tooltip/accessibility label of the × on a recent search row (docs/SCREENS.md B2).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {query} from recent searches'**
+  String exploreRecentRemove(String query);
+
   /// No description provided for @exploreRecentSearchesLabel.
   ///
   /// In en, this message translates to:

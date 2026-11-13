@@ -185,6 +185,7 @@
   "exploreTryAnotherTitle": "Prueba con otro título",
   "exploreDefaultResultsTitle": "Resultados",
   "exploreSearchHint": "Películas, series, personas",
+  "exploreRecentRemove": "Quitar {query} de las búsquedas recientes",
   "exploreRecentSearchesLabel": "Recientes",
   "explorePersonLabel": "Persona",
   "explorePersonMetadata": "{department} · Persona",
