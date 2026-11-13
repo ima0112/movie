@@ -280,9 +280,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingTastesSavedSnackbar => 'Tastes saved · Edit in You';
 
   @override
-  String get onboardingGenreStep3Label => 'Step 3 of 3';
-
-  @override
   String get onboardingLikedEyebrow => 'Make it yours';
 
   @override
@@ -302,7 +299,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingGenreStep3HighlightWord => 'never';
 
   @override
-  String get onboardingGenreStep3NextLabel => 'Done';
+  String get onboardingVetoedBody =>
+      'Pick the ones you\'d rather not see and we\'ll keep them out of your recommendations.';
+
+  @override
+  String get onboardingVetoedCta => 'Get started';
 
   @override
   String get onboardingNameHeadline => 'What\'s your name?';

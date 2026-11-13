@@ -251,7 +251,6 @@
     "description": "A2's exit snackbar when finish() succeeds and at least one genre was picked (docs/SCREENS.md A2). \"You\" here is the same word as navTabYou — keep them matching."
   },
 
-  "onboardingGenreStep3Label": "Step 3 of 3",
   "onboardingLikedEyebrow": "Make it yours",
   "onboardingLikedHeadline": "What do you like?",
   "onboardingLikedHighlight": "like",
@@ -264,9 +263,10 @@
   "@onboardingGenreStep3HighlightWord": {
     "description": "The single word inside onboardingGenreStep3Headline that GenreStepHeadline renders in amber — it's found by a literal substring search (text.indexOf(word)), so a translation MUST keep this exact word as a literal substring of its own translated onboardingGenreStep3Headline, not just a loose paraphrase."
   },
-  "onboardingGenreStep3NextLabel": "Done",
-  "@onboardingGenreStep3NextLabel": {
-    "description": "Step 3's own main button label — the flow's last action, distinct from commonNext."
+  "onboardingVetoedBody": "Pick the ones you'd rather not see and we'll keep them out of your recommendations.",
+  "onboardingVetoedCta": "Get started",
+  "@onboardingVetoedCta": {
+    "description": "The last onboarding screen's button (docs/SCREENS.md A2) — it finishes the flow."
   },
 
   "onboardingNameHeadline": "What's your name?",

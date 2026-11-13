@@ -151,8 +151,8 @@ void main() {
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Step 3 of 3'), findsOneWidget);
-    await tester.tap(find.text('Done'));
+    expect(find.text('And which ones never?'), findsOneWidget);
+    await tester.tap(find.text('Get started'));
     await tester.pump();
 
     expect(find.text('Tastes saved · Edit in You'), findsOneWidget);
