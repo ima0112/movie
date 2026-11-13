@@ -18,8 +18,8 @@ import 'package:movies/features/explore/presentation/widgets/explore_search_fiel
 import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';
-import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
+import 'package:movies/shared/widgets/app_tab_bar.dart';
 import 'package:movies/shared/widgets/explore_filter_sheet.dart';
 import 'package:movies/shared/widgets/media_card.dart';
 
@@ -270,6 +270,9 @@ void main() {
     await tester.tap(find.byIcon(AppIcons.filter));
     await tester.pumpAndSettle();
     expect(find.byType(ExploreFilterSheet), findsOneWidget);
+    // On the root navigator, so it covers the floating tab bar.
+    final sheet = tester.element(find.byType(ExploreFilterSheet));
+    expect(Navigator.of(sheet), same(Navigator.of(sheet, rootNavigator: true)));
 
     await tester.tapAt(const Offset(10, 10)); // dismiss on the scrim
     await tester.pumpAndSettle();

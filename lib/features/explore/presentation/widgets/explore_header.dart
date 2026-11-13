@@ -83,6 +83,8 @@ void _openFilterSheet(BuildContext context) {
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    // On the root navigator, so the sheet covers the floating tab bar.
+    useRootNavigator: true,
     builder: (_) => ExploreFilterSheet(
       initialFilter: DiscoverFilter(type: cubit.state.segment.mediaType),
       mediaRepository: getIt<MediaRepository>(),
