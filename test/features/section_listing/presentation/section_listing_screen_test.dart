@@ -295,6 +295,27 @@ void main() {
     expect(find.text('Dec 16, 2026'), findsWidgets);
   });
 
+  testWidgets('the detailed style (Hidden gems): the rating on the poster and '
+      'the title and year under it, still three to a row', (tester) async {
+    await pump(tester, style: ListingStyle.detailed);
+
+    expect(find.text('Movie 1'), findsOneWidget);
+    expect(find.text('2026'), findsWidgets);
+    expect(find.text('8.5'), findsWidgets);
+    final poster = tester.getRect(find.byType(MediaCard).first);
+    expect(
+      tester.getTopLeft(find.text('Movie 1')).dy,
+      greaterThan(poster.bottom - 1),
+    );
+    final first = tester.getTopLeft(find.byType(MediaCard).at(0)).dy;
+    expect(tester.getTopLeft(find.byType(MediaCard).at(2)).dy, first);
+    expect(
+      tester.getTopLeft(find.byType(MediaCard).at(3)).dy,
+      greaterThan(first),
+    );
+    expect(tester.takeException(), isNull); // no overflow
+  });
+
   test('listingStyleFor: each sort brings its style; the section\'s own '
       'order keeps the section\'s', () {
     expect(
@@ -403,6 +424,7 @@ void main() {
       // that dressing draws.
       final cases = <(ListingStyle, Finder)>[
         (ListingStyle.rating, find.byType(PosterBadge)),
+        (ListingStyle.detailed, find.byType(PosterBadge)),
         (ListingStyle.ranked, find.text('2')),
         (ListingStyle.dated, find.text('Dec 16, 2026')),
       ];

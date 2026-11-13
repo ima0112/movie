@@ -55,6 +55,10 @@ class ListingGrid extends StatelessWidget {
               sliver: SliverGrid.builder(
                 gridDelegate: ResultsGrid.delegate(
                   constraints.maxWidth - AppSpacing.screenMargin * 2,
+                  // The results tile names each title under its poster.
+                  captionExtent: dressing == ListingStyle.detailed
+                      ? ResultsGrid.captionExtent(context)
+                      : 0,
                 ),
                 itemCount: state.items.length,
                 itemBuilder: (context, index) {
