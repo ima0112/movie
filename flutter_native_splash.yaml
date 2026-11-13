@@ -1,16 +1,22 @@
-# docs/SCREENS.md A1: "static native (Pako's logo, off, centered on
-# #0B0B0D)" — the very first frame, shown by the OS before Flutter can
-# draw anything itself. Generated via `dart run
-# flutter_native_splash:create`; the real in-app animation (powers on,
-# wordmark, powers off) is `lib/app/splash_screen.dart`, which takes
-# over as soon as Flutter's first frame is ready.
+# docs/SCREENS.md A1 / docs/DECISIONS.md: the native splash is **only the page's
+# color** (#0B0B0D) — no image. The one splash the user sees is the in-app one
+# (`lib/app/splash_screen.dart`: the "P" monogram over the amber halo, then the
+# wordmark), which starts on that same dark color, so nothing flashes or jumps
+# between the two. (It used to show the old mascot's "off" logo, which didn't
+# match the monogram: two different logos in a row looked like two splashes.)
+#
+# Generated via `dart run flutter_native_splash:create`. Without an `image`
+# Android 12+ gets a transparent icon on the colored background (the system
+# splash itself can't be removed).
 flutter_native_splash:
   color: "0B0B0D"
-  image: assets/icons/pako/pako_off.png
 
   android_12:
     color: "0B0B0D"
-    image: assets/icons/pako/pako_off.png
+    # A fully transparent 288x288 PNG: Android 12+ always draws an icon on its system
+    # splash (the app's launcher icon when none is set), so we give it an
+    # invisible one. The file is only read by the generator.
+    image: assets/splash/transparent.png
 
   android: true
   ios: true
