@@ -539,11 +539,6 @@
     "description": "C1's empty-filtered-state headline (docs/SCREENS.md C1: \"empty ('Nothing matches these filters' + 'Reset')\")."
   },
   "filteredListClearFilters": "Clear filters",
-  "filteredListCount": "{count} results",
-  "@filteredListCount": {
-    "description": "C1's count of results under the filter chips (TMDB's total). Not ICU-pluralized in English, like the other counts.",
-    "placeholders": { "count": { "type": "int" } }
-  },
   "filteredListEmptyBody": "Try fewer filters or a lower minimum rating.",
   "filteredListCountLine": "{count} results · {sortLabel}",
   "@filteredListCountLine": {

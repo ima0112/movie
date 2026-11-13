@@ -199,7 +199,6 @@
   "filteredListMaxRuntimeChip": "Menos de {minutes} min",
   "filteredListEmptyTitle": "Nada con esos filtros",
   "filteredListClearFilters": "Limpiar filtros",
-  "filteredListCount": "{count, plural, =1{1 resultado} other{{count} resultados}}",
   "filteredListEmptyBody": "Prueba con menos filtros o una nota mínima más baja.",
   "filteredListCountLine": "{count, plural, =1{1 resultado} other{{count} resultados}} · {sortLabel}",
 

@@ -580,11 +580,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filteredListClearFilters => 'Clear filters';
 
   @override
-  String filteredListCount(int count) {
-    return '$count results';
-  }
-
-  @override
   String get filteredListEmptyBody =>
       'Try fewer filters or a lower minimum rating.';
 

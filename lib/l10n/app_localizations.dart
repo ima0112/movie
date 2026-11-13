@@ -1124,12 +1124,6 @@ abstract class AppLocalizations {
   /// **'Clear filters'**
   String get filteredListClearFilters;
 
-  /// C1's count of results under the filter chips (TMDB's total). Not ICU-pluralized in English, like the other counts.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} results'**
-  String filteredListCount(int count);
-
   /// No description provided for @filteredListEmptyBody.
   ///
   /// In en, this message translates to:

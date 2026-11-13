@@ -6,7 +6,9 @@ import 'package:movies/core/domain/entities/discover_preset.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_theme.dart';
+import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/shared/cubit/listing_providers_cubit.dart';
+import 'package:movies/shared/widgets/scroll_edge_fade.dart';
 import 'package:movies/shared/widgets/listing_platform_logo.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_cubit.dart';
@@ -71,53 +73,16 @@ void main() {
     expect(find.text('2'), findsOneWidget);
   });
 
-  testWidgets('with no filter set there are no chips and no badge, and the '
-      'count line shows the total with the sort', (tester) async {
+  testWidgets('with no filter set there are no chips and no badge, and no '
+      'count or sort row either', (tester) async {
     await _pump(tester, const DiscoverFilter(type: MediaType.movie));
 
     expect(find.text('1'), findsNothing);
-    expect(find.textContaining(' results'), findsOneWidget);
-    expect(find.text('Popular'), findsOneWidget);
-  });
-
-  testWidgets('the sort at the right opens the sheet; picking one re-sorts', (
-    tester,
-  ) async {
-    final cubit = await _pump(
-      tester,
-      const DiscoverFilter(type: MediaType.movie),
-    );
-
-    await tester.tap(find.text('Popular'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Top rated'));
-    await tester.pumpAndSettle();
-
-    expect(cubit.state.filter.sortBy, DiscoverSortBy.rating);
-    expect(cubit.state.filter.minVoteCount, 300); // not a 9.9 from a handful
-    expect(find.text('Top rated'), findsOneWidget); // now the line's label
-  });
-
-  testWidgets('the sort sheet offers Newest and Oldest too, and Oldest goes '
-      'back to the default vote floor', (tester) async {
-    final cubit = await _pump(
-      tester,
-      const DiscoverFilter(
-        type: MediaType.movie,
-        sortBy: DiscoverSortBy.rating,
-        minVoteCount: 300,
-      ),
-    );
-
-    await tester.tap(find.text('Top rated'));
-    await tester.pumpAndSettle();
-    expect(find.text('Newest'), findsOneWidget);
-    await tester.tap(find.text('Oldest'));
-    await tester.pumpAndSettle();
-
-    expect(cubit.state.filter.sortBy, DiscoverSortBy.releaseDateAsc);
-    expect(cubit.state.filter.minVoteCount, 100);
-    expect(find.text('Oldest'), findsOneWidget); // the line's label
+    // The results are the grid itself: no "N results" line and no quick sort
+    // (the order is chosen in the filters).
+    expect(find.textContaining(' results'), findsNothing);
+    expect(find.byIcon(AppIcons.chevronDown), findsNothing);
+    expect(find.byType(ScrollEdgeFade), findsOneWidget);
   });
 
   testWidgets('nothing matching: the message keeps the chips and "Clear '

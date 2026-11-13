@@ -4,17 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
-import '../../../../core/domain/entities/discover_preset.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../../../../shared/widgets/state_views.dart';
-import 'filtered_list_sort_sheet.dart';
 import '../cubit/filtered_list_cubit.dart';
 import '../cubit/filtered_list_state.dart';
 import 'filtered_list_chips_row.dart';
-import 'filtered_list_count_line.dart';
 import 'filtered_list_grid.dart';
 import 'filtered_list_grid_skeleton.dart';
 
@@ -71,37 +68,13 @@ class _States extends StatelessWidget {
             onCtaTap: () =>
                 cubit.updateFilter(DiscoverFilter(type: state.filter.type)),
           ),
-          FilteredListLoaded() => const _LoadedContent(),
+          // Posters scrolling up under the header dissolve, as on Home.
+          FilteredListLoaded() => const ScrollEdgeFade(
+            top: AppSpacing.lg,
+            child: _Grid(),
+          ),
         };
       },
-    );
-  }
-}
-
-/// Built once per Loading→Loaded transition — never subscribes to the Cubit
-/// itself; each child manages its own narrow subscription instead.
-class _LoadedContent extends StatelessWidget {
-  const _LoadedContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        // The last line of the header keeps a margin above the grid's top
-        // fade (posters scrolling up dissolve under it, as on Home).
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            AppSpacing.screenMargin,
-            AppSpacing.md,
-            AppSpacing.screenMargin,
-            AppSpacing.md,
-          ),
-          child: _CountLine(),
-        ),
-        Expanded(
-          child: ScrollEdgeFade(top: AppSpacing.lg, child: _Grid()),
-        ),
-      ],
     );
   }
 }
@@ -121,44 +94,6 @@ class _ChipsRow extends StatelessWidget {
         filter: data.$1,
         providerNames: data.$2,
         onFilterChanged: context.read<FilteredListCubit>().updateFilter,
-      ),
-    );
-  }
-}
-
-class _CountLine extends StatelessWidget {
-  const _CountLine();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocSelector<
-      FilteredListCubit,
-      FilteredListState,
-      (int, DiscoverSortBy)
-    >(
-      selector: (state) => switch (state) {
-        FilteredListLoaded(:final totalCount) => (
-          totalCount,
-          state.filter.sortBy,
-        ),
-        _ => (0, state.filter.sortBy),
-      },
-      builder: (context, data) => FilteredListCountLine(
-        count: data.$1,
-        sortBy: data.$2,
-        onSortTap: () => _openSortSheet(context),
-      ),
-    );
-  }
-
-  void _openSortSheet(BuildContext context) {
-    final cubit = context.read<FilteredListCubit>();
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (_) => FilteredListSortSheet(
-        selected: cubit.state.filter.sortBy,
-        onSelected: (sort) =>
-            cubit.updateFilter(cubit.state.filter.withSort(sort)),
       ),
     );
   }

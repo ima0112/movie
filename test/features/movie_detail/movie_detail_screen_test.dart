@@ -19,6 +19,7 @@ import 'package:movies/shared/widgets/app_buttons.dart';
 import 'package:movies/shared/widgets/scrim_back_button.dart';
 import 'package:movies/shared/widgets/media_detail/media_cast_row.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_action_row.dart';
+import 'package:movies/shared/widgets/media_card.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 import 'package:movies/shared/widgets/media_detail/media_similar_section.dart';
 import 'package:movies/shared/widgets/media_detail/media_synopsis_section.dart';
@@ -233,14 +234,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // C1's own top bar title is the genre's name (same convention as
-    // B2's genre tiles — see explore_content.dart). C1's grid cards
-    // show no title text (filtered_list_grid.dart's own doc comment),
-    // so this checks the count line instead: Dune: Part Two, Furiosa,
-    // and Untitled Sci-Fi Project are FakeMediaRepository's only
-    // three *movies* carrying Science Fiction.
+    // B2's genre tiles — see explore_content.dart). The grid lists Dune:
+    // Part Two, Furiosa and Untitled Sci-Fi Project: FakeMediaRepository's
+    // only three *movies* carrying Science Fiction.
     expect(find.text('Science Fiction'), findsWidgets);
-    expect(find.text('3 results'), findsOneWidget);
-    expect(find.text('Popular'), findsOneWidget);
+    // Exactly the three sci-fi movies are listed.
+    expect(find.byType(MediaCard), findsNWidgets(3));
   });
 
   testWidgets(
