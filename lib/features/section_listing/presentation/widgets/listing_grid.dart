@@ -9,13 +9,14 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
 import '../../../../shared/widgets/lazy_load.dart';
-import '../../../../shared/widgets/media_card.dart';
+import '../../../../shared/widgets/results_grid.dart';
 import '../../domain/listing_style.dart';
 import '../cubit/section_listing_cubit.dart';
 import '../cubit/section_listing_state.dart';
 import 'listing_poster.dart';
 
-/// The 3-column grid of a loaded listing. **Pages in on demand** (CLAUDE.md
+/// The 3-column grid of a loaded listing ([ResultsGrid], the app's one results
+/// layout). **Pages in on demand** (CLAUDE.md
 /// rule 17): a footer wrapped in `LazyLoad` asks the cubit for the next page
 /// once it is within about a screen of the viewport, and again after every page
 /// that arrives (its `loadKey` is the page number) — including when the first
@@ -41,41 +42,40 @@ class ListingGrid extends StatelessWidget {
     final dressing = listingStyleFor(state.sort, style);
     return RefreshIndicator(
       onRefresh: cubit.refresh,
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenMargin,
-              AppSpacing.lg,
-              AppSpacing.screenMargin,
-              0,
-            ),
-            sliver: SliverGrid.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: AppSpacing.md,
-                crossAxisSpacing: AppSpacing.md,
-                childAspectRatio: MediaCardSize.grid.aspectRatio!,
+      child: LayoutBuilder(
+        builder: (context, constraints) => CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenMargin,
+                AppSpacing.lg,
+                AppSpacing.screenMargin,
+                0,
               ),
-              itemCount: state.items.length,
-              itemBuilder: (context, index) {
-                final item = state.items[index];
-                return ListingPoster(
-                  key: ValueKey(item.key),
-                  item: item,
-                  style: dressing,
-                  rank: index + 1,
-                  showPlatform: showPlatform,
-                  onTap: () => context.pushMediaDetail(item.key),
-                );
-              },
+              sliver: SliverGrid.builder(
+                gridDelegate: ResultsGrid.delegate(
+                  constraints.maxWidth - AppSpacing.screenMargin * 2,
+                ),
+                itemCount: state.items.length,
+                itemBuilder: (context, index) {
+                  final item = state.items[index];
+                  return ListingPoster(
+                    key: ValueKey(item.key),
+                    item: item,
+                    style: dressing,
+                    rank: index + 1,
+                    showPlatform: showPlatform,
+                    onTap: () => context.pushMediaDetail(item.key),
+                  );
+                },
+              ),
             ),
-          ),
-          SliverToBoxAdapter(child: _Footer(state: state)),
-          SliverToBoxAdapter(
-            child: SizedBox(height: AppTabBar.scrollInset(context)),
-          ),
-        ],
+            SliverToBoxAdapter(child: _Footer(state: state)),
+            SliverToBoxAdapter(
+              child: SizedBox(height: AppTabBar.scrollInset(context)),
+            ),
+          ],
+        ),
       ),
     );
   }

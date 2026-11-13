@@ -126,7 +126,7 @@ void main() {
     await _settle(tester);
   }
 
-  testWidgets('shows the title, an amber pill (platform, genre) and a 2-column '
+  testWidgets('shows the title, an amber pill (platform, genre) and a 3-column '
       'grid — and, for now, no sort icon', (tester) async {
     await pump(
       tester,
@@ -158,11 +158,12 @@ void main() {
       AppColors.onAccent,
     );
     expect(find.byIcon(AppIcons.sort), findsNothing); // off for now
-    // Two posters share the first row.
+    // Three posters share the first row.
     final first = tester.getTopLeft(find.byType(MediaCard).at(0)).dy;
     expect(tester.getTopLeft(find.byType(MediaCard).at(1)).dy, first);
+    expect(tester.getTopLeft(find.byType(MediaCard).at(2)).dy, first);
     expect(
-      tester.getTopLeft(find.byType(MediaCard).at(2)).dy,
+      tester.getTopLeft(find.byType(MediaCard).at(3)).dy,
       greaterThan(first),
     );
   });
@@ -188,7 +189,7 @@ void main() {
       'the grid\'s right edge', (tester) async {
     await pump(tester, sort: true);
     final icon = tester.getRect(find.byIcon(AppIcons.sort));
-    final grid = tester.getRect(find.byType(MediaCard).at(1));
+    final grid = tester.getRect(find.byType(MediaCard).at(2));
     expect(icon.right, closeTo(grid.right, 0.5));
     // And the pill is at the left, on the page margin.
     final pill = tester.getRect(find.text('All genres'));

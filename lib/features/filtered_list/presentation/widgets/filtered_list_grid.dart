@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/media_item.dart';
-import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/media_card.dart';
+import '../../../../shared/widgets/result_poster_tile.dart';
+import '../../../../shared/widgets/results_grid.dart';
 
-/// C1's "3-column grid with infinite scroll" (`docs/SCREENS.md` C1).
-///
-/// Reuses `MediaCard` at its `MediaCardSize.grid` variant — the fluid
-/// 2:3 poster card `docs/DESIGN_SYSTEM.md` section 5 already calls for
-/// ("grid (2:3 fluido)") but that no screen had built yet, added
-/// alongside this file. Same bare-poster-plus-"TV"-tag look as the
-/// carousel size: no title/metadata text under the poster, matching
-/// `docs/SCREENS.md` J.2's own "Poster card (grid) with a 'TV' tag" —
-/// nothing there about showing a title.
+/// C1's 3-column grid with infinite scroll (`docs/SCREENS.md` C1): each tile is a
+/// [ResultPosterTile] — poster, rating badge, "TV" tag and the title under it —
+/// in the app's one results layout ([ResultsGrid]).
 ///
 /// Pure presentation — no Cubit access. [items] is whatever's currently
 /// visible (`FilteredListLoaded.visibleItems`); [onLoadMore] fires once
@@ -33,8 +27,6 @@ class FilteredListGrid extends StatefulWidget {
   final bool hasMore;
   final VoidCallback onLoadMore;
   final ValueChanged<MediaItem> onTap;
-
-  static const int _crossAxisCount = 3;
 
   // How close to the bottom (in pixels) triggers the next page — same
   // idea as a typical infinite-scroll threshold, not a documented value.
@@ -70,24 +62,28 @@ class _FilteredListGridState extends State<FilteredListGrid> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: FilteredListGrid._crossAxisCount,
-        mainAxisSpacing: AppSpacing.md,
-        crossAxisSpacing: AppSpacing.md,
-        childAspectRatio: MediaCardSize.grid.aspectRatio!,
-      ),
-      itemCount: widget.items.length,
-      itemBuilder: (context, index) {
-        final item = widget.items[index];
-        return MediaCard(
-          size: MediaCardSize.grid,
-          title: item.title,
-          posterUrl: item.posterUrl,
-          showTypeTag: item.type == MediaType.tvShow,
-          onTap: () => widget.onTap(item),
+    final caption = ResultsGrid.captionExtent(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth - AppSpacing.screenMargin * 2;
+        return GridView.builder(
+          controller: _scrollController,
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screenMargin,
+            AppSpacing.lg,
+            AppSpacing.screenMargin,
+            AppSpacing.xl,
+          ),
+          gridDelegate: ResultsGrid.delegate(width, captionExtent: caption),
+          itemCount: widget.items.length,
+          itemBuilder: (context, index) {
+            final item = widget.items[index];
+            return ResultPosterTile(
+              key: ValueKey(item.key),
+              item: item,
+              onTap: () => widget.onTap(item),
+            );
+          },
         );
       },
     );

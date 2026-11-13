@@ -16,6 +16,7 @@ a este documento primero y luego a código — nunca al revés.
 | `line` | `#1E1E22` | Separadores finos entre filas del mismo grupo |
 | `lineStrong` | `#2A2A2E` | Bordes de chips y botones secundarios |
 | `ink` | `#F5F5F7` | Texto primario, iconos activos |
+| `accentSoft` / `accentLine` | `#F2B441` 16% · `#F2B441` 40% | Relleno y borde del chip/pill seleccionado o activo (texto e icono en `accent`). Es el único look de «seleccionado» de chips y pills. |
 | `glass` / `glassBorder` / `shadow` | `#1C1C20` 62% · `#F5F5F7` 12% · `#000000` 45% | Barra de tabs flotante (relleno, borde, sombra). Solo sobre un desenfoque de fondo. |
 | `sheetHandle` | `#F5F5F7` 24% | Asa de arrastre de las hojas inferiores (40×4) |
 | `inkMuted` | `#A1A1A8` | Texto secundario, metadatos, iconos inactivos |
@@ -228,6 +229,15 @@ slivers). Un `loadKey` nuevo lo vuelve a armar (los filtros de los que
 depende el bloque). Es lógica de presentación pura; el trabajo de datos es el
 callback. Regla 17 de `CLAUDE.md`.
 
+**Listas de resultados — una sola cuadrícula.** `ResultsGrid`
+(`shared/widgets/results_grid.dart`): 3 columnas de pósters 2:3 sobre el margen
+de página, 12 de separación; la usan los resultados filtrados (C1) y todos los
+«Ver todo» (C1b). `ResultPosterTile` es la ficha de los resultados filtrados:
+póster con la valoración (abajo a la izquierda) y la etiqueta TV (arriba a la
+izquierda), y el título en una línea debajo. Bajo la barra superior el
+contenido se disuelve con `ScrollEdgeFade`, y la última línea de la cabecera
+deja un margen antes de ese degradado.
+
 **Tabs / segmented control — un solo diseño.** `AppSegmentedControl`
 (`shared/widgets/app_segmented_control.dart`): una pastilla contenedora
 (`surfaceRaised`, radio pill, 4 de margen interior, 40 de alto que crece con
@@ -247,7 +257,7 @@ depuración (`/debug/components`) que los liste todos:
 
 1. **Tarjeta de póster** — carrusel (110×165) y grid (2:3 fluido), con
    variante "grande" (330×380, radio 20) para la portada de Descubrir.
-2. **Chip** — default / seleccionado (fondo `accent`) / con borde punteado
+2. **Chip / pill** — default / seleccionado (tinte ámbar oscuro `accentSoft` con borde `accentLine` y texto/icono `accent`; un chip quitable lleva su × después de la etiqueta) / con borde punteado
    (sugerencia).
 3. **Tile de cuestionario/género** — default / seleccionado / deshabilitado
    (30% opacidad).

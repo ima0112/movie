@@ -7,6 +7,7 @@ import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../../../../shared/widgets/state_views.dart';
 import 'filtered_list_sort_sheet.dart';
 import '../cubit/filtered_list_cubit.dart';
@@ -85,16 +86,20 @@ class _LoadedContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
+        // The last line of the header keeps a margin above the grid's top
+        // fade (posters scrolling up dissolve under it, as on Home).
         Padding(
           padding: EdgeInsets.fromLTRB(
             AppSpacing.screenMargin,
             AppSpacing.md,
             AppSpacing.screenMargin,
-            0,
+            AppSpacing.md,
           ),
           child: _CountLine(),
         ),
-        Expanded(child: _Grid()),
+        Expanded(
+          child: ScrollEdgeFade(top: AppSpacing.lg, child: _Grid()),
+        ),
       ],
     );
   }
