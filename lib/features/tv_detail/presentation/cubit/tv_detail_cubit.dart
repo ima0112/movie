@@ -5,6 +5,7 @@ import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/recently_viewed_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../shared/widgets/media_detail_duration.dart';
 
@@ -54,11 +55,15 @@ final class TvDetailError extends TvDetailState {
 /// shared Cubit would need its own type-narrowing anyway, with no
 /// benefit over two small, independently readable Cubits.
 class TvDetailCubit extends Cubit<TvDetailState> {
-  TvDetailCubit(this._mediaRepository, this._userLibraryRepository)
-    : super(const TvDetailInitial());
+  TvDetailCubit(
+    this._mediaRepository,
+    this._userLibraryRepository,
+    this._recentlyViewedRepository,
+  ) : super(const TvDetailInitial());
 
   final MediaRepository _mediaRepository;
   final UserLibraryRepository _userLibraryRepository;
+  final RecentlyViewedRepository _recentlyViewedRepository;
   String? _regionCode;
 
   /// Shows [key] for [regionCode] on this screen only (providers and the
@@ -82,6 +87,8 @@ class TvDetailCubit extends Cubit<TvDetailState> {
     switch (result) {
       case Success<MediaDetail>(:final value):
         emit(TvDetailLoaded(value, regionCode: _regionCode));
+        // Home's "Recently viewed": opening a detail moves it to the front.
+        await _recentlyViewedRepository.record(value.item);
         await _refreshLibrarySnapshot(key, value);
       case Failure<MediaDetail>(:final reason):
         emit(TvDetailError(reason));

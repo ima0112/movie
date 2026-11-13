@@ -9,6 +9,7 @@ import '../../../../core/launch/media_share.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/recently_viewed_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/failure_localization.dart';
@@ -45,6 +46,7 @@ class TvDetailScreen extends StatelessWidget {
       create: (_) => TvDetailCubit(
         getIt<MediaRepository>(),
         getIt<UserLibraryRepository>(),
+        getIt<RecentlyViewedRepository>(),
       )..loadDetail(mediaKey),
       child: _TvDetailView(mediaKey: mediaKey),
     );
