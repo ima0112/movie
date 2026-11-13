@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/discover_filter.dart';
+import '../../../../core/domain/entities/discover_page.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
@@ -65,45 +66,139 @@ class FilteredListCubit extends Cubit<FilteredListState> {
   /// The error state's "Retry".
   Future<void> retry() => _fetch(state.filter);
 
+  /// Provider id → name, for the chip of a streaming-service filter.
+  Map<int, String> _providerNames = const {};
+
+  /// Bumped by every [_fetch], so a slow answer to an old filter can't land
+  /// over a newer one's (also guards [loadMore]'s page request).
+  int _generation = 0;
+  int _page = 1;
+  bool _loadingMore = false;
+
   Future<void> _fetch(DiscoverFilter filter) async {
-    emit(FilteredListLoading(filter: filter));
+    final generation = ++_generation;
+    _loadingMore = false;
+    _page = 1;
+    emit(FilteredListLoading(filter: filter, providerNames: _providerNames));
 
     final section = _collectionSection;
-    final result = section != null
-        ? await _mediaRepository.getCarouselSection(section, type: filter.type)
-        : await _mediaRepository.discover(filter);
-    if (isClosed) return;
+    final namesFuture = _loadProviderNames(filter);
+    final Result<DiscoverPage> result;
+    if (section != null) {
+      result = switch (await _mediaRepository.getCarouselSection(
+        section,
+        type: filter.type,
+      )) {
+        Success(:final value) => Success(
+          DiscoverPage(
+            items: value,
+            page: 1,
+            totalPages: 1,
+            totalResults: value.length,
+          ),
+        ),
+        Failure(:final reason) => Failure(reason),
+      };
+    } else {
+      result = await _mediaRepository.discoverPage(filter);
+    }
+    await namesFuture;
+    if (isClosed || generation != _generation) return;
 
     switch (result) {
-      case Success<List<MediaItem>>(:final value):
+      case Success<DiscoverPage>(:final value):
         emit(
           FilteredListLoaded(
             filter: filter,
-            allItems: value,
-            visibleCount: math.min(pageSize, value.length),
+            providerNames: _providerNames,
+            allItems: value.items,
+            visibleCount: math.min(pageSize, value.items.length),
+            totalCount: value.totalResults,
+            hasMorePages: value.page < value.totalPages,
           ),
         );
-      case Failure<List<MediaItem>>(:final reason):
-        emit(FilteredListError(filter: filter, reason: reason));
+      case Failure<DiscoverPage>(:final reason):
+        emit(
+          FilteredListError(
+            filter: filter,
+            providerNames: _providerNames,
+            reason: reason,
+          ),
+        );
+    }
+  }
+
+  /// Fetches the names of the streaming services [filter] uses, once; a
+  /// failure just leaves the chip without a name to show (it is then left
+  /// out, the filter still applies).
+  Future<void> _loadProviderNames(DiscoverFilter filter) async {
+    final missing = filter.withWatchProviders.where(
+      (id) => !_providerNames.containsKey(id),
+    );
+    if (missing.isEmpty) return;
+    final result = await _mediaRepository.streamingServices(type: filter.type);
+    if (result case Success(:final value)) {
+      _providerNames = {
+        ..._providerNames,
+        for (final service in value) service.id: service.name,
+      };
     }
   }
 
   /// C1's infinite scroll — reveals the next [pageSize] already-fetched
-  /// items. A no-op once [FilteredListLoaded.hasMore] is false, or if
-  /// nothing has loaded (yet, or failed).
-  void loadMore() {
+  /// items and, once those run out, asks TMDB for the next page. A no-op
+  /// while a page is on its way, once everything is visible, or if nothing
+  /// has loaded (yet, or failed); a page that fails is simply asked for again
+  /// on the next scroll.
+  Future<void> loadMore() async {
     final current = state;
     if (current is! FilteredListLoaded || !current.hasMore) return;
 
-    emit(
-      FilteredListLoaded(
-        filter: current.filter,
-        allItems: current.allItems,
-        visibleCount: math.min(
-          current.visibleCount + pageSize,
-          current.allItems.length,
-        ),
-      ),
+    if (current.visibleCount < current.allItems.length) {
+      emit(_revealed(current, current.allItems));
+      return;
+    }
+    if (_loadingMore) return;
+
+    _loadingMore = true;
+    final generation = _generation;
+    final result = await _mediaRepository.discoverPage(
+      current.filter,
+      page: _page + 1,
     );
+    _loadingMore = false;
+    if (isClosed || generation != _generation) return;
+
+    if (result case Success<DiscoverPage>(:final value)) {
+      _page = value.page;
+      final known = {for (final item in current.allItems) item.key};
+      final items = [
+        ...current.allItems,
+        for (final item in value.items)
+          if (known.add(item.key)) item,
+      ];
+      emit(
+        _revealed(
+          current,
+          items,
+          totalCount: value.totalResults,
+          hasMorePages: value.page < value.totalPages,
+        ),
+      );
+    }
   }
+
+  FilteredListLoaded _revealed(
+    FilteredListLoaded from,
+    List<MediaItem> items, {
+    int? totalCount,
+    bool? hasMorePages,
+  }) => FilteredListLoaded(
+    filter: from.filter,
+    providerNames: from.providerNames,
+    allItems: items,
+    visibleCount: math.min(from.visibleCount + pageSize, items.length),
+    totalCount: totalCount ?? from.totalCount,
+    hasMorePages: hasMorePages ?? from.hasMorePages,
+  );
 }

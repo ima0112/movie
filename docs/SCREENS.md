@@ -114,9 +114,10 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 
 ### C1. Filtered listing (See all · Genre · Results)
 - Access: "See all" from B1 (arrives with the collection's name and no filters), a genre tile in B2, or "See N results" from H8.
-- Elements: top bar with back, title ("In theaters" / "Horror" / "Results"), and a filter icon (amber if active → H8); row of active filter chips, each with "×"; line "312 results · Popularity" (the count comes from `total_results`; with "Hide watched" the grid shows fewer items and the count doesn't adjust); 3-column grid with infinite scroll.
+- Elements: top bar with back, the centered title ("Results" / "Horror" / …) and the **filter icon with an amber badge** counting the filters set (none: no badge; the kind of title and the sort never count) → H8. Under the bar, one line of **active-filter chips**, each amber with "×" (streaming service by name, each genre, the years, the minimum rating) that scrolls sideways when it doesn't fit; "×" drops just that filter. Then the line with the **count on the left** ("38 results" — TMDB's `total_results`, not what has loaded) and the **current sort on the right with a chevron** ("Popular ⌄", tapping opens a sheet with Popular · Top rated · Release date). Then the **3-column grid** with infinite scroll: the first page loads with the screen and the next ones as the grid nears its end (titles repeated across pages are dropped).
+- **No filters left** (every chip dropped, or "Clear" in H8) is a valid state, not an empty one: the list is every title of the segment, most popular first, with no chips and no badge.
 - Source: `/discover/{movie|tv}` with the filters; All = both interleaved. "See all" collections use their own endpoint until a filter is touched, at which point they switch to the equivalent `/discover` call.
-- States: grid skeleton, empty ("Nothing matches these filters" + "Reset"), error, offline.
+- States: grid skeleton; **no results** ("Nothing with those filters" / "Try fewer filters or a lower minimum rating." and a secondary "Clear filters" button that goes back to the segment's default) — the chips and the badge stay visible above it so a filter can be dropped right there; error ("Retry"); offline.
 - Exits: D1/D2, H8.
 
 ### C1b. Section listing ("See all" of a section)

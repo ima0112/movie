@@ -125,6 +125,17 @@ class DiscoverFilter {
   /// the default.
   bool get isDefault => this == const DiscoverFilter();
 
+  /// How many filters the user has set — what the C1 filter icon's badge
+  /// counts, one per streaming service, genre, the years and the minimum
+  /// rating. The kind of title and the sort never count: the first is the
+  /// segment, the second is always set to something.
+  int get activeFilterCount =>
+      withWatchProviders.length +
+      withGenres.length +
+      withoutGenres.length +
+      (yearFrom != null || yearTo != null ? 1 : 0) +
+      (minVoteAverage != null && minVoteAverage! > 0 ? 1 : 0);
+
   /// [type]/[yearFrom]/[yearTo]/[minVoteAverage]/[maxRuntimeMinutes]/
   /// [tvStatus] take a *function* returning the new value, not the value
   /// itself — the usual `?? this.x` copyWith shortcut can't tell "leave

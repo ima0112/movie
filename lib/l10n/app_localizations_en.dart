@@ -574,10 +574,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get filteredListEmptyTitle => 'Nothing matches these filters';
+  String get filteredListEmptyTitle => 'Nothing with those filters';
 
   @override
-  String get filteredListEmptyBody => 'Try adjusting your filters.';
+  String get filteredListClearFilters => 'Clear filters';
+
+  @override
+  String filteredListCount(int count) {
+    return '$count results';
+  }
+
+  @override
+  String get filteredListEmptyBody =>
+      'Try fewer filters or a lower minimum rating.';
 
   @override
   String filteredListCountLine(int count, String sortLabel) {

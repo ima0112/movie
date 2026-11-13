@@ -11,8 +11,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../shared/widgets/explore_filter_sheet.dart';
 import '../cubit/filtered_list_cubit.dart';
-import '../cubit/filtered_list_state.dart';
 import '../widgets/filtered_list_content.dart';
+import '../widgets/filtered_list_filter_button.dart';
 
 /// C1 (Filtered listing) — `docs/SCREENS.md` C1: "See all · Genre ·
 /// Results", reached from B1's "See all", a B2 genre tile, or H8's "See
@@ -69,16 +69,7 @@ class _FilteredListView extends StatelessWidget {
         ),
         title: Text(title),
         actions: [
-          BlocSelector<FilteredListCubit, FilteredListState, bool>(
-            selector: (state) => !state.filter.isDefault,
-            builder: (context, isActive) => IconButton(
-              icon: Icon(
-                AppIcons.filter,
-                color: isActive ? AppColors.accent : AppColors.ink,
-              ),
-              onPressed: () => _openFilterSheet(context),
-            ),
-          ),
+          FilteredListFilterButton(onPressed: () => _openFilterSheet(context)),
         ],
       ),
       body: const FilteredListContent(),
