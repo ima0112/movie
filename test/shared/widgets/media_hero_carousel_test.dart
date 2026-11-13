@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_card.dart';
 import 'package:movies/shared/widgets/media_hero_carousel.dart';
@@ -227,5 +228,39 @@ void main() {
     expect(title.dx, moreOrLessEquals(card.center.dx, epsilon: 1));
     // In the lower part of the card.
     expect(title.dy, greaterThan(card.top + card.height * 0.6));
+  });
+
+  testWidgets('the bottom fade is eased, practically opaque by 90% and the '
+      'page black at the foot (it blends with the background)', (tester) async {
+    _phone(tester);
+    await tester.pumpWidget(_host([_movie(1), _movie(2)]));
+
+    final gradient = tester
+        .widgetList<DecoratedBox>(
+          find.descendant(
+            of: _card('Movie 1'),
+            matching: find.byType(DecoratedBox),
+          ),
+        )
+        .map((b) => b.decoration)
+        .whereType<BoxDecoration>()
+        .map((d) => d.gradient)
+        .whereType<LinearGradient>()
+        .first;
+
+    final stops = gradient.stops!;
+    final alphas = [for (final c in gradient.colors) c.a];
+    // Transparent in the top third, then strictly darker down to the foot.
+    expect(alphas.first, 0);
+    expect(stops.first, greaterThanOrEqualTo(0.3));
+    for (var i = 1; i < alphas.length; i++) {
+      expect(alphas[i], greaterThan(alphas[i - 1]));
+    }
+    // Nearly opaque by 90%, and exactly the page's black at the very bottom.
+    final at90 = alphas[stops.indexWhere((s) => s >= 0.9)];
+    expect(at90, greaterThanOrEqualTo(0.95));
+    expect(alphas.last, 1);
+    expect(stops.last, 1);
+    expect(gradient.colors.last.withValues(alpha: 1), AppColors.surface);
   });
 }
