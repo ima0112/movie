@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/domain/entities/media_key.dart';
-import '../../../../core/domain/entities/streaming_service.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/streaming_service_logo.dart';
+import '../../core/domain/entities/media_key.dart';
+import '../../core/domain/entities/streaming_service.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import 'streaming_service_logo.dart';
 import '../cubit/listing_providers_cubit.dart';
 
 /// The platform a title streams on, as a small logo in a poster's **top-right**

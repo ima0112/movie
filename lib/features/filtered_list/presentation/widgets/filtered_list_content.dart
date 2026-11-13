@@ -179,6 +179,8 @@ class _Grid extends StatelessWidget {
         return FilteredListGrid(
           items: state.visibleItems,
           hasMore: state.hasMore,
+          // With a platform picked every title is on it: a logo says nothing.
+          showPlatform: state.filter.withWatchProviders.isEmpty,
           onLoadMore: () => context.read<FilteredListCubit>().loadMore(),
           onTap: (item) => context.pushMediaDetail(item.key),
         );

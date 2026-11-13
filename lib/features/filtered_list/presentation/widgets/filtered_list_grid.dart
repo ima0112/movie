@@ -21,12 +21,17 @@ class FilteredListGrid extends StatefulWidget {
     required this.hasMore,
     required this.onLoadMore,
     required this.onTap,
+    this.showPlatform = false,
   });
 
   final List<MediaItem> items;
   final bool hasMore;
   final VoidCallback onLoadMore;
   final ValueChanged<MediaItem> onTap;
+
+  /// Each tile shows the platform it streams on (when no platform filter
+  /// narrows the list).
+  final bool showPlatform;
 
   // How close to the bottom (in pixels) triggers the next page — same
   // idea as a typical infinite-scroll threshold, not a documented value.
@@ -82,6 +87,7 @@ class _FilteredListGridState extends State<FilteredListGrid> {
               key: ValueKey(item.key),
               item: item,
               onTap: () => widget.onTap(item),
+              showPlatform: widget.showPlatform,
             );
           },
         );

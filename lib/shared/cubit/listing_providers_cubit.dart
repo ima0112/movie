@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/domain/entities/media_key.dart';
-import '../../../../core/domain/entities/result.dart';
-import '../../../../core/domain/entities/streaming_service.dart';
-import '../../../../core/domain/repositories/media_repository.dart';
+import '../../core/domain/entities/media_key.dart';
+import '../../core/domain/entities/result.dart';
+import '../../core/domain/entities/streaming_service.dart';
+import '../../core/domain/repositories/media_repository.dart';
 
 /// Which subscription services each poster of the "See all" listing is on —
 /// the logo in a poster's corner when the listing isn't narrowed to a platform.

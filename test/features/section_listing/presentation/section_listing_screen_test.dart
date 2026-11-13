@@ -7,7 +7,7 @@ import 'package:movies/core/domain/entities/discover_page.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
-import 'package:movies/features/section_listing/presentation/widgets/listing_platform_logo.dart';
+import 'package:movies/shared/widgets/listing_platform_logo.dart';
 import 'package:movies/shared/widgets/poster_badge.dart';
 import 'package:movies/shared/widgets/streaming_service_logo.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';

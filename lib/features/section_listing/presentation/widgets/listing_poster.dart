@@ -13,7 +13,7 @@ import '../../../../shared/widgets/poster_badge.dart';
 import '../../../../shared/widgets/ranked_poster.dart';
 import '../../../../shared/widgets/result_poster_tile.dart';
 import '../../domain/listing_style.dart';
-import 'listing_platform_logo.dart';
+import '../../../../shared/widgets/listing_platform_logo.dart';
 
 /// One poster of the "See all" grid, dressed by [style] (see
 /// `listingStyleFor`): a rank, a rating badge, the date or year, or the title.
@@ -46,18 +46,10 @@ class ListingPoster extends StatelessWidget {
     // The results tile has its own layout (the title and year under the
     // poster), so it isn't a dressing laid over the poster.
     if (style == ListingStyle.detailed) {
-      return Stack(
-        children: [
-          Positioned.fill(
-            child: ResultPosterTile(item: item, onTap: onTap),
-          ),
-          if (showPlatform)
-            Positioned.fill(
-              child: IgnorePointer(
-                child: ListingPlatformLogo(titleKey: item.key),
-              ),
-            ),
-        ],
+      return ResultPosterTile(
+        item: item,
+        onTap: onTap,
+        showPlatform: showPlatform,
       );
     }
     final still = MediaQuery.disableAnimationsOf(context);

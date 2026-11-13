@@ -5,13 +5,17 @@ import '../../core/theme/app_text_styles.dart';
 
 /// The one grid layout of lists of results across the app — the filtered
 /// results (C1) and every "See all" (C1b): **three columns** of 2:3 posters on
-/// the page margin, [gap] apart. A tile may carry a caption under its poster
+/// the page margin, [gap] apart ([rowGap] between rows). A tile may carry a caption under its poster
 /// (C1's title); [delegate] adds room for it.
 class ResultsGrid {
   const ResultsGrid._();
 
   static const int columns = 3;
   static const double gap = AppSpacing.md;
+
+  /// The space between rows — more than between columns: a row's caption
+  /// needs air before the next poster starts.
+  static const double rowGap = AppSpacing.xl;
 
   /// The width one column takes in a grid [availableWidth] wide (the page
   /// margins already taken out).
@@ -42,7 +46,7 @@ class ResultsGrid {
   }) {
     return SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: columns,
-      mainAxisSpacing: gap,
+      mainAxisSpacing: rowGap,
       crossAxisSpacing: gap,
       mainAxisExtent: columnWidth(availableWidth) * 3 / 2 + captionExtent,
     );
