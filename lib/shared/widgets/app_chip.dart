@@ -12,7 +12,8 @@ enum ChipState {
   /// Unselected: `surfaceRaised` fill with a `lineStrong` border.
   normal,
 
-  /// Selected: `accent` fill, `onAccent` text/icon.
+  /// Selected: a dark amber tint ([AppColors.accentSoft]) with an amber
+  /// hairline ([AppColors.accentLine]) and `accent` text/icon.
   selected,
 
   /// Dashed `lineStrong` border, no fill — a suggestion the user can tap
@@ -35,6 +36,7 @@ class AppChip extends StatelessWidget {
     this.state = ChipState.normal,
     this.onTap,
     this.icon,
+    this.trailingIcon,
     this.leading,
   });
 
@@ -42,6 +44,9 @@ class AppChip extends StatelessWidget {
   final ChipState state;
   final VoidCallback? onTap;
   final IconData? icon;
+
+  /// An icon after the label — the "×" of a removable active-filter chip.
+  final IconData? trailingIcon;
 
   /// A widget before the label — a streaming service's logo.
   final Widget? leading;
@@ -55,7 +60,7 @@ class AppChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSelected = state == ChipState.selected;
     final isVetoed = state == ChipState.vetoed;
-    final textColor = isSelected ? AppColors.onAccent : AppColors.ink;
+    final textColor = isSelected ? AppColors.accent : AppColors.ink;
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
@@ -83,6 +88,10 @@ class AppChip extends StatelessWidget {
                       decorationColor: textColor,
                     ),
           ),
+          if (trailingIcon != null) ...[
+            const SizedBox(width: AppSpacing.xs),
+            Icon(trailingIcon, size: _iconSize, color: textColor),
+          ],
         ],
       ),
     );
@@ -98,8 +107,9 @@ class AppChip extends StatelessWidget {
       ),
       ChipState.selected => DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.accent,
+          color: AppColors.accentSoft,
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+          border: Border.all(color: AppColors.accentLine),
         ),
         child: content,
       ),

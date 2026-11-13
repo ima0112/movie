@@ -4,8 +4,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-/// One pill of B2's Genre / Platform rows: outlined when off, amber when
-/// selected (the same look as `AppChip`), with an optional [leading] widget —
+/// One pill of B2's Genre / Platform rows: outlined when off, a dark amber tint with an
+/// amber hairline and amber text when selected (the same look as `AppChip`), with an optional [leading] widget —
 /// a platform's logo. 40 px tall so it is an easy touch target.
 class ExplorePill extends StatelessWidget {
   const ExplorePill({
@@ -37,9 +37,11 @@ class ExplorePill extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: height),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           decoration: BoxDecoration(
-            color: selected ? AppColors.accent : Colors.transparent,
+            color: selected ? AppColors.accentSoft : Colors.transparent,
             borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-            border: selected ? null : Border.all(color: AppColors.lineStrong),
+            border: Border.all(
+              color: selected ? AppColors.accentLine : AppColors.lineStrong,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -50,9 +52,9 @@ class ExplorePill extends StatelessWidget {
               ],
               Text(
                 label,
-                style: AppTextStyles.bodySmToggle(selected).copyWith(
-                  color: selected ? AppColors.onAccent : AppColors.ink,
-                ),
+                style: AppTextStyles.bodySmToggle(
+                  selected,
+                ).copyWith(color: selected ? AppColors.accent : AppColors.ink),
                 maxLines: 1,
               ),
             ],

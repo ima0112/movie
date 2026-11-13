@@ -53,7 +53,7 @@ class FilteredListChipsRow extends StatelessWidget {
             child: AppChip(
               label: chip.label,
               state: ChipState.selected,
-              icon: AppIcons.close,
+              trailingIcon: AppIcons.close,
               onTap: () => onFilterChanged(chip.remove()),
             ),
           );
