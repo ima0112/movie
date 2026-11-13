@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
+import '../../../../shared/widgets/app_tab_bar.dart';
 import '../../../../shared/widgets/overline_label.dart';
 import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../cubit/explore_cubit.dart';
@@ -19,8 +20,8 @@ import 'recent_search_row.dart';
 /// is fixed; the searches under it scroll when there are more than fit.
 ///
 /// **Adaptive**: it is as tall as its rows, up to the room the screen leaves
-/// between the field and the bottom — which already excludes the keyboard
-/// (the body is resized) — so it fits a small phone with the keyboard up and
+/// between the field and the floating tab bar — which already excludes the
+/// keyboard (the body is resized) — so it never runs under the bar and fits a small phone with the keyboard up and
 /// uses a tall one fully. It only exists when the saved history has something
 /// in it and the field is empty (typing swaps it for the results).
 ///
@@ -32,9 +33,6 @@ class ExploreRecentsPanel extends StatelessWidget {
 
   /// The search field's focus: the panel shows while it is focused.
   final FocusNode searchFocus;
-
-  /// Space kept between the panel and the bottom of the available area.
-  static const double _bottomGap = AppSpacing.lg;
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +95,12 @@ class _Panel extends StatelessWidget {
             top: 0,
             child: ConstrainedBox(
               constraints: BoxConstraints(
+                // The page runs under the floating tab bar: the panel stops
+                // above it (the bar's height, the safe area and a gap — the
+                // same inset every scrolling page leaves).
                 maxHeight: math.max(
                   0,
-                  room.maxHeight - ExploreRecentsPanel._bottomGap,
+                  room.maxHeight - AppTabBar.scrollInset(context),
                 ),
               ),
               child: DecoratedBox(
