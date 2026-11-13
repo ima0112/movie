@@ -168,8 +168,26 @@ void main() {
     expect(applied?.originalLanguage, 'es');
   });
 
+  testWidgets('the apply button says "See results" with no number; with no '
+      'match it is disabled and says so', (tester) async {
+    await _pump(tester, onApply: (_) {});
+    expect(find.text('See results'), findsOneWidget);
+    expect(find.textContaining(RegExp(r'\d+ results')), findsNothing);
+
+    // Years nothing was ever released in (the fake has no 1900 titles).
+    final fields = find.descendant(
+      of: find.byType(YearRangeFields),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(fields.first, '1900');
+    await tester.enterText(fields.last, '1901');
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.text('No results'), findsOneWidget);
+    expect(find.text('See results'), findsNothing);
+  });
+
   testWidgets('it stays a bottom sheet: at most 90% of the screen, the filters '
-      'scroll inside and "See N results" stays in reach', (tester) async {
+      'scroll inside and "See results" stays in reach', (tester) async {
     tester.view.physicalSize = const Size(400, 700);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

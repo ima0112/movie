@@ -63,6 +63,9 @@ class DiscoverSectionBody extends StatelessWidget {
       CarouselSection.finishedShows => MediaCarousel.standard(
         items: items,
         size: MediaCardSize.carouselMedium,
+        // The rating sits bottom-left on every poster (Top rated's wide cards
+        // are the one exception).
+        overlayAtBottom: true,
         overlayBuilder: (item) =>
             PosterBadge.rating(label: item.voteAverage.localizedRating(l10n)),
         onItemTap: open,

@@ -60,9 +60,7 @@ class ListingPoster extends StatelessWidget {
             size: MediaCardSize.grid,
             title: item.title,
             posterUrl: item.posterUrl,
-            // The rating badge takes the corner the "TV" tag would sit in.
-            showTypeTag:
-                item.type == MediaType.tvShow && style != ListingStyle.rating,
+            showTypeTag: item.type == MediaType.tvShow,
             onTap: onTap,
           ),
         ),
@@ -107,7 +105,7 @@ class _Dressing extends StatelessWidget {
       ListingStyle.plain => const SizedBox.shrink(),
       ListingStyle.ranked => RankOverlay(rank: rank, compact: true),
       ListingStyle.rating => _Corner(
-        alignment: Alignment.topLeft,
+        alignment: Alignment.bottomLeft,
         child: PosterBadge.rating(
           label: item.voteAverage.localizedRating(l10n),
         ),

@@ -298,6 +298,11 @@ void main() {
     expect(find.text('1'), findsWidgets);
     await pump(tester, style: ListingStyle.rating);
     expect(find.text('8.5'), findsWidgets);
+    // The rating is at the poster's bottom-left, like everywhere.
+    final poster = tester.getRect(find.byType(MediaCard).first);
+    final badge = tester.getRect(find.text('8.5').first);
+    expect(badge.top, greaterThan(poster.top + poster.height / 2));
+    expect(badge.left, lessThan(poster.left + poster.width / 2));
     await pump(tester, style: ListingStyle.dated);
     expect(find.text('Dec 16, 2026'), findsWidgets);
   });

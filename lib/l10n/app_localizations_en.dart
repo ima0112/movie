@@ -679,11 +679,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterSheetSeeResultsLoading => 'See results';
 
   @override
-  String filterSheetSeeResultsCount(int count) {
-    return 'See $count results';
-  }
-
-  @override
   String discoverRangeFiltersYearRange(int from, int to) {
     return '$from – $to';
   }

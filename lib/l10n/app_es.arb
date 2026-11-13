@@ -230,7 +230,6 @@
   "filterSheetSectionStatus": "Estado",
   "filterSheetSectionSortBy": "Ordenar por",
   "filterSheetSeeResultsLoading": "Ver resultados",
-  "filterSheetSeeResultsCount": "Ver {count, plural, =1{1 resultado} other{{count} resultados}}",
 
   "discoverRangeFiltersYearRange": "{from} – {to}",
   "discoverRangeFiltersNoLimit": "Sin límite",

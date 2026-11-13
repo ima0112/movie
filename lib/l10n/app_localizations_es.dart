@@ -688,17 +688,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterSheetSeeResultsLoading => 'Ver resultados';
 
   @override
-  String filterSheetSeeResultsCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count resultados',
-      one: '1 resultado',
-    );
-    return 'Ver $_temp0';
-  }
-
-  @override
   String discoverRangeFiltersYearRange(int from, int to) {
     return '$from – $to';
   }
