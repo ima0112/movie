@@ -14,16 +14,30 @@ Movie _movie(int id) => Movie(
   voteAverage: 7,
 );
 
-Widget _host(List<MediaItem> items, {void Function(MediaItem)? onTap}) =>
-    MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(
-        body: ListView(
-          children: [MediaHeroCarousel(items: items, onItemTap: onTap)],
-        ),
-      ),
-    );
+Widget _host(
+  List<MediaItem> items, {
+  void Function(MediaItem)? onTap,
+  bool reduceMotion = false,
+}) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  builder: (context, child) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(disableAnimations: reduceMotion),
+    child: child!,
+  ),
+  home: Scaffold(
+    body: ListView(
+      children: [MediaHeroCarousel(items: items, onItemTap: onTap)],
+    ),
+  ),
+);
+
+/// The opacity the hero put on [title]'s card.
+double _opacityOf(WidgetTester tester, Finder card) => tester
+    .widget<Opacity>(
+      find.ancestor(of: card, matching: find.byType(Opacity)).first,
+    )
+    .opacity;
 
 Finder _card(String title) =>
     find.byWidgetPredicate((w) => w is MediaCard && w.title == title);
@@ -35,38 +49,137 @@ void _phone(WidgetTester tester, {double width = 390}) {
 }
 
 void main() {
-  testWidgets('the first card starts on the screen margin, a peek of the '
-      'next one shows on the right', (tester) async {
+  testWidgets('the banner in focus is centered and full size, with the '
+      'previous and the next peeking in on both sides, smaller', (
+    tester,
+  ) async {
     _phone(tester);
     await tester.pumpWidget(_host([_movie(1), _movie(2), _movie(3)]));
 
-    final first = tester.getRect(_card('Movie 1'));
-    expect(first.left, 20);
-    final second = tester.getRect(_card('Movie 2'));
-    expect(second.left, greaterThan(first.right));
-    expect(second.left, lessThan(390)); // part of it is on screen
+    final center = tester.getRect(_card('Movie 1'));
+    expect(center.center.dx, moreOrLessEquals(390 / 2, epsilon: 1));
+    expect(center.width, moreOrLessEquals(390 * 0.78, epsilon: 1));
+    expect(center.height, MediaCardSize.hero.height);
+
+    final next = tester.getRect(_card('Movie 2'));
+    final previous = tester.getRect(_card('Movie 3')); // it loops
+    expect(next.left, lessThan(390)); // part of it is on screen
+    expect(previous.right, greaterThan(0));
+    expect(next.left, greaterThan(center.right));
+    expect(previous.right, lessThan(center.left));
+    // Smaller (and so shorter), around the same middle.
+    expect(next.width, lessThan(center.width));
+    expect(next.height, lessThan(center.height));
+    expect(next.width / center.width, moreOrLessEquals(0.88, epsilon: 0.01));
+    expect(previous.width, moreOrLessEquals(next.width, epsilon: 1));
+    expect(next.center.dy, moreOrLessEquals(center.center.dy, epsilon: 1));
   });
 
-  testWidgets('on a small phone the card narrows and the peek stays', (
+  testWidgets('the neighbours are dimmer than the focused banner', (
     tester,
   ) async {
+    _phone(tester);
+    await tester.pumpWidget(_host([_movie(1), _movie(2), _movie(3)]));
+
+    expect(_opacityOf(tester, _card('Movie 1')), 1);
+    expect(
+      _opacityOf(tester, _card('Movie 2')),
+      moreOrLessEquals(MediaHeroCarousel.neighborOpacity, epsilon: 0.01),
+    );
+  });
+
+  testWidgets('the zoom follows the finger: halfway between two banners both '
+      'are in between', (tester) async {
+    _phone(tester);
+    await tester.pumpWidget(_host([_movie(1), _movie(2), _movie(3)]));
+    final full = tester.getRect(_card('Movie 1')).width;
+    final small = tester.getRect(_card('Movie 2')).width;
+
+    // Half a page to the left (page width = card + gap).
+    final gesture = await tester.startGesture(
+      tester.getCenter(_card('Movie 1')),
+    );
+    // The first move only gets past the touch slop; the second drags.
+    await gesture.moveBy(const Offset(-30, 0));
+    await tester.pump();
+    await gesture.moveBy(Offset(-(full + 12) / 2 + 30, 0));
+    await tester.pump();
+
+    final leaving = tester.getRect(_card('Movie 1')).width;
+    final arriving = tester.getRect(_card('Movie 2')).width;
+    expect(leaving, lessThan(full));
+    expect(leaving, greaterThan(small));
+    expect(arriving, greaterThan(small));
+    expect(arriving, lessThan(full));
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+    // It snapped onto one banner, which is back to full size.
+    final widths = [
+      for (final t in ['Movie 1', 'Movie 2'])
+        tester.getRect(_card(t).first).width,
+    ];
+    expect(
+      widths.reduce((a, b) => a > b ? a : b),
+      moreOrLessEquals(full, epsilon: 1),
+    );
+  });
+
+  testWidgets('with reduce motion on, every card stays at scale 1 (the '
+      'dimming stays)', (tester) async {
+    _phone(tester);
+    await tester.pumpWidget(
+      _host([_movie(1), _movie(2), _movie(3)], reduceMotion: true),
+    );
+
+    expect(
+      tester.getRect(_card('Movie 2')).width,
+      moreOrLessEquals(tester.getRect(_card('Movie 1')).width, epsilon: 0.5),
+    );
+    expect(
+      _opacityOf(tester, _card('Movie 2')),
+      moreOrLessEquals(MediaHeroCarousel.neighborOpacity, epsilon: 0.01),
+    );
+  });
+
+  testWidgets('tapping a neighbour opens its detail, like the banner in '
+      'focus', (tester) async {
+    _phone(tester);
+    final tapped = <int>[];
+    await tester.pumpWidget(
+      _host([_movie(1), _movie(2), _movie(3)], onTap: (i) => tapped.add(i.id)),
+    );
+
+    final next = tester.getRect(_card('Movie 2'));
+    // The part of it that is on screen.
+    await tester.tapAt(Offset((next.left + 390) / 2, next.center.dy));
+    await tester.pump();
+
+    expect(tapped, [2]);
+  });
+
+  testWidgets('on a small phone the card narrows and the neighbours still '
+      'show', (tester) async {
     _phone(tester, width: 320);
     await tester.pumpWidget(_host([_movie(1), _movie(2)]));
 
     final first = tester.getRect(_card('Movie 1'));
     expect(first.width, lessThan(MediaCardSize.hero.width));
-    expect(first.right, lessThan(320));
-    expect(tester.getRect(_card('Movie 2')).left, lessThan(320));
+    expect(first.center.dx, moreOrLessEquals(160, epsilon: 1));
+    // With two banners the neighbour on each side is the other one.
+    expect(
+      [for (final e in _card('Movie 2').evaluate()) e]
+          .map((e) => tester.getRect(find.byWidget(e.widget)).left)
+          .any((left) => left < 320),
+      isTrue,
+    );
   });
 
   testWidgets('it loops: after the last banner the first comes back', (
     tester,
   ) async {
     _phone(tester);
-    final tapped = <int>[];
-    await tester.pumpWidget(
-      _host([_movie(1), _movie(2), _movie(3)], onTap: (i) => tapped.add(i.id)),
-    );
+    await tester.pumpWidget(_host([_movie(1), _movie(2), _movie(3)]));
 
     // Swipe forward three times (1 -> 2 -> 3 -> 1 again).
     for (var i = 0; i < 3; i++) {
@@ -74,26 +187,31 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    // The card now in the first slot (the one nearest the left edge, among
-    // those built) is Movie 1 again.
+    // The card in the middle of the screen is Movie 1 again.
     final built = [
       for (final t in ['Movie 1', 'Movie 2', 'Movie 3'])
         if (_card(t).evaluate().isNotEmpty)
           MapEntry(t, tester.getRect(_card(t).first)),
     ];
-    final leftmost = built.reduce(
-      (a, b) => a.value.left.abs() < b.value.left.abs() ? a : b,
+    final centered = built.reduce(
+      (a, b) =>
+          (a.value.center.dx - 195).abs() < (b.value.center.dx - 195).abs()
+          ? a
+          : b,
     );
-    expect(leftmost.key, 'Movie 1');
+    expect(centered.key, 'Movie 1');
   });
 
-  testWidgets('a single banner does not loop', (tester) async {
+  testWidgets('a single banner does not loop and is centered', (tester) async {
     _phone(tester);
     await tester.pumpWidget(_host([_movie(1)]));
     await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
     await tester.pumpAndSettle();
     expect(_card('Movie 1'), findsOneWidget);
-    expect(tester.getRect(_card('Movie 1')).left, 20);
+    expect(
+      tester.getRect(_card('Movie 1')).center.dx,
+      moreOrLessEquals(195, epsilon: 1),
+    );
   });
 
   testWidgets('the hero card is taller and its title is centered at the '
