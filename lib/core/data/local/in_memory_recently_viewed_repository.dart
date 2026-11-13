@@ -16,9 +16,19 @@ class InMemoryRecentlyViewedRepository implements RecentlyViewedRepository {
   final _changes = StreamController<List<MediaItem>>.broadcast();
 
   @override
-  Stream<List<MediaItem>> watch() async* {
-    yield List.unmodifiable(_items);
-    yield* _changes.stream;
+  Stream<List<MediaItem>> watch() {
+    // The current list on subscribe, then every change — a plain controller
+    // (not an `async*` generator, whose cancel can wait on a pending yield).
+    late final StreamController<List<MediaItem>> controller;
+    StreamSubscription<List<MediaItem>>? changes;
+    controller = StreamController<List<MediaItem>>(
+      onListen: () {
+        controller.add(List.unmodifiable(_items));
+        changes = _changes.stream.listen(controller.add);
+      },
+      onCancel: () => changes?.cancel(),
+    );
+    return controller.stream;
   }
 
   @override

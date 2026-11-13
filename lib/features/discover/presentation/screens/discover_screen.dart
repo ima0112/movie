@@ -5,6 +5,7 @@ import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/recently_viewed_repository.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
@@ -15,6 +16,7 @@ import '../../../../shared/widgets/media_segmented_control.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../../../recommendations/presentation/cubit/recommendations_cubit.dart';
 import '../cubit/discover_cubit.dart';
+import '../cubit/recently_viewed_cubit.dart';
 import '../widgets/discover_content_area.dart';
 import '../widgets/discover_top_bar.dart';
 
@@ -42,6 +44,9 @@ class DiscoverScreen extends StatelessWidget {
             getIt<MediaRepository>(),
             getIt<SettingsRepository>(),
           )..loadDiscover(MediaSegment.all),
+        ),
+        BlocProvider(
+          create: (_) => RecentlyViewedCubit(getIt<RecentlyViewedRepository>()),
         ),
         BlocProvider(
           create: (_) => RecommendationsCubit(

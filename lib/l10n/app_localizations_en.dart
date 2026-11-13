@@ -396,6 +396,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionLatestTrailers => 'Latest trailers';
 
   @override
+  String get carouselSectionRecentlyViewed => 'Recently viewed';
+
+  @override
   String get discoverTasteCardTitle => 'Make Home yours';
 
   @override
