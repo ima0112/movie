@@ -45,6 +45,7 @@ class AppSegmentedControl<T> extends StatelessWidget {
       horizontal: AppSpacing.screenMargin,
     ),
     this.glass = false,
+    this.onSheet = false,
   });
 
   final List<AppSegment<T>> segments;
@@ -62,6 +63,11 @@ class AppSegmentedControl<T> extends StatelessWidget {
   /// contrast. Same shape, size and behavior.
   final bool glass;
 
+  /// For a control inside a bottom sheet: the sheet itself is `surfaceRaised`,
+  /// so the track takes the next level up (`surfaceRaised2`, the "cards inside
+  /// sheets" color) and stays visible. Same shape, size and behavior.
+  final bool onSheet;
+
   static const Duration _crossFade = Duration(milliseconds: 200);
   static const double pillHeight = 40;
   static const double pillInset = 4;
@@ -72,6 +78,7 @@ class AppSegmentedControl<T> extends StatelessWidget {
       padding: padding,
       child: _Track(
         glass: glass,
+        onSheet: onSheet,
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -94,9 +101,14 @@ class AppSegmentedControl<T> extends StatelessWidget {
 
 /// The contained pill's track: solid, or [AppSegmentedControl.glass].
 class _Track extends StatelessWidget {
-  const _Track({required this.glass, required this.child});
+  const _Track({
+    required this.glass,
+    required this.onSheet,
+    required this.child,
+  });
 
   final bool glass;
+  final bool onSheet;
   final Widget child;
 
   static const double _blur = 24;
@@ -110,7 +122,9 @@ class _Track extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(AppSegmentedControl.pillInset),
       decoration: BoxDecoration(
-        color: glass ? AppColors.glass : AppColors.surfaceRaised,
+        color: glass
+            ? AppColors.glass
+            : (onSheet ? AppColors.surfaceRaised2 : AppColors.surfaceRaised),
         borderRadius: radius,
         border: glass ? Border.all(color: AppColors.glassBorder) : null,
       ),

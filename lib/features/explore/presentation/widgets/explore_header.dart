@@ -80,17 +80,12 @@ class _ExploreSearchBar extends StatelessWidget {
 void _openFilterSheet(BuildContext context) {
   final cubit = context.read<ExploreCubit>();
   final title = context.l10n.exploreDefaultResultsTitle;
-  showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    // On the root navigator, so the sheet covers the floating tab bar.
-    useRootNavigator: true,
-    builder: (_) => ExploreFilterSheet(
-      initialFilter: DiscoverFilter(type: cubit.state.segment.mediaType),
-      mediaRepository: getIt<MediaRepository>(),
-      regionName: countryName(getIt<SettingsRepository>().current.regionCode),
-      onApply: (filter) => cubit.openListing(filter: filter, title: title),
-    ),
+  ExploreFilterSheet.show(
+    context,
+    initialFilter: DiscoverFilter(type: cubit.state.segment.mediaType),
+    mediaRepository: getIt<MediaRepository>(),
+    regionName: countryName(getIt<SettingsRepository>().current.regionCode),
+    onApply: (filter) => cubit.openListing(filter: filter, title: title),
   );
 }
 

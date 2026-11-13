@@ -120,20 +120,29 @@ SearchResult? searchResultFromJson(
 }
 
 /// `/watch/providers/{type}` entries as [StreamingService]s: duplicates across
-/// movie and TV merged by id, most relevant first (TMDB's `display_priority`,
+/// movie and TV merged by id, most relevant first (TMDB's `display_priorities`
+/// for [regionCode], else its `display_priority`,
 /// then name), at most [limit]. The logo uses the same `w92` size as D1/D2's
 /// own provider logos.
 List<StreamingService> streamingServicesFromJson(
   List<Map<String, dynamic>> raw, {
   required TmdbImagesConfig imagesConfig,
   required int limit,
+  String? regionCode,
 }) {
   final byId = <int, ({StreamingService service, int priority})>{};
   for (final json in raw) {
     final id = json['provider_id'];
     final name = json['provider_name'];
     if (id is! int || name is! String) continue;
-    final priority = (json['display_priority'] as num?)?.toInt() ?? 1 << 20;
+    // `display_priorities` ranks the service within each region (Peacock is
+    // 17th in the US, nowhere near that worldwide); the global
+    // `display_priority` is only the fallback.
+    final regional = (json['display_priorities'] as Map?)?[regionCode];
+    final priority =
+        (regional as num?)?.toInt() ??
+        (json['display_priority'] as num?)?.toInt() ??
+        1 << 20;
     final existing = byId[id];
     if (existing != null && existing.priority <= priority) continue;
     byId[id] = (

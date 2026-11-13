@@ -6,6 +6,8 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/core/domain/entities/media_segment.dart';
+import 'package:movies/shared/widgets/app_segmented_control.dart';
 import 'package:movies/shared/widgets/discover_range_filters.dart';
 import 'package:movies/shared/widgets/explore_filter_sheet.dart';
 
@@ -162,5 +164,62 @@ void main() {
 
     expect(applied?.tvStatus, DiscoverTvStatus.ended);
     expect(applied?.originalLanguage, 'es');
+  });
+
+  testWidgets('it stays a bottom sheet: at most 90% of the screen, the filters '
+      'scroll inside and "See N results" stays in reach', (tester) async {
+    tester.view.physicalSize = const Size(400, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        locale: const Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => ExploreFilterSheet.show(
+                context,
+                initialFilter: const DiscoverFilter(),
+                mediaRepository: FakeMediaRepository(),
+                regionName: 'United States',
+                onApply: (_) {},
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    final sheet = tester.getRect(find.byType(ExploreFilterSheet));
+    expect(sheet.height, lessThanOrEqualTo(700 * 0.9));
+    expect(sheet.top, greaterThan(0));
+    final button = tester.getRect(find.textContaining('See '));
+    expect(button.bottom, lessThanOrEqualTo(700));
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  testWidgets('the kind tabs are the app\'s one segmented control, inset by '
+      'the sheet\'s margin only, on a track that shows against the sheet', (
+    tester,
+  ) async {
+    await _pump(tester, onApply: (_) {});
+
+    final control = find.byType(AppSegmentedControl<MediaSegment>);
+    expect(control, findsOneWidget);
+    expect(
+      tester.widget<AppSegmentedControl<MediaSegment>>(control).onSheet,
+      isTrue,
+    );
+    // Same left edge as the section labels (one margin, not two).
+    expect(
+      tester.getTopLeft(control).dx,
+      tester.getTopLeft(find.text('SORT BY')).dx,
+    );
   });
 }

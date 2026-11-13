@@ -601,8 +601,10 @@ class TmdbMediaRepository implements MediaRepository {
     }
   }
 
-  /// How many services B2's pill row offers.
-  static const int _maxStreamingServices = 15;
+  /// How many services B2's pill row and H8's streaming row offer. Both scroll
+  /// sideways, and TMDB's ranking within a region puts services such as
+  /// Peacock well past the 15th place.
+  static const int _maxStreamingServices = 30;
 
   @override
   Future<Result<List<StreamingService>>> streamingServices({
@@ -623,6 +625,7 @@ class TmdbMediaRepository implements MediaRepository {
           raw,
           imagesConfig: _imagesConfig,
           limit: _maxStreamingServices,
+          regionCode: _region,
         ),
       );
     } on DioException catch (e) {

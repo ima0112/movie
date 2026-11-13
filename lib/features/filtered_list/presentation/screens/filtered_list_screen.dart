@@ -82,15 +82,12 @@ class _FilteredListView extends StatelessWidget {
   // explicitly rather than relied on to still be in scope.
   void _openFilterSheet(BuildContext context) {
     final cubit = context.read<FilteredListCubit>();
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => ExploreFilterSheet(
-        initialFilter: cubit.state.filter,
-        mediaRepository: getIt<MediaRepository>(),
-        regionName: countryName(getIt<SettingsRepository>().current.regionCode),
-        onApply: cubit.updateFilter,
-      ),
+    ExploreFilterSheet.show(
+      context,
+      initialFilter: cubit.state.filter,
+      mediaRepository: getIt<MediaRepository>(),
+      regionName: countryName(getIt<SettingsRepository>().current.regionCode),
+      onApply: cubit.updateFilter,
     );
   }
 }
