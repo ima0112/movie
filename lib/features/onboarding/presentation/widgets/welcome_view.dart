@@ -98,7 +98,7 @@ class WelcomeView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xl),
-                        PrimaryButton(
+                        AccentButton(
                           label: l10n.onboardingWelcomeGetStarted,
                           onTap: onGetStarted,
                         ),
