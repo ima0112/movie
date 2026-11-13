@@ -577,6 +577,8 @@
   "@filterSheetNoResults": {
     "description": "H8's apply button while the live count is 0 (disabled)."
   },
+  "filterSheetYearFrom": "From year",
+  "filterSheetYearTo": "To year",
   "filterSheetPresetComingSoon": "Coming soon",
   "filterSheetPresetInTheaters": "In theaters",
   "filterSheetPresetFinished": "Finished",

@@ -7,7 +7,7 @@ import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'filter_section_header.dart';
 
-/// H8's two numeric-range controls — the years and the rating
+/// H8's rating control — a range slider
 /// (`docs/SCREENS.md` H8). Each is a section header with its live value on the
 /// right, a slider with a white thumb and an amber active track (as in the
 /// mockups) and the two ends' values under it.
@@ -42,60 +42,6 @@ class _EndLabels extends StatelessWidget {
           Text(end, style: style),
         ],
       ),
-    );
-  }
-}
-
-/// "Years": a range slider from [minYear] to the current year.
-class YearRangeFilter extends StatelessWidget {
-  const YearRangeFilter({
-    super.key,
-    required this.yearFrom,
-    required this.yearTo,
-    required this.onChanged,
-  });
-
-  final int? yearFrom;
-  final int? yearTo;
-
-  /// Both `null` when the slider covers the whole range.
-  final void Function(int? yearFrom, int? yearTo) onChanged;
-
-  static const int minYear = 1950;
-
-  @override
-  Widget build(BuildContext context) {
-    final maxYear = DateTime.now().year;
-    final from = (yearFrom ?? minYear).clamp(minYear, maxYear);
-    final to = (yearTo ?? maxYear).clamp(minYear, maxYear);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        FilterSectionHeader(
-          context.l10n.filterSheetSectionYear,
-          trailing: Text(
-            context.l10n.discoverRangeFiltersYearRange(from, to),
-            style: AppTextStyles.h3,
-          ),
-        ),
-        SliderTheme(
-          data: _sliderTheme(context),
-          child: RangeSlider(
-            values: RangeValues(from.toDouble(), to.toDouble()),
-            min: minYear.toDouble(),
-            max: maxYear.toDouble(),
-            divisions: maxYear - minYear,
-            onChanged: (values) {
-              final start = values.start.round();
-              final end = values.end.round();
-              final whole = start == minYear && end == maxYear;
-              onChanged(whole ? null : start, whole ? null : end);
-            },
-          ),
-        ),
-        _EndLabels('$minYear', '$maxYear'),
-      ],
     );
   }
 }

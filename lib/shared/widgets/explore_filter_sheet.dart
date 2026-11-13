@@ -19,6 +19,7 @@ import 'filter_language_chips.dart';
 import 'filter_platform_chips.dart';
 import 'media_segmented_control.dart';
 import 'filter_section_header.dart';
+import 'year_range_fields.dart';
 import 'genre_multi_select_chips.dart';
 
 /// H8 (Filters) — `docs/SCREENS.md` H8. Used from both B2 and C1, so it takes
@@ -28,8 +29,8 @@ import 'genre_multi_select_chips.dart';
 /// **At the top, All | Movies | TV Shows** (starting on [initialFilter]'s
 /// kind). Then the filters, in this order: sort (the three orders plus the
 /// presets of the kind — Coming soon and In theaters for movies, Finished and
-/// Airing now for shows, none for All), streaming platform, genres, years,
-/// rating range and original language. Changing the kind drops what belongs
+/// Airing now for shows, none for All), streaming platform, genres, years
+/// (typed), rating range and original language. Changing the kind drops what belongs
 /// to the old one (the preset, the platform, since the services differ).
 ///
 /// Edits a local draft — nothing reaches [onApply] until "See N results", and
@@ -163,11 +164,13 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
+        // The keyboard (a year is typed) lifts the sheet's content: the
+        // filters scroll in what is left and the button stays above it.
+        padding: EdgeInsets.fromLTRB(
           AppSpacing.screenMargin,
           0,
           AppSpacing.screenMargin,
-          AppSpacing.xl,
+          AppSpacing.xl + MediaQuery.viewInsetsOf(context).bottom,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -239,7 +242,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                     ),
                     const SizedBox(height: AppSpacing.sectionGap),
                     if (_showYears) ...[
-                      YearRangeFilter(
+                      YearRangeFields(
                         yearFrom: _draft.yearFrom,
                         yearTo: _draft.yearTo,
                         onChanged: (from, to) => _setDraft(

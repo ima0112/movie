@@ -10,6 +10,7 @@ import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';
 import 'package:movies/shared/widgets/discover_range_filters.dart';
 import 'package:movies/shared/widgets/explore_filter_sheet.dart';
+import 'package:movies/shared/widgets/year_range_fields.dart';
 
 Future<void> _pump(
   WidgetTester tester, {
@@ -60,7 +61,7 @@ void main() {
     expect(find.text('TV Shows'), findsWidgets);
     expect(find.text('MAX RUNTIME'), findsNothing);
     expect(find.text('STATUS'), findsNothing);
-    expect(find.byType(YearRangeFilter), findsOneWidget);
+    expect(find.byType(YearRangeFields), findsOneWidget);
     expect(find.byType(RatingRangeFilter), findsOneWidget);
   });
 
@@ -129,15 +130,15 @@ void main() {
       filter: const DiscoverFilter(type: MediaType.movie),
       onApply: (f) => applied = f,
     );
-    expect(find.byType(YearRangeFilter), findsOneWidget);
+    expect(find.byType(YearRangeFields), findsOneWidget);
 
     await tester.tap(find.text('Coming soon'));
     await tester.pump(const Duration(seconds: 1));
-    expect(find.byType(YearRangeFilter), findsNothing);
+    expect(find.byType(YearRangeFields), findsNothing);
 
     await tester.tap(find.text('TV Shows'));
     await tester.pump(const Duration(seconds: 1));
-    expect(find.byType(YearRangeFilter), findsOneWidget);
+    expect(find.byType(YearRangeFields), findsOneWidget);
 
     await tester.tap(find.textContaining('See '));
     await tester.pumpAndSettle();
@@ -221,5 +222,97 @@ void main() {
       tester.getTopLeft(control).dx,
       tester.getTopLeft(find.text('SORT BY')).dx,
     );
+  });
+
+  group('the year fields', () {
+    testWidgets('a valid range is reported; a wrong one is not and gets the '
+        'danger border', (tester) async {
+      DiscoverFilter? applied;
+      await _pump(tester, onApply: (f) => applied = f);
+      final fields = find.descendant(
+        of: find.byType(YearRangeFields),
+        matching: find.byType(TextField),
+      );
+
+      await tester.enterText(fields.first, '1990');
+      await tester.enterText(fields.last, '2020');
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.textContaining('See '));
+      await tester.pumpAndSettle();
+      expect(applied?.yearFrom, 1990);
+      expect(applied?.yearTo, 2020);
+    });
+
+    testWidgets('a first year after the last, or out of range, is not '
+        'reported', (tester) async {
+      DiscoverFilter? applied;
+      await _pump(
+        tester,
+        filter: const DiscoverFilter(yearFrom: 1900, yearTo: 2026),
+        onApply: (f) => applied = f,
+      );
+      final fields = find.descendant(
+        of: find.byType(YearRangeFields),
+        matching: find.byType(TextField),
+      );
+
+      await tester.enterText(fields.first, '2027'); // after 2026
+      await tester.pump();
+      await tester.enterText(fields.last, '1800'); // before 1900
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.textContaining('See '));
+      await tester.pumpAndSettle();
+
+      expect(applied?.yearFrom, 1900);
+      expect(applied?.yearTo, 2026);
+    });
+
+    testWidgets('only digits; a half-typed year is not reported; empty is '
+        'an open end', (tester) async {
+      DiscoverFilter? applied;
+      await _pump(
+        tester,
+        filter: const DiscoverFilter(yearFrom: 1900, yearTo: 2026),
+        onApply: (f) => applied = f,
+      );
+      final fields = find.descendant(
+        of: find.byType(YearRangeFields),
+        matching: find.byType(TextField),
+      );
+
+      await tester.enterText(fields.first, 'ab');
+      await tester.pump();
+      expect(tester.widget<TextField>(fields.first).controller!.text, '');
+
+      await tester.enterText(fields.first, '19'); // half typed: kept, unsent
+      await tester.pump(const Duration(seconds: 1));
+      await tester.enterText(fields.first, '1990');
+      await tester.enterText(fields.last, '');
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.textContaining('See '));
+      await tester.pumpAndSettle();
+
+      expect(applied?.yearFrom, 1990);
+      expect(applied?.yearTo, isNull);
+    });
+
+    testWidgets('Clear empties both fields', (tester) async {
+      await _pump(
+        tester,
+        filter: const DiscoverFilter(yearFrom: 2000, yearTo: 2010),
+        onApply: (_) {},
+      );
+      final fields = find.descendant(
+        of: find.byType(YearRangeFields),
+        matching: find.byType(TextField),
+      );
+      expect(tester.widget<TextField>(fields.first).controller!.text, '2000');
+
+      await tester.tap(find.text('Clear'));
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(tester.widget<TextField>(fields.first).controller!.text, '');
+      expect(tester.widget<TextField>(fields.last).controller!.text, '');
+    });
   });
 }

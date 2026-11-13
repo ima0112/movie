@@ -135,6 +135,7 @@ List<StreamingService> streamingServicesFromJson(
     final id = json['provider_id'];
     final name = json['provider_name'];
     if (id is! int || name is! String) continue;
+    if (!_isSubscriptionService(name)) continue;
     // `display_priorities` ranks the service within each region (Peacock is
     // 17th in the US, nowhere near that worldwide); the global
     // `display_priority` is only the fallback.
@@ -167,6 +168,18 @@ List<StreamingService> streamingServicesFromJson(
           : a.service.name.compareTo(b.service.name);
     });
   return [for (final e in sorted.take(limit)) e.service];
+}
+
+/// TMDB's provider list also holds storefronts and re-sold bundles that aren't
+/// a service one subscribes to — "Apple TV Store", "Amazon Video" (rent/buy),
+/// the "JustWatch TV" ones, and any "… Amazon Channel" add-on — which would
+/// take the top spots of a short list. They are left out by name.
+bool _isSubscriptionService(String name) {
+  final lower = name.toLowerCase();
+  return !(lower.contains('justwatch') ||
+      lower.endsWith(' store') ||
+      lower == 'amazon video' ||
+      lower.endsWith(' channel'));
 }
 
 /// Public (not just this file's own concern): `tmdb_detail_mappers.dart`

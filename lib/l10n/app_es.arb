@@ -212,6 +212,8 @@
   "filterSheetMinRatingValue": "{rating} o más",
   "filterSheetMinRatingAny": "Cualquier nota",
   "filterSheetNoResults": "Sin resultados",
+  "filterSheetYearFrom": "Desde el año",
+  "filterSheetYearTo": "Hasta el año",
   "filterSheetPresetComingSoon": "Próximamente",
   "filterSheetPresetInTheaters": "En cines",
   "filterSheetPresetFinished": "Finalizadas",

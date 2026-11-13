@@ -1196,6 +1196,18 @@ abstract class AppLocalizations {
   /// **'No results'**
   String get filterSheetNoResults;
 
+  /// No description provided for @filterSheetYearFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From year'**
+  String get filterSheetYearFrom;
+
+  /// No description provided for @filterSheetYearTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To year'**
+  String get filterSheetYearTo;
+
   /// No description provided for @filterSheetPresetComingSoon.
   ///
   /// In en, this message translates to:

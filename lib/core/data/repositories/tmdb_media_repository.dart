@@ -601,10 +601,11 @@ class TmdbMediaRepository implements MediaRepository {
     }
   }
 
-  /// How many services B2's pill row and H8's streaming row offer. Both scroll
-  /// sideways, and TMDB's ranking within a region puts services such as
-  /// Peacock well past the 15th place.
-  static const int _maxStreamingServices = 30;
+  /// How many services B2's pill row and H8's streaming row offer: only the
+  /// region's top ones (TMDB's own ranking there). The rest are still found by
+  /// searching without a platform, which mixes every service — these pills are
+  /// just a useful shortcut.
+  static const int _maxStreamingServices = 8;
 
   @override
   Future<Result<List<StreamingService>>> streamingServices({
