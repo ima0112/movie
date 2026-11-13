@@ -1175,8 +1175,14 @@ abstract class AppLocalizations {
   /// No description provided for @filterSheetSortNewest.
   ///
   /// In en, this message translates to:
-  /// **'Release date'**
+  /// **'Newest'**
   String get filterSheetSortNewest;
+
+  /// No description provided for @filterSheetSortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get filterSheetSortOldest;
 
   /// H8's minimum-rating slider value, shown next to a star, e.g. "7.0 or more".
   ///

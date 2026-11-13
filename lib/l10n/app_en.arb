@@ -566,7 +566,8 @@
   "filterSheetSectionStreaming": "Streaming on",
   "filterSheetSortPopular": "Popular",
   "filterSheetSortTopRated": "Top rated",
-  "filterSheetSortNewest": "Release date",
+  "filterSheetSortNewest": "Newest",
+  "filterSheetSortOldest": "Oldest",
   "filterSheetMinRatingValue": "{rating} or more",
   "@filterSheetMinRatingValue": {
     "description": "H8's minimum-rating slider value, shown next to a star, e.g. \"7.0 or more\".",

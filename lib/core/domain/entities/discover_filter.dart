@@ -4,7 +4,18 @@ import 'media_type.dart';
 
 /// How `MediaRepository.discover` results should be ordered — H8's own
 /// "sort by Popularity/Rating/Date/Title" (`docs/SCREENS.md` H8).
-enum DiscoverSortBy { popularity, rating, releaseDate, title, voteCount }
+enum DiscoverSortBy {
+  popularity,
+  rating,
+
+  /// Newest first.
+  releaseDate,
+
+  /// Oldest first.
+  releaseDateAsc,
+  title,
+  voteCount,
+}
 
 /// H8's "status Airing/Ended (TV shows only)" — TMDB's own TV status
 /// vocabulary has more values ("Returning Series", "Canceled", ...);

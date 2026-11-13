@@ -126,4 +126,45 @@ void main() {
       );
     });
   });
+
+  group('withSort', () {
+    test('Top rated asks for 300 votes, so a 9.9 from a handful of people '
+        'never leads; any other order goes back to the default floor', () {
+      final rated = const DiscoverFilter().withSort(DiscoverSortBy.rating);
+      expect(rated.sortBy, DiscoverSortBy.rating);
+      expect(rated.minVoteCount, 300);
+
+      final back = rated.withSort(DiscoverSortBy.releaseDateAsc);
+      expect(back.minVoteCount, const DiscoverFilter().minVoteCount);
+      expect(
+        const DiscoverFilter().withSort(DiscoverSortBy.popularity),
+        const DiscoverFilter(),
+      );
+    });
+
+    test('a release-window preset keeps its own floor', () {
+      final coming = const DiscoverFilter(
+        type: MediaType.movie,
+      ).withPreset(DiscoverPreset.comingSoon, now: DateTime(2026, 11, 13));
+
+      expect(coming.withSort(DiscoverSortBy.rating).minVoteCount, 0);
+    });
+
+    test('Oldest first maps to the ascending date sort, for both kinds', () {
+      expect(
+        discoverQueryParams(
+          const DiscoverFilter(sortBy: DiscoverSortBy.releaseDateAsc),
+          type: MediaType.movie,
+        )['sort_by'],
+        'primary_release_date.asc',
+      );
+      expect(
+        discoverQueryParams(
+          const DiscoverFilter(sortBy: DiscoverSortBy.releaseDateAsc),
+          type: MediaType.tvShow,
+        )['sort_by'],
+        'first_air_date.asc',
+      );
+    });
+  });
 }

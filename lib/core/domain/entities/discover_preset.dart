@@ -35,6 +35,9 @@ enum DiscoverPreset {
   static const Duration inTheatersWindow = Duration(days: 45);
 }
 
+/// Votes needed under the "Top rated" order.
+const int ratedMinVoteCount = 300;
+
 extension DiscoverFilterPreset on DiscoverFilter {
   /// The preset this filter is exactly, as of [now] (default: today), or
   /// `null`. A release window is recognized by its dates, so one saved
@@ -63,6 +66,22 @@ extension DiscoverFilterPreset on DiscoverFilter {
 
   /// [presetAt] for today.
   DiscoverPreset? get preset => presetAt(DateTime.now());
+
+  /// The votes a title needs to be listed under [sort] — a "top rated" order
+  /// is meaningless on a handful of votes (a 9.9 from 143 people), so it asks
+  /// for 300 (as B2's Top rated does); otherwise the default. A preset keeps
+  /// its own floor (unreleased titles have no votes at all).
+  DiscoverFilter withSort(DiscoverSortBy sort) {
+    final floor = switch (preset) {
+      DiscoverPreset.comingSoon => 0,
+      DiscoverPreset.inTheaters => 10,
+      _ =>
+        sort == DiscoverSortBy.rating
+            ? ratedMinVoteCount
+            : const DiscoverFilter().minVoteCount,
+    };
+    return copyWith(sortBy: sort, minVoteCount: floor);
+  }
 
   /// This filter with [preset] applied (or, with `null`, with any preset
   /// removed), replacing whichever one was there. Unreleased titles have no

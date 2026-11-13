@@ -55,7 +55,8 @@ void main() {
     expect(tops, orderedEquals([...tops]..sort()));
     expect(find.text('Popular'), findsOneWidget);
     expect(find.text('Top rated'), findsOneWidget);
-    expect(find.text('Release date'), findsOneWidget);
+    expect(find.text('Newest'), findsOneWidget);
+    expect(find.text('Oldest'), findsOneWidget);
     expect(find.text('All'), findsWidgets);
     expect(find.text('Movies'), findsWidgets);
     expect(find.text('TV Shows'), findsWidgets);
