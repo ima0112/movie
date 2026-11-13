@@ -83,6 +83,13 @@ Map<String, dynamic> discoverQueryParams(
   if (filter.minVoteAverage != null) {
     params['vote_average.gte'] = filter.minVoteAverage;
   }
+  if (filter.maxVoteAverage != null) {
+    params['vote_average.lte'] = filter.maxVoteAverage;
+  }
+
+  if (filter.originalLanguage != null) {
+    params['with_original_language'] = filter.originalLanguage;
+  }
 
   // Movies only — DiscoverFilter.maxRuntimeMinutes' own doc comment:
   // "meaningless for a TV filter."

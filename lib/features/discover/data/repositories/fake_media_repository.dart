@@ -1169,6 +1169,9 @@ class FakeMediaRepository implements MediaRepository {
     if (filter.minVoteAverage case final min?) {
       items = items.where((item) => item.voteAverage >= min);
     }
+    if (filter.maxVoteAverage case final max?) {
+      items = items.where((item) => item.voteAverage <= max);
+    }
 
     final results = items.toList();
     final comparator = _comparatorFor(filter.sortBy);

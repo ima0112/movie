@@ -1,3 +1,4 @@
+import 'discover_preset.dart';
 import 'genre.dart';
 import 'media_type.dart';
 
@@ -36,6 +37,8 @@ class DiscoverFilter {
     this.yearFrom,
     this.yearTo,
     this.minVoteAverage,
+    this.maxVoteAverage,
+    this.originalLanguage,
     this.maxRuntimeMinutes,
     this.tvStatus,
     this.sortBy = DiscoverSortBy.popularity,
@@ -72,6 +75,14 @@ class DiscoverFilter {
 
   /// H8: "minimum rating (0–9 slider...)".
   final double? minVoteAverage;
+
+  /// The top of H8's rating range (`vote_average.lte`); `null` = no ceiling.
+  final double? maxVoteAverage;
+
+  /// H8's "Original language": an ISO 639-1 code (`with_original_language`),
+  /// `null` = any. The language a title was made in, not the one it's shown
+  /// in.
+  final String? originalLanguage;
 
   /// H8: "max runtime (movies only)" — minutes. Meaningless for a TV
   /// filter; nothing enforces that here (the *screen* only shows this
@@ -126,15 +137,22 @@ class DiscoverFilter {
   bool get isDefault => this == const DiscoverFilter();
 
   /// How many filters the user has set — what the C1 filter icon's badge
-  /// counts, one per streaming service, genre, the years and the minimum
-  /// rating. The kind of title and the sort never count: the first is the
-  /// segment, the second is always set to something.
+  /// counts, one per streaming service, genre, the years, the rating range,
+  /// the original language and a preset (Coming soon, Finished…). The kind
+  /// of title and the sort never count: the first is the segment, the second
+  /// is always set to something.
   int get activeFilterCount =>
       withWatchProviders.length +
       withGenres.length +
       withoutGenres.length +
       (yearFrom != null || yearTo != null ? 1 : 0) +
-      (minVoteAverage != null && minVoteAverage! > 0 ? 1 : 0);
+      (hasRatingRange ? 1 : 0) +
+      (originalLanguage != null ? 1 : 0) +
+      (preset != null ? 1 : 0);
+
+  /// Whether a rating floor above 0 or a ceiling is set.
+  bool get hasRatingRange =>
+      (minVoteAverage != null && minVoteAverage! > 0) || maxVoteAverage != null;
 
   /// [type]/[yearFrom]/[yearTo]/[minVoteAverage]/[maxRuntimeMinutes]/
   /// [tvStatus] take a *function* returning the new value, not the value
@@ -155,6 +173,8 @@ class DiscoverFilter {
     int? Function()? yearFrom,
     int? Function()? yearTo,
     double? Function()? minVoteAverage,
+    double? Function()? maxVoteAverage,
+    String? Function()? originalLanguage,
     int? Function()? maxRuntimeMinutes,
     DiscoverTvStatus? Function()? tvStatus,
     DiscoverSortBy? sortBy,
@@ -174,6 +194,12 @@ class DiscoverFilter {
       minVoteAverage: minVoteAverage == null
           ? this.minVoteAverage
           : minVoteAverage(),
+      maxVoteAverage: maxVoteAverage == null
+          ? this.maxVoteAverage
+          : maxVoteAverage(),
+      originalLanguage: originalLanguage == null
+          ? this.originalLanguage
+          : originalLanguage(),
       maxRuntimeMinutes: maxRuntimeMinutes == null
           ? this.maxRuntimeMinutes
           : maxRuntimeMinutes(),
@@ -197,6 +223,8 @@ class DiscoverFilter {
       other.yearFrom == yearFrom &&
       other.yearTo == yearTo &&
       other.minVoteAverage == minVoteAverage &&
+      other.maxVoteAverage == maxVoteAverage &&
+      other.originalLanguage == originalLanguage &&
       other.maxRuntimeMinutes == maxRuntimeMinutes &&
       other.tvStatus == tvStatus &&
       other.sortBy == sortBy &&
@@ -215,6 +243,8 @@ class DiscoverFilter {
     yearFrom,
     yearTo,
     minVoteAverage,
+    maxVoteAverage,
+    originalLanguage,
     maxRuntimeMinutes,
     tvStatus,
     sortBy,
@@ -231,6 +261,8 @@ class DiscoverFilter {
       'withoutGenres: $withoutGenres, withKeywords: $withKeywords, '
       'yearFrom: $yearFrom, '
       'yearTo: $yearTo, minVoteAverage: $minVoteAverage, '
+      'maxVoteAverage: $maxVoteAverage, '
+      'originalLanguage: $originalLanguage, '
       'maxRuntimeMinutes: $maxRuntimeMinutes, tvStatus: $tvStatus, '
       'sortBy: $sortBy, minVoteCount: $minVoteCount, '
       'maxVoteCount: $maxVoteCount, '
