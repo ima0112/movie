@@ -12,8 +12,8 @@ import '../cubit/section_listing_state.dart';
 import 'listing_context_pill.dart';
 import 'listing_sort_sheet.dart';
 
-/// Under the title bar: the context pill and, when [sortEnabled], the sort
-/// icon. With sorting on, the pill sits on the left and the icon on the right;
+/// Under the title bar: Explore's context pill (none from Home) and, when
+/// [sortEnabled], the sort icon. With sorting on, the pill sits on the left and the icon on the right;
 /// with it off (the screen's default for now) the pill is **centered** in the
 /// row. The pill is static (built once); only the icon watches the sort, to
 /// turn amber when the list is not in its own order (CLAUDE.md rule 9).
@@ -32,6 +32,10 @@ class ListingToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Home's "See all" says nothing about what was set (no segment pill); with
+    // sorting off there is then nothing to show in this row at all.
+    final showsPill = listingContext.showsFilters;
+    if (!showsPill && !sortEnabled) return const SizedBox.shrink();
     final pill = ListingContextPill(listingContext: listingContext);
     return Padding(
       // With the icon, its glyph lines up with the grid's right edge: the page
@@ -49,7 +53,7 @@ class ListingToolbar extends StatelessWidget {
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(child: pill),
+                if (showsPill) Flexible(child: pill) else const SizedBox(),
                 const _SortButton(),
               ],
             )
