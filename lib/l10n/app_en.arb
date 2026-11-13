@@ -577,9 +577,26 @@
   "@filterSheetNoResults": {
     "description": "H8's apply button while the live count is 0 (disabled)."
   },
+  "filterSheetPresetComingSoon": "Coming soon",
+  "filterSheetPresetInTheaters": "In theaters",
+  "filterSheetPresetFinished": "Finished",
+  "filterSheetPresetAiringNow": "Airing now",
+  "filterSheetSectionLanguage": "Original language",
+  "filterSheetLanguageAny": "Any",
+  "filterSheetRatingRangeValue": "{min} – {max}",
+  "@filterSheetRatingRangeValue": {
+    "description": "H8's rating range slider value, shown next to a star, e.g. \"4.5 – 8.0\".",
+    "placeholders": { "min": { "type": "String" }, "max": { "type": "String" } }
+  },
+  "filteredListRatingRangeChip": "Rating {min}–{max}",
+  "@filteredListRatingRangeChip": {
+    "description": "C1's active-filter chip for a rating range, e.g. \"Rating 4.5–8.0\".",
+    "placeholders": { "min": { "type": "String" }, "max": { "type": "String" } }
+  },
   "filterSheetSectionType": "Type",
   "filterSheetSectionYear": "Years",
   "filterSheetSectionMinRating": "Minimum rating",
+  "filterSheetSectionRating": "Rating",
   "filterSheetSectionMaxRuntime": "Max runtime",
   "filterSheetSectionStatus": "Status",
   "filterSheetSectionSortBy": "Sort by",

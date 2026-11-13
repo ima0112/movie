@@ -7,7 +7,7 @@ import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'filter_section_header.dart';
 
-/// H8's two numeric-range controls — the years and the minimum rating
+/// H8's two numeric-range controls — the years and the rating
 /// (`docs/SCREENS.md` H8). Each is a section header with its live value on the
 /// right, a slider with a white thumb and an amber active track (as in the
 /// mockups) and the two ends' values under it.
@@ -100,33 +100,38 @@ class YearRangeFilter extends StatelessWidget {
   }
 }
 
-/// "Minimum rating": 0–10 in half points; `vote_count.gte` stays fixed
-/// (`DiscoverFilter.minVoteCount`), so a title with three 10s never passes.
-class MinRatingFilter extends StatelessWidget {
-  const MinRatingFilter({
+/// "Rating": a range slider from 0 to 10 in half points; `vote_count.gte`
+/// stays fixed (`DiscoverFilter.minVoteCount`), so a title with three 10s
+/// never passes.
+class RatingRangeFilter extends StatelessWidget {
+  const RatingRangeFilter({
     super.key,
     required this.minVoteAverage,
+    required this.maxVoteAverage,
     required this.onChanged,
   });
 
   final double? minVoteAverage;
+  final double? maxVoteAverage;
 
-  /// `null` at 0 (no minimum).
-  final ValueChanged<double?> onChanged;
+  /// Each end is `null` while it is at its limit (0 / 10).
+  final void Function(double? min, double? max) onChanged;
 
   static const double max = 10;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final value = minVoteAverage ?? 0;
+    final low = minVoteAverage ?? 0;
+    final high = maxVoteAverage ?? max;
+    final whole = low == 0 && high == max;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FilterSectionHeader(
-          l10n.filterSheetSectionMinRating,
-          trailing: value == 0
+          l10n.filterSheetSectionRating,
+          trailing: whole
               ? Text(l10n.filterSheetMinRatingAny, style: AppTextStyles.h3)
               : Row(
                   mainAxisSize: MainAxisSize.min,
@@ -138,7 +143,10 @@ class MinRatingFilter extends StatelessWidget {
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     Text(
-                      l10n.filterSheetMinRatingValue(value.toStringAsFixed(1)),
+                      l10n.filterSheetRatingRangeValue(
+                        low.toStringAsFixed(1),
+                        high.toStringAsFixed(1),
+                      ),
                       style: AppTextStyles.h3,
                     ),
                   ],
@@ -146,12 +154,15 @@ class MinRatingFilter extends StatelessWidget {
         ),
         SliderTheme(
           data: _sliderTheme(context),
-          child: Slider(
-            value: value,
+          child: RangeSlider(
+            values: RangeValues(low, high),
             min: 0,
             max: max,
             divisions: (max * 2).round(),
-            onChanged: (v) => onChanged(v == 0 ? null : v),
+            onChanged: (values) => onChanged(
+              values.start == 0 ? null : values.start,
+              values.end == max ? null : values.end,
+            ),
           ),
         ),
         _EndLabels('0', '${max.round()}'),

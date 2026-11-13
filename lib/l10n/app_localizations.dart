@@ -1196,6 +1196,54 @@ abstract class AppLocalizations {
   /// **'No results'**
   String get filterSheetNoResults;
 
+  /// No description provided for @filterSheetPresetComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get filterSheetPresetComingSoon;
+
+  /// No description provided for @filterSheetPresetInTheaters.
+  ///
+  /// In en, this message translates to:
+  /// **'In theaters'**
+  String get filterSheetPresetInTheaters;
+
+  /// No description provided for @filterSheetPresetFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get filterSheetPresetFinished;
+
+  /// No description provided for @filterSheetPresetAiringNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Airing now'**
+  String get filterSheetPresetAiringNow;
+
+  /// No description provided for @filterSheetSectionLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Original language'**
+  String get filterSheetSectionLanguage;
+
+  /// No description provided for @filterSheetLanguageAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get filterSheetLanguageAny;
+
+  /// H8's rating range slider value, shown next to a star, e.g. "4.5 – 8.0".
+  ///
+  /// In en, this message translates to:
+  /// **'{min} – {max}'**
+  String filterSheetRatingRangeValue(String min, String max);
+
+  /// C1's active-filter chip for a rating range, e.g. "Rating 4.5–8.0".
+  ///
+  /// In en, this message translates to:
+  /// **'Rating {min}–{max}'**
+  String filteredListRatingRangeChip(String min, String max);
+
   /// No description provided for @filterSheetSectionType.
   ///
   /// In en, this message translates to:
@@ -1213,6 +1261,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Minimum rating'**
   String get filterSheetSectionMinRating;
+
+  /// No description provided for @filterSheetSectionRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get filterSheetSectionRating;
 
   /// No description provided for @filterSheetSectionMaxRuntime.
   ///
