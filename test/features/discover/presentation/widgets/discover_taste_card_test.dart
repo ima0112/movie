@@ -8,7 +8,9 @@ import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/core/theme/app_text_styles.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/presentation/widgets/taste_card_posters.dart';
 import 'package:movies/shared/widgets/app_buttons.dart';
@@ -126,7 +128,7 @@ void main() {
       ),
       findsNothing,
     );
-    expect(find.byType(PrimaryButton), findsOneWidget);
+    expect(find.byType(AccentButton), findsOneWidget);
   });
 
   testWidgets('it survives a small phone at 200% text scale', (tester) async {
@@ -153,5 +155,131 @@ void main() {
 
     expect(find.text('Recommendations tailored to you'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  /// A card at [width] logical pixels, in [locale].
+  Future<void> pumpAt(
+    WidgetTester tester, {
+    required double width,
+    String locale = 'en',
+    double textScale = 1,
+  }) async {
+    tester.view.physicalSize = Size(width, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        locale: Locale(locale),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        ),
+        home: const Scaffold(
+          body: SingleChildScrollView(child: DiscoverTasteCard()),
+        ),
+      ),
+    );
+    await settle(tester);
+  }
+
+  // The test environment has no Manrope (every glyph is a 20 px square), so
+  // real word widths can't be measured here: what is checked is the column the
+  // text gets — never under the width its longest word needs — and that the
+  // button stays on one line.
+  for (final width in [320.0, 340.0, 360.0, 390.0, 430.0]) {
+    for (final locale in ['en', 'es']) {
+      testWidgets('at $width px in $locale the title gets at least '
+          '${TasteCardPosters.minTextWidth} px and the button is one line', (
+        tester,
+      ) async {
+        await pumpAt(tester, width: width, locale: locale);
+
+        final titleFinder = find.byWidgetPredicate(
+          (w) =>
+              w is Text &&
+              w.style == AppTextStyles.h2 &&
+              w.data != null &&
+              w.data!.length > 10,
+        );
+        expect(titleFinder, findsOneWidget);
+        expect(
+          tester.getSize(titleFinder).width,
+          greaterThanOrEqualTo(TasteCardPosters.minTextWidth),
+        );
+
+        // One line: no taller than a single h3 line plus its padding.
+        expect(tester.getSize(find.byType(AccentButton)).height, lessThan(56));
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
+  testWidgets('a very narrow card leaves the posters out; a narrow one shows '
+      'two; a wide one all three', (tester) async {
+    await pumpAt(tester, width: 320);
+    expect(find.byType(TasteCardPosters), findsNothing);
+
+    await pumpAt(tester, width: 340);
+    expect(
+      tester.widget<TasteCardPosters>(find.byType(TasteCardPosters)).compact,
+      isTrue,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(TasteCardPosters),
+        matching: find.byType(Image),
+      ),
+      findsNWidgets(2),
+    );
+
+    await pumpAt(tester, width: 430);
+    expect(
+      tester.widget<TasteCardPosters>(find.byType(TasteCardPosters)).compact,
+      isFalse,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(TasteCardPosters),
+        matching: find.byType(Image),
+      ),
+      findsNWidgets(3),
+    );
+  });
+
+  testWidgets('the button is amber with dark text, per the card\'s design', (
+    tester,
+  ) async {
+    await pumpAt(tester, width: 390);
+
+    final pill = tester.widget<DecoratedBox>(
+      find
+          .descendant(
+            of: find.byType(AccentButton),
+            matching: find.byType(DecoratedBox),
+          )
+          .first,
+    );
+    expect((pill.decoration as BoxDecoration).color, AppColors.accent);
+    expect(
+      tester.widget<Text>(find.text('Choose my tastes')).style!.color,
+      AppColors.onAccent,
+    );
+  });
+
+  testWidgets('the posters sit inside the card and stay clear of the text', (
+    tester,
+  ) async {
+    await pumpAt(tester, width: 390);
+
+    final card = tester.getRect(find.byType(CometBorder));
+    final posters = tester.getRect(find.byType(TasteCardPosters));
+    final title = tester.getRect(find.text('Recommendations tailored to you'));
+    expect(posters.right, lessThanOrEqualTo(card.right));
+    expect(posters.left, greaterThanOrEqualTo(title.right - 1));
   });
 }
