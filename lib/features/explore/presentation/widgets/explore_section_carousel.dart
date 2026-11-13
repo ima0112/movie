@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/media_backdrop_carousel.dart';
@@ -22,7 +23,7 @@ import '../../domain/explore_section.dart';
 /// | Top rated | wide backdrop cards (the lead section) |
 /// | New releases | medium posters (130×195), no badge (the heading says it) |
 /// | Coming soon | small posters (90×135) with the release date under each |
-/// | Hidden gems | medium posters with an amber rating badge |
+/// | Hidden gems | medium posters, "TV" tag top-left, rating bottom-left, title under |
 class ExploreSectionCarousel extends StatelessWidget {
   const ExploreSectionCarousel({
     super.key,
@@ -80,9 +81,14 @@ class ExploreSectionCarousel extends StatelessWidget {
       ExploreSection.hiddenGems => MediaCarousel.standard(
         items: items,
         size: MediaCardSize.carouselMedium,
-        showTypeTag: false,
+        showTypeTag: tvTag,
+        // As in the results lists: the "TV" tag top-left, the rating
+        // bottom-left and the title under the poster.
+        overlayAtBottom: true,
         overlayBuilder: (item) =>
             PosterBadge.rating(label: item.voteAverage.localizedRating(l10n)),
+        captionStyle: AppTextStyles.bodySm,
+        captionBuilder: (item) => item.title,
         onItemTap: onItemTap,
       ),
     };

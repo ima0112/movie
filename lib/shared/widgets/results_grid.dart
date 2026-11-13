@@ -18,17 +18,20 @@ class ResultsGrid {
   static double columnWidth(double availableWidth) =>
       (availableWidth - gap * (columns - 1)) / columns;
 
-  /// The height of a one-line caption under a poster: its gap plus the line
-  /// at the current text scale, so a larger text setting grows the cell
-  /// instead of overflowing it.
+  /// The height of the caption under a poster — the title (one line) and the
+  /// release year (one line) with the gap above them — at the current text
+  /// scale, so a larger text setting grows the cell instead of overflowing it.
   static double captionExtent(BuildContext context) {
-    final style = AppTextStyles.bodySm;
-    final line = MediaQuery.textScalerOf(
-      context,
-    ).scale(style.fontSize! * style.height!);
-    // Rounded up, plus a pixel: text layout rounds the line's height, and a
-    // half-pixel short would overflow the tile.
-    return AppSpacing.sm + line.ceilToDouble() + 1;
+    final scaler = MediaQuery.textScalerOf(context);
+    double line(TextStyle style) =>
+        scaler.scale(style.fontSize! * style.height!).ceilToDouble();
+    // Plus a pixel each: text layout rounds a line's height, and a half-pixel
+    // short would overflow the tile.
+    return AppSpacing.sm +
+        line(AppTextStyles.bodySm) +
+        1 +
+        line(AppTextStyles.caption) +
+        1;
   }
 
   /// The grid delegate for a grid [availableWidth] wide whose tiles are a 2:3

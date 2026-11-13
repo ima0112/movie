@@ -38,6 +38,8 @@ class MediaCarousel extends StatelessWidget {
     this.size = MediaCardSize.carousel,
     this.overlayBuilder,
     this.captionBuilder,
+    this.captionStyle,
+    this.overlayAtBottom = false,
     this.focusZoom = false,
   });
 
@@ -63,6 +65,14 @@ class MediaCarousel extends StatelessWidget {
   /// A line of text under each poster (Coming soon's release date); `null`
   /// result = none for that item.
   final String? Function(MediaItem item)? captionBuilder;
+
+  /// The caption's style: the small muted line by default; a title under a
+  /// poster (Hidden gems) uses the body style.
+  final TextStyle? captionStyle;
+
+  /// Put [overlayBuilder]'s widget in the poster's bottom-left corner instead
+  /// of the top-left one — which is then free for the "TV" tag.
+  final bool overlayAtBottom;
   final void Function(MediaItem item)? onItemTap;
 
   @override
@@ -70,8 +80,19 @@ class MediaCarousel extends StatelessWidget {
     return _buildStandard(context);
   }
 
-  /// Room under a poster for [captionBuilder]'s one line of text.
-  static const double _captionHeight = 28;
+  static final TextStyle _defaultCaption = AppTextStyles.caption.copyWith(
+    color: AppColors.inkMuted,
+  );
+
+  /// Room under a poster for [captionBuilder]'s one line of text at the
+  /// current text scale.
+  double _captionHeight(BuildContext context) {
+    final style = captionStyle ?? _defaultCaption;
+    final line = MediaQuery.textScalerOf(
+      context,
+    ).scale(style.fontSize! * style.height!);
+    return AppSpacing.xs + line.ceilToDouble() + 1;
+  }
 
   Widget _list({required IndexedWidgetBuilder itemBuilder}) {
     if (focusZoom) {
@@ -91,7 +112,7 @@ class MediaCarousel extends StatelessWidget {
   Widget _buildStandard(BuildContext context) {
     final hasCaption = captionBuilder != null;
     return SizedBox(
-      height: size.height + (hasCaption ? _captionHeight : 0),
+      height: size.height + (hasCaption ? _captionHeight(context) : 0),
       child: _list(
         itemBuilder: (context, index) {
           final item = items[index];
@@ -121,7 +142,8 @@ class MediaCarousel extends StatelessWidget {
                       if (overlay != null)
                         Positioned(
                           left: AppSpacing.xs,
-                          top: AppSpacing.xs,
+                          top: overlayAtBottom ? null : AppSpacing.xs,
+                          bottom: overlayAtBottom ? AppSpacing.xs : null,
                           child: IgnorePointer(child: overlay),
                         ),
                     ],
@@ -131,9 +153,7 @@ class MediaCarousel extends StatelessWidget {
                       padding: const EdgeInsets.only(top: AppSpacing.xs),
                       child: Text(
                         caption ?? '',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.inkMuted,
-                        ),
+                        style: captionStyle ?? _defaultCaption,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
