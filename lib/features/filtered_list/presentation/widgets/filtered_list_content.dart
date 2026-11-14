@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
+import '../../../../core/domain/entities/discover_preset.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -157,7 +158,7 @@ class _CountLine extends StatelessWidget {
       builder: (_) => FilteredListSortSheet(
         selected: cubit.state.filter.sortBy,
         onSelected: (sort) =>
-            cubit.updateFilter(cubit.state.filter.copyWith(sortBy: sort)),
+            cubit.updateFilter(cubit.state.filter.withSort(sort)),
       ),
     );
   }

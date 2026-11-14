@@ -1224,6 +1224,10 @@ class FakeMediaRepository implements MediaRepository {
         (a, b) => (b.releaseDate ?? DateTime(0)).compareTo(
           a.releaseDate ?? DateTime(0),
         ),
+      DiscoverSortBy.releaseDateAsc =>
+        (a, b) => (a.releaseDate ?? DateTime(9999)).compareTo(
+          b.releaseDate ?? DateTime(9999),
+        ),
       DiscoverSortBy.title => (a, b) => a.title.compareTo(b.title),
     };
   }

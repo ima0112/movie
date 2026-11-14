@@ -10,6 +10,7 @@ extension DiscoverSortByLocalization on DiscoverSortBy {
     DiscoverSortBy.popularity => l10n.discoverSortPopularity,
     DiscoverSortBy.rating => l10n.discoverSortRating,
     DiscoverSortBy.releaseDate => l10n.discoverSortDate,
+    DiscoverSortBy.releaseDateAsc => l10n.filterSheetSortOldest,
     DiscoverSortBy.title => l10n.discoverSortTitle,
     DiscoverSortBy.voteCount => l10n.discoverSortVotes,
   };
@@ -23,6 +24,7 @@ extension DiscoverSortBySheetLabel on DiscoverSortBy {
     DiscoverSortBy.popularity => l10n.filterSheetSortPopular,
     DiscoverSortBy.rating => l10n.filterSheetSortTopRated,
     DiscoverSortBy.releaseDate => l10n.filterSheetSortNewest,
+    DiscoverSortBy.releaseDateAsc => l10n.filterSheetSortOldest,
     _ => localizedLabel(l10n),
   };
 }

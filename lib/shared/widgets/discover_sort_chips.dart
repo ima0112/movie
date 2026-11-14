@@ -9,8 +9,8 @@ import '../../l10n/discover_sort_by_localization.dart';
 import '../../l10n/l10n_extension.dart';
 import 'app_chip.dart';
 
-/// H8's "Sort by": the three plain orders ([options] — Popular, Top rated,
-/// Release date) followed by the presets of the kind of title
+/// H8's "Sort by": the four plain orders ([options] — Popular, Top rated,
+/// Newest, Oldest) followed by the presets of the kind of title
 /// ([DiscoverPreset.forType]: Coming soon and In theaters for movies,
 /// Finished and Airing now for shows, none for All). One choice among them
 /// all: a preset is a slice of the catalog ordered by popularity, so picking
@@ -39,6 +39,7 @@ class DiscoverSortChips extends StatelessWidget {
     DiscoverSortBy.popularity,
     DiscoverSortBy.rating,
     DiscoverSortBy.releaseDate,
+    DiscoverSortBy.releaseDateAsc,
   ];
 
   @override

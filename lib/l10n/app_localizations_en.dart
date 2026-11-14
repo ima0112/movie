@@ -609,7 +609,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterSheetSortTopRated => 'Top rated';
 
   @override
-  String get filterSheetSortNewest => 'Release date';
+  String get filterSheetSortNewest => 'Newest';
+
+  @override
+  String get filterSheetSortOldest => 'Oldest';
 
   @override
   String filterSheetMinRatingValue(String rating) {

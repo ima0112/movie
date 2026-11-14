@@ -94,7 +94,30 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(cubit.state.filter.sortBy, DiscoverSortBy.rating);
+    expect(cubit.state.filter.minVoteCount, 300); // not a 9.9 from a handful
     expect(find.text('Top rated'), findsOneWidget); // now the line's label
+  });
+
+  testWidgets('the sort sheet offers Newest and Oldest too, and Oldest goes '
+      'back to the default vote floor', (tester) async {
+    final cubit = await _pump(
+      tester,
+      const DiscoverFilter(
+        type: MediaType.movie,
+        sortBy: DiscoverSortBy.rating,
+        minVoteCount: 300,
+      ),
+    );
+
+    await tester.tap(find.text('Top rated'));
+    await tester.pumpAndSettle();
+    expect(find.text('Newest'), findsOneWidget);
+    await tester.tap(find.text('Oldest'));
+    await tester.pumpAndSettle();
+
+    expect(cubit.state.filter.sortBy, DiscoverSortBy.releaseDateAsc);
+    expect(cubit.state.filter.minVoteCount, 100);
+    expect(find.text('Oldest'), findsOneWidget); // the line's label
   });
 
   testWidgets('nothing matching: the message keeps the chips and "Clear '

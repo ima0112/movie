@@ -121,9 +121,11 @@ String _sortBy(DiscoverSortBy sortBy, bool isMovie) => switch (sortBy) {
   DiscoverSortBy.rating => 'vote_average.desc',
   DiscoverSortBy.releaseDate =>
     isMovie ? 'primary_release_date.desc' : 'first_air_date.desc',
-  // The *localized* title (not original_title), per DiscoverSortBy's own
-  // "Title" — a user sorting alphabetically expects the title they're
-  // shown, not whatever language TMDB first logged it in.
+  DiscoverSortBy.releaseDateAsc =>
+    isMovie ? 'primary_release_date.asc' : 'first_air_date.asc',
+  // Careful: TMDB sorts by the *original* title, not the localized one the
+  // user sees, and stops at page 500 (10,000 results, about the letter M of a
+  // big catalog) — so the app offers no alphabetical order.
   DiscoverSortBy.title => isMovie ? 'title.asc' : 'name.asc',
   // The most voted of all time — the "Popular" classics, unlike
   // `popularity`, which is TMDB's rolling current-interest figure.

@@ -624,7 +624,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterSheetSortTopRated => 'Mejor valoradas';
 
   @override
-  String get filterSheetSortNewest => 'Fecha de estreno';
+  String get filterSheetSortNewest => 'Más recientes';
+
+  @override
+  String get filterSheetSortOldest => 'Más antiguas';
 
   @override
   String filterSheetMinRatingValue(String rating) {

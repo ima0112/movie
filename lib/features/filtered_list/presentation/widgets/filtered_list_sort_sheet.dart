@@ -8,8 +8,8 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/checkable_option_row.dart';
 import '../../../../shared/widgets/discover_sort_chips.dart';
 
-/// The sheet behind C1's sort control: the same three orders as H8's "Sort
-/// by", single select with an amber check; tapping applies and closes.
+/// The sheet behind C1's sort control: the same four orders as H8's "Sort
+/// by" (Popular, Top rated, Newest, Oldest), single select with an amber check; tapping applies and closes.
 class FilteredListSortSheet extends StatelessWidget {
   const FilteredListSortSheet({
     super.key,
@@ -24,7 +24,8 @@ class FilteredListSortSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return SafeArea(
-      child: Padding(
+      // Four rows and a title don't fit a small phone's sheet: scroll.
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,

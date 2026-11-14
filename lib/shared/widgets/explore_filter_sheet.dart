@@ -208,9 +208,8 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                       type: _draft.type,
                       sortBy: _draft.sortBy,
                       preset: _draft.preset,
-                      onSortChanged: (sortBy) => _setDraft(
-                        _draft.withPreset(null).copyWith(sortBy: sortBy),
-                      ),
+                      onSortChanged: (sortBy) =>
+                          _setDraft(_draft.withPreset(null).withSort(sortBy)),
                       onPresetChanged: (preset) => _setDraft(
                         _draft
                             .withPreset(preset)
