@@ -14,6 +14,7 @@ import '../widgets/taste_avoided_genres_section.dart';
 import '../widgets/taste_eras_section.dart';
 import '../widgets/taste_footer.dart';
 import '../widgets/taste_liked_genres_section.dart';
+import '../widgets/taste_platforms_section.dart';
 import '../widgets/taste_type_section.dart';
 import '../widgets/taste_vibes_section.dart';
 
@@ -96,6 +97,7 @@ class _MyTastesView extends StatelessWidget {
           TasteAvoidedGenresSection(),
           TasteVibesSection(),
           TasteErasSection(),
+          TastePlatformsSection(),
           TasteFooter(),
         ],
       ),

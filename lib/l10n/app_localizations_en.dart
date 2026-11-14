@@ -1058,6 +1058,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myTastesErasHint => 'The release years you prefer.';
 
   @override
+  String get myTastesPlatformsTitle => 'My platforms';
+
+  @override
+  String get myTastesPlatformsHint =>
+      'We prioritize what you can already watch in your region.';
+
+  @override
   String get myTastesGenresLikeHint => 'Choose as many as you like.';
 
   @override
