@@ -494,6 +494,60 @@ abstract class AppLocalizations {
   /// **'Tap the heart on a person\'s page to keep them here.'**
   String get myListEmptyPeopleBody;
 
+  /// H1 (the three-dot sheet of a My List row): opens H2 for a title that isn't watched yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as watched'**
+  String get myListActionMarkWatched;
+
+  /// No description provided for @myListActionEditWatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit rating and date'**
+  String get myListActionEditWatched;
+
+  /// No description provided for @myListActionAddFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Favorites'**
+  String get myListActionAddFavorite;
+
+  /// No description provided for @myListActionRemoveFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Favorites'**
+  String get myListActionRemoveFavorite;
+
+  /// No description provided for @myListActionAddWatchLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Watch later'**
+  String get myListActionAddWatchLater;
+
+  /// No description provided for @myListActionRemoveWatchLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Watch later'**
+  String get myListActionRemoveWatchLater;
+
+  /// No description provided for @myListActionRemoveWatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Watched'**
+  String get myListActionRemoveWatched;
+
+  /// No description provided for @myListActionRemovePerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from People'**
+  String get myListActionRemovePerson;
+
+  /// Accessibility label of the three-dot button at the end of a My List row (opens H1).
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get myListRowActionsLabel;
+
   /// My List's swipe-to-remove snackbar. {tabName} is that LibraryTab's own localized label (myListTabFavorites/WatchLater/Watched).
   ///
   /// In en, this message translates to:

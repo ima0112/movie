@@ -221,6 +221,33 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap the heart on a person\'s page to keep them here.';
 
   @override
+  String get myListActionMarkWatched => 'Mark as watched';
+
+  @override
+  String get myListActionEditWatched => 'Edit rating and date';
+
+  @override
+  String get myListActionAddFavorite => 'Add to Favorites';
+
+  @override
+  String get myListActionRemoveFavorite => 'Remove from Favorites';
+
+  @override
+  String get myListActionAddWatchLater => 'Add to Watch later';
+
+  @override
+  String get myListActionRemoveWatchLater => 'Remove from Watch later';
+
+  @override
+  String get myListActionRemoveWatched => 'Remove from Watched';
+
+  @override
+  String get myListActionRemovePerson => 'Remove from People';
+
+  @override
+  String get myListRowActionsLabel => 'More actions';
+
+  @override
   String myListRemovedFromTab(String tabName) {
     return 'Removed from $tabName';
   }
