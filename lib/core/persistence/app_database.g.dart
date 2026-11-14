@@ -2987,6 +2987,329 @@ class RecentlyViewedTableCompanion extends UpdateCompanion<RecentlyViewedRow> {
   }
 }
 
+class $SavedPeopleTableTable extends SavedPeopleTable
+    with TableInfo<$SavedPeopleTableTable, SavedPersonRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SavedPeopleTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _tmdbIdMeta = const VerificationMeta('tmdbId');
+  @override
+  late final GeneratedColumn<int> tmdbId = GeneratedColumn<int>(
+    'tmdb_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _profilePathMeta = const VerificationMeta(
+    'profilePath',
+  );
+  @override
+  late final GeneratedColumn<String> profilePath = GeneratedColumn<String>(
+    'profile_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _knownForDepartmentMeta =
+      const VerificationMeta('knownForDepartment');
+  @override
+  late final GeneratedColumn<String> knownForDepartment =
+      GeneratedColumn<String>(
+        'known_for_department',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    tmdbId,
+    name,
+    profilePath,
+    knownForDepartment,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'saved_people_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SavedPersonRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('tmdb_id')) {
+      context.handle(
+        _tmdbIdMeta,
+        tmdbId.isAcceptableOrUnknown(data['tmdb_id']!, _tmdbIdMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('profile_path')) {
+      context.handle(
+        _profilePathMeta,
+        profilePath.isAcceptableOrUnknown(
+          data['profile_path']!,
+          _profilePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('known_for_department')) {
+      context.handle(
+        _knownForDepartmentMeta,
+        knownForDepartment.isAcceptableOrUnknown(
+          data['known_for_department']!,
+          _knownForDepartmentMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {tmdbId};
+  @override
+  SavedPersonRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SavedPersonRow(
+      tmdbId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tmdb_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      profilePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}profile_path'],
+      ),
+      knownForDepartment: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}known_for_department'],
+      ),
+    );
+  }
+
+  @override
+  $SavedPeopleTableTable createAlias(String alias) {
+    return $SavedPeopleTableTable(attachedDatabase, alias);
+  }
+}
+
+class SavedPersonRow extends DataClass implements Insertable<SavedPersonRow> {
+  /// TMDB's person id (not auto-incremented: it is the key).
+  final int tmdbId;
+  final String name;
+
+  /// TMDB's `profile_path`, as `Person.profilePath` carries it.
+  final String? profilePath;
+  final String? knownForDepartment;
+  const SavedPersonRow({
+    required this.tmdbId,
+    required this.name,
+    this.profilePath,
+    this.knownForDepartment,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['tmdb_id'] = Variable<int>(tmdbId);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || profilePath != null) {
+      map['profile_path'] = Variable<String>(profilePath);
+    }
+    if (!nullToAbsent || knownForDepartment != null) {
+      map['known_for_department'] = Variable<String>(knownForDepartment);
+    }
+    return map;
+  }
+
+  SavedPeopleTableCompanion toCompanion(bool nullToAbsent) {
+    return SavedPeopleTableCompanion(
+      tmdbId: Value(tmdbId),
+      name: Value(name),
+      profilePath: profilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(profilePath),
+      knownForDepartment: knownForDepartment == null && nullToAbsent
+          ? const Value.absent()
+          : Value(knownForDepartment),
+    );
+  }
+
+  factory SavedPersonRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SavedPersonRow(
+      tmdbId: serializer.fromJson<int>(json['tmdbId']),
+      name: serializer.fromJson<String>(json['name']),
+      profilePath: serializer.fromJson<String?>(json['profilePath']),
+      knownForDepartment: serializer.fromJson<String?>(
+        json['knownForDepartment'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'tmdbId': serializer.toJson<int>(tmdbId),
+      'name': serializer.toJson<String>(name),
+      'profilePath': serializer.toJson<String?>(profilePath),
+      'knownForDepartment': serializer.toJson<String?>(knownForDepartment),
+    };
+  }
+
+  SavedPersonRow copyWith({
+    int? tmdbId,
+    String? name,
+    Value<String?> profilePath = const Value.absent(),
+    Value<String?> knownForDepartment = const Value.absent(),
+  }) => SavedPersonRow(
+    tmdbId: tmdbId ?? this.tmdbId,
+    name: name ?? this.name,
+    profilePath: profilePath.present ? profilePath.value : this.profilePath,
+    knownForDepartment: knownForDepartment.present
+        ? knownForDepartment.value
+        : this.knownForDepartment,
+  );
+  SavedPersonRow copyWithCompanion(SavedPeopleTableCompanion data) {
+    return SavedPersonRow(
+      tmdbId: data.tmdbId.present ? data.tmdbId.value : this.tmdbId,
+      name: data.name.present ? data.name.value : this.name,
+      profilePath: data.profilePath.present
+          ? data.profilePath.value
+          : this.profilePath,
+      knownForDepartment: data.knownForDepartment.present
+          ? data.knownForDepartment.value
+          : this.knownForDepartment,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SavedPersonRow(')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('name: $name, ')
+          ..write('profilePath: $profilePath, ')
+          ..write('knownForDepartment: $knownForDepartment')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(tmdbId, name, profilePath, knownForDepartment);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SavedPersonRow &&
+          other.tmdbId == this.tmdbId &&
+          other.name == this.name &&
+          other.profilePath == this.profilePath &&
+          other.knownForDepartment == this.knownForDepartment);
+}
+
+class SavedPeopleTableCompanion extends UpdateCompanion<SavedPersonRow> {
+  final Value<int> tmdbId;
+  final Value<String> name;
+  final Value<String?> profilePath;
+  final Value<String?> knownForDepartment;
+  const SavedPeopleTableCompanion({
+    this.tmdbId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.profilePath = const Value.absent(),
+    this.knownForDepartment = const Value.absent(),
+  });
+  SavedPeopleTableCompanion.insert({
+    this.tmdbId = const Value.absent(),
+    required String name,
+    this.profilePath = const Value.absent(),
+    this.knownForDepartment = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<SavedPersonRow> custom({
+    Expression<int>? tmdbId,
+    Expression<String>? name,
+    Expression<String>? profilePath,
+    Expression<String>? knownForDepartment,
+  }) {
+    return RawValuesInsertable({
+      if (tmdbId != null) 'tmdb_id': tmdbId,
+      if (name != null) 'name': name,
+      if (profilePath != null) 'profile_path': profilePath,
+      if (knownForDepartment != null)
+        'known_for_department': knownForDepartment,
+    });
+  }
+
+  SavedPeopleTableCompanion copyWith({
+    Value<int>? tmdbId,
+    Value<String>? name,
+    Value<String?>? profilePath,
+    Value<String?>? knownForDepartment,
+  }) {
+    return SavedPeopleTableCompanion(
+      tmdbId: tmdbId ?? this.tmdbId,
+      name: name ?? this.name,
+      profilePath: profilePath ?? this.profilePath,
+      knownForDepartment: knownForDepartment ?? this.knownForDepartment,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (tmdbId.present) {
+      map['tmdb_id'] = Variable<int>(tmdbId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (profilePath.present) {
+      map['profile_path'] = Variable<String>(profilePath.value);
+    }
+    if (knownForDepartment.present) {
+      map['known_for_department'] = Variable<String>(knownForDepartment.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SavedPeopleTableCompanion(')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('name: $name, ')
+          ..write('profilePath: $profilePath, ')
+          ..write('knownForDepartment: $knownForDepartment')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3006,6 +3329,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SettingsTableTable settingsTable = $SettingsTableTable(this);
   late final $RecentlyViewedTableTable recentlyViewedTable =
       $RecentlyViewedTableTable(this);
+  late final $SavedPeopleTableTable savedPeopleTable = $SavedPeopleTableTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3018,6 +3344,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     onboardingTable,
     settingsTable,
     recentlyViewedTable,
+    savedPeopleTable,
   ];
 }
 
@@ -4684,6 +5011,200 @@ typedef $$RecentlyViewedTableTableProcessedTableManager =
       RecentlyViewedRow,
       PrefetchHooks Function()
     >;
+typedef $$SavedPeopleTableTableCreateCompanionBuilder =
+    SavedPeopleTableCompanion Function({
+      Value<int> tmdbId,
+      required String name,
+      Value<String?> profilePath,
+      Value<String?> knownForDepartment,
+    });
+typedef $$SavedPeopleTableTableUpdateCompanionBuilder =
+    SavedPeopleTableCompanion Function({
+      Value<int> tmdbId,
+      Value<String> name,
+      Value<String?> profilePath,
+      Value<String?> knownForDepartment,
+    });
+
+class $$SavedPeopleTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SavedPeopleTableTable> {
+  $$SavedPeopleTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get tmdbId => $composableBuilder(
+    column: $table.tmdbId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get profilePath => $composableBuilder(
+    column: $table.profilePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get knownForDepartment => $composableBuilder(
+    column: $table.knownForDepartment,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SavedPeopleTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SavedPeopleTableTable> {
+  $$SavedPeopleTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get tmdbId => $composableBuilder(
+    column: $table.tmdbId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get profilePath => $composableBuilder(
+    column: $table.profilePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get knownForDepartment => $composableBuilder(
+    column: $table.knownForDepartment,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SavedPeopleTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SavedPeopleTableTable> {
+  $$SavedPeopleTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get tmdbId =>
+      $composableBuilder(column: $table.tmdbId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get profilePath => $composableBuilder(
+    column: $table.profilePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get knownForDepartment => $composableBuilder(
+    column: $table.knownForDepartment,
+    builder: (column) => column,
+  );
+}
+
+class $$SavedPeopleTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SavedPeopleTableTable,
+          SavedPersonRow,
+          $$SavedPeopleTableTableFilterComposer,
+          $$SavedPeopleTableTableOrderingComposer,
+          $$SavedPeopleTableTableAnnotationComposer,
+          $$SavedPeopleTableTableCreateCompanionBuilder,
+          $$SavedPeopleTableTableUpdateCompanionBuilder,
+          (
+            SavedPersonRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SavedPeopleTableTable,
+              SavedPersonRow
+            >,
+          ),
+          SavedPersonRow,
+          PrefetchHooks Function()
+        > {
+  $$SavedPeopleTableTableTableManager(
+    _$AppDatabase db,
+    $SavedPeopleTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SavedPeopleTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SavedPeopleTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SavedPeopleTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> tmdbId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> profilePath = const Value.absent(),
+                Value<String?> knownForDepartment = const Value.absent(),
+              }) => SavedPeopleTableCompanion(
+                tmdbId: tmdbId,
+                name: name,
+                profilePath: profilePath,
+                knownForDepartment: knownForDepartment,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> tmdbId = const Value.absent(),
+                required String name,
+                Value<String?> profilePath = const Value.absent(),
+                Value<String?> knownForDepartment = const Value.absent(),
+              }) => SavedPeopleTableCompanion.insert(
+                tmdbId: tmdbId,
+                name: name,
+                profilePath: profilePath,
+                knownForDepartment: knownForDepartment,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SavedPeopleTableTable, SavedPersonRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SavedPeopleTableTable,
+                    SavedPersonRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SavedPeopleTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SavedPeopleTableTable,
+      SavedPersonRow,
+      $$SavedPeopleTableTableFilterComposer,
+      $$SavedPeopleTableTableOrderingComposer,
+      $$SavedPeopleTableTableAnnotationComposer,
+      $$SavedPeopleTableTableCreateCompanionBuilder,
+      $$SavedPeopleTableTableUpdateCompanionBuilder,
+      (
+        SavedPersonRow,
+        BaseReferences<_$AppDatabase, $SavedPeopleTableTable, SavedPersonRow>,
+      ),
+      SavedPersonRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4702,4 +5223,6 @@ class $AppDatabaseManager {
       $$SettingsTableTableTableManager(_db, _db.settingsTable);
   $$RecentlyViewedTableTableTableManager get recentlyViewedTable =>
       $$RecentlyViewedTableTableTableManager(_db, _db.recentlyViewedTable);
+  $$SavedPeopleTableTableTableManager get savedPeopleTable =>
+      $$SavedPeopleTableTableTableManager(_db, _db.savedPeopleTable);
 }
