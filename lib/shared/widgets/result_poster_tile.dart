@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/media_item.dart';
 import '../../core/domain/entities/media_type.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
@@ -11,7 +12,7 @@ import 'poster_badge.dart';
 
 /// One title of a list of results: the 2:3 poster with its rating badge
 /// (bottom-left) and a "TV" tag when it is a show (top-left), and its title
-/// under it on one line. Sized by [ResultsGrid.delegate] with
+/// under it on one line, then its release year. Sized by [ResultsGrid.delegate] with
 /// `captionExtent: ResultsGrid.captionExtent(context)`.
 ///
 /// Pure presentation — everything comes in by parameter.
@@ -56,6 +57,14 @@ class ResultPosterTile extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        // The release year, when TMDB has a date (not yet released titles
+        // may not).
+        if (item.releaseDate case final date?)
+          Text(
+            '${date.year}',
+            style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
+            maxLines: 1,
+          ),
       ],
     );
   }

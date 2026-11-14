@@ -17,12 +17,12 @@ Widget _app(Widget child) => MaterialApp(
   home: Scaffold(body: child),
 );
 
-MediaItem _movie(int id, {double rating = 8.2}) => Movie(
+MediaItem _movie(int id, {double rating = 8.2, DateTime? date}) => Movie(
   id: id,
   title: 'Movie $id',
   posterUrl: null,
   genres: const [],
-  releaseDate: null,
+  releaseDate: date ?? DateTime(2021, 5, 1),
   voteAverage: rating,
 );
 
@@ -36,11 +36,11 @@ void main() {
           child: Column(
             children: [
               SizedBox(
-                height: 220,
+                height: 260,
                 child: ResultPosterTile(item: _movie(1), onTap: () {}),
               ),
               SizedBox(
-                height: 220,
+                height: 260,
                 child: ResultPosterTile(
                   item: TvShow(
                     id: 2,
@@ -71,12 +71,52 @@ void main() {
     );
   });
 
+  testWidgets('the release year goes under the title; none without a date', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        Column(
+          children: [
+            SizedBox(
+              width: 120,
+              height: 240,
+              child: ResultPosterTile(item: _movie(1), onTap: () {}),
+            ),
+            SizedBox(
+              width: 120,
+              height: 240,
+              child: ResultPosterTile(
+                item: Movie(
+                  id: 9,
+                  title: 'Undated',
+                  posterUrl: null,
+                  genres: const [],
+                  releaseDate: null,
+                  voteAverage: 6,
+                ),
+                onTap: () {},
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    expect(find.text('2021'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('2021')).dy,
+      greaterThan(tester.getBottomLeft(find.text('Movie 1')).dy - 1),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('a title with no votes has no rating badge', (tester) async {
     await tester.pumpWidget(
       _app(
         SizedBox(
           width: 120,
-          height: 220,
+          height: 260,
           child: ResultPosterTile(item: _movie(1, rating: 0), onTap: () {}),
         ),
       ),

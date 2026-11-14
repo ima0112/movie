@@ -121,4 +121,59 @@ void main() {
       greaterThan(MediaCardSize.carouselLarge.width * 1.5),
     );
   });
+
+  group('Hidden gems lists the title and marks shows', () {
+    Future<void> pumpMixed(WidgetTester tester, MediaSegment segment) {
+      return tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: ExploreSectionCarousel(
+              section: ExploreSection.hiddenGems,
+              segment: segment,
+              onItemTap: (_) {},
+              items: [
+                _movie(1),
+                TvShow(
+                  id: 2,
+                  title: 'Regular Show',
+                  posterUrl: null,
+                  genres: const [],
+                  releaseDate: null,
+                  voteAverage: 9.6,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('the "TV" tag top-left on shows, the rating bottom-left and '
+        'the title under the poster', (tester) async {
+      await pumpMixed(tester, MediaSegment.all);
+
+      expect(find.text('TV'), findsOneWidget); // only the show
+      final poster = tester.getRect(find.byType(MediaCard).last);
+      final middle = poster.top + poster.height / 2;
+      expect(tester.getRect(find.text('TV')).top, lessThan(middle));
+      final rating = tester.getRect(find.text('9.6'));
+      expect(rating.top, greaterThan(middle));
+      expect(rating.left, lessThan(poster.left + poster.width / 2));
+      expect(
+        tester.getTopLeft(find.text('Regular Show')).dy,
+        greaterThanOrEqualTo(poster.bottom),
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('with Movies or TV Shows picked the tag is redundant and left '
+        'out', (tester) async {
+      await pumpMixed(tester, MediaSegment.tvShow);
+
+      expect(find.text('TV'), findsNothing);
+      expect(find.text('Regular Show'), findsOneWidget);
+    });
+  });
 }

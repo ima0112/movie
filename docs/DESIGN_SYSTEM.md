@@ -234,7 +234,7 @@ callback. Regla 17 de `CLAUDE.md`.
 de página, 12 de separación; la usan los resultados filtrados (C1) y todos los
 «Ver todo» (C1b). `ResultPosterTile` es la ficha de los resultados filtrados:
 póster con la valoración (abajo a la izquierda) y la etiqueta TV (arriba a la
-izquierda), y el título en una línea debajo. Bajo la barra superior el
+izquierda), y el título en una línea debajo con el año de estreno en otra. Bajo la barra superior el
 contenido se disuelve con `ScrollEdgeFade`, y la última línea de la cabecera
 deja un margen antes de ese degradado.
 
