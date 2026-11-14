@@ -5,7 +5,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/metric_card.dart';
-import '../../domain/library_stats.dart';
+import '../../../../core/domain/stats/library_stats.dart';
 
 /// C4's "Four metric cards in a 2×2 grid: Movies watched · Hours of
 /// movies · TV shows watched · Estimated TV hours" (`docs/SCREENS.md`

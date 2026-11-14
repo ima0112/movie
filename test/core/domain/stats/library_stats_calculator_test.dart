@@ -3,7 +3,7 @@ import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
-import 'package:movies/features/stats/domain/library_stats_calculator.dart';
+import 'package:movies/core/domain/stats/library_stats_calculator.dart';
 
 const _action = Genre(id: 'action');
 const _drama = Genre(id: 'drama');
