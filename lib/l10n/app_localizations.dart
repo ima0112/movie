@@ -596,12 +596,6 @@ abstract class AppLocalizations {
   /// **'Tastes saved · Edit in You'**
   String get onboardingTastesSavedSnackbar;
 
-  /// No description provided for @onboardingGenreStep3Label.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 3 of 3'**
-  String get onboardingGenreStep3Label;
-
   /// No description provided for @onboardingLikedEyebrow.
   ///
   /// In en, this message translates to:
@@ -638,11 +632,17 @@ abstract class AppLocalizations {
   /// **'never'**
   String get onboardingGenreStep3HighlightWord;
 
-  /// Step 3's own main button label — the flow's last action, distinct from commonNext.
+  /// No description provided for @onboardingVetoedBody.
   ///
   /// In en, this message translates to:
-  /// **'Done'**
-  String get onboardingGenreStep3NextLabel;
+  /// **'Pick the ones you\'d rather not see and we\'ll keep them out of your recommendations.'**
+  String get onboardingVetoedBody;
+
+  /// The last onboarding screen's button (docs/SCREENS.md A2) — it finishes the flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingVetoedCta;
 
   /// No description provided for @onboardingNameHeadline.
   ///

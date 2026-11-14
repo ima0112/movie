@@ -20,6 +20,8 @@ class GenreMultiSelectChips extends StatelessWidget {
     required this.selected,
     required this.onToggle,
     this.selectedState = ChipState.selected,
+    this.disabled = const {},
+    this.alignment = WrapAlignment.start,
   });
 
   final List<Genre> genres;
@@ -29,18 +31,44 @@ class GenreMultiSelectChips extends StatelessWidget {
   /// How a selected genre looks — [ChipState.vetoed] for "never" lists.
   final ChipState selectedState;
 
+  /// Genres that can't be picked here: drawn dimmed ([disabledOpacity]) and
+  /// inert — the ones already on the opposite list, so a genre can't be both
+  /// liked and avoided.
+  final Set<Genre> disabled;
+
+  /// How the chips sit on a row (centered on the onboarding's screens).
+  final WrapAlignment alignment;
+
+  static const double disabledOpacity = 0.3;
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
+      alignment: alignment,
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: [
         for (final genre in genres)
-          AppChip(
-            label: genre.localizedName(context.l10n),
-            state: selected.contains(genre) ? selectedState : ChipState.normal,
-            onTap: () => onToggle(genre),
-          ),
+          disabled.contains(genre)
+              ? Opacity(
+                  opacity: disabledOpacity,
+                  child: IgnorePointer(
+                    child: Semantics(
+                      enabled: false,
+                      child: AppChip(
+                        label: genre.localizedName(context.l10n),
+                        state: ChipState.normal,
+                      ),
+                    ),
+                  ),
+                )
+              : AppChip(
+                  label: genre.localizedName(context.l10n),
+                  state: selected.contains(genre)
+                      ? selectedState
+                      : ChipState.normal,
+                  onTap: () => onToggle(genre),
+                ),
       ],
     );
   }

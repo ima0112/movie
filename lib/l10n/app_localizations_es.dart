@@ -281,9 +281,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Gustos guardados · Edítalos en Tú';
 
   @override
-  String get onboardingGenreStep3Label => 'Paso 3 de 3';
-
-  @override
   String get onboardingLikedEyebrow => 'Hazla tuya';
 
   @override
@@ -303,7 +300,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboardingGenreStep3HighlightWord => 'nunca';
 
   @override
-  String get onboardingGenreStep3NextLabel => 'Listo';
+  String get onboardingVetoedBody =>
+      'Elige los que prefieres no ver y los dejaremos fuera de tus recomendaciones.';
+
+  @override
+  String get onboardingVetoedCta => 'Empezar';
 
   @override
   String get onboardingNameHeadline => '¿Cómo te llamas?';

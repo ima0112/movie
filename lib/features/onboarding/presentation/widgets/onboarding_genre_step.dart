@@ -2,14 +2,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/genre.dart';
-import '../../../../l10n/l10n_extension.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 import 'genre_chips_step.dart';
-import 'genre_step.dart';
+import 'vetoed_genres_step.dart';
 
-/// Binds step 2 (liked, the "Make it yours" chips — [GenreChipsStep]) and
-/// step 3 (vetoed, the tile grid — [GenreStep]) to `OnboardingCubit`
+/// Binds step 2 (liked, "Make it yours" — [GenreChipsStep]) and step 3
+/// (vetoed, "And which ones never?" — [VetoedGenresStep]) to `OnboardingCubit`
 /// (`docs/SCREENS.md` A2).
 ///
 /// [onFinish] is only used on step 3, where both "Skip" and the main
@@ -39,18 +38,12 @@ class OnboardingGenreStep extends StatelessWidget {
       selector: (state) => (state.likedGenres, state.vetoedGenres),
       builder: (context, data) {
         final (liked, vetoed) = data;
-        final l10n = context.l10n;
         if (isVetoedStep) {
-          return GenreStep(
-            stepLabel: l10n.onboardingGenreStep3Label,
-            headline: l10n.onboardingGenreStep3Headline,
-            highlightWord: l10n.onboardingGenreStep3HighlightWord,
+          return VetoedGenresStep(
             selected: vetoed,
-            disabledGenres: liked,
+            liked: liked,
             onToggle: cubit.toggleVetoedGenre,
-            onSkip: onFinish,
-            nextLabel: l10n.onboardingGenreStep3NextLabel,
-            onNext: onFinish,
+            onFinish: onFinish,
           );
         }
         return GenreChipsStep(

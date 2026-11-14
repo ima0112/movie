@@ -105,14 +105,14 @@
   "onboardingSaveError": "Algo salió mal. Inténtalo de nuevo.",
   "onboardingTastesSavedSnackbar": "Gustos guardados · Edítalos en Tú",
 
-  "onboardingGenreStep3Label": "Paso 3 de 3",
   "onboardingLikedEyebrow": "Hazla tuya",
   "onboardingLikedHeadline": "¿Qué te gusta?",
   "onboardingLikedHighlight": "gusta",
   "onboardingLikedBody": "Elige algunos géneros para personalizar Descubrir. Podrás afinar más en Tú › Mis gustos.",
   "onboardingGenreStep3Headline": "¿Y cuáles nunca?",
   "onboardingGenreStep3HighlightWord": "nunca",
-  "onboardingGenreStep3NextLabel": "Listo",
+  "onboardingVetoedBody": "Elige los que prefieres no ver y los dejaremos fuera de tus recomendaciones.",
+  "onboardingVetoedCta": "Empezar",
 
   "onboardingNameHeadline": "¿Cómo te llamas?",
   "onboardingNameEyebrow": "Tu perfil",
