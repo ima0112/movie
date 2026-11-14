@@ -240,10 +240,11 @@ void main() {
   });
 
   testWidgets('each sort dresses the posters its own way', (tester) async {
-    // The section's own style is plain: nothing on the posters.
+    // Every poster carries its title and year under it; the section's own
+    // (plain) style adds nothing over the poster but the rating.
     await pump(tester, sort: true);
-    expect(find.text('8.5'), findsNothing);
-    expect(find.text('2026'), findsNothing);
+    expect(find.text('Movie 1'), findsOneWidget);
+    expect(find.text('2026'), findsWidgets);
 
     Future<void> chooseSort(String label) async {
       await tester.tap(find.byIcon(AppIcons.sort));
@@ -252,24 +253,18 @@ void main() {
       await _settle(tester);
     }
 
-    await chooseSort('Popularity'); // a small rank in each corner
+    await chooseSort('Popularity'); // the position replaces the rating
     expect(find.text('1'), findsWidgets);
     expect(find.text('2'), findsWidgets);
+    expect(find.text('8.5'), findsNothing);
 
-    await chooseSort('Rating'); // the star badge, no ranks
+    await chooseSort('Rating'); // the rating again, no ranks
     expect(find.text('8.5'), findsWidgets);
     expect(find.text('1'), findsNothing);
 
-    await chooseSort('Most voted'); // the title over each poster
-    expect(find.text('Movie 1'), findsWidgets);
-    expect(find.text('8.5'), findsNothing);
-
-    await chooseSort('Newest first'); // the year
+    await chooseSort('Newest first'); // still title and year
+    expect(find.text('Movie 1'), findsOneWidget);
     expect(find.text('2026'), findsWidgets);
-    expect(find.text('Movie 1'), findsNothing);
-
-    await chooseSort('Default order'); // back to the section's own (plain)
-    expect(find.text('2026'), findsNothing);
   });
 
   testWidgets(
@@ -305,6 +300,24 @@ void main() {
     expect(badge.left, lessThan(poster.left + poster.width / 2));
     await pump(tester, style: ListingStyle.dated);
     expect(find.text('16 Dec, 2026'), findsWidgets);
+  });
+
+  testWidgets('every poster has its title and, under it, the year — the full '
+      'date for the upcoming sections', (tester) async {
+    for (final style in [ListingStyle.plain, ListingStyle.ranked]) {
+      await pump(tester, style: style);
+      final poster = tester.getRect(find.byType(MediaCard).first);
+      final title = tester.getTopLeft(find.text('Movie 1'));
+      final year = tester.getTopLeft(find.text('2026').first);
+      expect(title.dy, greaterThan(poster.bottom - 1), reason: '$style');
+      expect(year.dy, greaterThan(title.dy), reason: '$style');
+    }
+    await pump(tester, style: ListingStyle.dated);
+    final poster = tester.getRect(find.byType(MediaCard).first);
+    final date = tester.getTopLeft(find.text('16 Dec, 2026').first);
+    expect(date.dy, greaterThan(poster.bottom));
+    expect(find.text('2026'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('the detailed style (Hidden gems): the rating on the poster and '
@@ -438,7 +451,6 @@ void main() {
         (ListingStyle.rating, find.byType(PosterBadge)),
         (ListingStyle.detailed, find.byType(PosterBadge)),
         (ListingStyle.ranked, find.text('2')),
-        (ListingStyle.dated, find.text('16 Dec, 2026')),
       ];
       for (final (style, dressing) in cases) {
         await pump(tester, style: style);

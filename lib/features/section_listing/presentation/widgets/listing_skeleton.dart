@@ -18,7 +18,10 @@ class ListingSkeleton extends StatelessWidget {
         return GridView.builder(
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.all(AppSpacing.screenMargin),
-          gridDelegate: ResultsGrid.delegate(width),
+          gridDelegate: ResultsGrid.delegate(
+            width,
+            captionExtent: ResultsGrid.captionExtent(context),
+          ),
           itemCount: _count,
           itemBuilder: (context, index) => SkeletonBlock(
             width: double.infinity,
