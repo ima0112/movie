@@ -10,28 +10,24 @@ import 'surprise_me_test_helpers.dart';
 void main() {
   setUpAll(configureSurpriseMeDependencies);
 
-  testWidgets(
-    'no taste profile and an empty library: picking a type goes '
-    'straight to the quiz, which ends on a real result',
-    (tester) async {
-      expect(
-        await (getIt<TasteProfileRepository>()
-                as InMemoryTasteProfileRepository)
-            .watch()
-            .first,
-        isNull,
-      );
+  testWidgets('no taste profile and an empty library: picking a type goes '
+      'straight to the quiz, which ends on a real result', (tester) async {
+    expect(
+      await (getIt<TasteProfileRepository>() as InMemoryTasteProfileRepository)
+          .watch()
+          .first,
+      isNull,
+    );
 
-      await pumpSurpriseMe(tester);
+    await pumpSurpriseMe(tester);
 
-      await tester.tap(find.text('A movie'));
-      await tester.pumpAndSettle();
+    await tester.tap(find.text('A movie'));
+    await tester.pumpAndSettle();
 
-      // No usable signal at all -> NeedsQuiz directly, no H11.
-      expect(find.text('Find something to watch'), findsNothing);
-      await completeQuiz(tester);
+    // No usable signal at all -> NeedsQuiz directly, no H11.
+    expect(find.text('Find something to watch'), findsNothing);
+    await completeQuiz(tester);
 
-      expectOnSurpriseResultScreen();
-    },
-  );
+    expectOnSurpriseResultScreen();
+  });
 }

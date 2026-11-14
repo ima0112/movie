@@ -91,22 +91,19 @@ void main() {
   Locale rootLocale(WidgetTester tester) =>
       Localizations.localeOf(tester.element(find.text('PakoTV')));
 
-  testWidgets(
-    "switching the stored language updates MaterialApp.router's own "
-    'locale, with no restart',
-    (tester) async {
-      await tester.pumpWidget(const PakoTvApp());
-      await tester.pumpAndSettle();
-      expect(rootLocale(tester), const Locale('en'));
+  testWidgets("switching the stored language updates MaterialApp.router's own "
+      'locale, with no restart', (tester) async {
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+    expect(rootLocale(tester), const Locale('en'));
 
-      await settingsRepository.save(
-        const AppSettings(languageCode: 'es', regionCode: 'US'),
-      );
-      await tester.pumpAndSettle();
+    await settingsRepository.save(
+      const AppSettings(languageCode: 'es', regionCode: 'US'),
+    );
+    await tester.pumpAndSettle();
 
-      expect(rootLocale(tester), const Locale('es'));
-    },
-  );
+    expect(rootLocale(tester), const Locale('es'));
+  });
 
   testWidgets(
     'a region-only settings change leaves the resolved locale untouched',

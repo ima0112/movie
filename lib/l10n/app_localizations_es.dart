@@ -212,6 +212,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myListTabWatched => 'Vistos';
 
   @override
+  String get myListTabPeople => 'Personas';
+
+  @override
+  String get myListEmptyPeopleHeadline => 'Aún no hay personas';
+
+  @override
+  String get myListEmptyPeopleBody =>
+      'Toca el corazón en la página de una persona para tenerla aquí.';
+
+  @override
   String myListRemovedFromTab(String tabName) {
     return 'Eliminado de $tabName';
   }

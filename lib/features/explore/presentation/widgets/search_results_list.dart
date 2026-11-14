@@ -7,6 +7,7 @@ import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/entities/search_result.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
+import '../../../../shared/widgets/person_result_row.dart';
 import 'search_result_rows.dart';
 
 /// B2's State 2 results list — D3b's list tile for every row, on the page
