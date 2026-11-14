@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
+import 'package:movies/core/data/local/in_memory_recently_viewed_repository.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
+import 'package:movies/core/domain/entities/media_item.dart';
+import 'package:movies/core/domain/repositories/recently_viewed_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
@@ -10,6 +13,8 @@ import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/presentation/screens/discover_screen.dart';
 import 'package:movies/l10n/app_localizations.dart';
+
+final recent = InMemoryRecentlyViewedRepository();
 
 void main() {
   setUpAll(() {
@@ -22,6 +27,8 @@ void main() {
     getIt.registerLazySingleton<UserLibraryRepository>(
       InMemoryUserLibraryRepository.new,
     );
+    getIt.unregister<RecentlyViewedRepository>();
+    getIt.registerLazySingleton<RecentlyViewedRepository>(() => recent);
     getIt.unregister<TasteProfileRepository>();
     getIt.registerLazySingleton<TasteProfileRepository>(
       InMemoryTasteProfileRepository.new,
@@ -118,5 +125,39 @@ void main() {
     await tester.tap(find.byIcon(AppIcons.watchLaterFill));
     await tester.pumpAndSettle();
     expect(find.byIcon(AppIcons.watchLaterFill), findsNothing);
+  });
+
+  testWidgets('Recently viewed shows in the All tab only, once something has '
+      'been viewed', (tester) async {
+    await pumpDiscoverScreen(tester);
+    await tester.pumpAndSettle();
+    expect(find.text('Recently viewed'), findsNothing);
+
+    await recent.record(
+      Movie(
+        id: 42,
+        title: 'Seen Movie',
+        posterUrl: null,
+        genres: const [],
+        releaseDate: null,
+        voteAverage: 7,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Recently viewed'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Recently viewed'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Movies'),
+      -200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Movies'));
+    await tester.pumpAndSettle();
+    expect(find.text('Recently viewed'), findsNothing);
   });
 }

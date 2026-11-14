@@ -806,6 +806,12 @@ abstract class AppLocalizations {
   /// **'Latest trailers'**
   String get carouselSectionLatestTrailers;
 
+  /// No description provided for @carouselSectionRecentlyViewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently viewed'**
+  String get carouselSectionRecentlyViewed;
+
   /// Title of B1's taste-completion card, shown on the All tab while there is no taste profile and My List is empty (docs/SCREENS.md B1).
   ///
   /// In en, this message translates to:

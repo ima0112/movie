@@ -397,6 +397,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get carouselSectionLatestTrailers => 'Últimos tráilers';
 
   @override
+  String get carouselSectionRecentlyViewed => 'Vistos recientemente';
+
+  @override
   String get discoverTasteCardTitle => 'Haz que Inicio sea tuyo';
 
   @override

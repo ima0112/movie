@@ -339,6 +339,7 @@
   "carouselSectionComingSoon": "Coming soon",
   "carouselSectionFinishedShows": "Finished shows",
   "carouselSectionLatestTrailers": "Latest trailers",
+  "carouselSectionRecentlyViewed": "Recently viewed",
   "discoverTasteCardTitle": "Make Home yours",
   "@discoverTasteCardTitle": {
     "description": "Title of B1's taste-completion card, shown on the All tab while there is no taste profile and My List is empty (docs/SCREENS.md B1)."

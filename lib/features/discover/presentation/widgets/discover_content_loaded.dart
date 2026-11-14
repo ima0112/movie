@@ -9,6 +9,7 @@ import '../../../../shared/widgets/app_tab_bar.dart';
 import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../cubit/discover_cubit.dart';
 import 'discover_hero.dart';
+import 'discover_recently_viewed_section.dart';
 import 'discover_search_field.dart';
 import 'discover_taste_card.dart';
 import 'discover_trailers_section.dart';
@@ -57,6 +58,10 @@ class DiscoverContentLoaded extends StatelessWidget {
             DiscoverHero(segment: segment),
             const SizedBox(height: AppSpacing.xl),
             const DiscoverSearchField(),
+            // What the user opened last, from the local database — the All
+            // tab only, and nothing until something has been viewed.
+            if (segment == MediaSegment.all)
+              const DiscoverRecentlyViewedSection(),
             // Each section below owns its own gap above it.
             RecommendationSectionView(
               slot: RecommendationSlot.forYou,
