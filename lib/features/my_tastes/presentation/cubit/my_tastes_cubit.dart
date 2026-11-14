@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/cubits/taste_profile_cubit.dart';
 import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import 'my_tastes_state.dart';
@@ -48,7 +50,21 @@ class MyTastesCubit extends Cubit<MyTastesState> {
   static const _savedIndicatorDuration = Duration(seconds: 2);
 
   void _onProfileChanged(TasteProfile? profile) {
-    emit(MyTastesState.fromProfile(profile, state.availableVibes));
+    final next = MyTastesState.fromProfile(profile, state.availableVibes);
+    // The save we just made echoes back through the global cubit: keep the
+    // sets we already hold when they are equal, so the sections watching them
+    // (each with its own selector) don't rebuild for their own edit.
+    Set<T> keep<T>(Set<T> current, Set<T> incoming) =>
+        setEquals(current, incoming) ? current : incoming;
+    emit(
+      next.copyWith(
+        likedGenres: keep(state.likedGenres, next.likedGenres),
+        vetoedGenres: keep(state.vetoedGenres, next.vetoedGenres),
+        likedVibes: keep(state.likedVibes, next.likedVibes),
+        platformIds: keep(state.platformIds, next.platformIds),
+        justSaved: state.justSaved,
+      ),
+    );
   }
 
   /// "Genres you like" — mutually exclusive with vetoed
@@ -73,14 +89,39 @@ class MyTastesCubit extends Cubit<MyTastesState> {
     _apply(state.copyWith(likedGenres: liked, vetoedGenres: vetoed));
   }
 
-  /// "Vibes you like" — no exclusivity, no limit (same as onboarding's
-  /// own genre step: "multi-select, no limit").
+  /// "Vibes you like" — up to [MyTastesState.maxVibes]: picking another one
+  /// past the limit does nothing (deselecting always works).
   void toggleVibe(String vibeId) {
-    _apply(state.copyWith(likedVibes: _toggled(state.likedVibes, vibeId)));
+    final liked = state.likedVibes;
+    if (!liked.contains(vibeId) && liked.length >= MyTastesState.maxVibes) {
+      return;
+    }
+    _apply(state.copyWith(likedVibes: _toggled(liked, vibeId)));
   }
 
-  /// "How far back".
-  void setYearFrom(int year) => _apply(state.copyWith(yearFrom: year));
+  /// "Eras": the release years [from]–[to] we lean towards. A [to] of
+  /// [latestYear] means "up to today" and is kept as `null`.
+  void setYearRange(int from, int to, {required int latestYear}) {
+    _apply(
+      to >= latestYear
+          ? state.copyWith(yearFrom: from, clearYearTo: true)
+          : state.copyWith(yearFrom: from, yearTo: to),
+    );
+  }
+
+  /// "What do you usually watch?": a type, or `null` for both.
+  void setPreferredType(MediaType? type) => _apply(
+    type == null
+        ? state.copyWith(clearPreferredType: true)
+        : state.copyWith(preferredType: type),
+  );
+
+  /// "My platforms": a streaming service on or off (TMDB provider id).
+  void togglePlatform(int providerId) {
+    _apply(
+      state.copyWith(platformIds: _toggled(state.platformIds, providerId)),
+    );
+  }
 
   /// C5's "Reset" link — clears every selection back to a blank slate,
   /// not a delete: `TasteProfileRepository` has no delete, only `save`.
@@ -105,6 +146,9 @@ class MyTastesCubit extends Cubit<MyTastesState> {
           vetoedGenres: next.vetoedGenres,
           likedVibes: next.likedVibes,
           yearFrom: next.yearFrom,
+          yearTo: next.yearTo,
+          preferredType: next.preferredType,
+          platformIds: next.platformIds,
           updatedAt: DateTime.now(),
         ),
       ),
