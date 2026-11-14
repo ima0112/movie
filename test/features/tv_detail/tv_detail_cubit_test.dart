@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/in_memory_recently_viewed_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -15,6 +16,7 @@ void main() {
       final cubit = TvDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
       expect(cubit.state, isA<TvDetailInitial>());
       cubit.close();
@@ -24,6 +26,7 @@ void main() {
       final cubit = TvDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
 
       final expectation = expectLater(
@@ -44,6 +47,7 @@ void main() {
       final cubit = TvDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
 
       await cubit.loadDetail(_theBoys);
@@ -63,6 +67,7 @@ void main() {
       final cubit = TvDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
 
       await cubit.loadDetail(
@@ -90,6 +95,7 @@ void main() {
           final cubit = TvDetailCubit(
             FakeMediaRepository(),
             userLibraryRepository,
+            InMemoryRecentlyViewedRepository(),
           );
 
           await cubit.loadDetail(_theBoys);
@@ -116,6 +122,7 @@ void main() {
         final cubit = TvDetailCubit(
           FakeMediaRepository(),
           userLibraryRepository,
+          InMemoryRecentlyViewedRepository(),
         );
 
         await Future.wait([
@@ -134,6 +141,21 @@ void main() {
 
         await cubit.close();
       });
+    });
+
+    test('loading a detail records the show in Recently viewed', () async {
+      final recent = InMemoryRecentlyViewedRepository();
+      final cubit = TvDetailCubit(
+        FakeMediaRepository(),
+        InMemoryUserLibraryRepository(),
+        recent,
+      );
+
+      await cubit.loadDetail(_theBoys);
+
+      final items = await recent.watch().first;
+      expect(items.single.key, _theBoys);
+      await cubit.close();
     });
   });
 }

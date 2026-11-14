@@ -5,6 +5,7 @@ import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/repositories/recently_viewed_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../shared/widgets/media_detail_duration.dart';
 
@@ -51,11 +52,15 @@ final class MovieDetailError extends MovieDetailState {
 /// the screen that builds this one resolves the repository and passes it
 /// in.
 class MovieDetailCubit extends Cubit<MovieDetailState> {
-  MovieDetailCubit(this._mediaRepository, this._userLibraryRepository)
-    : super(const MovieDetailInitial());
+  MovieDetailCubit(
+    this._mediaRepository,
+    this._userLibraryRepository,
+    this._recentlyViewedRepository,
+  ) : super(const MovieDetailInitial());
 
   final MediaRepository _mediaRepository;
   final UserLibraryRepository _userLibraryRepository;
+  final RecentlyViewedRepository _recentlyViewedRepository;
   String? _regionCode;
 
   /// Shows [key] for [regionCode] on this screen only (providers and the
@@ -79,6 +84,8 @@ class MovieDetailCubit extends Cubit<MovieDetailState> {
     switch (result) {
       case Success<MediaDetail>(:final value):
         emit(MovieDetailLoaded(value, regionCode: _regionCode));
+        // Home's "Recently viewed": opening a detail moves it to the front.
+        await _recentlyViewedRepository.record(value.item);
         await _refreshLibrarySnapshot(key, value);
       case Failure<MediaDetail>(:final reason):
         emit(MovieDetailError(reason));

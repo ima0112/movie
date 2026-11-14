@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/in_memory_recently_viewed_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -15,6 +16,7 @@ void main() {
       final cubit = MovieDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
       expect(cubit.state, isA<MovieDetailInitial>());
       cubit.close();
@@ -25,6 +27,7 @@ void main() {
       final cubit = MovieDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
       await cubit.setRegion(_dune, 'CU');
       expect(cubit.state, isA<MovieDetailInitial>());
@@ -46,6 +49,7 @@ void main() {
       final cubit = MovieDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
 
       // `emitsInOrder` subscribes right away, so it can't race the
@@ -66,6 +70,7 @@ void main() {
       final cubit = MovieDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
 
       await cubit.loadDetail(_dune);
@@ -83,6 +88,7 @@ void main() {
       final cubit = MovieDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
 
       await cubit.loadDetail(
@@ -102,6 +108,7 @@ void main() {
       final cubit = MovieDetailCubit(
         FakeMediaRepository(),
         InMemoryUserLibraryRepository(),
+        InMemoryRecentlyViewedRepository(),
       );
 
       await cubit.loadDetail(
@@ -119,11 +126,16 @@ void main() {
           '(poster, rating, year, runtime) without being asked', () async {
         final userLibraryRepository = InMemoryUserLibraryRepository();
         await userLibraryRepository.upsert(
-          const UserMediaEntry(key: _dune, title: 'Stale title', isFavorite: true),
+          const UserMediaEntry(
+            key: _dune,
+            title: 'Stale title',
+            isFavorite: true,
+          ),
         );
         final cubit = MovieDetailCubit(
           FakeMediaRepository(),
           userLibraryRepository,
+          InMemoryRecentlyViewedRepository(),
         );
 
         await cubit.loadDetail(_dune);
@@ -137,12 +149,12 @@ void main() {
         await cubit.close();
       });
 
-      test('never creates an entry for a title the user never saved',
-          () async {
+      test('never creates an entry for a title the user never saved', () async {
         final userLibraryRepository = InMemoryUserLibraryRepository();
         final cubit = MovieDetailCubit(
           FakeMediaRepository(),
           userLibraryRepository,
+          InMemoryRecentlyViewedRepository(),
         );
 
         await cubit.loadDetail(_dune);
@@ -162,6 +174,7 @@ void main() {
         final cubit = MovieDetailCubit(
           FakeMediaRepository(),
           userLibraryRepository,
+          InMemoryRecentlyViewedRepository(),
         );
 
         // Simulates the toggle landing "during" loadDetail: both writes
@@ -185,6 +198,44 @@ void main() {
 
         await cubit.close();
       });
+    });
+
+    test('loading a detail records it in Recently viewed, at the front, once '
+        'per title', () async {
+      final recent = InMemoryRecentlyViewedRepository();
+      final cubit = MovieDetailCubit(
+        FakeMediaRepository(),
+        InMemoryUserLibraryRepository(),
+        recent,
+      );
+
+      await cubit.loadDetail(_dune);
+      await cubit.loadDetail(_dune);
+
+      final items = await recent.watch().first;
+      expect(items, hasLength(1));
+      expect(items.single.key, _dune);
+      expect(items.single.title, isNotEmpty);
+      await cubit.close();
+    });
+
+    test('a failed load, or switching the region, records nothing', () async {
+      final recent = InMemoryRecentlyViewedRepository();
+      final cubit = MovieDetailCubit(
+        FakeMediaRepository(),
+        InMemoryUserLibraryRepository(),
+        recent,
+      );
+
+      await cubit.loadDetail(
+        const MediaKey(type: MediaType.movie, tmdbId: 99999),
+      );
+      expect(await recent.watch().first, isEmpty);
+
+      await cubit.loadDetail(_dune);
+      await cubit.setRegion(_dune, 'CU');
+      expect(await recent.watch().first, hasLength(1));
+      await cubit.close();
     });
   });
 }
