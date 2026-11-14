@@ -7,7 +7,10 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/media_type_localization.dart';
-import '../../../../shared/widgets/library_row.dart';
+import '../../../../l10n/library_date_localization.dart';
+import '../../../../l10n/number_format_extension.dart';
+import '../../../../shared/widgets/library_row_status.dart';
+import '../entry_actions.dart';
 import 'library_row_swipeable.dart';
 
 /// One My List row (`docs/SCREENS.md` B4) — renders entirely from
@@ -39,24 +42,53 @@ class MyListEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    void openActions() => showEntryActions(
+      context,
+      entry: entry,
+      tab: tab,
+      repository: userLibraryRepository,
+    );
     return LibraryRowSwipeable(
       entry: entry,
       tab: tab,
       userLibraryRepository: userLibraryRepository,
       posterUrl: entry.posterUrl,
-      title: entry.title.isEmpty ? _fallbackTitle(context.l10n) : entry.title,
-      metadata: _metadata(entry, context.l10n),
-      trailing: tab == LibraryTab.watched
-          ? LibraryRowTrailing.starsWithDate(
-              rating: entry.rating,
-              // `watch(tab: .watched)` only ever returns watched
-              // entries, so `watchedAt` is set — the fallback is
-              // just defensive, not an expected path.
-              watchedAt: entry.watchedAt ?? DateTime.now(),
-            )
-          : const LibraryRowTrailing.chevron(),
+      title: entry.title.isEmpty ? _fallbackTitle(l10n) : entry.title,
+      metadata: _metadata(entry, l10n),
+      status: _status(l10n),
+      onMore: openActions,
+      onLongPress: openActions,
       onTap: () => context.pushMediaDetail(entry.key),
     );
+  }
+
+  /// The third line: Watched → the user's stars and when; the other tabs →
+  /// the TMDB rating and when it was added to that tab's list. Anything
+  /// unknown (an entry saved before these were recorded) is left out — and
+  /// with nothing at all, so is the line.
+  LibraryRowStatus? _status(AppLocalizations l10n) {
+    if (tab == LibraryTab.watched) {
+      // `watch(tab: .watched)` only ever returns watched entries.
+      final watchedAt = entry.watchedAt;
+      return watchedAt == null
+          ? null
+          : LibraryRowStatus.watched(
+              stars: entry.rating,
+              label: l10n.watchedLabel(watchedAt),
+            );
+    }
+    final added = tab == LibraryTab.favorites
+        ? entry.favoritedAt
+        : entry.watchLaterAt;
+    final vote = entry.voteAverage;
+    final rating = vote == null || vote <= 0
+        ? null
+        : vote.localizedRating(l10n);
+    final label = added == null ? null : l10n.addedLabel(added);
+    return rating == null && label == null
+        ? null
+        : LibraryRowStatus.rated(rating: rating, label: label);
   }
 
   String _fallbackTitle(AppLocalizations l10n) => switch (entry.key.type) {
@@ -77,8 +109,8 @@ class MyListEntryTile extends StatelessWidget {
             : l10n.myListEpisodesCount(entry.episodeCount!),
     };
     return [
-      if (entry.year != null) '${entry.year}',
       typeLabel,
+      if (entry.year != null) '${entry.year}',
       ?extra,
     ].join(' · ');
   }

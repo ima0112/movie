@@ -1,80 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n_extension.dart';
+import 'library_row_status.dart';
 
-/// The right-hand column of a [LibraryRow].
+/// A library row: a 56×84 poster, the title, a gray metadata line, a
+/// [status] line (the rating and when it was added, or the user's stars and
+/// when they watched it) and, at the end, a three-dot button ([onMore]).
 ///
-/// Source of truth: `docs/SCREENS.md` B4 (My List rows) and D3 (filmography
-/// rows).
-sealed class LibraryRowTrailing {
-  const LibraryRowTrailing();
-
-  /// A relative date, e.g. "Saved yesterday" (Favorites, Watch later).
-  const factory LibraryRowTrailing.date(String date) = _DateTrailing;
-
-  /// 1–5 stars alone, e.g. a rating with no date attached (D3's
-  /// filmography rows). `rating == 0` renders as unrated: all five
-  /// stars in gray.
-  const factory LibraryRowTrailing.stars(int rating) = _StarsTrailing;
-
-  /// Stars *and* a date at once — B4's actual Watched-tab column ("1–5
-  /// amber stars... and a short date"), which [stars] alone can't render.
-  /// `rating == null` renders as unrated: all five stars in gray.
-  const factory LibraryRowTrailing.starsWithDate({
-    required int? rating,
-    required DateTime watchedAt,
-  }) = _StarsWithDateTrailing;
-
-  /// A plain chevron, e.g. a filmography row that just pushes a detail.
-  const factory LibraryRowTrailing.chevron() = _ChevronTrailing;
-}
-
-class _DateTrailing extends LibraryRowTrailing {
-  const _DateTrailing(this.date);
-  final String date;
-}
-
-class _StarsTrailing extends LibraryRowTrailing {
-  const _StarsTrailing(this.rating);
-  final int rating;
-}
-
-class _StarsWithDateTrailing extends LibraryRowTrailing {
-  const _StarsWithDateTrailing({required this.rating, required this.watchedAt});
-  final int? rating;
-  final DateTime watchedAt;
-}
-
-class _ChevronTrailing extends LibraryRowTrailing {
-  const _ChevronTrailing();
-}
-
-/// A library row: a 56×84 poster, title, a gray metadata line, and a
-/// configurable trailing column.
-///
-/// Source of truth: `docs/SCREENS.md` B4 ("Rows: 56×84 poster, 16/500
-/// title, gray 13 px line... Swipe left → 'Remove' (red)... swipe right →
-/// 'Watched' (amber)... Long-press → H1.").
+/// Source of truth: `docs/SCREENS.md` B4 ("Rows: 56×84 poster, 16/500 title,
+/// gray 13 px line…, the status line…; swipe left → 'Remove' (red), swipe
+/// right → 'Watched' (amber); long-press and the three dots → H1").
 ///
 /// Pure presentation — no feature dependency, everything comes in by
 /// parameter. Swipe reveals a colored background via the framework's own
-/// `Dismissible` (no extra package needed) but never actually removes the
-/// row — [onSwipeLeft] / [onSwipeRight] decide what that means; the row
-/// itself doesn't know whether the swipe means "remove", "watched", or
-/// something else.
+/// `Dismissible` but never actually removes the row — [onSwipeLeft] /
+/// [onSwipeRight] decide what that means.
 class LibraryRow extends StatelessWidget {
   const LibraryRow({
     super.key,
     required this.posterUrl,
     required this.title,
     required this.metadata,
-    required this.trailing,
+    this.status,
+    this.onMore,
     this.onTap,
     this.onLongPress,
     this.onSwipeLeft,
@@ -84,7 +36,12 @@ class LibraryRow extends StatelessWidget {
   final String? posterUrl;
   final String title;
   final String metadata;
-  final LibraryRowTrailing trailing;
+
+  /// `null` for an entry with nothing to say yet (no rating, no date).
+  final LibraryRowStatus? status;
+
+  /// The three-dot button at the end (H1); none when `null`.
+  final VoidCallback? onMore;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
@@ -119,11 +76,8 @@ class LibraryRow extends StatelessWidget {
                     : Image.network(
                         posterUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const ColoredBox(
-                            color: AppColors.surfaceRaised2,
-                          );
-                        },
+                        errorBuilder: (context, error, stackTrace) =>
+                            const ColoredBox(color: AppColors.surfaceRaised2),
                       ),
               ),
             ),
@@ -148,11 +102,14 @@ class LibraryRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (status != null) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    LibraryRowStatusLine(status: status!),
+                  ],
                 ],
               ),
             ),
-            const SizedBox(width: AppSpacing.md),
-            _Trailing(trailing: trailing),
+            if (onMore != null) _MoreButton(onTap: onMore!),
           ],
         ),
       ),
@@ -186,91 +143,26 @@ class LibraryRow extends StatelessWidget {
   }
 }
 
-class _Trailing extends StatelessWidget {
-  const _Trailing({required this.trailing});
+class _MoreButton extends StatelessWidget {
+  const _MoreButton({required this.onTap});
 
-  final LibraryRowTrailing trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (trailing) {
-      _DateTrailing(:final date) => Text(
-        date,
-        style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
-      ),
-      _StarsTrailing(:final rating) => _StarRow(rating: rating),
-      _StarsWithDateTrailing(:final rating, :final watchedAt) => Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _StarRow(rating: rating ?? 0, emptyColor: AppColors.lineStrong),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            _relativeDate(watchedAt, context.l10n),
-            style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
-          ),
-        ],
-      ),
-      _ChevronTrailing() => Icon(
-        AppIcons.chevronRight,
-        size: 20,
-        color: AppColors.inkMuted,
-      ),
-    };
-  }
-}
-
-/// "Today", "Yesterday", "N days ago" for the last week, otherwise a
-/// short absolute date — used by [LibraryRowTrailing.starsWithDate]'s
-/// "short date" (`docs/SCREENS.md` B4). The absolute-date fallback goes
-/// through `intl`'s own [DateFormat.MMMd] rather than a hand-rolled
-/// English month abbreviation list, so it already renders correctly in
-/// any locale `GlobalMaterialLocalizations.delegate` (already wired in
-/// `app.dart`) initializes date symbols for.
-String _relativeDate(DateTime date, AppLocalizations l10n) {
-  final today = DateTime.now();
-  final difference = DateTime(
-    today.year,
-    today.month,
-    today.day,
-  ).difference(DateTime(date.year, date.month, date.day)).inDays;
-  return switch (difference) {
-    0 => l10n.libraryRowDateToday,
-    1 => l10n.libraryRowDateYesterday,
-    > 1 && < 7 => l10n.libraryRowDateDaysAgo(difference),
-    _ => DateFormat.MMMd(l10n.localeName).format(date),
-  };
-}
-
-class _StarRow extends StatelessWidget {
-  const _StarRow({required this.rating, this.emptyColor = AppColors.inkDim});
-
-  final int rating;
-
-  /// `.stars` uses `inkDim`; `.starsWithDate` uses `lineStrong` (H2/B4's
-  /// own spec for that variant) — different enough contexts that baking
-  /// one fixed color in would've been wrong for one of them.
-  final Color emptyColor;
-
-  // Compact rating stars — smaller than the standard 18 px "small pill"
-  // icon size, since five of them sit in a row's trailing column.
-  static const double _starSize = 14;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 1; i <= 5; i++)
-          // Always the filled star glyph — only the color switches. Per
-          // docs/SCREENS.md B4: "1–5 amber stars (empty ones in dark
-          // gray; unrated shows all five in gray)".
-          Icon(
-            AppIcons.starFill,
-            size: _starSize,
-            color: i <= rating ? AppColors.accent : emptyColor,
-          ),
-      ],
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      label: context.l10n.myListRowActionsLabel,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: const SizedBox(
+          width: kMinInteractiveDimension,
+          height: kMinInteractiveDimension,
+          child: Icon(AppIcons.more, size: 22, color: AppColors.ink),
+        ),
+      ),
     );
   }
 }

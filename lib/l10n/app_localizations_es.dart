@@ -759,14 +759,35 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get libraryRowDateToday => 'Hoy';
+  String get libraryRowAddedToday => 'Añadida hoy';
 
   @override
-  String get libraryRowDateYesterday => 'Ayer';
+  String get libraryRowAddedYesterday => 'Añadida ayer';
 
   @override
-  String libraryRowDateDaysAgo(int count) {
+  String libraryRowAddedDaysAgo(int count) {
     return 'Hace $count días';
+  }
+
+  @override
+  String libraryRowAddedWeeksAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count semanas',
+      one: '1 semana',
+    );
+    return 'Hace $_temp0';
+  }
+
+  @override
+  String libraryRowAddedOn(String date) {
+    return 'Añadida $date';
+  }
+
+  @override
+  String libraryRowWatchedOn(String date) {
+    return 'Vista $date';
   }
 
   @override
