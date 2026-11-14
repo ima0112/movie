@@ -5,19 +5,18 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'library_row_status.dart';
 import 'row_more_button.dart';
+import 'swipe_to_delete.dart';
 
 /// A library row: a 56×84 poster, the title, a gray metadata line, a
 /// [status] line (the rating and when it was added, or the user's stars and
 /// when they watched it) and, at the end, a three-dot button ([onMore]).
 ///
 /// Source of truth: `docs/SCREENS.md` B4 ("Rows: 56×84 poster, 16/500 title,
-/// gray 13 px line…, the status line…; swipe left → 'Remove' (red), swipe
-/// right → 'Watched' (amber); long-press and the three dots → H1").
+/// gray 13 px line…, the status line…; swipe left → delete; long-press and
+/// the three dots → H1").
 ///
 /// Pure presentation — no feature dependency, everything comes in by
-/// parameter. Swipe reveals a colored background via the framework's own
-/// `Dismissible` but never actually removes the row — [onSwipeLeft] /
-/// [onSwipeRight] decide what that means.
+/// parameter; [onDelete] decides what the swipe deletes.
 class LibraryRow extends StatelessWidget {
   const LibraryRow({
     super.key,
@@ -28,8 +27,7 @@ class LibraryRow extends StatelessWidget {
     this.onMore,
     this.onTap,
     this.onLongPress,
-    this.onSwipeLeft,
-    this.onSwipeRight,
+    this.onDelete,
   });
 
   final String? posterUrl;
@@ -44,12 +42,8 @@ class LibraryRow extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
-  /// Fires on a left swipe (e.g. "Remove"). Renders a `danger` reveal.
-  final VoidCallback? onSwipeLeft;
-
-  /// Fires on a right swipe (e.g. "Watched"/"Favorite"). Renders an
-  /// `accent` reveal.
-  final VoidCallback? onSwipeRight;
+  /// Swipe left to delete ([SwipeToDelete]); not swipeable when `null`.
+  final VoidCallback? onDelete;
 
   // docs/SCREENS.md B4: "56×84 poster".
   static const double _posterWidth = 56;
@@ -114,30 +108,8 @@ class LibraryRow extends StatelessWidget {
       ),
     );
 
-    if (onSwipeLeft == null && onSwipeRight == null) {
-      return row;
-    }
-
-    return Dismissible(
-      key: key ?? ValueKey(title),
-      direction: switch ((onSwipeLeft, onSwipeRight)) {
-        (null, null) => DismissDirection.none,
-        (_, null) => DismissDirection.endToStart,
-        (null, _) => DismissDirection.startToEnd,
-        (_, _) => DismissDirection.horizontal,
-      },
-      background: const ColoredBox(color: AppColors.accent),
-      secondaryBackground: const ColoredBox(color: AppColors.danger),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.endToStart) {
-          onSwipeLeft?.call();
-        } else if (direction == DismissDirection.startToEnd) {
-          onSwipeRight?.call();
-        }
-        // The row never removes itself — the caller owns that decision.
-        return false;
-      },
-      child: row,
-    );
+    return onDelete == null
+        ? row
+        : SwipeToDelete(onDelete: onDelete!, child: row);
   }
 }

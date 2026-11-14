@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/repositories/saved_people_repository.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -16,6 +15,7 @@ import '../../../../shared/widgets/clear_of_tab_bar.dart';
 import '../../../../shared/widgets/person_result_row.dart';
 import '../../../../shared/widgets/profile_image.dart';
 import '../../../../shared/widgets/state_views.dart';
+import '../../../../shared/widgets/swipe_to_delete.dart';
 
 /// My List's People tab (`docs/SCREENS.md` B4): the people saved from D3, by
 /// name A–Z. Subscribes to [SavedPeopleRepository.watchAll] directly (CLAUDE.md
@@ -76,15 +76,8 @@ class _SwipeablePerson extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey('dismiss-${person.id}'),
-      direction: DismissDirection.endToStart,
-      background: const ColoredBox(color: AppColors.danger),
-      confirmDismiss: (_) async {
-        _remove(context);
-        // The list rebuilds from the repository; the row never removes itself.
-        return false;
-      },
+    return SwipeToDelete(
+      onDelete: () => _remove(context),
       child: PersonResultRow(
         person: person,
         onTap: () => context.pushPersonDetail(person.id),
@@ -120,7 +113,9 @@ class _SwipeablePerson extends StatelessWidget {
     unawaited(repository.remove(person.id));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(l10n.myListRemovedFromTab(l10n.myListTabPeople)),
+        content: Text(
+          l10n.myListRemovedFromTab(person.name, l10n.myListTabPeople),
+        ),
         action: SnackBarAction(
           label: l10n.myListUndoAction,
           onPressed: () => unawaited(repository.save(person)),
