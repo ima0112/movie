@@ -1,4 +1,5 @@
 import 'genre.dart';
+import 'media_type.dart';
 
 /// The local user's explicit taste signal — C5 ("My Tastes") reads and
 /// writes this directly; the match engine and recommendations read it as
@@ -18,6 +19,9 @@ class TasteProfile {
     required this.likedVibes,
     required this.yearFrom,
     required this.updatedAt,
+    this.yearTo,
+    this.preferredType,
+    this.platformIds = const {},
   });
 
   final Set<Genre> likedGenres;
@@ -37,6 +41,19 @@ class TasteProfile {
   /// C5's "How far back" slider — titles released before this year are
   /// deprioritized/excluded, depending on where this is consumed.
   final int yearFrom;
+
+  /// The other end of C5's "Eras" range: titles released after this year are
+  /// left out of what we suggest. `null` = no upper bound (up to today).
+  final int? yearTo;
+
+  /// C5's "What do you usually watch?": movies, TV shows, or `null` for both.
+  /// Which segment Home opens on.
+  final MediaType? preferredType;
+
+  /// TMDB watch-provider ids of the streaming services the user has (C5's
+  /// "My platforms"). Ids, not names (rule 15): the services' names and logos
+  /// come from the catalog of the user's region.
+  final Set<int> platformIds;
 
   /// When this profile last changed — same purpose as
   /// `UserMediaEntry`/its table's `updatedAt`: a future sync step's
@@ -59,6 +76,33 @@ class TasteProfile {
   bool get isUsableForSuggestions =>
       likedGenres.isNotEmpty || likedVibes.isNotEmpty;
 
+  /// This profile with some fields replaced ([updatedAt] is always now, unless
+  /// given): C5 edits one field at a time. `clearYearTo` / `clearPreferredType`
+  /// reset those two nullable fields to `null`, which `null` alone can't say.
+  TasteProfile copyWith({
+    Set<Genre>? likedGenres,
+    Set<Genre>? vetoedGenres,
+    Set<String>? likedVibes,
+    int? yearFrom,
+    int? yearTo,
+    bool clearYearTo = false,
+    MediaType? preferredType,
+    bool clearPreferredType = false,
+    Set<int>? platformIds,
+    DateTime? updatedAt,
+  }) => TasteProfile(
+    likedGenres: likedGenres ?? this.likedGenres,
+    vetoedGenres: vetoedGenres ?? this.vetoedGenres,
+    likedVibes: likedVibes ?? this.likedVibes,
+    yearFrom: yearFrom ?? this.yearFrom,
+    yearTo: clearYearTo ? null : (yearTo ?? this.yearTo),
+    preferredType: clearPreferredType
+        ? null
+        : (preferredType ?? this.preferredType),
+    platformIds: platformIds ?? this.platformIds,
+    updatedAt: updatedAt ?? DateTime.now(),
+  );
+
   @override
   bool operator ==(Object other) =>
       other is TasteProfile &&
@@ -66,6 +110,9 @@ class TasteProfile {
       _setEquals(other.vetoedGenres, vetoedGenres) &&
       _setEquals(other.likedVibes, likedVibes) &&
       other.yearFrom == yearFrom &&
+      other.yearTo == yearTo &&
+      other.preferredType == preferredType &&
+      _setEquals(other.platformIds, platformIds) &&
       other.updatedAt == updatedAt;
 
   @override
@@ -74,13 +121,18 @@ class TasteProfile {
     Object.hashAllUnordered(vetoedGenres),
     Object.hashAllUnordered(likedVibes),
     yearFrom,
+    yearTo,
+    preferredType,
+    Object.hashAllUnordered(platformIds),
     updatedAt,
   );
 
   @override
   String toString() =>
       'TasteProfile(liked: $likedGenres, vetoed: $vetoedGenres, '
-      'vibes: $likedVibes, yearFrom: $yearFrom, updatedAt: $updatedAt)';
+      'vibes: $likedVibes, yearFrom: $yearFrom, yearTo: $yearTo, '
+      'preferredType: $preferredType, platforms: $platformIds, '
+      'updatedAt: $updatedAt)';
 }
 
 /// Order-independent set content equality — a local stand-in for

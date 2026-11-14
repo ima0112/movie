@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/genre.dart';
 import '../../domain/entities/genre_catalog.dart';
+import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
 import '../../domain/entities/taste_profile.dart';
 import '../../domain/repositories/taste_profile_repository.dart';
@@ -45,6 +46,9 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
               vetoedGenres: _serializeGenres(profile.vetoedGenres),
               likedVibes: profile.likedVibes.join(','),
               yearFrom: profile.yearFrom,
+              yearTo: Value(profile.yearTo),
+              preferredType: Value(profile.preferredType?.name),
+              platformIds: Value(profile.platformIds.join(',')),
               updatedAt: DateTime.now(),
             ),
           );
@@ -74,6 +78,13 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
           ? const {}
           : row.likedVibes.split(',').toSet(),
       yearFrom: row.yearFrom,
+      yearTo: row.yearTo,
+      preferredType: MediaType.values
+          .where((t) => t.name == row.preferredType)
+          .firstOrNull,
+      platformIds: row.platformIds.isEmpty
+          ? const {}
+          : row.platformIds.split(',').map(int.parse).toSet(),
       updatedAt: row.updatedAt,
     );
   }

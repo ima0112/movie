@@ -1567,6 +1567,38 @@ class $TasteProfileTableTable extends TasteProfileTable
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _yearToMeta = const VerificationMeta('yearTo');
+  @override
+  late final GeneratedColumn<int> yearTo = GeneratedColumn<int>(
+    'year_to',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _preferredTypeMeta = const VerificationMeta(
+    'preferredType',
+  );
+  @override
+  late final GeneratedColumn<String> preferredType = GeneratedColumn<String>(
+    'preferred_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _platformIdsMeta = const VerificationMeta(
+    'platformIds',
+  );
+  @override
+  late final GeneratedColumn<String> platformIds = GeneratedColumn<String>(
+    'platform_ids',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
   );
@@ -1585,6 +1617,9 @@ class $TasteProfileTableTable extends TasteProfileTable
     vetoedGenres,
     likedVibes,
     yearFrom,
+    yearTo,
+    preferredType,
+    platformIds,
     updatedAt,
   ];
   @override
@@ -1640,6 +1675,30 @@ class $TasteProfileTableTable extends TasteProfileTable
     } else if (isInserting) {
       context.missing(_yearFromMeta);
     }
+    if (data.containsKey('year_to')) {
+      context.handle(
+        _yearToMeta,
+        yearTo.isAcceptableOrUnknown(data['year_to']!, _yearToMeta),
+      );
+    }
+    if (data.containsKey('preferred_type')) {
+      context.handle(
+        _preferredTypeMeta,
+        preferredType.isAcceptableOrUnknown(
+          data['preferred_type']!,
+          _preferredTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('platform_ids')) {
+      context.handle(
+        _platformIdsMeta,
+        platformIds.isAcceptableOrUnknown(
+          data['platform_ids']!,
+          _platformIdsMeta,
+        ),
+      );
+    }
     if (data.containsKey('updated_at')) {
       context.handle(
         _updatedAtMeta,
@@ -1677,6 +1736,18 @@ class $TasteProfileTableTable extends TasteProfileTable
         DriftSqlType.int,
         data['${effectivePrefix}year_from'],
       )!,
+      yearTo: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year_to'],
+      ),
+      preferredType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}preferred_type'],
+      ),
+      platformIds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}platform_ids'],
+      )!,
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -1706,6 +1777,16 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
   /// none of them contain a comma.
   final String likedVibes;
   final int yearFrom;
+
+  /// `TasteProfile.yearTo` (schema v10); null = no upper bound.
+  final int? yearTo;
+
+  /// `TasteProfile.preferredType` as the `MediaType` name (schema v10); null =
+  /// both.
+  final String? preferredType;
+
+  /// `TasteProfile.platformIds`, comma-joined TMDB provider ids (schema v10).
+  final String platformIds;
   final DateTime updatedAt;
   const TasteProfileRow({
     required this.id,
@@ -1713,6 +1794,9 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
     required this.vetoedGenres,
     required this.likedVibes,
     required this.yearFrom,
+    this.yearTo,
+    this.preferredType,
+    required this.platformIds,
     required this.updatedAt,
   });
   @override
@@ -1723,6 +1807,13 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
     map['vetoed_genres'] = Variable<String>(vetoedGenres);
     map['liked_vibes'] = Variable<String>(likedVibes);
     map['year_from'] = Variable<int>(yearFrom);
+    if (!nullToAbsent || yearTo != null) {
+      map['year_to'] = Variable<int>(yearTo);
+    }
+    if (!nullToAbsent || preferredType != null) {
+      map['preferred_type'] = Variable<String>(preferredType);
+    }
+    map['platform_ids'] = Variable<String>(platformIds);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
@@ -1734,6 +1825,13 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
       vetoedGenres: Value(vetoedGenres),
       likedVibes: Value(likedVibes),
       yearFrom: Value(yearFrom),
+      yearTo: yearTo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(yearTo),
+      preferredType: preferredType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(preferredType),
+      platformIds: Value(platformIds),
       updatedAt: Value(updatedAt),
     );
   }
@@ -1749,6 +1847,9 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
       vetoedGenres: serializer.fromJson<String>(json['vetoedGenres']),
       likedVibes: serializer.fromJson<String>(json['likedVibes']),
       yearFrom: serializer.fromJson<int>(json['yearFrom']),
+      yearTo: serializer.fromJson<int?>(json['yearTo']),
+      preferredType: serializer.fromJson<String?>(json['preferredType']),
+      platformIds: serializer.fromJson<String>(json['platformIds']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
@@ -1761,6 +1862,9 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
       'vetoedGenres': serializer.toJson<String>(vetoedGenres),
       'likedVibes': serializer.toJson<String>(likedVibes),
       'yearFrom': serializer.toJson<int>(yearFrom),
+      'yearTo': serializer.toJson<int?>(yearTo),
+      'preferredType': serializer.toJson<String?>(preferredType),
+      'platformIds': serializer.toJson<String>(platformIds),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
@@ -1771,6 +1875,9 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
     String? vetoedGenres,
     String? likedVibes,
     int? yearFrom,
+    Value<int?> yearTo = const Value.absent(),
+    Value<String?> preferredType = const Value.absent(),
+    String? platformIds,
     DateTime? updatedAt,
   }) => TasteProfileRow(
     id: id ?? this.id,
@@ -1778,6 +1885,11 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
     vetoedGenres: vetoedGenres ?? this.vetoedGenres,
     likedVibes: likedVibes ?? this.likedVibes,
     yearFrom: yearFrom ?? this.yearFrom,
+    yearTo: yearTo.present ? yearTo.value : this.yearTo,
+    preferredType: preferredType.present
+        ? preferredType.value
+        : this.preferredType,
+    platformIds: platformIds ?? this.platformIds,
     updatedAt: updatedAt ?? this.updatedAt,
   );
   TasteProfileRow copyWithCompanion(TasteProfileTableCompanion data) {
@@ -1793,6 +1905,13 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
           ? data.likedVibes.value
           : this.likedVibes,
       yearFrom: data.yearFrom.present ? data.yearFrom.value : this.yearFrom,
+      yearTo: data.yearTo.present ? data.yearTo.value : this.yearTo,
+      preferredType: data.preferredType.present
+          ? data.preferredType.value
+          : this.preferredType,
+      platformIds: data.platformIds.present
+          ? data.platformIds.value
+          : this.platformIds,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
@@ -1805,6 +1924,9 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
           ..write('vetoedGenres: $vetoedGenres, ')
           ..write('likedVibes: $likedVibes, ')
           ..write('yearFrom: $yearFrom, ')
+          ..write('yearTo: $yearTo, ')
+          ..write('preferredType: $preferredType, ')
+          ..write('platformIds: $platformIds, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
@@ -1817,6 +1939,9 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
     vetoedGenres,
     likedVibes,
     yearFrom,
+    yearTo,
+    preferredType,
+    platformIds,
     updatedAt,
   );
   @override
@@ -1828,6 +1953,9 @@ class TasteProfileRow extends DataClass implements Insertable<TasteProfileRow> {
           other.vetoedGenres == this.vetoedGenres &&
           other.likedVibes == this.likedVibes &&
           other.yearFrom == this.yearFrom &&
+          other.yearTo == this.yearTo &&
+          other.preferredType == this.preferredType &&
+          other.platformIds == this.platformIds &&
           other.updatedAt == this.updatedAt);
 }
 
@@ -1837,6 +1965,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
   final Value<String> vetoedGenres;
   final Value<String> likedVibes;
   final Value<int> yearFrom;
+  final Value<int?> yearTo;
+  final Value<String?> preferredType;
+  final Value<String> platformIds;
   final Value<DateTime> updatedAt;
   const TasteProfileTableCompanion({
     this.id = const Value.absent(),
@@ -1844,6 +1975,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
     this.vetoedGenres = const Value.absent(),
     this.likedVibes = const Value.absent(),
     this.yearFrom = const Value.absent(),
+    this.yearTo = const Value.absent(),
+    this.preferredType = const Value.absent(),
+    this.platformIds = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
   TasteProfileTableCompanion.insert({
@@ -1852,6 +1986,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
     required String vetoedGenres,
     required String likedVibes,
     required int yearFrom,
+    this.yearTo = const Value.absent(),
+    this.preferredType = const Value.absent(),
+    this.platformIds = const Value.absent(),
     required DateTime updatedAt,
   }) : likedGenres = Value(likedGenres),
        vetoedGenres = Value(vetoedGenres),
@@ -1864,6 +2001,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
     Expression<String>? vetoedGenres,
     Expression<String>? likedVibes,
     Expression<int>? yearFrom,
+    Expression<int>? yearTo,
+    Expression<String>? preferredType,
+    Expression<String>? platformIds,
     Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
@@ -1872,6 +2012,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
       if (vetoedGenres != null) 'vetoed_genres': vetoedGenres,
       if (likedVibes != null) 'liked_vibes': likedVibes,
       if (yearFrom != null) 'year_from': yearFrom,
+      if (yearTo != null) 'year_to': yearTo,
+      if (preferredType != null) 'preferred_type': preferredType,
+      if (platformIds != null) 'platform_ids': platformIds,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
@@ -1882,6 +2025,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
     Value<String>? vetoedGenres,
     Value<String>? likedVibes,
     Value<int>? yearFrom,
+    Value<int?>? yearTo,
+    Value<String?>? preferredType,
+    Value<String>? platformIds,
     Value<DateTime>? updatedAt,
   }) {
     return TasteProfileTableCompanion(
@@ -1890,6 +2036,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
       vetoedGenres: vetoedGenres ?? this.vetoedGenres,
       likedVibes: likedVibes ?? this.likedVibes,
       yearFrom: yearFrom ?? this.yearFrom,
+      yearTo: yearTo ?? this.yearTo,
+      preferredType: preferredType ?? this.preferredType,
+      platformIds: platformIds ?? this.platformIds,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -1912,6 +2061,15 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
     if (yearFrom.present) {
       map['year_from'] = Variable<int>(yearFrom.value);
     }
+    if (yearTo.present) {
+      map['year_to'] = Variable<int>(yearTo.value);
+    }
+    if (preferredType.present) {
+      map['preferred_type'] = Variable<String>(preferredType.value);
+    }
+    if (platformIds.present) {
+      map['platform_ids'] = Variable<String>(platformIds.value);
+    }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
@@ -1926,6 +2084,9 @@ class TasteProfileTableCompanion extends UpdateCompanion<TasteProfileRow> {
           ..write('vetoedGenres: $vetoedGenres, ')
           ..write('likedVibes: $likedVibes, ')
           ..write('yearFrom: $yearFrom, ')
+          ..write('yearTo: $yearTo, ')
+          ..write('preferredType: $preferredType, ')
+          ..write('platformIds: $platformIds, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
@@ -4187,6 +4348,9 @@ typedef $$TasteProfileTableTableCreateCompanionBuilder =
       required String vetoedGenres,
       required String likedVibes,
       required int yearFrom,
+      Value<int?> yearTo,
+      Value<String?> preferredType,
+      Value<String> platformIds,
       required DateTime updatedAt,
     });
 typedef $$TasteProfileTableTableUpdateCompanionBuilder =
@@ -4196,6 +4360,9 @@ typedef $$TasteProfileTableTableUpdateCompanionBuilder =
       Value<String> vetoedGenres,
       Value<String> likedVibes,
       Value<int> yearFrom,
+      Value<int?> yearTo,
+      Value<String?> preferredType,
+      Value<String> platformIds,
       Value<DateTime> updatedAt,
     });
 
@@ -4230,6 +4397,21 @@ class $$TasteProfileTableTableFilterComposer
 
   ColumnFilters<int> get yearFrom => $composableBuilder(
     column: $table.yearFrom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get yearTo => $composableBuilder(
+    column: $table.yearTo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get preferredType => $composableBuilder(
+    column: $table.preferredType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get platformIds => $composableBuilder(
+    column: $table.platformIds,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4273,6 +4455,21 @@ class $$TasteProfileTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get yearTo => $composableBuilder(
+    column: $table.yearTo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get preferredType => $composableBuilder(
+    column: $table.preferredType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get platformIds => $composableBuilder(
+    column: $table.platformIds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
@@ -4308,6 +4505,19 @@ class $$TasteProfileTableTableAnnotationComposer
 
   GeneratedColumn<int> get yearFrom =>
       $composableBuilder(column: $table.yearFrom, builder: (column) => column);
+
+  GeneratedColumn<int> get yearTo =>
+      $composableBuilder(column: $table.yearTo, builder: (column) => column);
+
+  GeneratedColumn<String> get preferredType => $composableBuilder(
+    column: $table.preferredType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get platformIds => $composableBuilder(
+    column: $table.platformIds,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
@@ -4358,6 +4568,9 @@ class $$TasteProfileTableTableTableManager
                 Value<String> vetoedGenres = const Value.absent(),
                 Value<String> likedVibes = const Value.absent(),
                 Value<int> yearFrom = const Value.absent(),
+                Value<int?> yearTo = const Value.absent(),
+                Value<String?> preferredType = const Value.absent(),
+                Value<String> platformIds = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => TasteProfileTableCompanion(
                 id: id,
@@ -4365,6 +4578,9 @@ class $$TasteProfileTableTableTableManager
                 vetoedGenres: vetoedGenres,
                 likedVibes: likedVibes,
                 yearFrom: yearFrom,
+                yearTo: yearTo,
+                preferredType: preferredType,
+                platformIds: platformIds,
                 updatedAt: updatedAt,
               ),
           createCompanionCallback:
@@ -4374,6 +4590,9 @@ class $$TasteProfileTableTableTableManager
                 required String vetoedGenres,
                 required String likedVibes,
                 required int yearFrom,
+                Value<int?> yearTo = const Value.absent(),
+                Value<String?> preferredType = const Value.absent(),
+                Value<String> platformIds = const Value.absent(),
                 required DateTime updatedAt,
               }) => TasteProfileTableCompanion.insert(
                 id: id,
@@ -4381,6 +4600,9 @@ class $$TasteProfileTableTableTableManager
                 vetoedGenres: vetoedGenres,
                 likedVibes: likedVibes,
                 yearFrom: yearFrom,
+                yearTo: yearTo,
+                preferredType: preferredType,
+                platformIds: platformIds,
                 updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
