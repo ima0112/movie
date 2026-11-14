@@ -5,6 +5,7 @@ import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/app/cubits/user_profile_cubit.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
 import 'package:movies/core/domain/entities/genre.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/entities/user_profile.dart';
@@ -164,12 +165,13 @@ void main() {
       expect(cubit.state.step, OnboardingStep.welcome);
     });
 
-    test('typing a first character auto-picks a color preset', () {
-      expect(cubit.state.initialColor, isNull);
+    test('amber is preselected from the start, so the avatar and the picker '
+        'already show a choice', () {
+      expect(cubit.state.initialColor, AppColors.profileAmber.toARGB32());
 
       cubit.setDisplayName('A');
 
-      expect(cubit.state.initialColor, isNotNull);
+      expect(cubit.state.initialColor, AppColors.profileAmber.toARGB32());
     });
 
     test("a color, once picked, isn't overridden by further typing", () {

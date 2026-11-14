@@ -270,8 +270,19 @@
   },
 
   "onboardingNameHeadline": "What's your name?",
-  "onboardingNameBody": "That's what I'll call you, and how others will see you in rooms.",
+  "onboardingNameEyebrow": "Your profile",
+  "onboardingNameHighlight": "name",
+  "@onboardingNameHighlight": {
+    "description": "The word inside onboardingNameHeadline rendered in amber — found by a literal substring search, so a translation MUST keep this exact word as a substring of the headline."
+  },
+  "onboardingNameContinue": "Continue",
+  "@onboardingNameContinue": {
+    "description": "The name step's button (docs/SCREENS.md A2) — disabled until the name is valid."
+  },
+  "onboardingNameBody": "That's what you'll be called in the app, and how others will see you in rooms.",
   "onboardingNameHint": "Your name",
+  "profileNameLabel": "Name",
+  "profileColorLabel": "Color",
 
   "onboardingIntroDiscoverHeadline": "Find what to watch\nin seconds",
   "onboardingIntroDiscoverHighlight": "in seconds",

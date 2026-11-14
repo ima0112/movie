@@ -79,12 +79,17 @@ class AppColors {
   static const Color profileCoral = Color(0xFFFF6B6B);
   static const Color profileMint = Color(0xFF6FCF97);
   static const Color profileLilac = Color(0xFFA78BFA);
+  static const Color profileBlue = Color(0xFF8AB4F8);
+  static const Color profileWhite = Color(0xFFF5F5F7);
 
-  /// All profile colors, in the order they should be assigned.
+  /// All profile colors, in the order the picker shows them (and the first —
+  /// amber — is the default).
   static const List<Color> profileColors = [
     profileAmber,
-    profileCoral,
     profileMint,
+    profileCoral,
+    profileBlue,
     profileLilac,
+    profileWhite,
   ];
 }

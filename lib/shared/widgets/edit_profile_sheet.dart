@@ -8,15 +8,14 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'app_buttons.dart';
-import 'pako_state.dart';
+import 'overline_label.dart';
 import 'profile_avatar.dart';
 import 'profile_color_picker.dart';
+import 'profile_name_field.dart';
 
-/// H10 (Edit profile) — `docs/SCREENS.md` H10: "Name and initial color
-/// (4). Same controls as onboarding step 1." Onboarding (A2) doesn't
-/// exist yet, so [ProfileAvatar]/[ProfileColorPicker] (the reusable
-/// pieces of "the same controls") were built for this sheet first —
-/// onboarding step 1 should reuse them once it exists, not duplicate.
+/// H10 (Edit profile) — `docs/SCREENS.md` H10: "Name and initial color (6).
+/// Same controls as onboarding step 1": [ProfileAvatar] (the live preview),
+/// [ProfileNameField] and [ProfileColorPicker], shared with that step.
 ///
 /// Opens from B5's header ([YouHeader]'s `onEditProfile`). Reads/writes
 /// the global [UserProfileCubit] directly via `context.read` rather
@@ -24,11 +23,9 @@ import 'profile_color_picker.dart';
 /// it's a genuinely global Cubit (CLAUDE.md rule 10), already in scope
 /// everywhere from `app/app.dart`, so there's nothing to thread through.
 ///
-/// Per A2 step 1: typing reveals the avatar preview and color picker
-/// (hidden while the name is empty); "Save" (onboarding's own button
-/// says "Next" — this is "Save" instead, matching every other edit
-/// sheet in the app, e.g. H2's) stays disabled under 2 characters, same
-/// as that step's "Next".
+/// "Save" (onboarding's own button says "Continue" — this is "Save" instead,
+/// matching every other edit sheet in the app, e.g. H2's) stays disabled under
+/// 2 characters, same as that step's button.
 class EditProfileSheet extends StatefulWidget {
   const EditProfileSheet({super.key});
 
@@ -40,12 +37,16 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
   late final TextEditingController _nameController;
   int? _selectedColor;
 
+  static const double _avatarSize = 72;
+
   @override
   void initState() {
     super.initState();
     final current = context.read<UserProfileCubit>().state;
     _nameController = TextEditingController(text: current?.displayName ?? '');
-    _selectedColor = current?.initialColor;
+    // The first color (amber) is preselected, as in onboarding.
+    _selectedColor =
+        current?.initialColor ?? AppColors.profileColors.first.toARGB32();
   }
 
   @override
@@ -72,53 +73,50 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final name = _nameController.text;
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Center(child: PakoState(mood: PakoMood.idle, size: 56)),
+            // The live preview: the initial (or a person icon while the name is
+            // empty) over the picked color.
+            Center(
+              child: ProfileAvatar(
+                displayName: _nameController.text,
+                initialColor: _selectedColor,
+                size: _avatarSize,
+              ),
+            ),
             const SizedBox(height: AppSpacing.lg),
-            Text(l10n.editProfileSheetTitle, style: AppTextStyles.h2),
+            Text(
+              l10n.editProfileSheetTitle,
+              style: AppTextStyles.h2,
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: AppSpacing.sm),
             Text(
               l10n.onboardingNameBody,
+              textAlign: TextAlign.center,
               style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
             ),
             const SizedBox(height: AppSpacing.xl),
-            TextField(
+            OverlineLabel(l10n.profileNameLabel),
+            const SizedBox(height: AppSpacing.sm),
+            ProfileNameField(
               controller: _nameController,
+              hint: l10n.onboardingNameHint,
               autofocus: true,
-              style: AppTextStyles.body,
-              decoration: InputDecoration(hintText: l10n.onboardingNameHint),
-              onChanged: (value) => setState(() {
-                if (value.trim().isNotEmpty && _selectedColor == null) {
-                  _selectedColor = AppColors.profileColors.first.toARGB32();
-                }
-              }),
+              onChanged: (_) => setState(() {}),
             ),
-            if (name.trim().isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.lg),
-              Row(
-                children: [
-                  ProfileAvatar(
-                    displayName: name,
-                    initialColor: _selectedColor,
-                  ),
-                  const SizedBox(width: AppSpacing.lg),
-                  Expanded(
-                    child: ProfileColorPicker(
-                      selected: _selectedColor,
-                      onChanged: (color) =>
-                          setState(() => _selectedColor = color),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            const SizedBox(height: AppSpacing.lg),
+            OverlineLabel(l10n.profileColorLabel),
+            const SizedBox(height: AppSpacing.sm),
+            ProfileColorPicker(
+              selected: _selectedColor,
+              onChanged: (color) => setState(() => _selectedColor = color),
+            ),
             const SizedBox(height: AppSpacing.xl),
             PrimaryButton(
               label: l10n.commonSave,

@@ -1,18 +1,19 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 
-/// The 4-color picker for a profile's initial — `docs/SCREENS.md` H10 /
-/// A2 step 1: "typing reveals a circular initial and a 4-color picker
-/// (amber, coral, mint, lilac)". [AppColors.profileColors] is exactly
-/// that fixed 4-value, ordered palette.
+/// The picker for a profile's initial color — `docs/SCREENS.md` H10 / A2 step
+/// 1: the six colors of [AppColors.profileColors] (amber, mint, coral, blue,
+/// lilac, white) as circles spread across the available width, a check on the
+/// selected one.
 ///
-/// Lives in `shared/widgets/`, not under `features/you/`, because H10
-/// and onboarding step 1 use "the same controls" (H10's own doc entry)
-/// — this is one of them, built for H10 first and meant to be reused
-/// as-is once onboarding exists, not duplicated.
+/// Used by both onboarding's name step and "Edit profile" (H10), which share
+/// "the same controls". The circles are at most [maxSwatch] wide and shrink (to
+/// [minSwatch]) on a narrow screen so the six always fit one row.
 class ProfileColorPicker extends StatelessWidget {
   const ProfileColorPicker({
     super.key,
@@ -25,32 +26,48 @@ class ProfileColorPicker extends StatelessWidget {
   final int? selected;
   final ValueChanged<int> onChanged;
 
-  static const double _swatchSize = 40;
+  static const double maxSwatch = 48;
+  static const double minSwatch = 32;
+  static const double _checkRatio = 0.42;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (final color in AppColors.profileColors)
-          Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.md),
-            child: GestureDetector(
-              onTap: () => onChanged(color.toARGB32()),
-              child: Container(
-                width: _swatchSize,
-                height: _swatchSize,
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                child: selected == color.toARGB32()
-                    ? const Icon(
-                        AppIcons.check,
-                        color: AppColors.onAccent,
-                        size: 20,
-                      )
-                    : null,
+    final colors = AppColors.profileColors;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gaps = AppSpacing.sm * (colors.length - 1);
+        final swatch = math
+            .min(maxSwatch, (constraints.maxWidth - gaps) / colors.length)
+            .clamp(minSwatch, maxSwatch);
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            for (final color in colors)
+              Semantics(
+                button: true,
+                selected: selected == color.toARGB32(),
+                child: GestureDetector(
+                  onTap: () => onChanged(color.toARGB32()),
+                  child: Container(
+                    width: swatch,
+                    height: swatch,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
+                    child: selected == color.toARGB32()
+                        ? Icon(
+                            AppIcons.check,
+                            color: AppColors.onAccent,
+                            size: swatch * _checkRatio,
+                          )
+                        : null,
+                  ),
+                ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

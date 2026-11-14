@@ -1,22 +1,29 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
-import '../../../../shared/widgets/pako_state.dart';
-import 'name_step_form.dart';
-import 'onboarding_scaffold.dart';
+import '../../../../shared/widgets/overline_label.dart';
+import '../../../../shared/widgets/profile_avatar.dart';
+import '../../../../shared/widgets/profile_color_picker.dart';
+import '../../../../shared/widgets/profile_name_field.dart';
+import 'genre_step_headline.dart';
+import 'onboarding_glow_background.dart';
 import 'step_transition.dart';
 
-/// Step 1 — `docs/SCREENS.md` A2: "required, no 'Skip'". Mirrors
-/// `EditProfileSheet`'s own layout and copy (the doc's own "same
-/// controls" note), plus this task's own addition: Pako plays
-/// [PakoMood.celebrate] once, the moment the name first becomes valid.
+/// The name step — `docs/SCREENS.md` A2: **required, no "Skip"**, and the first
+/// thing after the welcome. A large live avatar (the typed name's initial, or a
+/// person icon while the field is empty, over the picked color), the amber
+/// "YOUR PROFILE" eyebrow, the headline with its one amber word, the body, the
+/// shared name field (`NAME`, `0/20`) and the six colors (`COLOR`); on the warm
+/// glow like the rest of the onboarding. The button is disabled until the name
+/// has 2–20 characters.
 ///
-/// Pure presentation (CLAUDE.md rule 9): [name]/[initialColor]/[isValid]
-/// come from `OnboardingCubit`'s state via whatever screen assembles
-/// this step (not built yet); this widget never reads the Cubit itself.
+/// Pure presentation (CLAUDE.md rule 9): name, color and validity come from
+/// `OnboardingCubit` through `OnboardingNameStep`; this widget never reads the
+/// Cubit. The same controls as "Edit profile" (H10).
 class NameStep extends StatefulWidget {
   const NameStep({
     super.key,
@@ -26,6 +33,7 @@ class NameStep extends StatefulWidget {
     required this.onNameChanged,
     required this.onColorChanged,
     required this.onNext,
+    this.footerTop,
   });
 
   final String name;
@@ -35,87 +43,134 @@ class NameStep extends StatefulWidget {
   final ValueChanged<int> onColorChanged;
   final VoidCallback onNext;
 
+  /// Something above the button (the pagination dots).
+  final Widget? footerTop;
+
+  static const double avatarSize = 112;
+
   @override
   State<NameStep> createState() => _NameStepState();
 }
 
 class _NameStepState extends State<NameStep> {
-  late final TextEditingController _controller;
-  bool _hasCelebrated = false;
-  PakoMood _mood = PakoMood.idle;
-  Timer? _celebrateTimer;
-
-  static const Duration _celebrateDuration = Duration(milliseconds: 900);
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.name,
+  );
 
   @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.name);
-    // Already valid on first build (e.g. coming back to this step) —
-    // treat the celebration as already spent, don't replay it.
-    _hasCelebrated = widget.isValid;
-  }
-
-  @override
-  void didUpdateWidget(NameStep oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  void didUpdateWidget(NameStep old) {
+    super.didUpdateWidget(old);
+    // Keep the field in step with the Cubit's draft (coming back to this step).
     if (widget.name != _controller.text) {
       _controller.value = _controller.value.copyWith(
         text: widget.name,
         selection: TextSelection.collapsed(offset: widget.name.length),
       );
     }
-    final wasShortEnough = oldWidget.name.trim().length < 2;
-    final isLongEnoughNow = widget.name.trim().length >= 2;
-    if (!_hasCelebrated && wasShortEnough && isLongEnoughNow) {
-      _hasCelebrated = true;
-      setState(() => _mood = PakoMood.celebrate);
-      _celebrateTimer = Timer(_celebrateDuration, () {
-        if (mounted) setState(() => _mood = PakoMood.idle);
-      });
-    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _celebrateTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // docs/SCREENS.md A2: Pako shrinks to 48 px once the keyboard is up,
-    // so it never fights the field/avatar/color-picker for space.
-    final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    final pakoSize = keyboardOpen ? 48.0 : 64.0;
-
+    final l10n = context.l10n;
     return StepTransition(
-      child: OnboardingScaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              // The content can be shorter than the viewport (no
-              // keyboard) or taller (keyboard up) — this sizes to at
-              // least the available height without forcing a second,
-              // nested scrollable inside it.
-              hasScrollBody: false,
-              child: NameStepForm(
-                mood: _mood,
-                pakoSize: pakoSize,
-                name: widget.name,
-                initialColor: widget.initialColor,
-                controller: _controller,
-                onNameChanged: widget.onNameChanged,
-                onColorChanged: widget.onColorChanged,
-              ),
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        body: OnboardingGlowBackground(
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Scrolls (and centers when there is room): a small phone, the
+                // keyboard or large text never overflow (CLAUDE.md rule 14).
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xl,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Center(
+                              child: ProfileAvatar(
+                                displayName: widget.name.trim(),
+                                initialColor: widget.initialColor,
+                                size: NameStep.avatarSize,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            Text(
+                              l10n.onboardingNameEyebrow.toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.overline.copyWith(
+                                color: AppColors.accent,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            GenreStepHeadline(
+                              text: l10n.onboardingNameHeadline,
+                              highlightWord: l10n.onboardingNameHighlight,
+                              style: AppTextStyles.display,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            Text(
+                              l10n.onboardingNameBody,
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.body.copyWith(
+                                color: AppColors.inkMuted,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.xxl),
+                            OverlineLabel(l10n.profileNameLabel),
+                            const SizedBox(height: AppSpacing.sm),
+                            ProfileNameField(
+                              controller: _controller,
+                              hint: l10n.onboardingNameHint,
+                              autofocus: true,
+                              onChanged: widget.onNameChanged,
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            OverlineLabel(l10n.profileColorLabel),
+                            const SizedBox(height: AppSpacing.sm),
+                            ProfileColorPicker(
+                              selected: widget.initialColor,
+                              onChanged: widget.onColorChanged,
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (widget.footerTop != null) widget.footerTop!,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xl,
+                    AppSpacing.lg,
+                    AppSpacing.xl,
+                    AppSpacing.lg,
+                  ),
+                  child: AccentButton(
+                    label: l10n.onboardingNameContinue,
+                    isDisabled: !widget.isValid,
+                    onTap: widget.isValid ? widget.onNext : null,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        footer: PrimaryButton(
-          label: context.l10n.commonNext,
-          isDisabled: !widget.isValid,
-          onTap: widget.isValid ? widget.onNext : null,
+          ),
         ),
       ),
     );

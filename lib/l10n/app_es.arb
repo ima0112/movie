@@ -115,8 +115,13 @@
   "onboardingGenreStep3NextLabel": "Listo",
 
   "onboardingNameHeadline": "¿Cómo te llamas?",
-  "onboardingNameBody": "Así te llamaré, y así te verán los demás en las salas.",
+  "onboardingNameEyebrow": "Tu perfil",
+  "onboardingNameHighlight": "llamas",
+  "onboardingNameContinue": "Continuar",
+  "onboardingNameBody": "Así te llamarás en la app, y así te verán los demás en las salas.",
   "onboardingNameHint": "Tu nombre",
+  "profileNameLabel": "Nombre",
+  "profileColorLabel": "Color",
 
   "onboardingIntroDiscoverHeadline": "Encuentra qué ver\nen segundos",
   "onboardingIntroDiscoverHighlight": "en segundos",
