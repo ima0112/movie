@@ -476,6 +476,24 @@ abstract class AppLocalizations {
   /// **'Watched'**
   String get myListTabWatched;
 
+  /// B4's fourth tab: the people saved from a person's page (D3).
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get myListTabPeople;
+
+  /// No description provided for @myListEmptyPeopleHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'No people yet'**
+  String get myListEmptyPeopleHeadline;
+
+  /// No description provided for @myListEmptyPeopleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart on a person\'s page to keep them here.'**
+  String get myListEmptyPeopleBody;
+
   /// My List's swipe-to-remove snackbar. {tabName} is that LibraryTab's own localized label (myListTabFavorites/WatchLater/Watched).
   ///
   /// In en, this message translates to:

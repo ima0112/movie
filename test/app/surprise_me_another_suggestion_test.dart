@@ -7,9 +7,7 @@ import 'surprise_me_test_helpers.dart';
 void main() {
   setUpAll(configureSurpriseMeDependencies);
 
-  testWidgets('"Another suggestion" rotates without crashing', (
-    tester,
-  ) async {
+  testWidgets('"Another suggestion" rotates without crashing', (tester) async {
     await pumpSurpriseMe(tester);
     await tester.tap(find.text('A movie'));
     await tester.pumpAndSettle();
