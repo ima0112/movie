@@ -81,7 +81,13 @@ class ExploreCubit extends Cubit<ExploreState> {
   void selectSegment(MediaSegment segment) {
     switch (state) {
       case ExploreAtRest(:final recentSearches):
-        emit(ExploreAtRest(segment: segment, recentSearches: recentSearches));
+        // People is only offered while searching.
+        emit(
+          ExploreAtRest(
+            segment: _atRest(segment),
+            recentSearches: recentSearches,
+          ),
+        );
       case ExploreSearchLoading(:final query):
         emit(ExploreSearchLoading(segment: segment, query: query));
       case ExploreSearchLoaded(:final query, :final results):
@@ -104,7 +110,12 @@ class ExploreCubit extends Cubit<ExploreState> {
     final segment = state.segment;
     if (query.trim().isEmpty) {
       _debounce?.cancel();
-      emit(ExploreAtRest(segment: segment, recentSearches: _recentSearches));
+      emit(
+        ExploreAtRest(
+          segment: _atRest(segment),
+          recentSearches: _recentSearches,
+        ),
+      );
       return;
     }
 
@@ -157,9 +168,17 @@ class ExploreCubit extends Cubit<ExploreState> {
   void clearQuery() {
     _debounce?.cancel();
     emit(
-      ExploreAtRest(segment: state.segment, recentSearches: _recentSearches),
+      ExploreAtRest(
+        segment: _atRest(state.segment),
+        recentSearches: _recentSearches,
+      ),
     );
   }
+
+  /// The segment B2 shows at rest: People only exists while searching (there
+  /// is nothing to browse for it), so leaving a search from there lands on All.
+  static MediaSegment _atRest(MediaSegment segment) =>
+      segment == MediaSegment.person ? MediaSegment.all : segment;
 
   /// A "Recent" chip's long-press. Fire-and-forget, same as [_runSearch]'s
   /// own [SearchHistoryRepository.record] call — [_onHistoryChanged]

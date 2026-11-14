@@ -148,8 +148,10 @@ void main() {
     expect(find.byType(PersonDetailScreen), findsOneWidget);
   });
 
-  testWidgets('Explore has a People segment at the end; at rest it invites a '
-      'search, and a search then shows only people', (tester) async {
+  testWidgets('People is a segment only while searching: not at rest, last '
+      'when there are results, and leaving the search returns to All', (
+    tester,
+  ) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
     await tester.pumpWidget(const PakoTvApp());
@@ -158,30 +160,35 @@ void main() {
     await tester.pumpAndSettle();
 
     final control = find.byType(AppSegmentedControl<MediaSegment>);
-    final labels = [
+    List<String?> labels() => [
       for (final e in tester.widgetList<Text>(
         find.descendant(of: control, matching: find.byType(Text)),
       ))
         e.data,
     ];
-    expect(labels, ['All', 'Movies', 'TV Shows', 'People']); // People last
+
+    // At rest: three segments, no People.
+    expect(labels(), ['All', 'Movies', 'TV Shows']);
+
+    // Searching: People joins, at the end.
+    await tester.enterText(find.byType(TextField), 'zendaya');
+    await tester.pumpAndSettle();
+    expect(labels(), ['All', 'Movies', 'TV Shows', 'People']);
 
     await tester.tap(
       find.descendant(of: control, matching: find.text('People')),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Search for people'), findsOneWidget);
-    expect(find.text('Top today'), findsNothing); // nothing to browse
-
-    await tester.enterText(find.byType(TextField), 'zendaya');
-    await tester.pumpAndSettle();
     expect(find.text('Zendaya'), findsOneWidget);
-    // Titles are hidden in People.
-    expect(find.byType(MediaResultRow), findsNothing);
+    expect(find.byType(MediaResultRow), findsNothing); // only people
 
-    // Back to a titles segment: the sections are there again.
-    await tester.tap(find.descendant(of: control, matching: find.text('All')));
+    // Clearing the search goes back to rest — on All, with three segments.
+    await tester.tap(find.byIcon(AppIcons.close));
     await tester.pumpAndSettle();
+    expect(labels(), ['All', 'Movies', 'TV Shows']);
+    expect(find.text('Top today'), findsOneWidget);
+    final all = tester.widget<AppSegmentedControl<MediaSegment>>(control);
+    expect(all.selected, MediaSegment.all);
   });
 
   Future<void> openExplore(WidgetTester tester) async {

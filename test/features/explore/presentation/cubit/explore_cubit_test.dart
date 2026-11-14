@@ -100,6 +100,38 @@ ExploreCubit _exploreCubit({
 );
 
 void main() {
+  group('the People segment', () {
+    test('a search can be narrowed to people; leaving the search lands on '
+        'All, and People cannot be picked at rest', () {
+      final cubit = ExploreCubit(
+        FakeMediaRepository(),
+        _InMemorySearchHistoryRepository(),
+        _FakeSettingsRepository(
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+        ),
+      );
+      addTearDown(cubit.close);
+
+      cubit.selectSegment(MediaSegment.person); // at rest: not offered
+      expect(cubit.state.segment, MediaSegment.all);
+      expect(cubit.state, isA<ExploreAtRest>());
+
+      cubit.onQueryChanged('zendaya');
+      cubit.selectSegment(MediaSegment.person);
+      expect(cubit.state.segment, MediaSegment.person);
+      expect(cubit.state, isA<ExploreSearching>());
+
+      cubit.clearQuery();
+      expect(cubit.state, isA<ExploreAtRest>());
+      expect(cubit.state.segment, MediaSegment.all);
+
+      cubit.onQueryChanged('zendaya');
+      cubit.selectSegment(MediaSegment.person);
+      cubit.onQueryChanged(''); // emptying the field is leaving too
+      expect(cubit.state.segment, MediaSegment.all);
+    });
+  });
+
   group('ExploreCubit', () {
     test('starts in ExploreAtRest, segment All, no recent searches', () {
       final cubit = _exploreCubit();
