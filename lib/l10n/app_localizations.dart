@@ -1658,11 +1658,41 @@ abstract class AppLocalizations {
   /// **'Hi, {name}'**
   String youHeaderGreetingWithName(String name);
 
-  /// No description provided for @yourActivityTitle.
+  /// You's stats card: the hours watched expressed in whole days (shown from one day on).
   ///
   /// In en, this message translates to:
-  /// **'Your Activity'**
-  String get yourActivityTitle;
+  /// **'{days, plural, =1{≈ 1 day of screen time} other{≈ {days} days of screen time}}'**
+  String youStatsDaysOfScreen(int days);
+
+  /// You's stats card: consecutive weeks with something watched.
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks, plural, =1{1 week} other{{weeks} weeks}} streak'**
+  String youStatsStreak(int weeks);
+
+  /// You's stats card: titles watched this calendar month.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} this month'**
+  String youStatsThisMonth(int count);
+
+  /// No description provided for @youStatsLast12Months.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 12 months'**
+  String get youStatsLast12Months;
+
+  /// Legend of the movies / TV shows split bar on You.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 movie} other{{count} movies}}'**
+  String youStatsMovies(int count);
+
+  /// Legend of the movies / TV shows split bar on You.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 TV show} other{{count} TV shows}}'**
+  String youStatsShows(int count);
 
   /// No description provided for @yourActivityHoursLabel.
   ///

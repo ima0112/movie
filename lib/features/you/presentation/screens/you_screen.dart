@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
@@ -8,9 +9,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/edit_profile_sheet.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
+import '../cubit/you_stats_cubit.dart';
 import '../widgets/my_tastes_card.dart';
 import '../widgets/you_header.dart';
-import '../widgets/your_activity_card.dart';
+import '../widgets/you_stats_card.dart';
 
 /// You (B5) — the user's own profile, tastes summary, and activity.
 ///
@@ -18,9 +20,8 @@ import '../widgets/your_activity_card.dart';
 /// assembles the sub-widgets in `../widgets/`, none of which needs a
 /// screen-level Cubit — [YouHeader]/`MyTastesCard` read the global
 /// `UserProfileCubit`/`TasteProfileCubit` (provided once in
-/// `app/app.dart`, rule 10) directly; `YourActivityCard` takes
-/// [UserLibraryRepository] by constructor, resolved here via `getIt`
-/// like every other screen does (`MyListScreen`, `DiscoverScreen`).
+/// `app/app.dart`, rule 10) directly; the stats card reads the screen-local `YouStatsCubit`, created here from
+/// [UserLibraryRepository] via `getIt` like every other screen does.
 ///
 /// Recent Rooms (v1.1) isn't built — out of v1.0's scope (CLAUDE.md:
 /// "Don't implement anything marked v1.1/v1.2"). C6 (Settings), C4
@@ -44,32 +45,32 @@ class YouScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      body: SafeArea(
-        // The root shell's floating bar is accounted for in the list's own
-        // bottom padding, so the page can scroll under it.
-        bottom: false,
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(
-            AppSpacing.screenMargin,
-            AppSpacing.xl,
-            AppSpacing.screenMargin,
-            AppTabBar.scrollInset(context),
+    return BlocProvider(
+      create: (_) => YouStatsCubit(getIt<UserLibraryRepository>()),
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        body: SafeArea(
+          // The root shell's floating bar is accounted for in the list's own
+          // bottom padding, so the page can scroll under it.
+          bottom: false,
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.screenMargin,
+              AppSpacing.xl,
+              AppSpacing.screenMargin,
+              AppTabBar.scrollInset(context),
+            ),
+            children: [
+              YouHeader(
+                onEditProfile: () => _openEditProfile(context),
+                onOpenSettings: () => context.push(AppRoutes.settings),
+              ),
+              const SizedBox(height: AppSpacing.sectionGap),
+              MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
+              const SizedBox(height: AppSpacing.sectionGap),
+              YouStatsCard(onSeeStats: () => context.push(AppRoutes.stats)),
+            ],
           ),
-          children: [
-            YouHeader(
-              onEditProfile: () => _openEditProfile(context),
-              onOpenSettings: () => context.push(AppRoutes.settings),
-            ),
-            const SizedBox(height: AppSpacing.sectionGap),
-            MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
-            const SizedBox(height: AppSpacing.sectionGap),
-            YourActivityCard(
-              userLibraryRepository: getIt<UserLibraryRepository>(),
-              onSeeStats: () => context.push(AppRoutes.stats),
-            ),
-          ],
         ),
       ),
     );
