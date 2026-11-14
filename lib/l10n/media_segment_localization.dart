@@ -11,5 +11,6 @@ extension MediaSegmentLocalization on MediaSegment {
     MediaSegment.all => l10n.mediaSegmentAll,
     MediaSegment.movie => l10n.mediaTypeMoviePlural,
     MediaSegment.tvShow => l10n.mediaTypeTvShowPlural,
+    MediaSegment.person => l10n.mediaSegmentPeople,
   };
 }

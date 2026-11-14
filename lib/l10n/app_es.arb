@@ -61,6 +61,9 @@
   "mediaTypeTvShowPlural": "Series",
   "mediaTypeTvTag": "TV",
 
+  "mediaSegmentPeople": "Personas",
+  "explorePeopleHintTitle": "Busca personas",
+  "explorePeopleHintBody": "Encuentra actores, directores y más por su nombre.",
   "mediaSegmentAll": "Todo",
 
   "personFilmographyAsDirector": "Como director",

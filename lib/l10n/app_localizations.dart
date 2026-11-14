@@ -410,6 +410,24 @@ abstract class AppLocalizations {
   /// **'TV'**
   String get mediaTypeTvTag;
 
+  /// B2's fourth segment, narrowing search results to people (docs/SCREENS.md B2).
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get mediaSegmentPeople;
+
+  /// B2 at rest in the People segment: there is nothing to browse, so it invites a search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for people'**
+  String get explorePeopleHintTitle;
+
+  /// No description provided for @explorePeopleHintBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Find actors, directors and more by name.'**
+  String get explorePeopleHintBody;
+
   /// MediaSegment.all / FilmographySegment.all — the "everything, no type filter" option in a segmented control.
   ///
   /// In en, this message translates to:

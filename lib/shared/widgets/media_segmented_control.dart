@@ -17,6 +17,7 @@ class MediaSegmentedControl extends StatelessWidget {
     required this.segment,
     required this.onSelected,
     this.glass = false,
+    this.segments = MediaSegment.media,
   });
 
   final MediaSegment segment;
@@ -25,12 +26,16 @@ class MediaSegmentedControl extends StatelessWidget {
   /// The translucent track (Discover); see [AppSegmentedControl.glass].
   final bool glass;
 
+  /// Which segments, in order: All | Movies | TV Shows by default; Explore
+  /// adds People ([MediaSegment.explore]).
+  final List<MediaSegment> segments;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AppSegmentedControl<MediaSegment>(
       segments: [
-        for (final value in MediaSegment.values)
+        for (final value in segments)
           AppSegment(value: value, label: value.localizedLabel(l10n)),
       ],
       selected: segment,

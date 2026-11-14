@@ -136,6 +136,15 @@
     "description": "The small corner tag on a TV show's own poster card, distinguishing it from a movie poster at a glance."
   },
 
+  "mediaSegmentPeople": "People",
+  "@mediaSegmentPeople": {
+    "description": "B2's fourth segment, narrowing search results to people (docs/SCREENS.md B2)."
+  },
+  "explorePeopleHintTitle": "Search for people",
+  "@explorePeopleHintTitle": {
+    "description": "B2 at rest in the People segment: there is nothing to browse, so it invites a search."
+  },
+  "explorePeopleHintBody": "Find actors, directors and more by name.",
   "mediaSegmentAll": "All",
   "@mediaSegmentAll": {
     "description": "MediaSegment.all / FilmographySegment.all — the \"everything, no type filter\" option in a segmented control."

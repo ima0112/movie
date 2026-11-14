@@ -13,6 +13,7 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/discover/presentation/widgets/discover_search_field.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_pill.dart';
+import 'package:movies/features/explore/presentation/widgets/search_result_rows.dart';
 import 'package:movies/features/explore/presentation/widgets/explore_search_field.dart';
 import 'package:movies/features/person_detail/presentation/screens/person_detail_screen.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
@@ -145,6 +146,42 @@ void main() {
     await tester.tap(find.text('Zendaya'));
     await tester.pumpAndSettle();
     expect(find.byType(PersonDetailScreen), findsOneWidget);
+  });
+
+  testWidgets('Explore has a People segment at the end; at rest it invites a '
+      'search, and a search then shows only people', (tester) async {
+    appRouter.go('/');
+    addTearDown(() => appRouter.go('/'));
+    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpAndSettle();
+    await tester.tap(_exploreTab());
+    await tester.pumpAndSettle();
+
+    final control = find.byType(AppSegmentedControl<MediaSegment>);
+    final labels = [
+      for (final e in tester.widgetList<Text>(
+        find.descendant(of: control, matching: find.byType(Text)),
+      ))
+        e.data,
+    ];
+    expect(labels, ['All', 'Movies', 'TV Shows', 'People']); // People last
+
+    await tester.tap(
+      find.descendant(of: control, matching: find.text('People')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Search for people'), findsOneWidget);
+    expect(find.text('Top today'), findsNothing); // nothing to browse
+
+    await tester.enterText(find.byType(TextField), 'zendaya');
+    await tester.pumpAndSettle();
+    expect(find.text('Zendaya'), findsOneWidget);
+    // Titles are hidden in People.
+    expect(find.byType(MediaResultRow), findsNothing);
+
+    // Back to a titles segment: the sections are there again.
+    await tester.tap(find.descendant(of: control, matching: find.text('All')));
+    await tester.pumpAndSettle();
   });
 
   Future<void> openExplore(WidgetTester tester) async {

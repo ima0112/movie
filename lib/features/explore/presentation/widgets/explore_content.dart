@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../app/router.dart';
 import '../../../../l10n/failure_localization.dart';
@@ -26,6 +27,13 @@ class ExploreContent extends StatelessWidget {
     return BlocBuilder<ExploreCubit, ExploreState>(
       builder: (context, state) {
         return switch (state) {
+          // People have nothing to browse: invite a search instead.
+          ExploreAtRest() when state.segment == MediaSegment.person =>
+            EmptyStateView(
+              icon: AppIcons.user,
+              title: context.l10n.explorePeopleHintTitle,
+              body: context.l10n.explorePeopleHintBody,
+            ),
           ExploreAtRest() => const ExploreBrowseBody(),
           ExploreSearchLoading() => const ExploreSearchSkeleton(),
           ExploreSearchLoaded() when state.results.isEmpty => EmptyStateView(

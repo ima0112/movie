@@ -178,6 +178,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaTypeTvTag => 'TV';
 
   @override
+  String get mediaSegmentPeople => 'People';
+
+  @override
+  String get explorePeopleHintTitle => 'Search for people';
+
+  @override
+  String get explorePeopleHintBody =>
+      'Find actors, directors and more by name.';
+
+  @override
   String get mediaSegmentAll => 'All';
 
   @override
