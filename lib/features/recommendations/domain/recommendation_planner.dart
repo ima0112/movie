@@ -142,6 +142,8 @@ class RecommendationPlanner {
               withGenres: withGenres,
               withoutGenres: profile.vetoedGenres,
               withKeywords: keywords,
+              yearFrom: profile.yearFrom,
+              yearTo: profile.yearTo,
             ),
       becauseLike: likeGenre == null ? null : GenreSeed(likeGenre),
       becauseWant: wantVibe == null ? null : VibeSeed(wantVibe),
@@ -154,12 +156,17 @@ class RecommendationPlanner {
         GenreSeed(:final genre) => DiscoverFilter(
           withGenres: {genre},
           withoutGenres: profile?.vetoedGenres ?? const {},
+          yearFrom: profile?.yearFrom,
+          yearTo: profile?.yearTo,
         ),
         VibeSeed(:final vibe) => DiscoverFilter(
           withGenres: vibe.genresFor(MediaType.movie),
           withoutGenres: profile?.vetoedGenres ?? const {},
           withKeywords: vibe.keywordIdsFor(MediaType.movie),
-          yearTo: vibe.maxReleaseYear,
+          yearFrom: profile?.yearFrom,
+          // The vibe's own ceiling (a "classic" ends in 1995) and the user's
+          // eras: whichever ends sooner.
+          yearTo: _earlier(vibe.maxReleaseYear, profile?.yearTo),
           minVoteAverage: vibe.minVoteAverage,
         ),
         TitleSeed() => throw ArgumentError(
@@ -220,3 +227,7 @@ class RecommendationPlanner {
     return entry.isWatchLater ? watchLaterWeight : 0;
   }
 }
+
+/// The smaller of two optional years; `null` only when both are.
+int? _earlier(int? a, int? b) =>
+    a == null ? b : (b == null ? a : (a < b ? a : b));

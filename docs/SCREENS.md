@@ -159,6 +159,13 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
   - **"My platforms"** ("We prioritize what you can already watch in your region."): the streaming services of the user's region (movies and TV merged, the same list as B2's Platform pills) as a 3-column grid of **logos on neutral `surfaceRaised` cards**; a picked one has an amber ring, a faint amber tint and a small amber check at the corner (the name is the accessibility label — no brand colors, which we have no tokens for). Skeleton while loading, a "Couldn't load · Retry" row on error, and nothing (heading included) when the region lists none. Stored as TMDB provider ids, so a service picked in another region stays saved though it isn't shown here.
   - Footer: "Everything is saved only on your device." and a discreet "Saved" that shows for a moment after each change.
 - States: none special.
+- **What each choice does** (every saved field has a real use):
+  - *Type* → Home opens on that segment (Movies / TV Shows; Both = All) the next time the app starts.
+  - *Liked genres* → B2's **GENRE pills show them first** (the rest in the usual order), live as C5 changes; they also feed "For you" and "Because you like…" as before.
+  - *Avoided genres* → excluded from the recommendations, as before.
+  - *Vibes* → the "Because you want…" sections, as before.
+  - *Eras* → the From/To years of the profile-based recommendation sections ("For you", "Because you like {genre}", "Because you want {vibe}"; a vibe's own ceiling, like a classic's 1999, still applies if earlier).
+  - *Platforms* → B2's **PLATFORM pills show them first**.
 
 ---
 
