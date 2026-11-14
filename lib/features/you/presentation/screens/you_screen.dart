@@ -12,6 +12,7 @@ import '../../../../shared/widgets/app_tab_bar.dart';
 import '../cubit/you_stats_cubit.dart';
 import '../widgets/my_tastes_card.dart';
 import '../widgets/you_header.dart';
+import '../widgets/you_genres_card.dart';
 import '../widgets/you_recently_watched.dart';
 import '../widgets/you_stats_card.dart';
 
@@ -73,6 +74,7 @@ class YouScreen extends StatelessWidget {
               const YouRecentlyWatched(),
               const SizedBox(height: AppSpacing.sectionGap),
               MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
+              const YouGenresCard(),
             ],
           ),
         ),

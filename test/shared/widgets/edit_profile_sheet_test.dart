@@ -154,4 +154,43 @@ void main() {
   });
 }
 
-void _noop() {}
+void _noop() {
+  testWidgets('Cancel closes the sheet without saving anything', (
+    tester,
+  ) async {
+    final repo = _InMemoryUserProfileRepository();
+    final cubit = UserProfileCubit(repo);
+    addTearDown(cubit.close);
+    await tester.pumpWidget(
+      _withStats(
+        cubit,
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => const EditProfileSheet(),
+                ),
+                child: const Text('Open H10'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Open H10'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Daniel');
+    await tester.pump();
+
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Cancel'), findsNothing);
+    expect(cubit.state, isNull);
+  });
+}

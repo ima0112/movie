@@ -12,40 +12,37 @@ void main() {
   const startPhases = [0.0, 0.35, 0.15, 0.6];
 
   group('visibleTileRange', () {
-    test(
-      '200 values of t, both directions, all 4 start phases: the '
-      'rendered content always covers the full viewport — no gap at '
-      'any point in the loop. This is the test that would have caught '
-      'the earlier Padding(top: ...) bug.',
-      () {
-        for (var i = 0; i < 200; i++) {
-          final t = i / 199;
-          for (final goesUp in [true, false]) {
-            for (final startPhase in startPhases) {
-              final offset = driftOffset(
-                startPhase: startPhase,
-                t: t,
-                goesUp: goesUp,
-                loopHeight: loopHeight,
-              );
-              final range = visibleTileRange(
-                offset: offset,
-                loopHeight: loopHeight,
-                viewportHeight: viewportHeight,
-                tileHeight: tileHeight,
-              );
-              expect(
-                range.coversViewport,
-                isTrue,
-                reason:
-                    't=$t goesUp=$goesUp startPhase=$startPhase '
-                    'offset=$offset range=$range',
-              );
-            }
+    test('200 values of t, both directions, all 4 start phases: the '
+        'rendered content always covers the full viewport — no gap at '
+        'any point in the loop. This is the test that would have caught '
+        'the earlier Padding(top: ...) bug.', () {
+      for (var i = 0; i < 200; i++) {
+        final t = i / 199;
+        for (final goesUp in [true, false]) {
+          for (final startPhase in startPhases) {
+            final offset = driftOffset(
+              startPhase: startPhase,
+              t: t,
+              goesUp: goesUp,
+              loopHeight: loopHeight,
+            );
+            final range = visibleTileRange(
+              offset: offset,
+              loopHeight: loopHeight,
+              viewportHeight: viewportHeight,
+              tileHeight: tileHeight,
+            );
+            expect(
+              range.coversViewport,
+              isTrue,
+              reason:
+                  't=$t goesUp=$goesUp startPhase=$startPhase '
+                  'offset=$offset range=$range',
+            );
           }
         }
-      },
-    );
+      }
+    });
 
     test('a geometry that violates loopHeight >= viewport + cardHeight '
         'does NOT cover the viewport at every t — proving the test '
@@ -125,16 +122,13 @@ void main() {
       expect(duration.inMicroseconds, 14285714);
     });
 
-    test(
-      "every configured column speed is within PosterWallConfig's own "
-      '4-10 px/s range — "slow drift" stays slow even if someone edits '
-      'columnSpeeds without noticing the bound',
-      () {
-        for (final speed in PosterWallConfig.columnSpeeds) {
-          expect(speed, greaterThanOrEqualTo(PosterWallConfig.minAllowedSpeed));
-          expect(speed, lessThanOrEqualTo(PosterWallConfig.maxAllowedSpeed));
-        }
-      },
-    );
+    test("every configured column speed is within PosterWallConfig's own "
+        '4-10 px/s range — "slow drift" stays slow even if someone edits '
+        'columnSpeeds without noticing the bound', () {
+      for (final speed in PosterWallConfig.columnSpeeds) {
+        expect(speed, greaterThanOrEqualTo(PosterWallConfig.minAllowedSpeed));
+        expect(speed, lessThanOrEqualTo(PosterWallConfig.maxAllowedSpeed));
+      }
+    });
   });
 }

@@ -833,24 +833,6 @@
       }
     }
   },
-  "myTastesSummarySinceYear": "since {year}",
-  "@myTastesSummarySinceYear": {
-    "description": "MyTastesCard's summary line, second fragment (docs/SCREENS.md B5).",
-    "placeholders": {
-      "year": {
-        "type": "int"
-      }
-    }
-  },
-  "myTastesSummaryNeverGenre": "never {genreName}",
-  "@myTastesSummaryNeverGenre": {
-    "description": "MyTastesCard's summary line, third (optional) fragment (docs/SCREENS.md B5). {genreName} is that Genre's own localized display name.",
-    "placeholders": {
-      "genreName": {
-        "type": "String"
-      }
-    }
-  },
 
   "myTastesInvitationTitle": "Build your taste profile",
   "myTastesInvitationBody": "Get picks that actually match what you like.",
@@ -934,6 +916,35 @@
   "youRecentlyWatchedTitle": "Recently watched",
   "@youRecentlyWatchedTitle": {
     "description": "Heading of You's row of the last titles marked as watched (docs/SCREENS.md B5)."
+  },
+  "youGenresTitle": "Your most-watched genres",
+  "@youGenresTitle": {
+    "description": "Heading of the genres card on You (docs/SCREENS.md B5); shown in capitals."
+  },
+  "youGenrePercent": "{percent}%",
+  "@youGenrePercent": {
+    "description": "A genre's share of the genres counted in what the user has watched.",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "myTastesRowGenresMore": "{names} +{count}",
+  "@myTastesRowGenresMore": {
+    "description": "The My Tastes row's summary on You: the two named liked genres and how many more there are.",
+    "placeholders": {
+      "names": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myTastesRowFallback": "Genres, vibes, platforms and more",
+  "@myTastesRowFallback": {
+    "description": "The My Tastes row's summary when a taste profile exists but has no liked genres or vibes yet."
   },
   "yourActivityHoursLabel": "Hours",
   "yourActivitySeeStats": "See stats",

@@ -294,8 +294,6 @@
 
   "myTastesTitle": "Mis gustos",
   "myTastesSummaryVibeCount": "{count, plural, =1{1 vibe} other{{count} vibes}}",
-  "myTastesSummarySinceYear": "desde {year}",
-  "myTastesSummaryNeverGenre": "nunca {genreName}",
 
   "myTastesInvitationTitle": "Crea tu perfil de gustos",
   "myTastesInvitationBody": "Recibe recomendaciones que de verdad encajen con lo que te gusta.",
@@ -318,6 +316,10 @@
   "viewerCinephile": "Cinéfilo",
   "viewerExplorer": "De todo un poco",
   "youRecentlyWatchedTitle": "Vistas recientemente",
+  "youGenresTitle": "Tus géneros más vistos",
+  "youGenrePercent": "{percent}%",
+  "myTastesRowGenresMore": "{names} +{count}",
+  "myTastesRowFallback": "Géneros, vibes, plataformas y más",
   "yourActivityHoursLabel": "Horas",
   "yourActivitySeeStats": "Ver estadísticas",
 
