@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../helpers/settle_home.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
@@ -112,11 +113,11 @@ void main() {
     "to Discover with its scroll position intact (push, not go)",
     (tester) async {
       await tester.pumpWidget(const PakoTvApp());
-      await tester.pumpAndSettle();
+      await settleHome(tester);
 
       final scrollable = find.byType(Scrollable).first;
       await tester.drag(scrollable, const Offset(0, -700));
-      await tester.pumpAndSettle();
+      await settleHome(tester);
 
       // A carousel card has no title text of its own (docs/SCREENS.md B1:
       // "no title or year underneath"), so find it structurally instead.
@@ -128,7 +129,7 @@ void main() {
       );
       expect(carouselCard, findsWidgets);
       await tester.ensureVisible(carouselCard.first);
-      await tester.pumpAndSettle();
+      await settleHome(tester);
       final scrollOffsetBefore = tester
           .state<ScrollableState>(scrollable)
           .position
@@ -138,7 +139,7 @@ void main() {
       expect(find.byIcon(AppIcons.back), findsOneWidget);
 
       await tester.tap(find.byIcon(AppIcons.back));
-      await tester.pumpAndSettle();
+      await settleHome(tester);
 
       final scrollOffsetAfter = tester
           .state<ScrollableState>(scrollable)

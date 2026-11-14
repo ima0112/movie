@@ -100,6 +100,7 @@ flutter:
   assets:
     - assets/icons/pako/
     - assets/illustrations/onboarding/
+    - assets/illustrations/taste_card/
     - assets/vibes.json
 
   # To add assets to your application, add an assets section, like this:
