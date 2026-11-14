@@ -222,5 +222,44 @@ void main() {
       expect(filter.withGenres, {_drama});
       expect(filter.withoutGenres, {_horror});
     });
+
+    group('the user\'s eras (C5) narrow every profile-based section', () {
+      TasteProfile eras({int? to}) => TasteProfile(
+        likedGenres: {_action},
+        vetoedGenres: const {},
+        likedVibes: const {'classic'},
+        yearFrom: 1980,
+        yearTo: to,
+        updatedAt: DateTime(2026),
+      );
+
+      test('"For you" carries the range, with no upper bound by default', () {
+        final plan = planner.plan(
+          type: null,
+          profile: eras(),
+          library: const [],
+          today: today,
+        );
+        expect(plan.forYou!.yearFrom, 1980);
+        expect(plan.forYou!.yearTo, isNull);
+      });
+
+      test('a genre section too', () {
+        final filter = planner.filterForSeed(
+          GenreSeed(_action),
+          eras(to: 2010),
+        );
+        expect(filter.yearFrom, 1980);
+        expect(filter.yearTo, 2010);
+      });
+
+      test('a vibe section ends at whichever is earlier: the vibe\'s own '
+          'ceiling (1999) or the user\'s', () {
+        final classic = VibeSeed(catalog.byId('classic')!);
+        expect(planner.filterForSeed(classic, eras(to: 2010)).yearTo, 1999);
+        expect(planner.filterForSeed(classic, eras(to: 1990)).yearTo, 1990);
+        expect(planner.filterForSeed(classic, eras()).yearTo, 1999);
+      });
+    });
   });
 }

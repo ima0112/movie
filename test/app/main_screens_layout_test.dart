@@ -106,9 +106,15 @@ void main() {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('es'),
-      home: BlocProvider(
-        // The root tabs read the connection (the app provides it globally).
-        create: (_) => ConnectivityCubit(NetworkStatus()),
+      home: MultiBlocProvider(
+        // The root tabs read the connection and the taste profile (the app
+        // provides both globally).
+        providers: [
+          BlocProvider(create: (_) => ConnectivityCubit(NetworkStatus())),
+          BlocProvider(
+            create: (_) => TasteProfileCubit(InMemoryTasteProfileRepository()),
+          ),
+        ],
         child: MediaQuery(
           data: const MediaQueryData(
             size: Size(375, 667),
