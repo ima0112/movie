@@ -959,11 +959,22 @@
   "statsTvShowsWatchedLabel": "TV shows watched",
   "statsEstimatedTvHoursLabel": "Estimated TV hours",
 
-  "myTastesIntro": "The more we know, the better your recommendations and Surprise me. Everything is saved only on your device.",
+  "myTastesTypeTitle": "What do you usually watch?",
+  "myTastesTypeHint": "It sets which catalog we show first.",
+  "myTastesTypeBoth": "Both",
+  "@myTastesTypeBoth": {
+    "description": "C5's third option of \"What do you usually watch?\": movies and TV shows alike."
+  },
+  "myTastesAddAvoided": "Add",
+  "@myTastesAddAvoided": {
+    "description": "The chip after the avoided genres that opens the picker of the rest."
+  },
+  "myTastesAddAvoidedSheetTitle": "Add a genre to avoid",
+  "myTastesFooter": "Everything is saved only on your device.",
   "myTastesGenresLikeHint": "Choose as many as you like.",
   "myTastesGenresNeverHint": "We won't show them in recommendations.",
   "myTastesGenresLikeTitle": "Genres you like",
-  "myTastesGenresNeverTitle": "Genres you never want",
+  "myTastesGenresNeverTitle": "Genres you avoid",
   "myTastesSavedIndicator": "Saved",
   "myTastesVibesLikeTitle": "Vibes you like",
   "myTastesHowFarBackLabel": "How far back",

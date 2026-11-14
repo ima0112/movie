@@ -1044,8 +1044,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get statsEstimatedTvHoursLabel => 'Horas estimadas de series';
 
   @override
-  String get myTastesIntro =>
-      'Cuanto más sepamos, mejores serán tus recomendaciones y el modo Sorpréndeme. Todo se guarda solo en tu dispositivo.';
+  String get myTastesTypeTitle => '¿Qué sueles ver?';
+
+  @override
+  String get myTastesTypeHint => 'Define qué catálogo mostramos primero.';
+
+  @override
+  String get myTastesTypeBoth => 'Ambas';
+
+  @override
+  String get myTastesAddAvoided => 'Añadir';
+
+  @override
+  String get myTastesAddAvoidedSheetTitle => 'Añadir un género que evitas';
+
+  @override
+  String get myTastesFooter => 'Todo se guarda solo en tu dispositivo.';
 
   @override
   String get myTastesGenresLikeHint => 'Elige los que quieras.';
@@ -1054,10 +1068,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myTastesGenresNeverHint => 'No los mostramos en recomendaciones.';
 
   @override
-  String get myTastesGenresLikeTitle => 'Géneros que te gustan';
+  String get myTastesGenresLikeTitle => 'Géneros que me gustan';
 
   @override
-  String get myTastesGenresNeverTitle => 'Géneros que nunca quieres';
+  String get myTastesGenresNeverTitle => 'Géneros que evito';
 
   @override
   String get myTastesSavedIndicator => 'Guardado';

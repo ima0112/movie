@@ -66,6 +66,7 @@ class AppIcons {
   static const IconData dice = RemixIcons.dice_5_line;
   static const IconData useMyTastes = RemixIcons.user_add_line;
 
+  static const IconData add = RemixIcons.add_line;
   static const IconData more = RemixIcons.more_2_fill;
   static const IconData star = RemixIcons.star_line;
   static const IconData starFill = RemixIcons.star_fill;
