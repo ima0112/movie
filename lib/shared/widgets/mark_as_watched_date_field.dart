@@ -1,5 +1,5 @@
+import '../../l10n/full_date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
@@ -37,10 +37,7 @@ class MarkAsWatchedDateField extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              DateFormat.yMMMd(context.l10n.localeName).format(date),
-              style: AppTextStyles.body,
-            ),
+            Text(context.l10n.fullDate(date), style: AppTextStyles.body),
             const Icon(AppIcons.calendar, size: 20, color: AppColors.inkMuted),
           ],
         ),

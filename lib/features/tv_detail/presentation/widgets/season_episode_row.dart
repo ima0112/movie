@@ -1,3 +1,4 @@
+import '../../../../l10n/full_date_format.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/season_summary.dart';
@@ -91,7 +92,7 @@ class SeasonEpisodeRow extends StatelessWidget {
                         TextSpan(
                           text: airDate == null
                               ? l10n.tvEpisodeTba
-                              : formatEpisodeDate(airDate),
+                              : context.l10n.fullDate(airDate),
                           style: AppTextStyles.caption.copyWith(
                             color: hasAired
                                 ? AppColors.inkMuted
@@ -140,8 +141,3 @@ class SeasonEpisodeRow extends StatelessWidget {
     );
   }
 }
-
-/// `YYYY-MM-DD` — the format both the row and the episode sheet use.
-String formatEpisodeDate(DateTime date) =>
-    '${date.year}-${date.month.toString().padLeft(2, '0')}-'
-    '${date.day.toString().padLeft(2, '0')}';

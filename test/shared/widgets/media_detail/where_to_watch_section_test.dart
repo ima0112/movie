@@ -240,7 +240,7 @@ void main() {
           ReleaseStatus(ReleaseStage.upcoming, date: DateTime(2026, 6, 12)),
         );
         expect(
-          find.textContaining('comes out on Jun 12, 2026'),
+          find.textContaining('comes out on 12 Jun, 2026'),
           findsOneWidget,
         );
         expect(find.textContaining('Not available'), findsNothing);
@@ -264,7 +264,7 @@ void main() {
           ),
         );
         expect(
-          find.textContaining('Expected on streaming on Jun 25, 2026'),
+          find.textContaining('Expected on streaming on 25 Jun, 2026'),
           findsOneWidget,
         );
 

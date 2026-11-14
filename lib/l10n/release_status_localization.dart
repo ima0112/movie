@@ -1,12 +1,10 @@
-import 'package:intl/intl.dart';
-
 import '../core/domain/entities/release_status.dart';
 import 'app_localizations.dart';
+import 'full_date_format.dart';
 
 /// The single mapper from a [ReleaseStatus] to its words — CLAUDE.md rule 15.
 extension ReleaseStatusLocalization on ReleaseStatus {
-  String _date(AppLocalizations l10n, DateTime d) =>
-      DateFormat.yMMMd(l10n.localeName).format(d);
+  String _date(AppLocalizations l10n, DateTime d) => l10n.fullDate(d);
 
   /// The tag in D1/D2's header: "Coming Mar 14, 2027", "Coming soon" (no
   /// date), or "In theaters".
