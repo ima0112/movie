@@ -26,33 +26,30 @@ void main() {
       expect(jsonDecode(json), isEmpty);
     });
 
-    test(
-      'carries every field the task asks for: title, type, id, '
-      'favorite, watchLater, rating, watchedAt',
-      () {
-        final json = libraryExportJson([
-          UserMediaEntry(
-            key: const MediaKey(type: MediaType.movie, tmdbId: 693134),
-            title: 'Dune: Part Two',
-            isFavorite: true,
-            isWatchLater: false,
-            watchedAt: DateTime.utc(2024, 3, 1),
-            rating: 5,
-          ),
-        ]);
+    test('carries every field the task asks for: title, type, id, '
+        'favorite, watchLater, rating, watchedAt', () {
+      final json = libraryExportJson([
+        UserMediaEntry(
+          key: const MediaKey(type: MediaType.movie, tmdbId: 693134),
+          title: 'Dune: Part Two',
+          isFavorite: true,
+          isWatchLater: false,
+          watchedAt: DateTime.utc(2024, 3, 1),
+          rating: 5,
+        ),
+      ]);
 
-        final decoded = jsonDecode(json) as List;
-        expect(decoded, hasLength(1));
-        final entry = decoded.single as Map<String, dynamic>;
-        expect(entry['title'], 'Dune: Part Two');
-        expect(entry['type'], 'movie');
-        expect(entry['id'], 693134);
-        expect(entry['favorite'], isTrue);
-        expect(entry['watchLater'], isFalse);
-        expect(entry['rating'], 5);
-        expect(entry['watchedAt'], '2024-03-01T00:00:00.000Z');
-      },
-    );
+      final decoded = jsonDecode(json) as List;
+      expect(decoded, hasLength(1));
+      final entry = decoded.single as Map<String, dynamic>;
+      expect(entry['title'], 'Dune: Part Two');
+      expect(entry['type'], 'movie');
+      expect(entry['id'], 693134);
+      expect(entry['favorite'], isTrue);
+      expect(entry['watchLater'], isFalse);
+      expect(entry['rating'], 5);
+      expect(entry['watchedAt'], '2024-03-01T00:00:00.000Z');
+    });
 
     test('a TV show entry exports its type as tvShow', () {
       final json = libraryExportJson([
@@ -95,10 +92,13 @@ void main() {
       final decoded = jsonDecode(libraryExportJson(entries)) as List;
 
       expect(decoded, hasLength(5));
-      expect(
-        decoded.map((e) => (e as Map<String, dynamic>)['title']),
-        ['Movie 0', 'Movie 1', 'Movie 2', 'Movie 3', 'Movie 4'],
-      );
+      expect(decoded.map((e) => (e as Map<String, dynamic>)['title']), [
+        'Movie 0',
+        'Movie 1',
+        'Movie 2',
+        'Movie 3',
+        'Movie 4',
+      ]);
     });
 
     test('indented for human readability, not a single packed line', () {

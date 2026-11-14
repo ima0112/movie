@@ -27,47 +27,48 @@ void main() {
       cubit.close();
     });
 
-    test('setLanguage saves the new language, keeping the current region', (
-    ) async {
-      final cubit = _cubit();
-
-      await cubit.setLanguage('es');
-
-      expect(cubit.state.languageCode, 'es');
-      expect(cubit.state.regionCode, 'US');
-
-      await cubit.close();
-    });
-
-    test('setRegion saves the new region, keeping the current language', (
-    ) async {
-      final cubit = _cubit();
-
-      await cubit.setRegion('ES');
-
-      expect(cubit.state.languageCode, 'en');
-      expect(cubit.state.regionCode, 'ES');
-
-      await cubit.close();
-    });
-
     test(
-      'setLanguage then setRegion ends with both new values, not one '
-      'overwriting the other back to a stale default',
+      'setLanguage saves the new language, keeping the current region',
       () async {
         final cubit = _cubit();
 
         await cubit.setLanguage('es');
-        await cubit.setRegion('MX');
 
-        expect(
-          cubit.state,
-          const AppSettings(languageCode: 'es', regionCode: 'MX'),
-        );
+        expect(cubit.state.languageCode, 'es');
+        expect(cubit.state.regionCode, 'US');
 
         await cubit.close();
       },
     );
+
+    test(
+      'setRegion saves the new region, keeping the current language',
+      () async {
+        final cubit = _cubit();
+
+        await cubit.setRegion('ES');
+
+        expect(cubit.state.languageCode, 'en');
+        expect(cubit.state.regionCode, 'ES');
+
+        await cubit.close();
+      },
+    );
+
+    test('setLanguage then setRegion ends with both new values, not one '
+        'overwriting the other back to a stale default', () async {
+      final cubit = _cubit();
+
+      await cubit.setLanguage('es');
+      await cubit.setRegion('MX');
+
+      expect(
+        cubit.state,
+        const AppSettings(languageCode: 'es', regionCode: 'MX'),
+      );
+
+      await cubit.close();
+    });
 
     test('close() leaves no live subscription on the repository', () async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
