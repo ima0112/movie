@@ -21,8 +21,4 @@ extension LibraryDateLocalization on AppLocalizations {
       _ => libraryRowAddedOn(fullDate(added)),
     };
   }
-
-  /// "Watched 8 Nov, 2026".
-  String watchedLabel(DateTime watched) =>
-      libraryRowWatchedOn(fullDate(watched));
 }

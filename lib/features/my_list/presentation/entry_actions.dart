@@ -66,6 +66,7 @@ void _run(
     case EntryAction.markWatched || EntryAction.editWatched:
       showModalBottomSheet<void>(
         context: context,
+        useRootNavigator: true,
         isScrollControlled: true,
         builder: (_) => MarkAsWatchedSheet(
           mediaKey: entry.key,

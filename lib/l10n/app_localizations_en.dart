@@ -777,11 +777,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String libraryRowWatchedOn(String date) {
-    return 'Watched $date';
-  }
-
-  @override
   String get myListUndoAction => 'Undo';
 
   @override

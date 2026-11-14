@@ -1466,12 +1466,6 @@ abstract class AppLocalizations {
   /// **'Added {date}'**
   String libraryRowAddedOn(String date);
 
-  /// A Watched row's line, next to the stars. {date} is the app's full date (12 Jan, 2026).
-  ///
-  /// In en, this message translates to:
-  /// **'Watched {date}'**
-  String libraryRowWatchedOn(String date);
-
   /// B4's swipe-to-remove SnackBarAction label, next to the tab-specific myListRemovedFromTab message.
   ///
   /// In en, this message translates to:

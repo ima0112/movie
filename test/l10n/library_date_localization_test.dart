@@ -38,9 +38,4 @@ void main() {
       'Añadida 5 mar, 2026',
     );
   });
-
-  test('watched uses the full date, comma included', () {
-    expect(en.watchedLabel(DateTime(2026, 11, 8)), 'Watched 8 Nov, 2026');
-    expect(es.watchedLabel(DateTime(2026, 11, 8)), 'Vista 8 nov, 2026');
-  });
 }
