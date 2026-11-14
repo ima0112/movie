@@ -111,7 +111,7 @@ void main() {
       test('$tab has a label, removed-message, and empty-headline key in '
           'both languages', () {
         expectLocalized((l10n) => tab.localizedLabel(l10n));
-        expectLocalized((l10n) => tab.localizedRemovedMessage(l10n));
+        expectLocalized((l10n) => tab.localizedRemovedMessage(l10n, 'Dune'));
         expectLocalized((l10n) => tab.localizedEmptyHeadline(l10n));
       });
     }

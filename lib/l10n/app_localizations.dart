@@ -548,11 +548,23 @@ abstract class AppLocalizations {
   /// **'More actions'**
   String get myListRowActionsLabel;
 
-  /// My List's swipe-to-remove snackbar. {tabName} is that LibraryTab's own localized label (myListTabFavorites/WatchLater/Watched).
+  /// The coral panel a swipe-to-delete row reveals while it is being dragged.
   ///
   /// In en, this message translates to:
-  /// **'Removed from {tabName}'**
-  String myListRemovedFromTab(String tabName);
+  /// **'Delete'**
+  String get swipeDelete;
+
+  /// The same panel once the drag has gone far enough that letting go deletes the row.
+  ///
+  /// In en, this message translates to:
+  /// **'Release to delete'**
+  String get swipeReleaseToDelete;
+
+  /// My List's remove snackbar (swipe, or the sheet's red row). {title} is the entry's name; {tabName} is that tab's own localized label (myListTabFavorites/WatchLater/Watched/People).
+  ///
+  /// In en, this message translates to:
+  /// **'{title} removed from {tabName}'**
+  String myListRemovedFromTab(String title, String tabName);
 
   /// No description provided for @myListEmptyFavoritesHeadline.
   ///

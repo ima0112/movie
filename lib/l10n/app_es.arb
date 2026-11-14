@@ -90,7 +90,10 @@
   "myListActionRemovePerson": "Quitar de Personas",
   "myListRowActionsLabel": "Más acciones",
 
-  "myListRemovedFromTab": "Eliminado de {tabName}",
+  "swipeDelete": "Borrar",
+  "swipeReleaseToDelete": "Suelta para borrar",
+
+  "myListRemovedFromTab": "{title} eliminada de {tabName}",
 
   "myListEmptyFavoritesHeadline": "Todavía no tienes favoritos",
   "myListEmptyWatchLaterHeadline": "Nada para ver después todavía",
