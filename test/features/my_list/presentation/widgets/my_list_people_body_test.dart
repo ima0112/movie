@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/local/in_memory_saved_people_repository.dart';
 import 'package:movies/core/domain/entities/person.dart';
+import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/my_list/presentation/widgets/my_list_people_body.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
@@ -56,5 +57,24 @@ void main() {
     await tester.tap(find.text('Undo'));
     await tester.pumpAndSettle();
     expect(find.text('Ana'), findsOneWidget);
+  });
+
+  testWidgets('the three dots open a sheet with one red row, '
+      '"Remove from People", that removes with Undo', (tester) async {
+    final repo = InMemorySavedPeopleRepository([_ana]);
+    await tester.pumpWidget(_host(repo));
+    await tester.pump();
+
+    await tester.tap(find.byIcon(AppIcons.more));
+    await tester.pumpAndSettle();
+    expect(find.text('Acting · Person'), findsNWidgets(2)); // row and sheet
+    expect(find.text('Remove from People'), findsOneWidget);
+    expect(find.text('Mark as watched'), findsNothing);
+
+    await tester.tap(find.text('Remove from People'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ana'), findsNothing);
+    expect(find.text('Removed from People'), findsOneWidget);
   });
 }
