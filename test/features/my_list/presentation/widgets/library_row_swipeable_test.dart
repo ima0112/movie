@@ -17,7 +17,11 @@ import 'package:movies/shared/widgets/library_row.dart';
 void main() {
   const dune = MediaKey(type: MediaType.movie, tmdbId: 1);
 
-  Future<void> pumpRow(WidgetTester tester, UserLibraryRepository repository) {
+  Future<void> pumpRow(
+    WidgetTester tester,
+    UserLibraryRepository repository, {
+    UserMediaEntry? entry,
+  }) {
     return tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -25,11 +29,13 @@ void main() {
         home: Scaffold(
           body: LibraryRowSwipeable(
             key: const ValueKey(dune),
-            entry: const UserMediaEntry(
-              title: 'Test Title',
-              key: dune,
-              isFavorite: true,
-            ),
+            entry:
+                entry ??
+                const UserMediaEntry(
+                  title: 'Test Title',
+                  key: dune,
+                  isFavorite: true,
+                ),
             tab: LibraryTab.favorites,
             userLibraryRepository: repository,
             posterUrl: null,
@@ -64,7 +70,9 @@ void main() {
     await repository.upsert(
       const UserMediaEntry(title: 'Test Title', key: dune, isFavorite: true),
     );
-    await pumpRow(tester, repository);
+    // The row is built from what the repository holds, date included.
+    final saved = await repository.watchEntry(dune).first;
+    await pumpRow(tester, repository, entry: saved);
 
     await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
     await tester.pumpAndSettle();
@@ -73,9 +81,7 @@ void main() {
     await tester.tap(find.text('Undo'));
     await tester.pumpAndSettle();
 
-    expect(
-      await repository.watchEntry(dune).first,
-      const UserMediaEntry(title: 'Test Title', key: dune, isFavorite: true),
-    );
+    // Back as it was, with the date it joined Favorites.
+    expect(await repository.watchEntry(dune).first, saved);
   });
 }
