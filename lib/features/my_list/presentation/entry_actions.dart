@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../core/domain/entities/result.dart';
 import '../../../core/domain/entities/user_media_entry.dart';
 import '../../../core/domain/repositories/user_library_repository.dart';
 import '../../../core/theme/app_icons.dart';
@@ -9,6 +10,8 @@ import '../../../l10n/entry_action_localization.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/library_tab_localization.dart';
 import '../../../l10n/media_type_localization.dart';
+import '../../../l10n/library_feedback_localization.dart';
+import '../../../shared/library_write.dart';
 import '../../../shared/widgets/actions_sheet.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/mark_as_watched_sheet.dart';
@@ -78,9 +81,20 @@ void _run(
     case EntryAction.removeFavorite ||
         EntryAction.removeWatchLater ||
         EntryAction.removeFromWatched:
-      removeFromTab(context, entry: entry, tab: tab, repository: repository);
+      unawaited(
+        removeFromTab(context, entry: entry, tab: tab, repository: repository),
+      );
     case EntryAction.addFavorite || EntryAction.addWatchLater:
-      unawaited(repository.upsert(applyTo(entry, action)));
+      final next = applyTo(entry, action);
+      unawaited(
+        saveEntry(
+          context,
+          repository,
+          next,
+          previous: entry,
+          message: context.l10n.toggleMessage(entry, next),
+        ),
+      );
   }
 }
 
@@ -94,20 +108,25 @@ IconData _iconOf(EntryAction action) => switch (action) {
 
 /// Takes [entry] out of [tab]'s list (deleting it when that leaves it in no
 /// list) and offers "Undo" in a snackbar for 4 s: swipe-to-remove and the
-/// sheet's red row both come here.
-void removeFromTab(
+/// sheet's red row both come here. A failed write says so instead.
+Future<void> removeFromTab(
   BuildContext context, {
   required UserMediaEntry entry,
   required LibraryTab tab,
   required UserLibraryRepository repository,
-}) {
+}) async {
+  final messenger = ScaffoldMessenger.of(context);
   final l10n = context.l10n;
   final left = withoutIn(tab, entry);
-  unawaited(
-    left == null ? repository.remove(entry.key) : repository.upsert(left),
-  );
-  AppSnackBar.show(
-    context,
+  final result = await (left == null
+      ? repository.remove(entry.key)
+      : repository.upsert(left));
+  if (result is Failure<void>) {
+    AppSnackBar.showOn(messenger, l10n.failureStorage);
+    return;
+  }
+  AppSnackBar.showOn(
+    messenger,
     tab.localizedRemovedMessage(l10n, entry.title),
     actionLabel: l10n.myListUndoAction,
     onAction: () => unawaited(repository.upsert(entry)),

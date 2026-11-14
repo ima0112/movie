@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/library_feedback_localization.dart';
+import '../../../../shared/library_write.dart';
 import '../../../../shared/widgets/media_card.dart';
 
 /// One hero card's save button: toggles the title in **Watch later** for
@@ -63,15 +66,20 @@ class _DiscoverHeroSaveButtonState extends State<DiscoverHeroSaveButton> {
     final snapshot = catalogSnapshotFrom(item);
     final base =
         current ?? UserMediaEntry(key: item.key, title: snapshot.title);
-    await widget.userLibraryRepository.upsert(
-      base.copyWith(
-        isWatchLater: !base.isWatchLater,
-        title: snapshot.title,
-        genres: snapshot.genres,
-        posterUrl: snapshot.posterUrl,
-        voteAverage: snapshot.voteAverage,
-        year: snapshot.year,
-      ),
+    final next = base.copyWith(
+      isWatchLater: !base.isWatchLater,
+      title: snapshot.title,
+      genres: snapshot.genres,
+      posterUrl: snapshot.posterUrl,
+      voteAverage: snapshot.voteAverage,
+      year: snapshot.year,
+    );
+    await saveEntry(
+      context,
+      widget.userLibraryRepository,
+      next,
+      previous: current,
+      message: context.l10n.toggleMessage(current, next),
     );
   }
 

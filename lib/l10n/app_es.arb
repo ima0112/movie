@@ -93,6 +93,9 @@
   "swipeDelete": "Borrar",
   "swipeReleaseToDelete": "Suelta para borrar",
 
+  "libraryAddedToTab": "{title} añadida a {tabName}",
+  "libraryMarkedWatched": "{title} marcada como vista",
+  "libraryMarkedWatchedLeftWatchLater": "{title} marcada como vista · Quitada de Ver después",
   "myListRemovedFromTab": "{title} eliminada de {tabName}",
 
   "myListEmptyFavoritesHeadline": "Todavía no tienes favoritos",

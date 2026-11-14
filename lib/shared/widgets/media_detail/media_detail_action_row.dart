@@ -13,7 +13,9 @@ import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/l10n_extension.dart';
+import '../../../l10n/library_feedback_localization.dart';
 import '../../../l10n/library_tab_localization.dart';
+import '../../library_write.dart';
 import '../app_buttons.dart';
 import '../mark_as_watched_sheet.dart';
 import '../media_detail_duration.dart';
@@ -243,7 +245,16 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
               episodeCount: duration.episodeCount,
               episodeRuntimeMinutes: duration.episodeRuntimeMinutes,
             );
-    unawaited(widget.userLibraryRepository.upsert(transform(current)));
+    final next = transform(current);
+    unawaited(
+      saveEntry(
+        context,
+        widget.userLibraryRepository,
+        next,
+        previous: _latestEntry,
+        message: context.l10n.toggleMessage(_latestEntry, next),
+      ),
+    );
   }
 
   void _openMarkAsWatchedSheet() {
