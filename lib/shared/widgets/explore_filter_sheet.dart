@@ -57,6 +57,34 @@ class ExploreFilterSheet extends StatefulWidget {
   final String regionName;
   final ValueChanged<DiscoverFilter> onApply;
 
+  /// Opens the sheet as a modal bottom sheet on the root navigator (above
+  /// the floating tab bar) at most [maxHeightFraction] of the screen tall, so
+  /// it stays a sheet however many filters it has: the filters scroll inside.
+  static Future<void> show(
+    BuildContext context, {
+    required DiscoverFilter initialFilter,
+    required MediaRepository mediaRepository,
+    required String regionName,
+    required ValueChanged<DiscoverFilter> onApply,
+  }) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * maxHeightFraction,
+      ),
+      builder: (_) => ExploreFilterSheet(
+        initialFilter: initialFilter,
+        mediaRepository: mediaRepository,
+        regionName: regionName,
+        onApply: onApply,
+      ),
+    );
+  }
+
+  static const double maxHeightFraction = 0.9;
+
   @override
   State<ExploreFilterSheet> createState() => _ExploreFilterSheetState();
 }
@@ -134,7 +162,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
     final count = _liveCount;
 
     return SafeArea(
-      child: SingleChildScrollView(
+      child: Padding(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.screenMargin,
           0,
@@ -145,6 +173,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // The header and the kind tabs stay put...
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -161,68 +190,91 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
             MediaSegmentedControl(
               segment: _segmentOf(_draft.type),
               onSelected: (segment) => _setType(segment.mediaType),
+              padding: EdgeInsets.zero,
+              onSheet: true,
             ),
             const SizedBox(height: AppSpacing.sectionGap),
-            FilterSectionHeader(l10n.filterSheetSectionSortBy),
-            DiscoverSortChips(
-              type: _draft.type,
-              sortBy: _draft.sortBy,
-              preset: _draft.preset,
-              onSortChanged: (sortBy) =>
-                  _setDraft(_draft.withPreset(null).copyWith(sortBy: sortBy)),
-              onPresetChanged: (preset) => _setDraft(
-                _draft
-                    .withPreset(preset)
-                    .copyWith(sortBy: DiscoverSortBy.popularity),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sectionGap),
-            FilterPlatformChips(
-              key: ValueKey(_draft.type),
-              mediaRepository: widget.mediaRepository,
-              type: _draft.type,
-              regionName: widget.regionName,
-              selectedId: _draft.withWatchProviders.firstOrNull,
-              onChanged: (id) => _setDraft(
-                _draft.copyWith(withWatchProviders: id == null ? {} : {id}),
-              ),
-            ),
-            FilterSectionHeader(l10n.commonGenres),
-            GenreMultiSelectChips(
-              genres: GenreCatalog.all,
-              selected: _draft.withGenres,
-              onToggle: (genre) => _setDraft(
-                _draft.copyWith(withGenres: _toggled(_draft.withGenres, genre)),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sectionGap),
-            if (_showYears) ...[
-              YearRangeFilter(
-                yearFrom: _draft.yearFrom,
-                yearTo: _draft.yearTo,
-                onChanged: (from, to) => _setDraft(
-                  _draft.copyWith(yearFrom: () => from, yearTo: () => to),
+            // ...the filters scroll...
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    FilterSectionHeader(l10n.filterSheetSectionSortBy),
+                    DiscoverSortChips(
+                      type: _draft.type,
+                      sortBy: _draft.sortBy,
+                      preset: _draft.preset,
+                      onSortChanged: (sortBy) => _setDraft(
+                        _draft.withPreset(null).copyWith(sortBy: sortBy),
+                      ),
+                      onPresetChanged: (preset) => _setDraft(
+                        _draft
+                            .withPreset(preset)
+                            .copyWith(sortBy: DiscoverSortBy.popularity),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sectionGap),
+                    FilterPlatformChips(
+                      key: ValueKey(_draft.type),
+                      mediaRepository: widget.mediaRepository,
+                      type: _draft.type,
+                      regionName: widget.regionName,
+                      selectedId: _draft.withWatchProviders.firstOrNull,
+                      onChanged: (id) => _setDraft(
+                        _draft.copyWith(
+                          withWatchProviders: id == null ? {} : {id},
+                        ),
+                      ),
+                    ),
+                    FilterSectionHeader(l10n.commonGenres),
+                    GenreMultiSelectChips(
+                      genres: GenreCatalog.all,
+                      selected: _draft.withGenres,
+                      onToggle: (genre) => _setDraft(
+                        _draft.copyWith(
+                          withGenres: _toggled(_draft.withGenres, genre),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sectionGap),
+                    if (_showYears) ...[
+                      YearRangeFilter(
+                        yearFrom: _draft.yearFrom,
+                        yearTo: _draft.yearTo,
+                        onChanged: (from, to) => _setDraft(
+                          _draft.copyWith(
+                            yearFrom: () => from,
+                            yearTo: () => to,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sectionGap),
+                    ],
+                    RatingRangeFilter(
+                      minVoteAverage: _draft.minVoteAverage,
+                      maxVoteAverage: _draft.maxVoteAverage,
+                      onChanged: (min, max) => _setDraft(
+                        _draft.copyWith(
+                          minVoteAverage: () => min,
+                          maxVoteAverage: () => max,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sectionGap),
+                    FilterLanguageChips(
+                      selected: _draft.originalLanguage,
+                      onChanged: (code) => _setDraft(
+                        _draft.copyWith(originalLanguage: () => code),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sectionGap),
+                  ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.sectionGap),
-            ],
-            RatingRangeFilter(
-              minVoteAverage: _draft.minVoteAverage,
-              maxVoteAverage: _draft.maxVoteAverage,
-              onChanged: (min, max) => _setDraft(
-                _draft.copyWith(
-                  minVoteAverage: () => min,
-                  maxVoteAverage: () => max,
-                ),
-              ),
             ),
-            const SizedBox(height: AppSpacing.sectionGap),
-            FilterLanguageChips(
-              selected: _draft.originalLanguage,
-              onChanged: (code) =>
-                  _setDraft(_draft.copyWith(originalLanguage: () => code)),
-            ),
-            const SizedBox(height: AppSpacing.sectionGap),
+            // ...and the button is always in reach.
+            const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
               label: switch (count) {
                 null => l10n.filterSheetSeeResultsLoading,

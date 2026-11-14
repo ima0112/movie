@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/media_segment.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../l10n/media_segment_localization.dart';
 import 'app_segmented_control.dart';
@@ -18,6 +19,10 @@ class MediaSegmentedControl extends StatelessWidget {
     required this.onSelected,
     this.glass = false,
     this.segments = MediaSegment.media,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: AppSpacing.screenMargin,
+    ),
+    this.onSheet = false,
   });
 
   final MediaSegment segment;
@@ -30,6 +35,12 @@ class MediaSegmentedControl extends StatelessWidget {
   /// adds People ([MediaSegment.explore]).
   final List<MediaSegment> segments;
 
+  /// See [AppSegmentedControl.padding].
+  final EdgeInsets padding;
+
+  /// See [AppSegmentedControl.onSheet].
+  final bool onSheet;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -41,6 +52,8 @@ class MediaSegmentedControl extends StatelessWidget {
       selected: segment,
       onSelected: onSelected,
       glass: glass,
+      padding: padding,
+      onSheet: onSheet,
     );
   }
 }

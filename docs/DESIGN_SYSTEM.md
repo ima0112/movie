@@ -235,7 +235,10 @@ el tamaño de texto) con la opción elegida como pastilla blanca (`ink`, texto
 `surface`, `bodySm` seminegrita) y las demás en gris (`inkMuted`). Es el
 único componente de pestañas: Descubrir, Explorar, Mi lista (con contadores
 en vivo), Estadísticas, Filmografía y Reparto/Equipo lo usan, y cualquier
-lugar nuevo que necesite pestañas también. Los chips sueltos
+lugar nuevo que necesite pestañas también. Dentro de una hoja (que ya es
+`surfaceRaised`) se usa con `onSheet: true` y `padding: EdgeInsets.zero`: la
+pista pasa a `surfaceRaised2` para que se vea, y no suma otro margen al de la
+hoja (la hoja de filtros H8 lo hace así). Los chips sueltos
 (`AppChip`) quedan para filtros de selección múltiple dentro de hojas de
 filtros, no para cambiar de vista.
 
