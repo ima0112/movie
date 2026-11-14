@@ -6,6 +6,7 @@ import '../../../../app/di.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../shared/widgets/app_snack_bar.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
@@ -50,15 +51,11 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     if (!context.mounted) return;
 
     if (result is Failure<void>) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.onboardingSaveError)));
+      AppSnackBar.show(context, context.l10n.onboardingSaveError);
       return;
     }
     if (pickedAGenre) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.onboardingTastesSavedSnackbar)),
-      );
+      AppSnackBar.show(context, context.l10n.onboardingTastesSavedSnackbar);
     }
     context.go('/');
   }

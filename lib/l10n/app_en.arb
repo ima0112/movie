@@ -247,6 +247,10 @@
     "description": "Same as myListFilteredEmptyMovieTitle, for a TV-show-only type filter — docs/SCREENS.md B4's own literal example."
   },
 
+  "commonCouldntOpenLink": "Couldn't open that link",
+  "@commonCouldntOpenLink": {
+    "description": "Snackbar when the system can't open an external link (TMDB, YouTube, GitHub…)."
+  },
   "commonRetry": "Retry",
   "@commonRetry": {
     "description": "ErrorStateView's fixed CTA label (docs/SCREENS.md G: \"Error: same layout with 'Retry'.\")."

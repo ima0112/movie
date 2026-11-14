@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../shared/widgets/app_snack_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -108,6 +110,6 @@ class SurpriseResultContent extends StatelessWidget {
         year: snapshot.year,
       ),
     );
-    messenger.showSnackBar(SnackBar(content: Text(message)));
+    AppSnackBar.showOn(messenger, message);
   }
 }
