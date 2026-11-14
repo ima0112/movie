@@ -1026,8 +1026,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsEstimatedTvHoursLabel => 'Estimated TV hours';
 
   @override
-  String get myTastesIntro =>
-      'The more we know, the better your recommendations and Surprise me. Everything is saved only on your device.';
+  String get myTastesTypeTitle => 'What do you usually watch?';
+
+  @override
+  String get myTastesTypeHint => 'It sets which catalog we show first.';
+
+  @override
+  String get myTastesTypeBoth => 'Both';
+
+  @override
+  String get myTastesAddAvoided => 'Add';
+
+  @override
+  String get myTastesAddAvoidedSheetTitle => 'Add a genre to avoid';
+
+  @override
+  String get myTastesFooter => 'Everything is saved only on your device.';
 
   @override
   String get myTastesGenresLikeHint => 'Choose as many as you like.';
@@ -1040,7 +1054,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myTastesGenresLikeTitle => 'Genres you like';
 
   @override
-  String get myTastesGenresNeverTitle => 'Genres you never want';
+  String get myTastesGenresNeverTitle => 'Genres you avoid';
 
   @override
   String get myTastesSavedIndicator => 'Saved';
