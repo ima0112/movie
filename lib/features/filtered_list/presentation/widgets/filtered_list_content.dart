@@ -5,7 +5,6 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../../../../shared/widgets/state_views.dart';
@@ -52,9 +51,8 @@ class _States extends StatelessWidget {
         return switch (state) {
           FilteredListInitial() ||
           FilteredListLoading() => const FilteredListGridSkeleton(),
-          FilteredListError(:final reason) => ErrorStateView(
-            title: context.l10n.commonCouldntLoad,
-            body: reason.localizedMessage(context.l10n),
+          FilteredListError(:final reason) => FailureStateView(
+            reason: reason,
             onRetry: cubit.retry,
           ),
           FilteredListLoaded() when state.allItems.isEmpty => EmptyStateView(

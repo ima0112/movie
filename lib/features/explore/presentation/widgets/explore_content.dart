@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_icons.dart';
 import '../../../../app/router.dart';
-import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/clear_of_tab_bar.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
@@ -29,14 +28,12 @@ class ExploreContent extends StatelessWidget {
         return switch (state) {
           ExploreAtRest() => const ExploreBrowseBody(),
           ExploreSearchLoading() => const ExploreSearchSkeleton(),
-          ExploreSearchLoaded() when state.results.isEmpty => ClearOfTabBar(
-            child: EmptyStateView(
-              icon: AppIcons.search,
-              title: context.l10n.exploreNoResults,
-              body: context.l10n.exploreNoResultsBody(state.query),
-              ctaLabel: context.l10n.exploreClearSearch,
-              onCtaTap: context.read<ExploreCubit>().clearQuery,
-            ),
+          ExploreSearchLoaded() when state.results.isEmpty => EmptyStateView(
+            icon: AppIcons.search,
+            title: context.l10n.exploreNoResults,
+            body: context.l10n.exploreNoResultsBody(state.query),
+            ctaLabel: context.l10n.exploreClearSearch,
+            onCtaTap: context.read<ExploreCubit>().clearQuery,
           ),
           ExploreSearchLoaded() => SearchResultsList(
             results: state.results,
@@ -44,13 +41,11 @@ class ExploreContent extends StatelessWidget {
             onMediaTap: (item) => context.pushMediaDetail(item.key),
             onPersonTap: (person) => context.pushPersonDetail(person.id),
           ),
-          ExploreSearchError(:final reason) => ClearOfTabBar(
-            child: ErrorStateView(
-              title: context.l10n.commonCouldntLoad,
-              body: reason.localizedMessage(context.l10n),
-              onRetry: () =>
-                  context.read<ExploreCubit>().runRecentSearch(state.query),
-            ),
+          ExploreSearchError(:final reason) => FailureStateView(
+            reason: reason,
+            onRetry: () =>
+                context.read<ExploreCubit>().runRecentSearch(state.query),
+            onGoToMyList: () => context.go('/my-list'),
           ),
           ExploreListing() => const SizedBox.shrink(),
         };

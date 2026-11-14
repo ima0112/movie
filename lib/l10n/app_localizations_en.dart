@@ -33,7 +33,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get failureServer =>
-      'TMDB is having trouble right now. Try again in a moment.';
+      'Something failed while connecting to the server. Try again in a few seconds.';
 
   @override
   String get failureNotFound => 'We couldn\'t find that.';
@@ -291,6 +291,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonCouldntOpenLink => 'Couldn\'t open that link';
+
+  @override
+  String get offlineStateTitle => 'You\'re offline';
+
+  @override
+  String get offlineStateBody =>
+      'Discovering and searching need internet. Your list is still available.';
+
+  @override
+  String get offlineGoToMyList => 'Go to My List';
 
   @override
   String get commonRetry => 'Retry';
