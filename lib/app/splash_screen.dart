@@ -8,10 +8,13 @@ import '../shared/widgets/app_monogram.dart';
 
 /// A1 (Splash) — `docs/SCREENS.md`: the "P" monogram fades in over an
 /// amber halo, the "PakoTV" wordmark unfurls, then the wordmark slides
-/// into its spot on Home. The native half is `flutter_native_splash.yaml`;
-/// this takes over the instant Flutter can draw its own first frame.
+/// into its spot on Home. It is the **only** splash the user sees: the native
+/// one (`flutter_native_splash.yaml`) is just the page's dark color, so this
+/// starts on the same background with nothing to jump from.
 ///
-/// [preload] is awaited the moment this widget mounts; [onFinished]
+/// [preload] returns A1's preload, which `main()` already started before the
+/// first frame (so it is usually part-way done); it is awaited when this
+/// widget mounts; [onFinished]
 /// fires once it's done *and* the animation has had its full ~1.3 s to
 /// play, capped at [maxDuration] regardless — `docs/SCREENS.md`
 /// "Duration: max 1.5 s" is a hard ceiling, not a target, so a slow

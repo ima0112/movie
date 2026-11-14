@@ -18,7 +18,7 @@ Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and th
 ### A1. Splash
 - Access: cold app launch.
 - Elements: amber halo, the "P" monogram (104 px amber rounded square) fades in, the "PakoTV" wordmark unfurls → the wordmark slides into its spot on Home.
-- Duration: max 1.5 s; while theme, language, `/configuration`, and `/trending/all/week` load.
+- Duration: max 1.5 s of animation; theme, language, `/configuration`, and `/trending/all/week` load **while** it plays — and the preload starts earlier still: `main()` kicks it off before the first Flutter frame, while the system shows the native splash. **There is one splash only**: the native one is just the page's dark color (no logo), so the animation starts on the same background with nothing to jump from.
 - Exits: A2 if it's the first launch, otherwise → B1.
 
 ### A2. Onboarding (1 flow, 6 screens: welcome + 2 intro slides + 3 steps)
