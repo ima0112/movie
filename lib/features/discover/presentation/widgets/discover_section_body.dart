@@ -1,5 +1,5 @@
+import '../../../../l10n/full_date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
@@ -77,9 +77,7 @@ class DiscoverSectionBody extends StatelessWidget {
         showTypeTag: tvTag,
         captionBuilder: (item) {
           final date = item.releaseDate;
-          return date == null
-              ? null
-              : DateFormat.yMMMd(l10n.localeName).format(date);
+          return date == null ? null : l10n.fullDate(date);
         },
         onItemTap: open,
       ),
