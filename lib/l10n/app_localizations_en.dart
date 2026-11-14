@@ -1044,6 +1044,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myTastesFooter => 'Everything is saved only on your device.';
 
   @override
+  String get myTastesVibesTitle => 'Favorite vibes';
+
+  @override
+  String myTastesVibesHint(int max) {
+    return 'Up to $max. They set the tone of what we suggest.';
+  }
+
+  @override
+  String get myTastesErasTitle => 'Eras';
+
+  @override
+  String get myTastesErasHint => 'The release years you prefer.';
+
+  @override
   String get myTastesGenresLikeHint => 'Choose as many as you like.';
 
   @override
@@ -1058,12 +1072,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myTastesSavedIndicator => 'Saved';
-
-  @override
-  String get myTastesVibesLikeTitle => 'Vibes you like';
-
-  @override
-  String get myTastesHowFarBackLabel => 'How far back';
 
   @override
   String statsHoursValue(String hours) {
