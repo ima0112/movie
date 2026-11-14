@@ -24,6 +24,12 @@ enum ListingStyle {
 
   /// The title over the poster's lower part.
   titled,
+
+  /// The results-list tile: the "TV" tag (top-left), the rating (bottom-left),
+  /// and the title with the release year **under** the poster — the same
+  /// ficha as the filtered results (C1), so shows are told apart and each
+  /// title is named. Hidden gems' own dressing.
+  detailed,
 }
 
 /// The dressing for a listing in [sort], given the one its section's carousel

@@ -11,6 +11,7 @@ import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/media_card.dart';
 import '../../../../shared/widgets/poster_badge.dart';
 import '../../../../shared/widgets/ranked_poster.dart';
+import '../../../../shared/widgets/result_poster_tile.dart';
 import '../../domain/listing_style.dart';
 import 'listing_platform_logo.dart';
 
@@ -42,6 +43,23 @@ class ListingPoster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The results tile has its own layout (the title and year under the
+    // poster), so it isn't a dressing laid over the poster.
+    if (style == ListingStyle.detailed) {
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: ResultPosterTile(item: item, onTap: onTap),
+          ),
+          if (showPlatform)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: ListingPlatformLogo(titleKey: item.key),
+              ),
+            ),
+        ],
+      );
+    }
     final still = MediaQuery.disableAnimationsOf(context);
     return Stack(
       children: [
@@ -119,6 +137,8 @@ class _Dressing extends StatelessWidget {
                 child: PosterBadge(label: '${date.year}'),
               ),
       ListingStyle.titled => _TitleOverlay(title: item.title),
+      // Laid out by the tile itself, never as a dressing.
+      ListingStyle.detailed => const SizedBox.shrink(),
     };
   }
 }
