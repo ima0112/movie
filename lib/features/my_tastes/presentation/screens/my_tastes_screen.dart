@@ -7,16 +7,15 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/genre_icons.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/app_section.dart';
-import '../../../../shared/widgets/app_chip.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/my_tastes_cubit.dart';
-import '../cubit/my_tastes_state.dart';
-import '../widgets/taste_genre_section.dart';
-import '../widgets/taste_vibe_grid.dart';
-import '../widgets/taste_year_slider.dart';
+import '../widgets/taste_avoided_genres_section.dart';
+import '../widgets/taste_eras_section.dart';
+import '../widgets/taste_footer.dart';
+import '../widgets/taste_liked_genres_section.dart';
+import '../widgets/taste_type_section.dart';
+import '../widgets/taste_vibes_section.dart';
 
 /// My Tastes (C5) — pushed from B5's My Tastes card.
 ///
@@ -87,82 +86,18 @@ class _MyTastesView extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<MyTastesCubit, MyTastesState>(
-        builder: (context, state) {
-          final cubit = context.read<MyTastesCubit>();
-          final l10n = context.l10n;
-          final genres = [for (final (genre, _) in genreOptions) genre];
-          return ListView(
-            padding: const EdgeInsets.only(
-              top: AppSpacing.xl,
-              bottom: AppSpacing.sectionGap,
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.screenMargin,
-                ),
-                child: Text(
-                  l10n.myTastesIntro,
-                  style: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
-                ),
-              ),
-              TasteGenreSection(
-                title: l10n.myTastesGenresLikeTitle,
-                hint: l10n.myTastesGenresLikeHint,
-                genres: genres,
-                selected: state.likedGenres,
-                onToggle: cubit.toggleLikedGenre,
-              ),
-              TasteGenreSection(
-                title: l10n.myTastesGenresNeverTitle,
-                hint: l10n.myTastesGenresNeverHint,
-                genres: genres,
-                selected: state.vetoedGenres,
-                onToggle: cubit.toggleVetoedGenre,
-                selectedState: ChipState.vetoed,
-              ),
-              AppSection(
-                child: TasteVibeGrid(
-                  vibes: state.availableVibes,
-                  selected: state.likedVibes,
-                  onToggle: cubit.toggleVibe,
-                ),
-              ),
-              AppSection(
-                child: TasteYearSlider(
-                  yearFrom: state.yearFrom,
-                  onChanged: (year) => cubit.setYearRange(
-                    year,
-                    state.yearTo ?? DateTime.now().year,
-                    latestYear: DateTime.now().year,
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.screenMargin,
-                ),
-                child: Row(
-                  children: [
-                    const Spacer(),
-                    AnimatedOpacity(
-                      opacity: state.justSaved ? 1 : 0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Text(
-                        l10n.myTastesSavedIndicator,
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.inkMuted,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
+      // Every section watches only its own slice of the state (rule 9), so
+      // nothing here is a screen-wide builder.
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: AppSpacing.sectionGap),
+        children: const [
+          TasteTypeSection(),
+          TasteLikedGenresSection(),
+          TasteAvoidedGenresSection(),
+          TasteVibesSection(),
+          TasteErasSection(),
+          TasteFooter(),
+        ],
       ),
     );
   }

@@ -149,14 +149,16 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 - States: empty ("Mark something as watched to see your stats" + CTA).
 
 ### C5. My Tastes
-- Access: My Tastes card in B5; invitation card in B1; or from the Surprise me result when saving.
-- Elements (vertical scroll, everything editable in place). Top bar: back, centered title, amber "Reset" on the right. Under it, a 14 px muted intro line ("The more we know, the better your recommendations and Surprise me. Everything is saved only on your device."). Each section has a 20 px title and a 13 px muted hint:
-  - "Genres you like" section ("Choose as many as you like."): every genre as a wrapping chip, selected = amber.
-  - "Genres you never want" section ("We won't show them in recommendations."): the same chips, mutually exclusive with the above; a picked one is red-tinted with a red border and struck through.
-  - "Vibes you like" section: 4-column grid of the 16 vibes.
-  - "How far back" section: slider with a large number.
-  - Auto-saved; discreet "Saved" text on change.
-- States: none special.
+- Access: My Tastes row in B5; invitation card in B1; or from the Surprise me result when saving.
+- Elements (vertical scroll, everything editable in place, **auto-saved**). Top bar: back, centered title, amber "Reset" on the right. Each section has a 20 px title and a 13 px muted hint; each one watches only its own slice of the state (no screen-wide builder):
+  - **"What do you usually watch?"** ("It sets which catalog we show first."): the contained pill Movies · TV Shows · Both. Home opens on it.
+  - **"Genres you like"** ("Choose as many as you like."): every genre as a wrapping chip, selected = amber.
+  - **"Genres you avoid"** ("We won't show them in recommendations."): only the avoided genres, as red struck-through chips (tap to take one back), then a **"+ Add"** chip that opens a sheet (on the root navigator) with the other genres; picking one avoids it and closes. Mutually exclusive with the liked ones: avoiding a liked genre removes it from them.
+  - **"Vibes you like"**: the vibes, **up to 5** (a sixth is ignored until one is deselected).
+  - **"Eras"**: the release-year range the user leans towards.
+  - **"My platforms"**: the streaming services the user has (logos on neutral cards; amber ring and check when picked).
+  - Footer: "Everything is saved only on your device." and a discreet "Saved" that shows for a moment after each change.
+- States: none special. (The vibes, eras and platforms sections are being redesigned in the stack: see the PRs.)
 
 ---
 
