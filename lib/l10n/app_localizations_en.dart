@@ -254,6 +254,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get swipeReleaseToDelete => 'Release to delete';
 
   @override
+  String libraryAddedToTab(String title, String tabName) {
+    return '$title added to $tabName';
+  }
+
+  @override
+  String libraryMarkedWatched(String title) {
+    return '$title marked as watched';
+  }
+
+  @override
+  String libraryMarkedWatchedLeftWatchLater(String title) {
+    return '$title marked as watched · Removed from Watch later';
+  }
+
+  @override
   String myListRemovedFromTab(String title, String tabName) {
     return '$title removed from $tabName';
   }
