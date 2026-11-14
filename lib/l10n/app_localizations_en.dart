@@ -786,11 +786,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myListHideWatchedToggle => 'Hide what I\'ve watched';
 
   @override
-  String myListSegmentLabelWithCount(String label, int count) {
-    return '$label ($count)';
-  }
-
-  @override
   String get myTastesTitle => 'My Tastes';
 
   @override
