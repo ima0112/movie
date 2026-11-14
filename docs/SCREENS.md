@@ -328,8 +328,9 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 ## G. Global state pattern (designed once)
 
 - **Skeleton**: version for carousel, grid, row list, detail.
-- **Empty**: outline icon in a 72 px `surfaceRaised` circle (no mascot), one-line headline, one-line body, optional CTA.
-- **Error**: same layout with "Retry".
+- **Empty**: outline icon in a 72 px `surfaceRaised` circle (no mascot), one-line headline, one-line body, optional CTA (an **outlined** button: nothing to fix).
+- **Error**: same layout with a cloud-off icon, "We couldn't load" ("No pudimos cargar"), the body for the failure's cause (server, quota, not found…) and an **amber filled** "Retry" (`ErrorStateView`).
+- **Offline** (a load failed because of the network): the same layout with a wifi-off icon, "You're offline" ("Estás sin conexión"), "Discovering and searching need internet. Your list is still available.", the amber "Retry" and — **only on Home and Explore** — a "Go to My List" text link (the list is local). Pushed screens show just "Retry". `FailureStateView(reason)` picks between this and the error state; no screen builds either by hand. Every one centers in the room the floating bar leaves free (built into `StateLayout`). It never retries on its own when the connection comes back: only "Retry".
 - **Offline**: persistent top banner "Offline" (rounded box with a wifi-off icon, neutral colors) + screens use local data when available.
 - **Snackbar**: short confirmations ("Added to Watch later", "Copied") or failures ("Couldn't save"), with an "Undo" action (amber) when it can be undone. A floating pill (`surfaceRaised`, hairline, radius 16) on the 20 px page margin, 4 s, **above the floating tab bar** on the root tabs; a new one replaces the one showing. Always shown through `AppSnackBar` (a guard test fails on a raw `SnackBar(`).
 
