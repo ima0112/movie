@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
+import '../../../../core/domain/repositories/saved_people_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../cubit/my_list_cubit.dart';
 import '../widgets/my_list_body.dart';
+import '../widgets/my_list_people_body.dart';
 import '../widgets/my_list_tabs.dart';
 import '../widgets/my_list_top_bar.dart';
 
@@ -35,8 +37,15 @@ class MyListScreen extends StatelessWidget {
               const MyListTabs(),
               const SizedBox(height: AppSpacing.md),
               Expanded(
-                child: MyListBody(
-                  userLibraryRepository: getIt<UserLibraryRepository>(),
+                child: BlocSelector<MyListCubit, MyListFilterState, bool>(
+                  selector: (state) => state.showsPeople,
+                  builder: (context, showsPeople) => showsPeople
+                      ? MyListPeopleBody(
+                          savedPeopleRepository: getIt<SavedPeopleRepository>(),
+                        )
+                      : MyListBody(
+                          userLibraryRepository: getIt<UserLibraryRepository>(),
+                        ),
                 ),
               ),
             ],

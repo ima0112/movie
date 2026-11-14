@@ -28,9 +28,15 @@ class MyListTopBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(context.l10n.navTabMyList, style: AppTextStyles.h2),
-          BlocSelector<MyListCubit, MyListFilterState, bool>(
-            selector: (state) => !state.currentFilter.isDefault,
+          // `null` on the People tab, which has nothing to filter.
+          BlocSelector<MyListCubit, MyListFilterState, bool?>(
+            selector: (state) =>
+                state.showsPeople ? null : !state.currentFilter.isDefault,
             builder: (context, isActive) {
+              if (isActive == null) {
+                // Keeps the bar's height, so the page doesn't jump.
+                return const SizedBox(height: kMinInteractiveDimension);
+              }
               return IconButton(
                 onPressed: () => _openFilterSheet(context),
                 icon: Icon(

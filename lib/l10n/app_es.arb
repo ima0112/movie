@@ -76,6 +76,10 @@
   "myListTabWatchLater": "Ver después",
   "myListTabWatched": "Vistos",
 
+  "myListTabPeople": "Personas",
+  "myListEmptyPeopleHeadline": "Aún no hay personas",
+  "myListEmptyPeopleBody": "Toca el corazón en la página de una persona para tenerla aquí.",
+
   "myListRemovedFromTab": "Eliminado de {tabName}",
 
   "myListEmptyFavoritesHeadline": "Todavía no tienes favoritos",

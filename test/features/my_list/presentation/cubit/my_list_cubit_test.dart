@@ -31,6 +31,23 @@ void main() {
       cubit.close();
     });
 
+    test('selectPeople shows the People tab and keeps the library tab and its '
+        'filter; selectTab leaves it', () {
+      final cubit = MyListCubit();
+      cubit.selectTab(LibraryTab.watched);
+      cubit.selectMinStars(4);
+
+      cubit.selectPeople();
+      expect(cubit.state.showsPeople, isTrue);
+      expect(cubit.state.tab, LibraryTab.watched);
+      expect(cubit.state.currentFilter.minStars, 4);
+
+      cubit.selectTab(LibraryTab.watched);
+      expect(cubit.state.showsPeople, isFalse);
+      expect(cubit.state.currentFilter.minStars, 4);
+      cubit.close();
+    });
+
     test('each tab remembers its own filter independently (H9: "remembers '
         'state per tab")', () {
       final cubit = MyListCubit();

@@ -160,6 +160,13 @@
   "myListTabWatchLater": "Watch later",
   "myListTabWatched": "Watched",
 
+  "myListTabPeople": "People",
+  "@myListTabPeople": {
+    "description": "B4's fourth tab: the people saved from a person's page (D3)."
+  },
+  "myListEmptyPeopleHeadline": "No people yet",
+  "myListEmptyPeopleBody": "Tap the heart on a person's page to keep them here.",
+
   "myListRemovedFromTab": "Removed from {tabName}",
   "@myListRemovedFromTab": {
     "description": "My List's swipe-to-remove snackbar. {tabName} is that LibraryTab's own localized label (myListTabFavorites/WatchLater/Watched).",

@@ -33,27 +33,24 @@ Future<void> _pump(
 
 void main() {
   group('MyListEntryTile', () {
-    testWidgets(
-      'renders title, year, and type with no network call — a single '
-      'pump is enough, no FutureBuilder waiting on a fetch',
-      (tester) async {
-        await _pump(
-          tester,
-          const UserMediaEntry(
-            key: _dune,
-            title: 'Dune: Part Two',
-            isFavorite: true,
-            year: 2024,
-          ),
-        );
+    testWidgets('renders title, year, and type with no network call — a single '
+        'pump is enough, no FutureBuilder waiting on a fetch', (tester) async {
+      await _pump(
+        tester,
+        const UserMediaEntry(
+          key: _dune,
+          title: 'Dune: Part Two',
+          isFavorite: true,
+          year: 2024,
+        ),
+      );
 
-        // No `pumpAndSettle`/extra pump needed — if this still depended
-        // on a Future, the row would render empty/placeholder on this
-        // single frame.
-        expect(find.text('Dune: Part Two'), findsOneWidget);
-        expect(find.textContaining('2024'), findsOneWidget);
-      },
-    );
+      // No `pumpAndSettle`/extra pump needed — if this still depended
+      // on a Future, the row would render empty/placeholder on this
+      // single frame.
+      expect(find.text('Dune: Part Two'), findsOneWidget);
+      expect(find.textContaining('2024'), findsOneWidget);
+    });
 
     testWidgets('shows runtime for a movie once it has one, omits it '
         'when the entry has none yet', (tester) async {
@@ -81,8 +78,9 @@ void main() {
       expect(find.textContaining('min'), findsNothing);
     });
 
-    testWidgets('shows episode count for a TV show once it has one',
-        (tester) async {
+    testWidgets('shows episode count for a TV show once it has one', (
+      tester,
+    ) async {
       await _pump(
         tester,
         const UserMediaEntry(

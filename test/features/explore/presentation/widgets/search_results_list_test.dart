@@ -9,7 +9,8 @@ import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/explore/presentation/widgets/search_result_rows.dart';
-import 'package:movies/features/explore/presentation/widgets/search_result_tile.dart';
+import 'package:movies/shared/widgets/person_result_row.dart';
+import 'package:movies/shared/widgets/search_result_tile.dart';
 import 'package:movies/features/explore/presentation/widgets/search_results_list.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
