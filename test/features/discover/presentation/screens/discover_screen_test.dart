@@ -2,19 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/cubits/connectivity_cubit.dart';
+import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/core/network/network_status.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_recently_viewed_repository.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
+import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/repositories/recently_viewed_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
+import 'package:movies/core/domain/entities/media_segment.dart';
+import 'package:movies/features/discover/presentation/cubit/discover_cubit.dart';
 import 'package:movies/features/discover/presentation/screens/discover_screen.dart';
+import 'package:movies/features/discover/presentation/widgets/discover_content_area.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_card.dart';
 
@@ -39,14 +45,27 @@ void main() {
     );
   });
 
-  Future<void> pumpDiscoverScreen(WidgetTester tester) async {
+  Future<void> pumpDiscoverScreen(
+    WidgetTester tester, {
+    TasteProfile? profile,
+  }) async {
+    final taste = InMemoryTasteProfileRepository();
+    if (profile != null) await taste.save(profile);
+    final tasteCubit = TasteProfileCubit(taste);
+    addTearDown(tasteCubit.close);
+    // Let the cubit read the saved profile, as the app has by the time Home
+    // is built.
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.dark,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: BlocProvider(
-          create: (_) => ConnectivityCubit(NetworkStatus()),
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => ConnectivityCubit(NetworkStatus())),
+            BlocProvider.value(value: tasteCubit),
+          ],
           child: const DiscoverScreen(),
         ),
       ),
@@ -175,5 +194,28 @@ void main() {
     await tester.tap(find.text('Movies'));
     await tester.pumpAndSettle();
     expect(find.text('Recently viewed'), findsNothing);
+  });
+
+  testWidgets('Home opens on what the user usually watches (C5): TV shows '
+      'when that is their type', (tester) async {
+    await pumpDiscoverScreen(
+      tester,
+      profile: TasteProfile(
+        likedGenres: const {},
+        vetoedGenres: const {},
+        likedVibes: const {},
+        yearFrom: 1990,
+        preferredType: MediaType.tvShow,
+        updatedAt: DateTime(2026),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // What Home loaded: the TV Shows segment, not All.
+    final cubit = tester
+        .element(find.byType(DiscoverContentArea))
+        .read<DiscoverCubit>();
+    expect(cubit.state, isA<DiscoverLoaded>());
+    expect((cubit.state as DiscoverLoaded).segment, MediaSegment.tvShow);
   });
 }
