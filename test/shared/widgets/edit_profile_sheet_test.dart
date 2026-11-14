@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/features/you/presentation/cubit/you_stats_cubit.dart';
 import 'package:movies/app/cubits/user_profile_cubit.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/user_profile.dart';
@@ -31,6 +33,16 @@ class _InMemoryUserProfileRepository implements UserProfileRepository {
   }
 }
 
+/// The providers You's header needs: the global profile cubit (the one under
+/// test) and the page's own stats cubit, over an empty library.
+Widget _withStats(UserProfileCubit cubit, Widget child) => MultiBlocProvider(
+  providers: [
+    BlocProvider<UserProfileCubit>.value(value: cubit),
+    BlocProvider(create: (_) => YouStatsCubit(InMemoryUserLibraryRepository())),
+  ],
+  child: child,
+);
+
 void main() {
   group('UserProfileCubit is genuinely global, not a per-screen copy', () {
     testWidgets(
@@ -43,9 +55,9 @@ void main() {
         addTearDown(cubit.close);
 
         await tester.pumpWidget(
-          BlocProvider<UserProfileCubit>.value(
-            value: cubit,
-            child: MaterialApp(
+          _withStats(
+            cubit,
+            MaterialApp(
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               home: Scaffold(
@@ -83,9 +95,9 @@ void main() {
       addTearDown(cubit.close);
 
       await tester.pumpWidget(
-        BlocProvider<UserProfileCubit>.value(
-          value: cubit,
-          child: MaterialApp(
+        _withStats(
+          cubit,
+          MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: Builder(

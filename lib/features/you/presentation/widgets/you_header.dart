@@ -9,6 +9,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/profile_avatar.dart';
+import 'you_viewer_label.dart';
 
 const double _avatarSize = 48;
 const double _badgeSize = 20;
@@ -96,10 +97,17 @@ class _Greeting extends StatelessWidget {
         ],
       );
     }
-    return Text(
-      l10n.youHeaderGreetingWithName(profile.displayName),
-      style: AppTextStyles.h1,
-      overflow: TextOverflow.ellipsis,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          l10n.youHeaderGreetingWithName(profile.displayName),
+          style: AppTextStyles.h1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const YouViewerLabel(),
+      ],
     );
   }
 }
