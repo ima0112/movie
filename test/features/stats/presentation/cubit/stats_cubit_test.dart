@@ -14,32 +14,29 @@ import 'package:movies/features/stats/presentation/cubit/stats_cubit.dart';
 /// no extra wiring here — this proves that's actually true, not just
 /// assumed from the existing subscription.
 void main() {
-  test(
-    'clearAll() on UserLibraryRepository zeroes an already-open '
-    'StatsCubit\'s stats, with no restart',
-    () async {
-      final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(db.close);
-      final library = DriftUserLibraryRepository(db);
-      await library.upsert(
-        UserMediaEntry(
-          title: 'Dune: Part Two',
-          key: const MediaKey(type: MediaType.movie, tmdbId: 1),
-          watchedAt: DateTime(2024, 1, 1),
-          runtimeMinutes: 166,
-        ),
-      );
+  test('clearAll() on UserLibraryRepository zeroes an already-open '
+      'StatsCubit\'s stats, with no restart', () async {
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    final library = DriftUserLibraryRepository(db);
+    await library.upsert(
+      UserMediaEntry(
+        title: 'Dune: Part Two',
+        key: const MediaKey(type: MediaType.movie, tmdbId: 1),
+        watchedAt: DateTime(2024, 1, 1),
+        runtimeMinutes: 166,
+      ),
+    );
 
-      final cubit = StatsCubit(library);
-      addTearDown(cubit.close);
-      await pumpEventQueue();
-      expect(cubit.state.stats.moviesWatched, 1);
+    final cubit = StatsCubit(library);
+    addTearDown(cubit.close);
+    await pumpEventQueue();
+    expect(cubit.state.stats.moviesWatched, 1);
 
-      await library.clearAll();
-      await pumpEventQueue();
+    await library.clearAll();
+    await pumpEventQueue();
 
-      expect(cubit.state.stats.moviesWatched, 0);
-      expect(cubit.state.stats.movieHours, 0);
-    },
-  );
+    expect(cubit.state.stats.moviesWatched, 0);
+    expect(cubit.state.stats.movieHours, 0);
+  });
 }

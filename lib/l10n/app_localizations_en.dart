@@ -881,16 +881,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String myTastesSummarySinceYear(int year) {
-    return 'since $year';
-  }
-
-  @override
-  String myTastesSummaryNeverGenre(String genreName) {
-    return 'never $genreName';
-  }
-
-  @override
   String get myTastesInvitationTitle => 'Build your taste profile';
 
   @override
@@ -985,6 +975,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get youRecentlyWatchedTitle => 'Recently watched';
+
+  @override
+  String get youGenresTitle => 'Your most-watched genres';
+
+  @override
+  String youGenrePercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String myTastesRowGenresMore(String names, int count) {
+    return '$names +$count';
+  }
+
+  @override
+  String get myTastesRowFallback => 'Genres, vibes, platforms and more';
 
   @override
   String get yourActivityHoursLabel => 'Hours';

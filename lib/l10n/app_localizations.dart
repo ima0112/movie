@@ -1616,18 +1616,6 @@ abstract class AppLocalizations {
   /// **'{count} vibes'**
   String myTastesSummaryVibeCount(int count);
 
-  /// MyTastesCard's summary line, second fragment (docs/SCREENS.md B5).
-  ///
-  /// In en, this message translates to:
-  /// **'since {year}'**
-  String myTastesSummarySinceYear(int year);
-
-  /// MyTastesCard's summary line, third (optional) fragment (docs/SCREENS.md B5). {genreName} is that Genre's own localized display name.
-  ///
-  /// In en, this message translates to:
-  /// **'never {genreName}'**
-  String myTastesSummaryNeverGenre(String genreName);
-
   /// No description provided for @myTastesInvitationTitle.
   ///
   /// In en, this message translates to:
@@ -1741,6 +1729,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recently watched'**
   String get youRecentlyWatchedTitle;
+
+  /// Heading of the genres card on You (docs/SCREENS.md B5); shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Your most-watched genres'**
+  String get youGenresTitle;
+
+  /// A genre's share of the genres counted in what the user has watched.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String youGenrePercent(int percent);
+
+  /// The My Tastes row's summary on You: the two named liked genres and how many more there are.
+  ///
+  /// In en, this message translates to:
+  /// **'{names} +{count}'**
+  String myTastesRowGenresMore(String names, int count);
+
+  /// The My Tastes row's summary when a taste profile exists but has no liked genres or vibes yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres, vibes, platforms and more'**
+  String get myTastesRowFallback;
 
   /// No description provided for @yourActivityHoursLabel.
   ///
