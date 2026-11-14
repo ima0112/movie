@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../l10n/l10n_extension.dart';
 import 'library_row_status.dart';
+import 'row_more_button.dart';
 
 /// A library row: a 56×84 poster, the title, a gray metadata line, a
 /// [status] line (the rating and when it was added, or the user's stars and
@@ -109,7 +108,7 @@ class LibraryRow extends StatelessWidget {
                 ],
               ),
             ),
-            if (onMore != null) _MoreButton(onTap: onMore!),
+            if (onMore != null) RowMoreButton(onTap: onMore!),
           ],
         ),
       ),
@@ -139,30 +138,6 @@ class LibraryRow extends StatelessWidget {
         return false;
       },
       child: row,
-    );
-  }
-}
-
-class _MoreButton extends StatelessWidget {
-  const _MoreButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      excludeSemantics: true,
-      label: context.l10n.myListRowActionsLabel,
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: const SizedBox(
-          width: kMinInteractiveDimension,
-          height: kMinInteractiveDimension,
-          child: Icon(AppIcons.more, size: 22, color: AppColors.ink),
-        ),
-      ),
     );
   }
 }

@@ -21,6 +21,8 @@ class SearchResultTile extends StatelessWidget {
     required this.subtitle,
     required this.onTap,
     this.third,
+    this.trailing,
+    this.onLongPress,
   });
 
   /// The 52×76 slot at the start: a poster, or a round photo centered in it.
@@ -32,6 +34,10 @@ class SearchResultTile extends StatelessWidget {
   final Widget? third;
   final VoidCallback onTap;
 
+  /// Replaces the chevron at the end (a three-dot button); `null` keeps it.
+  final Widget? trailing;
+  final VoidCallback? onLongPress;
+
   static const double leadingWidth = 52;
   static const double leadingHeight = 76;
   static const double _chevron = 20;
@@ -40,6 +46,7 @@ class SearchResultTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       behavior: HitTestBehavior.opaque,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
@@ -82,11 +89,12 @@ class SearchResultTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            const Icon(
-              AppIcons.chevronRight,
-              size: _chevron,
-              color: AppColors.inkMuted,
-            ),
+            trailing ??
+                const Icon(
+                  AppIcons.chevronRight,
+                  size: _chevron,
+                  color: AppColors.inkMuted,
+                ),
           ],
         ),
       ),
