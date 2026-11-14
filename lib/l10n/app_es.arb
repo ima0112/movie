@@ -265,7 +265,6 @@
 
   "myListHideWatchedToggle": "Ocultar lo que he visto",
 
-  "myListSegmentLabelWithCount": "{label} ({count})",
 
   "myTastesTitle": "Mis gustos",
   "myTastesSummaryVibeCount": "{count, plural, =1{1 vibe} other{{count} vibes}}",
