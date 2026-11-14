@@ -867,7 +867,52 @@
     }
   },
 
-  "yourActivityTitle": "Your Activity",
+  "youStatsDaysOfScreen": "{days, plural, =1{≈ 1 day of screen time} other{≈ {days} days of screen time}}",
+  "@youStatsDaysOfScreen": {
+    "description": "You's stats card: the hours watched expressed in whole days (shown from one day on).",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "youStatsStreak": "{weeks, plural, =1{1 week} other{{weeks} weeks}} streak",
+  "@youStatsStreak": {
+    "description": "You's stats card: consecutive weeks with something watched.",
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "youStatsThisMonth": "{count} this month",
+  "@youStatsThisMonth": {
+    "description": "You's stats card: titles watched this calendar month.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "youStatsLast12Months": "Last 12 months",
+  "youStatsMovies": "{count, plural, =1{1 movie} other{{count} movies}}",
+  "@youStatsMovies": {
+    "description": "Legend of the movies / TV shows split bar on You.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "youStatsShows": "{count, plural, =1{1 TV show} other{{count} TV shows}}",
+  "@youStatsShows": {
+    "description": "Legend of the movies / TV shows split bar on You.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "yourActivityHoursLabel": "Hours",
   "yourActivitySeeStats": "See stats",
 
