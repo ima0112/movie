@@ -29,14 +29,37 @@ void main() {
         final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
         addTearDown(db.close);
 
-        final onboardingRow = await db
-            .select(db.onboardingTable)
-            .getSingle();
+        final onboardingRow = await db.select(db.onboardingTable).getSingle();
         expect(onboardingRow.completed, isTrue);
 
         final settingsRows = await db.select(db.settingsTable).get();
         expect(settingsRows, isEmpty);
       },
     );
+
+    test('upgrading from schema v6 (before RecentlyViewedTable existed) '
+        'creates it, empty, and keeps the existing settings row', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      raw.execute('''
+        CREATE TABLE settings_table (
+          id INTEGER NOT NULL DEFAULT 0,
+          language_code TEXT NOT NULL,
+          region_code TEXT NOT NULL,
+          PRIMARY KEY (id)
+        );
+      ''');
+      raw.execute(
+        "INSERT INTO settings_table (id, language_code, region_code) "
+        "VALUES (0, 'es', 'ES');",
+      );
+      raw.execute('PRAGMA user_version = 6;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      expect(await db.select(db.recentlyViewedTable).get(), isEmpty);
+      final settings = await db.select(db.settingsTable).getSingle();
+      expect(settings.regionCode, 'ES');
+    });
   });
 }
