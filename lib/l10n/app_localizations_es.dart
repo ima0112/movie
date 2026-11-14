@@ -327,7 +327,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navMatchButton => 'Sorpréndeme y emparejar';
 
   @override
-  String get offlineBannerMessage => 'Sin conexión';
+  String get offlineBannerMessage => 'Sin conexión a internet';
 
   @override
   String get onboardingSaveError => 'Algo salió mal. Inténtalo de nuevo.';

@@ -7,7 +7,9 @@ import '../data/tmdb/tmdb_language_tag.dart';
 import '../domain/repositories/settings_repository.dart';
 import 'interceptors/bearer_interceptor.dart';
 import 'interceptors/locale_interceptor.dart';
+import 'interceptors/network_status_interceptor.dart';
 import 'interceptors/tmdb_logging_interceptor.dart';
+import 'network_status.dart';
 
 /// The single HTTP entry point for TMDB — CLAUDE.md rule 2: "no widget or
 /// repository builds a TMDB URL by hand." Every `data/repositories/*`
@@ -20,7 +22,7 @@ import 'interceptors/tmdb_logging_interceptor.dart';
 @real
 @LazySingleton()
 class ApiClient {
-  ApiClient(SettingsRepository settingsRepository)
+  ApiClient(SettingsRepository settingsRepository, NetworkStatus networkStatus)
     : dio = Dio(BaseOptions(baseUrl: Env.tmdbBaseUrl)) {
     dio.interceptors.addAll([
       BearerInterceptor(Env.tmdbToken),
@@ -31,6 +33,7 @@ class ApiClient {
         ),
         region: () => settingsRepository.current.regionCode,
       ),
+      NetworkStatusInterceptor(networkStatus),
       TmdbLoggingInterceptor(),
     ]);
   }

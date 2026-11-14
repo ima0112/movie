@@ -285,7 +285,7 @@
     "description": "The bottom bar's 4th tab label — also referenced by onboardingTastesSavedSnackbar's own \"Edit in You\" wording, so keep both in sync if either changes."
   },
 
-  "offlineBannerMessage": "Offline",
+  "offlineBannerMessage": "No internet connection",
   "@offlineBannerMessage": {
     "description": "OfflineBanner's persistent top banner text (docs/SCREENS.md G)."
   },

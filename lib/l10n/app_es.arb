@@ -121,7 +121,7 @@
   "navTabYou": "Tú",
   "navMatchButton": "Sorpréndeme y emparejar",
 
-  "offlineBannerMessage": "Sin conexión",
+  "offlineBannerMessage": "Sin conexión a internet",
 
   "onboardingSaveError": "Algo salió mal. Inténtalo de nuevo.",
   "onboardingTastesSavedSnackbar": "Gustos guardados · Edítalos en Tú",
