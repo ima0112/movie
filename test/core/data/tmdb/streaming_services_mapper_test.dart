@@ -58,4 +58,30 @@ void main() {
 
     expect(services.first.name, 'Service 20');
   });
+
+  test('storefronts and re-sold bundles are not services to subscribe to', () {
+    final services = streamingServicesFromJson(
+      [
+        for (final (i, name) in [
+          'Netflix',
+          'JustWatch TV Free',
+          'Amazon Video',
+          'Apple TV Store',
+          'HBO Max Amazon Channel',
+          'Disney Plus',
+        ].indexed)
+          {
+            'provider_id': i,
+            'provider_name': name,
+            'logo_path': null,
+            'display_priorities': {'US': i},
+          },
+      ],
+      imagesConfig: config,
+      limit: 8,
+      regionCode: 'US',
+    );
+
+    expect(services.map((s) => s.name), ['Netflix', 'Disney Plus']);
+  });
 }

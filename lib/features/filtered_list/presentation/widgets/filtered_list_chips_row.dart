@@ -10,6 +10,7 @@ import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import '../../../../shared/widgets/original_language_catalog.dart';
+import '../../../../shared/widgets/year_range_fields.dart';
 
 /// C1's row of active filters, one amber chip each with a "×" — a single line
 /// that scrolls sideways when it doesn't fit. Tapping a chip clears just that
@@ -109,8 +110,8 @@ class FilteredListChipsRow extends StatelessWidget {
     }
 
     if (filter.yearFrom != null || filter.yearTo != null) {
-      final from = filter.yearFrom ?? _minYear;
-      final to = filter.yearTo ?? DateTime.now().year;
+      final from = filter.yearFrom ?? YearRangeFields.minYear;
+      final to = filter.yearTo ?? YearRangeFields.maxYear;
       chips.add(
         _ActiveChip(
           label: l10n.filteredListYearRangeChip(from, to),
@@ -150,9 +151,6 @@ class FilteredListChipsRow extends StatelessWidget {
 
     return chips;
   }
-
-  /// H8's year slider's lower bound.
-  static const int _minYear = 1950;
 }
 
 class _ActiveChip {

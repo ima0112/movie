@@ -638,6 +638,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterSheetNoResults => 'Sin resultados';
 
   @override
+  String get filterSheetYearFrom => 'Desde el año';
+
+  @override
+  String get filterSheetYearTo => 'Hasta el año';
+
+  @override
   String get filterSheetPresetComingSoon => 'Próximamente';
 
   @override

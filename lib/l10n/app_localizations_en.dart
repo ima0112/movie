@@ -623,6 +623,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterSheetNoResults => 'No results';
 
   @override
+  String get filterSheetYearFrom => 'From year';
+
+  @override
+  String get filterSheetYearTo => 'To year';
+
+  @override
   String get filterSheetPresetComingSoon => 'Coming soon';
 
   @override
