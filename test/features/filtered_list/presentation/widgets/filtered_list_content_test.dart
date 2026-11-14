@@ -6,6 +6,8 @@ import 'package:movies/core/domain/entities/discover_preset.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_theme.dart';
+import 'package:movies/shared/cubit/listing_providers_cubit.dart';
+import 'package:movies/shared/widgets/listing_platform_logo.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_cubit.dart';
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_state.dart';
@@ -25,8 +27,13 @@ Future<FilteredListCubit> _pump(
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: BlocProvider.value(
-        value: cubit,
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: cubit),
+          BlocProvider(
+            create: (_) => ListingProvidersCubit(FakeMediaRepository()),
+          ),
+        ],
         child: Scaffold(
           appBar: AppBar(actions: [FilteredListFilterButton(onPressed: () {})]),
           body: const FilteredListContent(),
@@ -134,5 +141,17 @@ void main() {
     await tester.tap(find.text('Rating 4.5–8.0'));
     await tester.pumpAndSettle();
     expect(cubit.state.filter.hasRatingRange, isFalse);
+  });
+
+  testWidgets('with no platform picked each poster asks for its platform logo '
+      '(top-right); with one picked there are none', (tester) async {
+    await _pump(tester, const DiscoverFilter(type: MediaType.movie));
+    expect(find.byType(ListingPlatformLogo), findsWidgets);
+
+    await _pump(
+      tester,
+      const DiscoverFilter(type: MediaType.movie, withWatchProviders: {8}),
+    );
+    expect(find.byType(ListingPlatformLogo), findsNothing);
   });
 }

@@ -8,7 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../domain/listing_source.dart';
 import '../../domain/listing_style.dart';
-import '../cubit/listing_providers_cubit.dart';
+import '../../../../shared/cubit/listing_providers_cubit.dart';
 import '../cubit/section_listing_cubit.dart';
 import '../widgets/listing_content.dart';
 import '../widgets/listing_toolbar.dart';

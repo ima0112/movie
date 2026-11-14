@@ -7,6 +7,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../l10n/number_format_extension.dart';
+import 'listing_platform_logo.dart';
 import 'media_card.dart';
 import 'poster_badge.dart';
 
@@ -17,10 +18,20 @@ import 'poster_badge.dart';
 ///
 /// Pure presentation — everything comes in by parameter.
 class ResultPosterTile extends StatelessWidget {
-  const ResultPosterTile({super.key, required this.item, required this.onTap});
+  const ResultPosterTile({
+    super.key,
+    required this.item,
+    required this.onTap,
+    this.showPlatform = false,
+  });
 
   final MediaItem item;
   final VoidCallback onTap;
+
+  /// The platform the title streams on, as a small logo in the poster's
+  /// top-right corner ([ListingPlatformLogo]) — for a list not narrowed to a
+  /// platform. Needs a `ListingProvidersCubit` above it.
+  final bool showPlatform;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +48,12 @@ class ResultPosterTile extends StatelessWidget {
               showTypeTag: item.type == MediaType.tvShow,
               onTap: onTap,
             ),
+            if (showPlatform)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: ListingPlatformLogo(titleKey: item.key),
+                ),
+              ),
             // Unrated titles (no votes yet) have no badge, not a "0.0".
             if (item.voteAverage > 0)
               Positioned(

@@ -123,7 +123,7 @@ class ExploreBrowseSection extends StatelessWidget {
   /// How the grid's posters are dressed — the same as the section's carousel.
   ListingStyle get _style => switch (section) {
     ExploreSection.topToday => ListingStyle.ranked,
-    ExploreSection.topRated => ListingStyle.rating,
+    ExploreSection.topRated ||
     ExploreSection.hiddenGems => ListingStyle.detailed,
     ExploreSection.newReleases ||
     ExploreSection.comingSoon => ListingStyle.dated,

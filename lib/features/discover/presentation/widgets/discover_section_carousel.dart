@@ -93,7 +93,7 @@ class DiscoverSectionCarousel extends StatelessWidget {
 /// How a collection's grid posters are dressed — as in its carousel.
 ListingStyle _style(CarouselSection section) => switch (section) {
   CarouselSection.topRated ||
-  CarouselSection.finishedShows => ListingStyle.rating,
+  CarouselSection.finishedShows => ListingStyle.detailed,
   CarouselSection.comingSoon || CarouselSection.upcoming => ListingStyle.dated,
   _ => ListingStyle.plain,
 };

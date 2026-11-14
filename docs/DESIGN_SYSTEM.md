@@ -231,10 +231,11 @@ callback. Regla 17 de `CLAUDE.md`.
 
 **Listas de resultados — una sola cuadrícula.** `ResultsGrid`
 (`shared/widgets/results_grid.dart`): 3 columnas de pósters 2:3 sobre el margen
-de página, 12 de separación; la usan los resultados filtrados (C1) y todos los
+de página, 12 de separación entre columnas y 20 entre filas; la usan los resultados filtrados (C1) y todos los
 «Ver todo» (C1b). `ResultPosterTile` es la ficha de los resultados filtrados:
-póster con la valoración (abajo a la izquierda) y la etiqueta TV (arriba a la
-izquierda), y el título en una línea debajo con el año de estreno en otra. Bajo la barra superior el
+póster con la valoración (abajo a la izquierda), la etiqueta TV (arriba a la
+izquierda) y el logo de la plataforma (arriba a la derecha, si no hay una
+plataforma elegida), y el título en una línea debajo con el año de estreno en otra. Bajo la barra superior el
 contenido se disuelve con `ScrollEdgeFade`, y la última línea de la cabecera
 deja un margen antes de ese degradado.
 

@@ -10,6 +10,7 @@ import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../shared/widgets/explore_filter_sheet.dart';
+import '../../../../shared/cubit/listing_providers_cubit.dart';
 import '../cubit/filtered_list_cubit.dart';
 import '../widgets/filtered_list_content.dart';
 import '../widgets/filtered_list_filter_button.dart';
@@ -40,12 +41,20 @@ class FilteredListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => FilteredListCubit(
-        getIt<MediaRepository>(),
-        filter,
-        collectionSection: collectionSection,
-      )..load(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => FilteredListCubit(
+            getIt<MediaRepository>(),
+            filter,
+            collectionSection: collectionSection,
+          )..load(),
+        ),
+        // Which platform each result streams on (its logo, top-right).
+        BlocProvider(
+          create: (_) => ListingProvidersCubit(getIt<MediaRepository>()),
+        ),
+      ],
       child: _FilteredListView(title: title),
     );
   }

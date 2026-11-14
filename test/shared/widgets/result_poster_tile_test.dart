@@ -125,6 +125,10 @@ void main() {
     expect(find.byType(PosterBadge), findsNothing);
   });
 
+  testWidgets('rows are further apart than columns', (tester) async {
+    expect(ResultsGrid.rowGap, greaterThan(ResultsGrid.gap));
+  });
+
   testWidgets('the results grid is three columns on the page margin, with '
       'room for the caption', (tester) async {
     await tester.pumpWidget(
