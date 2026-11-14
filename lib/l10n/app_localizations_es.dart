@@ -524,7 +524,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get exploreNoResults => 'Sin resultados';
 
   @override
-  String get exploreTryAnotherTitle => 'Prueba con otro título';
+  String exploreNoResultsBody(String query) {
+    return 'No encontramos nada para «$query». Prueba con otro título, serie o persona.';
+  }
+
+  @override
+  String get exploreFilterTooltip => 'Filtros';
+
+  @override
+  String get exploreClearSearch => 'Limpiar búsqueda';
 
   @override
   String get exploreDefaultResultsTitle => 'Resultados';
