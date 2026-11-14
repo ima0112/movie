@@ -263,7 +263,7 @@ depuración (`/debug/components`) que los liste todos:
 3. **Tile de cuestionario/género** — default / seleccionado / deshabilitado
    (30% opacidad).
 4. **Botones** — primario (pill blanca), secundario (borde), texto/enlace
-   (ámbar: `AccentButton`, píldora ámbar con texto casi negro y siempre en una línea; solo la usa la tarjeta de gustos de Inicio y nunca va junto a un primario), destructivo (rojo), botón icono con estado.
+   (ámbar: `AccentButton`, píldora ámbar con texto casi negro siempre en una línea y con un tamaño `dense` (menos padding, etiqueta `bodySm`) para ir dentro de una tarjeta; solo la usa la tarjeta de gustos de Inicio y nunca va junto a un primario), destructivo (rojo), botón icono con estado.
 5. **Barra de tabs + FAB de Match** — 4 pestañas + botón circular elevado.
 6. **Tarjeta métrica** (Estadísticas) y barra horizontal de género.
 7. **Fila de biblioteca** (Mi lista / búsqueda / filmografía) — variantes

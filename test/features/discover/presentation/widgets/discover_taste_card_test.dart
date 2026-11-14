@@ -5,6 +5,9 @@ import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/entities/genre.dart';
+import 'package:movies/core/domain/entities/media_key.dart';
+import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
@@ -57,8 +60,8 @@ void main() {
     }
   }
 
-  testWidgets('shows with no profile and an empty My List, and goes away '
-      'once a usable profile exists', (tester) async {
+  testWidgets('shows with no usable taste profile, and goes away once one '
+      'exists', (tester) async {
     await pump(tester);
     await settle(tester);
     expect(find.text('Recommendations tailored to you'), findsOneWidget);
@@ -281,5 +284,52 @@ void main() {
     final title = tester.getRect(find.text('Recommendations tailored to you'));
     expect(posters.right, lessThanOrEqualTo(card.right));
     expect(posters.left, greaterThanOrEqualTo(title.right - 1));
+  });
+
+  testWidgets('saving titles (Favorites, Watch later, Watched) does not hide '
+      'it: that is not choosing tastes', (tester) async {
+    await pump(tester);
+    await settle(tester);
+    expect(find.text('Recommendations tailored to you'), findsOneWidget);
+
+    final library = getIt<UserLibraryRepository>();
+    const keys = [
+      MediaKey(type: MediaType.movie, tmdbId: 1),
+      MediaKey(type: MediaType.movie, tmdbId: 2),
+      MediaKey(type: MediaType.tvShow, tmdbId: 3),
+    ];
+    await library.upsert(
+      UserMediaEntry(key: keys[0], title: 'A', isFavorite: true),
+    );
+    await library.upsert(
+      UserMediaEntry(key: keys[1], title: 'B', isWatchLater: true),
+    );
+    await library.upsert(
+      UserMediaEntry(key: keys[2], title: 'C', watchedAt: DateTime(2026)),
+    );
+    await settle(tester);
+
+    expect(find.text('Recommendations tailored to you'), findsOneWidget);
+  });
+
+  testWidgets('the button is the in-card size: smaller than a screen\'s '
+      'button', (tester) async {
+    await pumpAt(tester, width: 390);
+
+    final dense = tester.getSize(find.byType(AccentButton)).height;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: Center(child: AccentButton(label: 'Go', fullWidth: false)),
+        ),
+      ),
+    );
+    final regular = tester.getSize(find.byType(AccentButton)).height;
+
+    expect(dense, lessThan(regular));
+    expect(dense, lessThan(48));
   });
 }

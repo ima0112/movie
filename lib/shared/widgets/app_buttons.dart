@@ -165,6 +165,7 @@ class AccentButton extends StatelessWidget {
     this.isLoading = false,
     this.isDisabled = false,
     this.fullWidth = true,
+    this.dense = false,
   });
 
   final String label;
@@ -173,6 +174,10 @@ class AccentButton extends StatelessWidget {
   final bool isLoading;
   final bool isDisabled;
   final bool fullWidth;
+
+  /// A smaller pill (less padding, `bodySm` semibold label) for a button that
+  /// sits inside a card, not at the foot of a screen.
+  final bool dense;
 
   @override
   Widget build(BuildContext context) {
@@ -183,6 +188,7 @@ class AccentButton extends StatelessWidget {
       isLoading: isLoading,
       isDisabled: isDisabled,
       fullWidth: fullWidth,
+      dense: dense,
       singleLine: true,
       backgroundColor: AppColors.accent,
       foregroundColor: AppColors.onAccent,
@@ -204,6 +210,7 @@ class _BaseButton extends StatelessWidget {
     this.isDisabled = false,
     this.fullWidth = true,
     this.singleLine = false,
+    this.dense = false,
   });
 
   final String label;
@@ -218,6 +225,9 @@ class _BaseButton extends StatelessWidget {
 
   /// Keep the label on one line (ellipsized) so the pill never grows taller.
   final bool singleLine;
+
+  /// Less padding and a `bodySm` label: the in-card size.
+  final bool dense;
 
   static const double _spinnerSize = 18;
   static const double _iconSize = 18;
@@ -236,9 +246,9 @@ class _BaseButton extends StatelessWidget {
         border: borderColor == null ? null : Border.all(color: borderColor!),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl,
-          vertical: AppSpacing.lg,
+        padding: EdgeInsets.symmetric(
+          horizontal: dense ? AppSpacing.lg : AppSpacing.xl,
+          vertical: dense ? AppSpacing.md : AppSpacing.lg,
         ),
         child: Center(
           widthFactor: fullWidth ? null : 1,
@@ -264,9 +274,11 @@ class _BaseButton extends StatelessWidget {
                         label,
                         maxLines: singleLine ? 1 : null,
                         overflow: singleLine ? TextOverflow.ellipsis : null,
-                        style: AppTextStyles.h3.copyWith(
-                          color: foregroundColor,
-                        ),
+                        style:
+                            (dense
+                                    ? AppTextStyles.bodySmStrong
+                                    : AppTextStyles.h3)
+                                .copyWith(color: foregroundColor),
                       ),
                     ),
                   ],
