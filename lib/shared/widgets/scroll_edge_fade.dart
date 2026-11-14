@@ -7,6 +7,13 @@ import 'package:flutter/material.dart';
 ///
 /// A mask on alpha, not a painted overlay: it works over any background and
 /// needs no color. The child still receives all touches.
+///
+/// The widget tree is the same whatever [top] and [bottom] are — including
+/// both 0, when the mask is simply all-opaque. Returning the bare child in
+/// that case would change the tree's structure whenever a fade appears or
+/// goes (the recent searches' bottom fade goes at the end of the list), and
+/// Flutter would then rebuild the child from scratch: a scrolling list under
+/// it would lose its position and jump back to the start.
 class ScrollEdgeFade extends StatelessWidget {
   const ScrollEdgeFade({
     super.key,
@@ -19,9 +26,11 @@ class ScrollEdgeFade extends StatelessWidget {
   final double top;
   final double bottom;
 
+  static const Color _opaque = Color(0xFFFFFFFF);
+  static const Color _clear = Color(0x00FFFFFF);
+
   @override
   Widget build(BuildContext context) {
-    if (top <= 0 && bottom <= 0) return child;
     return ShaderMask(
       blendMode: BlendMode.dstIn,
       shaderCallback: (bounds) {
@@ -36,11 +45,12 @@ class ScrollEdgeFade extends StatelessWidget {
         return LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: const [
-            Color(0x00FFFFFF),
-            Color(0xFFFFFFFF),
-            Color(0xFFFFFFFF),
-            Color(0x00FFFFFF),
+          // An edge with no fade is opaque all the way to it.
+          colors: [
+            top > 0 ? _clear : _opaque,
+            _opaque,
+            _opaque,
+            bottom > 0 ? _clear : _opaque,
           ],
           stops: [0, topStop, bottomStop, 1],
         ).createShader(bounds);

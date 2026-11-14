@@ -335,4 +335,36 @@ void main() {
       lessThanOrEqualTo(700 - bar - 16),
     );
   });
+
+  testWidgets('scrolling down to the end stays at the end: the list does not '
+      'jump back to the first row when the bottom fade goes', (tester) async {
+    await pump(tester, recents: many, height: 700, bottomInset: 100);
+    await focusField(tester);
+    ScrollableState scrollable() => tester.state<ScrollableState>(
+      find.descendant(
+        of: find.byType(ListView),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    final before = scrollable();
+    final max = before.position.maxScrollExtent;
+    expect(max, greaterThan(0));
+
+    // Like a finger: small steps all the way down, and a few more at the end.
+    for (var i = 0; i < 12; i++) {
+      await tester.drag(find.byType(ListView), const Offset(0, -80));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    await settle(tester);
+
+    expect(identical(scrollable(), before), isTrue); // never rebuilt
+    expect(scrollable().position.pixels, max); // still at the end
+    expect(find.text('search 10'), findsOneWidget);
+    expect(find.text('search 1'), findsNothing); // not back on the first
+    // And the fade is gone: nothing more below.
+    expect(
+      tester.widget<ScrollEdgeFade>(find.byType(ScrollEdgeFade)).bottom,
+      0,
+    );
+  });
 }
