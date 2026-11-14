@@ -10,7 +10,7 @@ import '../../core/theme/app_text_styles.dart';
 /// - [LibraryRowStatus.rated] — Favorites / Watch later: the ★ TMDB rating
 ///   and when it was added ("★ 8,2  Added today"). Either part may be absent.
 /// - [LibraryRowStatus.watched] — Watched: the user's own 1–5 stars and when
-///   they watched it ("★★★★☆  Watched 8 Nov, 2026").
+///   they watched it ("★★★★☆  8 Nov, 2026").
 sealed class LibraryRowStatus {
   const LibraryRowStatus();
 

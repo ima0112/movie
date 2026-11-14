@@ -66,4 +66,35 @@ void main() {
     expect(log, ['remove']);
     expect(find.text('Dune: Parte dos'), findsNothing);
   });
+
+  testWidgets('opens on the root navigator, so it covers a tab bar that lives '
+      'in a nested one', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Navigator(
+          onGenerateRoute: (_) => MaterialPageRoute<void>(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () => ActionsSheet.show(
+                  context,
+                  leading: ActionsSheet.posterSlot(null),
+                  title: 'Title',
+                  subtitle: '',
+                  actions: const [],
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    final sheet = tester.element(find.byType(ActionsSheet));
+    expect(Navigator.of(sheet), same(Navigator.of(sheet, rootNavigator: true)));
+  });
 }

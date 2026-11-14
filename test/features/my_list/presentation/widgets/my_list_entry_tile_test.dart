@@ -163,7 +163,7 @@ void main() {
     });
 
     testWidgets('Watched: the user\'s stars (not the TMDB rating) and the '
-        'watched date', (tester) async {
+        'bare watched date', (tester) async {
       await _pump(
         tester,
         UserMediaEntry(
@@ -178,7 +178,7 @@ void main() {
 
       expect(find.byIcon(AppIcons.starFill), findsNWidgets(4));
       expect(find.text('8.2'), findsNothing);
-      expect(find.text('Watched 8 Nov, 2026'), findsOneWidget);
+      expect(find.text('8 Nov, 2026'), findsOneWidget);
     });
 
     testWidgets('the three dots open the sheet of that tab; its red row '
