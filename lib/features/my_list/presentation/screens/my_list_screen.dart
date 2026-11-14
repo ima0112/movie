@@ -32,7 +32,7 @@ class MyListScreen extends StatelessWidget {
           child: Column(
             children: [
               const MyListTopBar(),
-              MyListTabs(userLibraryRepository: getIt<UserLibraryRepository>()),
+              const MyListTabs(),
               const SizedBox(height: AppSpacing.md),
               Expanded(
                 child: MyListBody(

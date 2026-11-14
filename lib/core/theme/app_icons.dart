@@ -37,8 +37,8 @@ class AppIcons {
   static const IconData compass = RemixIcons.compass_line;
   static const IconData compassFill = RemixIcons.compass_fill;
 
-  static const IconData list = RemixIcons.file_list_line;
-  static const IconData listFill = RemixIcons.file_list_fill;
+  static const IconData list = RemixIcons.bookmark_line;
+  static const IconData listFill = RemixIcons.bookmark_fill;
 
   static const IconData user = RemixIcons.user_line;
   static const IconData userFill = RemixIcons.user_fill;

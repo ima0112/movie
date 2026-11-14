@@ -20,7 +20,9 @@ void main() {
     testWidgets('no profile_path shows the name\'s initial over '
         'surfaceRaised, not an empty circle', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(home: ProfileImage(profilePath: null, name: 'Zendaya')),
+        const MaterialApp(
+          home: ProfileImage(profilePath: null, name: 'Zendaya'),
+        ),
       );
 
       expect(find.text('Z'), findsOneWidget);

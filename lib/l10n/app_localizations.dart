@@ -1466,12 +1466,6 @@ abstract class AppLocalizations {
   /// **'Hide what I\'ve watched'**
   String get myListHideWatchedToggle;
 
-  /// B4's segmented tab label with its own live count, e.g. "Favorites (12)". {label} is that LibraryTab's own localized label (LibraryTabLocalization.localizedLabel).
-  ///
-  /// In en, this message translates to:
-  /// **'{label} ({count})'**
-  String myListSegmentLabelWithCount(String label, int count);
-
   /// Shared across three spots: MyTastesCard's own header (B5), MyTastesInvitation's button label, and C5's AppBar title — same word, same screen, in all three.
   ///
   /// In en, this message translates to:

@@ -723,18 +723,6 @@
 
   "myListHideWatchedToggle": "Hide what I've watched",
 
-  "myListSegmentLabelWithCount": "{label} ({count})",
-  "@myListSegmentLabelWithCount": {
-    "description": "B4's segmented tab label with its own live count, e.g. \"Favorites (12)\". {label} is that LibraryTab's own localized label (LibraryTabLocalization.localizedLabel).",
-    "placeholders": {
-      "label": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
 
   "myTastesTitle": "My Tastes",
   "@myTastesTitle": {

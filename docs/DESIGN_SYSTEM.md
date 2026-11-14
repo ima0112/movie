@@ -165,7 +165,7 @@ regular/fill para los 8 conceptos que lo necesitan.
 | Cerrar | `close_line` |
 | Casa / Descubrir (inactivo/activo, tab bar) | `home_line` / `home_fill` |
 | Búsqueda / Explorar (inactivo/activo, tab bar) | `search_line` / `search_fill` |
-| Lista / Mi lista (inactivo/activo, tab bar) | `file_list_line` / `file_list_fill` |
+| Lista / Mi lista (inactivo/activo, tab bar) | `bookmark_line` / `bookmark_fill` |
 | Perfil / Tú (inactivo/activo, tab bar) | `user_line` / `user_fill` |
 | Ajustes | `settings_line` |
 | Estadísticas | `bar_chart_line` |
@@ -228,6 +228,8 @@ cualquier scroll (lista perezosa, `Column` en `SingleChildScrollView`,
 slivers). Un `loadKey` nuevo lo vuelve a armar (los filtros de los que
 depende el bloque). Es lógica de presentación pura; el trabajo de datos es el
 callback. Regla 17 de `CLAUDE.md`.
+
+**Estados vacíos / de error de una pestaña raíz** (`EmptyStateView`, `ErrorStateView`) van envueltos en `ClearOfTabBar` (`shared/widgets/clear_of_tab_bar.dart`): se centran en el espacio que deja libre la barra flotante, no en todo el cuerpo (que corre por debajo de ella). Las pantallas empujadas no lo necesitan.
 
 **Fechas completas — un solo formato.** `AppLocalizations.fullDate` (`lib/l10n/full_date_format.dart`): día, mes abreviado, coma y año — «12 Jan, 2026» en inglés, «12 ene, 2026» en español (cada idioma pone sus meses). Todo sitio que muestre una fecha completa (próximas fechas, estado de estreno, episodios, «marcar como visto») pasa por ahí; nunca `2026-5-25` ni «Jan 12, 2026» (lo vigila `full_date_format_test.dart`). Las formas cortas («Hoy», «Hace 3 días», «5 mar» en Mi lista) son otra cosa y conservan la suya.
 
