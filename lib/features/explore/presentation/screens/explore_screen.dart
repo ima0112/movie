@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/widgets/offline_banner_slot.dart';
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_segment.dart';
@@ -127,6 +128,7 @@ class _ExploreView extends StatelessWidget {
           bottom: false,
           child: Column(
             children: [
+              const OfflineBannerSlot(),
               ExploreSearchBar(
                 searchFocus: searchFocus,
                 focusToken: focusToken,

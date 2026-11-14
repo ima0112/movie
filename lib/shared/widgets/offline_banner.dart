@@ -6,15 +6,12 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 
-/// Persistent thin "Offline" banner.
+/// The "No internet connection" banner (`docs/SCREENS.md` G): a rounded box in
+/// the amber tint with a hairline, a wifi-off icon and the message in amber —
+/// a notice that the app is working from what it has, not an error.
 ///
-/// Source of truth: `docs/SCREENS.md` G ("Offline: persistent top banner
-/// 'Offline' + screens use local data when available."). Uses a neutral
-/// treatment (`surfaceRaised2` / `inkMuted`) rather than `danger` — being
-/// offline isn't an error here, the app keeps working from cached data.
-///
-/// Pure presentation — no feature dependency, everything comes in by
-/// parameter (there are none: the copy is fixed by the doc above).
+/// Pure presentation — the copy is fixed. `OfflineBannerSlot` decides when it
+/// shows.
 class OfflineBanner extends StatelessWidget {
   const OfflineBanner({super.key});
 
@@ -27,22 +24,24 @@ class OfflineBanner extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: _height),
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.surfaceRaised2,
+        color: AppColors.accentSoft,
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        border: Border.all(color: AppColors.lineStrong),
+        border: Border.all(color: AppColors.accentLine),
       ),
       child: Row(
         children: [
           const Icon(
             AppIcons.wifiOff,
             size: _iconSize,
-            color: AppColors.inkMuted,
+            color: AppColors.accent,
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
               context.l10n.offlineBannerMessage,
-              style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
+              style: AppTextStyles.bodySmToggle(
+                true,
+              ).copyWith(color: AppColors.accent),
             ),
           ),
         ],

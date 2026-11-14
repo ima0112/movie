@@ -483,3 +483,7 @@ not built yet.
 
 ## 10. Next step
 Movie detail screen.
+
+### Offline detection (no connectivity plugin)
+
+The app is "offline" when the **last TMDB request could not reach the server** (a connection error or timeout), and online again with the next request that gets any HTTP answer. `NetworkStatusInterceptor` (in the one `ApiClient`) reports each request to `NetworkStatus`; the global `ConnectivityCubit` mirrors it for the offline banner. Chosen over `connectivity_plus` to add no dependency: it reflects what matters (can we reach TMDB?), not whether a radio is on. The cost: it only notices once a request fails, and it doesn't retry by itself when the connection returns — the screens' "Retry" does.

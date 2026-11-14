@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/widgets/offline_banner_slot.dart';
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_segment.dart';
@@ -117,6 +118,7 @@ class _DiscoverViewState extends State<_DiscoverView> with RouteAware {
             child: Column(
               children: [
                 const DiscoverTopBar(),
+                const OfflineBannerSlot(),
                 MediaSegmentedControl(
                   // Floats over the halo: translucent, like the bottom bar.
                   glass: true,

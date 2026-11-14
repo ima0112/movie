@@ -689,7 +689,7 @@ abstract class AppLocalizations {
   /// OfflineBanner's persistent top banner text (docs/SCREENS.md G).
   ///
   /// In en, this message translates to:
-  /// **'Offline'**
+  /// **'No internet connection'**
   String get offlineBannerMessage;
 
   /// A2's finish() snackbar when saving the onboarding profile fails.

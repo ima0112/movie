@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/app/cubits/user_profile_cubit.dart';
+import 'package:movies/app/cubits/connectivity_cubit.dart';
 import 'package:movies/app/di.dart';
+import 'package:movies/core/network/network_status.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
@@ -104,14 +106,18 @@ void main() {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('es'),
-      home: MediaQuery(
-        data: const MediaQueryData(
-          size: Size(375, 667),
-          padding: EdgeInsets.only(top: 20, bottom: 0),
-          viewInsets: EdgeInsets.only(bottom: 300),
-          textScaler: TextScaler.linear(2),
+      home: BlocProvider(
+        // The root tabs read the connection (the app provides it globally).
+        create: (_) => ConnectivityCubit(NetworkStatus()),
+        child: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(375, 667),
+            padding: EdgeInsets.only(top: 20, bottom: 0),
+            viewInsets: EdgeInsets.only(bottom: 300),
+            textScaler: TextScaler.linear(2),
+          ),
+          child: child,
         ),
-        child: child,
       ),
     );
   }

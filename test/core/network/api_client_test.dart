@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/local/drift_settings_repository.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/network/api_client.dart';
+import 'package:movies/core/network/network_status.dart';
 import 'package:movies/core/persistence/app_database.dart';
 
 /// Records every request's `language`/`region` query parameters, so a
@@ -37,7 +38,7 @@ void main() {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(db.close);
       final settingsRepository = DriftSettingsRepository(db);
-      final apiClient = ApiClient(settingsRepository);
+      final apiClient = ApiClient(settingsRepository, NetworkStatus());
       final adapter = _RecordingAdapter();
       apiClient.dio.httpClientAdapter = adapter;
 
