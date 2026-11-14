@@ -72,6 +72,11 @@ class UserMediaEntries extends Table {
   BoolColumn get isWatchLater => boolean().withDefault(const Constant(false))();
   DateTimeColumn get watchedAt => dateTime().nullable()();
 
+  /// When the title joined Favorites / Watch later (schema v9) — null when it
+  /// isn't in that list, and for rows saved before this column existed.
+  DateTimeColumn get favoritedAt => dateTime().nullable()();
+  DateTimeColumn get watchLaterAt => dateTime().nullable()();
+
   /// 1–5, only meaningful once [watchedAt] is set — see
   /// `UserMediaEntry.markWatched`.
   IntColumn get rating => integer().nullable()();
@@ -279,12 +284,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, and to 9 when the favorite/watch-later dates were — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -316,6 +321,10 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 8) {
         await m.createTable(savedPeopleTable);
+      }
+      if (from < 9) {
+        await m.addColumn(userMediaEntries, userMediaEntries.favoritedAt);
+        await m.addColumn(userMediaEntries, userMediaEntries.watchLaterAt);
       }
     },
   );

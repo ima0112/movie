@@ -56,8 +56,16 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
   }
 
   @override
-  Future<Result<void>> upsert(UserMediaEntry entry) async {
+  Future<Result<void>> upsert(UserMediaEntry given) async {
     try {
+      final now = DateTime.now();
+      final stored = await (_db.select(
+        _db.userMediaEntries,
+      )..where((row) => _matchesKey(row, given.key))).getSingleOrNull();
+      final entry = given.withSaveDates(
+        stored == null ? null : _toEntry(stored),
+        now,
+      );
       await _db
           .into(_db.userMediaEntries)
           .insertOnConflictUpdate(
@@ -67,6 +75,8 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
               title: Value(entry.title),
               isFavorite: Value(entry.isFavorite),
               isWatchLater: Value(entry.isWatchLater),
+              favoritedAt: Value(entry.favoritedAt),
+              watchLaterAt: Value(entry.watchLaterAt),
               watchedAt: Value(entry.watchedAt),
               rating: Value(entry.rating),
               runtimeMinutes: Value(entry.runtimeMinutes),
@@ -76,7 +86,7 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
               posterPath: Value(entry.posterUrl),
               voteAverage: Value(entry.voteAverage),
               year: Value(entry.year),
-              updatedAt: DateTime.now(),
+              updatedAt: now,
             ),
           );
       return const Success(null);
@@ -200,6 +210,8 @@ class DriftUserLibraryRepository implements UserLibraryRepository {
       title: row.title ?? '',
       isFavorite: row.isFavorite,
       isWatchLater: row.isWatchLater,
+      favoritedAt: row.favoritedAt,
+      watchLaterAt: row.watchLaterAt,
       watchedAt: row.watchedAt,
       rating: row.rating,
       runtimeMinutes: row.runtimeMinutes,

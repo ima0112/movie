@@ -28,6 +28,19 @@ DriftUserLibraryRepository _repository() {
   return DriftUserLibraryRepository(db);
 }
 
+/// The entry as the repository hands it back: the same, plus the date it
+/// joined each list it is in (stamped on `upsert`).
+Matcher _savedAs(UserMediaEntry entry) => predicate<UserMediaEntry?>(
+  (stored) =>
+      stored != null &&
+      stored ==
+          entry.withSaveDates(
+            null,
+            stored.favoritedAt ?? stored.watchLaterAt ?? DateTime.now(),
+          ),
+  'the entry, stamped with its save dates',
+);
+
 void main() {
   group('DriftUserLibraryRepository', () {
     test('upsert followed by watchEntry emits the correct value', () async {
@@ -48,7 +61,7 @@ void main() {
       // straight past the initial `null`.
       final expectation = expectLater(
         repository.watchEntry(_dune),
-        emitsInOrder([null, entry]),
+        emitsInOrder([null, _savedAs(entry)]),
       );
       await Future<void>.delayed(Duration.zero);
 
@@ -70,7 +83,7 @@ void main() {
 
       final first = await repository.watchEntry(_dune).first;
 
-      expect(first, entry);
+      expect(first, _savedAs(entry));
     });
 
     test(
@@ -358,34 +371,36 @@ void main() {
         expect(entry.year, 2024);
       });
 
-      test('a concurrent favorite toggle is never lost to a simultaneous '
-          'catalog-snapshot refresh, regardless of which lands first',
-          () async {
-        final repository = _repository();
-        await repository.upsert(
-          const UserMediaEntry(title: 'Stale title', key: _dune),
-        );
+      test(
+        'a concurrent favorite toggle is never lost to a simultaneous '
+        'catalog-snapshot refresh, regardless of which lands first',
+        () async {
+          final repository = _repository();
+          await repository.upsert(
+            const UserMediaEntry(title: 'Stale title', key: _dune),
+          );
 
-        await Future.wait([
-          repository.updateCatalogSnapshot(
-            _dune,
-            title: 'Dune: Part Two',
-            genres: const [_action],
-            voteAverage: 8.4,
-            year: 2024,
-          ),
-          repository.upsert(
-            const UserMediaEntry(
-              title: 'Stale title',
-              key: _dune,
-              isFavorite: true,
+          await Future.wait([
+            repository.updateCatalogSnapshot(
+              _dune,
+              title: 'Dune: Part Two',
+              genres: const [_action],
+              voteAverage: 8.4,
+              year: 2024,
             ),
-          ),
-        ]);
+            repository.upsert(
+              const UserMediaEntry(
+                title: 'Stale title',
+                key: _dune,
+                isFavorite: true,
+              ),
+            ),
+          ]);
 
-        final entry = await repository.watchEntry(_dune).first;
-        expect(entry!.isFavorite, isTrue);
-      });
+          final entry = await repository.watchEntry(_dune).first;
+          expect(entry!.isFavorite, isTrue);
+        },
+      );
     });
 
     group('clearAll', () {
