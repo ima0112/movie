@@ -20,6 +20,7 @@ import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/features/section_listing/domain/listing_source.dart';
 import 'package:movies/features/section_listing/domain/listing_style.dart';
+import 'package:movies/features/section_listing/presentation/widgets/listing_context_pill.dart';
 import 'package:movies/features/section_listing/presentation/screens/section_listing_screen.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_card.dart';
@@ -146,16 +147,19 @@ void main() {
     expect(find.text('Comedy'), findsOneWidget);
     expect(find.text('100'), findsNothing);
     expect(find.text('Movies'), findsNothing);
-    // Amber background, black (onAccent) text.
+    // The app's selected-pill look: dark amber tint, amber hairline, amber
+    // text.
     final pill = tester.widget<Container>(
       find
           .ancestor(of: find.text('Comedy'), matching: find.byType(Container))
           .first,
     );
-    expect((pill.decoration! as BoxDecoration).color, AppColors.accent);
+    final decoration = pill.decoration! as BoxDecoration;
+    expect(decoration.color, AppColors.accentSoft);
+    expect((decoration.border! as Border).top.color, AppColors.accentLine);
     expect(
       tester.widget<Text>(find.text('Comedy')).style!.color,
-      AppColors.onAccent,
+      AppColors.accent,
     );
     expect(find.byIcon(AppIcons.sort), findsNothing); // off for now
     // Three posters share the first row.
@@ -210,15 +214,18 @@ void main() {
     expect(tester.getSize(find.byIcon(AppIcons.sort)).width, lessThan(24));
   });
 
-  testWidgets('Explore with no platform shows just the genre; Home shows '
-      'only the segment', (tester) async {
+  testWidgets('Explore with no platform shows just the genre; Home shows no '
+      'pill at all (not even the segment)', (tester) async {
     await pump(tester);
     expect(find.text('All genres'), findsOneWidget);
     expect(find.text('·'), findsNothing);
 
     await pump(tester, context: const ListingContext.home(MediaSegment.tvShow));
-    expect(find.text('TV Shows'), findsOneWidget);
+    expect(find.byType(ListingContextPill), findsNothing);
+    expect(find.text('TV Shows'), findsNothing);
     expect(find.textContaining('genres'), findsNothing);
+    // The grid starts right under the title bar, with its own top padding.
+    expect(find.byType(MediaCard), findsWidgets);
   });
 
   testWidgets('scrolling to the end loads the next page', (tester) async {

@@ -9,10 +9,11 @@ import '../../../../l10n/media_segment_localization.dart';
 import '../../../../shared/widgets/streaming_service_logo.dart';
 import '../../domain/listing_style.dart';
 
-/// The amber pill under the title that says what the screen the user came from
-/// had set. From Explore: the picked platform's logo (only when one was
-/// picked), a dot and the genre — or "All genres". From Home: the segment (All,
-/// Movies, TV Shows). Informational — it isn't a control. (No count: a listing
+/// The pill under the title (the app's selected-pill look: a dark amber tint,
+/// an amber hairline, amber text) that says what Explore had set: the picked
+/// platform's logo (only when one was picked), a dot and the genre — or "All
+/// genres". Home's "See all" has none (the segment isn't shown). Informational —
+/// it isn't a control. (No count: a listing
 /// is never longer than 100 titles.)
 class ListingContextPill extends StatelessWidget {
   const ListingContextPill({super.key, required this.listingContext});
@@ -34,8 +35,9 @@ class ListingContextPill extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: height),
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.accent,
+        color: AppColors.accentSoft,
         borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+        border: Border.all(color: AppColors.accentLine),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -57,9 +59,9 @@ class ListingContextPill extends StatelessWidget {
     );
   }
 
-  /// Black on the amber, like every amber control.
+  /// Amber on the dark amber tint, like every selected pill of the app.
   static final TextStyle _style = AppTextStyles.bodySmStrong.copyWith(
-    color: AppColors.onAccent,
+    color: AppColors.accent,
   );
 }
 
