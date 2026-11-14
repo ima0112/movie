@@ -6,55 +6,70 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../l10n/media_type_localization.dart';
-import '../../../../l10n/tv_status_localization.dart';
 import '../../../../shared/widgets/app_chip.dart';
 
-/// C1's "row of active filter chips, each with '×'" (`docs/SCREENS.md`
-/// C1). One chip per non-default [DiscoverFilter] dimension — tapping a
-/// chip clears just that dimension and reports the resulting filter via
-/// [onFilterChanged]; `sortBy` never gets a chip (there's always some
-/// sort active, so there's nothing to "clear").
+/// C1's row of active filters, one amber chip each with a "×" — a single line
+/// that scrolls sideways when it doesn't fit. Tapping a chip clears just that
+/// filter and reports the resulting filter via [onFilterChanged]. The sort and
+/// the kind of title (the segment) never get a chip. [providerNames] names the
+/// streaming-service chip (a service whose name isn't known yet has none).
 ///
-/// Renders nothing when [filter] is already [DiscoverFilter.isDefault].
+/// Renders nothing when no filter is set.
 class FilteredListChipsRow extends StatelessWidget {
   const FilteredListChipsRow({
     super.key,
     required this.filter,
+    required this.providerNames,
     required this.onFilterChanged,
   });
 
   final DiscoverFilter filter;
+  final Map<int, String> providerNames;
   final ValueChanged<DiscoverFilter> onFilterChanged;
+
+  static const double height = 40;
 
   @override
   Widget build(BuildContext context) {
     final chips = _activeChips(filter, context.l10n);
     if (chips.isEmpty) return const SizedBox.shrink();
 
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: [
-        for (final chip in chips)
-          AppChip(
-            label: chip.label,
-            state: ChipState.selected,
-            icon: AppIcons.close,
-            onTap: () => onFilterChanged(chip.remove()),
-          ),
-      ],
+    return SizedBox(
+      height: height,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.screenMargin,
+        ),
+        itemCount: chips.length,
+        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
+        itemBuilder: (context, index) {
+          final chip = chips[index];
+          return Center(
+            child: AppChip(
+              label: chip.label,
+              state: ChipState.selected,
+              icon: AppIcons.close,
+              onTap: () => onFilterChanged(chip.remove()),
+            ),
+          );
+        },
+      ),
     );
   }
 
   List<_ActiveChip> _activeChips(DiscoverFilter filter, AppLocalizations l10n) {
     final chips = <_ActiveChip>[];
 
-    if (filter.type != null) {
+    for (final id in filter.withWatchProviders) {
+      final name = providerNames[id];
+      if (name == null) continue;
       chips.add(
         _ActiveChip(
-          label: filter.type!.localizedPlural(l10n),
-          remove: () => filter.copyWith(type: () => null),
+          label: name,
+          remove: () => filter.copyWith(
+            withWatchProviders: Set.of(filter.withWatchProviders)..remove(id),
+          ),
         ),
       );
     }
@@ -82,10 +97,7 @@ class FilteredListChipsRow extends StatelessWidget {
     }
 
     if (filter.yearFrom != null || filter.yearTo != null) {
-      // 1950 is H8's own slider lower bound (`YearRangeFilter.minYear`);
-      // redefined locally rather than imported across features, matching
-      // how `YearRangeFilter` itself redefines `TasteYearSlider`'s copy.
-      final from = filter.yearFrom ?? 1950;
+      final from = filter.yearFrom ?? _minYear;
       final to = filter.yearTo ?? DateTime.now().year;
       chips.add(
         _ActiveChip(
@@ -107,26 +119,11 @@ class FilteredListChipsRow extends StatelessWidget {
       );
     }
 
-    if (filter.maxRuntimeMinutes != null) {
-      chips.add(
-        _ActiveChip(
-          label: l10n.filteredListMaxRuntimeChip(filter.maxRuntimeMinutes!),
-          remove: () => filter.copyWith(maxRuntimeMinutes: () => null),
-        ),
-      );
-    }
-
-    if (filter.tvStatus != null) {
-      chips.add(
-        _ActiveChip(
-          label: filter.tvStatus!.localizedLabel(l10n),
-          remove: () => filter.copyWith(tvStatus: () => null),
-        ),
-      );
-    }
-
     return chips;
   }
+
+  /// H8's year slider's lower bound.
+  static const int _minYear = 1950;
 }
 
 class _ActiveChip {

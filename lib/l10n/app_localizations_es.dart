@@ -577,10 +577,25 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get filteredListEmptyTitle => 'Nada coincide con estos filtros';
+  String get filteredListEmptyTitle => 'Nada con esos filtros';
 
   @override
-  String get filteredListEmptyBody => 'Prueba a ajustar tus filtros.';
+  String get filteredListClearFilters => 'Limpiar filtros';
+
+  @override
+  String filteredListCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count resultados',
+      one: '1 resultado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filteredListEmptyBody =>
+      'Prueba con menos filtros o una nota mínima más baja.';
 
   @override
   String filteredListCountLine(int count, String sortLabel) {

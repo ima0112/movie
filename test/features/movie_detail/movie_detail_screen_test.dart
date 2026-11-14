@@ -239,7 +239,8 @@ void main() {
     // and Untitled Sci-Fi Project are FakeMediaRepository's only
     // three *movies* carrying Science Fiction.
     expect(find.text('Science Fiction'), findsWidgets);
-    expect(find.text('3 results · Popularity'), findsOneWidget);
+    expect(find.text('3 results'), findsOneWidget);
+    expect(find.text('Popular'), findsOneWidget);
   });
 
   testWidgets(

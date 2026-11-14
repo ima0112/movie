@@ -1115,13 +1115,25 @@ abstract class AppLocalizations {
   /// C1's empty-filtered-state headline (docs/SCREENS.md C1: "empty ('Nothing matches these filters' + 'Reset')").
   ///
   /// In en, this message translates to:
-  /// **'Nothing matches these filters'**
+  /// **'Nothing with those filters'**
   String get filteredListEmptyTitle;
+
+  /// No description provided for @filteredListClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get filteredListClearFilters;
+
+  /// C1's count of results under the filter chips (TMDB's total). Not ICU-pluralized in English, like the other counts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} results'**
+  String filteredListCount(int count);
 
   /// No description provided for @filteredListEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Try adjusting your filters.'**
+  /// **'Try fewer filters or a lower minimum rating.'**
   String get filteredListEmptyBody;
 
   /// C1's own count/sort line (docs/SCREENS.md C1: "line '312 results · Popularity'"). {sortLabel} is DiscoverSortBy's own localized label. Deliberately not ICU-pluralized in English — "1 results" is this control's existing (if ungrammatical) behavior, preserved as-is by this mechanical migration; a locale introducing this string for the first time (e.g. Spanish) is free to pluralize correctly since there's no prior behavior of its own to preserve.

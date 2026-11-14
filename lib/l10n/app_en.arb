@@ -534,11 +534,17 @@
       }
     }
   },
-  "filteredListEmptyTitle": "Nothing matches these filters",
+  "filteredListEmptyTitle": "Nothing with those filters",
   "@filteredListEmptyTitle": {
     "description": "C1's empty-filtered-state headline (docs/SCREENS.md C1: \"empty ('Nothing matches these filters' + 'Reset')\")."
   },
-  "filteredListEmptyBody": "Try adjusting your filters.",
+  "filteredListClearFilters": "Clear filters",
+  "filteredListCount": "{count} results",
+  "@filteredListCount": {
+    "description": "C1's count of results under the filter chips (TMDB's total). Not ICU-pluralized in English, like the other counts.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "filteredListEmptyBody": "Try fewer filters or a lower minimum rating.",
   "filteredListCountLine": "{count} results · {sortLabel}",
   "@filteredListCountLine": {
     "description": "C1's own count/sort line (docs/SCREENS.md C1: \"line '312 results · Popularity'\"). {sortLabel} is DiscoverSortBy's own localized label. Deliberately not ICU-pluralized in English — \"1 results\" is this control's existing (if ungrammatical) behavior, preserved as-is by this mechanical migration; a locale introducing this string for the first time (e.g. Spanish) is free to pluralize correctly since there's no prior behavior of its own to preserve.",

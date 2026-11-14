@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
+import 'package:movies/core/domain/entities/discover_page.dart';
+import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/features/filtered_list/presentation/cubit/filtered_list_cubit.dart';
@@ -169,5 +172,80 @@ void main() {
       );
       await cubit.close();
     });
+
+    test('the count is TMDB\'s total, and more pages are requested once what '
+        'was fetched is revealed', () async {
+      final repo = _PagedRepository(total: 12, perPage: 5);
+      final cubit = FilteredListCubit(repo, const DiscoverFilter());
+
+      await cubit.load();
+      var loaded = cubit.state as FilteredListLoaded;
+      expect(loaded.totalCount, 12);
+      expect(loaded.allItems, hasLength(5));
+      expect(loaded.hasMore, isTrue);
+
+      // Everything fetched is already revealed, so each scroll to the end
+      // asks for the next page.
+      await cubit.loadMore();
+      expect(repo.pagesRequested, [1, 2]);
+      await cubit.loadMore();
+      loaded = cubit.state as FilteredListLoaded;
+      expect(repo.pagesRequested, [1, 2, 3]);
+      expect(loaded.allItems, hasLength(12));
+      expect(loaded.hasMore, isFalse);
+      expect(loaded.totalCount, 12);
+
+      await cubit.close();
+    });
+
+    test('the names of the streaming services in the filter are loaded for '
+        'their chips', () async {
+      final cubit = FilteredListCubit(
+        FakeMediaRepository(),
+        const DiscoverFilter(withWatchProviders: {8}),
+      );
+
+      await cubit.load();
+
+      expect(cubit.state.providerNames[8], 'Netflix');
+      await cubit.close();
+    });
   });
+}
+
+/// A repository whose `/discover` has [total] results in pages of [perPage].
+class _PagedRepository extends FakeMediaRepository {
+  _PagedRepository({required this.total, required this.perPage});
+
+  final int total;
+  final int perPage;
+  final pagesRequested = <int>[];
+
+  @override
+  Future<Result<DiscoverPage>> discoverPage(
+    DiscoverFilter filter, {
+    int page = 1,
+  }) async {
+    pagesRequested.add(page);
+    final start = (page - 1) * perPage;
+    final ids = [for (var i = start; i < start + perPage && i < total; i++) i];
+    return Success(
+      DiscoverPage(
+        items: [
+          for (final id in ids)
+            Movie(
+              id: 1000 + id,
+              title: 'Movie $id',
+              posterUrl: null,
+              genres: const [],
+              releaseDate: null,
+              voteAverage: 7,
+            ),
+        ],
+        page: page,
+        totalPages: (total / perPage).ceil(),
+        totalResults: total,
+      ),
+    );
+  }
 }

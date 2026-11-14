@@ -8,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
+import 'filtered_list_sort_sheet.dart';
 import '../cubit/filtered_list_cubit.dart';
 import '../cubit/filtered_list_state.dart';
 import 'filtered_list_chips_row.dart';
@@ -15,40 +16,58 @@ import 'filtered_list_count_line.dart';
 import 'filtered_list_grid.dart';
 import 'filtered_list_grid_skeleton.dart';
 
-/// C1's states — `docs/SCREENS.md` C1: "grid skeleton, empty..., error,
-/// offline." (Offline isn't modeled: no connectivity detection exists
-/// anywhere in the app yet, not something specific to this screen.)
+/// C1's body: the active-filter chips (always there while something is set,
+/// also on the empty and error states, so a filter can be dropped right there)
+/// and under them the state — `docs/SCREENS.md` C1: "grid skeleton, empty...,
+/// error, offline." (Offline isn't modeled: no connectivity detection exists
+/// anywhere in the app yet.)
 ///
-/// Only subscribes to *which* [FilteredListState] subtype is current
-/// (CLAUDE.md rule 9) — `loadMore()` never changes that (it re-emits
-/// another [FilteredListLoaded]), so revealing another page never
-/// rebuilds this switch; [_LoadedContent]'s own children each carry
-/// their own narrower selector for the slice they actually need.
+/// The state switch only subscribes to *which* [FilteredListState] subtype is
+/// current (CLAUDE.md rule 9) — `loadMore()` never changes that, so revealing
+/// another page never rebuilds it; each child carries its own narrower
+/// selector for the slice it needs.
 class FilteredListContent extends StatelessWidget {
   const FilteredListContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        _ChipsRow(),
+        Expanded(child: _States()),
+      ],
+    );
+  }
+}
+
+class _States extends StatelessWidget {
+  const _States();
 
   @override
   Widget build(BuildContext context) {
     return BlocSelector<FilteredListCubit, FilteredListState, Type>(
       selector: (state) => state.runtimeType,
       builder: (context, _) {
-        final state = context.read<FilteredListCubit>().state;
+        final cubit = context.read<FilteredListCubit>();
+        final state = cubit.state;
         return switch (state) {
           FilteredListInitial() ||
           FilteredListLoading() => const FilteredListGridSkeleton(),
           FilteredListError(:final reason) => ErrorStateView(
             title: context.l10n.commonCouldntLoad,
             body: reason.localizedMessage(context.l10n),
-            onRetry: () => context.read<FilteredListCubit>().retry(),
+            onRetry: cubit.retry,
           ),
           FilteredListLoaded() when state.allItems.isEmpty => EmptyStateView(
-            icon: AppIcons.filter,
+            icon: AppIcons.search,
             title: context.l10n.filteredListEmptyTitle,
             body: context.l10n.filteredListEmptyBody,
-            ctaLabel: state.filter.isDefault ? null : context.l10n.commonReset,
-            onCtaTap: () => context.read<FilteredListCubit>().updateFilter(
-              const DiscoverFilter(),
-            ),
+            ctaLabel: state.filter.activeFilterCount == 0
+                ? null
+                : context.l10n.filteredListClearFilters,
+            // Back to every title of the segment, most popular first.
+            onCtaTap: () =>
+                cubit.updateFilter(DiscoverFilter(type: state.filter.type)),
           ),
           FilteredListLoaded() => const _LoadedContent(),
         };
@@ -57,33 +76,25 @@ class FilteredListContent extends StatelessWidget {
   }
 }
 
-/// Built once per Loading→Loaded transition — never subscribes to
-/// [FilteredListCubit] itself, so it never rebuilds on its own; each
-/// child below manages its own narrow subscription instead.
+/// Built once per Loading→Loaded transition — never subscribes to the Cubit
+/// itself; each child manages its own narrow subscription instead.
 class _LoadedContent extends StatelessWidget {
   const _LoadedContent();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl,
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.screenMargin,
             AppSpacing.md,
-            AppSpacing.xl,
+            AppSpacing.screenMargin,
             0,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _ChipsRow(),
-              const SizedBox(height: AppSpacing.sm),
-              const _CountLine(),
-            ],
-          ),
+          child: _CountLine(),
         ),
-        const Expanded(child: _Grid()),
+        Expanded(child: _Grid()),
       ],
     );
   }
@@ -94,10 +105,15 @@ class _ChipsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<FilteredListCubit, FilteredListState, DiscoverFilter>(
-      selector: (state) => state.filter,
-      builder: (context, filter) => FilteredListChipsRow(
-        filter: filter,
+    return BlocSelector<
+      FilteredListCubit,
+      FilteredListState,
+      (DiscoverFilter, Map<int, String>)
+    >(
+      selector: (state) => (state.filter, state.providerNames),
+      builder: (context, data) => FilteredListChipsRow(
+        filter: data.$1,
+        providerNames: data.$2,
         onFilterChanged: context.read<FilteredListCubit>().updateFilter,
       ),
     );
@@ -121,8 +137,23 @@ class _CountLine extends StatelessWidget {
         ),
         _ => (0, state.filter.sortBy),
       },
-      builder: (context, data) =>
-          FilteredListCountLine(count: data.$1, sortBy: data.$2),
+      builder: (context, data) => FilteredListCountLine(
+        count: data.$1,
+        sortBy: data.$2,
+        onSortTap: () => _openSortSheet(context),
+      ),
+    );
+  }
+
+  void _openSortSheet(BuildContext context) {
+    final cubit = context.read<FilteredListCubit>();
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => FilteredListSortSheet(
+        selected: cubit.state.filter.sortBy,
+        onSelected: (sort) =>
+            cubit.updateFilter(cubit.state.filter.copyWith(sortBy: sort)),
+      ),
     );
   }
 }
