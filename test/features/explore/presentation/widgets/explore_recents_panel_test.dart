@@ -208,24 +208,53 @@ void main() {
     expect(find.text('search 10'), findsOneWidget); // the last is reachable
   });
 
-  testWidgets('it is as tall as its rows, up to the room the screen leaves', (
+  testWidgets('it has a fixed size — five and a half rows — however many '
+      'searches there are, leaving page under it to tap', (tester) async {
+    double panelBottom() {
+      // The panel ends where its scrolling list ends.
+      return tester.getRect(find.byType(ListView)).bottom;
+    }
+
+    const bar = 100.0;
+    await pump(tester, recents: many, height: 900, bottomInset: bar);
+    await focusField(tester);
+    final tenRows = panelBottom();
+    final header = tester.getTopLeft(find.text('RECENT')).dy;
+    // Header + 5.5 rows: not the ten.
+    expect(
+      tenRows - header,
+      lessThan(RecentSearchRow.height * (ExploreRecentsPanel.visibleRows + 1)),
+    );
+    // Plenty of dimmed page left under it, above the bar.
+    expect(900 - bar - tenRows, greaterThan(ExploreRecentsPanel.minDimBelow));
+
+    // Fewer searches than fit: only as tall as they are.
+    await pump(tester, recents: ['a', 'b'], height: 900, bottomInset: bar);
+    await focusField(tester);
+    expect(panelBottom(), lessThan(tenRows));
+  });
+
+  testWidgets('a tap on the page just under the panel dismisses it', (
     tester,
   ) async {
-    // Few recents on a tall screen: only as tall as they are.
-    await pump(tester, recents: ['a', 'b'], height: 900);
+    await pump(tester, recents: many, height: 900, bottomInset: 100);
     await focusField(tester);
-    final few =
-        tester.getBottomLeft(find.byType(RecentSearchRow).last).dy -
-        tester.getTopLeft(find.text('RECENT')).dy;
-    expect(few, lessThan(2 * RecentSearchRow.height + 80));
+    final under = tester.getRect(find.byType(ListView)).bottom + 40;
 
-    // Many recents on a short screen (keyboard up): capped, never past the
-    // bottom of the screen.
+    await tester.tapAt(Offset(195, under));
+    await settle(tester);
+
+    expect(focus.hasFocus, isFalse);
+    expect(find.text('RECENT'), findsNothing);
+  });
+
+  testWidgets('on a short screen it shrinks, still leaving the bar and room '
+      'to tap', (tester) async {
     await pump(tester, recents: many, height: 480);
     await focusField(tester);
     expect(
       tester.getRect(find.byType(ListView)).bottom,
-      lessThanOrEqualTo(480 - 16),
+      lessThanOrEqualTo(480 - 16 - ExploreRecentsPanel.minDimBelow),
     );
   });
 
