@@ -1066,6 +1066,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mediaSimilarTitle => 'Similares';
 
   @override
+  String get personDetailSave => 'Guardar en Mi lista';
+
+  @override
   String get mediaDetailShare => 'Compartir';
 
   @override

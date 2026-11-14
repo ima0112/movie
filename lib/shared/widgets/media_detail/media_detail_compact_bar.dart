@@ -17,13 +17,22 @@ import '../../../l10n/l10n_extension.dart';
 /// it in, so a scroll-driven rebuild never touches the rest of D1/D2 and
 /// this widget itself needs no Cubit awareness at all.
 class MediaDetailCompactBar extends StatelessWidget {
-  const MediaDetailCompactBar({super.key, required this.title, this.onShare});
+  const MediaDetailCompactBar({
+    super.key,
+    required this.title,
+    this.onShare,
+    this.trailing,
+  });
 
   final String title;
 
   /// Shows a Share action at the end of the bar (D1/D2: their Share circle
   /// has scrolled away by now). `null` for screens with no share.
   final VoidCallback? onShare;
+
+  /// Any other action at the end of the bar (D3's Save), a 48 px-wide control.
+  /// Replaces the Share slot; with neither, a spacer keeps the title centered.
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +65,8 @@ class MediaDetailCompactBar extends StatelessWidget {
                 tooltip: context.l10n.mediaDetailShare,
                 icon: const Icon(AppIcons.share, color: AppColors.ink),
               )
+            else if (trailing case final trailing?)
+              trailing
             else
               // As wide as the back button, so the title stays centered.
               const SizedBox(width: kMinInteractiveDimension),
