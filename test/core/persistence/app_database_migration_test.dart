@@ -3,12 +3,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/persistence/app_database.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite3;
 
-/// The one thing the later migration steps need of an older database: the
-/// table whose columns they add (its other columns don't matter here).
-void _addLibraryTable(sqlite3.Database raw) => raw.execute(
-  'CREATE TABLE user_media_entries ('
-  'media_type TEXT NOT NULL, tmdb_id INTEGER NOT NULL, '
-  'PRIMARY KEY (media_type, tmdb_id));',
+/// What the later migration steps need of an older database: the tables whose
+/// columns they add (their other columns don't matter here).
+void _addLibraryTable(sqlite3.Database raw) {
+  raw.execute(
+    'CREATE TABLE user_media_entries ('
+    'media_type TEXT NOT NULL, tmdb_id INTEGER NOT NULL, '
+    'PRIMARY KEY (media_type, tmdb_id));',
+  );
+  _addTasteTable(raw);
+}
+
+void _addTasteTable(sqlite3.Database raw) => raw.execute(
+  'CREATE TABLE taste_profile_table (id INTEGER NOT NULL DEFAULT 0, '
+  'PRIMARY KEY (id));',
 );
 
 void main() {
@@ -87,6 +95,7 @@ void main() {
         "INSERT INTO user_media_entries (media_type, tmdb_id, title, "
         "is_favorite, updated_at) VALUES ('movie', 1, 'Dune', 1, 0);",
       );
+      _addTasteTable(raw);
       raw.execute('PRAGMA user_version = 8;');
 
       final db = AppDatabase.forTesting(NativeDatabase.opened(raw));

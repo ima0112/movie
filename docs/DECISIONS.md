@@ -199,7 +199,7 @@ What actually shipped, and where it diverges from the table above:
 - Feed Stats and the taste profile's implicit signals.
 
 ### `TasteProfile`
-- Fields: `likedGenres`, `vetoedGenres`, `likedVibes`, `yearFrom`, `updatedAt`. Local (same store as `my_list`).
+- Fields: `likedGenres`, `vetoedGenres`, `likedVibes`, `yearFrom`, `yearTo` (null = up to today), `preferredType` (movie / TV show / null = both), `platformIds` (TMDB provider ids), `updatedAt`. Local (same store as `my_list`).
 - Uses **our own normalized genres** (Action, Comedy, Drama…) that map to TMDB's movie and TV genres.
 - Fed from: (a) optional onboarding, (b) Settings → My Tastes. **Not** fed from the quiz (E2) or the Matcher's questionnaire — see `docs/decisions/quiz-answers-not-saved-to-profile.md`; the quiz asks for vetoes, not favorite genres, so there's no clean mapping back into `likedGenres`.
 - Implicit signals from `my_list`: favorites and watched items rated ≥ 4 reinforce genres; items rated ≤ 2 subtract. They never replace the explicit profile, only fine-tune it.
