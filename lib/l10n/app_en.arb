@@ -665,14 +665,41 @@
     }
   },
 
-  "libraryRowDateToday": "Today",
-  "libraryRowDateYesterday": "Yesterday",
-  "libraryRowDateDaysAgo": "{count} days ago",
-  "@libraryRowDateDaysAgo": {
-    "description": "LibraryRow's relative watched-date, for 2–6 days ago (docs/SCREENS.md B4's \"short date\"). This control's own switch never produces count == 1 (that's the separate libraryRowDateYesterday branch), so there's deliberately no ICU plural rule here — a locale is still free to inflect {count} itself however it needs within this one template.",
+  "libraryRowAddedToday": "Added today",
+  "libraryRowAddedYesterday": "Added yesterday",
+  "libraryRowAddedDaysAgo": "Added {count} days ago",
+  "@libraryRowAddedDaysAgo": {
+    "description": "A Favorites / Watch later row's line, for 2–6 days after the title was added (docs/SCREENS.md B4). Never called with 1 (that is libraryRowAddedYesterday).",
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "libraryRowAddedWeeksAgo": "Added {count, plural, =1{1 week} other{{count} weeks}} ago",
+  "@libraryRowAddedWeeksAgo": {
+    "description": "The same line for 1–4 weeks after the title was added.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "libraryRowAddedOn": "Added {date}",
+  "@libraryRowAddedOn": {
+    "description": "The same line once more than 4 weeks have passed. {date} is the app's full date (12 Jan, 2026).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "libraryRowWatchedOn": "Watched {date}",
+  "@libraryRowWatchedOn": {
+    "description": "A Watched row's line, next to the stars. {date} is the app's full date (12 Jan, 2026).",
+    "placeholders": {
+      "date": {
+        "type": "String"
       }
     }
   },

@@ -7,7 +7,6 @@ import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/features/my_list/presentation/widgets/library_row_swipeable.dart';
 import 'package:movies/l10n/app_localizations.dart';
-import 'package:movies/shared/widgets/library_row.dart';
 
 /// Manual-verification step (swipe left → remove + Undo) made automatic
 /// and repeatable, the same way `movie_detail_screen_test.dart` covers
@@ -41,7 +40,6 @@ void main() {
             posterUrl: null,
             title: 'Dune: Part Two',
             metadata: '2024 · Movie · 2 h 46 min',
-            trailing: const LibraryRowTrailing.chevron(),
           ),
         ),
       ),
