@@ -1,4 +1,6 @@
-import '../../../core/domain/entities/genre.dart';
+import '../entities/genre.dart';
+import '../entities/user_media_entry.dart';
+import 'viewer_label.dart';
 
 /// The library-wide statistics C4 ("Stats") shows.
 ///
@@ -25,6 +27,12 @@ class LibraryStats {
     required this.topGenres,
     required this.mostWatchedYear,
     required this.monthlyActivity,
+    this.genreTotal = 0,
+    this.recentlyWatched = const [],
+    this.weeklyStreak = 0,
+    this.favoritesCount = 0,
+    this.watchLaterCount = 0,
+    this.viewerLabel,
   }) : assert(
          monthlyActivity.length == 12,
          'monthlyActivity must have exactly 12 values',
@@ -69,6 +77,42 @@ class LibraryStats {
   /// watched in that month.
   final List<int> monthlyActivity;
 
+  /// Every genre tag counted (a title with 3 genres adds 3) — what
+  /// [genreShareOf] divides by, so the shares of all genres sum to 100.
+  final int genreTotal;
+
+  /// The last watched titles, newest first (at most
+  /// [recentlyWatchedLimit]) — You's "Recently watched" poster row.
+  final List<UserMediaEntry> recentlyWatched;
+
+  /// Consecutive weeks (Monday to Sunday) with something watched, ending this
+  /// week — or last week, so a streak isn't lost just because this week has
+  /// not had its title yet.
+  final int weeklyStreak;
+
+  /// How many titles are in Favorites / Watch later (of the type filtered).
+  final int favoritesCount;
+  final int watchLaterCount;
+
+  /// What the watch history says the user is, `null` with nothing watched.
+  final ViewerLabel? viewerLabel;
+
+  static const int recentlyWatchedLimit = 6;
+
+  int get watchedCount => moviesWatched + tvShowsWatched;
+
+  /// Movie + estimated TV hours — the single figure You shows.
+  double get totalHours => movieHours + estimatedTvHours;
+
+  /// Titles watched this month and the month before (the last two cells of
+  /// [monthlyActivity]).
+  int get watchedThisMonth => monthlyActivity[11];
+  int get watchedLastMonth => monthlyActivity[10];
+
+  /// [count] as a whole percent of every genre counted (0 with none counted).
+  int genreShareOf(int count) =>
+      genreTotal == 0 ? 0 : (count * 100 / genreTotal).round();
+
   @override
   bool operator ==(Object other) =>
       other is LibraryStats &&
@@ -79,7 +123,13 @@ class LibraryStats {
       other.averageRating == averageRating &&
       _listEquals(other.topGenres, topGenres) &&
       other.mostWatchedYear == mostWatchedYear &&
-      _listEquals(other.monthlyActivity, monthlyActivity);
+      _listEquals(other.monthlyActivity, monthlyActivity) &&
+      other.genreTotal == genreTotal &&
+      _listEquals(other.recentlyWatched, recentlyWatched) &&
+      other.weeklyStreak == weeklyStreak &&
+      other.favoritesCount == favoritesCount &&
+      other.watchLaterCount == watchLaterCount &&
+      other.viewerLabel == viewerLabel;
 
   @override
   int get hashCode => Object.hash(
@@ -91,6 +141,12 @@ class LibraryStats {
     Object.hashAll(topGenres),
     mostWatchedYear,
     Object.hashAll(monthlyActivity),
+    genreTotal,
+    Object.hashAll(recentlyWatched),
+    weeklyStreak,
+    favoritesCount,
+    watchLaterCount,
+    viewerLabel,
   );
 
   @override
@@ -99,7 +155,8 @@ class LibraryStats {
       'tvShowsWatched: $tvShowsWatched, movieHours: $movieHours, '
       'estimatedTvHours: $estimatedTvHours, averageRating: $averageRating, '
       'topGenres: $topGenres, mostWatchedYear: $mostWatchedYear, '
-      'monthlyActivity: $monthlyActivity)';
+      'monthlyActivity: $monthlyActivity, genreTotal: $genreTotal, '
+      'weeklyStreak: $weeklyStreak, viewerLabel: $viewerLabel)';
 }
 
 /// Order-sensitive list content equality — [topGenres] and
