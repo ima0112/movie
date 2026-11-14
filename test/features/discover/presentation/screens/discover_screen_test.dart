@@ -13,6 +13,7 @@ import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/discover/presentation/screens/discover_screen.dart';
 import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/shared/widgets/media_card.dart';
 
 final recent = InMemoryRecentlyViewedRepository();
 
@@ -99,7 +100,16 @@ void main() {
         .evaluate()
         .length;
 
-    await tester.tap(find.byIcon(AppIcons.watchLater).first);
+    // The banner in focus (the neighbours are built too: the previous one
+    // comes first in the tree).
+    await tester.tap(
+      find.descendant(
+        of: find.byWidgetPredicate(
+          (w) => w is MediaCard && w.title == 'Dune: Part Two',
+        ),
+        matching: find.byIcon(AppIcons.watchLater),
+      ),
+    );
     // The write goes through the repository and comes back on its stream.
     await tester.pumpAndSettle();
 

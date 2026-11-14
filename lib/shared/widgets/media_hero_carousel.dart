@@ -21,19 +21,27 @@ String _heroMetadata(MediaItem item, AppLocalizations l10n) {
 }
 
 /// The Discover hero (`docs/SCREENS.md` B1): big snapping cards in a row that
-/// **loops** — after the last banner the first comes back.
+/// **loops** — after the last banner the first comes back — with the banner in
+/// focus **centered and in full size** and its neighbours peeking in on both
+/// sides, smaller ([neighborScale]) and dimmer ([neighborOpacity]).
 ///
-/// Layout: the first card starts on the page's [AppSpacing.screenMargin]
-/// like everything else on the screen, cards are [AppSpacing.md] apart, and
-/// the next card peeks in by [_peek] on the right. The card is
-/// [MediaCardSize.hero]'s 330 px wide, narrowed on small phones so the
-/// peek never disappears.
+/// The zoom follows the scroll: each card's scale and opacity are worked out
+/// from its distance to the page being shown (`PageController.page`), so it
+/// grows as it nears the center and shrinks as it leaves, in step with the
+/// finger — not a timed animation. With the system's "reduce motion" on, the
+/// scale stays 1 for every card (the dimming, which moves nothing, stays).
+/// Neighbours are shrunk, not the center enlarged, so the hero's height is
+/// always [MediaCardSize.hero]'s and nothing below it shifts.
+///
+/// Layout: the card is 78% of the page's width (at most [MediaCardSize.hero]'s
+/// 330 px) and [AppSpacing.md] apart from the next; every card opens its detail
+/// on tap, the neighbours included.
 ///
 /// Pure presentation, no Bloc: [saveButtonBuilder] lets the caller put a
 /// button (with its own narrow subscription) on each card without this
-/// carousel, or any other card, rebuilding for it (CLAUDE.md rule 9).
-/// Give it a `ValueKey` that changes with the content (the segment) so a
-/// new list starts again at its first banner.
+/// carousel, or any other card, rebuilding for it (CLAUDE.md rule 9). Only the
+/// hero itself repaints as it scrolls. Give it a `ValueKey` that changes with
+/// the content (the segment) so a new list starts again at its first banner.
 class MediaHeroCarousel extends StatefulWidget {
   const MediaHeroCarousel({
     super.key,
@@ -52,7 +60,14 @@ class MediaHeroCarousel extends StatefulWidget {
   final void Function(MediaItem item)? onSaveTap;
   final void Function(MediaItem item)? onItemTap;
 
-  static const double _peek = 24;
+  /// How much smaller a card one page away from the center is.
+  static const double neighborScale = 0.88;
+
+  /// How opaque a card one page away from the center is.
+  static const double neighborOpacity = 0.7;
+
+  /// The card's width over the screen's.
+  static const double _cardFraction = 0.78;
 
   /// How many laps' worth of pages there are before and after the start, so
   /// the carousel can be swiped far in either direction.
@@ -68,6 +83,9 @@ class _MediaHeroCarouselState extends State<MediaHeroCarousel> {
 
   bool get _loops => widget.items.length > 1;
 
+  int get _initialPage =>
+      _loops ? widget.items.length * MediaHeroCarousel._laps : 0;
+
   /// A controller for [fraction] (the page width over the viewport's),
   /// replaced only when the screen width changes.
   PageController _controllerFor(double fraction) {
@@ -76,7 +94,7 @@ class _MediaHeroCarouselState extends State<MediaHeroCarousel> {
       _fraction = fraction;
       _controller = PageController(
         viewportFraction: fraction,
-        initialPage: _loops ? widget.items.length * MediaHeroCarousel._laps : 0,
+        initialPage: _initialPage,
       );
     }
     return _controller!;
@@ -88,19 +106,24 @@ class _MediaHeroCarouselState extends State<MediaHeroCarousel> {
     super.dispose();
   }
 
+  /// The page being shown (fractional while swiping); the first page until
+  /// the controller has been laid out.
+  double _currentPage(PageController controller) {
+    if (controller.hasClients && controller.position.haveDimensions) {
+      return controller.page ?? _initialPage.toDouble();
+    }
+    return _initialPage.toDouble();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    // Card + the gap to the next one, over the viewport (the page minus the
-    // left margin the first card sits on).
-    final cardWidth =
-        (width -
-                AppSpacing.screenMargin -
-                AppSpacing.md -
-                MediaHeroCarousel._peek)
-            .clamp(0.0, MediaCardSize.hero.width);
-    final viewport = width - AppSpacing.screenMargin;
-    final controller = _controllerFor((cardWidth + AppSpacing.md) / viewport);
+    final still = MediaQuery.disableAnimationsOf(context);
+    final cardWidth = (width * MediaHeroCarousel._cardFraction).clamp(
+      0.0,
+      MediaCardSize.hero.width,
+    );
+    final controller = _controllerFor((cardWidth + AppSpacing.md) / width);
 
     final items = widget.items;
     final onSave = widget.onSaveTap;
@@ -109,38 +132,51 @@ class _MediaHeroCarouselState extends State<MediaHeroCarousel> {
 
     return SizedBox(
       height: MediaCardSize.hero.height,
-      child: Padding(
-        padding: const EdgeInsets.only(left: AppSpacing.screenMargin),
-        child: PageView.builder(
-          controller: controller,
-          // The previous card slides off the screen's edge, not the margin.
-          clipBehavior: Clip.none,
-          // Without this the first card would be centered.
-          padEnds: false,
-          itemCount: _loops ? null : items.length,
-          itemBuilder: (context, index) {
-            final item = items[index % items.length];
-            return Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.md),
-                child: MediaCard(
-                  size: MediaCardSize.hero,
-                  width: cardWidth,
-                  title: item.title,
-                  posterUrl: item.posterUrl,
-                  metadata: _heroMetadata(item, context.l10n),
-                  saveButton: buildSaveButton?.call(item),
-                  onSaveTap: buildSaveButton == null && onSave != null
-                      ? () => onSave(item)
-                      : null,
-                  onTap: onTap == null ? null : () => onTap(item),
-                ),
-              ),
-            );
-          },
-        ),
+      child: PageView.builder(
+        controller: controller,
+        clipBehavior: Clip.none,
+        itemCount: _loops ? null : items.length,
+        itemBuilder: (context, index) {
+          final item = items[index % items.length];
+          final card = SizedBox(
+            width: cardWidth,
+            child: MediaCard(
+              size: MediaCardSize.hero,
+              width: cardWidth,
+              title: item.title,
+              posterUrl: item.posterUrl,
+              metadata: _heroMetadata(item, context.l10n),
+              saveButton: buildSaveButton?.call(item),
+              onSaveTap: buildSaveButton == null && onSave != null
+                  ? () => onSave(item)
+                  : null,
+              onTap: onTap == null ? null : () => onTap(item),
+            ),
+          );
+          return AnimatedBuilder(
+            animation: controller,
+            // The card itself is built once; only its scale/opacity follow
+            // the scroll.
+            child: Center(child: card),
+            builder: (context, child) {
+              final distance = (_currentPage(controller) - index).abs().clamp(
+                0.0,
+                1.0,
+              );
+              final scale = still
+                  ? 1.0
+                  : _lerp(1, MediaHeroCarousel.neighborScale, distance);
+              return Opacity(
+                opacity: _lerp(1, MediaHeroCarousel.neighborOpacity, distance),
+                child: Transform.scale(scale: scale, child: child),
+              );
+            },
+          );
+        },
       ),
     );
   }
+
+  static double _lerp(double from, double to, double t) =>
+      from + (to - from) * t;
 }
