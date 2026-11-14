@@ -304,7 +304,7 @@ void main() {
     expect(badge.top, greaterThan(poster.top + poster.height / 2));
     expect(badge.left, lessThan(poster.left + poster.width / 2));
     await pump(tester, style: ListingStyle.dated);
-    expect(find.text('Dec 16, 2026'), findsWidgets);
+    expect(find.text('16 Dec, 2026'), findsWidgets);
   });
 
   testWidgets('the detailed style (Hidden gems): the rating on the poster and '
@@ -438,7 +438,7 @@ void main() {
         (ListingStyle.rating, find.byType(PosterBadge)),
         (ListingStyle.detailed, find.byType(PosterBadge)),
         (ListingStyle.ranked, find.text('2')),
-        (ListingStyle.dated, find.text('Dec 16, 2026')),
+        (ListingStyle.dated, find.text('16 Dec, 2026')),
       ];
       for (final (style, dressing) in cases) {
         await pump(tester, style: style);

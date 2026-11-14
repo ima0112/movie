@@ -55,7 +55,7 @@ void main() {
 
     expect(find.text('S1 · E4'), findsOneWidget);
     expect(find.text('Hands'), findsOneWidget);
-    expect(find.text('2022-06-23'), findsOneWidget);
+    expect(find.text('23 Jun, 2022'), findsOneWidget);
     expect(find.text('32 min'), findsOneWidget);
     final overview = tester.widget<Text>(find.textContaining('Carmy'));
     expect(overview.maxLines, isNull);

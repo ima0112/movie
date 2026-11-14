@@ -1,3 +1,4 @@
+import '../../../../l10n/full_date_format.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/season_summary.dart';
@@ -9,7 +10,6 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/media_detail/info_chip.dart';
 import '../../../../shared/widgets/still_image.dart';
-import 'season_episode_row.dart';
 
 /// One episode card on D2b ("Next episode" / "Last aired episode"): the
 /// 92×56 still, "S5 · E16 · Name" and chips for the air date and (when TMDB
@@ -91,7 +91,7 @@ class EpisodeRefCard extends StatelessWidget {
                   InfoChip(
                     label: airDate == null
                         ? l10n.tvEpisodeTba
-                        : formatEpisodeDate(airDate),
+                        : context.l10n.fullDate(airDate),
                   ),
                   if (rating != null)
                     InfoChip(

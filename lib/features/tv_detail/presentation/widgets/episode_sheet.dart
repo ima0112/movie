@@ -1,3 +1,4 @@
+import '../../../../l10n/full_date_format.dart';
 import 'package:flutter/material.dart';
 import '../../../../shared/widgets/overline_label.dart';
 
@@ -11,7 +12,6 @@ import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/media_detail/info_chip.dart';
 import '../../../../shared/widgets/media_detail/media_cast_circle.dart';
 import '../../../../shared/widgets/still_image.dart';
-import 'season_episode_row.dart';
 
 /// H4b (Episode) — `docs/SCREENS.md` H4b: opened from an episode row in
 /// H4. A 16:9 still, the "S1 · E1" caption, the name, info chips (air date,
@@ -68,7 +68,7 @@ class EpisodeSheet extends StatelessWidget {
                 InfoChip(
                   label: airDate == null
                       ? l10n.tvEpisodeTba
-                      : formatEpisodeDate(airDate),
+                      : context.l10n.fullDate(airDate),
                 ),
                 if (runtime != null)
                   InfoChip(label: l10n.myListRuntimeMinutesOnly(runtime)),

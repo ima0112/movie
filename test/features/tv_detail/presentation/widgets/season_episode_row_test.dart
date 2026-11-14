@@ -48,7 +48,7 @@ void main() {
         find.byWidgetPredicate(
           (widget) =>
               widget is Text &&
-              (widget.textSpan?.toPlainText().contains('2020-01-01') ?? false),
+              (widget.textSpan?.toPlainText().contains('1 Jan, 2020') ?? false),
         ),
       );
       final dateSpan = (richText.textSpan! as TextSpan).children!.first;
@@ -77,7 +77,7 @@ void main() {
         find.byWidgetPredicate(
           (widget) =>
               widget is Text &&
-              (widget.textSpan?.toPlainText().contains('-') ?? false),
+              (widget.textSpan?.toPlainText().contains(',') ?? false),
         ),
       );
       final dateSpan = (richText.textSpan! as TextSpan).children!.first;
