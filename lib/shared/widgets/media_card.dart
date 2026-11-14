@@ -203,11 +203,17 @@ class _Poster extends StatelessWidget {
   }
 }
 
-/// The hero poster's bottom melts into the page: transparent over the top
-/// half, then to the page color, fully opaque at the very bottom so the card
-/// has no visible lower edge and the caption sits on a dark, legible fade.
+/// The hero poster's bottom melts into the page, as the detail header's does:
+/// a long, eased ramp from transparent (30% down the card) through most of
+/// the way dark by 75%, to **practically opaque by 90%** and fully the page's
+/// black at the foot — so the poster's art is gone before the caption's last
+/// line, the card has no visible bottom edge, and the caption sits on a dark,
+/// legible fade.
 class _HeroFade extends StatelessWidget {
   const _HeroFade();
+
+  /// `(stop, opacity of the page color)` — see [heroFadeStops].
+  static const List<(double, double)> _ramp = heroFadeStops;
 
   @override
   Widget build(BuildContext context) {
@@ -216,17 +222,26 @@ class _HeroFade extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: const [0.45, 0.75, 1],
+          stops: [for (final (stop, _) in _ramp) stop],
           colors: [
-            AppColors.surface.withValues(alpha: 0),
-            AppColors.surface.withValues(alpha: 0.78),
-            AppColors.surface,
+            for (final (_, opacity) in _ramp)
+              AppColors.surface.withValues(alpha: opacity),
           ],
         ),
       ),
     );
   }
 }
+
+/// The hero fade's ramp: `(stop, opacity)` pairs, top to bottom.
+@visibleForTesting
+const List<(double, double)> heroFadeStops = [
+  (0.30, 0),
+  (0.55, 0.4),
+  (0.75, 0.82),
+  (0.90, 0.98),
+  (1, 1),
+];
 
 class _HeroCaption extends StatelessWidget {
   const _HeroCaption({
