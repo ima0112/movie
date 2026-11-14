@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../domain/library_stats.dart';
-import '../../domain/library_stats_calculator.dart';
+import '../../../../core/domain/stats/library_stats.dart';
+import '../../../../core/domain/stats/library_stats_calculator.dart';
 
 /// C4 (Stats)'s state: the current "All · Movies · TV Shows" filter
 /// (`docs/SCREENS.md` C4's own chips) plus the [LibraryStats] computed

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/genre.dart';
-import 'package:movies/features/stats/domain/library_stats.dart';
+import 'package:movies/core/domain/stats/library_stats.dart';
 
 LibraryStats _stats({
   List<(Genre, int)> topGenres = const [],

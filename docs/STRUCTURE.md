@@ -164,7 +164,7 @@ lib/
     my_list/
       presentation/               favorites / watch later / watched tabs
     stats/
-      domain/                     LibraryStats + calculation (pure)
+      domain/                     (the stats themselves live in core/domain/stats/ — C4 and You both use them)
       presentation/
     taste_profile/
       domain/
@@ -252,7 +252,7 @@ docs/
   STRUCTURE.md
   decisions/                      ADRs
 test/
-  core/domain/
+  core/domain/                    (incl. stats/: LibraryStats, calculateLibraryStats, ViewerLabel)
   features/match_engine/          engine tests (no network, no Firebase)
   features/taste_profile/
 firebase/                         (v1.1) firestore.rules, indexes, rules tests

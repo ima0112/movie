@@ -1,7 +1,8 @@
-import '../../../core/domain/entities/genre.dart';
-import '../../../core/domain/entities/media_type.dart';
-import '../../../core/domain/entities/user_media_entry.dart';
+import '../entities/genre.dart';
+import '../entities/media_type.dart';
+import '../entities/user_media_entry.dart';
 import 'library_stats.dart';
+import 'viewer_label.dart';
 
 /// Computes [LibraryStats] purely from a list of [UserMediaEntry] — no
 /// Flutter, no repository, no network. See `docs/SCREENS.md` C4.
@@ -28,10 +29,10 @@ LibraryStats calculateLibraryStats(
   DateTime? now,
 }) {
   final effectiveNow = now ?? DateTime.now();
-  final watched = entries
+  final ofType = entries
       .where((e) => filterType == null || e.key.type == filterType)
-      .where((e) => e.isWatched)
       .toList();
+  final watched = ofType.where((e) => e.isWatched).toList();
 
   final movies = watched.where((e) => e.key.type == MediaType.movie);
   final tvShows = watched.where((e) => e.key.type == MediaType.tvShow);
@@ -61,16 +62,50 @@ LibraryStats calculateLibraryStats(
     }
   }
 
+  final genreTotal = genreCounts.values.fold<int>(0, (a, b) => a + b);
+  final ranked = topGenres(genreCounts);
+  final recent = [...watched]
+    ..sort((a, b) => b.watchedAt!.compareTo(a.watchedAt!));
+
   return LibraryStats(
     moviesWatched: movies.length,
     tvShowsWatched: tvShows.length,
     movieHours: movieMinutes / 60,
     estimatedTvHours: tvMinutes / 60,
     averageRating: averageRating,
-    topGenres: topGenres(genreCounts),
+    topGenres: ranked,
     mostWatchedYear: _mostWatchedYear(watched),
     monthlyActivity: _monthlyActivity(watched, effectiveNow),
+    genreTotal: genreTotal,
+    recentlyWatched: recent.take(LibraryStats.recentlyWatchedLimit).toList(),
+    weeklyStreak: weeklyStreak(watched, effectiveNow),
+    favoritesCount: ofType.where((e) => e.isFavorite).length,
+    watchLaterCount: ofType.where((e) => e.isWatchLater).length,
+    viewerLabel: viewerLabelFor(
+      watched,
+      topGenre: ranked.isEmpty ? null : ranked.first.$1,
+      genreShare: genreTotal == 0 ? 0 : ranked.first.$2 / genreTotal,
+    ),
   );
+}
+
+/// Consecutive Monday-to-Sunday weeks with at least one entry watched, ending
+/// at [now]'s week — or at the week before when this one has none yet (so a
+/// streak survives until the week is over). 0 when neither has any.
+int weeklyStreak(List<UserMediaEntry> watched, DateTime now) {
+  DateTime weekOf(DateTime d) =>
+      DateTime(d.year, d.month, d.day - (d.weekday - DateTime.monday));
+  final weeks = {for (final e in watched) weekOf(e.watchedAt!)};
+  var week = weekOf(now);
+  if (!weeks.contains(week)) {
+    week = DateTime(week.year, week.month, week.day - 7);
+  }
+  var streak = 0;
+  while (weeks.contains(week)) {
+    streak++;
+    week = DateTime(week.year, week.month, week.day - 7);
+  }
+  return streak;
 }
 
 /// Ranks genres by watch count, most-watched first — ties broken by
