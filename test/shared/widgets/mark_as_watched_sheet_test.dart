@@ -71,10 +71,12 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: MarkAsWatchedSheet(
-            mediaKey: _dune,
-            userLibraryRepository: repository,
-            mediaDetail: _movieDetail(),
+          home: Scaffold(
+            body: MarkAsWatchedSheet(
+              mediaKey: _dune,
+              userLibraryRepository: repository,
+              mediaDetail: _movieDetail(),
+            ),
           ),
         ),
       );
@@ -89,10 +91,12 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: MarkAsWatchedSheet(
-            mediaKey: _theBear,
-            userLibraryRepository: repository,
-            mediaDetail: _tvShowDetail(),
+          home: Scaffold(
+            body: MarkAsWatchedSheet(
+              mediaKey: _theBear,
+              userLibraryRepository: repository,
+              mediaDetail: _tvShowDetail(),
+            ),
           ),
         ),
       );
@@ -110,9 +114,11 @@ void main() {
           MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: MarkAsWatchedSheet(
-              mediaKey: _dune,
-              userLibraryRepository: repository,
+            home: Scaffold(
+              body: MarkAsWatchedSheet(
+                mediaKey: _dune,
+                userLibraryRepository: repository,
+              ),
             ),
           ),
         );
@@ -137,9 +143,11 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: MarkAsWatchedSheet(
-            mediaKey: _dune,
-            userLibraryRepository: repository,
+          home: Scaffold(
+            body: MarkAsWatchedSheet(
+              mediaKey: _dune,
+              userLibraryRepository: repository,
+            ),
           ),
         ),
       );
@@ -163,9 +171,11 @@ void main() {
           MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: MarkAsWatchedSheet(
-              mediaKey: _dune,
-              userLibraryRepository: repository,
+            home: Scaffold(
+              body: MarkAsWatchedSheet(
+                mediaKey: _dune,
+                userLibraryRepository: repository,
+              ),
             ),
           ),
         );
@@ -175,14 +185,16 @@ void main() {
           MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: MarkAsWatchedSheet(
-              mediaKey: _dune,
-              userLibraryRepository: repository,
-              existingEntry: UserMediaEntry(
-                title: 'Test Title',
-                key: _dune,
-                watchedAt: DateTime(2024, 1, 1),
-                rating: 5,
+            home: Scaffold(
+              body: MarkAsWatchedSheet(
+                mediaKey: _dune,
+                userLibraryRepository: repository,
+                existingEntry: UserMediaEntry(
+                  title: 'Test Title',
+                  key: _dune,
+                  watchedAt: DateTime(2024, 1, 1),
+                  rating: 5,
+                ),
               ),
             ),
           ),
@@ -199,10 +211,12 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: MarkAsWatchedSheet(
-            mediaKey: _dune,
-            userLibraryRepository: repository,
-            mediaDetail: _movieDetail(runtimeMinutes: 166),
+          home: Scaffold(
+            body: MarkAsWatchedSheet(
+              mediaKey: _dune,
+              userLibraryRepository: repository,
+              mediaDetail: _movieDetail(runtimeMinutes: 166),
+            ),
           ),
         ),
       );
@@ -223,12 +237,14 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: MarkAsWatchedSheet(
-            mediaKey: _theBear,
-            userLibraryRepository: repository,
-            mediaDetail: _tvShowDetail(
-              numberOfEpisodes: 62,
-              episodeRuntimeMinutes: 24,
+          home: Scaffold(
+            body: MarkAsWatchedSheet(
+              mediaKey: _theBear,
+              userLibraryRepository: repository,
+              mediaDetail: _tvShowDetail(
+                numberOfEpisodes: 62,
+                episodeRuntimeMinutes: 24,
+              ),
             ),
           ),
         ),
@@ -252,18 +268,20 @@ void main() {
           MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: MarkAsWatchedSheet(
-              mediaKey: _dune,
-              userLibraryRepository: repository,
-              existingEntry: UserMediaEntry(
-                title: 'Test Title',
-                key: _dune,
-                watchedAt: DateTime(2024, 1, 1),
-                rating: 3,
-                runtimeMinutes: 166,
+            home: Scaffold(
+              body: MarkAsWatchedSheet(
+                mediaKey: _dune,
+                userLibraryRepository: repository,
+                existingEntry: UserMediaEntry(
+                  title: 'Test Title',
+                  key: _dune,
+                  watchedAt: DateTime(2024, 1, 1),
+                  rating: 3,
+                  runtimeMinutes: 166,
+                ),
+                // Re-editing the rating/date without a MediaDetail on hand
+                // (e.g. some future call site that doesn't have one).
               ),
-              // Re-editing the rating/date without a MediaDetail on hand
-              // (e.g. some future call site that doesn't have one).
             ),
           ),
         );
@@ -277,6 +295,37 @@ void main() {
         expect(saved!.rating, 5);
         expect(saved.runtimeMinutes, 166);
       },
+    );
+  });
+
+  testWidgets('Save says the title was marked as watched, and the Watch later '
+      'it left', (tester) async {
+    final repository = InMemoryUserLibraryRepository();
+    await repository.upsert(
+      const UserMediaEntry(key: _dune, title: 'Title', isWatchLater: true),
+    );
+    final existing = (await repository.watchEntry(_dune).first)!;
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: MarkAsWatchedSheet(
+            mediaKey: _dune,
+            userLibraryRepository: repository,
+            existingEntry: existing,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Save'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(
+      find.text('Title marked as watched · Removed from Watch later'),
+      findsOneWidget,
     );
   });
 }

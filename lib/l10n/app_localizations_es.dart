@@ -255,6 +255,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get swipeReleaseToDelete => 'Suelta para borrar';
 
   @override
+  String libraryAddedToTab(String title, String tabName) {
+    return '$title añadida a $tabName';
+  }
+
+  @override
+  String libraryMarkedWatched(String title) {
+    return '$title marcada como vista';
+  }
+
+  @override
+  String libraryMarkedWatchedLeftWatchLater(String title) {
+    return '$title marcada como vista · Quitada de Ver después';
+  }
+
+  @override
   String myListRemovedFromTab(String title, String tabName) {
     return '$title eliminada de $tabName';
   }

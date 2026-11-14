@@ -10,6 +10,9 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
+import '../../l10n/library_feedback_localization.dart';
+import '../../l10n/library_tab_localization.dart';
+import '../library_write.dart';
 import 'app_buttons.dart';
 import 'overline_label.dart';
 import 'mark_as_watched_date_field.dart';
@@ -86,23 +89,28 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
     final fresh = durationFieldsFrom(widget.mediaDetail);
     final detail = widget.mediaDetail;
     final snapshot = detail == null ? null : catalogSnapshotFrom(detail.item);
+    final next = current.markWatched(
+      watchedAt: _date,
+      rating: _rating,
+      runtimeMinutes: fresh.runtimeMinutes ?? current.runtimeMinutes,
+      episodeCount: fresh.episodeCount ?? current.episodeCount,
+      episodeRuntimeMinutes:
+          fresh.episodeRuntimeMinutes ?? current.episodeRuntimeMinutes,
+      // markWatched() already falls back to current's own value for
+      // genres/posterUrl/voteAverage/year when these are null, same
+      // as it does for the duration fields above.
+      genres: detail?.item.genres,
+      posterUrl: snapshot?.posterUrl,
+      voteAverage: snapshot?.voteAverage,
+      year: snapshot?.year,
+    );
     unawaited(
-      widget.userLibraryRepository.upsert(
-        current.markWatched(
-          watchedAt: _date,
-          rating: _rating,
-          runtimeMinutes: fresh.runtimeMinutes ?? current.runtimeMinutes,
-          episodeCount: fresh.episodeCount ?? current.episodeCount,
-          episodeRuntimeMinutes:
-              fresh.episodeRuntimeMinutes ?? current.episodeRuntimeMinutes,
-          // markWatched() already falls back to current's own value for
-          // genres/posterUrl/voteAverage/year when these are null, same
-          // as it does for the duration fields above.
-          genres: detail?.item.genres,
-          posterUrl: snapshot?.posterUrl,
-          voteAverage: snapshot?.voteAverage,
-          year: snapshot?.year,
-        ),
+      saveEntry(
+        context,
+        widget.userLibraryRepository,
+        next,
+        previous: widget.existingEntry,
+        message: context.l10n.markedWatchedMessage(widget.existingEntry, next),
       ),
     );
     Navigator.of(context).pop();
@@ -124,9 +132,18 @@ class _MarkAsWatchedSheetState extends State<MarkAsWatchedSheet> {
   }
 
   void _remove() {
+    final existing = widget.existingEntry!;
+    final l10n = context.l10n;
     unawaited(
-      widget.userLibraryRepository.upsert(
-        widget.existingEntry!.unmarkWatched(),
+      saveEntry(
+        context,
+        widget.userLibraryRepository,
+        existing.unmarkWatched(),
+        previous: existing,
+        message: l10n.myListRemovedFromTab(
+          existing.title,
+          LibraryTab.watched.localizedLabel(l10n),
+        ),
       ),
     );
     Navigator.of(context).pop();
