@@ -80,6 +80,16 @@
   "myListEmptyPeopleHeadline": "Aún no hay personas",
   "myListEmptyPeopleBody": "Toca el corazón en la página de una persona para tenerla aquí.",
 
+  "myListActionMarkWatched": "Marcar como vista",
+  "myListActionEditWatched": "Editar valoración y fecha",
+  "myListActionAddFavorite": "Añadir a favoritas",
+  "myListActionRemoveFavorite": "Quitar de favoritas",
+  "myListActionAddWatchLater": "Añadir a Ver después",
+  "myListActionRemoveWatchLater": "Quitar de Ver después",
+  "myListActionRemoveWatched": "Quitar de vistas",
+  "myListActionRemovePerson": "Quitar de Personas",
+  "myListRowActionsLabel": "Más acciones",
+
   "myListRemovedFromTab": "Eliminado de {tabName}",
 
   "myListEmptyFavoritesHeadline": "Todavía no tienes favoritos",
