@@ -984,6 +984,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewerExplorer => 'A bit of everything';
 
   @override
+  String get youRecentlyWatchedTitle => 'Recently watched';
+
+  @override
   String get yourActivityHoursLabel => 'Hours';
 
   @override

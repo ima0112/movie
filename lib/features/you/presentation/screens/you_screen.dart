@@ -12,6 +12,7 @@ import '../../../../shared/widgets/app_tab_bar.dart';
 import '../cubit/you_stats_cubit.dart';
 import '../widgets/my_tastes_card.dart';
 import '../widgets/you_header.dart';
+import '../widgets/you_recently_watched.dart';
 import '../widgets/you_stats_card.dart';
 
 /// You (B5) — the user's own profile, tastes summary, and activity.
@@ -66,9 +67,12 @@ class YouScreen extends StatelessWidget {
                 onOpenSettings: () => context.push(AppRoutes.settings),
               ),
               const SizedBox(height: AppSpacing.sectionGap),
-              MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
-              const SizedBox(height: AppSpacing.sectionGap),
               YouStatsCard(onSeeStats: () => context.push(AppRoutes.stats)),
+              // Owns its own gap above, and hides itself (gap included) until
+              // something has been watched.
+              const YouRecentlyWatched(),
+              const SizedBox(height: AppSpacing.sectionGap),
+              MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
             ],
           ),
         ),

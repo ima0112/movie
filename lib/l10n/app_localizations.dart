@@ -1736,6 +1736,12 @@ abstract class AppLocalizations {
   /// **'A bit of everything'**
   String get viewerExplorer;
 
+  /// Heading of You's row of the last titles marked as watched (docs/SCREENS.md B5).
+  ///
+  /// In en, this message translates to:
+  /// **'Recently watched'**
+  String get youRecentlyWatchedTitle;
+
   /// No description provided for @yourActivityHoursLabel.
   ///
   /// In en, this message translates to:
