@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../shared/widgets/library_row.dart';
+import '../../../../shared/widgets/library_row_status.dart';
 import '../entry_actions.dart';
 
 /// Wires up [LibraryRow]'s swipe callbacks to B4's actual behavior
@@ -27,7 +28,8 @@ class LibraryRowSwipeable extends StatelessWidget {
     required this.posterUrl,
     required this.title,
     required this.metadata,
-    required this.trailing,
+    this.status,
+    this.onMore,
     this.onTap,
     this.onLongPress,
     this.onNeedsMarkWatched,
@@ -40,7 +42,8 @@ class LibraryRowSwipeable extends StatelessWidget {
   final String? posterUrl;
   final String title;
   final String metadata;
-  final LibraryRowTrailing trailing;
+  final LibraryRowStatus? status;
+  final VoidCallback? onMore;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
@@ -58,7 +61,8 @@ class LibraryRowSwipeable extends StatelessWidget {
       posterUrl: posterUrl,
       title: title,
       metadata: metadata,
-      trailing: trailing,
+      status: status,
+      onMore: onMore,
       onTap: onTap,
       onLongPress: onLongPress,
       onSwipeLeft: () => _remove(context),

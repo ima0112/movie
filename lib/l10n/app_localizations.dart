@@ -1436,23 +1436,41 @@ abstract class AppLocalizations {
   /// **'{value} min'**
   String discoverRangeFiltersMinutes(int value);
 
-  /// No description provided for @libraryRowDateToday.
+  /// No description provided for @libraryRowAddedToday.
   ///
   /// In en, this message translates to:
-  /// **'Today'**
-  String get libraryRowDateToday;
+  /// **'Added today'**
+  String get libraryRowAddedToday;
 
-  /// No description provided for @libraryRowDateYesterday.
+  /// No description provided for @libraryRowAddedYesterday.
   ///
   /// In en, this message translates to:
-  /// **'Yesterday'**
-  String get libraryRowDateYesterday;
+  /// **'Added yesterday'**
+  String get libraryRowAddedYesterday;
 
-  /// LibraryRow's relative watched-date, for 2–6 days ago (docs/SCREENS.md B4's "short date"). This control's own switch never produces count == 1 (that's the separate libraryRowDateYesterday branch), so there's deliberately no ICU plural rule here — a locale is still free to inflect {count} itself however it needs within this one template.
+  /// A Favorites / Watch later row's line, for 2–6 days after the title was added (docs/SCREENS.md B4). Never called with 1 (that is libraryRowAddedYesterday).
   ///
   /// In en, this message translates to:
-  /// **'{count} days ago'**
-  String libraryRowDateDaysAgo(int count);
+  /// **'Added {count} days ago'**
+  String libraryRowAddedDaysAgo(int count);
+
+  /// The same line for 1–4 weeks after the title was added.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {count, plural, =1{1 week} other{{count} weeks}} ago'**
+  String libraryRowAddedWeeksAgo(int count);
+
+  /// The same line once more than 4 weeks have passed. {date} is the app's full date (12 Jan, 2026).
+  ///
+  /// In en, this message translates to:
+  /// **'Added {date}'**
+  String libraryRowAddedOn(String date);
+
+  /// A Watched row's line, next to the stars. {date} is the app's full date (12 Jan, 2026).
+  ///
+  /// In en, this message translates to:
+  /// **'Watched {date}'**
+  String libraryRowWatchedOn(String date);
 
   /// B4's swipe-to-remove SnackBarAction label, next to the tab-specific myListRemovedFromTab message.
   ///
