@@ -75,7 +75,8 @@ ask before inventing it.
     local — even if several screens instantiate the same Cubit class, each
     gets its own instance via a local `BlocProvider`.
     - **Global** (provided once, in `app/app.dart`, above `MaterialApp.router`):
-      `TasteProfileCubit`, `UserProfileCubit`, and — once v1.1 exists —
+      `TasteProfileCubit`, `UserProfileCubit`, `ConnectivityCubit` (the app's
+      online/offline, read by the offline banner on Home and Explore), and — once v1.1 exists —
       `MatchRoomCubit` for the lifetime of an active room.
     - **NOT global, even though it feels shared**: My List (favorites/watch
       later/watched). Don't create a library-wide Cubit holding an in-memory

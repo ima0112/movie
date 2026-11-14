@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/app/cubits/connectivity_cubit.dart';
+import 'package:movies/core/network/network_status.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_recently_viewed_repository.dart';
@@ -42,7 +45,10 @@ void main() {
         theme: AppTheme.dark,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const DiscoverScreen(),
+        home: BlocProvider(
+          create: (_) => ConnectivityCubit(NetworkStatus()),
+          child: const DiscoverScreen(),
+        ),
       ),
     );
   }

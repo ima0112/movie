@@ -327,7 +327,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navMatchButton => 'Surprise me and match';
 
   @override
-  String get offlineBannerMessage => 'Offline';
+  String get offlineBannerMessage => 'No internet connection';
 
   @override
   String get onboardingSaveError => 'Something went wrong — let\'s try again.';

@@ -229,6 +229,8 @@ slivers). Un `loadKey` nuevo lo vuelve a armar (los filtros de los que
 depende el bloque). Es lógica de presentación pura; el trabajo de datos es el
 callback. Regla 17 de `CLAUDE.md`.
 
+**Banner sin conexión** (`OfflineBanner`, dentro de `OfflineBannerSlot`): caja de `radiusMd` con fondo `accentSoft`, línea `accentLine`, icono wifi tachado y texto `bodySm` semibold en `accent`; alto mínimo 48.
+
 **Snackbar** (`AppSnackBar`, tema en `AppTheme.snackBarTheme`): píldora flotante `surfaceRaised` con línea `lineStrong`, radio `radiusLg`, texto `bodySm`, acción en `accent`, margen `screenMargin`, 4 s; el Scaffold la sube sobre la barra flotante en los roots. Nadie construye un `SnackBar(` a mano.
 
 **Estados de área completa** (`StateLayout` → `EmptyStateView`, `ErrorStateView`, `OfflineStateView`; `FailureStateView(reason)` elige error u offline): icono en círculo de 72 px, titular, cuerpo y acciones centrados en el espacio que deja libre la barra flotante (`AppTabBar.scrollInset`, ya integrado; en pantallas empujadas es solo el área segura) y con scroll si no cabe. El CTA de un estado vacío es `SecondaryButton` (contorno); el «Reintentar» de error y offline es `AccentButton` (ámbar relleno); «Ir a Mi lista» es un `TextLinkButton`.

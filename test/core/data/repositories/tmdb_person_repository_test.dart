@@ -11,6 +11,7 @@ import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
 import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/network/api_client.dart';
+import 'package:movies/core/network/network_status.dart';
 import 'package:movies/core/persistence/app_database.dart';
 
 /// Serves a fixture per request, same idea as
@@ -65,7 +66,7 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
 TmdbPersonRepository _repositoryWith(_FixtureRoutedAdapter adapter) {
   final db = AppDatabase.forTesting(NativeDatabase.memory());
   addTearDown(db.close);
-  final apiClient = ApiClient(DriftSettingsRepository(db));
+  final apiClient = ApiClient(DriftSettingsRepository(db), NetworkStatus());
   apiClient.dio.httpClientAdapter = adapter;
   final datasource = TmdbMediaDatasource(apiClient);
   final configService = TmdbConfigurationService(apiClient);
