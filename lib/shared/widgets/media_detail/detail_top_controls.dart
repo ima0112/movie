@@ -21,6 +21,7 @@ class DetailTopControls extends StatelessWidget {
     required this.showCompact,
     required this.title,
     this.onShare,
+    this.trailing,
   });
 
   final ValueListenable<bool> showCompact;
@@ -31,6 +32,10 @@ class DetailTopControls extends StatelessWidget {
   /// `null` for screens with nothing to share (D3).
   final VoidCallback? onShare;
 
+  /// Another top-right action (D3's Save), built for the circle over the image
+  /// (`compact: false`) or for the compact bar (`compact: true`).
+  final Widget Function({required bool compact})? trailing;
+
   @override
   Widget build(BuildContext context) {
     final title = this.title;
@@ -39,12 +44,17 @@ class DetailTopControls extends StatelessWidget {
       valueListenable: showCompact,
       builder: (context, compact, _) {
         if (compact) {
-          return MediaDetailCompactBar(title: title, onShare: onShare);
+          return MediaDetailCompactBar(
+            title: title,
+            onShare: onShare,
+            trailing: trailing?.call(compact: true),
+          );
         }
         return Stack(
           children: [
             const ScrimBackButton(),
             if (onShare != null) ScrimShareButton(onTap: onShare!),
+            ?trailing?.call(compact: false),
           ],
         );
       },

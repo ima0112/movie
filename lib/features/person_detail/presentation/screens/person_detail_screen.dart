@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/di.dart';
+import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/repositories/person_repository.dart';
+import '../../../../core/domain/repositories/saved_people_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/failure_localization.dart';
@@ -13,6 +15,7 @@ import '../../../../shared/widgets/state_views.dart';
 import '../cubit/person_detail_cubit.dart';
 import '../widgets/person_detail_content.dart';
 import '../widgets/person_detail_header.dart';
+import '../widgets/save_person_button.dart';
 
 /// D3 (Person detail).
 ///
@@ -119,13 +122,22 @@ class _PersonDetailViewState extends State<_PersonDetailView> {
               };
             },
           ),
-          BlocSelector<PersonDetailCubit, PersonDetailState, String?>(
+          BlocSelector<PersonDetailCubit, PersonDetailState, Person?>(
             selector: (state) => switch (state) {
-              PersonDetailLoaded(:final detail) => detail.person.name,
+              PersonDetailLoaded(:final detail) => detail.person,
               _ => null,
             },
-            builder: (context, name) =>
-                DetailTopControls(showCompact: _showCompactBar, title: name),
+            builder: (context, person) => DetailTopControls(
+              showCompact: _showCompactBar,
+              title: person?.name,
+              trailing: person == null
+                  ? null
+                  : ({required compact}) => SavePersonButton(
+                      person: person,
+                      repository: getIt<SavedPeopleRepository>(),
+                      compact: compact,
+                    ),
+            ),
           ),
         ],
       ),
