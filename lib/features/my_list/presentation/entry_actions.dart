@@ -107,7 +107,7 @@ void removeFromTab(
   );
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(tab.localizedRemovedMessage(l10n)),
+      content: Text(tab.localizedRemovedMessage(l10n, entry.title)),
       action: SnackBarAction(
         label: l10n.myListUndoAction,
         onPressed: () => unawaited(repository.upsert(entry)),

@@ -217,7 +217,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(await repo.watchEntry(_dune).first, isNull);
-      expect(find.text('Removed from Watch later'), findsOneWidget);
+      expect(
+        find.text('Dune: Part Two removed from Watch later'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('long-pressing the row opens the same sheet', (tester) async {

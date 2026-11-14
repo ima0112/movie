@@ -52,7 +52,7 @@ void main() {
     await tester.drag(find.text('Ana'), const Offset(-600, 0));
     await tester.pumpAndSettle();
     expect(find.text('Ana'), findsNothing);
-    expect(find.text('Removed from People'), findsOneWidget);
+    expect(find.text('Ana removed from People'), findsOneWidget);
 
     await tester.tap(find.text('Undo'));
     await tester.pumpAndSettle();
@@ -75,6 +75,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Ana'), findsNothing);
-    expect(find.text('Removed from People'), findsOneWidget);
+    expect(find.text('Ana removed from People'), findsOneWidget);
   });
 }

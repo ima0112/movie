@@ -183,10 +183,22 @@
     "description": "Accessibility label of the three-dot button at the end of a My List row (opens H1)."
   },
 
-  "myListRemovedFromTab": "Removed from {tabName}",
+  "swipeDelete": "Delete",
+  "@swipeDelete": {
+    "description": "The coral panel a swipe-to-delete row reveals while it is being dragged."
+  },
+  "swipeReleaseToDelete": "Release to delete",
+  "@swipeReleaseToDelete": {
+    "description": "The same panel once the drag has gone far enough that letting go deletes the row."
+  },
+
+  "myListRemovedFromTab": "{title} removed from {tabName}",
   "@myListRemovedFromTab": {
-    "description": "My List's swipe-to-remove snackbar. {tabName} is that LibraryTab's own localized label (myListTabFavorites/WatchLater/Watched).",
+    "description": "My List's remove snackbar (swipe, or the sheet's red row). {title} is the entry's name; {tabName} is that tab's own localized label (myListTabFavorites/WatchLater/Watched/People).",
     "placeholders": {
+      "title": {
+        "type": "String"
+      },
       "tabName": {
         "type": "String"
       }

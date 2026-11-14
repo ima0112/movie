@@ -817,7 +817,7 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
         Text(
-          'Swipe left (remove) / right (watched) — last: $_lastSwipe',
+          'Swipe left (delete) — last: $_lastSwipe',
           style: AppTextStyles.caption.copyWith(color: AppColors.inkMuted),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -829,8 +829,7 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
             rating: '7.9',
             label: 'Added 3 days ago',
           ),
-          onSwipeLeft: () => setState(() => _lastSwipe = 'left (remove)'),
-          onSwipeRight: () => setState(() => _lastSwipe = 'right (watched)'),
+          onDelete: () => setState(() => _lastSwipe = 'deleted'),
         ),
       ],
     );

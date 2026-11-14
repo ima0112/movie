@@ -249,8 +249,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myListRowActionsLabel => 'Más acciones';
 
   @override
-  String myListRemovedFromTab(String tabName) {
-    return 'Eliminado de $tabName';
+  String get swipeDelete => 'Borrar';
+
+  @override
+  String get swipeReleaseToDelete => 'Suelta para borrar';
+
+  @override
+  String myListRemovedFromTab(String title, String tabName) {
+    return '$title eliminada de $tabName';
   }
 
   @override
