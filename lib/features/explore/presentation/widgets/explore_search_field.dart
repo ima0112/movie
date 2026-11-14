@@ -6,7 +6,8 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 
-/// B2's search field — `docs/SCREENS.md` B2: a real search field ('Movies,
+/// B2's search field — `docs/SCREENS.md` B2 (with a primary-color ring while
+/// focused): a real search field ('Movies,
 /// TV shows, people') across the **full content width**; once there is text
 /// (or while it is focused) it gains a "×" inside it that clears the search
 /// (or, empty, dismisses it); at rest — empty and not focused — it shows the
@@ -101,6 +102,13 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
     super.dispose();
   }
 
+  static const double _focusRingWidth = 1.5;
+
+  static OutlineInputBorder _border(BorderSide side) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+    borderSide: side,
+  );
+
   @override
   Widget build(BuildContext context) {
     final isTyping = widget.query.isNotEmpty;
@@ -118,9 +126,12 @@ class _ExploreSearchFieldState extends State<ExploreSearchField> {
         fillColor: AppColors.surfaceRaised,
         prefixIcon: const Icon(AppIcons.search, color: AppColors.inkMuted),
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-          borderSide: BorderSide.none,
+        border: _border(BorderSide.none),
+        // The primary color ring while focused — it adds no height or width
+        // (an input's border is drawn, not laid out), so focusing never moves
+        // anything.
+        focusedBorder: _border(
+          const BorderSide(color: AppColors.accent, width: _focusRingWidth),
         ),
         // Typing: × clears. Focused and empty: × dismisses. At rest (empty,
         // not focused): the filter icon.
