@@ -225,6 +225,25 @@ class RecentlyViewedTable extends Table {
   Set<Column> get primaryKey => {mediaType, tmdbId};
 }
 
+/// My List's People tab (`docs/SCREENS.md` B4): the people saved from D3, with
+/// the small snapshot the tab draws without a network call. One row per TMDB
+/// person id — saving again refreshes the snapshot in place.
+@DataClassName('SavedPersonRow')
+class SavedPeopleTable extends Table {
+  /// TMDB's person id (not auto-incremented: it is the key).
+  IntColumn get tmdbId => integer()();
+
+  TextColumn get name => text()();
+
+  /// TMDB's `profile_path`, as `Person.profilePath` carries it.
+  TextColumn get profilePath => text().nullable()();
+
+  TextColumn get knownForDepartment => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {tmdbId};
+}
+
 /// The app's single SQLite (drift) database.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/persistence/
@@ -243,6 +262,7 @@ class RecentlyViewedTable extends Table {
     OnboardingTable,
     SettingsTable,
     RecentlyViewedTable,
+    SavedPeopleTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -259,12 +279,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, and to 7 when [RecentlyViewedTable] was — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -293,6 +313,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 7) {
         await m.createTable(recentlyViewedTable);
+      }
+      if (from < 8) {
+        await m.createTable(savedPeopleTable);
       }
     },
   );
