@@ -1,0 +1,62 @@
+import 'package:flutter/material.dart';
+
+import '../../core/domain/entities/media_item.dart';
+import '../../core/domain/entities/media_type.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
+import '../../l10n/l10n_extension.dart';
+import '../../l10n/number_format_extension.dart';
+import 'media_card.dart';
+import 'poster_badge.dart';
+
+/// One title of a list of results: the 2:3 poster with its rating badge
+/// (bottom-left) and a "TV" tag when it is a show (top-left), and its title
+/// under it on one line. Sized by [ResultsGrid.delegate] with
+/// `captionExtent: ResultsGrid.captionExtent(context)`.
+///
+/// Pure presentation — everything comes in by parameter.
+class ResultPosterTile extends StatelessWidget {
+  const ResultPosterTile({super.key, required this.item, required this.onTap});
+
+  final MediaItem item;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Stack(
+          children: [
+            MediaCard(
+              size: MediaCardSize.grid,
+              title: item.title,
+              posterUrl: item.posterUrl,
+              showTypeTag: item.type == MediaType.tvShow,
+              onTap: onTap,
+            ),
+            // Unrated titles (no votes yet) have no badge, not a "0.0".
+            if (item.voteAverage > 0)
+              Positioned(
+                left: AppSpacing.xs,
+                bottom: AppSpacing.xs,
+                child: IgnorePointer(
+                  child: PosterBadge.rating(
+                    label: item.voteAverage.localizedRating(l10n),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          item.title,
+          style: AppTextStyles.bodySm,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/media_card.dart';
+import '../../../../shared/widgets/results_grid.dart';
 import '../../../../shared/widgets/state_views.dart';
 
 /// The grid while the first page is on its way: four rows of poster blocks.
@@ -12,21 +12,21 @@ class ListingSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(AppSpacing.screenMargin),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: AppSpacing.md,
-        crossAxisSpacing: AppSpacing.md,
-        childAspectRatio: MediaCardSize.grid.aspectRatio!,
-      ),
-      itemCount: _count,
-      itemBuilder: (context, index) => SkeletonBlock(
-        width: double.infinity,
-        height: double.infinity,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth - AppSpacing.screenMargin * 2;
+        return GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppSpacing.screenMargin),
+          gridDelegate: ResultsGrid.delegate(width),
+          itemCount: _count,
+          itemBuilder: (context, index) => SkeletonBlock(
+            width: double.infinity,
+            height: double.infinity,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          ),
+        );
+      },
     );
   }
 }
