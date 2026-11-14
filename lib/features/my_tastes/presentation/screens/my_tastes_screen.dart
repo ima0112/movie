@@ -132,7 +132,11 @@ class _MyTastesView extends StatelessWidget {
               AppSection(
                 child: TasteYearSlider(
                   yearFrom: state.yearFrom,
-                  onChanged: cubit.setYearFrom,
+                  onChanged: (year) => cubit.setYearRange(
+                    year,
+                    state.yearTo ?? DateTime.now().year,
+                    latestYear: DateTime.now().year,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
