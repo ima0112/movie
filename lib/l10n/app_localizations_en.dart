@@ -961,6 +961,29 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get viewerNewcomer => 'Just getting started';
+
+  @override
+  String get viewerSeriesBinger => 'Series binger';
+
+  @override
+  String get viewerExigentCritic => 'Tough critic';
+
+  @override
+  String get viewerEnthusiast => 'Enthusiastic viewer';
+
+  @override
+  String viewerGenreFan(String genre) {
+    return 'Fan of $genre';
+  }
+
+  @override
+  String get viewerCinephile => 'Movie buff';
+
+  @override
+  String get viewerExplorer => 'A bit of everything';
+
+  @override
   String get yourActivityHoursLabel => 'Hours';
 
   @override
