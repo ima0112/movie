@@ -38,26 +38,31 @@ class FilteredListChipsRow extends StatelessWidget {
     final chips = _activeChips(filter, context.l10n);
     if (chips.isEmpty) return const SizedBox.shrink();
 
-    return SizedBox(
-      height: height,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.screenMargin,
+    // A margin under the chips: they are the last line of the header, and the
+    // grid's top fade starts below it.
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: SizedBox(
+        height: height,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenMargin,
+          ),
+          itemCount: chips.length,
+          separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
+          itemBuilder: (context, index) {
+            final chip = chips[index];
+            return Center(
+              child: AppChip(
+                label: chip.label,
+                state: ChipState.selected,
+                trailingIcon: AppIcons.close,
+                onTap: () => onFilterChanged(chip.remove()),
+              ),
+            );
+          },
         ),
-        itemCount: chips.length,
-        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
-        itemBuilder: (context, index) {
-          final chip = chips[index];
-          return Center(
-            child: AppChip(
-              label: chip.label,
-              state: ChipState.selected,
-              trailingIcon: AppIcons.close,
-              onTap: () => onFilterChanged(chip.remove()),
-            ),
-          );
-        },
       ),
     );
   }
