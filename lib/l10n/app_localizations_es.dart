@@ -597,13 +597,39 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterSheetTitle => 'Filtros';
 
   @override
+  String get filterSheetClear => 'Limpiar';
+
+  @override
+  String get filterSheetSectionStreaming => 'Streaming en';
+
+  @override
+  String get filterSheetSortPopular => 'Populares';
+
+  @override
+  String get filterSheetSortTopRated => 'Mejor valoradas';
+
+  @override
+  String get filterSheetSortNewest => 'Fecha de estreno';
+
+  @override
+  String filterSheetMinRatingValue(String rating) {
+    return '$rating o más';
+  }
+
+  @override
+  String get filterSheetMinRatingAny => 'Cualquier nota';
+
+  @override
+  String get filterSheetNoResults => 'Sin resultados';
+
+  @override
   String get filterSheetSectionType => 'Tipo';
 
   @override
-  String get filterSheetSectionYear => 'Año';
+  String get filterSheetSectionYear => 'Años';
 
   @override
-  String get filterSheetSectionMinRating => 'Valoración mínima';
+  String get filterSheetSectionMinRating => 'Nota mínima';
 
   @override
   String get filterSheetSectionMaxRuntime => 'Duración máxima';

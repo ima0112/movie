@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
+import '../../../../core/domain/repositories/settings_repository.dart';
+import '../../../../core/domain/entities/country.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
@@ -95,6 +97,7 @@ class _FilteredListView extends StatelessWidget {
       builder: (_) => ExploreFilterSheet(
         initialFilter: cubit.state.filter,
         mediaRepository: getIt<MediaRepository>(),
+        regionName: countryName(getIt<SettingsRepository>().current.regionCode),
         onApply: cubit.updateFilter,
       ),
     );

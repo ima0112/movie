@@ -1136,6 +1136,54 @@ abstract class AppLocalizations {
   /// **'Filters'**
   String get filterSheetTitle;
 
+  /// H8's header button that resets every filter (amber text, shown only while something is set).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get filterSheetClear;
+
+  /// No description provided for @filterSheetSectionStreaming.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaming on'**
+  String get filterSheetSectionStreaming;
+
+  /// No description provided for @filterSheetSortPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get filterSheetSortPopular;
+
+  /// No description provided for @filterSheetSortTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get filterSheetSortTopRated;
+
+  /// No description provided for @filterSheetSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Release date'**
+  String get filterSheetSortNewest;
+
+  /// H8's minimum-rating slider value, shown next to a star, e.g. "7.0 or more".
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} or more'**
+  String filterSheetMinRatingValue(String rating);
+
+  /// No description provided for @filterSheetMinRatingAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any rating'**
+  String get filterSheetMinRatingAny;
+
+  /// H8's apply button while the live count is 0 (disabled).
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get filterSheetNoResults;
+
   /// No description provided for @filterSheetSectionType.
   ///
   /// In en, this message translates to:
@@ -1145,7 +1193,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterSheetSectionYear.
   ///
   /// In en, this message translates to:
-  /// **'Year'**
+  /// **'Years'**
   String get filterSheetSectionYear;
 
   /// No description provided for @filterSheetSectionMinRating.

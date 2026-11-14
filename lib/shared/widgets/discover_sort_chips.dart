@@ -6,8 +6,8 @@ import '../../l10n/discover_sort_by_localization.dart';
 import '../../l10n/l10n_extension.dart';
 import 'app_chip.dart';
 
-/// H8: "sort by Popularity/Rating/Date/Title" (`docs/SCREENS.md` H8).
-/// Distinct from My List's own `SortFilterChips` (a different enum,
+/// H8's "Sort by": Popular, Top rated, Release date ([options]) — the three
+/// orders worth choosing between in a catalog search. Distinct from My List's own `SortFilterChips` (a different enum,
 /// `MyListSort` — recency/title/year/rating for a *library*, not a
 /// catalog search) rather than shared with it.
 ///
@@ -23,6 +23,12 @@ class DiscoverSortChips extends StatelessWidget {
   final DiscoverSortBy sortBy;
   final ValueChanged<DiscoverSortBy> onChanged;
 
+  static const List<DiscoverSortBy> options = [
+    DiscoverSortBy.popularity,
+    DiscoverSortBy.rating,
+    DiscoverSortBy.releaseDate,
+  ];
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -30,9 +36,9 @@ class DiscoverSortChips extends StatelessWidget {
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: [
-        for (final option in DiscoverSortBy.values)
+        for (final option in options)
           AppChip(
-            label: option.localizedLabel(l10n),
+            label: option.sheetLabel(l10n),
             state: option == sortBy ? ChipState.selected : ChipState.normal,
             onTap: () => onChanged(option),
           ),
