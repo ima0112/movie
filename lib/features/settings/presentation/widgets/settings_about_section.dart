@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router.dart';
 import '../../../../core/launch/launch_external_link.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_snack_bar.dart';
 import '../../../../shared/widgets/settings_row.dart';
 
 /// C6's About group — `docs/SCREENS.md` C6: "Version (long-press copies
@@ -29,9 +30,7 @@ class _SettingsAboutSectionState extends State<SettingsAboutSection> {
 
   void _copyBuildNumber(String buildNumber) {
     unawaited(Clipboard.setData(ClipboardData(text: buildNumber)));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.settingsBuildNumberCopiedSnackbar)),
-    );
+    AppSnackBar.show(context, context.l10n.settingsBuildNumberCopiedSnackbar);
   }
 
   @override

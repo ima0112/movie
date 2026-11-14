@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../l10n/l10n_extension.dart';
+import '../../shared/widgets/app_snack_bar.dart';
 import '../domain/entities/media_key.dart';
 import '../domain/entities/media_type.dart';
 
@@ -40,6 +41,6 @@ Future<void> shareMedia(
       ),
     );
   } catch (_) {
-    messenger.showSnackBar(SnackBar(content: Text(failure)));
+    AppSnackBar.showOn(messenger, failure);
   }
 }

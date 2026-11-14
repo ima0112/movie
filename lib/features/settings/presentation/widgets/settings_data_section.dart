@@ -9,6 +9,7 @@ import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_snack_bar.dart';
 import '../../../../shared/widgets/settings_row.dart';
 import '../../domain/library_export.dart';
 import 'confirm_deletion_dialog.dart';
@@ -60,9 +61,7 @@ class SettingsDataSection extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final result = await userLibraryRepository.all();
     if (result is! Success<List<UserMediaEntry>>) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.settingsExportFailedSnackbar)),
-      );
+      AppSnackBar.showOn(messenger, l10n.settingsExportFailedSnackbar);
       return;
     }
 
@@ -77,9 +76,7 @@ class SettingsDataSection extends StatelessWidget {
         ),
       );
     } catch (_) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.settingsExportFailedSnackbar)),
-      );
+      AppSnackBar.showOn(messenger, l10n.settingsExportFailedSnackbar);
     }
   }
 
@@ -103,14 +100,11 @@ class SettingsDataSection extends StatelessWidget {
 
     final messenger = ScaffoldMessenger.of(context);
     final deleteResult = await userLibraryRepository.clearAll();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          deleteResult is Success<void>
-              ? l10n.settingsMyListDeletedSnackbar
-              : l10n.settingsDeleteMyListFailedSnackbar,
-        ),
-      ),
+    AppSnackBar.showOn(
+      messenger,
+      deleteResult is Success<void>
+          ? l10n.settingsMyListDeletedSnackbar
+          : l10n.settingsDeleteMyListFailedSnackbar,
     );
   }
 
@@ -136,14 +130,11 @@ class SettingsDataSection extends StatelessWidget {
 
     final messenger = ScaffoldMessenger.of(context);
     final deleteResult = await tasteProfileRepository.delete();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          deleteResult is Success<void>
-              ? l10n.settingsMyTastesDeletedSnackbar
-              : l10n.settingsDeleteMyTastesFailedSnackbar,
-        ),
-      ),
+    AppSnackBar.showOn(
+      messenger,
+      deleteResult is Success<void>
+          ? l10n.settingsMyTastesDeletedSnackbar
+          : l10n.settingsDeleteMyTastesFailedSnackbar,
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../l10n/l10n_extension.dart';
+import '../../shared/widgets/app_snack_bar.dart';
 import 'youtube_urls.dart';
 
 /// Opens a trailer's own YouTube video — the YouTube app's `youtube://`
@@ -37,8 +39,6 @@ Future<void> _launchFirstWorking(
     }
   }
   if (context.mounted) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Couldn't open that link")));
+    AppSnackBar.show(context, context.l10n.commonCouldntOpenLink);
   }
 }
