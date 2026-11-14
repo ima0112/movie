@@ -931,6 +931,10 @@
   },
   "viewerCinephile": "Movie buff",
   "viewerExplorer": "A bit of everything",
+  "youRecentlyWatchedTitle": "Recently watched",
+  "@youRecentlyWatchedTitle": {
+    "description": "Heading of You's row of the last titles marked as watched (docs/SCREENS.md B5)."
+  },
   "yourActivityHoursLabel": "Hours",
   "yourActivitySeeStats": "See stats",
 

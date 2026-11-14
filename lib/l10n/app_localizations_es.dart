@@ -1000,6 +1000,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get viewerExplorer => 'De todo un poco';
 
   @override
+  String get youRecentlyWatchedTitle => 'Vistas recientemente';
+
+  @override
   String get yourActivityHoursLabel => 'Horas';
 
   @override
