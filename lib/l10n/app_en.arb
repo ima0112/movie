@@ -913,6 +913,24 @@
       }
     }
   },
+  "viewerNewcomer": "Just getting started",
+  "@viewerNewcomer": {
+    "description": "The line under the user's name on You (docs/SCREENS.md B5), from their watch history: fewer than 5 titles watched. The viewer* keys are all this one line."
+  },
+  "viewerSeriesBinger": "Series binger",
+  "viewerExigentCritic": "Tough critic",
+  "viewerEnthusiast": "Enthusiastic viewer",
+  "viewerGenreFan": "Fan of {genre}",
+  "@viewerGenreFan": {
+    "description": "A genre makes up a big share of what the user watches. {genre} is its localized name.",
+    "placeholders": {
+      "genre": {
+        "type": "String"
+      }
+    }
+  },
+  "viewerCinephile": "Movie buff",
+  "viewerExplorer": "A bit of everything",
   "yourActivityHoursLabel": "Hours",
   "yourActivitySeeStats": "See stats",
 

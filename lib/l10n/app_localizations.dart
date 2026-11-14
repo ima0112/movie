@@ -1694,6 +1694,48 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 TV show} other{{count} TV shows}}'**
   String youStatsShows(int count);
 
+  /// The line under the user's name on You (docs/SCREENS.md B5), from their watch history: fewer than 5 titles watched. The viewer* keys are all this one line.
+  ///
+  /// In en, this message translates to:
+  /// **'Just getting started'**
+  String get viewerNewcomer;
+
+  /// No description provided for @viewerSeriesBinger.
+  ///
+  /// In en, this message translates to:
+  /// **'Series binger'**
+  String get viewerSeriesBinger;
+
+  /// No description provided for @viewerExigentCritic.
+  ///
+  /// In en, this message translates to:
+  /// **'Tough critic'**
+  String get viewerExigentCritic;
+
+  /// No description provided for @viewerEnthusiast.
+  ///
+  /// In en, this message translates to:
+  /// **'Enthusiastic viewer'**
+  String get viewerEnthusiast;
+
+  /// A genre makes up a big share of what the user watches. {genre} is its localized name.
+  ///
+  /// In en, this message translates to:
+  /// **'Fan of {genre}'**
+  String viewerGenreFan(String genre);
+
+  /// No description provided for @viewerCinephile.
+  ///
+  /// In en, this message translates to:
+  /// **'Movie buff'**
+  String get viewerCinephile;
+
+  /// No description provided for @viewerExplorer.
+  ///
+  /// In en, this message translates to:
+  /// **'A bit of everything'**
+  String get viewerExplorer;
+
   /// No description provided for @yourActivityHoursLabel.
   ///
   /// In en, this message translates to:
