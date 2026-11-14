@@ -26,6 +26,8 @@ class UserMediaEntry {
     required this.title,
     this.isFavorite = false,
     this.isWatchLater = false,
+    this.favoritedAt,
+    this.watchLaterAt,
     this.watchedAt,
     this.rating,
     this.runtimeMinutes,
@@ -63,6 +65,14 @@ class UserMediaEntry {
 
   final bool isFavorite;
   final bool isWatchLater;
+
+  /// When the title was added to Favorites / Watch later ("Added 3 days ago",
+  /// `docs/SCREENS.md` B4). `null` while it isn't in that list, and also for
+  /// an entry saved before these fields existed (no date is invented for it).
+  /// Stamped by the repository on `upsert` ([withSaveDates]), so callers
+  /// never set them: a title that stays in a list keeps its date.
+  final DateTime? favoritedAt;
+  final DateTime? watchLaterAt;
   final DateTime? watchedAt;
 
   /// 1–5. Only meaningful once [watchedAt] is set.
@@ -156,6 +166,7 @@ class UserMediaEntry {
       title: title,
       isFavorite: isFavorite,
       isWatchLater: false,
+      favoritedAt: favoritedAt,
       watchedAt: watchedAt ?? DateTime.now(),
       rating: rating,
       runtimeMinutes: runtimeMinutes,
@@ -179,6 +190,8 @@ class UserMediaEntry {
       title: title,
       isFavorite: isFavorite,
       isWatchLater: isWatchLater,
+      favoritedAt: favoritedAt,
+      watchLaterAt: watchLaterAt,
       genres: genres,
       posterUrl: posterUrl,
       voteAverage: voteAverage,
@@ -205,6 +218,8 @@ class UserMediaEntry {
       title: title ?? this.title,
       isFavorite: isFavorite ?? this.isFavorite,
       isWatchLater: isWatchLater ?? this.isWatchLater,
+      favoritedAt: favoritedAt,
+      watchLaterAt: watchLaterAt,
       watchedAt: watchedAt ?? this.watchedAt,
       rating: rating ?? this.rating,
       runtimeMinutes: runtimeMinutes ?? this.runtimeMinutes,
@@ -218,6 +233,46 @@ class UserMediaEntry {
     );
   }
 
+  /// This entry with [favoritedAt] / [watchLaterAt] settled against what was
+  /// stored before ([previous], `null` when there was nothing): a list the
+  /// title isn't in has no date; one it was already in keeps its date (even
+  /// an absent one, for entries saved before dates existed); one it just
+  /// joined gets [now]. Both repositories call this on `upsert`.
+  UserMediaEntry withSaveDates(UserMediaEntry? previous, DateTime now) {
+    DateTime? settle(bool on, bool wasOn, DateTime? before, DateTime? given) {
+      if (!on) return null;
+      return wasOn ? (before ?? given) : (given ?? now);
+    }
+
+    return UserMediaEntry(
+      key: key,
+      title: title,
+      isFavorite: isFavorite,
+      isWatchLater: isWatchLater,
+      favoritedAt: settle(
+        isFavorite,
+        previous?.isFavorite ?? false,
+        previous?.favoritedAt,
+        favoritedAt,
+      ),
+      watchLaterAt: settle(
+        isWatchLater,
+        previous?.isWatchLater ?? false,
+        previous?.watchLaterAt,
+        watchLaterAt,
+      ),
+      watchedAt: watchedAt,
+      rating: rating,
+      runtimeMinutes: runtimeMinutes,
+      episodeCount: episodeCount,
+      episodeRuntimeMinutes: episodeRuntimeMinutes,
+      genres: genres,
+      posterUrl: posterUrl,
+      voteAverage: voteAverage,
+      year: year,
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       other is UserMediaEntry &&
@@ -225,6 +280,8 @@ class UserMediaEntry {
       other.title == title &&
       other.isFavorite == isFavorite &&
       other.isWatchLater == isWatchLater &&
+      other.favoritedAt == favoritedAt &&
+      other.watchLaterAt == watchLaterAt &&
       other.watchedAt == watchedAt &&
       other.rating == rating &&
       other.runtimeMinutes == runtimeMinutes &&
@@ -241,6 +298,8 @@ class UserMediaEntry {
     title,
     isFavorite,
     isWatchLater,
+    favoritedAt,
+    watchLaterAt,
     watchedAt,
     rating,
     runtimeMinutes,
@@ -255,7 +314,8 @@ class UserMediaEntry {
   @override
   String toString() =>
       'UserMediaEntry($key, title: $title, favorite: $isFavorite, '
-      'watchLater: $isWatchLater, watchedAt: $watchedAt, rating: $rating, '
+      'watchLater: $isWatchLater, favoritedAt: $favoritedAt, '
+      'watchLaterAt: $watchLaterAt, watchedAt: $watchedAt, rating: $rating, '
       'runtimeMinutes: $runtimeMinutes, episodeCount: $episodeCount, '
       'episodeRuntimeMinutes: $episodeRuntimeMinutes, genres: $genres, '
       'posterUrl: $posterUrl, voteAverage: $voteAverage, year: $year)';
@@ -266,7 +326,13 @@ class UserMediaEntry {
 /// of its 3+ call sites (My List toggles, Mark as watched, Surprise me's
 /// "Add to watch later", the detail screens' lazy snapshot refresh), all
 /// of which need exactly this same mapping.
-({String title, List<Genre> genres, String? posterUrl, double? voteAverage, int? year})
+({
+  String title,
+  List<Genre> genres,
+  String? posterUrl,
+  double? voteAverage,
+  int? year,
+})
 catalogSnapshotFrom(MediaItem item) => (
   title: item.title,
   genres: item.genres,

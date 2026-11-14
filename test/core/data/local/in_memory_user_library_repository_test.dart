@@ -9,6 +9,19 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart';
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
 const _theBear = MediaKey(type: MediaType.tvShow, tmdbId: 101);
 
+/// The entry as the repository hands it back: the same, plus the date it
+/// joined each list it is in (stamped on `upsert`).
+Matcher _savedAs(UserMediaEntry entry) => predicate<UserMediaEntry?>(
+  (stored) =>
+      stored != null &&
+      stored ==
+          entry.withSaveDates(
+            null,
+            stored.favoritedAt ?? stored.watchLaterAt ?? DateTime.now(),
+          ),
+  'the entry, stamped with its save dates',
+);
+
 void main() {
   group('InMemoryUserLibraryRepository', () {
     test('upsert followed by watchEntry emits the correct value', () async {
@@ -23,7 +36,7 @@ void main() {
       // initial `null` (nothing saved yet) and the post-upsert value.
       final expectation = expectLater(
         repository.watchEntry(_dune),
-        emitsInOrder([null, entry]),
+        emitsInOrder([null, _savedAs(entry)]),
       );
       // `upsert` has no real `await` inside it, so its side effects run
       // synchronously the moment it's called — give the stream's initial
@@ -49,7 +62,7 @@ void main() {
 
       final first = await repository.watchEntry(_dune).first;
 
-      expect(first, entry);
+      expect(first, _savedAs(entry));
     });
 
     test(
