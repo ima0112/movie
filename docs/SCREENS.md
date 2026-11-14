@@ -154,11 +154,11 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
   - **"What do you usually watch?"** ("It sets which catalog we show first."): the contained pill Movies · TV Shows · Both. Home opens on it.
   - **"Genres you like"** ("Choose as many as you like."): every genre as a wrapping chip, selected = amber.
   - **"Genres you avoid"** ("We won't show them in recommendations."): only the avoided genres, as red struck-through chips (tap to take one back), then a **"+ Add"** chip that opens a sheet (on the root navigator) with the other genres; picking one avoids it and closes. Mutually exclusive with the liked ones: avoiding a liked genre removes it from them.
-  - **"Vibes you like"**: the vibes, **up to 5** (a sixth is ignored until one is deselected).
-  - **"Eras"**: the release-year range the user leans towards.
+  - **"Favorite vibes"** ("Up to 5. They set the tone of what we suggest."): every vibe as a chip with its icon, selected = amber; **at most 5** — once 5 are picked the rest are dimmed and inert until one is deselected.
+  - **"Eras"** ("The release years you prefer."): a two-handle range slider 1950 – today with the chosen span in amber above it ("2000 – 2026") and the two bounds under it. One save when the finger lifts, not one per tick; a range that ends today is stored as no upper bound.
   - **"My platforms"**: the streaming services the user has (logos on neutral cards; amber ring and check when picked).
   - Footer: "Everything is saved only on your device." and a discreet "Saved" that shows for a moment after each change.
-- States: none special. (The vibes, eras and platforms sections are being redesigned in the stack: see the PRs.)
+- States: none special.
 
 ---
 
