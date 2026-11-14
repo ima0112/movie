@@ -107,6 +107,7 @@
   "myListFilteredEmptyMovieTitle": "No hay películas aquí",
   "myListFilteredEmptyTvShowTitle": "No hay series aquí",
 
+  "commonCouldntOpenLink": "No se pudo abrir ese enlace",
   "commonRetry": "Reintentar",
   "commonNext": "Siguiente",
   "commonSkip": "Omitir",

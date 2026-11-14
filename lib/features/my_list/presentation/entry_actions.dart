@@ -10,6 +10,7 @@ import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/library_tab_localization.dart';
 import '../../../l10n/media_type_localization.dart';
 import '../../../shared/widgets/actions_sheet.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/mark_as_watched_sheet.dart';
 import '../domain/entry_action.dart';
 
@@ -105,14 +106,10 @@ void removeFromTab(
   unawaited(
     left == null ? repository.remove(entry.key) : repository.upsert(left),
   );
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(tab.localizedRemovedMessage(l10n, entry.title)),
-      action: SnackBarAction(
-        label: l10n.myListUndoAction,
-        onPressed: () => unawaited(repository.upsert(entry)),
-      ),
-      duration: const Duration(seconds: 4),
-    ),
+  AppSnackBar.show(
+    context,
+    tab.localizedRemovedMessage(l10n, entry.title),
+    actionLabel: l10n.myListUndoAction,
+    onAction: () => unawaited(repository.upsert(entry)),
   );
 }

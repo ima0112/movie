@@ -10,6 +10,7 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/actions_sheet.dart';
+import '../../../../shared/widgets/app_snack_bar.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
 import '../../../../shared/widgets/clear_of_tab_bar.dart';
 import '../../../../shared/widgets/person_result_row.dart';
@@ -111,17 +112,11 @@ class _SwipeablePerson extends StatelessWidget {
   void _remove(BuildContext context) {
     final l10n = context.l10n;
     unawaited(repository.remove(person.id));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          l10n.myListRemovedFromTab(person.name, l10n.myListTabPeople),
-        ),
-        action: SnackBarAction(
-          label: l10n.myListUndoAction,
-          onPressed: () => unawaited(repository.save(person)),
-        ),
-        duration: const Duration(seconds: 4),
-      ),
+    AppSnackBar.show(
+      context,
+      l10n.myListRemovedFromTab(person.name, l10n.myListTabPeople),
+      actionLabel: l10n.myListUndoAction,
+      onAction: () => unawaited(repository.save(person)),
     );
   }
 }

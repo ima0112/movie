@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'No TV shows here'**
   String get myListFilteredEmptyTvShowTitle;
 
+  /// Snackbar when the system can't open an external link (TMDB, YouTube, GitHub…).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open that link'**
+  String get commonCouldntOpenLink;
+
   /// ErrorStateView's fixed CTA label (docs/SCREENS.md G: "Error: same layout with 'Retry'.").
   ///
   /// In en, this message translates to:
