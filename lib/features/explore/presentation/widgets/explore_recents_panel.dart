@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,6 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
 import '../../../../shared/widgets/overline_label.dart';
-import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../cubit/explore_cubit.dart';
 import '../cubit/explore_state.dart';
 import 'recent_search_row.dart';
@@ -90,6 +90,9 @@ class _Panel extends StatelessWidget {
   final List<String> recents;
   final VoidCallback onDismiss;
 
+  /// How much the page behind the panel is blurred.
+  static const double _blur = 6;
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ExploreCubit>();
@@ -104,8 +107,13 @@ class _Panel extends StatelessWidget {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: onDismiss,
-              child: ColoredBox(
-                color: AppColors.surface.withValues(alpha: 0.6),
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: _blur, sigmaY: _blur),
+                  child: ColoredBox(
+                    color: AppColors.surface.withValues(alpha: 0.6),
+                  ),
+                ),
               ),
             ),
           ),
@@ -140,19 +148,7 @@ class _Panel extends StatelessWidget {
                         onClearAll: cubit.clearRecentSearches,
                       ),
                       const Divider(height: 1, color: AppColors.line),
-                      Expanded(
-                        child: _FadingList(
-                          children: [
-                            for (final query in recents)
-                              RecentSearchRow(
-                                key: ValueKey(query),
-                                query: query,
-                                onTap: () => cubit.runRecentSearch(query),
-                                onRemove: () => cubit.removeRecentSearch(query),
-                              ),
-                          ],
-                        ),
-                      ),
+                      Expanded(child: _RecentsList(recents: recents)),
                     ],
                   ),
                 ),
@@ -198,59 +194,35 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// The scrolling rows, fading out at the bottom edge **only while there is
-/// more below** (a list that fits is never faded).
-class _FadingList extends StatefulWidget {
-  const _FadingList({required this.children});
+/// The scrolling rows. A [Scrollbar] insets its track by the ambient
+/// `MediaQuery` padding — which on a root tab includes the floating tab bar —
+/// so that padding is removed here, or the thumb would stop short of the end.
+class _RecentsList extends StatelessWidget {
+  const _RecentsList({required this.recents});
 
-  final List<Widget> children;
-
-  @override
-  State<_FadingList> createState() => _FadingListState();
-}
-
-class _FadingListState extends State<_FadingList> {
-  final _controller = ScrollController();
-  bool _moreBelow = false;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _measure() {
-    if (!_controller.hasClients) return;
-    final position = _controller.position;
-    final more = position.maxScrollExtent - position.pixels > 1;
-    if (more != _moreBelow) setState(() => _moreBelow = more);
-  }
+  final List<String> recents;
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollMetricsNotification>(
-      onNotification: (_) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _measure();
-        });
-        return false;
-      },
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (_) {
-          _measure();
-          return false;
-        },
-        child: ScrollEdgeFade(
-          top: 0,
-          bottom: _moreBelow ? AppSpacing.xxl : 0,
-          child: Scrollbar(
-            controller: _controller,
-            child: ListView(
-              controller: _controller,
-              padding: EdgeInsets.zero,
-              children: widget.children,
-            ),
-          ),
+    final cubit = context.read<ExploreCubit>();
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      removeBottom: true,
+      child: Scrollbar(
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemExtent: RecentSearchRow.height,
+          itemCount: recents.length,
+          itemBuilder: (context, index) {
+            final query = recents[index];
+            return RecentSearchRow(
+              key: ValueKey(query),
+              query: query,
+              onTap: () => cubit.runRecentSearch(query),
+              onRemove: () => cubit.removeRecentSearch(query),
+            );
+          },
         ),
       ),
     );
