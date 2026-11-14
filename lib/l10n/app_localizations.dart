@@ -1880,6 +1880,18 @@ abstract class AppLocalizations {
   /// **'The release years you prefer.'**
   String get myTastesErasHint;
 
+  /// No description provided for @myTastesPlatformsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My platforms'**
+  String get myTastesPlatformsTitle;
+
+  /// No description provided for @myTastesPlatformsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'We prioritize what you can already watch in your region.'**
+  String get myTastesPlatformsHint;
+
   /// No description provided for @myTastesGenresLikeHint.
   ///
   /// In en, this message translates to:

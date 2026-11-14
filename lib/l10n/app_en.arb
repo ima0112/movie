@@ -983,6 +983,8 @@
   },
   "myTastesErasTitle": "Eras",
   "myTastesErasHint": "The release years you prefer.",
+  "myTastesPlatformsTitle": "My platforms",
+  "myTastesPlatformsHint": "We prioritize what you can already watch in your region.",
   "myTastesGenresLikeHint": "Choose as many as you like.",
   "myTastesGenresNeverHint": "We won't show them in recommendations.",
   "myTastesGenresLikeTitle": "Genres you like",

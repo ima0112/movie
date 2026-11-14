@@ -343,6 +343,8 @@
   "myTastesVibesHint": "Hasta {max}. Marcan el tono de lo que te sugerimos.",
   "myTastesErasTitle": "Épocas",
   "myTastesErasHint": "Rango de años de estreno que prefieres.",
+  "myTastesPlatformsTitle": "Mis plataformas",
+  "myTastesPlatformsHint": "Priorizamos lo que puedes ver ya en tu región.",
   "myTastesGenresLikeHint": "Elige los que quieras.",
   "myTastesGenresNeverHint": "No los mostramos en recomendaciones.",
   "myTastesGenresLikeTitle": "Géneros que me gustan",
