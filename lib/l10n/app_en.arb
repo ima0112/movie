@@ -600,16 +600,7 @@
   "filterSheetSectionSortBy": "Sort by",
   "filterSheetSeeResultsLoading": "See results",
   "@filterSheetSeeResultsLoading": {
-    "description": "H8's \"See N results\" button while the live count hasn't resolved yet — no number shown (docs/SCREENS.md H8)."
-  },
-  "filterSheetSeeResultsCount": "See {count} results",
-  "@filterSheetSeeResultsCount": {
-    "description": "H8's \"See N results\" button once the live count has resolved (docs/SCREENS.md H8: \"'See N results' (N live)\"). Deliberately not ICU-pluralized in English for the same reason as filteredListCountLine — preserves this control's existing behavior exactly.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "description": "H8's apply button: it just says \"See results\" (no number; it turns into filterSheetNoResults, disabled, when nothing matches)."
   },
 
   "discoverRangeFiltersYearRange": "{from} – {to}",

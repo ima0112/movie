@@ -33,15 +33,15 @@ import 'genre_multi_select_chips.dart';
 /// (typed), rating range and original language. Changing the kind drops what belongs
 /// to the old one (the preset, the platform, since the services differ).
 ///
-/// Edits a local draft — nothing reaches [onApply] until "See N results", and
+/// Edits a local draft — nothing reaches [onApply] until "See results", and
 /// swiping closed discards it. "Clear" (top right, only while something is
 /// set) puts the draft back to the default of the picked kind: every title,
 /// most popular first — never an empty state.
 ///
-/// The button's N is live: the draft's total is requested (debounced, so a
-/// dragged slider doesn't fire a request per tick) and a slow answer to an
-/// old draft can't overwrite a newer one's. With no match the button is
-/// disabled and says so.
+/// The button just says "See results" — no number. Behind the scenes the
+/// draft's total is still requested (debounced, so a dragged slider doesn't
+/// fire a request per tick; a slow answer to an old draft can't overwrite a
+/// newer one's) so that, with no match, the button is disabled and says so.
 class ExploreFilterSheet extends StatefulWidget {
   const ExploreFilterSheet({
     super.key,
@@ -278,11 +278,11 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
             // ...and the button is always in reach.
             const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
-              label: switch (count) {
-                null => l10n.filterSheetSeeResultsLoading,
-                0 => l10n.filterSheetNoResults,
-                _ => l10n.filterSheetSeeResultsCount(count),
-              },
+              // No number: it is checked behind the scenes only to say when
+              // nothing matches (the button is then disabled).
+              label: count == 0
+                  ? l10n.filterSheetNoResults
+                  : l10n.filterSheetSeeResultsLoading,
               isDisabled: count == 0,
               onTap: _apply,
             ),

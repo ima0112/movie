@@ -75,4 +75,14 @@ void main() {
     await _pump(tester, CarouselSection.finishedShows);
     expect(find.text('7.5'), findsWidgets);
   });
+
+  testWidgets('the rating badge sits at the poster\'s bottom-left (Top '
+      'rated\'s wide cards are the one exception)', (tester) async {
+    await _pump(tester, CarouselSection.finishedShows);
+
+    final poster = tester.getRect(find.byType(MediaCard).first);
+    final rating = tester.getRect(find.text('7.5').first);
+    expect(rating.top, greaterThan(poster.top + poster.height / 2));
+    expect(rating.left, lessThan(poster.left + poster.width / 2));
+  });
 }

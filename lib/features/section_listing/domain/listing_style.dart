@@ -13,7 +13,7 @@ enum ListingStyle {
   /// A small outlined rank (1, 2, 3…) in the bottom-left corner.
   ranked,
 
-  /// An amber-star rating badge (top-left).
+  /// An amber-star rating badge (bottom-left).
   rating,
 
   /// The release date and year (bottom-left).

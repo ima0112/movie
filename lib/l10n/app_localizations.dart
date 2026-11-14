@@ -1298,17 +1298,11 @@ abstract class AppLocalizations {
   /// **'Sort by'**
   String get filterSheetSectionSortBy;
 
-  /// H8's "See N results" button while the live count hasn't resolved yet — no number shown (docs/SCREENS.md H8).
+  /// H8's apply button: it just says "See results" (no number; it turns into filterSheetNoResults, disabled, when nothing matches).
   ///
   /// In en, this message translates to:
   /// **'See results'**
   String get filterSheetSeeResultsLoading;
-
-  /// H8's "See N results" button once the live count has resolved (docs/SCREENS.md H8: "'See N results' (N live)"). Deliberately not ICU-pluralized in English for the same reason as filteredListCountLine — preserves this control's existing behavior exactly.
-  ///
-  /// In en, this message translates to:
-  /// **'See {count} results'**
-  String filterSheetSeeResultsCount(int count);
 
   /// H8's year-range slider's own live value display, e.g. "1950 – 2024" (spaces around the dash — distinct from filteredListYearRangeChip's own unspaced dash).
   ///
