@@ -784,7 +784,7 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
           metadata: 'Movie · 2024 · 2 h 46 min',
           status: const LibraryRowStatus.watched(
             stars: 3,
-            label: 'Watched 3 Oct, 2026',
+            label: '3 Oct, 2026',
           ),
           onMore: () {},
         ),
@@ -795,7 +795,7 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
           metadata: 'Movie · 2023 · 3 h',
           status: const LibraryRowStatus.watched(
             stars: 4,
-            label: 'Watched 8 Nov, 2026',
+            label: '8 Nov, 2026',
           ),
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
@@ -806,7 +806,7 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
           // stars: null — all five stars render empty.
           status: const LibraryRowStatus.watched(
             stars: null,
-            label: 'Watched 2 Nov, 2026',
+            label: '2 Nov, 2026',
           ),
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),

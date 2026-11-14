@@ -786,11 +786,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String libraryRowWatchedOn(String date) {
-    return 'Vista $date';
-  }
-
-  @override
   String get myListUndoAction => 'Deshacer';
 
   @override

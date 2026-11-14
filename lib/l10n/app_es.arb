@@ -261,7 +261,6 @@
   "libraryRowAddedDaysAgo": "Hace {count} días",
   "libraryRowAddedWeeksAgo": "Hace {count, plural, =1{1 semana} other{{count} semanas}}",
   "libraryRowAddedOn": "Añadida {date}",
-  "libraryRowWatchedOn": "Vista {date}",
 
   "myListUndoAction": "Deshacer",
   "myListBodyOtherTabsNote": "Explora para añadir películas y series aquí.",
