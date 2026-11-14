@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../shared/widgets/failure_state_view.dart';
 import '../cubit/discover_cubit.dart';
-import 'discover_content_error.dart';
 import 'discover_content_loaded.dart';
 import 'discover_content_skeleton.dart';
 
@@ -39,8 +40,10 @@ class DiscoverContentArea extends StatelessWidget {
         return switch (state) {
           DiscoverInitial() => DiscoverContentSkeleton(segment: segment),
           DiscoverLoading() => DiscoverContentSkeleton(segment: segment),
-          DiscoverError() => DiscoverContentError(
+          DiscoverError(:final reason) => FailureStateView(
+            reason: reason,
             onRetry: () => context.read<DiscoverCubit>().loadDiscover(segment),
+            onGoToMyList: () => context.go('/my-list'),
           ),
           DiscoverLoaded() => DiscoverContentLoaded(segment: segment),
         };

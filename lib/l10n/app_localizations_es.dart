@@ -33,7 +33,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get failureServer =>
-      'TMDB está teniendo problemas ahora mismo. Inténtalo de nuevo en un momento.';
+      'Algo falló al conectar con el servidor. Inténtalo de nuevo en unos segundos.';
 
   @override
   String get failureNotFound => 'No hemos podido encontrar esto.';
@@ -293,6 +293,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonCouldntOpenLink => 'No se pudo abrir ese enlace';
 
   @override
+  String get offlineStateTitle => 'Estás sin conexión';
+
+  @override
+  String get offlineStateBody =>
+      'Para descubrir y buscar necesitas internet. Tu lista sigue disponible.';
+
+  @override
+  String get offlineGoToMyList => 'Ir a Mi lista';
+
+  @override
   String get commonRetry => 'Reintentar';
 
   @override
@@ -411,7 +421,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboardingWelcomeTmdbAttribution => 'Datos de TMDB';
 
   @override
-  String get commonCouldntLoad => 'No se pudo cargar';
+  String get commonCouldntLoad => 'No pudimos cargar';
 
   @override
   String get commonReset => 'Restablecer';

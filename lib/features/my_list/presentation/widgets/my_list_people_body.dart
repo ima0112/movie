@@ -12,7 +12,6 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/actions_sheet.dart';
 import '../../../../shared/widgets/app_snack_bar.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
-import '../../../../shared/widgets/clear_of_tab_bar.dart';
 import '../../../../shared/widgets/person_result_row.dart';
 import '../../../../shared/widgets/profile_image.dart';
 import '../../../../shared/widgets/state_views.dart';
@@ -36,14 +35,12 @@ class MyListPeopleBody extends StatelessWidget {
         if (people == null) return const SizedBox.shrink();
         if (people.isEmpty) {
           final l10n = context.l10n;
-          return ClearOfTabBar(
-            child: EmptyStateView(
-              icon: AppIcons.user,
-              title: l10n.myListEmptyPeopleHeadline,
-              body: l10n.myListEmptyPeopleBody,
-              ctaLabel: l10n.navTabExplore,
-              onCtaTap: () => context.go('/explore'),
-            ),
+          return EmptyStateView(
+            icon: AppIcons.user,
+            title: l10n.myListEmptyPeopleHeadline,
+            body: l10n.myListEmptyPeopleBody,
+            ctaLabel: l10n.navTabExplore,
+            onCtaTap: () => context.go('/explore'),
           );
         }
         return ListView.builder(

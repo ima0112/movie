@@ -35,7 +35,7 @@
   "@failureNetwork": {
     "description": "Failure.localizedMessage (FailureReason.network) — the one translation site every network-shaped error goes through, CLAUDE.md rule 15."
   },
-  "failureServer": "TMDB is having trouble right now. Try again in a moment.",
+  "failureServer": "Something failed while connecting to the server. Try again in a few seconds.",
   "@failureServer": {
     "description": "Failure.localizedMessage (FailureReason.server)."
   },
@@ -250,6 +250,15 @@
   "commonCouldntOpenLink": "Couldn't open that link",
   "@commonCouldntOpenLink": {
     "description": "Snackbar when the system can't open an external link (TMDB, YouTube, GitHub…)."
+  },
+  "offlineStateTitle": "You're offline",
+  "@offlineStateTitle": {
+    "description": "Headline of the offline state (OfflineStateView): a load failed because there is no connection."
+  },
+  "offlineStateBody": "Discovering and searching need internet. Your list is still available.",
+  "offlineGoToMyList": "Go to My List",
+  "@offlineGoToMyList": {
+    "description": "The text link under the offline state's Retry on the root tabs Home and Explore; opens My List, which works offline."
   },
   "commonRetry": "Retry",
   "@commonRetry": {

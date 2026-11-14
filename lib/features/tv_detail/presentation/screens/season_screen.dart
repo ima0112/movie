@@ -9,7 +9,6 @@ import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/state_views.dart';
@@ -49,14 +48,23 @@ class SeasonScreen extends StatelessWidget {
       create: (_) =>
           SeasonCubit(getIt<MediaRepository>())
             ..loadSeason(tvId, seasonSummary.seasonNumber),
-      child: _SeasonView(seasonSummary: seasonSummary, showTitle: showTitle),
+      child: _SeasonView(
+        tvId: tvId,
+        seasonSummary: seasonSummary,
+        showTitle: showTitle,
+      ),
     );
   }
 }
 
 class _SeasonView extends StatelessWidget {
-  const _SeasonView({required this.seasonSummary, this.showTitle});
+  const _SeasonView({
+    required this.tvId,
+    required this.seasonSummary,
+    this.showTitle,
+  });
 
+  final int tvId;
   final SeasonSummary seasonSummary;
   final String? showTitle;
 
@@ -122,9 +130,12 @@ class _SeasonView extends StatelessWidget {
               builder: (context, state) {
                 return switch (state) {
                   SeasonInitial() || SeasonLoading() => const _SeasonSkeleton(),
-                  SeasonError(:final reason) => ErrorStateView(
-                    title: context.l10n.commonCouldntLoad,
-                    body: reason.localizedMessage(context.l10n),
+                  SeasonError(:final reason) => FailureStateView(
+                    reason: reason,
+                    onRetry: () => context.read<SeasonCubit>().loadSeason(
+                      tvId,
+                      seasonSummary.seasonNumber,
+                    ),
                   ),
                   SeasonLoaded(:final season) => Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

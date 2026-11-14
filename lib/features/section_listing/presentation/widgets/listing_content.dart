@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../l10n/failure_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/scroll_edge_fade.dart';
 import '../../../../shared/widgets/state_views.dart';
@@ -34,9 +33,8 @@ class ListingContent extends StatelessWidget {
         final l10n = context.l10n;
         return switch (state) {
           SectionListingLoading() => const ListingSkeleton(),
-          SectionListingError(:final reason) => ErrorStateView(
-            title: l10n.commonCouldntLoad,
-            body: reason.localizedMessage(l10n),
+          SectionListingError(:final reason) => FailureStateView(
+            reason: reason,
             onRetry: context.read<SectionListingCubit>().retry,
           ),
           SectionListingLoaded(:final items) when items.isEmpty =>

@@ -8,7 +8,7 @@
   "settingsDataDeleteItemCount": "{count, plural, =1{1 elemento} other{{count} elementos}}",
 
   "failureNetwork": "Sin conexión — revisa tu internet e inténtalo de nuevo.",
-  "failureServer": "TMDB está teniendo problemas ahora mismo. Inténtalo de nuevo en un momento.",
+  "failureServer": "Algo falló al conectar con el servidor. Inténtalo de nuevo en unos segundos.",
   "failureNotFound": "No hemos podido encontrar esto.",
   "failureQuota": "Demasiadas solicitudes — inténtalo de nuevo en un momento.",
   "failureStorage": "Algo salió mal al guardar esto en tu dispositivo.",
@@ -108,6 +108,9 @@
   "myListFilteredEmptyTvShowTitle": "No hay series aquí",
 
   "commonCouldntOpenLink": "No se pudo abrir ese enlace",
+  "offlineStateTitle": "Estás sin conexión",
+  "offlineStateBody": "Para descubrir y buscar necesitas internet. Tu lista sigue disponible.",
+  "offlineGoToMyList": "Ir a Mi lista",
   "commonRetry": "Reintentar",
   "commonNext": "Siguiente",
   "commonSkip": "Omitir",
@@ -152,7 +155,7 @@
   "onboardingWelcomeGetStarted": "Empezar",
   "onboardingWelcomeTmdbAttribution": "Datos de TMDB",
 
-  "commonCouldntLoad": "No se pudo cargar",
+  "commonCouldntLoad": "No pudimos cargar",
   "commonReset": "Restablecer",
   "commonCancel": "Cancelar",
   "commonClearAll": "Borrar todo",
