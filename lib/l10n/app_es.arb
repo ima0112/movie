@@ -339,13 +339,15 @@
   "myTastesAddAvoided": "Añadir",
   "myTastesAddAvoidedSheetTitle": "Añadir un género que evitas",
   "myTastesFooter": "Todo se guarda solo en tu dispositivo.",
+  "myTastesVibesTitle": "Vibes favoritas",
+  "myTastesVibesHint": "Hasta {max}. Marcan el tono de lo que te sugerimos.",
+  "myTastesErasTitle": "Épocas",
+  "myTastesErasHint": "Rango de años de estreno que prefieres.",
   "myTastesGenresLikeHint": "Elige los que quieras.",
   "myTastesGenresNeverHint": "No los mostramos en recomendaciones.",
   "myTastesGenresLikeTitle": "Géneros que me gustan",
   "myTastesGenresNeverTitle": "Géneros que evito",
   "myTastesSavedIndicator": "Guardado",
-  "myTastesVibesLikeTitle": "Vibes que te gustan",
-  "myTastesHowFarBackLabel": "Hasta cuándo",
 
   "statsHoursValue": "{hours} h",
 
