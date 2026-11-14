@@ -473,7 +473,7 @@ not built yet.
 | Halo | The only gradient allowed: radial from `accentDeep` to `surface`, in the Discover header and on the welcome screen. |
 | Typography | One geometric sans (Manrope or Satoshi), weights 400/500. Section 20/500, detail title 32/500, hero 26/500, metadata 13–14/400. |
 | Spacing | 20 px margins; 32 px between sections; 110×165 posters with 12 px gaps, 3.2 visible; no borders or shadows; 12 px radius. |
-| Buttons | Primary: white pill with black text. Secondary: pill with a thin gray border. Never two primaries. |
+| Buttons | Primary: white pill with black text. Secondary: pill with a thin gray border. Never two primaries. **Accent** (`AccentButton`): an amber pill with near-black text, always on one line (never taller), only as the single call-to-action of B1's taste card — not a second primary, never next to one. |
 | Bottom bar | **Four tabs** (Discover, Explore · My List, You) and a **60 px amber circular button raised 14 px in the center with Pako's face**, which opens the Match hub as a modal from the bottom. White dot on the button if a room is active. |
 | Pako | Mascot: a rounded TV set with two antennas, short legs, and a face on the screen. Off (outline, no face) = logo. A single `.riv` file with a state machine: `powerOn`, `mood` (neutral/searching/celebrating/asleep), `yearSlider`, `idle`. |
 | Rive | Only where the animation IS content: splash, empty states, "Searching…", match/Surprise me result, quiz step 3. Micro-interactions stay native Flutter. Runtime `rive` 0.14 (native C++), `RiveNative.init()` at startup. |

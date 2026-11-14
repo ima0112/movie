@@ -151,8 +151,47 @@ class DestructiveButton extends StatelessWidget {
   }
 }
 
+/// Filled pill in the `accent` (amber), `onAccent` (near-black) text, on **one
+/// line** (it never grows taller: a label that doesn't fit is ellipsized).
+/// Not a second primary: it is the one call-to-action of a card that sits on
+/// the dark page (B1's taste card), where the amber carries the card's own
+/// accent — see `docs/DESIGN_SYSTEM.md` §5.4. Never next to a [PrimaryButton].
+class AccentButton extends StatelessWidget {
+  const AccentButton({
+    super.key,
+    required this.label,
+    this.icon,
+    this.onTap,
+    this.isLoading = false,
+    this.isDisabled = false,
+    this.fullWidth = true,
+  });
+
+  final String label;
+  final IconData? icon;
+  final VoidCallback? onTap;
+  final bool isLoading;
+  final bool isDisabled;
+  final bool fullWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return _BaseButton(
+      label: label,
+      icon: icon,
+      onTap: onTap,
+      isLoading: isLoading,
+      isDisabled: isDisabled,
+      fullWidth: fullWidth,
+      singleLine: true,
+      backgroundColor: AppColors.accent,
+      foregroundColor: AppColors.onAccent,
+    );
+  }
+}
+
 /// Shared pill shape, tap handling, loading spinner, and disabled dimming
-/// for the four button styles above.
+/// for the button styles above.
 class _BaseButton extends StatelessWidget {
   const _BaseButton({
     required this.label,
@@ -164,6 +203,7 @@ class _BaseButton extends StatelessWidget {
     this.isLoading = false,
     this.isDisabled = false,
     this.fullWidth = true,
+    this.singleLine = false,
   });
 
   final String label;
@@ -175,6 +215,9 @@ class _BaseButton extends StatelessWidget {
   final bool isLoading;
   final bool isDisabled;
   final bool fullWidth;
+
+  /// Keep the label on one line (ellipsized) so the pill never grows taller.
+  final bool singleLine;
 
   static const double _spinnerSize = 18;
   static const double _iconSize = 18;
@@ -219,6 +262,8 @@ class _BaseButton extends StatelessWidget {
                     Flexible(
                       child: Text(
                         label,
+                        maxLines: singleLine ? 1 : null,
+                        overflow: singleLine ? TextOverflow.ellipsis : null,
                         style: AppTextStyles.h3.copyWith(
                           color: foregroundColor,
                         ),
