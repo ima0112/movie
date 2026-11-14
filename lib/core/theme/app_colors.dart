@@ -53,6 +53,14 @@ class AppColors {
   /// icon color.
   static const Color accentDeep = Color(0xFF5A3A10);
 
+  /// The selected pill's fill: the accent at 16% (a dark amber tint). With
+  /// [accentLine] as its border and [accent] as its text/icon, it is the one
+  /// "selected / active" look of chips and pills.
+  static const Color accentSoft = Color(0x29F2B441);
+
+  /// The selected pill's hairline border: the accent at 40%.
+  static const Color accentLine = Color(0x66F2B441);
+
   /// Text/icons on top of an [accent] background.
   static const Color onAccent = Color(0xFF1A1204);
 
