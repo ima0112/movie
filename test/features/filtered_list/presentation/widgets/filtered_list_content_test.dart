@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/discover_preset.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_theme.dart';
@@ -106,5 +107,32 @@ void main() {
     expect(cubit.state.filter, const DiscoverFilter(type: MediaType.movie));
     expect(find.text('Nothing with those filters'), findsNothing);
     expect(find.text('9.9+ rating'), findsNothing);
+  });
+
+  testWidgets('chips for the preset, the rating range and the original '
+      'language; each × drops its own', (tester) async {
+    final cubit = await _pump(
+      tester,
+      const DiscoverFilter(
+        type: MediaType.tvShow,
+        minVoteAverage: 4.5,
+        maxVoteAverage: 8,
+        originalLanguage: 'ko',
+      ).withPreset(DiscoverPreset.finished),
+    );
+
+    expect(find.text('Finished'), findsOneWidget);
+    expect(find.text('Rating 4.5–8.0'), findsOneWidget);
+    expect(find.text('한국어'), findsOneWidget);
+    expect(find.text('3'), findsOneWidget); // the badge
+
+    await tester.tap(find.text('Finished'));
+    await tester.pumpAndSettle();
+    expect(cubit.state.filter.preset, isNull);
+    expect(cubit.state.filter.tvStatus, isNull);
+
+    await tester.tap(find.text('Rating 4.5–8.0'));
+    await tester.pumpAndSettle();
+    expect(cubit.state.filter.hasRatingRange, isFalse);
   });
 }

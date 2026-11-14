@@ -638,6 +638,34 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterSheetNoResults => 'Sin resultados';
 
   @override
+  String get filterSheetPresetComingSoon => 'Próximamente';
+
+  @override
+  String get filterSheetPresetInTheaters => 'En cines';
+
+  @override
+  String get filterSheetPresetFinished => 'Finalizadas';
+
+  @override
+  String get filterSheetPresetAiringNow => 'En emisión';
+
+  @override
+  String get filterSheetSectionLanguage => 'Idioma original';
+
+  @override
+  String get filterSheetLanguageAny => 'Cualquiera';
+
+  @override
+  String filterSheetRatingRangeValue(String min, String max) {
+    return '$min – $max';
+  }
+
+  @override
+  String filteredListRatingRangeChip(String min, String max) {
+    return 'Nota $min–$max';
+  }
+
+  @override
   String get filterSheetSectionType => 'Tipo';
 
   @override
@@ -645,6 +673,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get filterSheetSectionMinRating => 'Nota mínima';
+
+  @override
+  String get filterSheetSectionRating => 'Nota';
 
   @override
   String get filterSheetSectionMaxRuntime => 'Duración máxima';

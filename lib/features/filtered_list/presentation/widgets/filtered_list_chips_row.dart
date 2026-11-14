@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/discover_filter.dart';
+import '../../../../core/domain/entities/discover_preset.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../l10n/discover_preset_localization.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_chip.dart';
+import '../../../../shared/widgets/original_language_catalog.dart';
 
 /// C1's row of active filters, one amber chip each with a "×" — a single line
 /// that scrolls sideways when it doesn't fit. Tapping a chip clears just that
@@ -61,6 +64,15 @@ class FilteredListChipsRow extends StatelessWidget {
   List<_ActiveChip> _activeChips(DiscoverFilter filter, AppLocalizations l10n) {
     final chips = <_ActiveChip>[];
 
+    if (filter.preset case final preset?) {
+      chips.add(
+        _ActiveChip(
+          label: preset.localizedLabel(l10n),
+          remove: () => filter.withPreset(null),
+        ),
+      );
+    }
+
     for (final id in filter.withWatchProviders) {
       final name = providerNames[id];
       if (name == null) continue;
@@ -108,13 +120,30 @@ class FilteredListChipsRow extends StatelessWidget {
       );
     }
 
-    if (filter.minVoteAverage != null && filter.minVoteAverage! > 0) {
+    if (filter.hasRatingRange) {
+      final low = filter.minVoteAverage ?? 0;
+      final high = filter.maxVoteAverage;
       chips.add(
         _ActiveChip(
-          label: l10n.filteredListMinRatingChip(
-            filter.minVoteAverage!.toStringAsFixed(1),
+          label: high == null
+              ? l10n.filteredListMinRatingChip(low.toStringAsFixed(1))
+              : l10n.filteredListRatingRangeChip(
+                  low.toStringAsFixed(1),
+                  high.toStringAsFixed(1),
+                ),
+          remove: () => filter.copyWith(
+            minVoteAverage: () => null,
+            maxVoteAverage: () => null,
           ),
-          remove: () => filter.copyWith(minVoteAverage: () => null),
+        ),
+      );
+    }
+
+    if (filter.originalLanguage case final code?) {
+      chips.add(
+        _ActiveChip(
+          label: originalLanguageName(code),
+          remove: () => filter.copyWith(originalLanguage: () => null),
         ),
       );
     }
