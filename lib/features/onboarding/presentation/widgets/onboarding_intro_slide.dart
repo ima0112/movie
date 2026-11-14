@@ -38,9 +38,6 @@ class OnboardingIntroSlide extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onSkip;
 
-  /// Four dots in the design: the two slides, the name step, the genres.
-  static const int dotCount = 4;
-
   static const double _fadeHeight = 230;
   static const double _textMaxFraction = 0.5;
 
@@ -132,7 +129,7 @@ class OnboardingIntroSlide extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             OnboardingPagerDots(
-                              count: dotCount,
+                              count: OnboardingPagerDots.total,
                               activeIndex: activeDot,
                             ),
                             Padding(

@@ -67,7 +67,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   Widget build(BuildContext context) {
     final cubit = context.read<OnboardingCubit>();
     // No Scaffold here — each step below is its own self-contained
-    // "screen" (WelcomeView, and NameStep/GenreStep via
+    // "screen" (WelcomeView, NameStep and the genre steps via
     // onboarding_scaffold.dart), each with its own Scaffold/SafeArea
     // (CLAUDE.md rule 14). A Scaffold here too would just nest one
     // inside another for no benefit.
@@ -79,13 +79,13 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             postersFuture: _postersFuture,
             onGetStarted: cubit.next,
           ),
+          OnboardingStep.name => const OnboardingNameStep(),
           OnboardingStep.introDiscover => const OnboardingIntroStep(
             kind: OnboardingIntroKind.discover,
           ),
           OnboardingStep.introSurprise => const OnboardingIntroStep(
             kind: OnboardingIntroKind.surprise,
           ),
-          OnboardingStep.name => const OnboardingNameStep(),
           OnboardingStep.likedGenres => OnboardingGenreStep(
             isVetoedStep: false,
             onFinish: () => _finish(context),

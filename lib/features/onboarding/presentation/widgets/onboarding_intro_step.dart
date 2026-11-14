@@ -14,6 +14,7 @@ import 'intro_discover_mock.dart';
 import 'intro_phone_frame.dart';
 import 'intro_surprise_mock.dart';
 import 'onboarding_intro_slide.dart';
+import 'onboarding_pager_dots.dart';
 
 enum OnboardingIntroKind { discover, surprise }
 
@@ -41,7 +42,9 @@ class OnboardingIntroStep extends StatelessWidget {
       body: isDiscover
           ? l10n.onboardingIntroDiscoverBody
           : l10n.onboardingIntroSurpriseBody,
-      activeDot: isDiscover ? 0 : 1,
+      activeDot: isDiscover
+          ? OnboardingPagerDots.introDiscoverDot
+          : OnboardingPagerDots.introSurpriseDot,
       visual: isDiscover ? const _DiscoverVisual() : const _SurpriseVisual(),
       onNext: cubit.next,
       onSkip: cubit.skipIntro,

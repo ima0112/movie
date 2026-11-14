@@ -1,12 +1,13 @@
 import '../../../../core/domain/entities/genre.dart';
 
-/// A2's own screens, in order — `docs/SCREENS.md` A2: welcome, two intro
-/// slides (skippable as a pair), then the name and two genre steps.
+/// A2's own screens, in order — `docs/SCREENS.md` A2: welcome, then the
+/// required name step, then two intro slides (skippable as a pair) and the two
+/// genre steps.
 enum OnboardingStep {
   welcome,
+  name,
   introDiscover,
   introSurprise,
-  name,
   likedGenres,
   vetoedGenres,
 }

@@ -8,6 +8,7 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 import '../../../../shared/widgets/quiz_tile.dart';
 import 'genre_step_headline.dart';
+import 'onboarding_pager_dots.dart';
 import 'onboarding_scaffold.dart';
 import 'step_transition.dart';
 
@@ -85,7 +86,17 @@ class GenreStep extends StatelessWidget {
             ),
           ],
         ),
-        footer: PrimaryButton(label: nextLabel, onTap: onNext),
+        footer: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const OnboardingPagerDots(
+              count: OnboardingPagerDots.total,
+              activeIndex: OnboardingPagerDots.vetoedDot,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            PrimaryButton(label: nextLabel, onTap: onNext),
+          ],
+        ),
       ),
     );
   }
