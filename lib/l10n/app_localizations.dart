@@ -1892,6 +1892,24 @@ abstract class AppLocalizations {
   /// **'≈ {hours} to watch'**
   String statsBacklogHours(String hours);
 
+  /// No description provided for @statsActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get statsActivityTitle;
+
+  /// No description provided for @statsActivityLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
+  String get statsActivityLess;
+
+  /// No description provided for @statsActivityMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get statsActivityMore;
+
   /// No description provided for @statsEmptyTitle.
   ///
   /// In en, this message translates to:

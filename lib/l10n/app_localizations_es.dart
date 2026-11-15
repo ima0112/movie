@@ -1101,6 +1101,15 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get statsActivityTitle => 'Actividad';
+
+  @override
+  String get statsActivityLess => 'Menos';
+
+  @override
+  String get statsActivityMore => 'Más';
+
+  @override
   String get statsEmptyTitle =>
       'Marca algo como visto para ver tus estadísticas';
 
