@@ -136,16 +136,14 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - Exits: D1/D2.
 
 ### C4. Stats
-- Access: "See stats" in B5.
-- Elements:
-  - "Stats" top bar.
-  - Filter tabs: All · Movies · TV Shows (the same contained-pill control as everywhere else).
-  - Four metric cards in a 2×2 grid: Movies watched · Hours of movies · TV shows watched · Estimated TV hours.
-  - "Genres you watch most": list of 5 horizontal bars with name and count.
-  - "Your most-watched year": one large number + subtitle.
-  - "Activity over the last 12 months": strip of 12 cells with intensity.
-  - "Your average rating": number + stars.
-- States: empty ("Mark something as watched to see your stats" + CTA).
+- Access: "See stats" in B5. Pushed screen: back button, no bottom bar.
+- **Period control** (the app's contained pill): **All time · This year · This month**. It replaces the old All · Movies · TV Shows filter — the two types are shown side by side in every block instead. The periods are distinct sets (this calendar year, this calendar month), so "This year" is not "the last 12 months". Counts, hours, activity, ratings, genres and decades are over the titles *watched in the period*; the streaks and the Watch later backlog are of the whole library.
+- **Lead card** (`surfaceRaised`, radius 16): the hours watched in large type ("312 h" with "≈ 13 days" under it), the titles count ("50 titles") with a comparison chip against the period before ("+4 vs last month" for This month, "vs last year" for This year; none for All time), the **activity bars** with a caption under each (a month's initial for the 12 months — the last 12 for All time, Jan–Dec for This year — or, for This month, one bar per day with the day number at the first, middle and last) and the **movies / TV split** bar with each one's count and hours.
+- States: nothing watched at all → the invitation ("Mark something as watched to see your stats" + Explore); nothing in the chosen period → "Nothing watched in this period / Try another period, or mark something as watched." (no CTA).
+- (The rest of the blocks — highlights, activity calendar, ratings, genres, decades, data coverage — follow in the stack; see below as they land.)
+- Exits: back.
+
+---
 
 ### C5. My Tastes
 - Access: My Tastes row in B5; invitation card in B1; or from the Surprise me result when saving.

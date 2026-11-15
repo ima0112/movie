@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 
 /// A small bar chart of [counts] (one bar per value, oldest first) — You's
 /// "last 12 months". Bars scale to the largest count; an empty month is a
@@ -10,10 +11,19 @@ import '../../core/theme/app_spacing.dart';
 ///
 /// Pure presentation — everything comes in by parameter.
 class ActivityBars extends StatelessWidget {
-  const ActivityBars({super.key, required this.counts, this.height = 56});
+  const ActivityBars({
+    super.key,
+    required this.counts,
+    this.height = 56,
+    this.labels,
+  });
 
   final List<int> counts;
   final double height;
+
+  /// A caption under each bar (same length as [counts]; an empty string for
+  /// none), drawn in a row that lines up with the bars. `null` draws none.
+  final List<String>? labels;
 
   static const double _stub = AppSpacing.xs;
   static const double _pastIntensity = 0.5;
@@ -21,7 +31,7 @@ class ActivityBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final max = counts.fold<int>(0, (a, b) => a > b ? a : b);
-    return SizedBox(
+    final bars = SizedBox(
       height: height,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -40,6 +50,32 @@ class ActivityBars extends StatelessWidget {
             ),
         ],
       ),
+    );
+    final captions = labels;
+    if (captions == null) return bars;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        bars,
+        const SizedBox(height: AppSpacing.xs),
+        Row(
+          children: [
+            for (final label in captions)
+              Expanded(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.visible,
+                  softWrap: false,
+                  style: AppTextStyles.micro.copyWith(
+                    color: AppColors.inkMuted,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
     );
   }
 }

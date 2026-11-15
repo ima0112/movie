@@ -938,6 +938,34 @@
 
   "statsTitle": "Stats",
   "statsActivityStripTitle": "Activity over the last 12 months",
+  "statsPeriodAllTime": "All time",
+  "statsPeriodThisYear": "This year",
+  "statsPeriodThisMonth": "This month",
+  "statsTitlesCount": "{count, plural, =1{1 title} other{{count} titles}}",
+  "@statsTitlesCount": {
+    "description": "C4's lead card: how many titles were watched in the period.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statsVsLastMonth": "vs last month",
+  "statsVsLastYear": "vs last year",
+  "statsDelta": "{delta} {previous}",
+  "@statsDelta": {
+    "description": "C4's comparison chip, e.g. \"+4 vs last month\". {delta} is signed; {previous} says what it is compared to.",
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      },
+      "previous": {
+        "type": "String"
+      }
+    }
+  },
+  "statsEmptyPeriodTitle": "Nothing watched in this period",
+  "statsEmptyPeriodBody": "Try another period, or mark something as watched.",
   "statsEmptyTitle": "Mark something as watched to see your stats",
   "statsEmptyBody": "Your numbers will show up here once you do.",
   "statsGenreBarsTitle": "Genres you watch most",

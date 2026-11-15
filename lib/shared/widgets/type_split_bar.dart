@@ -54,10 +54,13 @@ class TypeSplitBar extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        Row(
+        // Wraps onto a second line when the two labels don't fit (longer
+        // legends, large text).
+        Wrap(
+          spacing: AppSpacing.lg,
+          runSpacing: AppSpacing.xs,
           children: [
             _Legend(color: AppColors.accent, label: firstLabel),
-            const SizedBox(width: AppSpacing.lg),
             _Legend(color: AppColors.inkMuted, label: secondLabel),
           ],
         ),
