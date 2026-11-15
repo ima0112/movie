@@ -107,5 +107,41 @@ void main() {
       expect(row.favoritedAt, isNull);
       expect(row.watchLaterAt, isNull);
     });
+
+    test('a column the step wants to add is already there (an earlier run '
+        'was cut short): the upgrade carries on instead of crashing', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      // user_version 8, yet favorited_at already exists — the very state that
+      // crashed with "duplicate column name: favorited_at".
+      raw.execute(
+        'CREATE TABLE user_media_entries ('
+        'media_type TEXT NOT NULL, tmdb_id INTEGER NOT NULL, '
+        'title TEXT, is_favorite INTEGER NOT NULL DEFAULT 0, '
+        'is_watch_later INTEGER NOT NULL DEFAULT 0, '
+        'favorited_at INTEGER NULL, '
+        'updated_at INTEGER NOT NULL, '
+        'PRIMARY KEY (media_type, tmdb_id));',
+      );
+      raw.execute(
+        "INSERT INTO user_media_entries (media_type, tmdb_id, title, "
+        "is_favorite, updated_at) VALUES ('movie', 1, 'Dune', 1, 0);",
+      );
+      _addTasteTable(raw);
+      raw.execute('PRAGMA user_version = 8;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      final row = await db.select(db.userMediaEntries).getSingle();
+      expect(row.title, 'Dune');
+      // The column that was missing was still added.
+      expect(row.watchLaterAt, isNull);
+      expect(
+        (await db.customSelect('PRAGMA user_version').getSingle()).read<int>(
+          'user_version',
+        ),
+        10,
+      );
+    });
   });
 }
