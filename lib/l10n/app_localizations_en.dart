@@ -1094,6 +1094,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsActivityMore => 'More';
 
   @override
+  String get statsRatingsTitle => 'Your ratings';
+
+  @override
+  String statsRatingAverage(String value) {
+    return '$value average';
+  }
+
+  @override
+  String statsRatingTmdb(String value) {
+    return 'TMDB: $value';
+  }
+
+  @override
+  String statsRatingHigher(String gap) {
+    return 'You rate $gap ★ above TMDB on average';
+  }
+
+  @override
+  String statsRatingLower(String gap) {
+    return 'You rate $gap ★ below TMDB on average';
+  }
+
+  @override
+  String get statsRatingInLine => 'You rate in line with TMDB';
+
+  @override
+  String get statsDisagreementsTitle => 'Where you differ from TMDB';
+
+  @override
+  String statsDisagreement(String user, String tmdb) {
+    return 'You ★ $user · TMDB ★ $tmdb';
+  }
+
+  @override
   String get statsEmptyTitle => 'Mark something as watched to see your stats';
 
   @override

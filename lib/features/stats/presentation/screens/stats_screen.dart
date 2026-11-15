@@ -18,6 +18,7 @@ import '../widgets/stats_genre_bars.dart';
 import '../widgets/stats_hero_card.dart';
 import '../widgets/stats_highlights.dart';
 import '../widgets/stats_period_tabs.dart';
+import '../widgets/stats_ratings_section.dart';
 
 /// Stats (C4) — pushed from B5's "See stats" link.
 ///
@@ -102,6 +103,7 @@ class _StatsView extends StatelessWidget {
                       insights: insights,
                       today: DateTime.now(),
                     ),
+                    StatsRatingsSection(insights: insights),
                     const SizedBox(height: AppSpacing.sectionGap),
                     PageMargin(
                       child: StatsGenreBars(

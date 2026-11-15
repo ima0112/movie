@@ -1910,6 +1910,54 @@ abstract class AppLocalizations {
   /// **'More'**
   String get statsActivityMore;
 
+  /// No description provided for @statsRatingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ratings'**
+  String get statsRatingsTitle;
+
+  /// C4 ratings card: the user's average rating.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} average'**
+  String statsRatingAverage(String value);
+
+  /// C4 ratings card: TMDB's average over the same titles.
+  ///
+  /// In en, this message translates to:
+  /// **'TMDB: {value}'**
+  String statsRatingTmdb(String value);
+
+  /// C4: how much more generous the user rates than TMDB.
+  ///
+  /// In en, this message translates to:
+  /// **'You rate {gap} ★ above TMDB on average'**
+  String statsRatingHigher(String gap);
+
+  /// C4: how much harsher the user rates than TMDB.
+  ///
+  /// In en, this message translates to:
+  /// **'You rate {gap} ★ below TMDB on average'**
+  String statsRatingLower(String gap);
+
+  /// No description provided for @statsRatingInLine.
+  ///
+  /// In en, this message translates to:
+  /// **'You rate in line with TMDB'**
+  String get statsRatingInLine;
+
+  /// No description provided for @statsDisagreementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where you differ from TMDB'**
+  String get statsDisagreementsTitle;
+
+  /// C4 disagreement row: the user's stars vs TMDB's.
+  ///
+  /// In en, this message translates to:
+  /// **'You ★ {user} · TMDB ★ {tmdb}'**
+  String statsDisagreement(String user, String tmdb);
+
   /// No description provided for @statsEmptyTitle.
   ///
   /// In en, this message translates to:
