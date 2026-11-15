@@ -59,6 +59,41 @@ void main() {
     expect(undone, 1);
   });
 
+  testWidgets('it disappears by itself after its duration — with an action '
+      'too (Flutter would otherwise keep that one up forever)', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        (c) => AppSnackBar.show(
+          c,
+          'Shōgun removed',
+          actionLabel: 'Undo',
+          onAction: () {},
+        ),
+      ),
+    );
+    await tester.tap(find.text('go'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Shōgun removed'), findsOneWidget);
+
+    await tester.pump(AppSnackBar.duration);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Shōgun removed'), findsNothing);
+  });
+
+  testWidgets('a plain one disappears too', (tester) async {
+    await tester.pumpWidget(_app((c) => AppSnackBar.show(c, 'Copied')));
+    await tester.tap(find.text('go'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.pump(AppSnackBar.duration);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Copied'), findsNothing);
+  });
+
   testWidgets('a new snackbar replaces the one showing', (tester) async {
     await tester.pumpWidget(
       _app((c) {
