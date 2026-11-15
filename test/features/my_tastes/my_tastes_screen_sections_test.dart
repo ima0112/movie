@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
+import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/my_tastes/presentation/cubit/my_tastes_cubit.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_avoided_genres_section.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_eras_section.dart';
-import 'package:movies/features/my_tastes/presentation/widgets/taste_era_range.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_footer.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_vibes_section.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_liked_genres_section.dart';
@@ -51,16 +51,16 @@ Future<({MyTastesCubit tastes, TasteProfileCubit profile})> _pump(
       supportedLocales: AppLocalizations.supportedLocales,
       home: BlocProvider.value(
         value: tastes,
-        child: const Scaffold(
+        child: Scaffold(
           body: SingleChildScrollView(
             child: Column(
               children: [
-                TasteTypeSection(),
-                TasteLikedGenresSection(),
-                TasteAvoidedGenresSection(),
-                TasteVibesSection(),
-                TasteErasSection(),
-                TasteFooter(),
+                const TasteTypeSection(),
+                const TasteLikedGenresSection(),
+                const TasteAvoidedGenresSection(),
+                const TasteVibesSection(),
+                TasteErasSection(library: InMemoryUserLibraryRepository()),
+                const TasteFooter(),
               ],
             ),
           ),
@@ -82,12 +82,8 @@ void main() {
       'as Home, in that order; All is no preference', (tester) async {
     final c = await _pump(tester);
     expect(find.text('What do you usually watch?'), findsOneWidget);
-    expect([
-      for (final label in ['All', 'Movies', 'TV Shows'])
-        tester.getTopLeft(find.text(label)).dx,
-    ], isNotEmpty);
     expect(
-      tester.getTopLeft(find.text('All')).dx,
+      tester.getTopLeft(find.text('All').first).dx,
       lessThan(tester.getTopLeft(find.text('Movies')).dx),
     );
     expect(
@@ -103,7 +99,7 @@ void main() {
     await tester.pump();
     expect(c.tastes.state.preferredType, MediaType.movie);
 
-    await tester.tap(find.text('All'));
+    await tester.tap(find.text('All').first);
     await tester.pump();
     expect(c.tastes.state.preferredType, isNull);
     await _letSavedFade(tester);
@@ -161,13 +157,11 @@ void main() {
     await _letSavedFade(tester);
   });
 
-  testWidgets('the footer says where it is saved and shows "Saved" after a '
-      'change', (tester) async {
+  testWidgets('the footer shows a discreet "Saved" after a change', (
+    tester,
+  ) async {
     final c = await _pump(tester);
-    expect(
-      find.text('Everything is saved only on your device.'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('device'), findsNothing); // no note any more
     double opacity() => tester
         .widget<AnimatedOpacity>(
           find.descendant(
@@ -240,13 +234,46 @@ void main() {
     await _letSavedFade(tester);
   });
 
-  testWidgets('eras: dragging a handle saves once, when the finger lifts; a '
-      'range ending today is stored as no upper bound', (tester) async {
+  testWidgets('eras: FROM / TO cards, presets, and the range saved as '
+      'chosen — a range ending today is no upper bound', (tester) async {
     final c = await _pump(tester);
-    expect(find.text('Eras'), findsOneWidget);
     final latest = DateTime.now().year;
-    expect(find.text('1990 – $latest'), findsOneWidget);
+    expect(find.text('Eras'), findsOneWidget);
+    expect(find.text('Choose a release range'), findsOneWidget);
+    expect(find.text('FROM'), findsOneWidget);
+    expect(find.text('TO'), findsOneWidget);
+    expect(find.text('1990'), findsOneWidget); // the default start
+    expect(find.text('Today'), findsNWidgets(2)); // the TO card and the track
 
+    await tester.ensureVisible(find.text('2010s'));
+    await tester.tap(find.text('2010s'));
+    await tester.pump();
+    expect(c.tastes.state.yearFrom, 2010);
+    expect(c.tastes.state.yearTo, 2019);
+
+    await tester.tap(find.text('2020s'));
+    await tester.pump();
+    expect(c.tastes.state.yearFrom, 2020);
+    expect(c.tastes.state.yearTo, isNull); // ends today
+
+    await tester.tap(find.text('Earlier'));
+    await tester.pump();
+    expect(c.tastes.state.yearFrom, 1950);
+    expect(c.tastes.state.yearTo, 2009);
+
+    await tester.tap(find.text('All').last); // the preset, not the segment
+    await tester.pump();
+    expect(c.tastes.state.yearFrom, 1950);
+    expect(c.tastes.state.yearTo, isNull);
+    expect(latest, greaterThan(2019));
+    await _letSavedFade(tester);
+  });
+
+  testWidgets('eras: dragging a handle saves once, when the finger lifts', (
+    tester,
+  ) async {
+    final c = await _pump(tester);
+    final latest = DateTime.now().year;
     final saves = <Object?>[];
     c.profile.stream.listen(saves.add);
     await tester.ensureVisible(find.byType(RangeSlider));
@@ -256,8 +283,7 @@ void main() {
     final rect = tester.getRect(find.byType(RangeSlider));
     final thumbX =
         rect.left + 24 + (1990 - 1950) / (latest - 1950) * (rect.width - 48);
-    final left = Offset(thumbX, rect.center.dy);
-    final gesture = await tester.startGesture(left);
+    final gesture = await tester.startGesture(Offset(thumbX, rect.center.dy));
     await gesture.moveBy(const Offset(40, 0));
     await tester.pump();
     expect(saves, isEmpty); // nothing saved mid-drag
@@ -268,27 +294,5 @@ void main() {
     expect(c.tastes.state.yearFrom, greaterThan(1990));
     expect(c.tastes.state.yearTo, isNull); // still ends today
     await _letSavedFade(tester);
-  });
-
-  testWidgets('TasteEraRange alone: shows the span and the bounds', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: TasteEraRange(
-            from: 2000,
-            to: 2020,
-            minYear: 1950,
-            maxYear: 2026,
-            onChanged: (_, _) {},
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text('2000 – 2020'), findsOneWidget);
-    expect(find.text('1950'), findsOneWidget);
-    expect(find.text('2026'), findsOneWidget);
   });
 }

@@ -8,9 +8,8 @@ import '../../../../l10n/l10n_extension.dart';
 import '../cubit/my_tastes_cubit.dart';
 import '../cubit/my_tastes_state.dart';
 
-/// The foot of C5: where everything is kept ("only on your device") and, on
-/// the right, a discreet "Saved" that shows for a moment after each change —
-/// every edit saves by itself. Selects only that flag (rule 9).
+/// The foot of C5: a discreet "Saved" on the right that shows for a moment
+/// after each change — every edit saves by itself. Selects only that flag (rule 9).
 class TasteFooter extends StatelessWidget {
   const TasteFooter({super.key});
 
@@ -26,9 +25,8 @@ class TasteFooter extends StatelessWidget {
         0,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Expanded(child: Text(l10n.myTastesFooter, style: muted)),
-          const SizedBox(width: AppSpacing.md),
           BlocSelector<MyTastesCubit, MyTastesState, bool>(
             selector: (state) => state.justSaved,
             builder: (context, saved) => AnimatedOpacity(
