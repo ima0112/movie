@@ -89,8 +89,10 @@ class _FailingMediaRepository implements MediaRepository {
       throw UnimplementedError();
 
   @override
-  Future<Result<List<StreamingService>>> streamingServices({MediaType? type}) =>
-      throw UnimplementedError();
+  Future<Result<List<StreamingService>>> streamingServices({
+    MediaType? type,
+    bool all = false,
+  }) => throw UnimplementedError();
 
   @override
   Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) =>

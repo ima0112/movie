@@ -132,7 +132,10 @@ abstract interface class MediaRepository {
   /// B2's "Platform" pills: the streaming services available in the user's
   /// region (Settings), most relevant first, capped to a short list. [type]
   /// picks movies or TV shows; `null` (All) merges both without repeats.
-  Future<Result<List<StreamingService>>> streamingServices({MediaType? type});
+  Future<Result<List<StreamingService>>> streamingServices({
+    MediaType? type,
+    bool all = false,
+  });
 
   /// B1's "Latest trailers": up to [limit] current and upcoming movies, each
   /// with its trailer (titles with no YouTube video are skipped). Needs one

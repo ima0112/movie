@@ -89,8 +89,10 @@ class _RecordingMediaRepository implements MediaRepository {
       throw UnimplementedError();
 
   @override
-  Future<Result<List<StreamingService>>> streamingServices({MediaType? type}) =>
-      throw UnimplementedError();
+  Future<Result<List<StreamingService>>> streamingServices({
+    MediaType? type,
+    bool all = false,
+  }) => throw UnimplementedError();
 }
 
 /// FakeMediaRepository's sample movies relevant to these tests (see its

@@ -24,6 +24,7 @@ class _Services implements MediaRepository {
   @override
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
+    bool all = false,
   }) async {
     calls++;
     return outcome;

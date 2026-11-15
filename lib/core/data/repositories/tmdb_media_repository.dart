@@ -610,6 +610,7 @@ class TmdbMediaRepository implements MediaRepository {
   @override
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
+    bool all = false,
   }) async {
     try {
       final types = switch (type) {
@@ -625,7 +626,7 @@ class TmdbMediaRepository implements MediaRepository {
         streamingServicesFromJson(
           raw,
           imagesConfig: _imagesConfig,
-          limit: _maxStreamingServices,
+          limit: all ? null : _maxStreamingServices,
           regionCode: _region,
         ),
       );

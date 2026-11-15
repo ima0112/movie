@@ -44,8 +44,10 @@ class _Repo extends FakeMediaRepository {
   }
 
   @override
-  Future<Result<List<StreamingService>>> streamingServices({type}) async =>
-      Success(services);
+  Future<Result<List<StreamingService>>> streamingServices({
+    type,
+    bool all = false,
+  }) async => Success(services);
 }
 
 class _Settings implements SettingsRepository {
