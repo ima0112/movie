@@ -961,15 +961,6 @@
 
   "myTastesTypeTitle": "What do you usually watch?",
   "myTastesTypeHint": "It sets which catalog we show first.",
-  "myTastesTypeBoth": "Both",
-  "@myTastesTypeBoth": {
-    "description": "C5's third option of \"What do you usually watch?\": movies and TV shows alike."
-  },
-  "myTastesAddAvoided": "Add",
-  "@myTastesAddAvoided": {
-    "description": "The chip after the avoided genres that opens the picker of the rest."
-  },
-  "myTastesAddAvoidedSheetTitle": "Add a genre to avoid",
   "myTastesFooter": "Everything is saved only on your device.",
   "myTastesVibesTitle": "Favorite vibes",
   "myTastesVibesHint": "Up to {max}. They set the tone of what we suggest.",

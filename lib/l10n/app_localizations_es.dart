@@ -1050,15 +1050,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myTastesTypeHint => 'Define qué catálogo mostramos primero.';
 
   @override
-  String get myTastesTypeBoth => 'Ambas';
-
-  @override
-  String get myTastesAddAvoided => 'Añadir';
-
-  @override
-  String get myTastesAddAvoidedSheetTitle => 'Añadir un género que evitas';
-
-  @override
   String get myTastesFooter => 'Todo se guarda solo en tu dispositivo.';
 
   @override

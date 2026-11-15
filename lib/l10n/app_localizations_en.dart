@@ -1032,15 +1032,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myTastesTypeHint => 'It sets which catalog we show first.';
 
   @override
-  String get myTastesTypeBoth => 'Both';
-
-  @override
-  String get myTastesAddAvoided => 'Add';
-
-  @override
-  String get myTastesAddAvoidedSheetTitle => 'Add a genre to avoid';
-
-  @override
   String get myTastesFooter => 'Everything is saved only on your device.';
 
   @override
