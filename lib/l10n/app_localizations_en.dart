@@ -1541,7 +1541,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get surpriseErrorMessage => 'Couldn\'t find a match. Try again.';
 
   @override
-  String get chooseTypeHeadline => 'What are you in the mood for today?';
+  String get chooseTypeHeadlineLead => 'What are you in the mood for';
+
+  @override
+  String get chooseTypeHeadlineAccent => 'today';
 
   @override
   String get surpriseNoMoreSuggestionsTitle => 'That\'s all for now';
@@ -1561,6 +1564,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chooseTypeTvShowLabel => 'A TV show';
+
+  @override
+  String get chooseTypeMovieSubtitle => 'A plan for a couple of hours';
+
+  @override
+  String get chooseTypeTvShowSubtitle => 'To get hooked over several nights';
 
   @override
   String get surpriseYourSuggestionTitle => 'Your suggestion';

@@ -17,8 +17,14 @@ import '../../core/theme/app_colors.dart';
 /// TODO: SCREENS.md B1 also has this "fade with scrolling" — that needs
 /// a `ScrollController` wired up from `DiscoverContentLoaded`'s
 /// `ListView`, out of scope for this pass.
+///
+/// [intensity] scales how strong the glow is: `1` (the default) is Home's
+/// halo; a smaller value fades its amber toward the page color (E1 uses a
+/// softer one).
 class AppHalo extends StatelessWidget {
-  const AppHalo({super.key});
+  const AppHalo({super.key, this.intensity = 1});
+
+  final double intensity;
 
   // No token or SCREENS.md literal fixes this — it's a rough "how far
   // down the glow reaches" placement, not a design-system dimension.
@@ -34,7 +40,14 @@ class AppHalo extends StatelessWidget {
             gradient: RadialGradient(
               center: Alignment.topCenter,
               radius: 1.1,
-              colors: [AppColors.accentDeep, AppColors.surface],
+              colors: [
+                Color.lerp(
+                  AppColors.surface,
+                  AppColors.accentDeep,
+                  intensity.clamp(0, 1),
+                )!,
+                AppColors.surface,
+              ],
             ),
           ),
         ),

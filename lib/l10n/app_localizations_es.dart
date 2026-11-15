@@ -1559,7 +1559,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'No hemos encontrado nada. Inténtalo de nuevo.';
 
   @override
-  String get chooseTypeHeadline => '¿Qué te apetece hoy?';
+  String get chooseTypeHeadlineLead => '¿Qué te apetece ver';
+
+  @override
+  String get chooseTypeHeadlineAccent => 'hoy';
 
   @override
   String get surpriseNoMoreSuggestionsTitle => 'Eso es todo por ahora';
@@ -1579,6 +1582,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chooseTypeTvShowLabel => 'Una serie';
+
+  @override
+  String get chooseTypeMovieSubtitle => 'Un plan de un par de horas';
+
+  @override
+  String get chooseTypeTvShowSubtitle => 'Para engancharte varias noches';
 
   @override
   String get surpriseYourSuggestionTitle => 'Tu sugerencia';

@@ -53,6 +53,7 @@ Familia única: **Manrope** (Google Fonts), pesos 400 (regular) y 600
 |---|---|---|---|
 | `display` | 32 / 1.15 | 600 | Título de detalle (película/serie) |
 | `h1` | 26–28 / 1.15 | 600 | Titulares de flujo (onboarding, resultado, portada) |
+| `h1Strong` | 26 / 1.15 | 800 | Titular de flujo con más peso (E1) |
 | `h2` | 20–22 / 1.2 | 600 | Título de sección, título de tarjeta grande |
 | `h3` | 15–16 / 1.25 | 600 | Título de fila destacada, nombre en tarjeta |
 | `body` | 14–15 / 1.5 | 400 | Sinopsis, texto de tarjeta |

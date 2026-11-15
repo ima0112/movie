@@ -39,6 +39,15 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// A flow headline with more weight (E1's "What are you in the mood for
+  /// today?"). 26 / 1.15, extra bold.
+  static final TextStyle h1Strong = GoogleFonts.manrope(
+    fontSize: 26,
+    height: 1.15,
+    fontWeight: _extraBold,
+    color: AppColors.ink,
+  );
+
   /// Section title, large card title. 20 / 1.2, semibold.
   static final TextStyle h2 = GoogleFonts.manrope(
     fontSize: 20,
