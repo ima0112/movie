@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/edit_profile_sheet.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
+import '../../../../shared/widgets/page_margin.dart';
 import '../cubit/you_stats_cubit.dart';
 import '../widgets/my_tastes_card.dart';
 import '../widgets/you_header.dart';
@@ -64,20 +65,20 @@ class YouScreen extends StatelessWidget {
               AppTabBar.scrollInset(context),
             ),
             children: [
-              _Margin(
+              PageMargin(
                 child: YouHeader(
                   onEditProfile: () => _openEditProfile(context),
                   onOpenSettings: () => context.push(AppRoutes.settings),
                 ),
               ),
               const SizedBox(height: AppSpacing.sectionGap),
-              _Margin(
+              PageMargin(
                 child: YouStatsCard(
                   onSeeStats: () => context.push(AppRoutes.stats),
                 ),
               ),
               const SizedBox(height: AppSpacing.sectionGap),
-              _Margin(
+              PageMargin(
                 child: MyTastesCard(
                   onTap: () => context.push(AppRoutes.myTastes),
                 ),
@@ -91,17 +92,4 @@ class YouScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-/// The page margin around one of the screen's cards.
-class _Margin extends StatelessWidget {
-  const _Margin({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
-    child: child,
-  );
 }

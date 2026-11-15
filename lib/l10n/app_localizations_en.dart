@@ -1035,6 +1035,56 @@ class AppLocalizationsEn extends AppLocalizations {
       'Try another period, or mark something as watched.';
 
   @override
+  String get statsHighlightsTitle => 'Highlights';
+
+  @override
+  String get statsBusiestMonth => 'Busiest month';
+
+  @override
+  String get statsStreak => 'Streak';
+
+  @override
+  String get statsNoStreak => 'No streak now';
+
+  @override
+  String statsWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weeks',
+      one: '1 week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statsBestStreak(String weeks) {
+    return 'Best: $weeks';
+  }
+
+  @override
+  String get statsLongestMovie => 'Longest movie';
+
+  @override
+  String get statsLongestShow => 'Longest show';
+
+  @override
+  String get statsBestRated => 'Your top rated';
+
+  @override
+  String statsStarsOfFive(int stars) {
+    return '★ $stars of 5';
+  }
+
+  @override
+  String get statsBacklog => 'Watch later';
+
+  @override
+  String statsBacklogHours(String hours) {
+    return '≈ $hours to watch';
+  }
+
+  @override
   String get statsEmptyTitle => 'Mark something as watched to see your stats';
 
   @override

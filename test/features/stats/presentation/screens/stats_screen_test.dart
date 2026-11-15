@@ -27,6 +27,10 @@ UserMediaEntry _watched(
   episodeRuntimeMinutes: episodes == null ? null : 60,
 );
 
+/// A text inside the lead card (the highlights below repeat some counts).
+Finder _inHero(String text) =>
+    find.descendant(of: find.byType(StatsHeroCard), matching: find.text(text));
+
 void main() {
   setUpAll(() => configureDependencies(fake.name));
 
@@ -75,7 +79,7 @@ void main() {
 
     expect(find.byType(StatsHeroCard), findsOneWidget);
     expect(find.text('8 h'), findsOneWidget); // 2 h + 6 × 60 min
-    expect(find.text('2 titles'), findsOneWidget);
+    expect(_inHero('2 titles'), findsOneWidget);
     expect(find.byType(ActivityBars), findsOneWidget);
     expect(find.text('1 movie · 2 h'), findsOneWidget);
     expect(find.text('1 TV show · 6 h'), findsOneWidget);
@@ -88,7 +92,7 @@ void main() {
       _watched(1, DateTime(now.year - 1, 1, 5), minutes: 100),
       _watched(2, DateTime(now.year - 1, 2, 5), minutes: 100),
     ]);
-    expect(find.text('2 titles'), findsOneWidget);
+    expect(_inHero('2 titles'), findsOneWidget);
 
     await tester.tap(find.text('This month'));
     await tester.pumpAndSettle();
@@ -98,7 +102,7 @@ void main() {
 
     await tester.tap(find.text('All time'));
     await tester.pumpAndSettle();
-    expect(find.text('2 titles'), findsOneWidget);
+    expect(_inHero('2 titles'), findsOneWidget);
   });
 
   testWidgets('a comparison chip with the period before (this month vs '
@@ -134,6 +138,6 @@ void main() {
     expect(find.text('Todo'), findsOneWidget);
     expect(find.text('Este año'), findsOneWidget);
     expect(find.text('Este mes'), findsOneWidget);
-    expect(find.text('1 título'), findsOneWidget);
+    expect(_inHero('1 título'), findsOneWidget);
   });
 }

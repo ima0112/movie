@@ -8,12 +8,14 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/page_margin.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../cubit/stats_cubit.dart';
 import '../widgets/stats_empty_state.dart';
 import '../widgets/stats_empty_period.dart';
 import '../widgets/stats_genre_bars.dart';
 import '../widgets/stats_hero_card.dart';
+import '../widgets/stats_highlights.dart';
 import '../widgets/stats_period_tabs.dart';
 
 /// Stats (C4) — pushed from B5's "See stats" link.
@@ -85,17 +87,22 @@ class _StatsView extends StatelessWidget {
                         )
                       : const StatsEmptyPeriod();
                 }
+                // No side padding on the list: cards pad themselves with the
+                // page margin and the highlights scroll edge to edge.
                 return ListView(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.screenMargin,
-                    AppSpacing.md,
-                    AppSpacing.screenMargin,
-                    AppSpacing.sectionGap,
+                  padding: const EdgeInsets.only(
+                    top: AppSpacing.md,
+                    bottom: AppSpacing.sectionGap,
                   ),
                   children: [
-                    StatsHeroCard(insights: insights),
+                    PageMargin(child: StatsHeroCard(insights: insights)),
+                    StatsHighlights(insights: insights),
                     const SizedBox(height: AppSpacing.sectionGap),
-                    StatsGenreBars(topGenres: insights.genres.take(5).toList()),
+                    PageMargin(
+                      child: StatsGenreBars(
+                        topGenres: insights.genres.take(5).toList(),
+                      ),
+                    ),
                   ],
                 );
               },
