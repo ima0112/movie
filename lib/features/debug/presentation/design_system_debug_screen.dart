@@ -16,7 +16,6 @@ import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/media_carousel.dart';
 import '../../../shared/widgets/media_hero_carousel.dart';
 import '../../../shared/widgets/metric_card.dart';
-import '../../../shared/widgets/pako_state.dart';
 import '../../../shared/widgets/quiz_tile.dart';
 import '../../../shared/widgets/state_views.dart';
 
@@ -50,10 +49,6 @@ class DesignSystemDebugScreen extends StatelessWidget {
           _SectionTitle('Icons'),
           const SizedBox(height: AppSpacing.md),
           const _IconsSection(),
-          const SizedBox(height: AppSpacing.xxxl),
-          _SectionTitle('Pako'),
-          const SizedBox(height: AppSpacing.md),
-          const _PakoSection(),
           const SizedBox(height: AppSpacing.xxxl),
           _SectionTitle('Media card'),
           const SizedBox(height: AppSpacing.md),
@@ -341,40 +336,6 @@ class _IconSwatch extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _PakoSection extends StatelessWidget {
-  const _PakoSection();
-
-  static const _moods = <(String, PakoMood)>[
-    ('off', PakoMood.off),
-    ('idle', PakoMood.idle),
-    ('asleep', PakoMood.asleep),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (final (name, mood) in _moods)
-          Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.xxl),
-            child: Column(
-              children: [
-                PakoState(mood: mood, size: 80),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  name,
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.inkMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }

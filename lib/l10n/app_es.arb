@@ -316,8 +316,6 @@
   "viewerCinephile": "Cinéfilo",
   "viewerExplorer": "De todo un poco",
   "youRecentlyWatchedTitle": "Vistas recientemente",
-  "youGenresTitle": "Tus géneros más vistos",
-  "youGenrePercent": "{percent}%",
   "myTastesRowGenresMore": "{names} +{count}",
   "myTastesRowFallback": "Géneros, vibes, plataformas y más",
   "yourActivityHoursLabel": "Horas",

@@ -143,7 +143,7 @@ Radios: `radiusSm` 8 · `radiusMd` 12 (pósters, tarjetas, tiles) ·
 Paquete: **`remixicon`**, variante `_line` por defecto, `_fill` para
 estados activos. Tamaños: 24 (filas, acciones, barra de tabs), 20 (chips,
 campos, elementos secundarios), 18 (dentro de pills pequeñas). El icono de
-Match en la barra/FAB es un SVG propio (Pako apagado), no RemixIcons.
+El botón Match de la barra/FAB usa el icono `AppIcons.match` (destellos, RemixIcons).
 
 Cambiado desde `phosphor_flutter` (ver `docs/DECISIONS.md`): al subir el
 SDK de Dart/Flutter para poder generar drift, `phosphor_flutter ^2.1.0`
@@ -276,7 +276,7 @@ depuración (`/debug/components`) que los liste todos:
 6. **Tarjeta métrica** (Estadísticas) y barra horizontal de género.
 7. **Fila de biblioteca** (Mi lista / búsqueda / filmografía) — variantes
    con estrellas, con fecha, con chevron.
-8. **Estados**: skeleton (shimmer sutil), vacío (Pako dormido + texto +
+8. **Estados**: skeleton (shimmer sutil), vacío (icono en círculo + texto +
    CTA), error (+ Reintentar), banner sin conexión.
 
 ---
@@ -303,4 +303,4 @@ depuración (`/debug/components`) que los liste todos:
 - Selección de tile/chip: escala 0.96 → 1, 120 ms.
 - Cross-fade de resultado (Sorpréndeme "otra sugerencia", Matcher cambio de ganador): 300–400 ms.
 - Nunca fade-and-slide-up genérico en cada tarjeta al cargar — los carruseles de Descubrir entran escalonados una sola vez (60 ms entre secciones), no cada tarjeta individualmente.
-- Respetar siempre "reducir movimiento" del sistema: cuando esté activo, cualquier animación continua (muro de pósters, Pako `idle`) pasa a estática.
+- Respetar siempre "reducir movimiento" del sistema: cuando esté activo, cualquier animación continua (muro de pósters) pasa a estática.

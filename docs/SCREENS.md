@@ -9,7 +9,7 @@ Conventions
 
 Summary: **24 screens**, **9 sheets**, **3 dialogs**, **1 global state pattern**.
 
-Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and the Pako button. Every pushed screen (details, listings, Settings, Stats, My Tastes, quiz, rooms) has a back button in the top bar and hides the bottom bar.
+Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and the Match button. Every pushed screen (details, listings, Settings, Stats, My Tastes, quiz, rooms) has a back button in the top bar and hides the bottom bar.
 
 ---
 
@@ -38,7 +38,7 @@ Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and th
 
 ## B. Tabs (bottom bar with 4 + Match button)
 
-Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List (a **bookmark** icon) · You. A floating glass pill (inset 16 px, 68 px tall, blurred) with four icon-only tabs (26 px icon; active in white with a 5 px amber dot, inactive in gray) and in the center a **56 px amber circular button with a sparkle icon, straddling the pill's top edge** that opens B3 as a modal. White dot on the button when a room is active. Visible on the 4 roots; hidden in details, quiz, rooms, and inside the Match modal. The page scrolls under the bar and fades into the background behind it (an eased transparent-to-page-color gradient that starts ~72 px above the bar's top edge and is fully the page color at the very bottom, so content disappears gradually; it doesn't take touches); every root tab's list ends with padding equal to the bar's height, so the last item can be scrolled up above it.
+Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List (a **bookmark** icon) · You. A floating glass pill (inset 16 px, 68 px tall, blurred) with four icon-only tabs (26 px icon; active in white with a 5 px amber dot, inactive in gray) and in the center a **56 px amber circular button with a sparkle icon, straddling the pill's top edge** that opens B3 as a modal. White dot on the button when a room is active. Visible on the 4 roots; hidden in details, quiz, rooms, and inside the Match modal. The page scrolls under the bar and fades into the background behind it (an eased transparent-to-page-color gradient that starts ~72 px above the bar's top edge and is fully the page color at the very bottom, so content disappears gradually; it doesn't take touches); every root tab's list ends with padding equal to the bar's height, so the last item can be scrolled up above it.
 
 ### B1. Discover
 - Access: tab 1 (root). Main screen.
@@ -76,7 +76,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 - Exits: D1/D2/D3, C1.
 
 ### B3. Match (hub, modal)
-- Access: Pako button in the bottom bar. Slides up from the bottom as a near-full-screen modal (Pako gives a small bounce on open); swipe down to close.
+- Access: Match button in the bottom bar. Slides up from the bottom as a near-full-screen modal (the amber sparkle emblem gives a small bounce on open); swipe down to close.
 - Elements:
   - Drag handle and title "Match".
   - Large "Surprise me" card — subtitle "A suggestion just for you" — icon. → E1.
@@ -95,19 +95,18 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
   - Rows: 56×84 poster, 16/500 title, a gray 13 px line **"Movie · 2024 · 2 h 46 min" / "TV Show · 2024 · 24 episodes"** (the type first, then the year, then the duration or episode count — rendered entirely from the saved entry's own catalog snapshot, no network call; that last segment only appears once the entry has picked one up, until then the line is just "type · year"), and a **third line**: in **Favorites and Watch later** the amber ★ with the TMDB rating (bold) and "Added today / yesterday / 3 days ago / 1 week ago / 2 weeks ago" ("Added 12 Jan, 2026" past 4 weeks) — counted from when the title joined *that* tab's list; in **Watched** the user's own 1–5 stars (filled amber for the rating, outlined for the rest; five outlined when unrated) and **just the date** ("8 Nov, 2026" / "8 nov, 2026", no "Watched" word). Whatever isn't known (a title saved before dates existed, no TMDB rating yet) is left out, and with nothing the line is too. At the end, a **three-dot button** that opens H1 (the row's long-press opens it too). Tapping the row opens its detail.
   - **Swipe left → delete — the only swipe** (a drag to the right does nothing). A coral (`danger`) panel follows the finger with a trash icon and "Delete" ("Borrar"); once the drag passes the threshold it reads "Release to delete" ("Suelta para borrar"), and letting go collapses the row (`SwipeToDelete`). No dialog: a snackbar "{title} removed from {tab}" ("{título} eliminada de {pestaña}") with "Undo" for 4 s. It takes the title out of **that tab's list only**, and deletes it when it is in no list. Long-press and the three dots → H1. People rows swipe the same way.
   - Default sort: Title A–Z, every tab (Favorites/Watch later *do* now record when a title joined each list — `favoritedAt` / `watchLaterAt`, stamped by the repository, schema v9 — but they only feed the row's "Added 3 days ago"; sorting by them isn't offered; Watched also offers Date watched from H9, just not as the default). A title saved before those dates existed simply shows its row without the "Added…" text — no date is invented.
-- States (centered in the room the floating bar leaves free, `ClearOfTabBar`): empty with sleeping Pako (Rive, `mood = asleep`), per-tab headline ("No favorites yet" / "Nothing for later yet" / "You haven't marked anything as watched yet"), a line mentioning what does exist in other tabs, "Explore" CTA. If a filter is what's emptying the list: "No TV shows here" + "See all".
+- States (centered in the room the floating bar leaves free, `ClearOfTabBar`): empty with an icon badge (the tab's own icon), per-tab headline ("No favorites yet" / "Nothing for later yet" / "You haven't marked anything as watched yet"), a line mentioning what does exist in other tabs, "Explore" CTA. If a filter is what's emptying the list: "No TV shows here" + "See all".
 - Exits: D1/D2, H1, H2, H9.
 
 ### B5. You
 - Access: tab 4.
 - Elements:
   - Header: initial in a circle with the chosen color (48 px, small pencil badge bottom right), "Hi, Daniel" 26/600 with, **under it, a muted line of what the watch history says the viewer is** ("Just getting started" under 5 titles watched; "Series binger" when 60 %+ of what they watch is TV and at least 3 shows; "Tough critic" / "Enthusiastic viewer" for an average of 2.5★ or less / 4.5★ or more over 5+ ratings; "Fan of {genre}" when one genre is 30 %+ of the genres counted; "Movie buff" when 60 %+ is movies; "A bit of everything" otherwise — the first that fits, in that order; nothing while nothing is watched) (no name: a person icon in the circle, "Hi" and subtitle "Tap to set your name"); tapping the header edits name and color in a sheet (H10). Gear icon top right → C6.
-  - **My Tastes** row (`surfaceRaised`, radius 16): an amber heart, "My Tastes" and a muted summary line, a chevron; tap → C5. The summary names up to two liked genres (by id order) and how many more, then the vibes — "Drama, Science Fiction +2 · 3 vibes" — each part left out when empty; with neither picked, "Genres, vibes, platforms and more". No taste profile: the invitation card with a small Pako and a "My Tastes" button.
-  - **Your most-watched genres** card (under the My Tastes row; hidden until a watched title carries genres): the overline "YOUR MOST-WATCHED GENRES" and up to 5 amber bars, each with the genre's name and its **share of all the genres counted** as a whole percent (so the shares of every genre sum to 100; a title with 3 genres counts 3). Titles saved before genres were kept don't count.
+  - **My Tastes** row (`surfaceRaised`, radius 16): an amber heart, "My Tastes" and a muted summary line, a chevron; tap → C5. The summary names up to two liked genres (by id order) and how many more, then the vibes — "Drama, Science Fiction +2 · 3 vibes" — each part left out when empty; with neither picked, "Genres, vibes, platforms and more". No taste profile: **the same row as an invitation** — the heart, "Build your taste profile", "Get picks that actually match what you like." and the chevron (the whole row opens C5); no mascot, no separate button.
   - **Stats card** (`surfaceRaised`, radius 16; replaces "Your Activity"): the four big numbers in a strip with hairline dividers (watched · hours · favorites · watch later); under them short insight lines, each shown only when it has something to say — "≈ 13 days of screen time" (the hours as days, from one day on), "3 weeks streak" (consecutive Monday–Sunday weeks with something watched; last week still counts while this one is empty) and "4 this month"; the last 12 months as small bars (the current month brightest, empty months a stub) with "Last 12 months"; and the movies / TV split as a thin two-part bar with a legend ("38 movies · 12 TV shows"); then the amber "See stats" link → C4. With nothing watched it is an invitation ("Mark something as watched to see your stats") instead of zeros. All computed from the entries' own snapshot (`calculateLibraryStats`, shared with C4) by the screen-local `YouStatsCubit`.
-  - **Recently watched**: under the stats card, the last 6 titles marked as watched, newest first, as a row of small posters (the "TV" tag on shows); tapping one opens its detail. Posters come from each entry's saved snapshot. Hidden entirely (heading included) until something has been watched.
+  - **Recently watched**: under the My Tastes row, the last 6 titles marked as watched, newest first, as a row of small posters (the "TV" tag on shows) that **scrolls edge to edge** and starts on the page margin; tapping one opens its detail. Posters come from each entry's saved snapshot. Hidden entirely (heading included) until something has been watched.
   - **Recent Rooms** card (v1.1): up to 10 local matches (thumbnail, title, "with Ana and Luis · yesterday"); tap → D1/D2. Not shown if there are none.
-- No halo, no large Pako. Amber on the initial's circle, the stats link, the stats bars and the My Tastes heart.
+- No halo, no mascot. Amber on the initial's circle, the stats link, the stats bars and the My Tastes heart.
 - Exits: C4, C5, C6, H10, D1/D2.
 
 ---
@@ -296,7 +295,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 ### F2. Join: confirm
 - Access: a valid code from the hub's boxes, from F4, or from the universal link `https://pakotv.app/r/{code}` (opens the app directly here; without the app, a web page with the code and store links). The room has already been read before this screen is shown.
 - Elements: large code, amber type pill, "Ana's room · 2 people inside" with their avatars, "how it works" row (Answer 4 questions · Wait for the others · Pako picks one for all), "You'll join as Daniel" row with "Change" (→ H10 with a "Also save to my profile" toggle off by default and a color suggestion if yours is already taken), "Join" button (→ F3b, where you choose how to answer).
-- States: room full / expired after having read it → sleeping Pako with an explanation and "Back to hub"; already answered in this room → jumps to F3; offline → button dimmed.
+- States: room full / expired after having read it → an icon badge with an explanation and "Back to hub"; already answered in this room → jumps to F3; offline → button dimmed.
 - Exits: F3b.
 
 ### F3. Waiting room (host)
@@ -314,7 +313,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 - State 1 — You just joined: list with your row marked "· you" and "hasn't answered"; "Your answer" block with the same two options as the host.
 - State 2 — Waiting for the host: your row with a check; waiting card "Once everyone answers, Ana will find the match" with a "Change my answer" link (until the room moves to `resolved`). No button: resolved by the listener. On leaving the screen, the Pako button shows the white dot and the hub shows the "Back to room" card.
 - State 3 — Everyone answered but the host isn't searching: "Waiting for Ana to find the match"; after 2 min of host inactivity (`hostLastSeen`), a "Search myself" option appears for the first guest to tap it, who acts as host just for that search.
-- State 4 — Excluded via "Search without waiting": sleeping Pako, "Ana searched without waiting for you", "Your answer wasn't part of the calculation, but you can see the result", "See the match" button.
+- State 4 — Excluded via "Search without waiting": an icon badge, "Ana searched without waiting for you", "Your answer wasn't part of the calculation, but you can see the result", "See the match" button.
 - When the host launches the search, the guest sees the same "Searching for the 6 of you…" screen even though they aren't computing anything.
 - Exits: E2, F5b, I2.
 
@@ -332,7 +331,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 
 ### F5b. Match result (guest)
 - Same as F5 except: header "Ana's room · 6 people"; **no "Find another"**, instead the line "Only Ana can ask for another option" with a refresh icon; your avatar has a white ring in the satisfaction row; the excluded participant doesn't appear in the row. Winner change: cross-fade + soft haptic on every phone. "×" doesn't affect anyone and saves the match to Recent Rooms.
-- Room closed by the host or expired (in F3b or F5b): sleeping Pako, "Ana closed the room", with the result if there was one ("The match was Knives Out. It's in Recent Rooms.") or "You didn't get to search"; "Back to start" button.
+- Room closed by the host or expired (in F3b or F5b): an icon badge, "Ana closed the room", with the result if there was one ("The match was Knives Out. It's in Recent Rooms.") or "You didn't get to search"; "Back to start" button.
 
 ---
 

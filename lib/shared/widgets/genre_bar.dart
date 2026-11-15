@@ -21,8 +21,6 @@ class GenreBar extends StatelessWidget {
     required this.count,
     required this.maxCount,
     this.labelWidth = 88,
-    this.valueText,
-    this.valueWidth,
   });
 
   final String label;
@@ -34,14 +32,6 @@ class GenreBar extends StatelessWidget {
 
   /// Fixed width for [label] so a list of bars lines up.
   final double labelWidth;
-
-  /// What the right-hand side says instead of the plain [count] (You shows a
-  /// percentage).
-  final String? valueText;
-
-  /// A fixed width for the right-hand text, right-aligned, so a list of bars
-  /// ends in a clean column.
-  final double? valueWidth;
 
   static const double _barHeight = AppSpacing.sm;
 
@@ -84,13 +74,9 @@ class GenreBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
-        SizedBox(
-          width: valueWidth,
-          child: Text(
-            valueText ?? '$count',
-            textAlign: valueWidth == null ? null : TextAlign.end,
-            style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
-          ),
+        Text(
+          '$count',
+          style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
         ),
       ],
     );

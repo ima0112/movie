@@ -10,11 +10,11 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
-import 'my_tastes_invitation.dart';
 
 /// B5's "My Tastes": a one-row card (a heart, the title, a line summarizing
-/// the taste profile, a chevron) that opens C5, or the invitation card while
-/// there is no taste profile (`docs/SCREENS.md` B5).
+/// the taste profile, a chevron) that opens C5. While there is no taste
+/// profile it is the same row as an invitation ("Build your taste profile")
+/// (`docs/SCREENS.md` B5).
 ///
 /// The summary names up to two liked genres and how many more, then the
 /// vibes — "Drama, Science Fiction +2 · 3 vibes" — and falls back to a plain
@@ -40,13 +40,20 @@ class MyTastesCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.cardPadding),
         child: BlocBuilder<TasteProfileCubit, TasteProfile?>(
-          builder: (context, profile) => profile == null
-              ? MyTastesInvitation(onTap: onTap)
-              : GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: onTap,
-                  child: _Row(summary: summaryOf(profile, context.l10n)),
-                ),
+          builder: (context, profile) => GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onTap,
+            // No profile yet: the same row, as an invitation.
+            child: profile == null
+                ? _Row(
+                    title: context.l10n.myTastesInvitationTitle,
+                    summary: context.l10n.myTastesInvitationBody,
+                  )
+                : _Row(
+                    title: context.l10n.myTastesTitle,
+                    summary: summaryOf(profile, context.l10n),
+                  ),
+          ),
         ),
       ),
     );
@@ -74,8 +81,9 @@ class MyTastesCard extends StatelessWidget {
 }
 
 class _Row extends StatelessWidget {
-  const _Row({required this.summary});
+  const _Row({required this.title, required this.summary});
 
+  final String title;
   final String summary;
 
   @override
@@ -88,7 +96,7 @@ class _Row extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(context.l10n.myTastesTitle, style: AppTextStyles.h3),
+              Text(title, style: AppTextStyles.h3),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 summary,

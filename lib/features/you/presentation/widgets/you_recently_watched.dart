@@ -28,11 +28,17 @@ class YouRecentlyWatched extends StatelessWidget {
       selector: (stats) => stats?.recentlyWatched ?? const [],
       builder: (context, entries) {
         if (entries.isEmpty) return const SizedBox.shrink();
+        // The page has no side padding of its own (the cards pad themselves),
+        // so this row scrolls edge to edge and starts on the page margin.
         return AppSection(
           title: context.l10n.youRecentlyWatchedTitle,
+          inset: false,
           child: SizedBox(
             height: _size.height,
             child: ListView.separated(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenMargin,
+              ),
               scrollDirection: Axis.horizontal,
               itemCount: entries.length,
               separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.md),

@@ -12,7 +12,6 @@ import '../../../../shared/widgets/app_tab_bar.dart';
 import '../cubit/you_stats_cubit.dart';
 import '../widgets/my_tastes_card.dart';
 import '../widgets/you_header.dart';
-import '../widgets/you_genres_card.dart';
 import '../widgets/you_recently_watched.dart';
 import '../widgets/you_stats_card.dart';
 
@@ -55,30 +54,54 @@ class YouScreen extends StatelessWidget {
           // The root shell's floating bar is accounted for in the list's own
           // bottom padding, so the page can scroll under it.
           bottom: false,
+          // No side padding on the list: the cards pad themselves with the
+          // page margin and "Recently watched" scrolls edge to edge.
           child: ListView(
             padding: EdgeInsets.fromLTRB(
-              AppSpacing.screenMargin,
+              0,
               AppSpacing.xl,
-              AppSpacing.screenMargin,
+              0,
               AppTabBar.scrollInset(context),
             ),
             children: [
-              YouHeader(
-                onEditProfile: () => _openEditProfile(context),
-                onOpenSettings: () => context.push(AppRoutes.settings),
+              _Margin(
+                child: YouHeader(
+                  onEditProfile: () => _openEditProfile(context),
+                  onOpenSettings: () => context.push(AppRoutes.settings),
+                ),
               ),
               const SizedBox(height: AppSpacing.sectionGap),
-              YouStatsCard(onSeeStats: () => context.push(AppRoutes.stats)),
+              _Margin(
+                child: YouStatsCard(
+                  onSeeStats: () => context.push(AppRoutes.stats),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sectionGap),
+              _Margin(
+                child: MyTastesCard(
+                  onTap: () => context.push(AppRoutes.myTastes),
+                ),
+              ),
               // Owns its own gap above, and hides itself (gap included) until
               // something has been watched.
               const YouRecentlyWatched(),
-              const SizedBox(height: AppSpacing.sectionGap),
-              MyTastesCard(onTap: () => context.push(AppRoutes.myTastes)),
-              const YouGenresCard(),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+/// The page margin around one of the screen's cards.
+class _Margin extends StatelessWidget {
+  const _Margin({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenMargin),
+    child: child,
+  );
 }

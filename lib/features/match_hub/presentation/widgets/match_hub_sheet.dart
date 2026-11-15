@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_halo.dart';
-import '../../../../shared/widgets/pako_state.dart';
 import 'match_hub_card.dart';
 
 /// B3 (Match hub) — the modal the bottom bar's Pako button opens.
@@ -53,12 +53,12 @@ class MatchHubSheet extends StatelessWidget {
                     child: TweenAnimationBuilder<double>(
                       tween: Tween(begin: 0.8, end: 1),
                       duration: const Duration(milliseconds: 400),
-                      // SCREENS.md B3: "Pako gives a small bounce on
-                      // open" — a one-shot scale-in on first build.
+                      // SCREENS.md B3: the sparkle gives a small bounce on
+                      // open — a one-shot scale-in on first build.
                       curve: Curves.elasticOut,
                       builder: (context, scale, child) =>
                           Transform.scale(scale: scale, child: child),
-                      child: const PakoState(mood: PakoMood.idle),
+                      child: const _MatchBadge(),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -85,6 +85,36 @@ class MatchHubSheet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The hub's emblem: the Match button's amber circle and sparkle, larger.
+class _MatchBadge extends StatelessWidget {
+  const _MatchBadge();
+
+  static const double _size = 72;
+  static const double _icon = 34;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.accent,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: 0.35),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: const SizedBox(
+        width: _size,
+        height: _size,
+        child: Icon(AppIcons.match, size: _icon, color: AppColors.onAccent),
       ),
     );
   }
