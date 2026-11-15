@@ -1,3 +1,4 @@
+import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../match_engine/domain/relaxation.dart';
@@ -44,10 +45,18 @@ final class NeedsQuiz extends SurpriseState {
 /// [SurpriseCubit.answerQuizInstead], both of which read it off
 /// [SurpriseState], not something the quiz path ever produces.
 final class ChooseSource extends SurpriseState {
-  const ChooseSource(this.mediaType, this.source);
+  const ChooseSource(
+    this.mediaType,
+    this.source, {
+    this.tasteGenres = const {},
+  });
 
   final MediaType mediaType;
   final SuggestionSource source;
+
+  /// The profile's liked genres, to name them in H11 (empty for an inferred
+  /// list or a profile with only vibes).
+  final Set<Genre> tasteGenres;
 }
 
 /// E3's own result. [candidates] is the *whole* pool

@@ -106,7 +106,15 @@ class SurpriseCubit extends Cubit<SurpriseState> {
         ? SuggestionSource.profile
         : SuggestionSource.inferredList;
     _pendingAnswers = answers;
-    emit(ChooseSource(mediaType, source));
+    emit(
+      ChooseSource(
+        mediaType,
+        source,
+        tasteGenres: source == SuggestionSource.profile
+            ? profile!.likedGenres
+            : const {},
+      ),
+    );
   }
 
   /// H11's own "Use my tastes" — launches the search [chooseType]
