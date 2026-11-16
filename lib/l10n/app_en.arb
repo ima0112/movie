@@ -966,6 +966,50 @@
   },
   "statsEmptyPeriodTitle": "Nothing watched in this period",
   "statsEmptyPeriodBody": "Try another period, or mark something as watched.",
+  "statsHighlightsTitle": "Highlights",
+  "statsBusiestMonth": "Busiest month",
+  "statsStreak": "Streak",
+  "statsNoStreak": "No streak now",
+  "statsWeeks": "{count, plural, =1{1 week} other{{count} weeks}}",
+  "@statsWeeks": {
+    "description": "A span of weeks in C4's streak highlight.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statsBestStreak": "Best: {weeks}",
+  "@statsBestStreak": {
+    "description": "C4's streak card detail; {weeks} is statsWeeks.",
+    "placeholders": {
+      "weeks": {
+        "type": "String"
+      }
+    }
+  },
+  "statsLongestMovie": "Longest movie",
+  "statsLongestShow": "Longest show",
+  "statsBestRated": "Your top rated",
+  "statsStarsOfFive": "★ {stars} of 5",
+  "@statsStarsOfFive": {
+    "description": "C4's top-rated card detail: the user's rating.",
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "statsBacklog": "Watch later",
+  "statsBacklogHours": "≈ {hours} to watch",
+  "@statsBacklogHours": {
+    "description": "C4's Watch later card detail; {hours} is already formatted (\"30 h\").",
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
   "statsEmptyTitle": "Mark something as watched to see your stats",
   "statsEmptyBody": "Your numbers will show up here once you do.",
   "statsGenreBarsTitle": "Genres you watch most",

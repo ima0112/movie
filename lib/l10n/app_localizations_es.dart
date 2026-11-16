@@ -1051,6 +1051,56 @@ class AppLocalizationsEs extends AppLocalizations {
       'Prueba otro periodo o marca algo como visto.';
 
   @override
+  String get statsHighlightsTitle => 'Destacados';
+
+  @override
+  String get statsBusiestMonth => 'Mes más activo';
+
+  @override
+  String get statsStreak => 'Racha';
+
+  @override
+  String get statsNoStreak => 'Sin racha ahora';
+
+  @override
+  String statsWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count semanas',
+      one: '1 semana',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statsBestStreak(String weeks) {
+    return 'Mejor: $weeks';
+  }
+
+  @override
+  String get statsLongestMovie => 'Película más larga';
+
+  @override
+  String get statsLongestShow => 'Serie más larga';
+
+  @override
+  String get statsBestRated => 'Tu mejor valorada';
+
+  @override
+  String statsStarsOfFive(int stars) {
+    return '★ $stars de 5';
+  }
+
+  @override
+  String get statsBacklog => 'Ver después';
+
+  @override
+  String statsBacklogHours(String hours) {
+    return '≈ $hours por ver';
+  }
+
+  @override
   String get statsEmptyTitle =>
       'Marca algo como visto para ver tus estadísticas';
 

@@ -1820,6 +1820,78 @@ abstract class AppLocalizations {
   /// **'Try another period, or mark something as watched.'**
   String get statsEmptyPeriodBody;
 
+  /// No description provided for @statsHighlightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlights'**
+  String get statsHighlightsTitle;
+
+  /// No description provided for @statsBusiestMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Busiest month'**
+  String get statsBusiestMonth;
+
+  /// No description provided for @statsStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get statsStreak;
+
+  /// No description provided for @statsNoStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'No streak now'**
+  String get statsNoStreak;
+
+  /// A span of weeks in C4's streak highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 week} other{{count} weeks}}'**
+  String statsWeeks(int count);
+
+  /// C4's streak card detail; {weeks} is statsWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Best: {weeks}'**
+  String statsBestStreak(String weeks);
+
+  /// No description provided for @statsLongestMovie.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest movie'**
+  String get statsLongestMovie;
+
+  /// No description provided for @statsLongestShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest show'**
+  String get statsLongestShow;
+
+  /// No description provided for @statsBestRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your top rated'**
+  String get statsBestRated;
+
+  /// C4's top-rated card detail: the user's rating.
+  ///
+  /// In en, this message translates to:
+  /// **'★ {stars} of 5'**
+  String statsStarsOfFive(int stars);
+
+  /// No description provided for @statsBacklog.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch later'**
+  String get statsBacklog;
+
+  /// C4's Watch later card detail; {hours} is already formatted ("30 h").
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {hours} to watch'**
+  String statsBacklogHours(String hours);
+
   /// No description provided for @statsEmptyTitle.
   ///
   /// In en, this message translates to:
