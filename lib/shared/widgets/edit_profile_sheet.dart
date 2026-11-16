@@ -123,6 +123,11 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
               onTap: _save,
               isDisabled: !_canSave,
             ),
+            const SizedBox(height: AppSpacing.sm),
+            TextLinkButton(
+              label: l10n.commonCancel,
+              onTap: () => Navigator.of(context).pop(),
+            ),
           ],
         ),
       ),
