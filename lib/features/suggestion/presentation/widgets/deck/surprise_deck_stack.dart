@@ -57,7 +57,10 @@ class SurpriseDeckStack extends StatefulWidget {
   /// …or a flick faster than this (logical px / s).
   static const double flickVelocity = 700;
 
-  static const Duration exitDuration = Duration(milliseconds: 220);
+  static const Duration exitDuration = Duration(milliseconds: 200);
+
+  /// The zoom when a thumbnail brings another card up.
+  static const Duration zoomDuration = Duration(milliseconds: 300);
   static const Duration bounceDuration = Duration(milliseconds: 250);
 
   @override
@@ -65,8 +68,16 @@ class SurpriseDeckStack extends StatefulWidget {
 }
 
 class _SurpriseDeckStackState extends State<SurpriseDeckStack>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(vsync: this);
+  late final AnimationController _zoom = AnimationController(vsync: this);
+
+  /// The card that is flying off (a swipe) or zooming out toward the viewer (a
+  /// jump to a higher number) while the deck has already moved on under it.
+  int? _leavingIndex;
+
+  /// A jump to a lower number: the card now on top comes from the front.
+  bool _comingFromFront = false;
 
   /// The top card's horizontal offset while a finger is on it.
   double _dx = 0;
@@ -82,13 +93,51 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   static const double _behindScale = 0.06;
   static const double _behindFade = 0.35;
   static const double _behindTurn = 0.05;
-  static const Duration _reorder = Duration(milliseconds: 250);
+  static const Duration _reorder = Duration(milliseconds: 220);
+
+  /// How far the zooming card grows toward the viewer.
+  static const double _zoomGrowth = 0.18;
 
   bool get _canSwipe => widget.suggestions.length >= 2;
   bool get _still => MediaQuery.disableAnimationsOf(context);
 
   @override
+  void didUpdateWidget(SurpriseDeckStack old) {
+    super.didUpdateWidget(old);
+    final n = widget.suggestions.length;
+    // A swipe leaves through its own animation; a new batch just appears.
+    if (old.index == widget.index ||
+        _leavingIndex != null ||
+        !identical(old.suggestions, widget.suggestions) ||
+        n < 2 ||
+        _still) {
+      return;
+    }
+    // Another card was brought up (a thumbnail, "Next"): toward a higher number
+    // the old top comes toward the viewer and fades; toward a lower one the new
+    // top arrives from the front. One step around the circle counts as forward.
+    final step = (widget.index - old.index) % n;
+    final forward = step == 1
+        ? true
+        : step == n - 1
+        ? false
+        : widget.index > old.index;
+    _leavingIndex = forward ? old.index : null;
+    _comingFromFront = !forward;
+    _zoom
+      ..duration = SurpriseDeckStack.zoomDuration
+      ..forward(from: 0).whenComplete(() {
+        if (!mounted) return;
+        setState(() {
+          _leavingIndex = null;
+          _comingFromFront = false;
+        });
+      });
+  }
+
+  @override
   void dispose() {
+    _zoom.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -129,12 +178,19 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     required double width,
   }) async {
     if (save) HapticFeedback.lightImpact();
+    // The deck moves on at once — the next card rises while this one leaves —
+    // instead of waiting for the exit to end.
+    final leaving = widget.index;
+    if (!_still) _leavingIndex = leaving;
+    (save ? widget.onSaveAndNext : widget.onNext)();
     await _run(
       dir * width * 1.3,
       SurpriseDeckStack.exitDuration,
-      Curves.easeOut,
-      then: save ? widget.onSaveAndNext : widget.onNext,
+      Curves.easeIn,
     );
+    if (mounted && _leavingIndex == leaving) {
+      setState(() => _leavingIndex = null);
+    }
   }
 
   /// Slides the top card from where it is to [to], then runs [then] (the deck
@@ -175,7 +231,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
           behavior: HitTestBehavior.translucent,
           onPointerDown: (_) => _dismissHint(),
           child: AnimatedBuilder(
-            animation: _controller,
+            animation: Listenable.merge([_controller, _zoom]),
             builder: (context, _) {
               final dx = _offset();
               final p = (dx.abs() / (width * SurpriseDeckStack.confirmFraction))
@@ -194,6 +250,8 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
                       children: [
                         for (final i in order)
                           _slotted(i, cards[i], dx: dx, width: width),
+                        if (_leavingIndex != null)
+                          _leaving(_leavingIndex!, dx: dx, width: width),
                       ],
                     ),
                   ),
@@ -212,6 +270,33 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
           ),
         );
       },
+    );
+  }
+
+  /// The card on its way out, drawn above the deck: flying off with the swipe,
+  /// or growing toward the viewer and fading when another card was brought up.
+  Widget _leaving(int i, {required double dx, required double width}) {
+    final card = SurpriseSuggestionCard(
+      suggestion: widget.suggestions[i],
+      number: i + 1,
+      total: widget.suggestions.length,
+    );
+    final Widget moving;
+    if (_zoom.isAnimating) {
+      final t = Curves.easeOutCubic.transform(_zoom.value);
+      moving = Opacity(
+        opacity: 1 - t,
+        child: Transform.scale(scale: 1 + _zoomGrowth * t, child: card),
+      );
+    } else {
+      moving = Transform.translate(
+        offset: Offset(dx, 0),
+        child: Transform.rotate(angle: dx / width * _maxTurn, child: card),
+      );
+    }
+    return Positioned.fill(
+      key: const ValueKey('leaving'),
+      child: IgnorePointer(child: ExcludeSemantics(child: moving)),
     );
   }
 
@@ -246,14 +331,27 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
                     widget.onChoose();
                   },
             child: Transform.translate(
-              offset: Offset(dx, 0),
+              offset: Offset(_leavingIndex == null ? dx : 0, 0),
               child: Transform.rotate(
-                angle: _still ? 0 : dx / width * _maxTurn,
+                angle: _still || _leavingIndex != null
+                    ? 0
+                    : dx / width * _maxTurn,
                 child: card,
               ),
             ),
           )
         : IgnorePointer(child: card);
+    final arriving = isTop && _comingFromFront && _zoom.isAnimating;
+    final t = Curves.easeOutCubic.transform(_zoom.value);
+    final shown = arriving
+        ? Opacity(
+            opacity: t,
+            child: Transform.scale(
+              scale: 1 + _zoomGrowth * (1 - t),
+              child: body,
+            ),
+          )
+        : body;
 
     return Positioned.fill(
       key: ValueKey(suggestion.item.key),
@@ -275,7 +373,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
               1,
               1,
             ),
-          child: body,
+          child: shown,
         ),
       ),
     );
