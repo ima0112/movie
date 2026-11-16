@@ -997,6 +997,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsActivityStripTitle => 'Activity over the last 12 months';
 
   @override
+  String get statsPeriodAllTime => 'All time';
+
+  @override
+  String get statsPeriodThisYear => 'This year';
+
+  @override
+  String get statsPeriodThisMonth => 'This month';
+
+  @override
+  String statsTitlesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count titles',
+      one: '1 title',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statsVsLastMonth => 'vs last month';
+
+  @override
+  String get statsVsLastYear => 'vs last year';
+
+  @override
+  String statsDelta(String delta, String previous) {
+    return '$delta $previous';
+  }
+
+  @override
+  String get statsEmptyPeriodTitle => 'Nothing watched in this period';
+
+  @override
+  String get statsEmptyPeriodBody =>
+      'Try another period, or mark something as watched.';
+
+  @override
   String get statsEmptyTitle => 'Mark something as watched to see your stats';
 
   @override

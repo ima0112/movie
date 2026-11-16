@@ -1766,6 +1766,60 @@ abstract class AppLocalizations {
   /// **'Activity over the last 12 months'**
   String get statsActivityStripTitle;
 
+  /// No description provided for @statsPeriodAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get statsPeriodAllTime;
+
+  /// No description provided for @statsPeriodThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get statsPeriodThisYear;
+
+  /// No description provided for @statsPeriodThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get statsPeriodThisMonth;
+
+  /// C4's lead card: how many titles were watched in the period.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 title} other{{count} titles}}'**
+  String statsTitlesCount(int count);
+
+  /// No description provided for @statsVsLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'vs last month'**
+  String get statsVsLastMonth;
+
+  /// No description provided for @statsVsLastYear.
+  ///
+  /// In en, this message translates to:
+  /// **'vs last year'**
+  String get statsVsLastYear;
+
+  /// C4's comparison chip, e.g. "+4 vs last month". {delta} is signed; {previous} says what it is compared to.
+  ///
+  /// In en, this message translates to:
+  /// **'{delta} {previous}'**
+  String statsDelta(String delta, String previous);
+
+  /// No description provided for @statsEmptyPeriodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing watched in this period'**
+  String get statsEmptyPeriodTitle;
+
+  /// No description provided for @statsEmptyPeriodBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another period, or mark something as watched.'**
+  String get statsEmptyPeriodBody;
+
   /// No description provided for @statsEmptyTitle.
   ///
   /// In en, this message translates to:

@@ -2,73 +2,68 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../../../core/domain/stats/library_stats.dart';
-import '../../../../core/domain/stats/library_stats_calculator.dart';
+import '../../../../core/domain/stats/library_insights.dart';
+import '../../../../core/domain/stats/library_insights_calculator.dart';
+import '../../../../core/domain/stats/stats_period.dart';
 
-/// C4 (Stats)'s state: the current "All · Movies · TV Shows" filter
-/// (`docs/SCREENS.md` C4's own chips) plus the [LibraryStats] computed
-/// for it. Reuses [MediaType]? directly (`null` = "All") rather than a
-/// new enum — it's exactly what [calculateLibraryStats]'s own
-/// `filterType` parameter already takes.
+/// C4 (Stats)'s state: the chosen [period] and the [LibraryInsights]
+/// computed for it.
 class StatsState {
-  const StatsState({required this.filterType, required this.stats});
+  const StatsState({required this.period, required this.insights});
 
-  final MediaType? filterType;
-  final LibraryStats stats;
+  final StatsPeriod period;
+  final LibraryInsights insights;
 }
 
-/// Screen-local Cubit for C4 — created where its `BlocProvider` is
-/// placed (the Stats screen), never registered in `di.config.dart`.
+/// Screen-local Cubit for C4 — created where its `BlocProvider` is placed
+/// (the Stats screen), never registered in `di.config.dart`.
 ///
-/// This is **not** the Cubit CLAUDE.md rule 10 warns against ("don't
-/// create a library-wide Cubit holding an in-memory copy of the whole
-/// list"): that rule targets a *shared* cache other screens would
-/// piggyback on instead of subscribing to [UserLibraryRepository]
-/// themselves (a favorite icon, a single entry's status...). Stats is
-/// the opposite case — its one screen's entire purpose is an aggregate
-/// over the whole watched list, so holding that aggregate as this
-/// Cubit's own, screen-local state is the same shape as `DiscoverCubit`
-/// (a Cubit owning computed state for its own screen), not the shared
-/// cache rule 10 rules out.
+/// Not the library-wide cache CLAUDE.md rule 10 rules out: that rule targets
+/// a *shared* copy other screens would piggyback on. Stats is the opposite —
+/// its one screen's whole purpose is an aggregate over the watched list, so
+/// holding that aggregate as its own state is the same shape as
+/// `DiscoverCubit`.
 ///
-/// Subscribes to [UserLibraryRepository.watch] — not `.all()`, which is
-/// a one-shot `Future`, not a stream; this needs to live-update as
-/// entries are watched/unwatched while C4 stays open, and recomputes
-/// [LibraryStats] on every emission via [calculateLibraryStats].
+/// Subscribes to [UserLibraryRepository.watch] so the screen live-updates as
+/// titles are watched or removed, and recomputes [LibraryInsights] on every
+/// emission and every period change ([clock] anchors "this month" / "this
+/// year" for tests).
 class StatsCubit extends Cubit<StatsState> {
-  StatsCubit(this._userLibraryRepository)
-    : super(
-        StatsState(filterType: null, stats: calculateLibraryStats(const [])),
+  StatsCubit(this._repository, {DateTime Function()? clock})
+    : _clock = clock ?? DateTime.now,
+      super(
+        StatsState(
+          period: StatsPeriod.allTime,
+          insights: calculateInsights(
+            const [],
+            period: StatsPeriod.allTime,
+            now: (clock ?? DateTime.now)(),
+          ),
+        ),
       ) {
-    _subscription = _userLibraryRepository.watch().listen(_onEntries);
+    _subscription = _repository.watch().listen(_onEntries);
   }
 
-  final UserLibraryRepository _userLibraryRepository;
+  final UserLibraryRepository _repository;
+  final DateTime Function() _clock;
   late final StreamSubscription<List<UserMediaEntry>> _subscription;
   List<UserMediaEntry> _entries = const [];
 
-  /// `null` selects "All".
-  void selectFilter(MediaType? filterType) {
-    emit(
-      StatsState(
-        filterType: filterType,
-        stats: calculateLibraryStats(_entries, filterType: filterType),
-      ),
-    );
-  }
+  void selectPeriod(StatsPeriod period) => _emit(period);
 
   void _onEntries(List<UserMediaEntry> entries) {
     _entries = entries;
-    emit(
-      StatsState(
-        filterType: state.filterType,
-        stats: calculateLibraryStats(entries, filterType: state.filterType),
-      ),
-    );
+    _emit(state.period);
   }
+
+  void _emit(StatsPeriod period) => emit(
+    StatsState(
+      period: period,
+      insights: calculateInsights(_entries, period: period, now: _clock()),
+    ),
+  );
 
   @override
   Future<void> close() {

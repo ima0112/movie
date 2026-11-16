@@ -3,18 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
-import '../../../../core/domain/entities/media_type.dart';
+import '../../../../core/domain/stats/stats_period.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../cubit/stats_cubit.dart';
-import '../widgets/stats_activity_strip.dart';
 import '../widgets/stats_empty_state.dart';
+import '../widgets/stats_empty_period.dart';
 import '../widgets/stats_genre_bars.dart';
-import '../widgets/stats_metric_grid.dart';
-import '../widgets/stats_type_tabs.dart';
+import '../widgets/stats_hero_card.dart';
+import '../widgets/stats_period_tabs.dart';
 
 /// Stats (C4) — pushed from B5's "See stats" link.
 ///
@@ -63,34 +63,39 @@ class _StatsView extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xl,
+              horizontal: AppSpacing.screenMargin,
               vertical: AppSpacing.md,
             ),
-            child: BlocSelector<StatsCubit, StatsState, MediaType?>(
-              selector: (state) => state.filterType,
-              builder: (context, filterType) => StatsTypeTabs(
-                filterType: filterType,
-                onSelected: context.read<StatsCubit>().selectFilter,
+            child: BlocSelector<StatsCubit, StatsState, StatsPeriod>(
+              selector: (state) => state.period,
+              builder: (context, period) => StatsPeriodTabs(
+                period: period,
+                onSelected: context.read<StatsCubit>().selectPeriod,
               ),
             ),
           ),
           Expanded(
             child: BlocBuilder<StatsCubit, StatsState>(
               builder: (context, state) {
-                final stats = state.stats;
-                if (stats.moviesWatched == 0 && stats.tvShowsWatched == 0) {
-                  return StatsEmptyState(
-                    onExploreTap: () => context.go('/explore'),
-                  );
+                final insights = state.insights;
+                if (insights.watchedCount == 0) {
+                  return state.period == StatsPeriod.allTime
+                      ? StatsEmptyState(
+                          onExploreTap: () => context.go('/explore'),
+                        )
+                      : const StatsEmptyPeriod();
                 }
                 return ListView(
-                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screenMargin,
+                    AppSpacing.md,
+                    AppSpacing.screenMargin,
+                    AppSpacing.sectionGap,
+                  ),
                   children: [
-                    StatsMetricGrid(stats: stats),
+                    StatsHeroCard(insights: insights),
                     const SizedBox(height: AppSpacing.sectionGap),
-                    StatsGenreBars(topGenres: stats.topGenres),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    StatsActivityStrip(monthlyActivity: stats.monthlyActivity),
+                    StatsGenreBars(topGenres: insights.genres.take(5).toList()),
                   ],
                 );
               },

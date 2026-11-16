@@ -31,12 +31,12 @@ void main() {
     final cubit = StatsCubit(library);
     addTearDown(cubit.close);
     await pumpEventQueue();
-    expect(cubit.state.stats.moviesWatched, 1);
+    expect(cubit.state.insights.moviesWatched, 1);
 
     await library.clearAll();
     await pumpEventQueue();
 
-    expect(cubit.state.stats.moviesWatched, 0);
-    expect(cubit.state.stats.movieHours, 0);
+    expect(cubit.state.insights.moviesWatched, 0);
+    expect(cubit.state.insights.movieHours, 0);
   });
 }
