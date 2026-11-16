@@ -54,6 +54,16 @@ Map<String, dynamic> discoverQueryParams(
     params['with_keywords'] = filter.withKeywords.join('|');
   }
 
+  // A TV veto for a genre TMDB's TV list lacks (Horror, Romance…) falls back
+  // to a keyword — see `TmdbGenreMapper.tvVetoKeywordIds`.
+  final withoutKeywordIds = {
+    ...filter.withoutKeywords,
+    if (!isMovie) ...TmdbGenreMapper.tvVetoKeywordIds(filter.withoutGenres),
+  };
+  if (withoutKeywordIds.isNotEmpty) {
+    params['without_keywords'] = withoutKeywordIds.join(',');
+  }
+
   final dateField = isMovie ? 'primary_release_date' : 'first_air_date';
   if (filter.yearFrom != null) {
     params['$dateField.gte'] = '${filter.yearFrom}-01-01';
@@ -78,6 +88,11 @@ Map<String, dynamic> discoverQueryParams(
   if (filter.withWatchProviders.isNotEmpty && watchRegion != null) {
     params['with_watch_providers'] = filter.withWatchProviders.join('|');
     params['watch_region'] = watchRegion;
+    if (filter.monetizationTypes.isNotEmpty) {
+      params['with_watch_monetization_types'] = filter.monetizationTypes
+          .map((m) => m.name)
+          .join('|');
+    }
   }
 
   if (filter.minVoteAverage != null) {

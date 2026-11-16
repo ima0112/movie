@@ -63,5 +63,46 @@ void main() {
         isNull,
       );
     });
+
+    test('thriller has no TV id (37 is Western — it used to map there)', () {
+      expect(
+        TmdbGenreMapper.toTmdbId(const Genre(id: 'thriller'), MediaType.tvShow),
+        isNull,
+      );
+      expect(TmdbGenreMapper.fromTmdbId(37, MediaType.tvShow), isNull);
+      expect(
+        TmdbGenreMapper.toTmdbId(const Genre(id: 'thriller'), MediaType.movie),
+        53,
+      );
+    });
+  });
+
+  group('TmdbGenreMapper.tvVetoKeywordIds', () {
+    test(
+      'Horror, Romance, Thriller, History and Music stand in as keywords',
+      () {
+        expect(
+          TmdbGenreMapper.tvVetoKeywordIds(const [
+            Genre(id: 'horror'),
+            Genre(id: 'romance'),
+            Genre(id: 'thriller'),
+            Genre(id: 'history'),
+            Genre(id: 'music'),
+          ]),
+          {315058, 9840, 316362, 282633, 283297},
+        );
+      },
+    );
+
+    test('genres TV does have (or any other) add nothing', () {
+      expect(
+        TmdbGenreMapper.tvVetoKeywordIds(const [
+          Genre(id: 'action'),
+          Genre(id: 'comedy'),
+          Genre(id: 'fantasy'),
+        ]),
+        isEmpty,
+      );
+    });
   });
 }

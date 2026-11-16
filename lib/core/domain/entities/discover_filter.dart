@@ -22,6 +22,12 @@ enum DiscoverSortBy {
 /// this is deliberately just the two H8 actually exposes as a filter.
 enum DiscoverTvStatus { airing, ended }
 
+/// How a title is available on a streaming service (TMDB's
+/// `with_watch_monetization_types`): included in the subscription, free,
+/// free with ads, to rent or to buy. Only meaningful with
+/// [DiscoverFilter.withWatchProviders].
+enum WatchMonetization { flatrate, free, ads, rent, buy }
+
 /// C1/B2's filter set — everything one `MediaRepository.discover` call
 /// needs, mirroring H8 (`docs/SCREENS.md` H8: "Type (All/Movies/TV
 /// Shows); multi-select genres; year (range slider 1950–present);
@@ -58,6 +64,8 @@ class DiscoverFilter {
     this.withWatchProviders = const {},
     this.releasedFrom,
     this.releasedTo,
+    this.withoutKeywords = const {},
+    this.monetizationTypes = const {},
   });
 
   /// `null` = "All" (H8: "Type (All/Movies/TV Shows)"). C1: "All = both
@@ -143,6 +151,16 @@ class DiscoverFilter {
   final DateTime? releasedFrom;
   final DateTime? releasedTo;
 
+  /// TMDB keyword ids no title may carry (`without_keywords`) — on top of
+  /// what [withoutGenres] already stands in for on TV.
+  final Set<int> withoutKeywords;
+
+  /// How the title must be available on [withWatchProviders]
+  /// (`with_watch_monetization_types`, any of them). Empty = TMDB's own
+  /// default, which does **not** restrict to the subscription: pass
+  /// [WatchMonetization.flatrate] to mean "included in my plan".
+  final Set<WatchMonetization> monetizationTypes;
+
   /// H8's "Reset" only shows "if something's active" — i.e. this isn't
   /// the default.
   bool get isDefault => this == const DiscoverFilter();
@@ -194,6 +212,8 @@ class DiscoverFilter {
     Set<int>? withWatchProviders,
     DateTime? Function()? releasedFrom,
     DateTime? Function()? releasedTo,
+    Set<int>? withoutKeywords,
+    Set<WatchMonetization>? monetizationTypes,
   }) {
     return DiscoverFilter(
       type: type == null ? this.type : type(),
@@ -221,6 +241,8 @@ class DiscoverFilter {
       withWatchProviders: withWatchProviders ?? this.withWatchProviders,
       releasedFrom: releasedFrom == null ? this.releasedFrom : releasedFrom(),
       releasedTo: releasedTo == null ? this.releasedTo : releasedTo(),
+      withoutKeywords: withoutKeywords ?? this.withoutKeywords,
+      monetizationTypes: monetizationTypes ?? this.monetizationTypes,
     );
   }
 
@@ -243,7 +265,9 @@ class DiscoverFilter {
       other.maxVoteCount == maxVoteCount &&
       _setEquals(other.withWatchProviders, withWatchProviders) &&
       other.releasedFrom == releasedFrom &&
-      other.releasedTo == releasedTo;
+      other.releasedTo == releasedTo &&
+      _setEquals(other.withoutKeywords, withoutKeywords) &&
+      _setEquals(other.monetizationTypes, monetizationTypes);
 
   @override
   int get hashCode => Object.hash(
@@ -264,6 +288,8 @@ class DiscoverFilter {
     Object.hashAllUnordered(withWatchProviders),
     releasedFrom,
     releasedTo,
+    Object.hashAllUnordered(withoutKeywords),
+    Object.hashAllUnordered(monetizationTypes),
   );
 
   @override
@@ -278,7 +304,9 @@ class DiscoverFilter {
       'sortBy: $sortBy, minVoteCount: $minVoteCount, '
       'maxVoteCount: $maxVoteCount, '
       'withWatchProviders: $withWatchProviders, '
-      'releasedFrom: $releasedFrom, releasedTo: $releasedTo)';
+      'releasedFrom: $releasedFrom, releasedTo: $releasedTo, '
+      'withoutKeywords: $withoutKeywords, '
+      'monetizationTypes: $monetizationTypes)';
 }
 
 /// Order-independent set content equality — same local stand-in for

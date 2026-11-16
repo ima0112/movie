@@ -383,7 +383,11 @@ class TmdbMediaRepository implements MediaRepository {
     }
   }
 
+  /// TMDB refuses `page` above 500 ("Pages start at 1 and max at 500").
+  static const int _maxPage = 500;
+
   Future<DiscoverPage> _discoverPage(DiscoverFilter filter, int page) async {
+    page = page.clamp(1, _maxPage);
     switch (filter.type) {
       case MediaType.movie:
         return _moviesPage((p) => _discoverMovies(filter, p), page);

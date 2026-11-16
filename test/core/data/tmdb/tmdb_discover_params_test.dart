@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/tmdb/tmdb_discover_params.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/genre_catalog.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 
@@ -350,5 +351,95 @@ void main() {
       );
       expect(params['sort_by'], 'vote_count.desc');
     }
+  });
+
+  group('discoverQueryParams — Surprise me\'s filters', () {
+    const horror = Genre(id: 'horror');
+    const action = Genre(id: 'action');
+
+    test('without_keywords: explicit ids, comma-joined', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(withoutKeywords: {1, 2}),
+        type: MediaType.movie,
+      );
+
+      expect(params['without_keywords'], '1,2');
+    });
+
+    test(
+      'a TV veto with no TV genre becomes a keyword, not a dropped veto',
+      () {
+        final params = discoverQueryParams(
+          DiscoverFilter(withoutGenres: {horror, action}),
+          type: MediaType.tvShow,
+        );
+
+        expect(params['without_genres'], '10759');
+        expect(params['without_keywords'], '315058');
+      },
+    );
+
+    test('a movie veto stays a genre and adds no keyword', () {
+      final params = discoverQueryParams(
+        DiscoverFilter(withoutGenres: {horror}),
+        type: MediaType.movie,
+      );
+
+      expect(params['without_genres'], '27');
+      expect(params.containsKey('without_keywords'), isFalse);
+    });
+
+    test('nothing to exclude: no without_keywords at all', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(),
+        type: MediaType.tvShow,
+      );
+
+      expect(params.containsKey('without_keywords'), isFalse);
+    });
+
+    test('monetization types go with the platforms, OR-joined', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(
+          withWatchProviders: {8, 337},
+          monetizationTypes: {
+            WatchMonetization.flatrate,
+            WatchMonetization.rent,
+          },
+        ),
+        type: MediaType.movie,
+        watchRegion: 'ES',
+      );
+
+      expect(params['with_watch_providers'], '8|337');
+      expect(params['watch_region'], 'ES');
+      expect(params['with_watch_monetization_types'], 'flatrate|rent');
+    });
+
+    test('without platforms there is no monetization filter either', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(monetizationTypes: {WatchMonetization.flatrate}),
+        type: MediaType.movie,
+        watchRegion: 'ES',
+      );
+
+      expect(params.containsKey('with_watch_monetization_types'), isFalse);
+      expect(params.containsKey('with_watch_providers'), isFalse);
+    });
+
+    test('the new fields count in equality', () {
+      expect(
+        const DiscoverFilter(withoutKeywords: {1}),
+        isNot(const DiscoverFilter()),
+      );
+      expect(
+        const DiscoverFilter(monetizationTypes: {WatchMonetization.rent}),
+        isNot(const DiscoverFilter()),
+      );
+      expect(
+        const DiscoverFilter(withoutKeywords: {1}),
+        const DiscoverFilter(withoutKeywords: {1}),
+      );
+    });
   });
 }

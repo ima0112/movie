@@ -11,6 +11,7 @@ import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/discover_page.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -415,6 +416,39 @@ void main() {
       expect(page.totalPages, 42); // from the fixture
       expect(page.totalResults, greaterThan(0));
       expect(page.hasMore, isTrue);
+    });
+
+    test('a page past TMDB\'s cap of 500 (or below 1) is clamped, not sent '
+        'to be refused', () async {
+      await repository.discoverPage(
+        const DiscoverFilter(type: MediaType.movie),
+        page: 900,
+      );
+      expect(adapter.lastQueryParameters!['page'], 500);
+
+      await repository.discoverPage(
+        const DiscoverFilter(type: MediaType.movie),
+        page: 0,
+      );
+      expect(adapter.lastQueryParameters!['page'], 1);
+    });
+
+    test('Surprise me\'s filters reach /discover: a TV keyword veto and '
+        'the platforms with their monetization', () async {
+      await repository.discoverPage(
+        DiscoverFilter(
+          type: MediaType.tvShow,
+          withoutGenres: {const Genre(id: 'horror')},
+          withWatchProviders: const {8},
+          monetizationTypes: const {WatchMonetization.flatrate},
+        ),
+      );
+
+      final q = adapter.lastQueryParameters!;
+      expect(q['without_keywords'], '315058');
+      expect(q['with_watch_providers'], '8');
+      expect(q['with_watch_monetization_types'], 'flatrate');
+      expect(q['watch_region'], isNotNull);
     });
 
     test('All merges both types for the same page', () async {
