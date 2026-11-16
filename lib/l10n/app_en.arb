@@ -971,13 +971,23 @@
   },
   "myTastesAddAvoidedSheetTitle": "Add a genre to avoid",
   "myTastesFooter": "Everything is saved only on your device.",
+  "myTastesVibesTitle": "Favorite vibes",
+  "myTastesVibesHint": "Up to {max}. They set the tone of what we suggest.",
+  "@myTastesVibesHint": {
+    "description": "C5's hint under \"Favorite vibes\"; {max} is how many can be picked.",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "myTastesErasTitle": "Eras",
+  "myTastesErasHint": "The release years you prefer.",
   "myTastesGenresLikeHint": "Choose as many as you like.",
   "myTastesGenresNeverHint": "We won't show them in recommendations.",
   "myTastesGenresLikeTitle": "Genres you like",
   "myTastesGenresNeverTitle": "Genres you avoid",
   "myTastesSavedIndicator": "Saved",
-  "myTastesVibesLikeTitle": "Vibes you like",
-  "myTastesHowFarBackLabel": "How far back",
 
   "statsHoursValue": "{hours} h",
   "@statsHoursValue": {

@@ -1856,6 +1856,30 @@ abstract class AppLocalizations {
   /// **'Everything is saved only on your device.'**
   String get myTastesFooter;
 
+  /// No description provided for @myTastesVibesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite vibes'**
+  String get myTastesVibesTitle;
+
+  /// C5's hint under "Favorite vibes"; {max} is how many can be picked.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {max}. They set the tone of what we suggest.'**
+  String myTastesVibesHint(int max);
+
+  /// No description provided for @myTastesErasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Eras'**
+  String get myTastesErasTitle;
+
+  /// No description provided for @myTastesErasHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The release years you prefer.'**
+  String get myTastesErasHint;
+
   /// No description provided for @myTastesGenresLikeHint.
   ///
   /// In en, this message translates to:
@@ -1885,18 +1909,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved'**
   String get myTastesSavedIndicator;
-
-  /// No description provided for @myTastesVibesLikeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Vibes you like'**
-  String get myTastesVibesLikeTitle;
-
-  /// No description provided for @myTastesHowFarBackLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'How far back'**
-  String get myTastesHowFarBackLabel;
 
   /// StatsMetricGrid's own hours-value format, e.g. "312 h" (docs/SCREENS.md C4's own example). {hours} is already locale-formatted (LocalizedCount.localizedCount) before being substituted in.
   ///

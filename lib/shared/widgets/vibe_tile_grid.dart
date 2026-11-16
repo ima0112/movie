@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../features/match_engine/domain/vibe.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../l10n/vibe_localization.dart';
+import 'vibe_icon.dart';
 
-/// A 4-column grid of [Vibe] tiles — `docs/SCREENS.md` C5 ("4-column
-/// grid of the 16 vibes") and E2 step 2 (the identical shape, "4-column
-/// grid of the 16 vibes... exactly 3"). Icon-only tiles, unlike
-/// `QuizTile`: 16 tiles at 4/row leaves no room for a permanent caption,
-/// so each name shows as a [Tooltip] instead — it already reveals on
-/// long-press on a touch device by default, exactly what both screens
-/// need, no bespoke gesture of ours.
-///
-/// Promoted from `features/my_tastes/presentation/widgets/
-/// taste_vibe_grid.dart` to `shared/widgets/` once `quiz_vibe_step.dart`
-/// (E2) became this grid's second real consumer — that file's own
-/// hardcoded "Vibes you like" caption stays behind in `TasteVibeGrid`
-/// (C5's own wrapper around this), since E2 needs a different headline
-/// entirely.
+/// A 4-column grid of [Vibe] tiles — E2 step 2 ("4-column grid of the 16
+/// vibes... exactly 3"). Icon-only tiles, unlike `QuizTile`: 16 tiles at 4/row
+/// leaves no room for a permanent caption, so each name shows as a [Tooltip]
+/// instead — it already reveals on long-press on a touch device by default.
+/// (C5 shows its vibes as chips with their icons instead.)
 class VibeTileGrid extends StatelessWidget {
   const VibeTileGrid({
     super.key,
@@ -98,7 +89,11 @@ class _VibeTileState extends State<_VibeTile> {
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       ),
       child: Center(
-        child: Icon(_iconFor(widget.vibe), size: _iconSize, color: foreground),
+        child: Icon(
+          vibeIconFor(widget.vibe),
+          size: _iconSize,
+          color: foreground,
+        ),
       ),
     );
 
@@ -121,29 +116,3 @@ class _VibeTileState extends State<_VibeTile> {
     );
   }
 }
-
-/// Resolves [Vibe.icon] (an `AppIcons` constant *name*, e.g.
-/// `"vibeFeelGood"` — a plain `String` since `vibe.dart` stays
-/// Flutter-free) to the real icon. Falls back to [AppIcons.dice] if a
-/// name doesn't match — shouldn't happen with `assets/vibes.json` as
-/// shipped, but a silently wrong icon would be worse than a generic one.
-IconData _iconFor(Vibe vibe) => _vibeIcons[vibe.icon] ?? AppIcons.dice;
-
-const Map<String, IconData> _vibeIcons = {
-  'vibeFeelGood': AppIcons.vibeFeelGood,
-  'vibeIndie': AppIcons.vibeIndie,
-  'vibeMonster': AppIcons.vibeMonster,
-  'vibeDetective': AppIcons.vibeDetective,
-  'vibeClassic': AppIcons.vibeClassic,
-  'vibeSuperhero': AppIcons.vibeSuperhero,
-  'vibeTearjerker': AppIcons.vibeTearjerker,
-  'vibeSports': AppIcons.vibeSports,
-  'vibeDate': AppIcons.vibeDate,
-  'vibeFuture': AppIcons.vibeFuture,
-  'vibeExplosive': AppIcons.vibeExplosive,
-  'vibeGritty': AppIcons.vibeGritty,
-  'vibeTrueStory': AppIcons.vibeTrueStory,
-  'vibeGangster': AppIcons.vibeGangster,
-  'vibeMusical': AppIcons.vibeMusical,
-  'vibeFantasy': AppIcons.vibeFantasy,
-};
