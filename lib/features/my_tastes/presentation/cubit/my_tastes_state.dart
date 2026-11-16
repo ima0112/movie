@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
 import '../../../match_engine/domain/vibe.dart';
 
@@ -16,8 +19,14 @@ class MyTastesState {
     required this.likedVibes,
     required this.yearFrom,
     required this.availableVibes,
+    this.yearTo,
+    this.preferredType,
+    this.platformIds = const {},
     this.justSaved = false,
   });
+
+  /// "Up to 5" vibes (C5: "Hasta 5. Marcan el tono de lo que te sugerimos.").
+  static const int maxVibes = 5;
 
   /// A brand-new profile's "How far back" default. No doc gives one
   /// explicitly; 1990 matches the sample value this codebase's own
@@ -28,6 +37,15 @@ class MyTastesState {
   final Set<Genre> vetoedGenres;
   final Set<String> likedVibes;
   final int yearFrom;
+
+  /// The eras' upper bound; `null` = today.
+  final int? yearTo;
+
+  /// "What do you usually watch?": a type, or `null` for both.
+  final MediaType? preferredType;
+
+  /// Selected streaming services (TMDB provider ids).
+  final Set<int> platformIds;
 
   /// The full 16-vibe catalog (`VibeCatalog.all()`), resolved once at
   /// construction — the catalog itself never changes at runtime, unlike
@@ -48,6 +66,9 @@ class MyTastesState {
       vetoedGenres: profile?.vetoedGenres ?? const {},
       likedVibes: profile?.likedVibes ?? const {},
       yearFrom: profile?.yearFrom ?? defaultYearFrom,
+      yearTo: profile?.yearTo,
+      preferredType: profile?.preferredType,
+      platformIds: profile?.platformIds ?? const {},
       availableVibes: availableVibes,
     );
   }
@@ -57,6 +78,11 @@ class MyTastesState {
     Set<Genre>? vetoedGenres,
     Set<String>? likedVibes,
     int? yearFrom,
+    int? yearTo,
+    bool clearYearTo = false,
+    MediaType? preferredType,
+    bool clearPreferredType = false,
+    Set<int>? platformIds,
     bool? justSaved,
   }) {
     return MyTastesState(
@@ -64,8 +90,37 @@ class MyTastesState {
       vetoedGenres: vetoedGenres ?? this.vetoedGenres,
       likedVibes: likedVibes ?? this.likedVibes,
       yearFrom: yearFrom ?? this.yearFrom,
+      yearTo: clearYearTo ? null : (yearTo ?? this.yearTo),
+      preferredType: clearPreferredType
+          ? null
+          : (preferredType ?? this.preferredType),
+      platformIds: platformIds ?? this.platformIds,
       availableVibes: availableVibes,
       justSaved: justSaved ?? this.justSaved,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is MyTastesState &&
+      setEquals(other.likedGenres, likedGenres) &&
+      setEquals(other.vetoedGenres, vetoedGenres) &&
+      setEquals(other.likedVibes, likedVibes) &&
+      other.yearFrom == yearFrom &&
+      other.yearTo == yearTo &&
+      other.preferredType == preferredType &&
+      setEquals(other.platformIds, platformIds) &&
+      other.justSaved == justSaved;
+
+  @override
+  int get hashCode => Object.hash(
+    Object.hashAllUnordered(likedGenres),
+    Object.hashAllUnordered(vetoedGenres),
+    Object.hashAllUnordered(likedVibes),
+    yearFrom,
+    yearTo,
+    preferredType,
+    Object.hashAllUnordered(platformIds),
+    justSaved,
+  );
 }
