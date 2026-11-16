@@ -4,12 +4,8 @@ import '../../../../shared/widgets/app_snack_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/di.dart';
 import '../../../../app/router.dart';
-import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/surprise_history_entry.dart';
-import '../../../../core/domain/entities/user_media_entry.dart';
-import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -73,17 +69,19 @@ class SurpriseResultContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           PrimaryButton(
             label: l10n.surpriseAddToWatchLater,
-            onTap: () {
-              context.read<SurpriseCubit>().recordOutcome(
-                SurpriseOutcome.saved,
-              );
-              _addToWatchLater(context, item);
-            },
+            onTap: () => _addToWatchLater(context),
           ),
           const SizedBox(height: AppSpacing.md),
           SecondaryButton(
             label: l10n.surpriseAnotherSuggestion,
-            onTap: () => context.read<SurpriseCubit>().another(),
+            onTap: () => context.read<SurpriseCubit>().next(),
+          ),
+          // The deck is circular now — it never runs out — so a new batch is
+          // asked for explicitly (until the card game replaces this screen).
+          const SizedBox(height: AppSpacing.md),
+          TextLinkButton(
+            label: l10n.surpriseSearchAgain,
+            onTap: () => context.read<SurpriseCubit>().reroll(),
           ),
           // Only profile/inferredList ever had a choice to begin with
           // (H11) — having just answered the quiz, there's nothing
@@ -106,21 +104,10 @@ class SurpriseResultContent extends StatelessWidget {
     );
   }
 
-  Future<void> _addToWatchLater(BuildContext context, MediaItem item) async {
+  Future<void> _addToWatchLater(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
     final message = context.l10n.surpriseAddedToWatchLaterSnackbar;
-    final snapshot = catalogSnapshotFrom(item);
-    await getIt<UserLibraryRepository>().upsert(
-      UserMediaEntry(
-        key: item.key,
-        title: snapshot.title,
-        isWatchLater: true,
-        genres: snapshot.genres,
-        posterUrl: snapshot.posterUrl,
-        voteAverage: snapshot.voteAverage,
-        year: snapshot.year,
-      ),
-    );
+    await context.read<SurpriseCubit>().save();
     AppSnackBar.showOn(messenger, message);
   }
 }

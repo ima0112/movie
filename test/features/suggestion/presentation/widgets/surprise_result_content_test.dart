@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movies/app/di.dart';
 import 'package:movies/app/router.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
@@ -211,14 +210,9 @@ void main() {
   group('SurpriseResultContent — "Add to watch later"', () {
     testWidgets('persists voteAverage and year from the suggested item, '
         'not just title/genres', (tester) async {
-      // "Add to watch later" reaches for the global `getIt` directly
-      // (surprise_result_content.dart's own `_addToWatchLater`) rather
-      // than a repository passed in by this widget's constructor —
-      // unlike every other write site in this branch, so the fake has
-      // to go through `getIt` too, not just `SurpriseCubit`'s own.
+      // The button asks the cubit to save the card on top, so the cubit has to
+      // be showing it.
       final userLibraryRepository = _FakeUserLibraryRepository();
-      getIt.registerSingleton<UserLibraryRepository>(userLibraryRepository);
-      addTearDown(() => getIt.unregister<UserLibraryRepository>());
       final cubit = SurpriseCubit(
         FakeSurpriseEngine(),
         TasteProfileBuilder(VibeCatalog(const [])),
@@ -226,6 +220,8 @@ void main() {
         userLibraryRepository,
       );
       addTearDown(cubit.close);
+      // ignore: invalid_use_of_protected_member
+      cubit.emit(_resultState(SuggestionSource.profile));
 
       await tester.pumpWidget(
         _wrap(cubit, _resultState(SuggestionSource.profile)),

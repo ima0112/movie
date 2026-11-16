@@ -20,6 +20,7 @@ import '../../../match_engine/domain/surprise_history_affinity.dart';
 import '../../../match_engine/domain/surprise_request.dart';
 import '../../../taste_profile/domain/taste_profile_builder.dart';
 import 'surprise_state.dart';
+import 'surprise_watch_later.dart';
 
 /// Surprise me (N=1)'s state machine — `docs/SCREENS.md` E1/E3,
 /// `docs/DECISIONS.md` section 5 ("Surprise me (N=1)").
@@ -220,62 +221,141 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     );
   }
 
-  /// E3's "Another suggestion" — rotates to the next candidate in the
-  /// *already-fetched* pool (`MatchOptions.randomizeTop`'s whole top-5)
-  /// without calling [MatchEngine] again. Once every candidate has been
-  /// shown, emits [Exhausted] instead. A no-op from any state other than
-  /// [SurpriseResult].
-  void another() {
-    final current = state;
-    if (current is! SurpriseResult) return;
+  // ---------------------------------------------------------------- the deck
 
-    // Passing a card is never recorded as a rejection.
-    final nextIndex = current.index + 1;
-    if (nextIndex >= current.suggestions.length) {
-      emit(const Exhausted());
-      return;
-    }
+  /// How long a card on top counts as "lingered on" (weakly positive).
+  static const Duration dwellDuration = Duration(seconds: 3);
 
-    emit(
-      SurpriseResult(
-        suggestions: current.suggestions,
-        index: nextIndex,
-        relaxations: current.relaxations,
-        source: current.source,
-      ),
-    );
+  Timer? _dwell;
+
+  /// Which cards of the batch on screen have been on top (so one that comes
+  /// back — the deck is circular — or is jumped to counts as revisited).
+  final Set<int> _visited = {};
+
+  /// While "other 5" is running over a deck: what to go back to if it finds
+  /// nothing or can't reach TMDB — the deck is never lost to a failed ask.
+  SurpriseResult? _deckBeforeReroll;
+
+  bool _choosing = false;
+
+  /// Pass: the next card comes up (after the last, the first — the deck never
+  /// runs out). With one card there is nowhere to go. Never a rejection.
+  void next() {
+    final deck = state;
+    if (deck is! SurpriseResult || deck.suggestions.length < 2) return;
+    _showCard(deck, (deck.index + 1) % deck.suggestions.length);
   }
 
-  /// [SurpriseError]'s own recovery — re-runs the exact search that just
-  /// failed (same media type, same `ParticipantAnswers`, same
-  /// [SuggestionSource]). A no-op if nothing has been searched for yet.
+  /// Save the card on top to Watch later and pass (the left swipe). A card
+  /// already there is just passed.
+  Future<void> saveAndNext() async {
+    final deck = state;
+    if (deck is! SurpriseResult) return;
+    final saving = _saveCard(deck.index);
+    next();
+    await saving;
+  }
+
+  /// Save the card on top to Watch later, staying on it (the "Save" control);
+  /// a no-op if it is already there. Saving is one-way here: taking a card out
+  /// of Watch later is done from My List.
+  Future<void> save() async {
+    final deck = state;
+    if (deck is! SurpriseResult) return;
+    await _saveCard(deck.index);
+  }
+
+  /// Bring card [index] to the top (a thumbnail tapped).
+  void jumpTo(int index) {
+    final deck = state;
+    if (deck is! SurpriseResult ||
+        index < 0 ||
+        index >= deck.suggestions.length ||
+        index == deck.index) {
+      return;
+    }
+    _showCard(deck, index);
+  }
+
+  /// Pick the card on top (double tap, or "Choose this" from its detail): it
+  /// goes into Watch later by itself, is recorded as chosen, and the game ends
+  /// at the closing screen. A second call while this one is running is ignored.
+  Future<void> choose() async {
+    final deck = state;
+    if (deck is! SurpriseResult || _choosing) return;
+    _choosing = true;
+    _dwell?.cancel();
+    final index = deck.index;
+    final card = deck.suggestions[index];
+    try {
+      await saveToWatchLater(_userLibraryRepository, card);
+      if (isClosed || state is! SurpriseResult) return;
+      unawaited(_markOutcome(card.item.key, SurpriseOutcome.chosen));
+      emit(
+        SurpriseChosen(
+          suggestions: deck.suggestions,
+          index: index,
+          savedKeys: {...(state as SurpriseResult).savedKeys, card.item.key},
+          source: deck.source,
+        ),
+      );
+    } finally {
+      _choosing = false;
+    }
+  }
+
+  /// "Other 5": a new batch with the same answers and no title of the session
+  /// repeated. The deck stays on screen under "Searching" and **comes back**
+  /// if the ask finds nothing new or can't reach TMDB (with a [notice]).
+  Future<void> reroll() async {
+    final deck = state;
+    final mediaType = _lastMediaType;
+    final answers = _lastAnswers;
+    final source = _lastSource;
+    if (deck is! SurpriseResult ||
+        mediaType == null ||
+        answers == null ||
+        source == null) {
+      return;
+    }
+    _dwell?.cancel();
+    _deckBeforeReroll = deck;
+    final generation = ++_searchGeneration;
+    emit(Searching(mediaType));
+    await _search(mediaType, answers, source, generation);
+  }
+
+  /// [SurpriseError]'s own recovery — re-runs the search that failed (same
+  /// type, same answers, same source). A no-op if nothing was searched yet.
   Future<void> retry() async {
     final mediaType = _lastMediaType;
     final answers = _lastAnswers;
     final source = _lastSource;
     if (mediaType == null || answers == null || source == null) return;
 
-    // Asking again after a batch: its cards are marked as a fact (nothing in it
-    // was saved or chosen, if so), then a new batch of the same session.
-    if (_batch > 0) {
-      unawaited(
-        _history?.markBatchRerolled(sessionId: _sessionId, batch: _batch) ??
-            Future<void>.value(),
-      );
-    }
-
     final generation = ++_searchGeneration;
     emit(Searching(mediaType));
     await _search(mediaType, answers, source, generation);
   }
 
-  /// The user did something with the suggestion on screen — saved it to
-  /// Watch later, opened its details: kept in the history as a taste signal.
-  /// A no-op outside a result.
+  /// The user left the deck (the ×): stops the "lingered on" timer. The
+  /// history was written event by event, so nothing else is left to save.
+  void closeDeck() => _dwell?.cancel();
+
+  /// The pending [SurpriseResult.notice] has been shown.
+  void noticeShown() {
+    final deck = state;
+    if (deck is SurpriseResult && deck.notice != SurpriseNotice.none) {
+      emit(deck.copyWith(notice: SurpriseNotice.none));
+    }
+  }
+
+  /// The user did something with the card on top — opened its details: kept in
+  /// the history as a taste signal. A no-op outside a deck.
   void recordOutcome(SurpriseOutcome outcome) {
-    final current = state;
-    if (current is! SurpriseResult) return;
-    unawaited(_markOutcome(current.current.key, outcome));
+    final deck = state;
+    if (deck is! SurpriseResult) return;
+    unawaited(_markOutcome(deck.current.key, outcome));
   }
 
   Future<void> _markOutcome(MediaKey key, SurpriseOutcome outcome) async {
@@ -286,11 +366,60 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     );
   }
 
+  /// A card comes to the top: one already seen in this batch counts as
+  /// revisited, and the "lingered on" timer starts over.
+  void _showCard(SurpriseResult deck, int index) {
+    emit(deck.copyWith(index: index));
+    final card = deck.suggestions[index];
+    if (!_visited.add(index)) {
+      unawaited(_markOutcome(card.item.key, SurpriseOutcome.revisited));
+    }
+    _startDwell();
+  }
+
+  void _startDwell() {
+    _dwell?.cancel();
+    _dwell = Timer(dwellDuration, () {
+      final deck = state;
+      if (deck is SurpriseResult) {
+        unawaited(_markOutcome(deck.current.key, SurpriseOutcome.revisited));
+      }
+    });
+  }
+
+  /// Puts card [index] in Watch later (and the history). Optimistic: the deck
+  /// shows it saved at once and goes back if the write fails.
+  Future<void> _saveCard(int index) async {
+    final deck = state;
+    if (deck is! SurpriseResult) return;
+    final card = deck.suggestions[index];
+    final key = card.item.key;
+    if (deck.savedKeys.contains(key)) return;
+
+    emit(deck.copyWith(savedKeys: {...deck.savedKeys, key}));
+    unawaited(_markOutcome(key, SurpriseOutcome.saved));
+    final result = await saveToWatchLater(_userLibraryRepository, card);
+    if (result is Failure<void> && !isClosed) {
+      final now = state;
+      if (now is SurpriseResult) {
+        emit(now.copyWith(savedKeys: {...now.savedKeys}..remove(key)));
+      }
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _dwell?.cancel();
+    return super.close();
+  }
+
   /// E3a's "×": gives up the search in flight — whatever it finds is thrown
   /// away — and goes back to [ChoosingType], so E1 can route again when the
   /// user picks a type once more.
   void cancelSearch() {
     _searchGeneration++;
+    _dwell?.cancel();
+    _deckBeforeReroll = null;
     emit(const ChoosingType());
   }
 
@@ -378,17 +507,38 @@ class SurpriseCubit extends Cubit<SurpriseState> {
 
     if (generation != _searchGeneration || isClosed) return;
 
+    final deckBefore = _deckBeforeReroll;
+    _deckBeforeReroll = null;
+
     if (result is! Success<SurpriseBatch>) {
-      emit(const SurpriseError());
+      // Over a deck, a failed ask leaves the deck as it was (offline notice).
+      if (deckBefore != null) {
+        _restoreDeck(deckBefore, SurpriseNotice.offline);
+      } else {
+        emit(const SurpriseError());
+      }
       return;
     }
     final batch = result.value;
 
     if (batch.isEmpty) {
-      // Nothing (more) that satisfies the filters: after earlier batches
-      // that's "that's all for now"; on a first search, no match at all.
-      emit(_sessionShown.isEmpty ? const SurpriseError() : const Exhausted());
+      // Nothing (more) that satisfies the filters: over a deck it stays (with
+      // a notice); on a first search there is simply no match.
+      if (deckBefore != null) {
+        _restoreDeck(deckBefore, SurpriseNotice.noMoreSurprises);
+      } else {
+        emit(const SurpriseError());
+      }
       return;
+    }
+
+    // A new batch replaces the one before: that one is marked as rerolled
+    // (a fact) if nothing in it was picked.
+    if (_batch > 0) {
+      unawaited(
+        _history?.markBatchRerolled(sessionId: _sessionId, batch: _batch) ??
+            Future<void>.value(),
+      );
     }
 
     final keys = {for (final s in batch.suggestions) s.item.key};
@@ -409,13 +559,34 @@ class SurpriseCubit extends Cubit<SurpriseState> {
           Future<void>.value(),
     );
 
+    // Cards already in Watch later show as saved from the start.
+    final library = await _libraryEntries();
+    if (generation != _searchGeneration || isClosed) return;
+    final saved = {
+      for (final e in library)
+        if (e.isWatchLater && keys.contains(e.key)) e.key,
+    };
+
+    _visited
+      ..clear()
+      ..add(0);
     emit(
       SurpriseResult(
         suggestions: batch.suggestions,
         index: 0,
         relaxations: batch.relaxations,
         source: source,
+        savedKeys: saved,
+        notice: batch.relaxations.isEmpty
+            ? SurpriseNotice.none
+            : SurpriseNotice.widenedSearch,
       ),
     );
+    _startDwell();
+  }
+
+  void _restoreDeck(SurpriseResult deck, SurpriseNotice notice) {
+    emit(deck.copyWith(notice: notice));
+    _startDwell();
   }
 }
