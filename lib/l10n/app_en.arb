@@ -1013,6 +1013,57 @@
   "statsActivityTitle": "Activity",
   "statsActivityLess": "Less",
   "statsActivityMore": "More",
+  "statsRatingsTitle": "Your ratings",
+  "statsRatingAverage": "{value} average",
+  "@statsRatingAverage": {
+    "description": "C4 ratings card: the user's average rating.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "statsRatingTmdb": "TMDB: {value}",
+  "@statsRatingTmdb": {
+    "description": "C4 ratings card: TMDB's average over the same titles.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "statsRatingHigher": "You rate {gap} ★ above TMDB on average",
+  "@statsRatingHigher": {
+    "description": "C4: how much more generous the user rates than TMDB.",
+    "placeholders": {
+      "gap": {
+        "type": "String"
+      }
+    }
+  },
+  "statsRatingLower": "You rate {gap} ★ below TMDB on average",
+  "@statsRatingLower": {
+    "description": "C4: how much harsher the user rates than TMDB.",
+    "placeholders": {
+      "gap": {
+        "type": "String"
+      }
+    }
+  },
+  "statsRatingInLine": "You rate in line with TMDB",
+  "statsDisagreementsTitle": "Where you differ from TMDB",
+  "statsDisagreement": "You ★ {user} · TMDB ★ {tmdb}",
+  "@statsDisagreement": {
+    "description": "C4 disagreement row: the user's stars vs TMDB's.",
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "tmdb": {
+        "type": "String"
+      }
+    }
+  },
   "statsEmptyTitle": "Mark something as watched to see your stats",
   "statsEmptyBody": "Your numbers will show up here once you do.",
   "statsGenreBarsTitle": "Genres you watch most",

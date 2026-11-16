@@ -1110,6 +1110,40 @@ class AppLocalizationsEs extends AppLocalizations {
   String get statsActivityMore => 'Más';
 
   @override
+  String get statsRatingsTitle => 'Tus valoraciones';
+
+  @override
+  String statsRatingAverage(String value) {
+    return '$value de promedio';
+  }
+
+  @override
+  String statsRatingTmdb(String value) {
+    return 'TMDB: $value';
+  }
+
+  @override
+  String statsRatingHigher(String gap) {
+    return 'Valoras $gap ★ por encima de TMDB en promedio';
+  }
+
+  @override
+  String statsRatingLower(String gap) {
+    return 'Valoras $gap ★ por debajo de TMDB en promedio';
+  }
+
+  @override
+  String get statsRatingInLine => 'Valoras en línea con TMDB';
+
+  @override
+  String get statsDisagreementsTitle => 'Dónde difieres de TMDB';
+
+  @override
+  String statsDisagreement(String user, String tmdb) {
+    return 'Tú ★ $user · TMDB ★ $tmdb';
+  }
+
+  @override
   String get statsEmptyTitle =>
       'Marca algo como visto para ver tus estadísticas';
 
