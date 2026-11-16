@@ -4,7 +4,8 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_icons.dart';
 
 /// The two round bubbles at the deck's edges, mostly off screen — just enough
-/// shows for the whole icon to be seen. **Left: Save** (a bookmark); **right:
+/// shows for the whole icon to be seen, all of it in the margin beside the
+/// cards (at rest nothing overlaps a card; only a dragged card passes under). **Left: Save** (a bookmark); **right:
 /// Next** (an arrow). They hint at the gestures and never take a touch
 /// ([IgnorePointer]).
 ///
@@ -29,14 +30,17 @@ class SurpriseEdgeBubbles extends StatelessWidget {
   final double nextProgress;
   final bool showNext;
 
-  static const double size = 112;
+  static const double size = 104;
 
   /// How much of a bubble shows at rest (enough for a whole icon and its
   /// margin) and once fully pulled.
-  static const double _restVisible = 0.42;
+  static const double _restVisible = 0.29;
   static const double _pulledVisible = 0.66;
 
-  static const double _iconSize = 22;
+  /// How far into the screen a bubble reaches at rest.
+  static const double restWidth = size * _restVisible;
+
+  static const double _iconSize = 20;
   static const double _haloBlur = 28;
   static const double _haloSpread = 4;
   static const double _haloAlpha = 0.45;
