@@ -1490,9 +1490,13 @@
   "@surpriseErrorMessage": {
     "description": "E3's SurpriseError body — no exact copy is given in docs/SCREENS.md for this (E3 only describes the state, \"error with 'Retry'\"), so this is a plain, generic line."
   },
-  "chooseTypeHeadline": "What are you in the mood for today?",
-  "@chooseTypeHeadline": {
-    "description": "E1's own headline (docs/SCREENS.md E1)."
+  "chooseTypeHeadlineLead": "What are you in the mood for",
+  "@chooseTypeHeadlineLead": {
+    "description": "E1's headline (docs/SCREENS.md E1), first part, in white. Followed by a space and chooseTypeHeadlineAccent."
+  },
+  "chooseTypeHeadlineAccent": "today",
+  "@chooseTypeHeadlineAccent": {
+    "description": "E1's headline, the word in the accent color; a white \"?\" follows it."
   },
   "surpriseNoMoreSuggestionsTitle": "That's all for now",
   "surpriseNoMoreSuggestionsBody": "We're out of suggestions from this search — try again for a fresh pick.",
@@ -1503,6 +1507,8 @@
   },
   "chooseTypeMovieLabel": "A movie",
   "chooseTypeTvShowLabel": "A TV show",
+  "chooseTypeMovieSubtitle": "A plan for a couple of hours",
+  "chooseTypeTvShowSubtitle": "To get hooked over several nights",
   "surpriseYourSuggestionTitle": "Your suggestion",
   "@surpriseYourSuggestionTitle": {
     "description": "E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states."

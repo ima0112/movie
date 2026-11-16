@@ -122,6 +122,6 @@ class AppIcons {
 
   /// E1's own "two large cards 'A movie' / 'A TV show', each with an
   /// icon".
-  static const IconData movie = RemixIcons.movie_line;
+  static const IconData movie = RemixIcons.film_line;
   static const IconData tvShow = RemixIcons.tv_line;
 }

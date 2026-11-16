@@ -9,8 +9,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/app_halo.dart';
 import '../../../match_engine/domain/match_engine.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../../../taste_profile/domain/taste_profile_builder.dart';
@@ -18,6 +17,7 @@ import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
 import '../widgets/choose_source_sheet.dart';
 import '../widgets/choose_type_cards.dart';
+import '../widgets/choose_type_headline.dart';
 
 /// E1 (Choose type) — `docs/SCREENS.md` E1.
 ///
@@ -131,26 +131,41 @@ class _ChooseTypeViewState extends State<_ChooseTypeView> {
       },
       child: Scaffold(
         backgroundColor: AppColors.surface,
+        // The halo reaches the top of the screen, behind the bar.
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(AppIcons.back, color: AppColors.ink),
             onPressed: () => context.pop(),
           ),
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(context.l10n.chooseTypeHeadline, style: AppTextStyles.h1),
-                const SizedBox(height: AppSpacing.xxl),
-                const ChooseTypeCards(),
-              ],
+        body: Stack(
+          children: [
+            const Positioned(left: 0, right: 0, top: 0, child: AppHalo()),
+            SafeArea(
+              child: SingleChildScrollView(
+                // The Scaffold already counts the app bar in the safe area
+                // (the body extends behind it), so only a small breath here.
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.xl,
+                  AppSpacing.sm,
+                  AppSpacing.xl,
+                  AppSpacing.xl,
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ChooseTypeHeadline(),
+                    SizedBox(height: AppSpacing.xxxl),
+                    ChooseTypeCards(),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

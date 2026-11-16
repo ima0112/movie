@@ -2630,11 +2630,17 @@ abstract class AppLocalizations {
   /// **'Couldn\'t find a match. Try again.'**
   String get surpriseErrorMessage;
 
-  /// E1's own headline (docs/SCREENS.md E1).
+  /// E1's headline (docs/SCREENS.md E1), first part, in white. Followed by a space and chooseTypeHeadlineAccent.
   ///
   /// In en, this message translates to:
-  /// **'What are you in the mood for today?'**
-  String get chooseTypeHeadline;
+  /// **'What are you in the mood for'**
+  String get chooseTypeHeadlineLead;
+
+  /// E1's headline, the word in the accent color; a white "?" follows it.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get chooseTypeHeadlineAccent;
 
   /// No description provided for @surpriseNoMoreSuggestionsTitle.
   ///
@@ -2671,6 +2677,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A TV show'**
   String get chooseTypeTvShowLabel;
+
+  /// No description provided for @chooseTypeMovieSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A plan for a couple of hours'**
+  String get chooseTypeMovieSubtitle;
+
+  /// No description provided for @chooseTypeTvShowSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'To get hooked over several nights'**
+  String get chooseTypeTvShowSubtitle;
 
   /// E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states.
   ///

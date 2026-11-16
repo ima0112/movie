@@ -103,6 +103,8 @@ Future<void> pumpSurpriseMe(WidgetTester tester) async {
   await tester.pumpAndSettle();
 
   expect(find.text('What are you in the mood for today?'), findsOneWidget);
+  expect(find.text('A plan for a couple of hours'), findsOneWidget);
+  expect(find.text('To get hooked over several nights'), findsOneWidget);
 }
 
 /// Taps through E2's 4 steps with the minimum valid selection on each —

@@ -259,7 +259,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 
 ### E1. Choose type
 - Access: "Surprise me" card in B3.
-- Elements: headline "What are you in the mood for today?", two large cards "A movie" / "A TV show", each with an icon.
+- Elements: the page halo, the same as Home's, reaching the top of the screen (behind the back arrow); headline "What are you in the mood for **today**?" (extra bold, only the one word amber); two tall cards (`surfaceRaised`, `lineStrong` border, radius 24, at least 160 px high) with an amber icon at the top — a **film strip** for the movie, a TV for the show — and, pinned to the bottom, the title and a muted line: **"A movie"** / "A plan for a couple of hours" and **"A TV show"** / "To get hooked over several nights". The page scrolls (text at 200%).
 - Rule: usable tastes exist (a profile with at least one liked genre or vibe, or — with no such profile — My List has 5+ entries) → picking a type opens H11 to choose between using them or answering the quiz anyway. No usable tastes at all → picking a type goes straight to E2.
 - Exits: H11, E2, or E3.
 
