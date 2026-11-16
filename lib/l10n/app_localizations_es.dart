@@ -1076,6 +1076,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myTastesErasHint => 'Rango de años de estreno que prefieres.';
 
   @override
+  String get myTastesPlatformsTitle => 'Mis plataformas';
+
+  @override
+  String get myTastesPlatformsHint =>
+      'Priorizamos lo que puedes ver ya en tu región.';
+
+  @override
   String get myTastesGenresLikeHint => 'Elige los que quieras.';
 
   @override
