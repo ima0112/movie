@@ -1,3 +1,4 @@
+import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_key.dart';
 import '../../../core/domain/entities/media_type.dart';
 import 'participant_answers.dart';
@@ -19,6 +20,7 @@ class SurpriseRequest {
     required this.region,
     required this.seed,
     this.excludeKeys = const {},
+    this.genreAffinity = const {},
     this.count = defaultCount,
   });
 
@@ -38,6 +40,11 @@ class SurpriseRequest {
   /// [ParticipantAnswers.excludeWatched] is on).
   final Set<MediaKey> excludeKeys;
 
+  /// How much the user likes each genre — positive liked, negative disliked,
+  /// the shape `genreAffinityFrom(library)` already returns. A soft signal:
+  /// it orders candidates, it never excludes. Empty = no taste to go on.
+  final Map<Genre, int> genreAffinity;
+
   final int count;
 
   SurpriseRequest copyWith({int? seed, Set<MediaKey>? excludeKeys}) =>
@@ -48,6 +55,7 @@ class SurpriseRequest {
         region: region,
         seed: seed ?? this.seed,
         excludeKeys: excludeKeys ?? this.excludeKeys,
+        genreAffinity: genreAffinity,
         count: count,
       );
 

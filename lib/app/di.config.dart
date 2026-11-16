@@ -62,6 +62,10 @@ import 'package:movies/features/explore/data/drift_search_history_repository.dar
 import 'package:movies/features/explore/domain/search_history_repository.dart'
     as _i942;
 import 'package:movies/features/match_engine/domain/match_engine.dart' as _i365;
+import 'package:movies/features/match_engine/domain/surprise_engine.dart'
+    as _i487;
+import 'package:movies/features/match_engine/domain/surprise_engine_impl.dart'
+    as _i55;
 import 'package:movies/features/person_detail/data/repositories/fake_person_repository.dart'
     as _i849;
 
@@ -134,6 +138,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i780.SettingsRepository>(),
       ),
       registerFor: {_real},
+    );
+    gh.lazySingleton<_i487.SurpriseEngine>(
+      () => _i55.SurpriseEngineImpl(gh<_i245.MediaRepository>()),
     );
     gh.lazySingleton<_i263.PersonRepository>(
       () => _i496.TmdbPersonRepository(

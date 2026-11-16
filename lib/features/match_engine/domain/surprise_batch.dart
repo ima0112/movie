@@ -1,25 +1,43 @@
+import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_item.dart';
-import 'relaxation.dart';
 
-/// One suggestion of a batch: the title, which of the chosen vibes it
-/// matched, and its "% for you".
+/// One step of the Surprise-me relaxation ladder, applied (in this order)
+/// only while a search finds fewer than `SurpriseEngineImpl.minCandidates`.
+/// Vetoes, platforms, runtime and the latest year are **never** relaxed —
+/// not even silently.
+enum SurpriseRelaxation {
+  /// `vote_count.gte` from 150 down to 50.
+  lowerVoteCount,
+
+  /// Search without the chosen vibes (the general query alone).
+  dropVibes,
+
+  /// The earliest year moved 10 years back.
+  widenYears,
+}
+
+/// One suggestion of a batch: the title with its details (runtime or
+/// seasons, tagline, where to watch), which of the chosen vibes it matched,
+/// and its "% for you".
 class SurpriseSuggestion {
   const SurpriseSuggestion({
-    required this.item,
+    required this.detail,
     this.matchedVibeIds = const {},
     required this.affinityPercent,
   });
 
   /// The "% for you" shown on the card: the title's score scaled to a modest
   /// range (never below [minPercent] nor above [maxPercent]) — a relative
-  /// affinity within the batch, not a probability, and never presented as
-  /// more precise than that.
+  /// affinity among the candidates, not a probability, and never presented
+  /// as more precise than that.
   static const int minPercent = 60;
   static const int maxPercent = 98;
 
-  final MediaItem item;
+  final MediaDetail detail;
   final Set<String> matchedVibeIds;
   final int affinityPercent;
+
+  MediaItem get item => detail.item;
 }
 
 /// What the engine returns: up to [SurpriseRequest.count] suggestions, ranked
@@ -40,9 +58,9 @@ class SurpriseBatch {
   final String sessionId;
   final List<SurpriseSuggestion> suggestions;
 
-  /// The steps of the relaxation ladder that were needed, in order
-  /// (`Relaxation`), so the screen can say what was widened.
-  final List<Relaxation> relaxations;
+  /// The ladder steps that were needed, in order, so the screen can say what
+  /// was widened.
+  final List<SurpriseRelaxation> relaxations;
 
   /// How many distinct candidates the search gathered before choosing.
   final int candidateCount;

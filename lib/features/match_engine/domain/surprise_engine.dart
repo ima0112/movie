@@ -1,4 +1,5 @@
 import '../../../core/domain/entities/result.dart';
+import 'vibe_catalog.dart';
 import 'surprise_batch.dart';
 import 'surprise_request.dart';
 
@@ -15,5 +16,8 @@ import 'surprise_request.dart';
 abstract interface class SurpriseEngine {
   /// A new batch for [request]. A [Failure] only when TMDB can't be reached;
   /// "nothing found" is a [SurpriseBatch] that [SurpriseBatch.isEmpty].
-  Future<Result<SurpriseBatch>> resolve(SurpriseRequest request);
+  Future<Result<SurpriseBatch>> resolve(
+    SurpriseRequest request, {
+    required VibeCatalog vibeCatalog,
+  });
 }
