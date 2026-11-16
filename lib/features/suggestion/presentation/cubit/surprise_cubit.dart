@@ -51,7 +51,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
 
   /// "Searching…" never flashes for less than this, even if
   /// [MatchEngine.resolve] is instant.
-  static const Duration minSearchingDuration = Duration(milliseconds: 1200);
+  static const Duration minSearchingDuration = Duration(milliseconds: 1800);
 
   /// Past this, [_search] gives up and emits [SurpriseError] instead of
   /// continuing to wait on [MatchEngine.resolve].
@@ -193,6 +193,14 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final generation = ++_searchGeneration;
     emit(Searching(mediaType));
     await _search(mediaType, answers, source, generation);
+  }
+
+  /// E3a's "×": gives up the search in flight — whatever it finds is thrown
+  /// away — and goes back to [ChoosingType], so E1 can route again when the
+  /// user picks a type once more.
+  void cancelSearch() {
+    _searchGeneration++;
+    emit(const ChoosingType());
   }
 
   Future<List<UserMediaEntry>> _libraryEntries() async {

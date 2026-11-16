@@ -2696,6 +2696,18 @@ abstract class AppLocalizations {
   /// **'Your suggestion'**
   String get surpriseYourSuggestionTitle;
 
+  /// E3a (Surprise me, searching): the headline under the shuffling cards.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffling your 5 surprises'**
+  String get surpriseShufflingTitle;
+
+  /// No description provided for @surpriseShufflingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixing what you like with what you don\'t expect'**
+  String get surpriseShufflingSubtitle;
+
   /// No description provided for @surpriseSearchingLabel.
   ///
   /// In en, this message translates to:

@@ -1513,6 +1513,11 @@
   "@surpriseYourSuggestionTitle": {
     "description": "E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states."
   },
+  "surpriseShufflingTitle": "Shuffling your 5 surprises",
+  "@surpriseShufflingTitle": {
+    "description": "E3a (Surprise me, searching): the headline under the shuffling cards."
+  },
+  "surpriseShufflingSubtitle": "Mixing what you like with what you don't expect",
   "surpriseSearchingLabel": "Searching…",
   "surpriseViewDetailsLink": "View details",
   "@surpriseViewDetailsLink": {

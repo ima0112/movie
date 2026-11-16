@@ -162,7 +162,7 @@ SurpriseCubit _cubit({
 
 void main() {
   group('SurpriseCubit — Searching timing', () {
-    test('stays in Searching for at least 1.2s even if the engine '
+    test('stays in Searching for at least 1.8s even if the engine '
         'resolves instantly', () {
       fakeAsync((async) {
         final engine = _FakeMatchEngine(result: _resultWithPoolSize(1));
@@ -176,15 +176,39 @@ void main() {
         async.flushMicrotasks();
         expect(cubit.state, isA<Searching>());
 
-        async.elapse(const Duration(milliseconds: 1199));
+        async.elapse(
+          SurpriseCubit.minSearchingDuration - const Duration(milliseconds: 1),
+        );
         expect(
           cubit.state,
           isA<Searching>(),
-          reason: 'still short of the 1.2s minimum',
+          reason: 'still short of the 1.8s minimum',
         );
 
         async.elapse(const Duration(milliseconds: 1));
         expect(cubit.state, isA<SurpriseResult>());
+
+        cubit.close();
+      });
+    });
+
+    test('cancelSearch goes back to ChoosingType and the late result is '
+        'thrown away', () {
+      fakeAsync((async) {
+        final engine = _FakeMatchEngine(result: _resultWithPoolSize(1));
+        final cubit = _cubit(engine: engine, profile: _profile());
+
+        unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+        unawaited(cubit.useMyTastes());
+        async.flushMicrotasks();
+        expect(cubit.state, isA<Searching>());
+
+        cubit.cancelSearch();
+        expect(cubit.state, isA<ChoosingType>());
+
+        async.elapse(SurpriseCubit.maxSearchingDuration);
+        expect(cubit.state, isA<ChoosingType>());
 
         cubit.close();
       });
