@@ -76,15 +76,14 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - Exits: D1/D2/D3, C1.
 
 ### B3. Match (hub, modal)
-- Access: Match button in the bottom bar. Slides up from the bottom as a near-full-screen modal (the amber sparkle emblem gives a small bounce on open); swipe down to close.
+- Access: Match button in the bottom bar. A compact bottom sheet — as tall as its content, under the theme's drag handle; swipe down to close.
 - Elements:
-  - Drag handle and title "Match".
-  - Large "Surprise me" card — subtitle "A suggestion just for you" — icon. → E1.
-  - Large "Match with friends" card — subtitle "Decide together in seconds" — icon. → F1.
-  - "Join a room" block: code field (6 characters, auto-uppercase) + "Join" button + "Scan" icon button (→ F4).
-  - If a recent room is active: "Back to room K7PM3Q" card.
-- States: inline field error ("Room not found" / "Room is full" / "Room has expired").
-- Exits: E1, F1, F3, F4.
+  - Title "Match" (left-aligned).
+  - **"Surprise me"** card (`surfaceRaised2`, hairline): an amber circle with the sparkle, the title, "A suggestion just for you" and a chevron. → E1.
+  - **"Match with friends"** card, dimmed: a neutral circle with a muted team icon, a muted title with an amber **"Soon"** pill, "Decide together in seconds". Not tappable until the Matcher (v1.1) exists.
+  - v1.1 (not built): "Join a room" block (code field + Join + Scan → F4) and, if a recent room is active, a "Back to room K7PM3Q" card.
+- States: (v1.1) inline field error ("Room not found" / "Room is full" / "Room has expired").
+- Exits: E1 (later F1, F3, F4).
 
 ### B4. My List
 - Access: tab 3. 100% local data: no skeleton or network error.
