@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../../../l10n/l10n_extension.dart';
-import '../../../../l10n/library_tab_localization.dart';
 import '../../../../shared/widgets/library_row.dart';
+import '../entry_actions.dart';
 
 /// Wires up [LibraryRow]'s swipe callbacks to B4's actual behavior
 /// (`docs/SCREENS.md` B4: "Swipe left → 'Remove' (red, snackbar with
@@ -79,18 +78,10 @@ class LibraryRowSwipeable extends StatelessWidget {
     }
   }
 
-  void _remove(BuildContext context) {
-    final removed = entry;
-    unawaited(userLibraryRepository.remove(entry.key));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(tab.localizedRemovedMessage(context.l10n)),
-        action: SnackBarAction(
-          label: context.l10n.myListUndoAction,
-          onPressed: () => unawaited(userLibraryRepository.upsert(removed)),
-        ),
-        duration: const Duration(seconds: 4),
-      ),
-    );
-  }
+  void _remove(BuildContext context) => removeFromTab(
+    context,
+    entry: entry,
+    tab: tab,
+    repository: userLibraryRepository,
+  );
 }

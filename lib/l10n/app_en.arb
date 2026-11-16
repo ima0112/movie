@@ -167,6 +167,22 @@
   "myListEmptyPeopleHeadline": "No people yet",
   "myListEmptyPeopleBody": "Tap the heart on a person's page to keep them here.",
 
+  "myListActionMarkWatched": "Mark as watched",
+  "@myListActionMarkWatched": {
+    "description": "H1 (the three-dot sheet of a My List row): opens H2 for a title that isn't watched yet."
+  },
+  "myListActionEditWatched": "Edit rating and date",
+  "myListActionAddFavorite": "Add to Favorites",
+  "myListActionRemoveFavorite": "Remove from Favorites",
+  "myListActionAddWatchLater": "Add to Watch later",
+  "myListActionRemoveWatchLater": "Remove from Watch later",
+  "myListActionRemoveWatched": "Remove from Watched",
+  "myListActionRemovePerson": "Remove from People",
+  "myListRowActionsLabel": "More actions",
+  "@myListRowActionsLabel": {
+    "description": "Accessibility label of the three-dot button at the end of a My List row (opens H1)."
+  },
+
   "myListRemovedFromTab": "Removed from {tabName}",
   "@myListRemovedFromTab": {
     "description": "My List's swipe-to-remove snackbar. {tabName} is that LibraryTab's own localized label (myListTabFavorites/WatchLater/Watched).",
