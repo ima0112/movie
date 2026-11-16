@@ -140,7 +140,7 @@ void main() {
         (await db.customSelect('PRAGMA user_version').getSingle()).read<int>(
           'user_version',
         ),
-        11,
+        12,
       );
     });
 
@@ -163,5 +163,50 @@ void main() {
           .getSingle();
       expect(count.read<int>('c'), 1);
     });
+
+    test(
+      'upgrading from schema v11 adds the batch and the genres and renames '
+      'the old outcomes (shown/discarded → viewed, seen → revisited)',
+      () async {
+        final raw = sqlite3.sqlite3.openInMemory();
+        raw.execute(
+          'CREATE TABLE surprise_history_table ('
+          'media_type TEXT NOT NULL, tmdb_id INTEGER NOT NULL, '
+          'session_id TEXT NOT NULL, shown_at INTEGER NOT NULL, '
+          'outcome TEXT NOT NULL, '
+          'PRIMARY KEY (media_type, tmdb_id, session_id));',
+        );
+        for (final (id, outcome) in [
+          (1, 'shown'),
+          (2, 'seen'),
+          (3, 'discarded'),
+          (4, 'saved'),
+          (5, 'chosen'),
+        ]) {
+          raw.execute(
+            "INSERT INTO surprise_history_table "
+            "(media_type, tmdb_id, session_id, shown_at, outcome) "
+            "VALUES ('movie', $id, 's', 0, '$outcome');",
+          );
+        }
+        raw.execute('PRAGMA user_version = 11;');
+
+        final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+        addTearDown(db.close);
+
+        final rows = {
+          for (final r in await db.select(db.surpriseHistoryTable).get())
+            r.tmdbId: r,
+        };
+        expect(rows[1]!.outcome.name, 'viewed');
+        expect(rows[2]!.outcome.name, 'revisited');
+        expect(rows[3]!.outcome.name, 'viewed');
+        expect(rows[4]!.outcome.name, 'saved');
+        expect(rows[5]!.outcome.name, 'chosen');
+        // The new columns arrive with their defaults.
+        expect(rows.values.every((r) => r.batch == 1), isTrue);
+        expect(rows.values.every((r) => r.genres == ''), isTrue);
+      },
+    );
   });
 }

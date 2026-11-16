@@ -591,8 +591,8 @@ void main() {
       });
     });
 
-    test('"Another suggestion" marks the one left behind as discarded; a '
-        'saved or opened one is recorded as such', () {
+    test('passing a card is never a rejection; a saved or opened one is '
+        'recorded as such', () {
       fakeAsync((async) {
         final history = InMemorySurpriseHistoryRepository();
         final engine = FakeSurpriseEngine.returning(batchOf(5));
@@ -606,9 +606,9 @@ void main() {
         async.flushMicrotasks();
 
         cubit.recordOutcome(SurpriseOutcome.saved); // title 0 saved
-        cubit.another(); // …and left behind: discarded overrides
+        cubit.another(); // …and passed: nothing is recorded for passing
         async.flushMicrotasks();
-        cubit.recordOutcome(SurpriseOutcome.seen); // title 1 opened
+        cubit.recordOutcome(SurpriseOutcome.revisited); // title 1 opened
         async.flushMicrotasks();
 
         late List<SurpriseHistoryEntry> all;
@@ -619,9 +619,9 @@ void main() {
         );
         async.flushMicrotasks();
         final byId = {for (final e in all) e.key.tmdbId: e.outcome};
-        expect(byId[0], SurpriseOutcome.discarded);
-        expect(byId[1], SurpriseOutcome.seen);
-        expect(byId[2], SurpriseOutcome.shown);
+        expect(byId[0], SurpriseOutcome.saved); // passing doesn't undo it
+        expect(byId[1], SurpriseOutcome.revisited);
+        expect(byId[2], SurpriseOutcome.viewed); // shown, nothing more
         cubit.close();
       });
     });
@@ -662,6 +662,88 @@ void main() {
         async.elapse(SurpriseCubit.minSearchingDuration);
         expect(b.state, isA<Exhausted>());
         b.close();
+      });
+    });
+
+    test(
+      'each card is recorded with its batch number and genres; "Search '
+      'again" marks the batch before as rerolled when nothing was picked',
+      () {
+        fakeAsync((async) {
+          final history = InMemorySurpriseHistoryRepository();
+          final engine = FakeSurpriseEngine(
+            results: [Success(batchOf(5)), Success(batchOf(5, first: 5))],
+          );
+          final cubit = _cubit(
+            engine: engine,
+            profile: _profile(),
+            history: history,
+            clock: () => now,
+          );
+          runSearch(cubit, async);
+          async.flushMicrotasks();
+
+          for (var i = 0; i < 5; i++) {
+            cubit.another(); // passing: neutral
+          }
+          expect(cubit.state, isA<Exhausted>());
+          unawaited(cubit.retry());
+          async.elapse(SurpriseCubit.minSearchingDuration);
+          async.flushMicrotasks();
+
+          late List<SurpriseHistoryEntry> all;
+          unawaited(
+            history.all().then(
+              (r) => all = (r as Success<List<SurpriseHistoryEntry>>).value,
+            ),
+          );
+          async.flushMicrotasks();
+          final byId = {for (final e in all) e.key.tmdbId: e};
+          expect(all, hasLength(10));
+          expect(byId[0]!.batch, 1);
+          expect(byId[0]!.outcome, SurpriseOutcome.rerolled);
+          expect(byId[5]!.batch, 2);
+          expect(byId[5]!.outcome, SurpriseOutcome.viewed); // current batch
+          cubit.close();
+        });
+      },
+    );
+
+    test('a batch with something saved is not marked as rerolled', () {
+      fakeAsync((async) {
+        final history = InMemorySurpriseHistoryRepository();
+        final engine = FakeSurpriseEngine(
+          results: [Success(batchOf(5)), Success(batchOf(5, first: 5))],
+        );
+        final cubit = _cubit(
+          engine: engine,
+          profile: _profile(),
+          history: history,
+          clock: () => now,
+        );
+        runSearch(cubit, async);
+        async.flushMicrotasks();
+
+        cubit.recordOutcome(SurpriseOutcome.saved);
+        async.flushMicrotasks();
+        for (var i = 0; i < 5; i++) {
+          cubit.another();
+        }
+        unawaited(cubit.retry());
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
+
+        late List<SurpriseHistoryEntry> all;
+        unawaited(
+          history.all().then(
+            (r) => all = (r as Success<List<SurpriseHistoryEntry>>).value,
+          ),
+        );
+        async.flushMicrotasks();
+        final byId = {for (final e in all) e.key.tmdbId: e.outcome};
+        expect(byId[0], SurpriseOutcome.saved);
+        expect(byId[1], SurpriseOutcome.viewed);
+        cubit.close();
       });
     });
   });

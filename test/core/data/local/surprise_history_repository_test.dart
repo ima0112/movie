@@ -2,6 +2,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/local/drift_surprise_history_repository.dart';
 import 'package:movies/core/data/local/in_memory_surprise_history_repository.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
@@ -16,12 +17,16 @@ SurpriseHistoryEntry _entry(
   MediaKey key,
   String session,
   DateTime at, [
-  SurpriseOutcome outcome = SurpriseOutcome.shown,
+  SurpriseOutcome outcome = SurpriseOutcome.viewed,
+  int batch = 1,
+  List<Genre> genres = const [],
 ]) => SurpriseHistoryEntry(
   key: key,
   sessionId: session,
   shownAt: at,
   outcome: outcome,
+  batch: batch,
+  genres: genres,
 );
 
 DriftSurpriseHistoryRepository _drift() {
@@ -59,7 +64,7 @@ void _contract(String name, SurpriseHistoryRepository Function() create) {
       final all = await _ok(repo.all());
 
       expect(all.map((e) => e.key.tmdbId), [2, 3, 1]);
-      expect(all.every((e) => e.outcome == SurpriseOutcome.shown), isTrue);
+      expect(all.every((e) => e.outcome == SurpriseOutcome.viewed), isTrue);
     });
 
     test(
@@ -134,8 +139,8 @@ void _contract(String name, SurpriseHistoryRepository Function() create) {
           '${e.sessionId}/${e.key.tmdbId}': e.outcome,
       };
       expect(byRow['s1/1'], SurpriseOutcome.chosen);
-      expect(byRow['s1/2'], SurpriseOutcome.shown);
-      expect(byRow['s2/1'], SurpriseOutcome.shown);
+      expect(byRow['s1/2'], SurpriseOutcome.viewed);
+      expect(byRow['s2/1'], SurpriseOutcome.viewed);
     });
 
     test('setOutcome on a title never shown is a no-op', () async {
@@ -148,6 +153,96 @@ void _contract(String name, SurpriseHistoryRepository Function() create) {
       );
 
       expect(await _ok(repo.all()), isEmpty);
+    });
+
+    test('keeps the batch number and the genres, in order', () async {
+      final repo = create();
+      await repo.recordShown([
+        _entry(_movie(1), 's1', t0, SurpriseOutcome.viewed, 3, const [
+          Genre(id: 'sci-fi'),
+          Genre(id: 'drama'),
+        ]),
+        _entry(_movie(2), 's1', t1),
+      ]);
+
+      final all = {for (final e in await _ok(repo.all())) e.key.tmdbId: e};
+
+      expect(all[1]!.batch, 3);
+      expect(all[1]!.genres, const [Genre(id: 'sci-fi'), Genre(id: 'drama')]);
+      expect(all[2]!.batch, 1);
+      expect(all[2]!.genres, isEmpty);
+    });
+
+    test(
+      'an outcome only ever goes up: saved is not undone by a weaker one',
+      () async {
+        final repo = create();
+        await repo.recordShown([_entry(_movie(1), 's1', t0)]);
+
+        Future<SurpriseOutcome> now() async =>
+            (await _ok(repo.all())).single.outcome;
+        Future<void> set(SurpriseOutcome o) =>
+            repo.setOutcome(sessionId: 's1', key: _movie(1), outcome: o);
+
+        await set(SurpriseOutcome.revisited);
+        expect(await now(), SurpriseOutcome.revisited);
+        await set(SurpriseOutcome.saved);
+        expect(await now(), SurpriseOutcome.saved);
+        await set(SurpriseOutcome.revisited);
+        await set(SurpriseOutcome.viewed);
+        expect(await now(), SurpriseOutcome.saved);
+        await set(SurpriseOutcome.chosen);
+        expect(await now(), SurpriseOutcome.chosen);
+      },
+    );
+
+    test(
+      'markBatchRerolled: a batch with nothing picked has its viewed '
+      'cards marked as rerolled — revisited ones keep their signal',
+      () async {
+        final repo = create();
+        await repo.recordShown([
+          _entry(_movie(1), 's1', t0),
+          _entry(_movie(2), 's1', t0),
+          _entry(_movie(3), 's1', t0, SurpriseOutcome.viewed, 2),
+        ]);
+        await repo.setOutcome(
+          sessionId: 's1',
+          key: _movie(2),
+          outcome: SurpriseOutcome.revisited,
+        );
+
+        await repo.markBatchRerolled(sessionId: 's1', batch: 1);
+
+        final byId = {
+          for (final e in await _ok(repo.all())) e.key.tmdbId: e.outcome,
+        };
+        expect(byId[1], SurpriseOutcome.rerolled);
+        expect(byId[2], SurpriseOutcome.revisited);
+        expect(byId[3], SurpriseOutcome.viewed, reason: 'another batch');
+      },
+    );
+
+    test('markBatchRerolled does nothing when something in the batch was '
+        'saved or chosen', () async {
+      final repo = create();
+      await repo.recordShown([
+        _entry(_movie(1), 's1', t0),
+        _entry(_movie(2), 's1', t0),
+      ]);
+      await repo.setOutcome(
+        sessionId: 's1',
+        key: _movie(2),
+        outcome: SurpriseOutcome.saved,
+      );
+
+      await repo.markBatchRerolled(sessionId: 's1', batch: 1);
+
+      final byId = {
+        for (final e in await _ok(repo.all())) e.key.tmdbId: e.outcome,
+      };
+      expect(byId[1], SurpriseOutcome.viewed);
+      expect(byId[2], SurpriseOutcome.saved);
     });
 
     test('clear forgets everything', () async {

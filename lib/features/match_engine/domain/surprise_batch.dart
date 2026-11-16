@@ -1,5 +1,6 @@
 import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_item.dart';
+import '../../../core/domain/entities/streaming_service.dart';
 
 /// One step of the Surprise-me relaxation ladder, applied (in this order)
 /// only while a search finds fewer than `SurpriseEngineImpl.minCandidates`.
@@ -24,6 +25,7 @@ class SurpriseSuggestion {
     required this.detail,
     this.matchedVibeIds = const {},
     required this.affinityPercent,
+    this.platforms = const [],
   });
 
   /// The "% for you" shown on the card: the title's score scaled to a modest
@@ -36,6 +38,11 @@ class SurpriseSuggestion {
   final MediaDetail detail;
   final Set<String> matchedVibeIds;
   final int affinityPercent;
+
+  /// Where to watch it, as far as the search is concerned (`platformsFor`):
+  /// the services it is available on that the user's answers accept — the card
+  /// shows up to three and "+N".
+  final List<StreamingService> platforms;
 
   MediaItem get item => detail.item;
 }

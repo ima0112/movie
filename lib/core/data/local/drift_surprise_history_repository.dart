@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../domain/entities/genre.dart';
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
@@ -29,6 +30,8 @@ class DriftSurpriseHistoryRepository implements SurpriseHistoryRepository {
               sessionId: entry.sessionId,
               shownAt: entry.shownAt,
               outcome: entry.outcome,
+              batch: Value(entry.batch),
+              genres: Value(entry.genres.map((g) => g.id).join(',')),
             ),
             // A title shown again in the same session keeps its first row.
             mode: InsertMode.insertOrIgnore,
@@ -48,13 +51,52 @@ class DriftSurpriseHistoryRepository implements SurpriseHistoryRepository {
     required SurpriseOutcome outcome,
   }) async {
     try {
+      final match = _db.select(_db.surpriseHistoryTable)
+        ..where(
+          (row) =>
+              row.sessionId.equals(sessionId) &
+              row.mediaType.equalsValue(key.type) &
+              row.tmdbId.equals(key.tmdbId),
+        );
+      final row = await match.getSingleOrNull();
+      // Never replace a stronger outcome with a weaker one.
+      if (row == null || !outcome.canReplace(row.outcome)) {
+        return const Success(null);
+      }
       await (_db.update(_db.surpriseHistoryTable)..where(
-            (row) =>
-                row.sessionId.equals(sessionId) &
-                row.mediaType.equalsValue(key.type) &
-                row.tmdbId.equals(key.tmdbId),
+            (r) =>
+                r.sessionId.equals(sessionId) &
+                r.mediaType.equalsValue(key.type) &
+                r.tmdbId.equals(key.tmdbId),
           ))
           .write(SurpriseHistoryTableCompanion(outcome: Value(outcome)));
+      return const Success(null);
+    } catch (_) {
+      return Failure(FailureReason.storage);
+    }
+  }
+
+  @override
+  Future<Result<void>> markBatchRerolled({
+    required String sessionId,
+    required int batch,
+  }) async {
+    try {
+      final inBatch = _db.select(_db.surpriseHistoryTable)
+        ..where((r) => r.sessionId.equals(sessionId) & r.batch.equals(batch));
+      final rows = await inBatch.get();
+      if (rows.any((r) => r.outcome.isPick)) return const Success(null);
+      await (_db.update(_db.surpriseHistoryTable)..where(
+            (r) =>
+                r.sessionId.equals(sessionId) &
+                r.batch.equals(batch) &
+                r.outcome.equalsValue(SurpriseOutcome.viewed),
+          ))
+          .write(
+            const SurpriseHistoryTableCompanion(
+              outcome: Value(SurpriseOutcome.rerolled),
+            ),
+          );
       return const Success(null);
     } catch (_) {
       return Failure(FailureReason.storage);
@@ -101,6 +143,11 @@ class DriftSurpriseHistoryRepository implements SurpriseHistoryRepository {
             key: MediaKey(type: row.mediaType, tmdbId: row.tmdbId),
             sessionId: row.sessionId,
             shownAt: row.shownAt,
+            batch: row.batch,
+            genres: [
+              for (final id in row.genres.split(','))
+                if (id.isNotEmpty) Genre(id: id),
+            ],
             outcome: row.outcome,
           ),
       ]);

@@ -12,11 +12,21 @@ abstract interface class SurpriseHistoryRepository {
   /// the same session keeps its first row.
   Future<Result<void>> recordShown(List<SurpriseHistoryEntry> entries);
 
-  /// What came of [key] in [sessionId]. A no-op if it was never shown there.
+  /// What came of [key] in [sessionId]. A no-op if it was never shown there, and
+  /// an outcome never replaces a stronger one (`SurpriseOutcome.canReplace`): a
+  /// saved card that is looked at again stays saved.
   Future<Result<void>> setOutcome({
     required String sessionId,
     required MediaKey key,
     required SurpriseOutcome outcome,
+  });
+
+  /// "Other 5" was asked for [batch] of [sessionId]: if nothing in it was saved
+  /// or chosen, its cards still only `viewed` become `rerolled` (cards already
+  /// `revisited` keep their weak positive signal). A fact, not a verdict.
+  Future<Result<void>> markBatchRerolled({
+    required String sessionId,
+    required int batch,
   });
 
   /// The titles of [type] already shown: in [sessionId] alone when given

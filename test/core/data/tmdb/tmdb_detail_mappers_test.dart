@@ -221,6 +221,12 @@ void main() {
       },
     );
 
+    test('maps each provider_id, by provider name', () {
+      final detail = load('tmdb_movie_detail_full.json');
+
+      expect(detail.watchProviders.ids, {'Movistar Plus+': 149, 'Apple TV': 2});
+    });
+
     test('maps original_language and production country codes', () {
       final detail = load('tmdb_movie_detail_full.json');
 

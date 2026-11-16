@@ -87,6 +87,7 @@ class _FakeRepository implements MediaRepository {
   bool failDiscover = false;
   Set<int> failDetailIds = {};
   bool failAllDetails = false;
+  WatchProviders providers = WatchProviders.empty;
 
   @override
   Future<Result<DiscoverPage>> discoverPage(
@@ -151,7 +152,7 @@ class _FakeRepository implements MediaRepository {
               imdbId: null,
               tagline: 'tagline ${item.id}',
               status: 'Released',
-              watchProviders: WatchProviders.empty,
+              watchProviders: providers,
               runtimeMinutes: 110,
               releaseDate: item.releaseDate,
               certification: null,
@@ -166,7 +167,7 @@ class _FakeRepository implements MediaRepository {
               imdbId: null,
               tagline: 'tagline ${item.id}',
               status: 'Ended',
-              watchProviders: WatchProviders.empty,
+              watchProviders: providers,
               creators: const [],
               seasons: const [],
               numberOfEpisodes: 10,
@@ -717,6 +718,40 @@ void main() {
         }
       }
       expect(early, greaterThan(late));
+    });
+  });
+
+  group('where to watch', () {
+    test('each suggestion carries the services it is on that the answers '
+        'accept — only the picked ones when there are any', () async {
+      final repo = _FakeRepository(_catalog(120));
+      repo.providers = const WatchProviders(
+        flatrate: ['Netflix', 'Max'],
+        rent: ['Apple TV'],
+        buy: [],
+        link: null,
+        ids: {'Netflix': 8, 'Max': 1899, 'Apple TV': 2},
+      );
+
+      final all = await _resolve(repo, _request());
+      expect(all.suggestions.first.platforms.map((p) => p.name), [
+        'Netflix',
+        'Max',
+      ]);
+
+      final picked = await _resolve(
+        repo,
+        _request(
+          answers: const ParticipantAnswers(
+            participantId: 'me',
+            yearFrom: 1980,
+            platformIds: {8},
+          ),
+        ),
+      );
+      expect(picked.suggestions.first.platforms.map((p) => p.name), [
+        'Netflix',
+      ]);
     });
   });
 

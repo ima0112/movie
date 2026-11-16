@@ -332,12 +332,22 @@ WatchProviders _watchProvidersFrom(
       ),
   };
 
+  final ids = <String, int>{
+    for (final p in [
+      ...forRegion.flatrate,
+      ...forRegion.rent,
+      ...forRegion.buy,
+    ])
+      if (p.providerId != null) p.providerName: p.providerId!,
+  };
+
   return WatchProviders(
     flatrate: forRegion.flatrate.map((p) => p.providerName).toList(),
     rent: forRegion.rent.map((p) => p.providerName).toList(),
     buy: forRegion.buy.map((p) => p.providerName).toList(),
     link: forRegion.link,
     logos: logos,
+    ids: ids,
   );
 }
 

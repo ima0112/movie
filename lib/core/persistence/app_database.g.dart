@@ -3641,6 +3641,26 @@ class $SurpriseHistoryTableTable extends SurpriseHistoryTable
       ).withConverter<SurpriseOutcome>(
         $SurpriseHistoryTableTable.$converteroutcome,
       );
+  static const VerificationMeta _batchMeta = const VerificationMeta('batch');
+  @override
+  late final GeneratedColumn<int> batch = GeneratedColumn<int>(
+    'batch',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _genresMeta = const VerificationMeta('genres');
+  @override
+  late final GeneratedColumn<String> genres = GeneratedColumn<String>(
+    'genres',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     mediaType,
@@ -3648,6 +3668,8 @@ class $SurpriseHistoryTableTable extends SurpriseHistoryTable
     sessionId,
     shownAt,
     outcome,
+    batch,
+    genres,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3685,6 +3707,18 @@ class $SurpriseHistoryTableTable extends SurpriseHistoryTable
     } else if (isInserting) {
       context.missing(_shownAtMeta);
     }
+    if (data.containsKey('batch')) {
+      context.handle(
+        _batchMeta,
+        batch.isAcceptableOrUnknown(data['batch']!, _batchMeta),
+      );
+    }
+    if (data.containsKey('genres')) {
+      context.handle(
+        _genresMeta,
+        genres.isAcceptableOrUnknown(data['genres']!, _genresMeta),
+      );
+    }
     return context;
   }
 
@@ -3718,6 +3752,14 @@ class $SurpriseHistoryTableTable extends SurpriseHistoryTable
           data['${effectivePrefix}outcome'],
         )!,
       ),
+      batch: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}batch'],
+      )!,
+      genres: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}genres'],
+      )!,
     );
   }
 
@@ -3744,12 +3786,21 @@ class SurpriseHistoryRow extends DataClass
 
   /// `SurpriseOutcome`, as its name.
   final SurpriseOutcome outcome;
+
+  /// Which batch of the session it was shown in (1 = the first five).
+  final int batch;
+
+  /// The title's genre ids, comma-separated (`'action,drama'`), so the engine
+  /// can learn from it without another request.
+  final String genres;
   const SurpriseHistoryRow({
     required this.mediaType,
     required this.tmdbId,
     required this.sessionId,
     required this.shownAt,
     required this.outcome,
+    required this.batch,
+    required this.genres,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3767,6 +3818,8 @@ class SurpriseHistoryRow extends DataClass
         $SurpriseHistoryTableTable.$converteroutcome.toSql(outcome),
       );
     }
+    map['batch'] = Variable<int>(batch);
+    map['genres'] = Variable<String>(genres);
     return map;
   }
 
@@ -3777,6 +3830,8 @@ class SurpriseHistoryRow extends DataClass
       sessionId: Value(sessionId),
       shownAt: Value(shownAt),
       outcome: Value(outcome),
+      batch: Value(batch),
+      genres: Value(genres),
     );
   }
 
@@ -3795,6 +3850,8 @@ class SurpriseHistoryRow extends DataClass
       outcome: $SurpriseHistoryTableTable.$converteroutcome.fromJson(
         serializer.fromJson<String>(json['outcome']),
       ),
+      batch: serializer.fromJson<int>(json['batch']),
+      genres: serializer.fromJson<String>(json['genres']),
     );
   }
   @override
@@ -3810,6 +3867,8 @@ class SurpriseHistoryRow extends DataClass
       'outcome': serializer.toJson<String>(
         $SurpriseHistoryTableTable.$converteroutcome.toJson(outcome),
       ),
+      'batch': serializer.toJson<int>(batch),
+      'genres': serializer.toJson<String>(genres),
     };
   }
 
@@ -3819,12 +3878,16 @@ class SurpriseHistoryRow extends DataClass
     String? sessionId,
     DateTime? shownAt,
     SurpriseOutcome? outcome,
+    int? batch,
+    String? genres,
   }) => SurpriseHistoryRow(
     mediaType: mediaType ?? this.mediaType,
     tmdbId: tmdbId ?? this.tmdbId,
     sessionId: sessionId ?? this.sessionId,
     shownAt: shownAt ?? this.shownAt,
     outcome: outcome ?? this.outcome,
+    batch: batch ?? this.batch,
+    genres: genres ?? this.genres,
   );
   SurpriseHistoryRow copyWithCompanion(SurpriseHistoryTableCompanion data) {
     return SurpriseHistoryRow(
@@ -3833,6 +3896,8 @@ class SurpriseHistoryRow extends DataClass
       sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
       shownAt: data.shownAt.present ? data.shownAt.value : this.shownAt,
       outcome: data.outcome.present ? data.outcome.value : this.outcome,
+      batch: data.batch.present ? data.batch.value : this.batch,
+      genres: data.genres.present ? data.genres.value : this.genres,
     );
   }
 
@@ -3843,14 +3908,23 @@ class SurpriseHistoryRow extends DataClass
           ..write('tmdbId: $tmdbId, ')
           ..write('sessionId: $sessionId, ')
           ..write('shownAt: $shownAt, ')
-          ..write('outcome: $outcome')
+          ..write('outcome: $outcome, ')
+          ..write('batch: $batch, ')
+          ..write('genres: $genres')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(mediaType, tmdbId, sessionId, shownAt, outcome);
+  int get hashCode => Object.hash(
+    mediaType,
+    tmdbId,
+    sessionId,
+    shownAt,
+    outcome,
+    batch,
+    genres,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3859,7 +3933,9 @@ class SurpriseHistoryRow extends DataClass
           other.tmdbId == this.tmdbId &&
           other.sessionId == this.sessionId &&
           other.shownAt == this.shownAt &&
-          other.outcome == this.outcome);
+          other.outcome == this.outcome &&
+          other.batch == this.batch &&
+          other.genres == this.genres);
 }
 
 class SurpriseHistoryTableCompanion
@@ -3869,6 +3945,8 @@ class SurpriseHistoryTableCompanion
   final Value<String> sessionId;
   final Value<DateTime> shownAt;
   final Value<SurpriseOutcome> outcome;
+  final Value<int> batch;
+  final Value<String> genres;
   final Value<int> rowid;
   const SurpriseHistoryTableCompanion({
     this.mediaType = const Value.absent(),
@@ -3876,6 +3954,8 @@ class SurpriseHistoryTableCompanion
     this.sessionId = const Value.absent(),
     this.shownAt = const Value.absent(),
     this.outcome = const Value.absent(),
+    this.batch = const Value.absent(),
+    this.genres = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SurpriseHistoryTableCompanion.insert({
@@ -3884,6 +3964,8 @@ class SurpriseHistoryTableCompanion
     required String sessionId,
     required DateTime shownAt,
     required SurpriseOutcome outcome,
+    this.batch = const Value.absent(),
+    this.genres = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : mediaType = Value(mediaType),
        tmdbId = Value(tmdbId),
@@ -3896,6 +3978,8 @@ class SurpriseHistoryTableCompanion
     Expression<String>? sessionId,
     Expression<DateTime>? shownAt,
     Expression<String>? outcome,
+    Expression<int>? batch,
+    Expression<String>? genres,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3904,6 +3988,8 @@ class SurpriseHistoryTableCompanion
       if (sessionId != null) 'session_id': sessionId,
       if (shownAt != null) 'shown_at': shownAt,
       if (outcome != null) 'outcome': outcome,
+      if (batch != null) 'batch': batch,
+      if (genres != null) 'genres': genres,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3914,6 +4000,8 @@ class SurpriseHistoryTableCompanion
     Value<String>? sessionId,
     Value<DateTime>? shownAt,
     Value<SurpriseOutcome>? outcome,
+    Value<int>? batch,
+    Value<String>? genres,
     Value<int>? rowid,
   }) {
     return SurpriseHistoryTableCompanion(
@@ -3922,6 +4010,8 @@ class SurpriseHistoryTableCompanion
       sessionId: sessionId ?? this.sessionId,
       shownAt: shownAt ?? this.shownAt,
       outcome: outcome ?? this.outcome,
+      batch: batch ?? this.batch,
+      genres: genres ?? this.genres,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3948,6 +4038,12 @@ class SurpriseHistoryTableCompanion
         $SurpriseHistoryTableTable.$converteroutcome.toSql(outcome.value),
       );
     }
+    if (batch.present) {
+      map['batch'] = Variable<int>(batch.value);
+    }
+    if (genres.present) {
+      map['genres'] = Variable<String>(genres.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3962,6 +4058,8 @@ class SurpriseHistoryTableCompanion
           ..write('sessionId: $sessionId, ')
           ..write('shownAt: $shownAt, ')
           ..write('outcome: $outcome, ')
+          ..write('batch: $batch, ')
+          ..write('genres: $genres, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5976,6 +6074,8 @@ typedef $$SurpriseHistoryTableTableCreateCompanionBuilder =
       required String sessionId,
       required DateTime shownAt,
       required SurpriseOutcome outcome,
+      Value<int> batch,
+      Value<String> genres,
       Value<int> rowid,
     });
 typedef $$SurpriseHistoryTableTableUpdateCompanionBuilder =
@@ -5985,6 +6085,8 @@ typedef $$SurpriseHistoryTableTableUpdateCompanionBuilder =
       Value<String> sessionId,
       Value<DateTime> shownAt,
       Value<SurpriseOutcome> outcome,
+      Value<int> batch,
+      Value<String> genres,
       Value<int> rowid,
     });
 
@@ -6023,6 +6125,16 @@ class $$SurpriseHistoryTableTableFilterComposer
     column: $table.outcome,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
+
+  ColumnFilters<int> get batch => $composableBuilder(
+    column: $table.batch,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get genres => $composableBuilder(
+    column: $table.genres,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$SurpriseHistoryTableTableOrderingComposer
@@ -6058,6 +6170,16 @@ class $$SurpriseHistoryTableTableOrderingComposer
     column: $table.outcome,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get batch => $composableBuilder(
+    column: $table.batch,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get genres => $composableBuilder(
+    column: $table.genres,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SurpriseHistoryTableTableAnnotationComposer
@@ -6083,6 +6205,12 @@ class $$SurpriseHistoryTableTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<SurpriseOutcome, String> get outcome =>
       $composableBuilder(column: $table.outcome, builder: (column) => column);
+
+  GeneratedColumn<int> get batch =>
+      $composableBuilder(column: $table.batch, builder: (column) => column);
+
+  GeneratedColumn<String> get genres =>
+      $composableBuilder(column: $table.genres, builder: (column) => column);
 }
 
 class $$SurpriseHistoryTableTableTableManager
@@ -6133,6 +6261,8 @@ class $$SurpriseHistoryTableTableTableManager
                 Value<String> sessionId = const Value.absent(),
                 Value<DateTime> shownAt = const Value.absent(),
                 Value<SurpriseOutcome> outcome = const Value.absent(),
+                Value<int> batch = const Value.absent(),
+                Value<String> genres = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SurpriseHistoryTableCompanion(
                 mediaType: mediaType,
@@ -6140,6 +6270,8 @@ class $$SurpriseHistoryTableTableTableManager
                 sessionId: sessionId,
                 shownAt: shownAt,
                 outcome: outcome,
+                batch: batch,
+                genres: genres,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -6149,6 +6281,8 @@ class $$SurpriseHistoryTableTableTableManager
                 required String sessionId,
                 required DateTime shownAt,
                 required SurpriseOutcome outcome,
+                Value<int> batch = const Value.absent(),
+                Value<String> genres = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SurpriseHistoryTableCompanion.insert(
                 mediaType: mediaType,
@@ -6156,6 +6290,8 @@ class $$SurpriseHistoryTableTableTableManager
                 sessionId: sessionId,
                 shownAt: shownAt,
                 outcome: outcome,
+                batch: batch,
+                genres: genres,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
