@@ -42,11 +42,15 @@ void main() {
       expect(cells, findsNWidgets(5));
       for (var i = 0; i < 5; i++) {
         final size = tester.getSize(cells.at(i));
-        expect(size.width, SurpriseThumbnailStrip.touchSize);
-        expect(size.height, SurpriseThumbnailStrip.touchSize);
+        expect(size.width, SurpriseThumbnailStrip.touchWidth);
+        expect(size.height, SurpriseThumbnailStrip.touchHeight);
       }
-      expect(SurpriseThumbnailStrip.touchSize, 48);
-      expect(SurpriseThumbnailStrip.thumbWidth, lessThan(48));
+      // Close together (a few dp of air between posters), still 48 tall.
+      expect(SurpriseThumbnailStrip.touchHeight, 48);
+      expect(
+        SurpriseThumbnailStrip.touchWidth - SurpriseThumbnailStrip.thumbWidth,
+        lessThanOrEqualTo(8),
+      );
     });
 
     testWidgets('tapping a thumbnail reports its card', (tester) async {

@@ -27,7 +27,7 @@ class SurpriseRerollButton extends StatelessWidget {
       child: Material(
         color: AppColors.accentSoft,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           side: const BorderSide(color: AppColors.accentLine),
         ),
         clipBehavior: Clip.antiAlias,

@@ -30,7 +30,7 @@ class SurpriseCardTags extends StatelessWidget {
       runSpacing: AppSpacing.xs,
       children: [
         _Pill(
-          background: AppColors.accentSoft,
+          border: AppColors.accentLine,
           child: Text(
             l10n.surpriseCardAffinity(affinityPercent),
             style: AppTextStyles.captionStrong.copyWith(
@@ -64,19 +64,22 @@ class SurpriseCardTags extends StatelessWidget {
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.child, this.background, this.border});
+  const _Pill({required this.child, required this.border});
 
   final Widget child;
-  final Color? background;
-  final Color? border;
+  final Color border;
+
+  /// How solid the dark fill behind a tag is.
+  static const double _pillFill = 0.82;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: background,
+        // Opaque enough to read over any poster; the tint is only the border.
+        color: AppColors.surface.withValues(alpha: _pillFill),
         borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-        border: border == null ? null : Border.all(color: border!),
+        border: Border.all(color: border),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(

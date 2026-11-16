@@ -39,7 +39,11 @@ class SurpriseSuggestionCard extends StatelessWidget {
   final int total;
 
   /// How much of the card's height the dark fade covers.
-  static const double _fadeHeightFactor = 0.62;
+  static const double _fadeHeightFactor = 0.7;
+  static const List<double> _fadeStops = [0, 0.3, 0.6, 1];
+
+  /// How much of the card's height the top veil covers.
+  static const double _topVeilHeightFactor = 0.3;
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +96,35 @@ class SurpriseSuggestionCard extends StatelessWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
+                          // Dark early: the tags and the title sit in the
+                          // upper half of this band, over any poster.
+                          stops: _fadeStops,
                           colors: [
                             AppColors.surface.withValues(alpha: 0),
+                            AppColors.surface.withValues(alpha: 0.72),
                             AppColors.surface.withValues(alpha: 0.94),
+                            AppColors.surface.withValues(alpha: 0.97),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // A soft veil behind the number so its outline reads on a
+                // bright poster.
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: FractionallySizedBox(
+                    heightFactor: _topVeilHeightFactor,
+                    widthFactor: 1,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppColors.surface.withValues(alpha: 0.55),
+                            AppColors.surface.withValues(alpha: 0),
                           ],
                         ),
                       ),
