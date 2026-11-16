@@ -340,6 +340,10 @@
   "myTastesVibesHint": "Hasta {max}. Marcan el tono de lo que te sugerimos.",
   "myTastesErasTitle": "Épocas",
   "myTastesErasHint": "Rango de años de estreno que prefieres.",
+  "myTastesPlatformsAdd": "Añadir",
+  "myTastesPlatformsSheetTitle": "Añadir plataformas",
+  "myTastesPlatformsSearchHint": "Buscar plataformas",
+  "myTastesPlatformRemove": "Quitar {name}",
   "myTastesPlatformsTitle": "Mis plataformas",
   "myTastesPlatformsHint": "Priorizamos lo que puedes ver ya en tu región.",
   "myTastesGenresLikeHint": "Elige los que quieras.",
@@ -377,6 +381,7 @@
   "tvEpisodeRowTitle": "{number}. {name}",
   "tvEpisodeTba": "Por confirmar",
 
+  "commonDone": "Listo",
   "commonNoMatches": "Sin coincidencias",
   "commonSave": "Guardar",
 

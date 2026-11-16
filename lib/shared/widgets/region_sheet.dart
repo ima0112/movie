@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/country.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'checkable_option_row.dart';
+import 'sheet_search_field.dart';
 
 /// H6 (Region) — `docs/SCREENS.md` H6: "Searchable list of countries."
 /// [selectedRegionCode] is `AppSettings.regionCode`; [onSelected] is
@@ -64,7 +64,8 @@ class _RegionSheetState extends State<RegionSheet> {
                     ),
                   ],
                   const SizedBox(height: AppSpacing.lg),
-                  _SearchField(
+                  SheetSearchField(
+                    hint: context.l10n.regionSheetSearchHint,
                     query: _query,
                     onChanged: (query) => setState(() => _query = query),
                   ),
@@ -101,45 +102,6 @@ class _RegionSheetState extends State<RegionSheet> {
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class _SearchField extends StatelessWidget {
-  const _SearchField({required this.query, required this.onChanged});
-
-  final String query;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      onChanged: onChanged,
-      style: AppTextStyles.body,
-      decoration: InputDecoration(
-        hintText: context.l10n.regionSheetSearchHint,
-        hintStyle: AppTextStyles.body.copyWith(color: AppColors.inkMuted),
-        prefixIcon: const Icon(AppIcons.search, color: AppColors.inkMuted),
-        filled: true,
-        // The sheet itself is surfaceRaised, so the field sits one level
-        // down on `surface` with a hairline border (the "Región" design).
-        fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-          borderSide: const BorderSide(color: AppColors.lineStrong),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-          borderSide: const BorderSide(color: AppColors.lineStrong),
-        ),
-        suffixIcon: query.isEmpty
-            ? null
-            : IconButton(
-                icon: const Icon(AppIcons.close, color: AppColors.inkMuted),
-                onPressed: () => onChanged(''),
-              ),
       ),
     );
   }

@@ -25,8 +25,9 @@ final class TastePlatformsError extends TastePlatformsState {
   final FailureReason reason;
 }
 
-/// The streaming services of the user's region for C5's "My platforms"
-/// (movies and TV shows merged), loaded once when the section appears.
+/// Every streaming service of the user's region for C5's "My platforms"
+/// (movies and TV shows merged, not capped), loaded once when the section
+/// appears: the section shows the picked ones and the picker lists them all.
 ///
 /// **Screen-local** (CLAUDE.md rule 10): the list is only this section's
 /// business. Which ones are picked is not here — that is
@@ -41,7 +42,7 @@ class TastePlatformsCubit extends Cubit<TastePlatformsState> {
 
   Future<void> load() async {
     emit(const TastePlatformsLoading());
-    final result = await _mediaRepository.streamingServices();
+    final result = await _mediaRepository.streamingServices(all: true);
     if (isClosed) return;
     emit(switch (result) {
       Success(:final value) => TastePlatformsLoaded(value),

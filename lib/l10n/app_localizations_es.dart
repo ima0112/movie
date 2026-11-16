@@ -1067,6 +1067,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myTastesErasHint => 'Rango de años de estreno que prefieres.';
 
   @override
+  String get myTastesPlatformsAdd => 'Añadir';
+
+  @override
+  String get myTastesPlatformsSheetTitle => 'Añadir plataformas';
+
+  @override
+  String get myTastesPlatformsSearchHint => 'Buscar plataformas';
+
+  @override
+  String myTastesPlatformRemove(String name) {
+    return 'Quitar $name';
+  }
+
+  @override
   String get myTastesPlatformsTitle => 'Mis plataformas';
 
   @override
@@ -1196,6 +1210,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tvEpisodeTba => 'Por confirmar';
+
+  @override
+  String get commonDone => 'Listo';
 
   @override
   String get commonNoMatches => 'Sin coincidencias';

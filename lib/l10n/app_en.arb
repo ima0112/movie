@@ -974,6 +974,21 @@
   },
   "myTastesErasTitle": "Eras",
   "myTastesErasHint": "The release years you prefer.",
+  "myTastesPlatformsAdd": "Add",
+  "@myTastesPlatformsAdd": {
+    "description": "The chip in C5's \"My platforms\" that opens the picker of the region's streaming services."
+  },
+  "myTastesPlatformsSheetTitle": "Add platforms",
+  "myTastesPlatformsSearchHint": "Search platforms",
+  "myTastesPlatformRemove": "Remove {name}",
+  "@myTastesPlatformRemove": {
+    "description": "Accessibility label of a picked platform's logo in My platforms; tapping it removes the service. {name} is the service's name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "myTastesPlatformsTitle": "My platforms",
   "myTastesPlatformsHint": "We prioritize what you can already watch in your region.",
   "myTastesGenresLikeHint": "Choose as many as you like.",
@@ -1110,6 +1125,7 @@
     "description": "H4's episode row air date, for an episode with no air date yet (\"To Be Announced\")."
   },
 
+  "commonDone": "Done",
   "commonNoMatches": "No matches",
   "@commonNoMatches": {
     "description": "H3 (full cast) and H6 (region)'s own searchable-list empty state — deliberately distinct wording from exploreNoResults (\"No results\"), a different control with its own existing copy."

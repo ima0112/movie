@@ -1862,6 +1862,30 @@ abstract class AppLocalizations {
   /// **'The release years you prefer.'**
   String get myTastesErasHint;
 
+  /// The chip in C5's "My platforms" that opens the picker of the region's streaming services.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get myTastesPlatformsAdd;
+
+  /// No description provided for @myTastesPlatformsSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add platforms'**
+  String get myTastesPlatformsSheetTitle;
+
+  /// No description provided for @myTastesPlatformsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search platforms'**
+  String get myTastesPlatformsSearchHint;
+
+  /// Accessibility label of a picked platform's logo in My platforms; tapping it removes the service. {name} is the service's name.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}'**
+  String myTastesPlatformRemove(String name);
+
   /// No description provided for @myTastesPlatformsTitle.
   ///
   /// In en, this message translates to:
@@ -2059,6 +2083,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TBA'**
   String get tvEpisodeTba;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get commonDone;
 
   /// H3 (full cast) and H6 (region)'s own searchable-list empty state — deliberately distinct wording from exploreNoResults ("No results"), a different control with its own existing copy.
   ///
