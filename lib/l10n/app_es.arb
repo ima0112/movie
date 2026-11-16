@@ -304,7 +304,12 @@
   "youHeaderTapToSetName": "Toca para poner tu nombre",
   "youHeaderGreetingWithName": "Hola, {name}",
 
-  "yourActivityTitle": "Tu actividad",
+  "youStatsDaysOfScreen": "{days, plural, =1{≈ 1 día de pantalla} other{≈ {days} días de pantalla}}",
+  "youStatsStreak": "Racha de {weeks, plural, =1{1 semana} other{{weeks} semanas}}",
+  "youStatsThisMonth": "{count} este mes",
+  "youStatsLast12Months": "Últimos 12 meses",
+  "youStatsMovies": "{count, plural, =1{1 película} other{{count} películas}}",
+  "youStatsShows": "{count, plural, =1{1 serie} other{{count} series}}",
   "yourActivityHoursLabel": "Horas",
   "yourActivitySeeStats": "Ver estadísticas",
 

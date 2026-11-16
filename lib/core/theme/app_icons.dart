@@ -16,6 +16,7 @@ class AppIcons {
   static const IconData searchFill = RemixIcons.search_fill;
   static const IconData filter = RemixIcons.equalizer_2_line;
   static const IconData history = RemixIcons.history_line;
+  static const IconData streak = RemixIcons.fire_line;
   static const IconData sort = RemixIcons.arrow_up_down_line;
 
   static const IconData favorite = RemixIcons.heart_line;

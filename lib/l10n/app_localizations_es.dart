@@ -925,7 +925,56 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get yourActivityTitle => 'Tu actividad';
+  String youStatsDaysOfScreen(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '≈ $days días de pantalla',
+      one: '≈ 1 día de pantalla',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String youStatsStreak(int weeks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      weeks,
+      locale: localeName,
+      other: '$weeks semanas',
+      one: '1 semana',
+    );
+    return 'Racha de $_temp0';
+  }
+
+  @override
+  String youStatsThisMonth(int count) {
+    return '$count este mes';
+  }
+
+  @override
+  String get youStatsLast12Months => 'Últimos 12 meses';
+
+  @override
+  String youStatsMovies(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count películas',
+      one: '1 película',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String youStatsShows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count series',
+      one: '1 serie',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get yourActivityHoursLabel => 'Horas';
