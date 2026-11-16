@@ -1792,5 +1792,17 @@
   "editProfileSheetTitle": "Edit profile",
   "@editProfileSheetTitle": {
     "description": "H10's own title (docs/SCREENS.md H10)."
+  },
+  "surpriseControlSave": "Save",
+  "@surpriseControlSave": {
+    "description": "The visible Save control of Surprise me's deck (screen-reader users): puts the card on top in Watch later."
+  },
+  "surpriseControlNext": "Next",
+  "@surpriseControlNext": {
+    "description": "The visible Next control of Surprise me's deck: passes to the next card."
+  },
+  "surpriseActionViewDetails": "View details",
+  "@surpriseActionViewDetails": {
+    "description": "Screen-reader action on the deck's top card: opens its detail."
   }
 }

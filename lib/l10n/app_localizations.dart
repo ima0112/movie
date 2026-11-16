@@ -3218,6 +3218,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit profile'**
   String get editProfileSheetTitle;
+
+  /// The visible Save control of Surprise me's deck (screen-reader users): puts the card on top in Watch later.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get surpriseControlSave;
+
+  /// The visible Next control of Surprise me's deck: passes to the next card.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get surpriseControlNext;
+
+  /// Screen-reader action on the deck's top card: opens its detail.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get surpriseActionViewDetails;
 }
 
 class _AppLocalizationsDelegate

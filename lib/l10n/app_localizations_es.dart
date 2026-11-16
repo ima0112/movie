@@ -1916,4 +1916,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get editProfileSheetTitle => 'Editar perfil';
+
+  @override
+  String get surpriseControlSave => 'Guardar';
+
+  @override
+  String get surpriseControlNext => 'Siguiente';
+
+  @override
+  String get surpriseActionViewDetails => 'Ver detalles';
 }

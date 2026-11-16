@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/di.dart';
@@ -12,6 +13,7 @@ import '../../../../../shared/widgets/detail_choose_overlay.dart';
 import '../../cubit/surprise_cubit.dart';
 import '../../../../match_engine/domain/surprise_batch.dart';
 import '../../cubit/surprise_state.dart';
+import 'surprise_accessible_controls.dart';
 import 'surprise_deck_stack.dart';
 import 'surprise_deck_top_bar.dart';
 import 'surprise_help_row.dart';
@@ -61,6 +63,21 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
     );
   }
 
+  /// The screen-reader actions on the deck: the gestures, by name.
+  Widget _withActions(BuildContext context, SurpriseCubit cubit, Widget deck) {
+    final l10n = context.l10n;
+    return Semantics(
+      customSemanticsActions: {
+        CustomSemanticsAction(label: l10n.surpriseControlNext): cubit.next,
+        CustomSemanticsAction(label: l10n.surpriseControlSave): cubit.save,
+        CustomSemanticsAction(label: l10n.surpriseChooseThis): cubit.choose,
+        CustomSemanticsAction(label: l10n.surpriseActionViewDetails): () =>
+            _openDetail(context),
+      },
+      child: deck,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SurpriseCubit>();
@@ -91,20 +108,36 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
                   selector: (s) => s is SurpriseResult ? _DeckData(s) : null,
                   builder: (context, data) => data == null
                       ? const SizedBox.shrink()
-                      : SurpriseDeckStack(
-                          suggestions: data.suggestions,
-                          index: data.index,
-                          onNext: cubit.next,
-                          onSaveAndNext: cubit.saveAndNext,
-                          onChoose: cubit.choose,
-                          onOpenDetail: () => _openDetail(context),
-                          showHint: _showHint,
-                          onHintDismissed: _hintDismissed,
+                      : _withActions(
+                          context,
+                          cubit,
+                          SurpriseDeckStack(
+                            suggestions: data.suggestions,
+                            index: data.index,
+                            onNext: cubit.next,
+                            onSaveAndNext: cubit.saveAndNext,
+                            onChoose: cubit.choose,
+                            onOpenDetail: () => _openDetail(context),
+                            showHint: _showHint,
+                            onHintDismissed: _hintDismissed,
+                          ),
                         ),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              const SurpriseHelpRow(),
+              if (MediaQuery.accessibleNavigationOf(context))
+                BlocSelector<SurpriseCubit, SurpriseState, int>(
+                  selector: (s) =>
+                      s is SurpriseResult ? s.suggestions.length : 0,
+                  builder: (context, count) => SurpriseAccessibleControls(
+                    onSave: cubit.save,
+                    onChoose: cubit.choose,
+                    onNext: cubit.next,
+                    canNext: count > 1,
+                  ),
+                )
+              else
+                const SurpriseHelpRow(),
               Padding(
                 padding: const EdgeInsets.all(AppSpacing.screenMargin),
                 child: SurpriseRerollButton(onTap: cubit.reroll),

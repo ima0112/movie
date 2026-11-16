@@ -518,5 +518,8 @@
   "attributionJustWatchDetail": "Streaming, alquiler y compra según tu región.",
   "attributionFooter": "PakoTV es un proyecto personal gratuito. Todas las marcas pertenecen a sus respectivos dueños.",
   "settingsLicensesLabel": "Licencias",
-  "editProfileSheetTitle": "Editar perfil"
+  "editProfileSheetTitle": "Editar perfil",
+  "surpriseControlSave": "Guardar",
+  "surpriseControlNext": "Siguiente",
+  "surpriseActionViewDetails": "Ver detalles"
 }
