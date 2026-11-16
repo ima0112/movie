@@ -10,9 +10,9 @@ extension LibraryTabLocalization on LibraryTab {
     LibraryTab.watched => l10n.myListTabWatched,
   };
 
-  /// The swipe-to-remove snackbar, e.g. "Removed from Favorites".
-  String localizedRemovedMessage(AppLocalizations l10n) =>
-      l10n.myListRemovedFromTab(localizedLabel(l10n));
+  /// The remove snackbar, e.g. "Dune removed from Favorites".
+  String localizedRemovedMessage(AppLocalizations l10n, String title) =>
+      l10n.myListRemovedFromTab(title, localizedLabel(l10n));
 
   /// The tab's own empty-state headline.
   String localizedEmptyHeadline(AppLocalizations l10n) => switch (this) {

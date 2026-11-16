@@ -46,6 +46,46 @@ void main() {
     );
   }
 
+  testWidgets('the swipe goes only toward the action: a right drag does '
+      'nothing', (tester) async {
+    final repository = InMemoryUserLibraryRepository();
+    await repository.upsert(
+      const UserMediaEntry(title: 'Test Title', key: dune, isFavorite: true),
+    );
+    await pumpRow(tester, repository);
+
+    await tester.drag(find.byType(Dismissible), const Offset(500, 0));
+    await tester.pumpAndSettle();
+
+    expect(await repository.watchEntry(dune).first, isNotNull);
+    expect(find.text('Delete'), findsNothing);
+  });
+
+  testWidgets('dragging left shows a "Delete" panel; far enough it reads '
+      '"Release to delete"', (tester) async {
+    final repository = InMemoryUserLibraryRepository();
+    await repository.upsert(
+      const UserMediaEntry(title: 'Test Title', key: dune, isFavorite: true),
+    );
+    await pumpRow(tester, repository);
+
+    final drag = await tester.startGesture(
+      tester.getCenter(find.byType(Dismissible)),
+    );
+    await drag.moveBy(const Offset(-60, 0));
+    await tester.pump();
+    expect(find.text('Delete'), findsOneWidget);
+    expect(find.text('Release to delete'), findsNothing);
+
+    await drag.moveBy(const Offset(-300, 0));
+    await tester.pump();
+    expect(find.text('Release to delete'), findsOneWidget);
+
+    await drag.up();
+    await tester.pumpAndSettle();
+    expect(await repository.watchEntry(dune).first, isNull);
+  });
+
   testWidgets('swiping left removes the entry and shows an Undo snackbar', (
     tester,
   ) async {
@@ -59,7 +99,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(await repository.watchEntry(dune).first, isNull);
-    expect(find.text('Removed from Favorites'), findsOneWidget);
+    expect(find.text('Test Title removed from Favorites'), findsOneWidget);
     expect(find.text('Undo'), findsOneWidget);
   });
 
