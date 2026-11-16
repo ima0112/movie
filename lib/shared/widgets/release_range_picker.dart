@@ -5,6 +5,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'app_chip.dart';
+import 'app_slider_theme.dart';
 import 'year_bound_card.dart';
 import 'year_histogram.dart';
 
@@ -96,12 +97,7 @@ class _ReleaseRangePickerState extends State<ReleaseRangePicker> {
           to: to,
         ),
         SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: AppColors.accent,
-            inactiveTrackColor: AppColors.lineStrong,
-            thumbColor: AppColors.ink,
-            overlayColor: AppColors.ink.withValues(alpha: 0.12),
-          ),
+          data: AppSliderTheme.of(context),
           child: RangeSlider(
             values: values,
             min: widget.minYear.toDouble(),
@@ -114,15 +110,12 @@ class _ReleaseRangePickerState extends State<ReleaseRangePicker> {
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('${widget.minYear}', style: muted),
-              Text(l10n.releaseRangeToday, style: muted),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${widget.minYear}', style: muted),
+            Text(l10n.releaseRangeToday, style: muted),
+          ],
         ),
         const SizedBox(height: AppSpacing.lg),
         Wrap(
