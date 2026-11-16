@@ -12,8 +12,6 @@ import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/recently_viewed_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../l10n/failure_localization.dart';
-import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/media_detail/detail_top_controls.dart';
 import '../../../../shared/widgets/media_detail/media_detail_header.dart';
 import '../../../../shared/widgets/media_detail/media_detail_skeleton.dart';
@@ -104,9 +102,8 @@ class _TvDetailViewState extends State<_TvDetailView> {
                 TvDetailError(:final reason) => Stack(
                   children: [
                     Center(
-                      child: ErrorStateView(
-                        title: context.l10n.commonCouldntLoad,
-                        body: reason.localizedMessage(context.l10n),
+                      child: FailureStateView(
+                        reason: reason,
                         onRetry: () => context.read<TvDetailCubit>().loadDetail(
                           widget.mediaKey,
                         ),

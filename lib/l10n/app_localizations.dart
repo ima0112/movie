@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// Failure.localizedMessage (FailureReason.server).
   ///
   /// In en, this message translates to:
-  /// **'TMDB is having trouble right now. Try again in a moment.'**
+  /// **'Something failed while connecting to the server. Try again in a few seconds.'**
   String get failureServer;
 
   /// Failure.localizedMessage (FailureReason.notFound).
@@ -619,6 +619,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t open that link'**
   String get commonCouldntOpenLink;
+
+  /// Headline of the offline state (OfflineStateView): a load failed because there is no connection.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline'**
+  String get offlineStateTitle;
+
+  /// No description provided for @offlineStateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Discovering and searching need internet. Your list is still available.'**
+  String get offlineStateBody;
+
+  /// The text link under the offline state's Retry on the root tabs Home and Explore; opens My List, which works offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to My List'**
+  String get offlineGoToMyList;
 
   /// ErrorStateView's fixed CTA label (docs/SCREENS.md G: "Error: same layout with 'Retry'.").
   ///

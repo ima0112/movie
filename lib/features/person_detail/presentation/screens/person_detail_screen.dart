@@ -7,8 +7,6 @@ import '../../../../core/domain/repositories/person_repository.dart';
 import '../../../../core/domain/repositories/saved_people_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../l10n/failure_localization.dart';
-import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/media_detail/detail_top_controls.dart';
 import '../../../../shared/widgets/scrim_back_button.dart';
 import '../../../../shared/widgets/state_views.dart';
@@ -103,9 +101,8 @@ class _PersonDetailViewState extends State<_PersonDetailView> {
                 PersonDetailError(:final reason) => Stack(
                   children: [
                     Center(
-                      child: ErrorStateView(
-                        title: context.l10n.commonCouldntLoad,
-                        body: reason.localizedMessage(context.l10n),
+                      child: FailureStateView(
+                        reason: reason,
                         onRetry: () => context
                             .read<PersonDetailCubit>()
                             .loadDetail(widget.personId),
