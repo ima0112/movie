@@ -1898,6 +1898,12 @@ abstract class AppLocalizations {
   /// **'Similar'**
   String get mediaSimilarTitle;
 
+  /// D3's heart button: saves the person to My List's People tab (it is a toggle: pressed means saved).
+  ///
+  /// In en, this message translates to:
+  /// **'Save to My List'**
+  String get personDetailSave;
+
   /// No description provided for @mediaDetailShare.
   ///
   /// In en, this message translates to:

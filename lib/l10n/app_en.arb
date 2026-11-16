@@ -976,6 +976,10 @@
     "description": "D1/D2's own \"Similar\" carousel header (docs/SCREENS.md D1)."
   },
 
+  "personDetailSave": "Save to My List",
+  "@personDetailSave": {
+    "description": "D3's heart button: saves the person to My List's People tab (it is a toggle: pressed means saved)."
+  },
   "mediaDetailShare": "Share",
   "mediaDetailShareFailed": "Couldn't share",
   "mediaDetailActionTrailer": "Trailer",
