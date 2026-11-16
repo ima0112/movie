@@ -147,7 +147,14 @@ void main() {
         type: MediaType.movie,
       ).withPreset(DiscoverPreset.comingSoon, now: DateTime(2026, 11, 13));
 
-      expect(coming.withSort(DiscoverSortBy.rating).minVoteCount, 0);
+      // `now` is the day the preset was applied: the window is recognized by
+      // its dates, so a test must not depend on today's date.
+      expect(
+        coming
+            .withSort(DiscoverSortBy.rating, now: DateTime(2026, 11, 13))
+            .minVoteCount,
+        0,
+      );
     });
 
     test('Oldest first maps to the ascending date sort, for both kinds', () {

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
 /// The amber-outlined phone the intro slides draw their mock screens in
-/// ([child] is the mock). Fixed 250×640 like the design; the slide shows
-/// as much of it as fits and fades the rest out.
+/// ([child] is the mock). Drawn at the design's fixed 250×640; `IntroVisual`
+/// scales it to the screen and fades the rest out.
 class IntroPhoneFrame extends StatelessWidget {
   const IntroPhoneFrame({super.key, required this.child});
 
@@ -23,7 +23,6 @@ class IntroPhoneFrame extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(_radius),
@@ -35,7 +34,12 @@ class IntroPhoneFrame extends StatelessWidget {
             ),
           ],
         ),
-        child: child,
+        // Clipped with the radius *inside* the border: clipping with the outer
+        // one let the mock's square corners paint over the amber stroke.
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(_radius - _border),
+          child: child,
+        ),
       ),
     );
   }

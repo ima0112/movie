@@ -71,8 +71,8 @@ extension DiscoverFilterPreset on DiscoverFilter {
   /// is meaningless on a handful of votes (a 9.9 from 143 people), so it asks
   /// for 300 (as B2's Top rated does); otherwise the default. A preset keeps
   /// its own floor (unreleased titles have no votes at all).
-  DiscoverFilter withSort(DiscoverSortBy sort) {
-    final floor = switch (preset) {
+  DiscoverFilter withSort(DiscoverSortBy sort, {DateTime? now}) {
+    final floor = switch (presetAt(now ?? DateTime.now())) {
       DiscoverPreset.comingSoon => 0,
       DiscoverPreset.inTheaters => 10,
       _ =>
