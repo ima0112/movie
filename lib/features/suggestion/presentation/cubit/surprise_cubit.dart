@@ -416,11 +416,21 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   /// E3a's "×": gives up the search in flight — whatever it finds is thrown
   /// away — and goes back to [ChoosingType], so E1 can route again when the
   /// user picks a type once more.
-  void cancelSearch() {
+  ///
+  /// Over a deck ("other 5" was running) the deck comes back as it was and the
+  /// call returns `true` — there is nowhere to go back *from*; otherwise it goes
+  /// to [ChoosingType] and returns `false`.
+  bool cancelSearch() {
     _searchGeneration++;
-    _dwell?.cancel();
+    final deck = _deckBeforeReroll;
     _deckBeforeReroll = null;
+    if (deck != null) {
+      _restoreDeck(deck, SurpriseNotice.none);
+      return true;
+    }
+    _dwell?.cancel();
     emit(const ChoosingType());
+    return false;
   }
 
   /// The taste for the engine: [_baseAffinity] (My List and the profile) plus

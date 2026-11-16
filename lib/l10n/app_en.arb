@@ -1,11 +1,9 @@
 {
   "@@locale": "en",
-
   "discoverSeeAll": "See all",
   "@discoverSeeAll": {
     "description": "Discover (B1) — link under a carousel section header that opens the full collection as a filtered list (C1)."
   },
-
   "settingsAboutVersion": "{version} ({build})",
   "@settingsAboutVersion": {
     "description": "Settings (C6) → About's Version row VALUE only — the row's own label is the separate settingsVersionLabel key (\"Version\"), so this doesn't bake that word in too. {version} is the app's own semantic version (e.g. 1.0.0); {build} is the platform build number. Not wired up to any call site until this branch — safe to reshape.",
@@ -20,7 +18,6 @@
       }
     }
   },
-
   "settingsDataDeleteItemCount": "{count, plural, =1{1 item} other{{count} items}}",
   "@settingsDataDeleteItemCount": {
     "description": "Settings (C6) → I1 (Confirm deletion) — how many items a deletion removes (e.g. \"Delete My List\"). {count} is the number of items.",
@@ -30,7 +27,6 @@
       }
     }
   },
-
   "failureNetwork": "No connection — check your internet and try again.",
   "@failureNetwork": {
     "description": "Failure.localizedMessage (FailureReason.network) — the one translation site every network-shaped error goes through, CLAUDE.md rule 15."
@@ -55,7 +51,6 @@
   "@failureUnknown": {
     "description": "Failure.localizedMessage (FailureReason.unknown) — the generic catch-all."
   },
-
   "genreAction": "Action",
   "genreAdventure": "Adventure",
   "genreAnimation": "Animation",
@@ -72,7 +67,6 @@
   "genreRomance": "Romance",
   "genreSciFi": "Science Fiction",
   "genreThriller": "Thriller",
-
   "vibeFeelGood": "Feel Good",
   "vibeIndie": "Indie",
   "vibeMonster": "Monster",
@@ -89,7 +83,6 @@
   "vibeGangster": "Gangster",
   "vibeMusical": "Musical",
   "vibeFantasy": "Fantasy",
-
   "tvStatusCardLabel": "Status",
   "@tvStatusCardLabel": {
     "description": "D2's Status stat card label above Airing / Ended / Cancelled (docs/SCREENS.md D2)."
@@ -106,7 +99,6 @@
   "@tvStatusCancelled": {
     "description": "D2's Status card only — the raw-TMDB-string branch for \"Canceled\"; DiscoverTvStatus (the H8 filter enum) has no cancelled value."
   },
-
   "mediaTypeMovieSingular": "Movie",
   "@mediaTypeMovieSingular": {
     "description": "A single item's own type, e.g. \"2019 · Movie\" in a search result row."
@@ -127,7 +119,6 @@
   "@mediaTypeTvTag": {
     "description": "The small corner tag on a TV show's own poster card, distinguishing it from a movie poster at a glance."
   },
-
   "mediaSegmentPeople": "People",
   "@mediaSegmentPeople": {
     "description": "B2's fourth segment, narrowing search results to people (docs/SCREENS.md B2)."
@@ -136,29 +127,24 @@
   "@mediaSegmentAll": {
     "description": "MediaSegment.all / FilmographySegment.all — the \"everything, no type filter\" option in a segmented control."
   },
-
   "personFilmographyAsDirector": "As director",
   "@personFilmographyAsDirector": {
     "description": "D3's filmography segmented control — FilmographySegment.asDirector, only shown once a person has both a cast and a crew credit."
   },
-
   "discoverSortPopularity": "Popularity",
   "discoverSortRating": "Rating",
   "discoverSortDate": "Date",
   "discoverSortTitle": "Title",
   "discoverSortVotes": "Most voted",
-
   "myListTabFavorites": "Favorites",
   "myListTabWatchLater": "Watch later",
   "myListTabWatched": "Watched",
-
   "myListTabPeople": "People",
   "@myListTabPeople": {
     "description": "B4's fourth tab: the people saved from a person's page (D3)."
   },
   "myListEmptyPeopleHeadline": "No people yet",
   "myListEmptyPeopleBody": "Tap the heart on a person's page to keep them here.",
-
   "myListActionMarkWatched": "Mark as watched",
   "@myListActionMarkWatched": {
     "description": "H1 (the three-dot sheet of a My List row): opens H2 for a title that isn't watched yet."
@@ -174,7 +160,6 @@
   "@myListRowActionsLabel": {
     "description": "Accessibility label of the three-dot button at the end of a My List row (opens H1)."
   },
-
   "swipeDelete": "Delete",
   "@swipeDelete": {
     "description": "The coral panel a swipe-to-delete row reveals while it is being dragged."
@@ -183,7 +168,6 @@
   "@swipeReleaseToDelete": {
     "description": "The same panel once the drag has gone far enough that letting go deletes the row."
   },
-
   "libraryAddedToTab": "{title} added to {tabName}",
   "@libraryAddedToTab": {
     "description": "Snackbar after a Favorites / Watch later toggle turned on (D1/D2, H1, Home's save button). {title} is the title's name; {tabName} that list's localized label.",
@@ -226,11 +210,9 @@
       }
     }
   },
-
   "myListEmptyFavoritesHeadline": "No favorites yet",
   "myListEmptyWatchLaterHeadline": "Nothing for later yet",
   "myListEmptyWatchedHeadline": "You haven't marked anything as watched yet",
-
   "myListFallbackTitleMovie": "Movie #{id}",
   "@myListFallbackTitleMovie": {
     "description": "My List row title fallback — shown only when MediaRepository.detail hasn't resolved yet for a movie entry. {id} is the TMDB id.",
@@ -249,7 +231,6 @@
       }
     }
   },
-
   "filteredListExcludeGenreChip": "No {genreName}",
   "@filteredListExcludeGenreChip": {
     "description": "C1's active-filter chip for a genre in DiscoverFilter.withoutGenres (H8's \"excluded genres\"). {genreName} is that genre's own localized display name.",
@@ -259,7 +240,6 @@
       }
     }
   },
-
   "myListFilteredEmptyMovieTitle": "No movies here",
   "@myListFilteredEmptyMovieTitle": {
     "description": "B4's filtered-empty state (docs/SCREENS.md B4's own literal example) when a movie-only type filter is what's hiding every entry. Deliberately its own sentence-case key, not composed from mediaTypeMoviePlural (\"Movies\") — that label's title case doesn't fit mid-sentence here."
@@ -268,7 +248,6 @@
   "@myListFilteredEmptyTvShowTitle": {
     "description": "Same as myListFilteredEmptyMovieTitle, for a TV-show-only type filter — docs/SCREENS.md B4's own literal example."
   },
-
   "commonCouldntOpenLink": "Couldn't open that link",
   "@commonCouldntOpenLink": {
     "description": "Snackbar when the system can't open an external link (TMDB, YouTube, GitHub…)."
@@ -294,7 +273,6 @@
   "@commonSkip": {
     "description": "OnboardingScaffold's header skip link, shown on any step that allows skipping."
   },
-
   "navTabDiscover": "Discover",
   "navTabExplore": "Explore",
   "navTabMyList": "My List",
@@ -306,12 +284,10 @@
   "@navTabYou": {
     "description": "The bottom bar's 4th tab label — also referenced by onboardingTastesSavedSnackbar's own \"Edit in You\" wording, so keep both in sync if either changes."
   },
-
   "offlineBannerMessage": "No internet connection",
   "@offlineBannerMessage": {
     "description": "OfflineBanner's persistent top banner text (docs/SCREENS.md G)."
   },
-
   "onboardingSaveError": "Something went wrong — let's try again.",
   "@onboardingSaveError": {
     "description": "A2's finish() snackbar when saving the onboarding profile fails."
@@ -320,7 +296,6 @@
   "@onboardingTastesSavedSnackbar": {
     "description": "A2's exit snackbar when finish() succeeds and at least one genre was picked (docs/SCREENS.md A2). \"You\" here is the same word as navTabYou — keep them matching."
   },
-
   "onboardingLikedEyebrow": "Make it yours",
   "onboardingLikedHeadline": "What do you like?",
   "onboardingLikedHighlight": "like",
@@ -338,7 +313,6 @@
   "@onboardingVetoedCta": {
     "description": "The last onboarding screen's button (docs/SCREENS.md A2) — it finishes the flow."
   },
-
   "onboardingNameHeadline": "What's your name?",
   "onboardingNameEyebrow": "Your profile",
   "onboardingNameHighlight": "name",
@@ -353,7 +327,6 @@
   "onboardingNameHint": "Your name",
   "profileNameLabel": "Name",
   "profileColorLabel": "Color",
-
   "onboardingIntroDiscoverHeadline": "Find what to watch\nin seconds",
   "onboardingIntroDiscoverHighlight": "in seconds",
   "@onboardingIntroDiscoverHighlight": {
@@ -373,7 +346,6 @@
   "@onboardingWelcomeTmdbAttribution": {
     "description": "TMDB attribution caption — used as the footer of the movie, TV and person detail screens (it began on the welcome step). \"TMDB\" stays untranslated in every locale, same as PakoTV's own name."
   },
-
   "commonCouldntLoad": "Couldn't load",
   "@commonCouldntLoad": {
     "description": "Shared inline/section error title — Discover's per-section error row, Explore's search error, and C1's own error state all use this exact wording (docs/SCREENS.md B1/B2/C1)."
@@ -394,18 +366,25 @@
   "@commonGenres": {
     "description": "B2's own \"Genres\" grid section header and H8's \"Genres\" filter-sheet section label — same word in both places."
   },
-
   "carouselSectionForYou": "For You",
   "carouselSectionPopularThisWeek": "Popular this week",
   "carouselSectionBecauseYouLikeGenre": "Because you like {genre}",
   "@carouselSectionBecauseYouLikeGenre": {
     "description": "B1's All tab: 'Because you like X' where X is one of the genres in the user's taste profile (docs/SCREENS.md B1).",
-    "placeholders": { "genre": { "type": "String" } }
+    "placeholders": {
+      "genre": {
+        "type": "String"
+      }
+    }
   },
   "carouselSectionBecauseYouWantVibe": "Because you want {vibe}",
   "@carouselSectionBecauseYouWantVibe": {
     "description": "B1's All tab: 'Because you want X' where X is one of the vibes in the user's taste profile (docs/SCREENS.md B1).",
-    "placeholders": { "vibe": { "type": "String" } }
+    "placeholders": {
+      "vibe": {
+        "type": "String"
+      }
+    }
   },
   "carouselSectionBecauseYouLike": "Because you like {title}",
   "@carouselSectionBecauseYouLike": {
@@ -453,7 +432,11 @@
   "releaseStatusComingOn": "Coming {date}",
   "@releaseStatusComingOn": {
     "description": "D1/D2's header tag for a title that isn't out yet, with its release date (docs/SCREENS.md D1).",
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
   "whereToWatchNotReleased": "It isn't out yet, so it isn't on any service.",
   "@whereToWatchNotReleased": {
@@ -462,7 +445,11 @@
   "whereToWatchNotReleasedOn": "It isn't out yet. It comes out on {date}.",
   "@whereToWatchNotReleasedOn": {
     "description": "D1/D2's Where to watch card for an unreleased title with a release date.",
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
   "whereToWatchInTheaters": "In theaters now, and not on any service yet.",
   "@whereToWatchInTheaters": {
@@ -471,12 +458,20 @@
   "whereToWatchInTheatersStreamingOn": "In theaters now. Expected on streaming on {date}.",
   "@whereToWatchInTheatersStreamingOn": {
     "description": "D1's Where to watch card for a movie in cinemas whose digital release date is known.",
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
   "trailerPlayLabel": "Play the trailer for {title}",
   "@trailerPlayLabel": {
     "description": "Accessibility label of a Latest trailers card (docs/SCREENS.md B1); opens the trailer in YouTube.",
-    "placeholders": { "title": { "type": "String" } }
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   },
   "carouselSectionTrending": "Trending",
   "carouselSectionTopRated": "Top rated",
@@ -486,7 +481,6 @@
   "@carouselSectionPopular": {
     "description": "CarouselSection.popular — TV Shows segment only (docs/SCREENS.md B1). CarouselSection.watchLater reuses myListTabWatchLater instead of its own key."
   },
-
   "exploreGenreLabel": "Genre",
   "@exploreGenreLabel": {
     "description": "B2's overline above the genre pill row at rest (docs/SCREENS.md B2)."
@@ -543,7 +537,11 @@
   "exploreNoResultsBody": "We couldn't find anything for “{query}”. Try another title, show or person.",
   "@exploreNoResultsBody": {
     "description": "B2's no-results state under the search field: names what was searched (docs/SCREENS.md B2).",
-    "placeholders": { "query": { "type": "String" } }
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
   },
   "exploreFilterTooltip": "Filters",
   "exploreClearSearch": "Clear search",
@@ -558,7 +556,11 @@
   "exploreRecentRemove": "Remove {query} from recent searches",
   "@exploreRecentRemove": {
     "description": "Tooltip/accessibility label of the × on a recent search row (docs/SCREENS.md B2).",
-    "placeholders": { "query": { "type": "String" } }
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
   },
   "exploreRecentSearchesLabel": "Recent",
   "explorePersonLabel": "Person",
@@ -586,7 +588,6 @@
       }
     }
   },
-
   "filteredListYearRangeChip": "{from}–{to}",
   "@filteredListYearRangeChip": {
     "description": "C1's active-filter chip for a year range, e.g. \"1950–2024\" (no spaces around the dash — distinct from discoverRangeFiltersYearRange's own spaced dash).",
@@ -635,7 +636,6 @@
       }
     }
   },
-
   "filterSheetTitle": "Filters",
   "filterSheetClear": "Clear",
   "@filterSheetClear": {
@@ -649,7 +649,11 @@
   "filterSheetMinRatingValue": "{rating} or more",
   "@filterSheetMinRatingValue": {
     "description": "H8's minimum-rating slider value, shown next to a star, e.g. \"7.0 or more\".",
-    "placeholders": { "rating": { "type": "String" } }
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
   },
   "filterSheetMinRatingAny": "Any rating",
   "filterSheetNoResults": "No results",
@@ -667,12 +671,26 @@
   "filterSheetRatingRangeValue": "{min} – {max}",
   "@filterSheetRatingRangeValue": {
     "description": "H8's rating range slider value, shown next to a star, e.g. \"4.5 – 8.0\".",
-    "placeholders": { "min": { "type": "String" }, "max": { "type": "String" } }
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
   },
   "filteredListRatingRangeChip": "Rating {min}–{max}",
   "@filteredListRatingRangeChip": {
     "description": "C1's active-filter chip for a rating range, e.g. \"Rating 4.5–8.0\".",
-    "placeholders": { "min": { "type": "String" }, "max": { "type": "String" } }
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
   },
   "filterSheetSectionType": "Type",
   "filterSheetSectionYear": "Years",
@@ -685,7 +703,6 @@
   "@filterSheetSeeResultsLoading": {
     "description": "H8's apply button: it just says \"See results\" (no number; it turns into filterSheetNoResults, disabled, when nothing matches)."
   },
-
   "discoverRangeFiltersYearRange": "{from} – {to}",
   "@discoverRangeFiltersYearRange": {
     "description": "H8's year-range slider's own live value display, e.g. \"1950 – 2024\" (spaces around the dash — distinct from filteredListYearRangeChip's own unspaced dash).",
@@ -711,7 +728,6 @@
       }
     }
   },
-
   "libraryRowAddedToday": "Added today",
   "libraryRowAddedYesterday": "Added yesterday",
   "libraryRowAddedDaysAgo": "Added {count} days ago",
@@ -741,7 +757,6 @@
       }
     }
   },
-
   "myListUndoAction": "Undo",
   "@myListUndoAction": {
     "description": "B4's swipe-to-remove SnackBarAction label, next to the tab-specific myListRemovedFromTab message."
@@ -754,7 +769,6 @@
   "@myListBodyEmptyFilterTitle": {
     "description": "B4's own filtered-empty-state headline when no type filter is active. Deliberately distinct from C1's filteredListEmptyTitle (\"Nothing matches these filters\") — different screen, different exact wording in the existing code, preserved as its own key rather than merged."
   },
-
   "myListSeasonsCount": "{count, plural, =1{1 season} other{{count} seasons}}",
   "@myListSeasonsCount": {
     "description": "A TV show row's metadata line (B4) — season count.",
@@ -794,7 +808,6 @@
       }
     }
   },
-
   "myListSortTitleAz": "Title A–Z",
   "myListSortTmdbRating": "TMDB rating",
   "@myListSortTmdbRating": {
@@ -802,16 +815,12 @@
   },
   "myListSortMyRating": "My rating",
   "myListSortDateWatched": "Date watched",
-
   "myListFilterSheetTitle": "Sort and filter",
   "commonApply": "Apply",
   "@commonApply": {
     "description": "B4's own filter sheet \"Apply\" button — a generic enough verb other sheets may reuse later."
   },
-
   "myListHideWatchedToggle": "Hide what I've watched",
-
-
   "myTastesTitle": "My Tastes",
   "@myTastesTitle": {
     "description": "Shared across three spots: MyTastesCard's own header (B5), MyTastesInvitation's button label, and C5's AppBar title — same word, same screen, in all three."
@@ -825,10 +834,8 @@
       }
     }
   },
-
   "myTastesInvitationTitle": "Build your taste profile",
   "myTastesInvitationBody": "Get picks that actually match what you like.",
-
   "youHeaderGreetingNoProfile": "Hi",
   "youHeaderTapToSetName": "Tap to set your name",
   "youHeaderGreetingWithName": "Hi, {name}",
@@ -840,7 +847,6 @@
       }
     }
   },
-
   "youStatsDaysOfScreen": "{days, plural, =1{≈ 1 day of screen time} other{≈ {days} days of screen time}}",
   "@youStatsDaysOfScreen": {
     "description": "You's stats card: the hours watched expressed in whole days (shown from one day on).",
@@ -927,7 +933,6 @@
   },
   "yourActivityHoursLabel": "Hours",
   "yourActivitySeeStats": "See stats",
-
   "statsTitle": "Stats",
   "statsActivityStripTitle": "Activity over the last 12 months",
   "statsPeriodAllTime": "All time",
@@ -1104,7 +1109,6 @@
   "statsHoursOfMoviesLabel": "Hours of movies",
   "statsTvShowsWatchedLabel": "TV shows watched",
   "statsEstimatedTvHoursLabel": "Estimated TV hours",
-
   "myTastesTypeTitle": "What do you usually watch?",
   "myTastesTypeHint": "It sets which catalog we show first.",
   "myTastesVibesTitle": "Favorite vibes",
@@ -1158,7 +1162,6 @@
   "myTastesGenresLikeTitle": "Genres you like",
   "myTastesGenresNeverTitle": "Genres you avoid",
   "myTastesSavedIndicator": "Saved",
-
   "statsHoursValue": "{hours} h",
   "@statsHoursValue": {
     "description": "StatsMetricGrid's own hours-value format, e.g. \"312 h\" (docs/SCREENS.md C4's own example). {hours} is already locale-formatted (LocalizedCount.localizedCount) before being substituted in.",
@@ -1168,7 +1171,6 @@
       }
     }
   },
-
   "mediaDetailDuration": "Duration",
   "@mediaDetailDuration": {
     "description": "D1's stat card label above the movie's runtime (docs/SCREENS.md D1)."
@@ -1181,17 +1183,14 @@
   "@mediaDetailSynopsis": {
     "description": "The small caption above D1/D2's synopsis text; shown in capitals."
   },
-
   "commonReadLess": "Read less",
   "@commonReadLess": {
     "description": "The tap-to-collapse link shown after an expanded synopsis (the opposite of commonReadMore)."
   },
-
   "commonReadMore": "Read more",
   "@commonReadMore": {
     "description": "The tap-to-expand link at the end of a folded synopsis/biography (docs/SCREENS.md D1: \"Synopsis folded to 4 lines with an amber 'Read more'\") — shared by D1/D2's synopsis, D3's biography, and H4's episode overview."
   },
-
   "tvEpisodeCount": "{count, plural, =1{1 episode} other{{count} episodes}}",
   "@tvEpisodeCount": {
     "description": "D2's \"Seasons\" row and H4's own title both show a season's episode count (docs/SCREENS.md D2).",
@@ -1214,15 +1213,21 @@
   "@tvEpisodeCode": {
     "description": "H4b's caption over the episode name (e.g. \"S1 · E4\").",
     "placeholders": {
-      "season": {"type": "int"},
-      "episode": {"type": "int"}
+      "season": {
+        "type": "int"
+      },
+      "episode": {
+        "type": "int"
+      }
     }
   },
   "tvEpisodeCodeSpecials": "Specials · E{episode}",
   "@tvEpisodeCodeSpecials": {
     "description": "H4b's caption for an episode of season 0 (TMDB's specials).",
     "placeholders": {
-      "episode": {"type": "int"}
+      "episode": {
+        "type": "int"
+      }
     }
   },
   "tvEpisodeGuestStars": "Guest stars",
@@ -1231,8 +1236,12 @@
   "@tvSeasonsLinkValue": {
     "description": "D2's Seasons card value, e.g. \"5 · 62 episodes\" — season count, a dot, then the total episodes with their word (pluralised).",
     "placeholders": {
-      "seasons": {"type": "int"},
-      "episodes": {"type": "int"}
+      "seasons": {
+        "type": "int"
+      },
+      "episodes": {
+        "type": "int"
+      }
     }
   },
   "tvNextEpisodeCaption": "Next episode",
@@ -1243,17 +1252,27 @@
   "@tvEpisodeCodeAndName": {
     "description": "D2b's episode card title, e.g. \"S5 · E16 · Felina\".",
     "placeholders": {
-      "season": {"type": "int"},
-      "episode": {"type": "int"},
-      "name": {"type": "String"}
+      "season": {
+        "type": "int"
+      },
+      "episode": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
     }
   },
   "tvEpisodeCodeSpecialsAndName": "Specials · E{episode} · {name}",
   "@tvEpisodeCodeSpecialsAndName": {
     "description": "D2b's episode card title for season 0 (TMDB's specials).",
     "placeholders": {
-      "episode": {"type": "int"},
-      "name": {"type": "String"}
+      "episode": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
     }
   },
   "tvSeasonsSectionTitle": "Seasons",
@@ -1286,7 +1305,6 @@
   "@tvEpisodeTba": {
     "description": "H4's episode row air date, for an episode with no air date yet (\"To Be Announced\")."
   },
-
   "commonDone": "Done",
   "commonNoMatches": "No matches",
   "@commonNoMatches": {
@@ -1296,7 +1314,6 @@
   "@commonSave": {
     "description": "H2's own \"Save\" button (docs/SCREENS.md H2)."
   },
-
   "mediaDetailHaveYouFinished": "Have you finished {title}?",
   "@mediaDetailHaveYouFinished": {
     "description": "H2's own heading for a TV show specifically (docs/SCREENS.md H2) — a movie uses mediaDetailMarkAsWatched instead.",
@@ -1315,7 +1332,9 @@
   "@mediaDetailRatingStarLabel": {
     "description": "Accessibility label of one of H2's five rating stars (e.g. \"4 of 5\").",
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "mediaDetailYourRating": "Your rating",
@@ -1323,25 +1342,21 @@
   "@mediaDetailRemoveFromWatched": {
     "description": "H2's own link, shown only when re-opening the sheet for an already-watched entry (docs/SCREENS.md H2)."
   },
-
   "regionSheetTitle": "Region",
   "@regionSheetTitle": {
     "description": "H6's own title (docs/SCREENS.md H6)."
   },
   "regionSheetSubtitle": "Sets which services you see in \"Where to watch\".",
   "regionSheetSearchHint": "Search countries",
-
   "fullCastCastLabel": "Cast",
   "fullCastCrewLabel": "Crew",
   "fullCastSearchHint": "Search cast and crew",
-
   "mediaSimilarMoviesTitle": "Similar movies",
   "mediaSimilarTvTitle": "Similar TV shows",
   "mediaSimilarTitle": "Similar",
   "@mediaSimilarTitle": {
     "description": "D1/D2's own \"Similar\" carousel header (docs/SCREENS.md D1)."
   },
-
   "personDetailSave": "Save to My List",
   "@personDetailSave": {
     "description": "D3's heart button: saves the person to My List's People tab (it is a toggle: pressed means saved)."
@@ -1357,8 +1372,6 @@
   "@mediaDetailActionFavorite": {
     "description": "D1/D2's own Favorite toggle (docs/SCREENS.md D1: \"Favorite · Watch later · Watched\"). The other two reuse myListTabWatchLater/myListTabWatched — same words, same meaning."
   },
-
-
   "whereToWatchTitle": "Where to watch",
   "@whereToWatchTitle": {
     "description": "D1/D2's own section title (docs/SCREENS.md D1)."
@@ -1398,7 +1411,6 @@
       }
     }
   },
-
   "personAgeLivedYears": "Lived {age} years",
   "@personAgeLivedYears": {
     "description": "D3's header age line once PersonDetail.deathday is set (docs/SCREENS.md D3).",
@@ -1434,14 +1446,15 @@
   "@personFilmographyTitleCount": {
     "description": "D3's filmography card: how many titles the full list has (e.g. \"64 titles\").",
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "personFilmographyTitle": "Filmography",
   "@personFilmographyTitle": {
     "description": "D3's own section header (docs/SCREENS.md D3)."
   },
-
   "quizExcludeWatchedToggle": "Exclude what I've already watched",
   "@quizExcludeWatchedToggle": {
     "description": "E2 step 4's own discreet toggle (docs/SCREENS.md E2) — deliberately its own key, not myListHideWatchedToggle (\"Hide what I've watched\"), since the two controls use different wording in the existing code."
@@ -1519,7 +1532,6 @@
   "@quizVibeStepHeadline": {
     "description": "E2 step 2's own headline (docs/SCREENS.md E2)."
   },
-
   "surpriseErrorMessage": "Couldn't find a match. Try again.",
   "@surpriseErrorMessage": {
     "description": "E3's SurpriseError body — no exact copy is given in docs/SCREENS.md for this (E3 only describes the state, \"error with 'Retry'\"), so this is a plain, generic line."
@@ -1532,9 +1544,6 @@
   "@chooseTypeHeadlineAccent": {
     "description": "E1's headline, the word in the accent color; a white \"?\" follows it."
   },
-  "surpriseNoMoreSuggestionsTitle": "That's all for now",
-  "surpriseNoMoreSuggestionsBody": "We're out of suggestions from this search — try again for a fresh pick.",
-  "surpriseSearchAgain": "Search again",
   "surpriseNoMatchTitle": "Couldn't find a match",
   "@surpriseNoMatchTitle": {
     "description": "E3's SurpriseError title — distinct from surpriseErrorMessage (the body), even though the wording overlaps in English."
@@ -1543,10 +1552,6 @@
   "chooseTypeTvShowLabel": "A TV show",
   "chooseTypeMovieSubtitle": "A plan for a couple of hours",
   "chooseTypeTvShowSubtitle": "To get hooked over several nights",
-  "surpriseYourSuggestionTitle": "Your suggestion",
-  "@surpriseYourSuggestionTitle": {
-    "description": "E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states."
-  },
   "surpriseCardAffinity": "{percent} % for you",
   "@surpriseCardAffinity": {
     "description": "A Surprise-me card's affinity tag: the engine's score scaled to 60-98 — a relative affinity, not a probability.",
@@ -1636,29 +1641,33 @@
   },
   "surpriseHelpDoubleTap": "Double-tap to choose",
   "surpriseRerollButton": "Ask for another 5",
+  "surpriseChooseThis": "Choose this",
+  "@surpriseChooseThis": {
+    "description": "The fixed button on a title's detail when it was opened from Surprise me's deck: does what the double tap does."
+  },
+  "surpriseChosenLabel": "Your surprise of the day",
+  "@surpriseChosenLabel": {
+    "description": "The label above the chosen card on Surprise me's closing screen; shown in capitals."
+  },
+  "surpriseChosenInWatchLater": "In Watch later",
+  "surpriseNoticeWidened": "We widened the search a little to find these.",
+  "surpriseNoticeNoMore": "No more surprises with these answers.",
+  "surpriseNoticeOffline": "You're offline — couldn't ask for more.",
   "surpriseShufflingTitle": "Shuffling your 5 surprises",
   "@surpriseShufflingTitle": {
     "description": "E3a (Surprise me, searching): the headline under the shuffling cards."
   },
   "surpriseShufflingSubtitle": "Mixing what you like with what you don't expect",
-  "surpriseSearchingLabel": "Searching…",
   "surpriseViewDetailsLink": "View details",
   "@surpriseViewDetailsLink": {
     "description": "E3's result card link (docs/SCREENS.md E3)."
   },
   "surpriseSourceProfile": "Based on your tastes",
-  "surpriseSourceInferredList": "Based on your list",
-  "surpriseSourceQuiz": "Based on your answers",
-  "@surpriseSourceQuiz": {
-    "description": "E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — one line per SuggestionSource value, including the quiz now."
-  },
-  "surpriseRelaxedSearchNote": "We broadened the search a bit to find this match.",
   "surpriseAddToWatchLater": "Add to Watch later",
   "surpriseAnotherSuggestion": "Another suggestion",
   "@surpriseAnotherSuggestion": {
     "description": "E3's secondary button (docs/SCREENS.md E3: \"Secondary button 'Another suggestion'\")."
   },
-  "surpriseAddedToWatchLaterSnackbar": "Added to Watch later",
   "surpriseChooseSourceTitle": "Find something to watch",
   "@surpriseChooseSourceTitle": {
     "description": "H11's own headline (docs/SCREENS.md H11), shown above the subtitle naming where the suggestion would come from."
@@ -1693,7 +1702,6 @@
   "@surpriseAnswerQuizInstead": {
     "description": "H11's secondary button, and E3's own link back to E2 for the profile/inferredList sources (docs/SCREENS.md H11, E3) — same copy, same action, two call sites."
   },
-
   "matchHubTitle": "Match",
   "@matchHubTitle": {
     "description": "B3's own title (docs/SCREENS.md B3) — \"Match\" is this app's own feature name, left untranslated in every locale, same class of exception as \"PakoTV\"."
@@ -1706,12 +1714,10 @@
   },
   "matchHubWithFriendsSubtitle": "Decide together in seconds",
   "matchHubSoonPill": "Soon",
-
   "settingsTitle": "Settings",
   "@settingsTitle": {
     "description": "C6's own AppBar title (docs/SCREENS.md C6)."
   },
-
   "settingsPreferencesHeader": "Preferences",
   "settingsLanguageLabel": "Language",
   "@settingsLanguageLabel": {
@@ -1725,7 +1731,6 @@
   "@languageNameEnglish": {
     "description": "Same convention as languageNameSpanish — deliberately identical in every locale."
   },
-
   "settingsDataHeader": "Data",
   "settingsExportMyList": "Export My List",
   "settingsDeleteMyListLabel": "Delete My List",
@@ -1742,7 +1747,6 @@
   "settingsDeleteMyListFailedSnackbar": "Couldn't delete My List",
   "settingsMyTastesDeletedSnackbar": "My Tastes deleted",
   "settingsDeleteMyTastesFailedSnackbar": "Couldn't delete My Tastes",
-
   "settingsDeleteListDialogTitle": "Delete your list?",
   "settingsDeleteTastesDialogTitle": "Delete your tastes?",
   "settingsDeleteDialogBody": "This will remove {itemsPhrase}. This can't be undone.",
@@ -1767,7 +1771,6 @@
   "@commonDelete": {
     "description": "I1's own destructive confirm button (docs/SCREENS.md I1: \"Cancel / Delete (destructive)\")."
   },
-
   "settingsBuildNumberCopiedSnackbar": "Build number copied",
   "settingsAboutHeader": "About",
   "settingsVersionLabel": "Version",
@@ -1786,7 +1789,6 @@
   "attributionJustWatchDetail": "Streaming, rent and buy options for your region.",
   "attributionFooter": "PakoTV is a free personal project. All trademarks belong to their respective owners.",
   "settingsLicensesLabel": "Licenses",
-
   "editProfileSheetTitle": "Edit profile",
   "@editProfileSheetTitle": {
     "description": "H10's own title (docs/SCREENS.md H10)."

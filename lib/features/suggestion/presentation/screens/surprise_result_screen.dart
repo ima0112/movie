@@ -3,27 +3,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
-import '../widgets/surprise_result_content.dart';
+import '../widgets/deck/surprise_closing_view.dart';
+import '../widgets/deck/surprise_deck_view.dart';
 import '../widgets/surprise_searching_view.dart';
 
-/// E3 (Surprise me result) — `docs/SCREENS.md` E3.
+/// E3 (Surprise me's deck, its searching screen and its closing screen) —
+/// `docs/SCREENS.md` E3/E3a.
 ///
-/// Takes the already-built [cubit] (handed forward from E1/E2 via
-/// `extra` — see `ChooseTypeScreen`'s own doc comment for why) and
-/// re-provides it via `BlocProvider.value`, the same "same instance,
-/// different part of the tree" hand-off `MyListTopBar`'s own filter
-/// sheet already uses.
+/// Takes the already-built [cubit] (handed forward from E1/E2 via `extra` — see
+/// `ChooseTypeScreen`) and re-provides it with `BlocProvider.value`. Thin
+/// (CLAUDE.md rule 11): it only switches between the page of each state; each
+/// page is its own widget.
 ///
-/// Thin per CLAUDE.md rule 11: the actual per-state rendering lives in
-/// `SurpriseSearchingContent`/`SurpriseResultContent` (split out once
-/// this file crossed the soft line limit) — this file only owns the
-/// `Scaffold`/`BlocBuilder` switch and the "×" button's own navigation.
+/// Leaving: the "×" and the system back both leave the whole flow from the deck
+/// and the closing screen; from "Searching" they cancel the search — back to the
+/// deck if there was one ("Ask for another 5"), else one step back.
 class SurpriseResultScreen extends StatelessWidget {
   const SurpriseResultScreen({super.key, required this.cubit});
 
@@ -38,83 +37,84 @@ class SurpriseResultScreen extends StatelessWidget {
   }
 }
 
+/// Which page a state shows.
+enum _Page { searching, deck, closing, error, none }
+
+_Page _pageOf(SurpriseState s) => switch (s) {
+  Searching() => _Page.searching,
+  SurpriseResult() => _Page.deck,
+  SurpriseChosen() => _Page.closing,
+  SurpriseError() => _Page.error,
+  // The Cubit moving on (a cancel on its way out): leave the page as it is.
+  ChoosingType() || ChooseSource() || NeedsQuiz() => _Page.none,
+};
+
 class _SurpriseResultView extends StatelessWidget {
   const _SurpriseResultView();
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SurpriseCubit, SurpriseState>(
-      // Only the switch between the searching screen (E3a, its own page) and
-      // the result page needs a rebuild; a new result inside the page is the
-      // content's own job.
-      buildWhen: (previous, current) =>
-          // (ChoosingType is the cancel on its way out: leave the page as is
-          // while it pops.)
-          current is! ChoosingType &&
-          (previous is Searching) != (current is Searching),
-      builder: (context, state) {
-        if (state is Searching) {
-          return SurpriseSearchingView(
-            onCancel: () {
-              context.read<SurpriseCubit>().cancelSearch();
-              context.pop();
-            },
-          );
-        }
-        return Scaffold(
-          backgroundColor: AppColors.surface,
-          appBar: AppBar(
-            backgroundColor: AppColors.surface,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(AppIcons.close, color: AppColors.ink),
-              onPressed: () => _returnToWhereYouWere(context),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _leave(context);
+      },
+      child: BlocBuilder<SurpriseCubit, SurpriseState>(
+        buildWhen: (previous, current) {
+          final page = _pageOf(current);
+          return page != _Page.none && page != _pageOf(previous);
+        },
+        builder: (context, state) {
+          void leave() => _leave(context);
+          return switch (state) {
+            Searching() => SurpriseSearchingView(onCancel: leave),
+            SurpriseResult() => SurpriseDeckView(onClose: leave),
+            SurpriseChosen() => SurpriseClosingView(
+              chosen: state,
+              onClose: leave,
             ),
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              child: BlocBuilder<SurpriseCubit, SurpriseState>(
-                builder: (context, state) {
-                  return switch (state) {
-                    SurpriseResult() => SurpriseResultContent(state: state),
-                    SurpriseError() => ErrorStateView(
-                      title: context.l10n.surpriseNoMatchTitle,
-                      body: context.l10n.surpriseErrorMessage,
-                      onRetry: () => context.read<SurpriseCubit>().retry(),
-                    ),
-                    // Searching has its own page above; the other three never
-                    // reach E3 (only ChooseTypeScreen's BlocListener pushes
-                    // here, once the Cubit has moved past them).
-                    // The closing screen (the chosen card) is built later in
-                    // this stack; nothing reaches it yet.
-                    SurpriseChosen() ||
-                    Searching() ||
-                    ChoosingType() ||
-                    ChooseSource() ||
-                    NeedsQuiz() => const SizedBox.shrink(),
-                  };
-                },
+            SurpriseError() => Scaffold(
+              backgroundColor: AppColors.surface,
+              appBar: AppBar(
+                backgroundColor: AppColors.surface,
+                elevation: 0,
+                leading: const CloseButton(color: AppColors.ink),
+                // (leading's own onPressed pops one step; the error has no
+                // deck to protect.)
+              ),
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  child: ErrorStateView(
+                    title: context.l10n.surpriseNoMatchTitle,
+                    body: context.l10n.surpriseErrorMessage,
+                    onRetry: () => context.read<SurpriseCubit>().retry(),
+                  ),
+                ),
               ),
             ),
-          ),
-        );
-      },
+            ChoosingType() ||
+            ChooseSource() ||
+            NeedsQuiz() => const SizedBox.shrink(),
+          };
+        },
+      ),
     );
   }
 
-  // "×" in E3 returns to wherever you were before this whole flow (B3's
-  // hub, already dismissed by the time E1 showed) — not just one level
-  // up, since the stack depth varies (E1→E3 direct vs E1→E2→E3 through
-  // the quiz). Popped through go_router's own `pop()` rather than a raw
-  // `Navigator.popUntil`: go_router rebuilds its page stack from its own
-  // internal match list on every declarative navigation, so bypassing it
-  // with the imperative Navigator left that internal list stale — the
-  // next push resurrected an already-"popped" E3 as a zombie route
-  // underneath the new one. Looping `canPop()`/`pop()` keeps go_router's
-  // own state in sync at each step, and stops correctly regardless of
-  // depth since the root shell route itself is never poppable.
-  void _returnToWhereYouWere(BuildContext context) {
+  void _leave(BuildContext context) {
+    final cubit = context.read<SurpriseCubit>();
+    final state = cubit.state;
+    if (state is Searching) {
+      // Back to the deck it came from, if any; else one step back.
+      if (!cubit.cancelSearch()) context.pop();
+      return;
+    }
+    cubit.closeDeck();
+    // Back to wherever you were before this whole flow, not one level up: the
+    // depth varies (E1→E3, or E1→E2→E3 through the quiz). Looping go_router's
+    // own `canPop()`/`pop()` keeps its internal match list in sync (a raw
+    // `Navigator.popUntil` left it stale and resurrected a popped E3).
     final router = GoRouter.of(context);
     while (router.canPop()) {
       router.pop();

@@ -1609,16 +1609,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseTypeHeadlineAccent => 'today';
 
   @override
-  String get surpriseNoMoreSuggestionsTitle => 'That\'s all for now';
-
-  @override
-  String get surpriseNoMoreSuggestionsBody =>
-      'We\'re out of suggestions from this search — try again for a fresh pick.';
-
-  @override
-  String get surpriseSearchAgain => 'Search again';
-
-  @override
   String get surpriseNoMatchTitle => 'Couldn\'t find a match';
 
   @override
@@ -1632,9 +1622,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chooseTypeTvShowSubtitle => 'To get hooked over several nights';
-
-  @override
-  String get surpriseYourSuggestionTitle => 'Your suggestion';
 
   @override
   String surpriseCardAffinity(int percent) {
@@ -1702,14 +1689,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get surpriseRerollButton => 'Ask for another 5';
 
   @override
+  String get surpriseChooseThis => 'Choose this';
+
+  @override
+  String get surpriseChosenLabel => 'Your surprise of the day';
+
+  @override
+  String get surpriseChosenInWatchLater => 'In Watch later';
+
+  @override
+  String get surpriseNoticeWidened =>
+      'We widened the search a little to find these.';
+
+  @override
+  String get surpriseNoticeNoMore => 'No more surprises with these answers.';
+
+  @override
+  String get surpriseNoticeOffline =>
+      'You\'re offline — couldn\'t ask for more.';
+
+  @override
   String get surpriseShufflingTitle => 'Shuffling your 5 surprises';
 
   @override
   String get surpriseShufflingSubtitle =>
       'Mixing what you like with what you don\'t expect';
-
-  @override
-  String get surpriseSearchingLabel => 'Searching…';
 
   @override
   String get surpriseViewDetailsLink => 'View details';
@@ -1718,23 +1722,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get surpriseSourceProfile => 'Based on your tastes';
 
   @override
-  String get surpriseSourceInferredList => 'Based on your list';
-
-  @override
-  String get surpriseSourceQuiz => 'Based on your answers';
-
-  @override
-  String get surpriseRelaxedSearchNote =>
-      'We broadened the search a bit to find this match.';
-
-  @override
   String get surpriseAddToWatchLater => 'Add to Watch later';
 
   @override
   String get surpriseAnotherSuggestion => 'Another suggestion';
-
-  @override
-  String get surpriseAddedToWatchLaterSnackbar => 'Added to Watch later';
 
   @override
   String get surpriseChooseSourceTitle => 'Find something to watch';

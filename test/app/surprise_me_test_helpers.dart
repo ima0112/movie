@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/app/router.dart';
+import 'package:movies/core/data/local/in_memory_local_flags_repository.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
 import 'package:movies/core/data/local/in_memory_surprise_history_repository.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/surprise_history_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/repositories/local_flags_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
@@ -44,6 +46,14 @@ void configureSurpriseMeDependencies() {
   getIt.unregister<SurpriseHistoryRepository>();
   getIt.registerLazySingleton<SurpriseHistoryRepository>(
     InMemorySurpriseHistoryRepository.new,
+  );
+  getIt.unregister<LocalFlagsRepository>();
+  getIt.registerLazySingleton<LocalFlagsRepository>(
+    // The first-time "2×" overlay pulses forever, which `pumpAndSettle`
+    // never gets past; these files are not about it.
+    () =>
+        InMemoryLocalFlagsRepository()
+          ..set(LocalFlag.surpriseDoubleTapHintSeen),
   );
   getIt.unregister<OnboardingRepository>();
   getIt.registerLazySingleton<OnboardingRepository>(
@@ -150,6 +160,6 @@ Future<void> settleSearch(WidgetTester tester) async {
 }
 
 void expectOnSurpriseResultScreen() {
-  expect(find.text('Your suggestion'), findsOneWidget);
-  expect(find.text('Another suggestion'), findsOneWidget);
+  expect(find.text('Double-tap to choose'), findsOneWidget);
+  expect(find.text('Ask for another 5'), findsOneWidget);
 }

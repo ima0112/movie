@@ -1,3 +1,4 @@
+import '../shared/widgets/detail_choose_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -212,12 +213,15 @@ extension MediaDetailNavigation on BuildContext {
   /// same `MediaKey` every repository call and `UserLibraryRepository`
   /// entry already uses, so a caller never has to re-derive which route
   /// shape a given id needs.
-  Future<T?> pushMediaDetail<T>(MediaKey key) {
+  ///
+  /// [choose], from Surprise me's deck, adds the fixed "Choose this" button
+  /// (`DetailChooseOverlay`).
+  Future<T?> pushMediaDetail<T>(MediaKey key, {DetailChooseAction? choose}) {
     final path = switch (key.type) {
       MediaType.movie => AppRoutes.movieDetail(key.tmdbId),
       MediaType.tvShow => AppRoutes.tvDetail(key.tmdbId),
     };
-    return push<T>(path);
+    return push<T>(path, extra: choose);
   }
 
   /// D3 (Person detail) — cast/crew rows and search results that are
@@ -307,7 +311,10 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
-        return MovieDetailScreen(movieId: id);
+        return DetailChooseOverlay(
+          action: state.extra as DetailChooseAction?,
+          child: MovieDetailScreen(movieId: id),
+        );
       },
     ),
     GoRoute(
@@ -315,7 +322,10 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
-        return TvDetailScreen(tvId: id);
+        return DetailChooseOverlay(
+          action: state.extra as DetailChooseAction?,
+          child: TvDetailScreen(tvId: id),
+        );
       },
     ),
     GoRoute(

@@ -202,6 +202,41 @@ void main() {
       });
     });
 
+    test('cancelSearch during "Ask for another 5" brings the same deck back '
+        'and the late batch is thrown away', () {
+      fakeAsync((async) {
+        final engine = FakeSurpriseEngine(
+          results: [Success(batchOf(5)), Success(batchOf(5, first: 5))],
+        );
+        final cubit = _cubit(engine: engine, profile: _profile());
+
+        unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+        unawaited(cubit.useMyTastes());
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
+        final deck = cubit.state as SurpriseResult;
+        cubit.next();
+
+        unawaited(cubit.reroll());
+        expect(cubit.state, isA<Searching>());
+        expect(cubit.cancelSearch(), isTrue);
+
+        final back = cubit.state as SurpriseResult;
+        expect(back.suggestions, same(deck.suggestions));
+        expect(back.index, 1);
+
+        async.elapse(SurpriseCubit.maxSearchingDuration);
+        async.flushMicrotasks();
+        expect(
+          (cubit.state as SurpriseResult).suggestions,
+          same(deck.suggestions),
+        );
+
+        cubit.close();
+      });
+    });
+
     test('emits SurpriseError after 8s if the engine never resolves', () {
       fakeAsync((async) {
         final engine = FakeSurpriseEngine(neverCompletes: true);

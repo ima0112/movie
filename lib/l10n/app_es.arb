@@ -1,19 +1,14 @@
 {
   "@@locale": "es",
-
   "discoverSeeAll": "Ver todo",
-
   "settingsAboutVersion": "{version} ({build})",
-
   "settingsDataDeleteItemCount": "{count, plural, =1{1 elemento} other{{count} elementos}}",
-
   "failureNetwork": "Sin conexión — revisa tu internet e inténtalo de nuevo.",
   "failureServer": "Algo falló al conectar con el servidor. Inténtalo de nuevo en unos segundos.",
   "failureNotFound": "No hemos podido encontrar esto.",
   "failureQuota": "Demasiadas solicitudes — inténtalo de nuevo en un momento.",
   "failureStorage": "Algo salió mal al guardar esto en tu dispositivo.",
   "failureUnknown": "Algo salió mal. Inténtalo de nuevo.",
-
   "genreAction": "Acción",
   "genreAdventure": "Aventura",
   "genreAnimation": "Animación",
@@ -30,7 +25,6 @@
   "genreRomance": "Romance",
   "genreSciFi": "Ciencia ficción",
   "genreThriller": "Suspense",
-
   "vibeFeelGood": "Para sentirse bien",
   "vibeIndie": "Indie",
   "vibeMonster": "Monstruos",
@@ -47,37 +41,29 @@
   "vibeGangster": "Gánsteres",
   "vibeMusical": "Musical",
   "vibeFantasy": "Fantasía",
-
   "tvStatusCardLabel": "Estado",
   "tvStatusAiring": "En emisión",
   "tvStatusEnded": "Finalizada",
   "tvStatusCancelled": "Cancelada",
-
   "mediaTypeMovieSingular": "Película",
   "mediaTypeTvShowSingular": "Serie",
   "mediaTypeMoviePlural": "Películas",
   "mediaTypeTvShowPlural": "Series",
   "mediaTypeTvTag": "TV",
-
   "mediaSegmentPeople": "Personas",
   "mediaSegmentAll": "Todo",
-
   "personFilmographyAsDirector": "Como director",
-
   "discoverSortPopularity": "Popularidad",
   "discoverSortRating": "Valoración",
   "discoverSortDate": "Fecha",
   "discoverSortTitle": "Título",
   "discoverSortVotes": "Más votadas",
-
   "myListTabFavorites": "Favoritos",
   "myListTabWatchLater": "Ver después",
   "myListTabWatched": "Vistos",
-
   "myListTabPeople": "Personas",
   "myListEmptyPeopleHeadline": "Aún no hay personas",
   "myListEmptyPeopleBody": "Toca el corazón en la página de una persona para tenerla aquí.",
-
   "myListActionMarkWatched": "Marcar como vista",
   "myListActionEditWatched": "Editar valoración y fecha",
   "myListActionAddFavorite": "Añadir a favoritas",
@@ -87,27 +73,20 @@
   "myListActionRemoveWatched": "Quitar de vistas",
   "myListActionRemovePerson": "Quitar de Personas",
   "myListRowActionsLabel": "Más acciones",
-
   "swipeDelete": "Borrar",
   "swipeReleaseToDelete": "Suelta para borrar",
-
   "libraryAddedToTab": "{title} añadida a {tabName}",
   "libraryMarkedWatched": "{title} marcada como vista",
   "libraryMarkedWatchedLeftWatchLater": "{title} marcada como vista · Quitada de Ver después",
   "myListRemovedFromTab": "{title} eliminada de {tabName}",
-
   "myListEmptyFavoritesHeadline": "Todavía no tienes favoritos",
   "myListEmptyWatchLaterHeadline": "Nada para ver después todavía",
   "myListEmptyWatchedHeadline": "Aún no has marcado nada como visto",
-
   "myListFallbackTitleMovie": "Película n.º {id}",
   "myListFallbackTitleTvShow": "Serie n.º {id}",
-
   "filteredListExcludeGenreChip": "Sin {genreName}",
-
   "myListFilteredEmptyMovieTitle": "No hay películas aquí",
   "myListFilteredEmptyTvShowTitle": "No hay series aquí",
-
   "commonCouldntOpenLink": "No se pudo abrir ese enlace",
   "offlineStateTitle": "Estás sin conexión",
   "offlineStateBody": "Para descubrir y buscar necesitas internet. Tu lista sigue disponible.",
@@ -115,18 +94,14 @@
   "commonRetry": "Reintentar",
   "commonNext": "Siguiente",
   "commonSkip": "Omitir",
-
   "navTabDiscover": "Descubrir",
   "navTabExplore": "Explorar",
   "navTabMyList": "Mi lista",
   "navTabYou": "Tú",
   "navMatchButton": "Sorpréndeme y emparejar",
-
   "offlineBannerMessage": "Sin conexión a internet",
-
   "onboardingSaveError": "Algo salió mal. Inténtalo de nuevo.",
   "onboardingTastesSavedSnackbar": "Gustos guardados · Edítalos en Tú",
-
   "onboardingLikedEyebrow": "Hazla tuya",
   "onboardingLikedHeadline": "¿Qué te gusta?",
   "onboardingLikedHighlight": "gusta",
@@ -135,7 +110,6 @@
   "onboardingGenreStep3HighlightWord": "nunca",
   "onboardingVetoedBody": "Elige los que prefieres no ver y los dejaremos fuera de tus recomendaciones.",
   "onboardingVetoedCta": "Empezar",
-
   "onboardingNameHeadline": "¿Cómo te llamas?",
   "onboardingNameEyebrow": "Tu perfil",
   "onboardingNameHighlight": "llamas",
@@ -144,7 +118,6 @@
   "onboardingNameHint": "Tu nombre",
   "profileNameLabel": "Nombre",
   "profileColorLabel": "Color",
-
   "onboardingIntroDiscoverHeadline": "Encuentra qué ver\nen segundos",
   "onboardingIntroDiscoverHighlight": "en segundos",
   "onboardingIntroRatingLabel": "valoración",
@@ -155,13 +128,11 @@
   "onboardingWelcomeTagline": "Encuentra qué ver",
   "onboardingWelcomeGetStarted": "Empezar",
   "onboardingWelcomeTmdbAttribution": "Datos de TMDB",
-
   "commonCouldntLoad": "No pudimos cargar",
   "commonReset": "Restablecer",
   "commonCancel": "Cancelar",
   "commonClearAll": "Borrar todo",
   "commonGenres": "Géneros",
-
   "carouselSectionForYou": "Para ti",
   "carouselSectionPopularThisWeek": "Popular esta semana",
   "carouselSectionBecauseYouLikeGenre": "Porque te gusta {genre}",
@@ -197,7 +168,6 @@
   "carouselSectionUpcoming": "Próximamente",
   "carouselSectionAiringNow": "En emisión ahora",
   "carouselSectionPopular": "Populares",
-
   "exploreGenreLabel": "Género",
   "exploreGenreAll": "Todos",
   "explorePlatformLabel": "Plataforma",
@@ -222,7 +192,6 @@
   "explorePersonLabel": "Persona",
   "explorePersonMetadata": "{department} · Persona",
   "exploreResultMetadata": "{year} · {typeLabel}",
-
   "filteredListYearRangeChip": "{from}–{to}",
   "filteredListMinRatingChip": "Valoración {rating}+",
   "filteredListMaxRuntimeChip": "Menos de {minutes} min",
@@ -230,7 +199,6 @@
   "filteredListClearFilters": "Limpiar filtros",
   "filteredListEmptyBody": "Prueba con menos filtros o una nota mínima más baja.",
   "filteredListCountLine": "{count, plural, =1{1 resultado} other{{count} resultados}} · {sortLabel}",
-
   "filterSheetTitle": "Filtros",
   "filterSheetClear": "Limpiar",
   "filterSheetSectionStreaming": "Streaming en",
@@ -259,47 +227,35 @@
   "filterSheetSectionStatus": "Estado",
   "filterSheetSectionSortBy": "Ordenar por",
   "filterSheetSeeResultsLoading": "Ver resultados",
-
   "discoverRangeFiltersYearRange": "{from} – {to}",
   "discoverRangeFiltersNoLimit": "Sin límite",
   "discoverRangeFiltersMinutes": "{value} min",
-
   "libraryRowAddedToday": "Añadida hoy",
   "libraryRowAddedYesterday": "Añadida ayer",
   "libraryRowAddedDaysAgo": "Hace {count} días",
   "libraryRowAddedWeeksAgo": "Hace {count, plural, =1{1 semana} other{{count} semanas}}",
   "libraryRowAddedOn": "Añadida {date}",
-
   "myListUndoAction": "Deshacer",
   "myListBodyOtherTabsNote": "Explora para añadir películas y series aquí.",
   "myListBodyEmptyFilterTitle": "Nada coincide con tus filtros",
-
   "myListSeasonsCount": "{count, plural, =1{1 temporada} other{{count} temporadas}}",
   "myListEpisodesCount": "{count, plural, =1{1 episodio} other{{count} episodios}}",
   "myListRuntimeHoursMinutes": "{hours} h {minutes} min",
   "myListRuntimeMinutesOnly": "{minutes} min",
-
   "myListSortTitleAz": "Título A-Z",
   "myListSortTmdbRating": "Valoración de TMDB",
   "myListSortMyRating": "Mi valoración",
   "myListSortDateWatched": "Fecha de visionado",
-
   "myListFilterSheetTitle": "Ordenar y filtrar",
   "commonApply": "Aplicar",
-
   "myListHideWatchedToggle": "Ocultar lo que he visto",
-
-
   "myTastesTitle": "Mis gustos",
   "myTastesSummaryVibeCount": "{count, plural, =1{1 vibe} other{{count} vibes}}",
-
   "myTastesInvitationTitle": "Crea tu perfil de gustos",
   "myTastesInvitationBody": "Recibe recomendaciones que de verdad encajen con lo que te gusta.",
-
   "youHeaderGreetingNoProfile": "Hola",
   "youHeaderTapToSetName": "Toca para poner tu nombre",
   "youHeaderGreetingWithName": "Hola, {name}",
-
   "youStatsDaysOfScreen": "{days, plural, =1{≈ 1 día de pantalla} other{≈ {days} días de pantalla}}",
   "youStatsStreak": "Racha de {weeks, plural, =1{1 semana} other{{weeks} semanas}}",
   "youStatsThisMonth": "{count} este mes",
@@ -318,7 +274,6 @@
   "myTastesRowFallback": "Géneros, vibes, plataformas y más",
   "yourActivityHoursLabel": "Horas",
   "yourActivitySeeStats": "Ver estadísticas",
-
   "statsTitle": "Estadísticas",
   "statsActivityStripTitle": "Actividad de los últimos 12 meses",
   "statsPeriodAllTime": "Todo",
@@ -366,7 +321,6 @@
   "statsHoursOfMoviesLabel": "Horas de películas",
   "statsTvShowsWatchedLabel": "Series vistas",
   "statsEstimatedTvHoursLabel": "Horas estimadas de series",
-
   "myTastesTypeTitle": "¿Qué sueles ver?",
   "myTastesTypeHint": "Define qué catálogo mostramos primero.",
   "myTastesVibesTitle": "Vibes favoritas",
@@ -392,15 +346,12 @@
   "myTastesGenresLikeTitle": "Géneros que me gustan",
   "myTastesGenresNeverTitle": "Géneros que evito",
   "myTastesSavedIndicator": "Guardado",
-
   "statsHoursValue": "{hours} h",
-
   "mediaDetailDuration": "Duración",
   "mediaDetailClassification": "Clasificación",
   "mediaDetailSynopsis": "Sinopsis",
   "commonReadLess": "Leer menos",
   "commonReadMore": "Leer más",
-
   "tvEpisodeCount": "{count, plural, =1{1 episodio} other{{count} episodios}}",
   "mediaCreatedByLabel": "Creada por ",
   "mediaDirectedByLabel": "Dirigida por ",
@@ -421,38 +372,30 @@
   "tvSeasonLabel": "Temporada {number}",
   "tvEpisodeRowTitle": "{number}. {name}",
   "tvEpisodeTba": "Por confirmar",
-
   "commonDone": "Listo",
   "commonNoMatches": "Sin coincidencias",
   "commonSave": "Guardar",
-
   "mediaDetailHaveYouFinished": "¿Has terminado {title}?",
   "mediaDetailMarkAsWatched": "Marcar como visto",
   "mediaDetailDateLabel": "Fecha",
   "mediaDetailRatingStarLabel": "{count} de 5",
   "mediaDetailYourRating": "Tu valoración",
   "mediaDetailRemoveFromWatched": "Quitar de Vistos",
-
   "regionSheetTitle": "Región",
   "regionSheetSubtitle": "Define qué plataformas ves en \"Dónde ver\".",
   "regionSheetSearchHint": "Buscar países",
-
   "fullCastCastLabel": "Reparto",
   "fullCastCrewLabel": "Equipo",
   "fullCastSearchHint": "Buscar en reparto y equipo",
-
   "mediaSimilarMoviesTitle": "Películas similares",
   "mediaSimilarTvTitle": "Series similares",
   "mediaSimilarTitle": "Similares",
-
   "personDetailSave": "Guardar en Mi lista",
   "mediaDetailShare": "Compartir",
   "mediaDetailShareFailed": "No se pudo compartir",
   "mediaDetailActionTrailer": "Tráiler",
   "mediaDetailActionSeeSimilar": "Ver similares",
   "mediaDetailActionFavorite": "Favorito",
-
-
   "whereToWatchTitle": "Dónde ver",
   "whereToWatchTapHint": "Toca un servicio para abrirlo en JustWatch",
   "whereToWatchNoProviders": "No disponible para ver, alquilar o comprar en {region}. Prueba con otro país.",
@@ -462,7 +405,6 @@
   "whereToWatchBuy": "Compra",
   "whereToWatchJustWatchAttribution": "Datos de JustWatch",
   "whereToWatchOverflowChip": "+{count}",
-
   "personAgeLivedYears": "Vivió {age} años",
   "personAgeYearsOld": "{age} años",
   "personBiographyInEnglish": "Biografía en inglés",
@@ -471,7 +413,6 @@
   "personFilmographyLinkLabel": "Ver filmografía completa",
   "personFilmographyTitleCount": "{count, plural, =1{1 título} other{{count} títulos}}",
   "personFilmographyTitle": "Filmografía",
-
   "quizExcludeWatchedToggle": "Excluir lo que ya vi",
   "quizGenreHeadlineBefore": "¿Qué ",
   "quizGenreHeadlineAccent": "NO",
@@ -500,19 +441,14 @@
   "quizStatusAny": "Cualquiera",
   "quizStatusFinished": "Finalizada",
   "quizContinueButton": "Continuar",
-
   "surpriseErrorMessage": "No hemos encontrado nada. Inténtalo de nuevo.",
   "chooseTypeHeadlineLead": "¿Qué te apetece ver",
   "chooseTypeHeadlineAccent": "hoy",
-  "surpriseNoMoreSuggestionsTitle": "Eso es todo por ahora",
-  "surpriseNoMoreSuggestionsBody": "Se nos acabaron las sugerencias de esta búsqueda — inténtalo de nuevo para encontrar algo nuevo.",
-  "surpriseSearchAgain": "Buscar de nuevo",
   "surpriseNoMatchTitle": "No hemos encontrado nada",
   "chooseTypeMovieLabel": "Una película",
   "chooseTypeTvShowLabel": "Una serie",
   "chooseTypeMovieSubtitle": "Un plan de un par de horas",
   "chooseTypeTvShowSubtitle": "Para engancharte varias noches",
-  "surpriseYourSuggestionTitle": "Tu sugerencia",
   "surpriseCardAffinity": "{percent} % para ti",
   "surpriseCardSeasons": "{count, plural, =1{1 temporada} other{{count} temporadas}}",
   "surpriseCardSince": "desde {year}",
@@ -523,38 +459,35 @@
   "surpriseThumbnailSaved": "Carta {number}, guardada",
   "surpriseHelpDoubleTap": "Toca dos veces para elegir",
   "surpriseRerollButton": "Volver a pedir otras 5",
+  "surpriseChooseThis": "Elegir esta",
+  "surpriseChosenLabel": "Tu sorpresa de hoy",
+  "surpriseChosenInWatchLater": "En Ver después",
+  "surpriseNoticeWidened": "Ampliamos un poco la búsqueda para encontrar estas.",
+  "surpriseNoticeNoMore": "No hay más sorpresas con estas respuestas.",
+  "surpriseNoticeOffline": "Sin conexión: no se pudo pedir más.",
   "surpriseShufflingTitle": "Barajando tus 5 sorpresas",
   "surpriseShufflingSubtitle": "Mezclando lo que te gusta con lo que no esperas",
-  "surpriseSearchingLabel": "Buscando…",
   "surpriseViewDetailsLink": "Ver detalles",
   "surpriseSourceProfile": "Según tus gustos",
-  "surpriseSourceInferredList": "Según tu lista",
-  "surpriseSourceQuiz": "Según tus respuestas",
-  "surpriseRelaxedSearchNote": "Ampliamos un poco la búsqueda para encontrar esta coincidencia.",
   "surpriseAddToWatchLater": "Añadir a ver después",
   "surpriseAnotherSuggestion": "Otra sugerencia",
-  "surpriseAddedToWatchLaterSnackbar": "Añadido a ver después",
   "surpriseChooseSourceTitle": "Encuentra algo para ver",
   "surpriseSourceProfileGenres": "Tus gustos: {genres}.",
   "surpriseGenresAnd": "{rest} y {last}",
   "surpriseQuizNote": "El cuestionario no cambia tus gustos guardados.",
   "surpriseUseMyTastes": "Usar mis gustos",
   "surpriseAnswerQuizInstead": "Responder el cuestionario",
-
   "matchHubTitle": "Match",
   "matchHubSurpriseMeTitle": "Sorpréndeme",
   "matchHubSurpriseMeSubtitle": "Una sugerencia solo para ti",
   "matchHubWithFriendsTitle": "Match con amigos",
   "matchHubWithFriendsSubtitle": "Decide con amigos en segundos",
   "matchHubSoonPill": "Pronto",
-
   "settingsTitle": "Ajustes",
-
   "settingsPreferencesHeader": "Preferencias",
   "settingsLanguageLabel": "Idioma",
   "languageNameSpanish": "Español",
   "languageNameEnglish": "English",
-
   "settingsDataHeader": "Datos",
   "settingsExportMyList": "Exportar mi lista",
   "settingsDeleteMyListLabel": "Eliminar mi lista",
@@ -568,13 +501,11 @@
   "settingsDeleteMyListFailedSnackbar": "No se pudo eliminar tu lista",
   "settingsMyTastesDeletedSnackbar": "Gustos eliminados",
   "settingsDeleteMyTastesFailedSnackbar": "No se pudieron eliminar tus gustos",
-
   "settingsDeleteListDialogTitle": "¿Eliminar tu lista?",
   "settingsDeleteTastesDialogTitle": "¿Eliminar tus gustos?",
   "settingsDeleteDialogBody": "Se eliminarán {itemsPhrase}. No podrás deshacerlo.",
   "settingsDataDeleteSelectionCount": "{count, plural, =1{1 selección} other{{count} selecciones}}",
   "commonDelete": "Eliminar",
-
   "settingsBuildNumberCopiedSnackbar": "Número de compilación copiado",
   "settingsAboutHeader": "Acerca de",
   "settingsVersionLabel": "Versión",
@@ -587,6 +518,5 @@
   "attributionJustWatchDetail": "Streaming, alquiler y compra según tu región.",
   "attributionFooter": "PakoTV es un proyecto personal gratuito. Todas las marcas pertenecen a sus respectivos dueños.",
   "settingsLicensesLabel": "Licencias",
-
   "editProfileSheetTitle": "Editar perfil"
 }

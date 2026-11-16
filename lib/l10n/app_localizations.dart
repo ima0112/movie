@@ -2762,24 +2762,6 @@ abstract class AppLocalizations {
   /// **'today'**
   String get chooseTypeHeadlineAccent;
 
-  /// No description provided for @surpriseNoMoreSuggestionsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'That\'s all for now'**
-  String get surpriseNoMoreSuggestionsTitle;
-
-  /// No description provided for @surpriseNoMoreSuggestionsBody.
-  ///
-  /// In en, this message translates to:
-  /// **'We\'re out of suggestions from this search — try again for a fresh pick.'**
-  String get surpriseNoMoreSuggestionsBody;
-
-  /// No description provided for @surpriseSearchAgain.
-  ///
-  /// In en, this message translates to:
-  /// **'Search again'**
-  String get surpriseSearchAgain;
-
   /// E3's SurpriseError title — distinct from surpriseErrorMessage (the body), even though the wording overlaps in English.
   ///
   /// In en, this message translates to:
@@ -2809,12 +2791,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To get hooked over several nights'**
   String get chooseTypeTvShowSubtitle;
-
-  /// E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states.
-  ///
-  /// In en, this message translates to:
-  /// **'Your suggestion'**
-  String get surpriseYourSuggestionTitle;
 
   /// A Surprise-me card's affinity tag: the engine's score scaled to 60-98 — a relative affinity, not a probability.
   ///
@@ -2883,6 +2859,42 @@ abstract class AppLocalizations {
   /// **'Ask for another 5'**
   String get surpriseRerollButton;
 
+  /// The fixed button on a title's detail when it was opened from Surprise me's deck: does what the double tap does.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose this'**
+  String get surpriseChooseThis;
+
+  /// The label above the chosen card on Surprise me's closing screen; shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Your surprise of the day'**
+  String get surpriseChosenLabel;
+
+  /// No description provided for @surpriseChosenInWatchLater.
+  ///
+  /// In en, this message translates to:
+  /// **'In Watch later'**
+  String get surpriseChosenInWatchLater;
+
+  /// No description provided for @surpriseNoticeWidened.
+  ///
+  /// In en, this message translates to:
+  /// **'We widened the search a little to find these.'**
+  String get surpriseNoticeWidened;
+
+  /// No description provided for @surpriseNoticeNoMore.
+  ///
+  /// In en, this message translates to:
+  /// **'No more surprises with these answers.'**
+  String get surpriseNoticeNoMore;
+
+  /// No description provided for @surpriseNoticeOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline — couldn\'t ask for more.'**
+  String get surpriseNoticeOffline;
+
   /// E3a (Surprise me, searching): the headline under the shuffling cards.
   ///
   /// In en, this message translates to:
@@ -2894,12 +2906,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mixing what you like with what you don\'t expect'**
   String get surpriseShufflingSubtitle;
-
-  /// No description provided for @surpriseSearchingLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Searching…'**
-  String get surpriseSearchingLabel;
 
   /// E3's result card link (docs/SCREENS.md E3).
   ///
@@ -2913,24 +2919,6 @@ abstract class AppLocalizations {
   /// **'Based on your tastes'**
   String get surpriseSourceProfile;
 
-  /// No description provided for @surpriseSourceInferredList.
-  ///
-  /// In en, this message translates to:
-  /// **'Based on your list'**
-  String get surpriseSourceInferredList;
-
-  /// E3's own subtitle per SurpriseResult.source (docs/SCREENS.md E3) — one line per SuggestionSource value, including the quiz now.
-  ///
-  /// In en, this message translates to:
-  /// **'Based on your answers'**
-  String get surpriseSourceQuiz;
-
-  /// No description provided for @surpriseRelaxedSearchNote.
-  ///
-  /// In en, this message translates to:
-  /// **'We broadened the search a bit to find this match.'**
-  String get surpriseRelaxedSearchNote;
-
   /// No description provided for @surpriseAddToWatchLater.
   ///
   /// In en, this message translates to:
@@ -2942,12 +2930,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Another suggestion'**
   String get surpriseAnotherSuggestion;
-
-  /// No description provided for @surpriseAddedToWatchLaterSnackbar.
-  ///
-  /// In en, this message translates to:
-  /// **'Added to Watch later'**
-  String get surpriseAddedToWatchLaterSnackbar;
 
   /// H11's own headline (docs/SCREENS.md H11), shown above the subtitle naming where the suggestion would come from.
   ///
