@@ -746,6 +746,59 @@ void main() {
         cubit.close();
       });
     });
+
+    test('what the history says about taste reaches the engine: a genre '
+        'chosen before counts, and a pick in this session counts at once', () {
+      fakeAsync((async) {
+        final history = InMemorySurpriseHistoryRepository();
+        unawaited(
+          history.recordShown([
+            SurpriseHistoryEntry(
+              key: const MediaKey(type: MediaType.movie, tmdbId: 900),
+              sessionId: 'old',
+              shownAt: now.subtract(const Duration(days: 3)),
+              genres: const [Genre(id: 'crime')],
+              outcome: SurpriseOutcome.chosen,
+            ),
+          ]),
+        );
+        final engine = FakeSurpriseEngine(
+          results: [
+            Success(batchOfGenre(5, 'horror')),
+            Success(batchOf(5, first: 5)),
+          ],
+        );
+        final cubit = _cubit(
+          engine: engine,
+          profile: _profile(), // likes drama (+3)
+          history: history,
+          clock: () => now,
+        );
+
+        runSearch(cubit, async);
+        async.flushMicrotasks();
+
+        final first = engine.requests.first.genreAffinity;
+        expect(first[const Genre(id: 'crime')], greaterThan(0)); // from history
+        expect(first[const Genre(id: 'drama')], 3); // from the profile
+        expect(first[const Genre(id: 'horror')], isNull);
+
+        // A horror card is saved now: the next batch already knows.
+        cubit.recordOutcome(SurpriseOutcome.saved);
+        async.flushMicrotasks();
+        for (var i = 0; i < 5; i++) {
+          cubit.another();
+        }
+        unawaited(cubit.retry());
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
+
+        final second = engine.requests.last.genreAffinity;
+        expect(second[const Genre(id: 'horror')], 4);
+        expect(second[const Genre(id: 'crime')], greaterThan(0));
+        cubit.close();
+      });
+    });
   });
 
   group('SurpriseCubit — picking a type again', () {

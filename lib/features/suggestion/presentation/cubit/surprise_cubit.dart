@@ -16,6 +16,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../match_engine/domain/participant_answers.dart';
 import '../../../match_engine/domain/surprise_batch.dart';
 import '../../../match_engine/domain/surprise_engine.dart';
+import '../../../match_engine/domain/surprise_history_affinity.dart';
 import '../../../match_engine/domain/surprise_request.dart';
 import '../../../taste_profile/domain/taste_profile_builder.dart';
 import 'surprise_state.dart';
@@ -106,7 +107,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
 
   /// Taste for the engine: the library's genre affinity plus the profile's
   /// liked genres. Computed in [chooseType], where both are at hand.
-  Map<Genre, int> _genreAffinity = const {};
+  Map<Genre, int> _baseAffinity = const {};
 
   static const int _profileLikedWeight = 3;
 
@@ -134,7 +135,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final libraryEntries = await _libraryEntries();
     if (generation != _searchGeneration || isClosed) return;
 
-    _genreAffinity = {
+    _baseAffinity = {
       ...genreAffinityFrom(libraryEntries),
       if (profile != null)
         for (final g in profile.likedGenres)
@@ -293,6 +294,19 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     emit(const ChoosingType());
   }
 
+  /// The taste for the engine: [_baseAffinity] (My List and the profile) plus
+  /// what the history says — read at each search, so what was chosen, saved or
+  /// revisited in this very session already counts for the next batch.
+  Future<Map<Genre, int>> _affinityWithHistory() async {
+    final history = await _history?.all();
+    if (history is! Success<List<SurpriseHistoryEntry>>) return _baseAffinity;
+    final learned = SurpriseHistoryAffinity.from(history.value, now: _clock());
+    return {
+      for (final genre in {..._baseAffinity.keys, ...learned.keys})
+        genre: (_baseAffinity[genre] ?? 0) + (learned[genre] ?? 0),
+    };
+  }
+
   Future<List<UserMediaEntry>> _libraryEntries() async {
     final result = await _userLibraryRepository.all();
     return switch (result) {
@@ -338,7 +352,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
       region: _region(),
       seed: _random.nextInt(1 << 31),
       excludeKeys: excluded,
-      genreAffinity: _genreAffinity,
+      genreAffinity: await _affinityWithHistory(),
     );
 
     // Future.wait races the engine against the minimum delay — the combined
