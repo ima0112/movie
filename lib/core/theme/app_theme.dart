@@ -73,6 +73,9 @@ class AppTheme {
         elevation: 0,
         contentTextStyle: AppTextStyles.bodySm,
         actionTextColor: AppColors.accent,
+        // Swipe it away sideways, as with any floating card (Flutter's default
+        // is down only, which nobody tries first).
+        dismissDirection: DismissDirection.horizontal,
         insetPadding: const EdgeInsets.fromLTRB(
           AppSpacing.screenMargin,
           0,

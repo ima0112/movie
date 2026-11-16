@@ -94,6 +94,31 @@ void main() {
     expect(find.text('Copied'), findsNothing);
   });
 
+  for (final offset in [const Offset(500, 0), const Offset(-500, 0)]) {
+    testWidgets('swiping it ${offset.dx > 0 ? 'right' : 'left'} dismisses '
+        'it', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          (c) => AppSnackBar.show(
+            c,
+            'Copied',
+            actionLabel: 'Undo',
+            onAction: () {},
+          ),
+        ),
+      );
+      await tester.tap(find.text('go'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('Copied'), findsOneWidget);
+
+      await tester.drag(find.text('Copied'), offset);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Copied'), findsNothing);
+    });
+  }
+
   testWidgets('a new snackbar replaces the one showing', (tester) async {
     await tester.pumpWidget(
       _app((c) {
