@@ -12,6 +12,8 @@
 
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:movies/core/data/local/drift_local_flags_repository.dart'
+    as _i229;
 import 'package:movies/core/data/local/drift_onboarding_repository.dart'
     as _i116;
 import 'package:movies/core/data/local/drift_recently_viewed_repository.dart'
@@ -33,6 +35,8 @@ import 'package:movies/core/data/repositories/tmdb_person_repository.dart'
     as _i496;
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart' as _i294;
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart' as _i118;
+import 'package:movies/core/domain/repositories/local_flags_repository.dart'
+    as _i741;
 import 'package:movies/core/domain/repositories/media_repository.dart' as _i245;
 import 'package:movies/core/domain/repositories/onboarding_repository.dart'
     as _i725;
@@ -83,6 +87,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i231.AppDatabase>(() => _i231.AppDatabase());
     gh.lazySingleton<_i942.SearchHistoryRepository>(
       () => _i598.DriftSearchHistoryRepository(gh<_i231.AppDatabase>()),
+    );
+    gh.lazySingleton<_i741.LocalFlagsRepository>(
+      () => _i229.DriftLocalFlagsRepository(gh<_i231.AppDatabase>()),
     );
     gh.lazySingleton<_i725.OnboardingRepository>(
       () => _i116.DriftOnboardingRepository(gh<_i231.AppDatabase>()),
