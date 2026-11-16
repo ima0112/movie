@@ -1010,6 +1010,9 @@
       }
     }
   },
+  "statsActivityTitle": "Activity",
+  "statsActivityLess": "Less",
+  "statsActivityMore": "More",
   "statsEmptyTitle": "Mark something as watched to see your stats",
   "statsEmptyBody": "Your numbers will show up here once you do.",
   "statsGenreBarsTitle": "Genres you watch most",

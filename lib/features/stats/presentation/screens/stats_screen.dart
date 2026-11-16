@@ -12,6 +12,7 @@ import '../../../../shared/widgets/page_margin.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../cubit/stats_cubit.dart';
 import '../widgets/stats_empty_state.dart';
+import '../widgets/stats_activity_section.dart';
 import '../widgets/stats_empty_period.dart';
 import '../widgets/stats_genre_bars.dart';
 import '../widgets/stats_hero_card.dart';
@@ -97,6 +98,10 @@ class _StatsView extends StatelessWidget {
                   children: [
                     PageMargin(child: StatsHeroCard(insights: insights)),
                     StatsHighlights(insights: insights),
+                    StatsActivitySection(
+                      insights: insights,
+                      today: DateTime.now(),
+                    ),
                     const SizedBox(height: AppSpacing.sectionGap),
                     PageMargin(
                       child: StatsGenreBars(

@@ -1085,6 +1085,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get statsActivityTitle => 'Activity';
+
+  @override
+  String get statsActivityLess => 'Less';
+
+  @override
+  String get statsActivityMore => 'More';
+
+  @override
   String get statsEmptyTitle => 'Mark something as watched to see your stats';
 
   @override
