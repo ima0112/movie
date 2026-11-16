@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/portrait_only.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
@@ -32,7 +33,7 @@ class SurpriseResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<SurpriseCubit>.value(
       value: cubit,
-      child: const _SurpriseResultView(),
+      child: const PortraitOnly(child: _SurpriseResultView()),
     );
   }
 }
