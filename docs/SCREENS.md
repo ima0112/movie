@@ -331,7 +331,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 - **Empty**: outline icon in a 72 px `surfaceRaised` circle (no mascot), one-line headline, one-line body, optional CTA.
 - **Error**: same layout with "Retry".
 - **Offline**: persistent top banner "Offline" (rounded box with a wifi-off icon, neutral colors) + screens use local data when available.
-- **Snackbar**: short confirmations ("Added to Watch later", "Copied") with an "Undo" action when applicable.
+- **Snackbar**: short confirmations ("Added to Watch later", "Copied") or failures ("Couldn't save"), with an "Undo" action (amber) when it can be undone. A floating pill (`surfaceRaised`, hairline, radius 16) on the 20 px page margin, 4 s, **above the floating tab bar** on the root tabs; a new one replaces the one showing. Always shown through `AppSnackBar` (a guard test fails on a raw `SnackBar(`).
 
 ---
 

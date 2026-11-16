@@ -290,6 +290,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myListFilteredEmptyTvShowTitle => 'No TV shows here';
 
   @override
+  String get commonCouldntOpenLink => 'Couldn\'t open that link';
+
+  @override
   String get commonRetry => 'Retry';
 
   @override

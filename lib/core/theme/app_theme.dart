@@ -65,6 +65,25 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         ),
       ),
+      // The one snackbar: a floating `surfaceRaised` pill with a hairline,
+      // the action in amber (`AppSnackBar` is how it is shown).
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.surfaceRaised,
+        elevation: 0,
+        contentTextStyle: AppTextStyles.bodySm,
+        actionTextColor: AppColors.accent,
+        insetPadding: const EdgeInsets.fromLTRB(
+          AppSpacing.screenMargin,
+          0,
+          AppSpacing.screenMargin,
+          AppSpacing.sm,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          side: const BorderSide(color: AppColors.lineStrong),
+        ),
+      ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.surfaceRaised,
         // Every sheet gets the design's handle (40×4) unless it opts out.
