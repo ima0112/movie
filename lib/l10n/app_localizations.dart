@@ -1958,6 +1958,42 @@ abstract class AppLocalizations {
   /// **'You ★ {user} · TMDB ★ {tmdb}'**
   String statsDisagreement(String user, String tmdb);
 
+  /// C4 genres list: expands it to every genre.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all ({count})'**
+  String statsGenresShowAll(int count);
+
+  /// No description provided for @statsGenresShowLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get statsGenresShowLess;
+
+  /// A genre's share of the genres counted.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String statsGenrePercent(int percent);
+
+  /// No description provided for @statsDecadesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'By decade'**
+  String get statsDecadesTitle;
+
+  /// C4 decades chart label: 1990 -> '1990s'.
+  ///
+  /// In en, this message translates to:
+  /// **'{decade}s'**
+  String statsDecadeLabel(int decade);
+
+  /// C4's always-visible data-coverage note: how many watched titles have genres, year and duration saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on {complete} of {total, plural, one{1 title} other{{total} titles}} with full data.'**
+  String statsCoverage(int complete, int total);
+
   /// No description provided for @statsEmptyTitle.
   ///
   /// In en, this message translates to:

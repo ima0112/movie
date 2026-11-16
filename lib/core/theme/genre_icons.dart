@@ -19,6 +19,9 @@ final List<(Genre, IconData)> genreOptions = [
   for (final genre in GenreCatalog.all) (genre, _icons[genre.id]!),
 ];
 
+/// [genre]'s icon, a film strip for one outside the catalog.
+IconData genreIconOf(Genre genre) => _icons[genre.id] ?? AppIcons.movie;
+
 const Map<String, IconData> _icons = {
   'action': AppIcons.genreAction,
   'adventure': AppIcons.genreAdventure,

@@ -1144,6 +1144,38 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String statsGenresShowAll(int count) {
+    return 'Ver todos ($count)';
+  }
+
+  @override
+  String get statsGenresShowLess => 'Ver menos';
+
+  @override
+  String statsGenrePercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get statsDecadesTitle => 'Por década';
+
+  @override
+  String statsDecadeLabel(int decade) {
+    return '${decade}s';
+  }
+
+  @override
+  String statsCoverage(int complete, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$total títulos',
+      one: '1 título',
+    );
+    return 'Calculado sobre $complete de $_temp0 con datos completos.';
+  }
+
+  @override
   String get statsEmptyTitle =>
       'Marca algo como visto para ver tus estadísticas';
 
