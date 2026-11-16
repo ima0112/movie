@@ -192,6 +192,36 @@
     "description": "The same panel once the drag has gone far enough that letting go deletes the row."
   },
 
+  "libraryAddedToTab": "{title} added to {tabName}",
+  "@libraryAddedToTab": {
+    "description": "Snackbar after a Favorites / Watch later toggle turned on (D1/D2, H1, Home's save button). {title} is the title's name; {tabName} that list's localized label.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "tabName": {
+        "type": "String"
+      }
+    }
+  },
+  "libraryMarkedWatched": "{title} marked as watched",
+  "@libraryMarkedWatched": {
+    "description": "Snackbar after H2's Save on a title that wasn't watched.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "libraryMarkedWatchedLeftWatchLater": "{title} marked as watched · Removed from Watch later",
+  "@libraryMarkedWatchedLeftWatchLater": {
+    "description": "The same snackbar when the title was in Watch later (marking watched takes it out; docs/SCREENS.md D1).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
   "myListRemovedFromTab": "{title} removed from {tabName}",
   "@myListRemovedFromTab": {
     "description": "My List's remove snackbar (swipe, or the sheet's red row). {title} is the entry's name; {tabName} is that tab's own localized label (myListTabFavorites/WatchLater/Watched/People).",

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/user_media_entry.dart';
@@ -48,11 +50,13 @@ class LibraryRowSwipeable extends StatelessWidget {
       onMore: onMore,
       onTap: onTap,
       onLongPress: onLongPress,
-      onDelete: () => removeFromTab(
-        context,
-        entry: entry,
-        tab: tab,
-        repository: userLibraryRepository,
+      onDelete: () => unawaited(
+        removeFromTab(
+          context,
+          entry: entry,
+          tab: tab,
+          repository: userLibraryRepository,
+        ),
       ),
     );
   }

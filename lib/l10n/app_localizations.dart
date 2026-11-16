@@ -560,6 +560,24 @@ abstract class AppLocalizations {
   /// **'Release to delete'**
   String get swipeReleaseToDelete;
 
+  /// Snackbar after a Favorites / Watch later toggle turned on (D1/D2, H1, Home's save button). {title} is the title's name; {tabName} that list's localized label.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} added to {tabName}'**
+  String libraryAddedToTab(String title, String tabName);
+
+  /// Snackbar after H2's Save on a title that wasn't watched.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} marked as watched'**
+  String libraryMarkedWatched(String title);
+
+  /// The same snackbar when the title was in Watch later (marking watched takes it out; docs/SCREENS.md D1).
+  ///
+  /// In en, this message translates to:
+  /// **'{title} marked as watched · Removed from Watch later'**
+  String libraryMarkedWatchedLeftWatchLater(String title);
+
   /// My List's remove snackbar (swipe, or the sheet's red row). {title} is the entry's name; {tabName} is that tab's own localized label (myListTabFavorites/WatchLater/Watched/People).
   ///
   /// In en, this message translates to:
