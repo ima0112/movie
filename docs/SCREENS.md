@@ -38,7 +38,7 @@ Navigation rule: only the four roots (B1, B2, B4, B5) show the bottom bar and th
 
 ## B. Tabs (bottom bar with 4 + Match button)
 
-Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List · You. A floating glass pill (inset 16 px, 68 px tall, blurred) with four icon-only tabs (26 px icon; active in white with a 5 px amber dot, inactive in gray) and in the center a **56 px amber circular button with a sparkle icon, straddling the pill's top edge** that opens B3 as a modal. White dot on the button when a room is active. Visible on the 4 roots; hidden in details, quiz, rooms, and inside the Match modal. The page scrolls under the bar and fades into the background behind it (an eased transparent-to-page-color gradient that starts ~72 px above the bar's top edge and is fully the page color at the very bottom, so content disappears gradually; it doesn't take touches); every root tab's list ends with padding equal to the bar's height, so the last item can be scrolled up above it.
+Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List (a **bookmark** icon) · You. A floating glass pill (inset 16 px, 68 px tall, blurred) with four icon-only tabs (26 px icon; active in white with a 5 px amber dot, inactive in gray) and in the center a **56 px amber circular button with a sparkle icon, straddling the pill's top edge** that opens B3 as a modal. White dot on the button when a room is active. Visible on the 4 roots; hidden in details, quiz, rooms, and inside the Match modal. The page scrolls under the bar and fades into the background behind it (an eased transparent-to-page-color gradient that starts ~72 px above the bar's top edge and is fully the page color at the very bottom, so content disappears gradually; it doesn't take touches); every root tab's list ends with padding equal to the bar's height, so the last item can be scrolled up above it.
 
 ### B1. Discover
 - Access: tab 1 (root). Main screen.
@@ -90,12 +90,12 @@ Bottom bar: Discover · Explore (a **search** icon) · [Pako button] · My List 
 - Access: tab 3. 100% local data: no skeleton or network error.
 - Elements:
   - Top bar: "My List" title and a single icon on the right, filters (→ H9; amber if filters are active).
-  - Segmented Favorites · Watch later · Watched, each with a live counter, drawn as a contained pill (same as B2's).
+  - Segmented Favorites · Watch later · Watched, drawn as a contained pill (same as B2's). **No counts** in the labels.
   - Row of amber chips with active filters (each with "×"), only when something differs from the default.
   - Rows: 56×84 poster, 16/500 title, gray 13 px line ("2022 · TV Show · 24 episodes" / "2023 · Movie · 1 h 46 min") — rendered entirely from the saved entry's own catalog snapshot, no network call; the episode count/runtime segment only appears once the entry has picked one up (a toggle or Save from the detail screen, or the detail screen's own lazy refresh on reopening) — until then the line is just "year · type". Right-hand column per tab: Favorites and Watch later → relative date saved; Watched → 1–5 amber stars (empty ones in dark gray; unrated shows all five in gray) and a short date. Tapping the stars → H2 directly.
   - Swipe left → "Remove" (red, snackbar with "Undo" for 4 s, no dialog); swipe right → "Watched" (amber → H2) in Favorites/Watch later, "Favorite" in Watched. Long-press → H1.
   - Default sort: Title A–Z, every tab (there's no "date saved" field to sort Favorites/Watch later by; Watched also offers Date watched from H9, just not as the default).
-- States: empty with sleeping Pako (Rive, `mood = asleep`), per-tab headline ("No favorites yet" / "Nothing for later yet" / "You haven't marked anything as watched yet"), a line mentioning what does exist in other tabs, "Explore" CTA. If a filter is what's emptying the list: "No TV shows here" + "See all".
+- States (centered in the room the floating bar leaves free, `ClearOfTabBar`): empty with sleeping Pako (Rive, `mood = asleep`), per-tab headline ("No favorites yet" / "Nothing for later yet" / "You haven't marked anything as watched yet"), a line mentioning what does exist in other tabs, "Explore" CTA. If a filter is what's emptying the list: "No TV shows here" + "See all".
 - Exits: D1/D2, H1, H2, H9.
 
 ### B5. You

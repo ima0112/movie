@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/theme/app_colors.dart';
@@ -42,29 +40,6 @@ void main() {
 
     await tester.tap(find.text('Beta'));
     expect(tapped, 'b');
-  });
-
-  testWidgets('a label stream updates just that segment', (tester) async {
-    final counts = StreamController<String>.broadcast();
-    addTearDown(counts.close);
-    await tester.pumpWidget(
-      _host(
-        AppSegmentedControl<int>(
-          segments: [
-            AppSegment(value: 1, label: 'One', labelStream: counts.stream),
-            const AppSegment(value: 2, label: 'Two'),
-          ],
-          selected: 1,
-          onSelected: (_) {},
-        ),
-      ),
-    );
-    expect(find.text('One'), findsOneWidget);
-
-    counts.add('One · 3');
-    await tester.pump();
-    expect(find.text('One · 3'), findsOneWidget);
-    expect(find.text('Two'), findsOneWidget);
   });
 
   testWidgets('four options survive a small device at 200% text scale', (

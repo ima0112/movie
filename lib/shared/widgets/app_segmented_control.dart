@@ -8,22 +8,10 @@ import '../../core/theme/app_text_styles.dart';
 
 /// One option of an [AppSegmentedControl].
 class AppSegment<T> {
-  const AppSegment({
-    required this.value,
-    required this.label,
-    this.labelStream,
-  });
+  const AppSegment({required this.value, required this.label});
 
   final T value;
   final String label;
-
-  /// Optional live label (a count that changes: "Favorites · 3"). Shown in
-  /// place of [label] once it emits; [label] is what shows until then and
-  /// what screen readers use as the base.
-  ///
-  /// The stream instance must stay the same across rebuilds (create it once,
-  /// e.g. in `initState`), or the segment re-subscribes every time.
-  final Stream<String>? labelStream;
 }
 
 /// The app's only tabs / segmented control: a contained pill (a
@@ -175,24 +163,15 @@ class _Option<T> extends StatelessWidget {
             style: AppTextStyles.bodySmToggle(isSelected).copyWith(
               color: isSelected ? AppColors.surface : AppColors.inkMuted,
             ),
-            child: segment.labelStream == null
-                ? _label(segment.label)
-                : StreamBuilder<String>(
-                    stream: segment.labelStream,
-                    initialData: segment.label,
-                    builder: (context, snapshot) =>
-                        _label(snapshot.data ?? segment.label),
-                  ),
+            child: Text(
+              segment.label,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ),
     );
   }
-
-  Widget _label(String text) => Text(
-    text,
-    textAlign: TextAlign.center,
-    maxLines: 1,
-    overflow: TextOverflow.ellipsis,
-  );
 }
