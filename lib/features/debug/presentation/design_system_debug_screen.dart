@@ -10,6 +10,7 @@ import '../../../shared/widgets/app_chip.dart';
 import '../../../shared/widgets/app_tab_bar.dart';
 import '../../../shared/widgets/genre_bar.dart';
 import '../../../shared/widgets/library_row.dart';
+import '../../../shared/widgets/library_row_status.dart';
 import '../../../shared/widgets/match_fab.dart';
 import '../../../shared/widgets/media_card.dart';
 import '../../../shared/widgets/media_carousel.dart';
@@ -766,46 +767,53 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const LibraryRow(
+        LibraryRow(
           posterUrl: null,
           title: 'The Bear',
-          metadata: '2022 · TV Show · 2 seasons',
-          trailing: LibraryRowTrailing.date('Saved yesterday'),
+          metadata: 'TV Show · 2022 · 2 seasons',
+          status: const LibraryRowStatus.rated(
+            rating: '8.7',
+            label: 'Added yesterday',
+          ),
+          onMore: () {},
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
-        const LibraryRow(
+        LibraryRow(
           posterUrl: null,
           title: 'Dune: Part Two',
-          metadata: '2024 · Movie · 2 h 46 min',
-          trailing: LibraryRowTrailing.stars(3),
+          metadata: 'Movie · 2024 · 2 h 46 min',
+          status: const LibraryRowStatus.watched(
+            stars: 3,
+            label: 'Watched 3 Oct, 2026',
+          ),
+          onMore: () {},
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
         LibraryRow(
           posterUrl: null,
           title: 'Oppenheimer',
-          metadata: '2023 · Movie · 3 h',
-          trailing: LibraryRowTrailing.starsWithDate(
-            rating: 4,
-            watchedAt: DateTime.now(),
+          metadata: 'Movie · 2023 · 3 h',
+          status: const LibraryRowStatus.watched(
+            stars: 4,
+            label: 'Watched 8 Nov, 2026',
           ),
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
         LibraryRow(
           posterUrl: null,
           title: 'Poor Things',
-          metadata: '2023 · Movie · 2 h 21 min',
-          // rating: null — all five stars render in lineStrong gray.
-          trailing: LibraryRowTrailing.starsWithDate(
-            rating: null,
-            watchedAt: DateTime.now().subtract(const Duration(days: 3)),
+          metadata: 'Movie · 2023 · 2 h 21 min',
+          // stars: null — all five stars render empty.
+          status: const LibraryRowStatus.watched(
+            stars: null,
+            label: 'Watched 2 Nov, 2026',
           ),
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
         const LibraryRow(
           posterUrl: null,
           title: 'Season 1',
-          metadata: '2016 · 8 episodes',
-          trailing: LibraryRowTrailing.chevron(),
+          metadata: 'TV Show · 2016 · 8 episodes',
         ),
         const Divider(color: AppColors.line, height: AppSpacing.xxl),
         Text(
@@ -816,8 +824,11 @@ class _LibraryRowSectionState extends State<_LibraryRowSection> {
         LibraryRow(
           posterUrl: null,
           title: 'Knives Out',
-          metadata: '2019 · Movie · 2 h 10 min',
-          trailing: const LibraryRowTrailing.date('Saved 3 days ago'),
+          metadata: 'Movie · 2019 · 2 h 10 min',
+          status: const LibraryRowStatus.rated(
+            rating: '7.9',
+            label: 'Added 3 days ago',
+          ),
           onSwipeLeft: () => setState(() => _lastSwipe = 'left (remove)'),
           onSwipeRight: () => setState(() => _lastSwipe = 'right (watched)'),
         ),
