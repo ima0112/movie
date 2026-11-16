@@ -43,6 +43,10 @@ abstract final class AppSnackBar {
         SnackBar(
           content: Text(message),
           duration: duration,
+          // Flutter keeps a snackbar that has an action on screen until it is
+          // dismissed by hand (`persist` defaults to `action != null`); ours
+          // all fade after [duration], "Undo" ones included.
+          persist: false,
           action: actionLabel == null
               ? null
               : SnackBarAction(label: actionLabel, onPressed: onAction!),
