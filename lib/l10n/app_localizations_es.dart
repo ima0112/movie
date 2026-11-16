@@ -1535,12 +1535,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizExcludeWatchedToggle => 'Excluir lo que ya he visto';
 
   @override
-  String get quizGenreStepHeadline => 'Elige hasta 3 que NO te apetezcan';
+  String get quizGenreHeadlineBefore => '¿Qué ';
 
   @override
-  String quizSelectionCounter(int selected, int max) {
-    return '$selected de $max';
-  }
+  String get quizGenreHeadlineAccent => 'NO';
+
+  @override
+  String get quizGenreHeadlineAfter => ' te apetece hoy?';
+
+  @override
+  String get quizGenreSubtitle => 'Descarta hasta 3 géneros';
 
   @override
   String get quizMaxSeasonsLabel => 'Temporadas máximas';
@@ -1549,7 +1553,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizSearchButton => 'Buscar';
 
   @override
-  String get quizVibeStepHeadline => 'Ahora elige 3 que SÍ te apetezcan';
+  String get quizVibeHeadlineBefore => '¿Qué ';
+
+  @override
+  String get quizVibeHeadlineAccent => 'vibes';
+
+  @override
+  String get quizVibeHeadlineAfter => ' te apetecen hoy?';
+
+  @override
+  String get quizVibeSubtitle => 'Elige hasta 3 vibes';
+
+  @override
+  String get quizContinueButton => 'Continuar';
 
   @override
   String get quizYearStepHeadline => '¿Hasta cuándo quieres retroceder?';

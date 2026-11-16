@@ -5,21 +5,18 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/vibe_tile_grid.dart';
+import '../../../../l10n/vibe_localization.dart';
+import '../../../../shared/widgets/accent_headline.dart';
+import '../../../../shared/widgets/app_chip.dart';
+import '../../../../shared/widgets/vibe_icon.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
+import '../cubit/quiz_state.dart';
 
-/// E2 step 2 — `docs/SCREENS.md` E2: "Now pick 3 you ARE in the mood
-/// for": 4-column grid of the 16 vibes; exactly 3; counter '3 of 3'."
-///
-/// Renders [VibeTileGrid] (the shared grid + long-press tooltip, also
-/// used by C5's `TasteVibeGrid`) rather than that wrapper directly: C5's
-/// own hardcoded "Vibes you like" caption doesn't fit this step's
-/// headline, so only the grid itself is reused.
-///
-/// Takes [vibeCatalog] + [mediaType] rather than an already-filtered
-/// `List<Vibe>`: resolving "the 16 vibes" for whichever type this
-/// session is about (`Vibe.isMeaningfulFor`) is this step's own job, the
-/// same way `VibeCatalog.availableFor` is documented to work.
+/// E2 step 2 — "Which **vibes** are you in the mood for today?": the vibes of
+/// the chosen kind (16 for movies, 11 for TV) as chips with their icon, up to
+/// [QuizState.maxVibes] filled in amber — none is fine, the search then goes
+/// without vibes. Once the cap is reached the rest dim and stop answering
+/// taps. Pure presentation.
 class QuizVibeStep extends StatelessWidget {
   const QuizVibeStep({
     super.key,
@@ -34,23 +31,57 @@ class QuizVibeStep extends StatelessWidget {
   final Set<String> selected;
   final ValueChanged<String> onToggle;
 
-  static const int _required = 3;
+  static const double _disabledOpacity = 0.3;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final vibes = vibeCatalog.availableFor(mediaType);
+    final atMax = selected.length >= QuizState.maxVibes;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(context.l10n.quizVibeStepHeadline, style: AppTextStyles.h1),
+        AccentHeadline(
+          before: l10n.quizVibeHeadlineBefore,
+          accent: l10n.quizVibeHeadlineAccent,
+          after: l10n.quizVibeHeadlineAfter,
+        ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          context.l10n.quizSelectionCounter(selected.length, _required),
+          l10n.quizVibeSubtitle,
           style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        VibeTileGrid(vibes: vibes, selected: selected, onToggle: onToggle),
+        const SizedBox(height: AppSpacing.xl),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.md,
+          children: [
+            for (final vibe in vibes)
+              () {
+                final isSelected = selected.contains(vibe.id);
+                final disabled = atMax && !isSelected;
+                final name = vibe.localizedName(l10n);
+                final chip = AppChip(
+                  label: name,
+                  icon: vibeIconFor(vibe),
+                  state: isSelected ? ChipState.solid : ChipState.normal,
+                  onTap: disabled ? null : () => onToggle(vibe.id),
+                );
+                return Semantics(
+                  button: true,
+                  selected: isSelected,
+                  enabled: !disabled,
+                  excludeSemantics: true,
+                  label: name,
+                  onTap: disabled ? null : () => onToggle(vibe.id),
+                  child: disabled
+                      ? Opacity(opacity: _disabledOpacity, child: chip)
+                      : chip,
+                );
+              }(),
+          ],
+        ),
       ],
     );
   }

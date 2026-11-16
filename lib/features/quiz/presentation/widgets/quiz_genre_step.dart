@@ -7,22 +7,14 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/genre_icons.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/quiz_tile.dart';
+import '../../../../shared/widgets/accent_headline.dart';
+import '../../../../shared/widgets/app_chip.dart';
+import '../cubit/quiz_state.dart';
 
-/// E2 step 1 — `docs/SCREENS.md` E2: "Pick up to 3 you're NOT in the mood
-/// for": 4-column grid of genres for the chosen type; icon + name; max
-/// 3; counter '1 of 3'."
-///
-/// "For the chosen type" isn't modeled: [GenreCatalog] (via
-/// [genreOptions]) isn't segmented by media type yet — the same gap
-/// `explore_content.dart`'s own doc comment already flags for Explore's
-/// genre grid (the TMDB-id-per-type mapping that would make this
-/// possible lives only in `data/tmdb/`) — so this shows the same 16
-/// genres for a movie or a TV session.
-///
-/// Reuses [QuizTile] directly rather than `TasteGenreGrid` (C5's own
-/// wrapper): that widget always renders its own title text, which
-/// doesn't fit this step's "headline + counter" layout.
+/// E2 step 1 — "What **NOT** are you in the mood for today?": the genres as
+/// chips that flow, up to [QuizState.maxExcludedGenres] of them struck out in
+/// red. Once the cap is reached the rest dim and stop answering taps (a tap on
+/// a struck one still takes it back out). Pure presentation.
 class QuizGenreStep extends StatelessWidget {
   const QuizGenreStep({
     super.key,
@@ -33,53 +25,56 @@ class QuizGenreStep extends StatelessWidget {
   final Set<Genre> selected;
   final ValueChanged<Genre> onToggle;
 
-  static const int _max = 3;
-  static const int _crossAxisCount = 4;
+  /// A disabled chip is shown at this opacity (the quiz tiles' own 30%).
+  static const double _disabledOpacity = 0.3;
 
   @override
   Widget build(BuildContext context) {
-    final atMax = selected.length >= _max;
+    final l10n = context.l10n;
+    final atMax = selected.length >= QuizState.maxExcludedGenres;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(context.l10n.quizGenreStepHeadline, style: AppTextStyles.h1),
+        AccentHeadline(
+          before: l10n.quizGenreHeadlineBefore,
+          accent: l10n.quizGenreHeadlineAccent,
+          after: l10n.quizGenreHeadlineAfter,
+          accentColor: AppColors.danger,
+        ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          context.l10n.quizSelectionCounter(selected.length, _max),
+          l10n.quizGenreSubtitle,
           style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _crossAxisCount,
-            mainAxisSpacing: AppSpacing.sm,
-            crossAxisSpacing: AppSpacing.sm,
-            childAspectRatio: 1,
-          ),
-          itemCount: genreOptions.length,
-          itemBuilder: (context, index) {
-            final (genre, icon) = genreOptions[index];
-            final isSelected = selected.contains(genre);
-
-            return QuizTile(
-              icon: icon,
-              label: genre.localizedName(context.l10n),
-              // A genre already at the cap and not itself selected shows
-              // disabled (30% opacity, inert) — QuizTileState's own doc
-              // comment already covers this exact "picked elsewhere,
-              // now shown while picking the opposite set" case, and E2's
-              // own "max 3" reads the same way.
-              state: isSelected
-                  ? QuizTileState.selected
-                  : (atMax ? QuizTileState.disabled : QuizTileState.normal),
-              onTap: () => onToggle(genre),
-            );
-          },
+        const SizedBox(height: AppSpacing.xl),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.md,
+          children: [
+            for (final (genre, _) in genreOptions)
+              _chip(context, genre, selected.contains(genre), atMax),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _chip(BuildContext context, Genre genre, bool isSelected, bool atMax) {
+    final disabled = atMax && !isSelected;
+    final chip = AppChip(
+      label: genre.localizedName(context.l10n),
+      state: isSelected ? ChipState.vetoed : ChipState.normal,
+      onTap: disabled ? null : () => onToggle(genre),
+    );
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      enabled: !disabled,
+      excludeSemantics: true,
+      label: genre.localizedName(context.l10n),
+      onTap: disabled ? null : () => onToggle(genre),
+      child: disabled ? Opacity(opacity: _disabledOpacity, child: chip) : chip,
     );
   }
 }
