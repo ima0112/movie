@@ -977,6 +977,29 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get viewerNewcomer => 'Recién llegado';
+
+  @override
+  String get viewerSeriesBinger => 'Maratonista de series';
+
+  @override
+  String get viewerExigentCritic => 'Crítico exigente';
+
+  @override
+  String get viewerEnthusiast => 'Espectador entusiasta';
+
+  @override
+  String viewerGenreFan(String genre) {
+    return 'Fan de $genre';
+  }
+
+  @override
+  String get viewerCinephile => 'Cinéfilo';
+
+  @override
+  String get viewerExplorer => 'De todo un poco';
+
+  @override
   String get yourActivityHoursLabel => 'Horas';
 
   @override
