@@ -69,7 +69,7 @@ void main() {
       await pump(
         ReleaseStatus(ReleaseStage.upcoming, date: DateTime(2026, 6, 12)),
       );
-      expect(find.text('Coming Jun 12, 2026'), findsOneWidget);
+      expect(find.text('Coming 12 Jun, 2026'), findsOneWidget);
       // Amber, above the title.
       final tag = tester.getRect(find.byType(PosterBadge));
       expect(tag.bottom, lessThan(tester.getRect(find.text('Inception')).top));

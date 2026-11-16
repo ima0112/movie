@@ -229,6 +229,8 @@ slivers). Un `loadKey` nuevo lo vuelve a armar (los filtros de los que
 depende el bloque). Es lógica de presentación pura; el trabajo de datos es el
 callback. Regla 17 de `CLAUDE.md`.
 
+**Fechas completas — un solo formato.** `AppLocalizations.fullDate` (`lib/l10n/full_date_format.dart`): día, mes abreviado, coma y año — «12 Jan, 2026» en inglés, «12 ene, 2026» en español (cada idioma pone sus meses). Todo sitio que muestre una fecha completa (próximas fechas, estado de estreno, episodios, «marcar como visto») pasa por ahí; nunca `2026-5-25` ni «Jan 12, 2026» (lo vigila `full_date_format_test.dart`). Las formas cortas («Hoy», «Hace 3 días», «5 mar» en Mi lista) son otra cosa y conservan la suya.
+
 **Listas de resultados — una sola cuadrícula.** `ResultsGrid`
 (`shared/widgets/results_grid.dart`): 3 columnas de pósters 2:3 sobre el margen
 de página, 12 de separación entre columnas y 20 entre filas; la usan los resultados filtrados (C1) y todos los
