@@ -76,8 +76,8 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   /// jump to a higher number) while the deck has already moved on under it.
   int? _leavingIndex;
 
-  /// A jump to a lower number: the card now on top comes from the front.
-  bool _comingFromFront = false;
+  /// Which way the last jump went: toward a higher number (true) or a lower one.
+  bool _zoomForward = true;
 
   /// The top card's horizontal offset while a finger is on it.
   double _dx = 0;
@@ -102,6 +102,9 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
 
   /// How far the zooming card grows toward the viewer.
   static const double _zoomGrowth = 0.28;
+
+  /// How far a card shrinks when it goes back (or comes from the back).
+  static const double _zoomShrink = 0.2;
 
   /// A card arriving from the front starts this faint.
   static const double _arrivingStart = 0.15;
@@ -152,15 +155,14 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
         : step == n - 1
         ? false
         : widget.index > old.index;
-    _leavingIndex = forward ? old.index : null;
-    _comingFromFront = !forward;
+    _leavingIndex = old.index;
+    _zoomForward = forward;
     _zoom
       ..duration = SurpriseDeckStack.zoomDuration
       ..forward(from: 0).whenComplete(() {
         if (!mounted) return;
         setState(() {
           _leavingIndex = null;
-          _comingFromFront = false;
         });
       });
   }
@@ -318,9 +320,14 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     final Widget moving;
     if (_zoom.isAnimating) {
       final t = Curves.easeOutCubic.transform(_zoom.value);
+      // Forward: toward the viewer, larger; backward: away, smaller. Fading
+      // out either way.
       moving = Opacity(
         opacity: 1 - t,
-        child: Transform.scale(scale: 1 + _zoomGrowth * t, child: card),
+        child: Transform.scale(
+          scale: _zoomForward ? 1 + _zoomGrowth * t : 1 - _zoomShrink * t,
+          child: card,
+        ),
       );
     } else {
       moving = Transform.translate(
@@ -373,13 +380,17 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
             ),
           )
         : IgnorePointer(child: card);
-    final arriving = isTop && _comingFromFront && _zoom.isAnimating;
+    final zooming = _zoom.isAnimating;
+    final arriving = isTop && zooming;
     final t = Curves.easeOutCubic.transform(_zoom.value);
     final shown = arriving
         ? Opacity(
             opacity: _arrivingStart + (1 - _arrivingStart) * t,
             child: Transform.scale(
-              scale: 1 + _zoomGrowth * (1 - t),
+              // Forward: from small and far; backward: from large and near.
+              scale: _zoomForward
+                  ? 1 - _zoomShrink * (1 - t)
+                  : 1 + _zoomGrowth * (1 - t),
               child: body,
             ),
           )
@@ -388,10 +399,16 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     return Positioned.fill(
       key: ValueKey(suggestion.item.key),
       child: AnimatedOpacity(
-        duration: _still ? Duration.zero : _reorder,
-        opacity: !visible ? 0 : 1 - _behindFade * slot,
+        // (A zoom draws the two cards itself: the leaving one is hidden here and
+        // the arriving one starts from its zoom pose, not from its old slot.)
+        duration: _still || (zooming && (isTop || i == _leavingIndex))
+            ? Duration.zero
+            : _reorder,
+        opacity: !visible || (zooming && i == _leavingIndex)
+            ? 0
+            : 1 - _behindFade * slot,
         child: AnimatedContainer(
-          duration: _still ? Duration.zero : _reorder,
+          duration: _still || (zooming && isTop) ? Duration.zero : _reorder,
           curve: Curves.easeOut,
           transformAlignment: Alignment.center,
           transform: Matrix4.identity()
