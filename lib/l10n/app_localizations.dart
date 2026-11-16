@@ -2654,10 +2654,10 @@ abstract class AppLocalizations {
   /// **' shall we search?'**
   String get quizPlatformHeadlineAfter;
 
-  /// E2 step 3's link that clears the picked services (no platform filter).
+  /// E2 step 3's switch, on while no service is picked: the search covers every streaming service of the user's region.
   ///
   /// In en, this message translates to:
-  /// **'All'**
+  /// **'All platforms'**
   String get quizPlatformAll;
 
   /// No description provided for @quizPlatformRentBuy.

@@ -115,15 +115,31 @@ void main() {
       expect(answers.yearTo, 2015);
     });
 
-    test('rent/buy is dropped from the answers while no platform is picked, '
-        'but kept in the state so the switch remembers it', () {
+    test('rent/buy goes to the engine whether platforms are picked or not '
+        '("All platforms" covers the whole region)', () {
       final cubit = QuizCubit(MediaType.movie)..setIncludeRentBuy(true);
 
-      expect(cubit.buildAnswers(participantId: 'me').includeRentBuy, isFalse);
-      expect(cubit.state.includeRentBuy, isTrue);
+      final all = cubit.buildAnswers(participantId: 'me');
+      expect(all.platformIds, isEmpty);
+      expect(all.includeRentBuy, isTrue);
 
       cubit.togglePlatform(8);
       expect(cubit.buildAnswers(participantId: 'me').includeRentBuy, isTrue);
+
+      cubit.setIncludeRentBuy(false);
+      expect(cubit.buildAnswers(participantId: 'me').includeRentBuy, isFalse);
+    });
+
+    test('"All platforms" is simply no platform picked: picking one leaves it, '
+        'taking the last out brings it back', () {
+      final cubit = QuizCubit(MediaType.movie);
+      expect(cubit.state.platformIds, isEmpty);
+
+      cubit.togglePlatform(8);
+      expect(cubit.state.platformIds, isNotEmpty);
+
+      cubit.togglePlatform(8);
+      expect(cubit.state.platformIds, isEmpty);
     });
 
     test('the defaults ask for nothing: no platform, open years, no limit', () {

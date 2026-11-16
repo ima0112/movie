@@ -81,7 +81,8 @@ class QuizState {
   /// no platform filter.
   final Set<int> platformIds;
 
-  /// "Include rent and buy" — only means something with [platformIds].
+  /// "Include rent and buy" — on the picked [platformIds], or on any service of
+  /// the region while none is picked ("All platforms").
   final bool includeRentBuy;
 
   /// Whether "Continue" is enabled: the first two steps need **at least one**

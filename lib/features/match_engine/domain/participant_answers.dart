@@ -92,13 +92,13 @@ class ParticipantAnswers {
 
   /// The streaming services this participant has (TMDB provider ids, from
   /// `/watch/providers` for the user's region — never hardcoded). Empty =
-  /// "All": no platform filter at all. A hard filter for the Surprise-me
-  /// engine.
+  /// "All platforms": any service of the user's region (not just the dozen the
+  /// quiz shows). A hard filter for the Surprise-me engine either way.
   final Set<int> platformIds;
 
-  /// "Include rent and buy": with [platformIds] set, also accept titles
-  /// that are only rentable/buyable there, not just included in the
-  /// subscription. Meaningless while [platformIds] is empty.
+  /// "Include rent and buy": also accept titles that are only rentable or
+  /// buyable — on the picked [platformIds], or on any service of the region
+  /// when none is picked — not just included in a subscription.
   final bool includeRentBuy;
 
   @override

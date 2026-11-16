@@ -11,13 +11,15 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/accent_headline.dart';
 import '../../../../shared/widgets/failure_state_view.dart';
 import '../cubit/quiz_platforms_cubit.dart';
+import 'quiz_all_platforms_row.dart';
 import 'quiz_platform_grid.dart';
 import 'quiz_rent_buy_row.dart';
 
-/// E2 step 3 — "Which **platforms** shall we search?": the region's top
-/// streaming services as a 3-column grid of logo tiles, any number picked, an
-/// "All" link that clears the picks (= no platform filter), and the "Include
-/// rent and buy" switch, dimmed until a service is picked.
+/// E2 step 3 — "Which **platforms** shall we search?": an "All platforms"
+/// switch (on while nothing is picked — then the search covers every service of
+/// the region, not just the ones shown), the region's top streaming services as
+/// a 3-column grid of logo tiles, any number picked, and the "Include rent and
+/// buy" switch.
 ///
 /// Provides its own [QuizPlatformsCubit] (the list is only needed here).
 class QuizPlatformStep extends StatelessWidget {
@@ -54,21 +56,12 @@ class QuizPlatformStep extends StatelessWidget {
             accent: l10n.quizPlatformHeadlineAccent,
             after: l10n.quizPlatformHeadlineAfter,
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: selected.isEmpty ? null : onClear,
-              child: Text(
-                l10n.quizPlatformAll,
-                style: AppTextStyles.action.copyWith(
-                  color: selected.isEmpty
-                      ? AppColors.inkMuted
-                      : AppColors.accent,
-                ),
-              ),
-            ),
+          const SizedBox(height: AppSpacing.xl),
+          QuizAllPlatformsRow(
+            allSelected: selected.isEmpty,
+            onSelectAll: onClear,
           ),
+          const SizedBox(height: AppSpacing.md),
           BlocBuilder<QuizPlatformsCubit, QuizPlatformsState>(
             builder: (context, state) => switch (state) {
               QuizPlatformsLoading() => const QuizPlatformGrid.loading(),
@@ -98,7 +91,6 @@ class QuizPlatformStep extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           QuizRentBuyRow(
-            enabled: selected.isNotEmpty,
             value: includeRentBuy,
             onChanged: onIncludeRentBuyChanged,
           ),

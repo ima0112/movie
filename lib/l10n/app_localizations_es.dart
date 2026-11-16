@@ -1568,7 +1568,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizPlatformHeadlineAfter => ' buscamos?';
 
   @override
-  String get quizPlatformAll => 'Todas';
+  String get quizPlatformAll => 'Todas las plataformas';
 
   @override
   String get quizPlatformRentBuy => 'Incluir alquiler y compra';

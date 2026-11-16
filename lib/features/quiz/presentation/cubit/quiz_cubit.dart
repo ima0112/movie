@@ -130,8 +130,7 @@ class QuizCubit extends Cubit<QuizState> {
       watchedKeys: watchedKeys,
       yearTo: s.yearTo,
       platformIds: s.platformIds,
-      // Rent and buy only means something with a platform picked.
-      includeRentBuy: s.platformIds.isNotEmpty && s.includeRentBuy,
+      includeRentBuy: s.includeRentBuy,
     );
   }
 }

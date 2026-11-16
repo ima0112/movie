@@ -416,15 +416,39 @@ void main() {
       expect(params['with_watch_monetization_types'], 'flatrate|rent');
     });
 
-    test('without platforms there is no monetization filter either', () {
+    test('monetization alone = any service of the region: the region and the '
+        'types go, no provider list', () {
       final params = discoverQueryParams(
         const DiscoverFilter(monetizationTypes: {WatchMonetization.flatrate}),
         type: MediaType.movie,
         watchRegion: 'ES',
       );
 
+      expect(params['watch_region'], 'ES');
+      expect(params['with_watch_monetization_types'], 'flatrate');
+      expect(params.containsKey('with_watch_providers'), isFalse);
+    });
+
+    test('nothing about availability set: none of the three params', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(),
+        type: MediaType.movie,
+        watchRegion: 'ES',
+      );
+
+      expect(params.containsKey('watch_region'), isFalse);
       expect(params.containsKey('with_watch_monetization_types'), isFalse);
       expect(params.containsKey('with_watch_providers'), isFalse);
+    });
+
+    test('no region known: availability is left out (it means nothing without '
+        'one)', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(monetizationTypes: {WatchMonetization.flatrate}),
+        type: MediaType.movie,
+      );
+
+      expect(params.containsKey('with_watch_monetization_types'), isFalse);
     });
 
     test('the new fields count in equality', () {
