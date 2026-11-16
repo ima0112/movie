@@ -158,12 +158,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tvStatusCancelled => 'Cancelada';
 
   @override
-  String get quizFinishedToggleFinished => 'Terminada';
-
-  @override
-  String get quizFinishedToggleEither => 'Cualquiera';
-
-  @override
   String get mediaTypeMovieSingular => 'Película';
 
   @override
@@ -1231,6 +1225,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get releaseRange2010s => '2010s';
 
   @override
+  String get releaseRange2000s => '2000s';
+
+  @override
   String get releaseRangeEarlier => 'Anteriores';
 
   @override
@@ -1532,7 +1529,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get personFilmographyTitle => 'Filmografía';
 
   @override
-  String get quizExcludeWatchedToggle => 'Excluir lo que ya he visto';
+  String get quizExcludeWatchedToggle => 'Excluir lo que ya vi';
 
   @override
   String get quizGenreHeadlineBefore => '¿Qué ';
@@ -1545,9 +1542,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get quizGenreSubtitle => 'Descarta hasta 3 géneros';
-
-  @override
-  String get quizMaxSeasonsLabel => 'Temporadas máximas';
 
   @override
   String get quizSearchButton => 'Buscar';
@@ -1584,10 +1578,44 @@ class AppLocalizationsEs extends AppLocalizations {
       'No hay plataformas de streaming listadas para tu región, así que la búsqueda no filtrará por plataforma.';
 
   @override
-  String get quizContinueButton => 'Continuar';
+  String get quizYearHeadlineBefore => '¿De qué ';
 
   @override
-  String get quizYearStepHeadline => '¿Hasta cuándo quieres retroceder?';
+  String get quizYearHeadlineAccent => 'años';
+
+  @override
+  String get quizYearHeadlineAfter => '?';
+
+  @override
+  String get quizYearSubtitle => 'Elige un rango de estreno';
+
+  @override
+  String get quizLimitsTitle => 'Límites';
+
+  @override
+  String get quizMaxDuration => 'Duración máxima';
+
+  @override
+  String quizDurationHours(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String quizDurationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get quizStatusLabel => 'Estado';
+
+  @override
+  String get quizStatusAny => 'Cualquiera';
+
+  @override
+  String get quizStatusFinished => 'Finalizada';
+
+  @override
+  String get quizContinueButton => 'Continuar';
 
   @override
   String get surpriseErrorMessage =>

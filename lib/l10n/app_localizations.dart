@@ -368,18 +368,6 @@ abstract class AppLocalizations {
   /// **'Cancelled'**
   String get tvStatusCancelled;
 
-  /// E2 step 4's own "Finished | Either" toggle (TV shows) — deliberately its own word, not tvStatusEnded, even though it maps to the same DiscoverTvStatus.ended value.
-  ///
-  /// In en, this message translates to:
-  /// **'Finished'**
-  String get quizFinishedToggleFinished;
-
-  /// E2 step 4's own "Finished | Either" toggle — the null/no-filter option.
-  ///
-  /// In en, this message translates to:
-  /// **'Either'**
-  String get quizFinishedToggleEither;
-
   /// A single item's own type, e.g. "2019 · Movie" in a search result row.
   ///
   /// In en, this message translates to:
@@ -2096,6 +2084,12 @@ abstract class AppLocalizations {
   /// **'2010s'**
   String get releaseRange2010s;
 
+  /// No description provided for @releaseRange2000s.
+  ///
+  /// In en, this message translates to:
+  /// **'2000s'**
+  String get releaseRange2000s;
+
   /// Release-range preset: everything before the 2010s.
   ///
   /// In en, this message translates to:
@@ -2612,12 +2606,6 @@ abstract class AppLocalizations {
   /// **'Skip up to 3 genres'**
   String get quizGenreSubtitle;
 
-  /// E2 step 4's own stepper label (docs/SCREENS.md E2) — reuses discoverRangeFiltersNoLimit for its "No limit" value.
-  ///
-  /// In en, this message translates to:
-  /// **'Max seasons'**
-  String get quizMaxSeasonsLabel;
-
   /// E2's final-step button, replacing commonNext (docs/SCREENS.md E2: "Final button 'Search'").
   ///
   /// In en, this message translates to:
@@ -2684,17 +2672,77 @@ abstract class AppLocalizations {
   /// **'No streaming services are listed for your region, so the search will not filter by platform.'**
   String get quizPlatformNone;
 
+  /// E2 step 4's headline, three parts so "years" can be coloured: before + accent + after = "Which years?".
+  ///
+  /// In en, this message translates to:
+  /// **'Which '**
+  String get quizYearHeadlineBefore;
+
+  /// No description provided for @quizYearHeadlineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get quizYearHeadlineAccent;
+
+  /// No description provided for @quizYearHeadlineAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'?'**
+  String get quizYearHeadlineAfter;
+
+  /// No description provided for @quizYearSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a release range'**
+  String get quizYearSubtitle;
+
+  /// No description provided for @quizLimitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Limits'**
+  String get quizLimitsTitle;
+
+  /// No description provided for @quizMaxDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Max duration'**
+  String get quizMaxDuration;
+
+  /// A whole number of hours, the max-duration slider's value ("2 h").
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h'**
+  String quizDurationHours(int hours);
+
+  /// Hours and minutes, the max-duration slider's value ("2 h 30 min").
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String quizDurationHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @quizStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get quizStatusLabel;
+
+  /// No description provided for @quizStatusAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get quizStatusAny;
+
+  /// No description provided for @quizStatusFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get quizStatusFinished;
+
   /// E2's "next step" button (the last step's is quizSearchButton).
   ///
   /// In en, this message translates to:
   /// **'Continue'**
   String get quizContinueButton;
-
-  /// E2 step 3's own headline (docs/SCREENS.md E2).
-  ///
-  /// In en, this message translates to:
-  /// **'How far back do you want to go?'**
-  String get quizYearStepHeadline;
 
   /// E3's SurpriseError body — no exact copy is given in docs/SCREENS.md for this (E3 only describes the state, "error with 'Retry'"), so this is a plain, generic line.
   ///
