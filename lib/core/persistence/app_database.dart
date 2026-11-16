@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:sqlite3/sqlite3.dart' show SqliteException;
 
 import '../domain/entities/media_type.dart';
+import '../domain/entities/surprise_history_entry.dart';
 
 part 'app_database.g.dart';
 
@@ -260,6 +261,28 @@ class SavedPeopleTable extends Table {
   Set<Column> get primaryKey => {tmdbId};
 }
 
+/// What Surprise me has shown (`docs/DECISIONS.md` §5, "Surprise me
+/// engine"): one row per title per search session, with what the user did
+/// with it. Local only. `SurpriseHistoryRepository` reads and writes it.
+@DataClassName('SurpriseHistoryRow')
+class SurpriseHistoryTable extends Table {
+  /// `MediaKey.type`, stored as the enum's name (like [UserMediaEntries]).
+  TextColumn get mediaType => textEnum<MediaType>()();
+
+  IntColumn get tmdbId => integer()();
+
+  /// The Surprise-me session ("shuffle") it was shown in.
+  TextColumn get sessionId => text()();
+
+  DateTimeColumn get shownAt => dateTime()();
+
+  /// `SurpriseOutcome`, as its name.
+  TextColumn get outcome => textEnum<SurpriseOutcome>()();
+
+  @override
+  Set<Column> get primaryKey => {mediaType, tmdbId, sessionId};
+}
+
 /// The app's single SQLite (drift) database.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/persistence/
@@ -279,6 +302,7 @@ class SavedPeopleTable extends Table {
     SettingsTable,
     RecentlyViewedTable,
     SavedPeopleTable,
+    SurpriseHistoryTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -295,12 +319,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, and to 10 when the taste profile gained its type, eras and platforms — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, and to 11 when [SurpriseHistoryTable] was added — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -342,6 +366,9 @@ class AppDatabase extends _$AppDatabase {
         await _addColumn(m, tasteProfileTable, tasteProfileTable.yearTo);
         await _addColumn(m, tasteProfileTable, tasteProfileTable.preferredType);
         await _addColumn(m, tasteProfileTable, tasteProfileTable.platformIds);
+      }
+      if (from < 11) {
+        await m.createTable(surpriseHistoryTable);
       }
     },
   );

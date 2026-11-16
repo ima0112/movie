@@ -140,8 +140,28 @@ void main() {
         (await db.customSelect('PRAGMA user_version').getSingle()).read<int>(
           'user_version',
         ),
-        10,
+        11,
       );
+    });
+
+    test('upgrading from schema v10 creates SurpriseHistoryTable, empty, and '
+        'keeps the library rows', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      _addLibraryTable(raw);
+      raw.execute(
+        "INSERT INTO user_media_entries (media_type, tmdb_id) "
+        "VALUES ('movie', 7);",
+      );
+      raw.execute('PRAGMA user_version = 10;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      expect(await db.select(db.surpriseHistoryTable).get(), isEmpty);
+      final count = await db
+          .customSelect('SELECT COUNT(*) AS c FROM user_media_entries')
+          .getSingle();
+      expect(count.read<int>('c'), 1);
     });
   });
 }
