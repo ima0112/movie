@@ -1547,6 +1547,95 @@
   "@surpriseYourSuggestionTitle": {
     "description": "E3's own headline (docs/SCREENS.md E3), shown by both the searching and loaded states."
   },
+  "surpriseCardAffinity": "{percent} % for you",
+  "@surpriseCardAffinity": {
+    "description": "A Surprise-me card's affinity tag: the engine's score scaled to 60-98 — a relative affinity, not a probability.",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "surpriseCardSeasons": "{count, plural, =1{1 season} other{{count} seasons}}",
+  "@surpriseCardSeasons": {
+    "description": "A Surprise-me series card's season count.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "surpriseCardSince": "since {year}",
+  "@surpriseCardSince": {
+    "description": "A series still airing: the year it started.",
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "surpriseCardPlatforms": "{count, plural, =1{1 platform} other{{count} platforms}}",
+  "@surpriseCardPlatforms": {
+    "description": "How many services a Surprise-me card's title is on (shown when it is on three or fewer).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "surpriseCardPlatformsMore": "+{count}",
+  "@surpriseCardPlatformsMore": {
+    "description": "A Surprise-me card on more than three services: how many beyond the three logos shown.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "surpriseCardSemantics": "Card {number} of {total}: {title}, {type}, {percent} % for you{platforms}",
+  "@surpriseCardSemantics": {
+    "description": "A Surprise-me card's full label for a screen reader. {platforms} is empty or already starts with a comma.",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "int"
+      },
+      "platforms": {
+        "type": "String"
+      }
+    }
+  },
+  "surpriseThumbnailLabel": "Card {number}",
+  "@surpriseThumbnailLabel": {
+    "description": "A thumbnail of the Surprise-me strip, for a screen reader.",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "surpriseThumbnailSaved": "Card {number}, saved",
+  "@surpriseThumbnailSaved": {
+    "description": "A thumbnail of a card that is in Watch later.",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "surpriseHelpDoubleTap": "Double-tap to choose",
+  "surpriseRerollButton": "Ask for another 5",
   "surpriseShufflingTitle": "Shuffling your 5 surprises",
   "@surpriseShufflingTitle": {
     "description": "E3a (Surprise me, searching): the headline under the shuffling cards."

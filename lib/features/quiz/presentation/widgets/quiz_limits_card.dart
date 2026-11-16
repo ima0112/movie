@@ -4,8 +4,8 @@ import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../l10n/runtime_format.dart';
 import '../../../../shared/widgets/app_segmented_control.dart';
 import '../../../../shared/widgets/app_slider_theme.dart';
 
@@ -133,15 +133,6 @@ class _DurationRow extends StatelessWidget {
       ),
     );
   }
-}
-
-/// "2 h 30 min", "2 h", "90 min" — the slider's value, in the user's language.
-String formatRuntime(int minutes, AppLocalizations l10n) {
-  final h = minutes ~/ 60;
-  final m = minutes % 60;
-  if (h == 0) return l10n.discoverRangeFiltersMinutes(m);
-  if (m == 0) return l10n.quizDurationHours(h);
-  return l10n.quizDurationHoursMinutes(h, m);
 }
 
 class _StatusRow extends StatelessWidget {

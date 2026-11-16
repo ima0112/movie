@@ -1656,6 +1656,71 @@ class AppLocalizationsEs extends AppLocalizations {
   String get surpriseYourSuggestionTitle => 'Tu sugerencia';
 
   @override
+  String surpriseCardAffinity(int percent) {
+    return '$percent % para ti';
+  }
+
+  @override
+  String surpriseCardSeasons(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count temporadas',
+      one: '1 temporada',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String surpriseCardSince(int year) {
+    return 'desde $year';
+  }
+
+  @override
+  String surpriseCardPlatforms(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count plataformas',
+      one: '1 plataforma',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String surpriseCardPlatformsMore(int count) {
+    return '+$count';
+  }
+
+  @override
+  String surpriseCardSemantics(
+    int number,
+    int total,
+    String title,
+    String type,
+    int percent,
+    String platforms,
+  ) {
+    return 'Carta $number de $total: $title, $type, $percent % para ti$platforms';
+  }
+
+  @override
+  String surpriseThumbnailLabel(int number) {
+    return 'Carta $number';
+  }
+
+  @override
+  String surpriseThumbnailSaved(int number) {
+    return 'Carta $number, guardada';
+  }
+
+  @override
+  String get surpriseHelpDoubleTap => 'Toca dos veces para elegir';
+
+  @override
+  String get surpriseRerollButton => 'Volver a pedir otras 5';
+
+  @override
   String get surpriseShufflingTitle => 'Barajando tus 5 sorpresas';
 
   @override
