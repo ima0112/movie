@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../match_engine/domain/participant_answers.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/quiz_cubit.dart';
 import '../widgets/quiz_next_button.dart';
 import '../widgets/quiz_progress_indicator.dart';
+import '../widgets/quiz_top_bar.dart';
+import '../../../../shared/widgets/app_halo.dart';
 import '../widgets/quiz_step_content.dart';
 
 /// E2 (Quiz) — `docs/SCREENS.md` E2: "1 screen, 4 steps... shared with
@@ -65,6 +66,7 @@ class QuizScreen extends StatelessWidget {
         return BlocProvider(
           create: (_) => QuizCubit(mediaType),
           child: _QuizView(
+            mediaType: mediaType,
             vibeCatalog: catalog,
             participantId: participantId,
             onComplete: onComplete,
@@ -77,11 +79,13 @@ class QuizScreen extends StatelessWidget {
 
 class _QuizView extends StatelessWidget {
   const _QuizView({
+    required this.mediaType,
     required this.vibeCatalog,
     required this.participantId,
     required this.onComplete,
   });
 
+  final MediaType mediaType;
   final VibeCatalog vibeCatalog;
   final String participantId;
   final ValueChanged<ParticipantAnswers> onComplete;
@@ -90,34 +94,37 @@ class _QuizView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(AppIcons.back, color: AppColors.ink),
-          onPressed: () => _handleBack(context),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            children: [
-              const QuizProgressIndicator(),
-              const SizedBox(height: AppSpacing.xl),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: QuizStepContent(vibeCatalog: vibeCatalog),
-                ),
+      body: Stack(
+        children: [
+          const Positioned(left: 0, right: 0, top: 0, child: AppHalo()),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              child: Column(
+                children: [
+                  QuizTopBar(
+                    mediaType: mediaType,
+                    onBack: () => _handleBack(context),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  const QuizProgressIndicator(),
+                  const SizedBox(height: AppSpacing.xl),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: QuizStepContent(vibeCatalog: vibeCatalog),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  QuizNextButton(
+                    participantId: participantId,
+                    onComplete: onComplete,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
               ),
-              const SizedBox(height: AppSpacing.lg),
-              QuizNextButton(
-                participantId: participantId,
-                onComplete: onComplete,
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
