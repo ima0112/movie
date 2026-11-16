@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/widgets/offline_banner_slot.dart';
+import '../../../../app/cubits/taste_profile_cubit.dart';
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
 import '../../../../core/domain/repositories/recently_viewed_repository.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
@@ -38,13 +40,23 @@ class DiscoverScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Home opens on what the user usually watches (C5 "What do you usually
+    // watch?"); both, or no taste profile yet, is All.
+    final first = switch (context
+        .read<TasteProfileCubit>()
+        .state
+        ?.preferredType) {
+      MediaType.movie => MediaSegment.movie,
+      MediaType.tvShow => MediaSegment.tvShow,
+      null => MediaSegment.all,
+    };
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (_) => DiscoverCubit(
             getIt<MediaRepository>(),
             getIt<SettingsRepository>(),
-          )..loadDiscover(MediaSegment.all),
+          )..loadDiscover(first),
         ),
         BlocProvider(
           create: (_) => RecentlyViewedCubit(getIt<RecentlyViewedRepository>()),
@@ -56,10 +68,10 @@ class DiscoverScreen extends StatelessWidget {
             getIt<TasteProfileRepository>(),
             getIt<SettingsRepository>(),
             VibeCatalog.loadFromAssets(),
-          )..load(MediaSegment.all),
+          )..load(first),
         ),
       ],
-      child: const _DiscoverView(),
+      child: _DiscoverView(initialSegment: first),
     );
   }
 }
@@ -73,14 +85,16 @@ class DiscoverScreen extends StatelessWidget {
 /// detail screen" trigger (`docs/SCREENS.md` B1) — see that Cubit's own
 /// doc comment for which 3 triggers exist and which don't.
 class _DiscoverView extends StatefulWidget {
-  const _DiscoverView();
+  const _DiscoverView({required this.initialSegment});
+
+  final MediaSegment initialSegment;
 
   @override
   State<_DiscoverView> createState() => _DiscoverViewState();
 }
 
 class _DiscoverViewState extends State<_DiscoverView> with RouteAware {
-  MediaSegment _segment = MediaSegment.all;
+  late MediaSegment _segment = widget.initialSegment;
 
   void _onSegmentSelected(MediaSegment segment) {
     if (segment == _segment) return;

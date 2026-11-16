@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/cubits/taste_profile_cubit.dart';
+import '../../../../core/domain/entities/taste_profile.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/priority_first.dart';
 import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../../../../shared/widgets/streaming_service_logo.dart';
@@ -13,7 +16,8 @@ import 'explore_pill.dart';
 import 'explore_pill_row.dart';
 
 /// B2's "PLATFORM" row: an "All" pill and the streaming services of the
-/// user's region, each with its logo, single select. Skeleton while loading,
+/// user's region, each with its logo, single select — the user's own services
+/// (C5) first. Skeleton while loading,
 /// a retry row on error, and nothing at all when the region has no services.
 class ExplorePlatformPills extends StatelessWidget {
   const ExplorePlatformPills({super.key});
@@ -40,21 +44,28 @@ class ExplorePlatformPills extends StatelessWidget {
           ExploreServicesLoaded(:final services) => AppSection.overline(
             title: l10n.explorePlatformLabel,
             inset: false,
-            child: ExplorePillRow(
-              pills: [
-                ExplorePill(
-                  label: l10n.explorePlatformAll,
-                  selected: state.service == null,
-                  onTap: () => cubit.selectService(null),
-                ),
-                for (final service in services)
+            // The user's own services (C5 "My platforms") come first.
+            child: BlocSelector<TasteProfileCubit, TasteProfile?, Set<int>>(
+              selector: (profile) => profile?.platformIds ?? const {},
+              builder: (context, mine) => ExplorePillRow(
+                pills: [
                   ExplorePill(
-                    label: service.name,
-                    selected: state.service == service,
-                    onTap: () => cubit.selectService(service),
-                    leading: StreamingServiceLogo(service: service),
+                    label: l10n.explorePlatformAll,
+                    selected: state.service == null,
+                    onTap: () => cubit.selectService(null),
                   ),
-              ],
+                  for (final service in priorityFirst(
+                    services,
+                    (s) => mine.contains(s.id),
+                  ))
+                    ExplorePill(
+                      label: service.name,
+                      selected: state.service == service,
+                      onTap: () => cubit.selectService(service),
+                      leading: StreamingServiceLogo(service: service),
+                    ),
+                ],
+              ),
             ),
           ),
         };
