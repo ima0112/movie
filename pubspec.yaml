@@ -98,7 +98,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icons/pako/
     - assets/illustrations/onboarding/
     - assets/illustrations/taste_card/
     - assets/vibes.json

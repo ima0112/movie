@@ -33,15 +33,10 @@ loading per section — see `docs/DECISIONS.md` §5's own
 |---|---|---|
 | `lib/features/explore/presentation/widgets/genre_tile_grid.dart:15` | Real backdrop image per genre tile — no TMDB endpoint resolves "most popular title per genre" today. | **Reclassified** from "bloquea publicar v1.0": the fallback already reuses the documented "offline" look (`surfaceRaised`, name only) rather than looking broken, so Explore ships correctly either way — this is visual polish, not a functional gap, and has no clear path to a real fix without a data source TMDB doesn't offer. |
 | `lib/features/explore/presentation/widgets/genre_tile_grid.dart:64` | Pointer back to the file's own top-of-file TODO above. | Same reclassification, not a second independent issue. |
-| `lib/shared/widgets/pako_state.dart:20-21` | Replace with a `RiveAnimation` driving a state machine once the runtime is integrated. | The canonical example CLAUDE.md itself cites for this bucket. |
 | `lib/app/splash_screen.dart:23-25` | Replace the hand-timed mood/opacity sequence with a real `RiveAnimation`. | Same deferred Rive runtime. |
 | `lib/core/theme/app_theme.dart:14-15` | Implement light mode, switch to `ThemeMode.system`. | Light theme is explicitly deferred per DECISIONS.md §9. |
 | `docs/DESIGN_SYSTEM.md:36-38` | "No implementar todavía" instruction defining the light-theme deferral convention. | Documents the same deferred item `app_theme.dart` implements. |
 | `lib/features/settings/presentation/widgets/settings_preferences_section.dart:18-20` | Doc comment explaining no Theme row in Settings yet. | References the same light-theme deferral (also mentions Family mode in prose, but the TODO token itself is `light-theme`). |
-| `lib/features/quiz/presentation/widgets/quiz_year_step.dart:14-17` | Doc comment: uses the static PakoState placeholder instead of duplicating the Rive TODO. | Same Rive deferral, not a separate gap. |
-| `assets/icons/pako/pako_idle.svg:2` | SVG comment: static placeholder, see `TODO(rive)`. | Same deferred item. |
-| `assets/icons/pako/pako_asleep.svg:2` | Same. | Same deferred item. |
-| `assets/icons/pako/pako_off.svg:2` | Same. | Same deferred item. |
 | `docs/STRUCTURE.md:25-28` | Tree annotation describing `splash_screen.dart`'s Rive TODO. | Documentation of the same already-listed code TODO. |
 | `CLAUDE.md:190-191` | The rule that defines this whole convention. | Not a pending code item — the authoritative source for why the other Rive TODOs exist. Listed because it's a literal grep hit. |
 

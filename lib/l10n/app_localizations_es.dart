@@ -993,14 +993,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get youRecentlyWatchedTitle => 'Vistas recientemente';
 
   @override
-  String get youGenresTitle => 'Tus géneros más vistos';
-
-  @override
-  String youGenrePercent(int percent) {
-    return '$percent%';
-  }
-
-  @override
   String myTastesRowGenresMore(String names, int count) {
     return '$names +$count';
   }

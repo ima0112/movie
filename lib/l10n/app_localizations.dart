@@ -1730,18 +1730,6 @@ abstract class AppLocalizations {
   /// **'Recently watched'**
   String get youRecentlyWatchedTitle;
 
-  /// Heading of the genres card on You (docs/SCREENS.md B5); shown in capitals.
-  ///
-  /// In en, this message translates to:
-  /// **'Your most-watched genres'**
-  String get youGenresTitle;
-
-  /// A genre's share of the genres counted in what the user has watched.
-  ///
-  /// In en, this message translates to:
-  /// **'{percent}%'**
-  String youGenrePercent(int percent);
-
   /// The My Tastes row's summary on You: the two named liked genres and how many more there are.
   ///
   /// In en, this message translates to:

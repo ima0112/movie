@@ -917,19 +917,6 @@
   "@youRecentlyWatchedTitle": {
     "description": "Heading of You's row of the last titles marked as watched (docs/SCREENS.md B5)."
   },
-  "youGenresTitle": "Your most-watched genres",
-  "@youGenresTitle": {
-    "description": "Heading of the genres card on You (docs/SCREENS.md B5); shown in capitals."
-  },
-  "youGenrePercent": "{percent}%",
-  "@youGenrePercent": {
-    "description": "A genre's share of the genres counted in what the user has watched.",
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      }
-    }
-  },
   "myTastesRowGenresMore": "{names} +{count}",
   "@myTastesRowGenresMore": {
     "description": "The My Tastes row's summary on You: the two named liked genres and how many more there are.",

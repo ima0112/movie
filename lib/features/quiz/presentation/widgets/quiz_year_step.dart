@@ -4,17 +4,12 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/pako_state.dart';
 
 /// E2 step 3 — `docs/SCREENS.md` E2: "How far back do you want to go?":
 /// large year number, full-width slider (1950–present), room for an
 /// illustration."
 ///
-/// The "illustration" slot is Pako reacting to the year — no Rive
-/// runtime is wired up yet (`docs/DECISIONS.md` section 9), so this uses
-/// the static [PakoState] placeholder `PakoState`'s own file already
-/// documents with a `// TODO(rive)`, rather than adding a second one
-/// here.
+/// The illustration slot is empty for now (no mascot).
 ///
 /// Slider styling (ink track, no accent) matches every other slider in
 /// this codebase (`TasteYearSlider`, H8's `YearRangeFilter`/
@@ -41,8 +36,6 @@ class QuizYearStep extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(context.l10n.quizYearStepHeadline, style: AppTextStyles.h1),
-        const SizedBox(height: AppSpacing.xl),
-        const Center(child: PakoState(mood: PakoMood.idle)),
         const SizedBox(height: AppSpacing.xl),
         Center(child: Text('$clamped', style: AppTextStyles.display)),
         SliderTheme(

@@ -1,7 +1,7 @@
 # PakoTV — guide for Claude Code
 
 Movie and TV show catalog app (Flutter, iOS + Android) with a group
-recommendation engine (the "Matcher") and an animated mascot (Pako).
+recommendation engine (the "Matcher"). (The Pako mascot was dropped; the name stays.)
 Portfolio project, public repo.
 
 **Before writing code for a new screen or feature, read the matching
@@ -36,8 +36,7 @@ ask before inventing it.
    widget.
 5. **Icons**: `remixicon` package, `_line` variant by default and `_fill`
    for active states (favorite, selected tab). Never mix with Material's
-   `Icons.*` or `CupertinoIcons.*`. Pako's icons are custom SVGs in
-   `assets/icons/pako/`, not an icon package. (Switched from
+   `Icons.*` or `CupertinoIcons.*`. There is no mascot icon set any more. (Switched from
    `phosphor_flutter` — see `docs/DESIGN_SYSTEM.md` section 4 for why.)
 6. **One single visual look on iOS and Android** (no Cupertino widgets for
    a native feel). What IS respected underneath: system gestures for
@@ -205,8 +204,6 @@ ask before inventing it.
   etc.) unless explicitly asked.
 - Don't invent new copy for buttons or titles that are already written in
   SCREENS.md — copy them as-is, in sentence case.
-- Don't use Rive yet if the runtime isn't configured; use the static
-  `PakoState` (SVG) as a documented placeholder with a `// TODO(rive)`.
 
 ## Git / PR workflow
 
