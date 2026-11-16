@@ -29,9 +29,7 @@ Future<void> _pump(
       supportedLocales: AppLocalizations.supportedLocales,
       home: BlocProvider<MyListCubit>.value(
         value: cubit,
-        child: Scaffold(
-          body: MyListBody(userLibraryRepository: repository),
-        ),
+        child: Scaffold(body: MyListBody(userLibraryRepository: repository)),
       ),
     ),
   );
@@ -47,9 +45,7 @@ List<String> _renderedTitles(WidgetTester tester) => tester
 
 void main() {
   group('MyListBody sorting', () {
-    testWidgets('Title A-Z sorts case-insensitively by title', (
-      tester,
-    ) async {
+    testWidgets('Title A-Z sorts case-insensitively by title', (tester) async {
       final repository = InMemoryUserLibraryRepository();
       // "zeta" lowercase on purpose — sorting is case-insensitive, so
       // it must still land last, not first (a plain string compare

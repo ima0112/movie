@@ -68,15 +68,21 @@ class TabFilter {
 
 /// Which [LibraryTab] My List is currently showing, and each tab's own
 /// [TabFilter] (H9 "remembers state per tab").
+///
+/// [showsPeople] is the People tab (saved people, not a [LibraryTab]: they
+/// have no type, sort or rating to filter by). While it is on, [tab] keeps
+/// the last library tab, so coming back to it finds its own filter.
 class MyListFilterState {
   MyListFilterState({
     this.tab = LibraryTab.favorites,
+    this.showsPeople = false,
     Map<LibraryTab, TabFilter>? filters,
   }) : filters =
            filters ??
            {for (final tab in LibraryTab.values) tab: const TabFilter()};
 
   final LibraryTab tab;
+  final bool showsPeople;
   final Map<LibraryTab, TabFilter> filters;
 
   /// The selected [tab]'s own filter — what H9 and the row list both
@@ -87,6 +93,7 @@ class MyListFilterState {
   bool operator ==(Object other) =>
       other is MyListFilterState &&
       other.tab == tab &&
+      other.showsPeople == showsPeople &&
       mapEquals(other.filters, filters);
 
   // `filters.entries` can't feed `Object.hashAll` directly — `MapEntry`
@@ -97,6 +104,7 @@ class MyListFilterState {
   @override
   int get hashCode => Object.hash(
     tab,
+    showsPeople,
     filters[LibraryTab.favorites],
     filters[LibraryTab.watchLater],
     filters[LibraryTab.watched],
@@ -124,6 +132,17 @@ class MyListCubit extends Cubit<MyListFilterState> {
 
   void selectTab(LibraryTab tab) {
     emit(MyListFilterState(tab: tab, filters: state.filters));
+  }
+
+  /// The People tab: the library tab and its filters stay as they were.
+  void selectPeople() {
+    emit(
+      MyListFilterState(
+        tab: state.tab,
+        showsPeople: true,
+        filters: state.filters,
+      ),
+    );
   }
 
   /// `null` selects "All".
@@ -182,6 +201,7 @@ class MyListCubit extends Cubit<MyListFilterState> {
     emit(
       MyListFilterState(
         tab: state.tab,
+        showsPeople: state.showsPeople,
         filters: {...state.filters, state.tab: updated},
       ),
     );
