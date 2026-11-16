@@ -1832,24 +1832,6 @@ abstract class AppLocalizations {
   /// **'It sets which catalog we show first.'**
   String get myTastesTypeHint;
 
-  /// C5's third option of "What do you usually watch?": movies and TV shows alike.
-  ///
-  /// In en, this message translates to:
-  /// **'Both'**
-  String get myTastesTypeBoth;
-
-  /// The chip after the avoided genres that opens the picker of the rest.
-  ///
-  /// In en, this message translates to:
-  /// **'Add'**
-  String get myTastesAddAvoided;
-
-  /// No description provided for @myTastesAddAvoidedSheetTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Add a genre to avoid'**
-  String get myTastesAddAvoidedSheetTitle;
-
   /// No description provided for @myTastesFooter.
   ///
   /// In en, this message translates to:

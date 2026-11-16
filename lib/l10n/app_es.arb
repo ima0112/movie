@@ -335,9 +335,6 @@
 
   "myTastesTypeTitle": "¿Qué sueles ver?",
   "myTastesTypeHint": "Define qué catálogo mostramos primero.",
-  "myTastesTypeBoth": "Ambas",
-  "myTastesAddAvoided": "Añadir",
-  "myTastesAddAvoidedSheetTitle": "Añadir un género que evitas",
   "myTastesFooter": "Todo se guarda solo en tu dispositivo.",
   "myTastesVibesTitle": "Vibes favoritas",
   "myTastesVibesHint": "Hasta {max}. Marcan el tono de lo que te sugerimos.",

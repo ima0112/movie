@@ -78,16 +78,32 @@ Future<void> _letSavedFade(WidgetTester tester) =>
     tester.pump(const Duration(seconds: 3));
 
 void main() {
-  testWidgets('"What do you usually watch?": picks a type, then Both '
-      'clears it', (tester) async {
+  testWidgets('"What do you usually watch?": the same All · Movies · TV Shows '
+      'as Home, in that order; All is no preference', (tester) async {
     final c = await _pump(tester);
     expect(find.text('What do you usually watch?'), findsOneWidget);
+    expect([
+      for (final label in ['All', 'Movies', 'TV Shows'])
+        tester.getTopLeft(find.text(label)).dx,
+    ], isNotEmpty);
+    expect(
+      tester.getTopLeft(find.text('All')).dx,
+      lessThan(tester.getTopLeft(find.text('Movies')).dx),
+    );
+    expect(
+      tester.getTopLeft(find.text('Movies')).dx,
+      lessThan(tester.getTopLeft(find.text('TV Shows')).dx),
+    );
 
     await tester.tap(find.text('TV Shows'));
     await tester.pump();
     expect(c.tastes.state.preferredType, MediaType.tvShow);
 
-    await tester.tap(find.text('Both'));
+    await tester.tap(find.text('Movies'));
+    await tester.pump();
+    expect(c.tastes.state.preferredType, MediaType.movie);
+
+    await tester.tap(find.text('All'));
     await tester.pump();
     expect(c.tastes.state.preferredType, isNull);
     await _letSavedFade(tester);
@@ -103,34 +119,27 @@ void main() {
     await _letSavedFade(tester);
   });
 
-  testWidgets('avoided genres: starts with just "Add"; the picker adds one '
-      'as a struck-through chip, and tapping that chip takes it back', (
-    tester,
-  ) async {
+  testWidgets('avoided genres: every genre is listed on the page like the '
+      'liked ones; tapping avoids it (struck through) and again takes it '
+      'back', (tester) async {
     final c = await _pump(tester);
     expect(find.text('Genres you avoid'), findsOneWidget);
-    expect(find.text('Add'), findsOneWidget);
+    // Each genre appears twice: once under "like", once under "avoid".
+    expect(find.text('Horror'), findsNWidgets(2));
+    expect(find.text('Add'), findsNothing);
 
-    await tester.tap(find.text('Add'));
-    await tester.pumpAndSettle();
-    expect(find.text('Add a genre to avoid'), findsOneWidget);
-
-    // The picker lists the genres; pick Horror (the last Horror chip is the
-    // sheet's — the page's liked list has its own).
     await tester.tap(find.text('Horror').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Add a genre to avoid'), findsNothing);
+    await tester.pump();
     expect(c.tastes.state.vetoedGenres.map((g) => g.id), ['horror']);
-
-    // Now an avoided chip: tap to take it back.
-    final avoided = find.byWidgetPredicate(
+    final struck = find.byWidgetPredicate(
       (w) =>
           w is Text &&
           w.data == 'Horror' &&
-          (w.style?.decoration == TextDecoration.lineThrough),
+          w.style?.decoration == TextDecoration.lineThrough,
     );
-    expect(avoided, findsOneWidget);
-    await tester.tap(avoided);
+    expect(struck, findsOneWidget);
+
+    await tester.tap(struck);
     await tester.pump();
     expect(c.tastes.state.vetoedGenres, isEmpty);
     await _letSavedFade(tester);
@@ -144,10 +153,8 @@ void main() {
     await tester.pump();
     expect(c.tastes.state.likedGenres.map((g) => g.id), ['horror']);
 
-    await tester.tap(find.text('Add'));
-    await tester.pumpAndSettle();
     await tester.tap(find.text('Horror').last);
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(c.tastes.state.likedGenres, isEmpty);
     expect(c.tastes.state.vetoedGenres.map((g) => g.id), ['horror']);
@@ -184,10 +191,8 @@ void main() {
     await _pump(tester, locale: const Locale('es'));
 
     expect(find.text('¿Qué sueles ver?'), findsOneWidget);
-    expect(find.text('Ambas'), findsOneWidget);
     expect(find.text('Géneros que me gustan'), findsOneWidget);
     expect(find.text('Géneros que evito'), findsOneWidget);
-    expect(find.text('Añadir'), findsOneWidget);
   });
 
   testWidgets('vibes: chips with their icons, up to 5; the sixth is dimmed '
@@ -218,14 +223,17 @@ void main() {
     );
     expect(tester.widget<Opacity>(sixth.first).opacity, lessThan(1));
     // ...and tapping it picks nothing.
+    await tester.ensureVisible(find.text('Superhero'));
     await tester.tap(find.text('Superhero'));
     await tester.pump();
     expect(c.tastes.state.likedVibes.length, 5);
 
     // Dropping one frees it.
+    await tester.ensureVisible(find.text('Feel Good'));
     await tester.tap(find.text('Feel Good'));
     await tester.pump();
     await tester.pump();
+    await tester.ensureVisible(find.text('Superhero'));
     await tester.tap(find.text('Superhero'));
     await tester.pump();
     expect(c.tastes.state.likedVibes.contains('superhero'), isTrue);
