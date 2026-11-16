@@ -665,4 +665,26 @@ void main() {
       });
     });
   });
+
+  group('SurpriseCubit — picking a type again', () {
+    test('a new pick passes through ChoosingType, so E1 routes again', () {
+      fakeAsync((async) {
+        final cubit = _cubit(engine: FakeSurpriseEngine());
+        final seen = <Type>[];
+        final sub = cubit.stream.listen((s) => seen.add(s.runtimeType));
+
+        unawaited(cubit.chooseType(MediaType.movie));
+        async.flushMicrotasks();
+        expect(cubit.state, isA<NeedsQuiz>());
+
+        // Back from the quiz, the user picks again.
+        unawaited(cubit.chooseType(MediaType.tvShow));
+        async.flushMicrotasks();
+
+        expect(seen, [NeedsQuiz, ChoosingType, NeedsQuiz]);
+        unawaited(sub.cancel());
+        cubit.close();
+      });
+    });
+  });
 }
