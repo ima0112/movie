@@ -1064,6 +1064,47 @@
       }
     }
   },
+  "statsGenresShowAll": "Show all ({count})",
+  "@statsGenresShowAll": {
+    "description": "C4 genres list: expands it to every genre.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statsGenresShowLess": "Show less",
+  "statsGenrePercent": "{percent}%",
+  "@statsGenrePercent": {
+    "description": "A genre's share of the genres counted.",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "statsDecadesTitle": "By decade",
+  "statsDecadeLabel": "{decade}s",
+  "@statsDecadeLabel": {
+    "description": "C4 decades chart label: 1990 -> '1990s'.",
+    "placeholders": {
+      "decade": {
+        "type": "int"
+      }
+    }
+  },
+  "statsCoverage": "Based on {complete} of {total, plural, one{1 title} other{{total} titles}} with full data.",
+  "@statsCoverage": {
+    "description": "C4's always-visible data-coverage note: how many watched titles have genres, year and duration saved.",
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "statsEmptyTitle": "Mark something as watched to see your stats",
   "statsEmptyBody": "Your numbers will show up here once you do.",
   "statsGenreBarsTitle": "Genres you watch most",

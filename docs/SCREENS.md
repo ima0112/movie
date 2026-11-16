@@ -143,6 +143,9 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - **Highlights** (a row of cards that scrolls edge to edge, starting on the page margin; each card is a poster or an icon, a small muted label, a semibold value and a muted detail; a card shows only when it has something to say, the whole section when none does): **Busiest month** ("May 2026", "7 titles"); **Streak** (current consecutive Monday–Sunday weeks with something watched, "Best: 5 weeks" — of the whole library, whatever the period); **Longest movie** and **Longest show** (poster, title, runtime / "24 episodes · 20 h"); **Your top rated** (poster, title, "★ 5 of 5"; the latest watched among ties); **Watch later** (how many titles wait and "≈ 30 h to watch", the hours of the ones with a known duration). The title cards open the detail.
 - **Activity** (a card; each day is a cell shaded by how many titles were watched that day — none, 1, 2, 3+ — with a "Less ▢▢▢▢ More" legend; days after today are not drawn): *All time* — the last 26 weeks, weeks as columns, Monday on top, a month caption over the week it starts; *This year* — the weeks of January to December (one-letter captions); *This month* — a classic calendar, Monday-first weekday header and the day number in each cell.
 - **Your ratings** (only when something in the period is rated): a card with the average ("4.2 average") and TMDB's over the same titles beside it, one line on how far you rate from TMDB ("You rate 0.4 ★ above TMDB on average" / below / in line), and a 5★→1★ bar histogram with the count per star; under it, when any, a card "Where you differ from TMDB" with up to three titles rated at least a star away ("You ★ 5 · TMDB ★ 3.2"), each opening the detail.
+- **Genres you watch most** (a card; absent when no watched title has genre data): per row the genre's icon, its name, a thin bar scaled to the top genre and its **share of all the genres counted** ("33%" — a title with several genres counts in each); the top 6, with **"Show all (N)"** / "Show less" at the end when there are more.
+- **By decade** (a card; absent with no dated title): one column per release decade, oldest first, tall in proportion to its count, the count above and "1990s" below; the busiest decade amber, the rest a muted amber.
+- **Coverage note** (always, centred and muted, at the end): "Based on 12 of 14 titles with full data." — watched titles with genres, a year and a duration all saved; the rest are left out of the genre, decade and hours figures.
 - (The rest of the blocks — activity calendar, ratings, genres, decades, data coverage — follow in the stack; see below as they land.)
 - Exits: back.
 
@@ -384,7 +387,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 7. Quiz/genre tile (default / selected / disabled).
 8. Slider with a large number (year, runtime).
 9. Stepper (seasons) and toggle.
-10. Metric card and genre bar (Stats).
+10. Stats blocks: hero, highlight card, activity calendar, rating histogram, genre row, decade chart.
 11. Participant row (initial avatar, name, tag, status).
 12. Status pill: Perfect match / Best compromise / Airing / Ended.
 13. Result card (Surprise me and Match).

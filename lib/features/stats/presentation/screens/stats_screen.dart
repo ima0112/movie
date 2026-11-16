@@ -14,7 +14,9 @@ import '../cubit/stats_cubit.dart';
 import '../widgets/stats_empty_state.dart';
 import '../widgets/stats_activity_section.dart';
 import '../widgets/stats_empty_period.dart';
-import '../widgets/stats_genre_bars.dart';
+import '../widgets/stats_coverage_note.dart';
+import '../widgets/stats_decades_section.dart';
+import '../widgets/stats_genres_section.dart';
 import '../widgets/stats_hero_card.dart';
 import '../widgets/stats_highlights.dart';
 import '../widgets/stats_period_tabs.dart';
@@ -104,12 +106,12 @@ class _StatsView extends StatelessWidget {
                       today: DateTime.now(),
                     ),
                     StatsRatingsSection(insights: insights),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    PageMargin(
-                      child: StatsGenreBars(
-                        topGenres: insights.genres.take(5).toList(),
-                      ),
+                    StatsGenresSection(
+                      genres: insights.genres,
+                      genreTotal: insights.genreTotal,
                     ),
+                    StatsDecadesSection(decades: insights.decades),
+                    PageMargin(child: StatsCoverageNote(insights: insights)),
                   ],
                 );
               },
