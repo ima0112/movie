@@ -47,12 +47,36 @@ class QuizCubit extends Cubit<QuizState> {
       emit(state.copyWith(vibeIds: Set.of(current)..remove(vibeId)));
       return;
     }
-    if (current.length >= QuizState.requiredVibeCount) return;
+    if (current.length >= QuizState.maxVibes) return;
     emit(state.copyWith(vibeIds: {...current, vibeId}));
   }
 
   /// Step 3's year slider.
   void setYearFrom(int year) => emit(state.copyWith(yearFrom: year));
+
+  /// The year range's two handles. [to] at or past [currentYear] means "up to
+  /// today" and is stored as no upper bound.
+  void setYearRange(int from, int to, {required int currentYear}) => emit(
+    state.copyWith(yearFrom: from, yearTo: () => to >= currentYear ? null : to),
+  );
+
+  /// Tapping a service adds it to the set or takes it out.
+  void togglePlatform(int id) {
+    final current = state.platformIds;
+    emit(
+      state.copyWith(
+        platformIds: current.contains(id)
+            ? (Set.of(current)..remove(id))
+            : {...current, id},
+      ),
+    );
+  }
+
+  /// The "All" link: no platform filter.
+  void clearPlatforms() => emit(state.copyWith(platformIds: const {}));
+
+  void setIncludeRentBuy(bool value) =>
+      emit(state.copyWith(includeRentBuy: value));
 
   /// Step 4, movie sessions only. `null` = "No limit".
   void setMaxRuntimeMinutes(int? minutes) =>
@@ -109,6 +133,10 @@ class QuizCubit extends Cubit<QuizState> {
       maxSeasons: s.mediaType == MediaType.tvShow ? s.maxSeasons : null,
       excludeWatched: s.excludeWatched,
       watchedKeys: watchedKeys,
+      yearTo: s.yearTo,
+      platformIds: s.platformIds,
+      // Rent and buy only means something with a platform picked.
+      includeRentBuy: s.platformIds.isNotEmpty && s.includeRentBuy,
     );
   }
 }
