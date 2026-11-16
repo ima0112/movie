@@ -59,7 +59,10 @@ class InMemoryUserLibraryRepository implements UserLibraryRepository {
 
   @override
   Future<Result<void>> upsert(UserMediaEntry entry) async {
-    _entries[entry.key] = entry;
+    _entries[entry.key] = entry.withSaveDates(
+      _entries[entry.key],
+      DateTime.now(),
+    );
     _changes.add(null);
     return const Success(null);
   }

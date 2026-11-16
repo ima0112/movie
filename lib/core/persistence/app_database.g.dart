@@ -150,6 +150,28 @@ class $UserMediaEntriesTable extends UserMediaEntries
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _favoritedAtMeta = const VerificationMeta(
+    'favoritedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> favoritedAt = GeneratedColumn<DateTime>(
+    'favorited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _watchLaterAtMeta = const VerificationMeta(
+    'watchLaterAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> watchLaterAt = GeneratedColumn<DateTime>(
+    'watch_later_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _ratingMeta = const VerificationMeta('rating');
   @override
   late final GeneratedColumn<int> rating = GeneratedColumn<int>(
@@ -217,6 +239,8 @@ class $UserMediaEntriesTable extends UserMediaEntries
     isFavorite,
     isWatchLater,
     watchedAt,
+    favoritedAt,
+    watchLaterAt,
     rating,
     runtimeMinutes,
     episodeCount,
@@ -316,6 +340,24 @@ class $UserMediaEntriesTable extends UserMediaEntries
       context.handle(
         _watchedAtMeta,
         watchedAt.isAcceptableOrUnknown(data['watched_at']!, _watchedAtMeta),
+      );
+    }
+    if (data.containsKey('favorited_at')) {
+      context.handle(
+        _favoritedAtMeta,
+        favoritedAt.isAcceptableOrUnknown(
+          data['favorited_at']!,
+          _favoritedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('watch_later_at')) {
+      context.handle(
+        _watchLaterAtMeta,
+        watchLaterAt.isAcceptableOrUnknown(
+          data['watch_later_at']!,
+          _watchLaterAtMeta,
+        ),
       );
     }
     if (data.containsKey('rating')) {
@@ -422,6 +464,14 @@ class $UserMediaEntriesTable extends UserMediaEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}watched_at'],
       ),
+      favoritedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}favorited_at'],
+      ),
+      watchLaterAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}watch_later_at'],
+      ),
       rating: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}rating'],
@@ -491,6 +541,11 @@ class UserMediaEntryRow extends DataClass
   final bool isWatchLater;
   final DateTime? watchedAt;
 
+  /// When the title joined Favorites / Watch later (schema v9) — null when it
+  /// isn't in that list, and for rows saved before this column existed.
+  final DateTime? favoritedAt;
+  final DateTime? watchLaterAt;
+
   /// 1–5, only meaningful once [watchedAt] is set — see
   /// `UserMediaEntry.markWatched`.
   final int? rating;
@@ -515,6 +570,8 @@ class UserMediaEntryRow extends DataClass
     required this.isFavorite,
     required this.isWatchLater,
     this.watchedAt,
+    this.favoritedAt,
+    this.watchLaterAt,
     this.rating,
     this.runtimeMinutes,
     this.episodeCount,
@@ -558,6 +615,12 @@ class UserMediaEntryRow extends DataClass
     map['is_watch_later'] = Variable<bool>(isWatchLater);
     if (!nullToAbsent || watchedAt != null) {
       map['watched_at'] = Variable<DateTime>(watchedAt);
+    }
+    if (!nullToAbsent || favoritedAt != null) {
+      map['favorited_at'] = Variable<DateTime>(favoritedAt);
+    }
+    if (!nullToAbsent || watchLaterAt != null) {
+      map['watch_later_at'] = Variable<DateTime>(watchLaterAt);
     }
     if (!nullToAbsent || rating != null) {
       map['rating'] = Variable<int>(rating);
@@ -606,6 +669,12 @@ class UserMediaEntryRow extends DataClass
       watchedAt: watchedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(watchedAt),
+      favoritedAt: favoritedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(favoritedAt),
+      watchLaterAt: watchLaterAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(watchLaterAt),
       rating: rating == null && nullToAbsent
           ? const Value.absent()
           : Value(rating),
@@ -643,6 +712,8 @@ class UserMediaEntryRow extends DataClass
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       isWatchLater: serializer.fromJson<bool>(json['isWatchLater']),
       watchedAt: serializer.fromJson<DateTime?>(json['watchedAt']),
+      favoritedAt: serializer.fromJson<DateTime?>(json['favoritedAt']),
+      watchLaterAt: serializer.fromJson<DateTime?>(json['watchLaterAt']),
       rating: serializer.fromJson<int?>(json['rating']),
       runtimeMinutes: serializer.fromJson<int?>(json['runtimeMinutes']),
       episodeCount: serializer.fromJson<int?>(json['episodeCount']),
@@ -671,6 +742,8 @@ class UserMediaEntryRow extends DataClass
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'isWatchLater': serializer.toJson<bool>(isWatchLater),
       'watchedAt': serializer.toJson<DateTime?>(watchedAt),
+      'favoritedAt': serializer.toJson<DateTime?>(favoritedAt),
+      'watchLaterAt': serializer.toJson<DateTime?>(watchLaterAt),
       'rating': serializer.toJson<int?>(rating),
       'runtimeMinutes': serializer.toJson<int?>(runtimeMinutes),
       'episodeCount': serializer.toJson<int?>(episodeCount),
@@ -693,6 +766,8 @@ class UserMediaEntryRow extends DataClass
     bool? isFavorite,
     bool? isWatchLater,
     Value<DateTime?> watchedAt = const Value.absent(),
+    Value<DateTime?> favoritedAt = const Value.absent(),
+    Value<DateTime?> watchLaterAt = const Value.absent(),
     Value<int?> rating = const Value.absent(),
     Value<int?> runtimeMinutes = const Value.absent(),
     Value<int?> episodeCount = const Value.absent(),
@@ -712,6 +787,8 @@ class UserMediaEntryRow extends DataClass
     isFavorite: isFavorite ?? this.isFavorite,
     isWatchLater: isWatchLater ?? this.isWatchLater,
     watchedAt: watchedAt.present ? watchedAt.value : this.watchedAt,
+    favoritedAt: favoritedAt.present ? favoritedAt.value : this.favoritedAt,
+    watchLaterAt: watchLaterAt.present ? watchLaterAt.value : this.watchLaterAt,
     rating: rating.present ? rating.value : this.rating,
     runtimeMinutes: runtimeMinutes.present
         ? runtimeMinutes.value
@@ -749,6 +826,12 @@ class UserMediaEntryRow extends DataClass
           ? data.isWatchLater.value
           : this.isWatchLater,
       watchedAt: data.watchedAt.present ? data.watchedAt.value : this.watchedAt,
+      favoritedAt: data.favoritedAt.present
+          ? data.favoritedAt.value
+          : this.favoritedAt,
+      watchLaterAt: data.watchLaterAt.present
+          ? data.watchLaterAt.value
+          : this.watchLaterAt,
       rating: data.rating.present ? data.rating.value : this.rating,
       runtimeMinutes: data.runtimeMinutes.present
           ? data.runtimeMinutes.value
@@ -779,6 +862,8 @@ class UserMediaEntryRow extends DataClass
           ..write('isFavorite: $isFavorite, ')
           ..write('isWatchLater: $isWatchLater, ')
           ..write('watchedAt: $watchedAt, ')
+          ..write('favoritedAt: $favoritedAt, ')
+          ..write('watchLaterAt: $watchLaterAt, ')
           ..write('rating: $rating, ')
           ..write('runtimeMinutes: $runtimeMinutes, ')
           ..write('episodeCount: $episodeCount, ')
@@ -803,6 +888,8 @@ class UserMediaEntryRow extends DataClass
     isFavorite,
     isWatchLater,
     watchedAt,
+    favoritedAt,
+    watchLaterAt,
     rating,
     runtimeMinutes,
     episodeCount,
@@ -826,6 +913,8 @@ class UserMediaEntryRow extends DataClass
           other.isFavorite == this.isFavorite &&
           other.isWatchLater == this.isWatchLater &&
           other.watchedAt == this.watchedAt &&
+          other.favoritedAt == this.favoritedAt &&
+          other.watchLaterAt == this.watchLaterAt &&
           other.rating == this.rating &&
           other.runtimeMinutes == this.runtimeMinutes &&
           other.episodeCount == this.episodeCount &&
@@ -847,6 +936,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
   final Value<bool> isFavorite;
   final Value<bool> isWatchLater;
   final Value<DateTime?> watchedAt;
+  final Value<DateTime?> favoritedAt;
+  final Value<DateTime?> watchLaterAt;
   final Value<int?> rating;
   final Value<int?> runtimeMinutes;
   final Value<int?> episodeCount;
@@ -867,6 +958,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     this.isFavorite = const Value.absent(),
     this.isWatchLater = const Value.absent(),
     this.watchedAt = const Value.absent(),
+    this.favoritedAt = const Value.absent(),
+    this.watchLaterAt = const Value.absent(),
     this.rating = const Value.absent(),
     this.runtimeMinutes = const Value.absent(),
     this.episodeCount = const Value.absent(),
@@ -888,6 +981,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     this.isFavorite = const Value.absent(),
     this.isWatchLater = const Value.absent(),
     this.watchedAt = const Value.absent(),
+    this.favoritedAt = const Value.absent(),
+    this.watchLaterAt = const Value.absent(),
     this.rating = const Value.absent(),
     this.runtimeMinutes = const Value.absent(),
     this.episodeCount = const Value.absent(),
@@ -911,6 +1006,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     Expression<bool>? isFavorite,
     Expression<bool>? isWatchLater,
     Expression<DateTime>? watchedAt,
+    Expression<DateTime>? favoritedAt,
+    Expression<DateTime>? watchLaterAt,
     Expression<int>? rating,
     Expression<int>? runtimeMinutes,
     Expression<int>? episodeCount,
@@ -932,6 +1029,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (isWatchLater != null) 'is_watch_later': isWatchLater,
       if (watchedAt != null) 'watched_at': watchedAt,
+      if (favoritedAt != null) 'favorited_at': favoritedAt,
+      if (watchLaterAt != null) 'watch_later_at': watchLaterAt,
       if (rating != null) 'rating': rating,
       if (runtimeMinutes != null) 'runtime_minutes': runtimeMinutes,
       if (episodeCount != null) 'episode_count': episodeCount,
@@ -956,6 +1055,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     Value<bool>? isFavorite,
     Value<bool>? isWatchLater,
     Value<DateTime?>? watchedAt,
+    Value<DateTime?>? favoritedAt,
+    Value<DateTime?>? watchLaterAt,
     Value<int?>? rating,
     Value<int?>? runtimeMinutes,
     Value<int?>? episodeCount,
@@ -977,6 +1078,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
       isFavorite: isFavorite ?? this.isFavorite,
       isWatchLater: isWatchLater ?? this.isWatchLater,
       watchedAt: watchedAt ?? this.watchedAt,
+      favoritedAt: favoritedAt ?? this.favoritedAt,
+      watchLaterAt: watchLaterAt ?? this.watchLaterAt,
       rating: rating ?? this.rating,
       runtimeMinutes: runtimeMinutes ?? this.runtimeMinutes,
       episodeCount: episodeCount ?? this.episodeCount,
@@ -1031,6 +1134,12 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
     if (watchedAt.present) {
       map['watched_at'] = Variable<DateTime>(watchedAt.value);
     }
+    if (favoritedAt.present) {
+      map['favorited_at'] = Variable<DateTime>(favoritedAt.value);
+    }
+    if (watchLaterAt.present) {
+      map['watch_later_at'] = Variable<DateTime>(watchLaterAt.value);
+    }
     if (rating.present) {
       map['rating'] = Variable<int>(rating.value);
     }
@@ -1070,6 +1179,8 @@ class UserMediaEntriesCompanion extends UpdateCompanion<UserMediaEntryRow> {
           ..write('isFavorite: $isFavorite, ')
           ..write('isWatchLater: $isWatchLater, ')
           ..write('watchedAt: $watchedAt, ')
+          ..write('favoritedAt: $favoritedAt, ')
+          ..write('watchLaterAt: $watchLaterAt, ')
           ..write('rating: $rating, ')
           ..write('runtimeMinutes: $runtimeMinutes, ')
           ..write('episodeCount: $episodeCount, ')
@@ -3363,6 +3474,8 @@ typedef $$UserMediaEntriesTableCreateCompanionBuilder =
       Value<bool> isFavorite,
       Value<bool> isWatchLater,
       Value<DateTime?> watchedAt,
+      Value<DateTime?> favoritedAt,
+      Value<DateTime?> watchLaterAt,
       Value<int?> rating,
       Value<int?> runtimeMinutes,
       Value<int?> episodeCount,
@@ -3385,6 +3498,8 @@ typedef $$UserMediaEntriesTableUpdateCompanionBuilder =
       Value<bool> isFavorite,
       Value<bool> isWatchLater,
       Value<DateTime?> watchedAt,
+      Value<DateTime?> favoritedAt,
+      Value<DateTime?> watchLaterAt,
       Value<int?> rating,
       Value<int?> runtimeMinutes,
       Value<int?> episodeCount,
@@ -3465,6 +3580,16 @@ class $$UserMediaEntriesTableFilterComposer
 
   ColumnFilters<DateTime> get watchedAt => $composableBuilder(
     column: $table.watchedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get favoritedAt => $composableBuilder(
+    column: $table.favoritedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get watchLaterAt => $composableBuilder(
+    column: $table.watchLaterAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3568,6 +3693,16 @@ class $$UserMediaEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get favoritedAt => $composableBuilder(
+    column: $table.favoritedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get watchLaterAt => $composableBuilder(
+    column: $table.watchLaterAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get rating => $composableBuilder(
     column: $table.rating,
     builder: (column) => ColumnOrderings(column),
@@ -3654,6 +3789,16 @@ class $$UserMediaEntriesTableAnnotationComposer
   GeneratedColumn<DateTime> get watchedAt =>
       $composableBuilder(column: $table.watchedAt, builder: (column) => column);
 
+  GeneratedColumn<DateTime> get favoritedAt => $composableBuilder(
+    column: $table.favoritedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get watchLaterAt => $composableBuilder(
+    column: $table.watchLaterAt,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get rating =>
       $composableBuilder(column: $table.rating, builder: (column) => column);
 
@@ -3726,6 +3871,8 @@ class $$UserMediaEntriesTableTableManager
                 Value<bool> isFavorite = const Value.absent(),
                 Value<bool> isWatchLater = const Value.absent(),
                 Value<DateTime?> watchedAt = const Value.absent(),
+                Value<DateTime?> favoritedAt = const Value.absent(),
+                Value<DateTime?> watchLaterAt = const Value.absent(),
                 Value<int?> rating = const Value.absent(),
                 Value<int?> runtimeMinutes = const Value.absent(),
                 Value<int?> episodeCount = const Value.absent(),
@@ -3746,6 +3893,8 @@ class $$UserMediaEntriesTableTableManager
                 isFavorite: isFavorite,
                 isWatchLater: isWatchLater,
                 watchedAt: watchedAt,
+                favoritedAt: favoritedAt,
+                watchLaterAt: watchLaterAt,
                 rating: rating,
                 runtimeMinutes: runtimeMinutes,
                 episodeCount: episodeCount,
@@ -3768,6 +3917,8 @@ class $$UserMediaEntriesTableTableManager
                 Value<bool> isFavorite = const Value.absent(),
                 Value<bool> isWatchLater = const Value.absent(),
                 Value<DateTime?> watchedAt = const Value.absent(),
+                Value<DateTime?> favoritedAt = const Value.absent(),
+                Value<DateTime?> watchLaterAt = const Value.absent(),
                 Value<int?> rating = const Value.absent(),
                 Value<int?> runtimeMinutes = const Value.absent(),
                 Value<int?> episodeCount = const Value.absent(),
@@ -3788,6 +3939,8 @@ class $$UserMediaEntriesTableTableManager
                 isFavorite: isFavorite,
                 isWatchLater: isWatchLater,
                 watchedAt: watchedAt,
+                favoritedAt: favoritedAt,
+                watchLaterAt: watchLaterAt,
                 rating: rating,
                 runtimeMinutes: runtimeMinutes,
                 episodeCount: episodeCount,

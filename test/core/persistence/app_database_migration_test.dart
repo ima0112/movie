@@ -3,6 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/persistence/app_database.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite3;
 
+/// The one thing the later migration steps need of an older database: the
+/// table whose columns they add (its other columns don't matter here).
+void _addLibraryTable(sqlite3.Database raw) => raw.execute(
+  'CREATE TABLE user_media_entries ('
+  'media_type TEXT NOT NULL, tmdb_id INTEGER NOT NULL, '
+  'PRIMARY KEY (media_type, tmdb_id));',
+);
+
 void main() {
   group('AppDatabase migration', () {
     test(
@@ -24,6 +32,7 @@ void main() {
         raw.execute(
           'INSERT INTO onboarding_table (id, completed) VALUES (0, 1);',
         );
+        _addLibraryTable(raw);
         raw.execute('PRAGMA user_version = 5;');
 
         final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
@@ -52,6 +61,7 @@ void main() {
         "INSERT INTO settings_table (id, language_code, region_code) "
         "VALUES (0, 'es', 'ES');",
       );
+      _addLibraryTable(raw);
       raw.execute('PRAGMA user_version = 6;');
 
       final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
@@ -60,6 +70,33 @@ void main() {
       expect(await db.select(db.recentlyViewedTable).get(), isEmpty);
       final settings = await db.select(db.settingsTable).getSingle();
       expect(settings.regionCode, 'ES');
+    });
+
+    test('upgrading from schema v8 (before the favorite/watch-later dates) '
+        'adds them as empty columns and keeps the saved entry', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      raw.execute(
+        'CREATE TABLE user_media_entries ('
+        'media_type TEXT NOT NULL, tmdb_id INTEGER NOT NULL, '
+        'title TEXT, is_favorite INTEGER NOT NULL DEFAULT 0, '
+        'is_watch_later INTEGER NOT NULL DEFAULT 0, '
+        'updated_at INTEGER NOT NULL, '
+        'PRIMARY KEY (media_type, tmdb_id));',
+      );
+      raw.execute(
+        "INSERT INTO user_media_entries (media_type, tmdb_id, title, "
+        "is_favorite, updated_at) VALUES ('movie', 1, 'Dune', 1, 0);",
+      );
+      raw.execute('PRAGMA user_version = 8;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      final row = await db.select(db.userMediaEntries).getSingle();
+      expect(row.title, 'Dune');
+      expect(row.isFavorite, isTrue);
+      expect(row.favoritedAt, isNull);
+      expect(row.watchLaterAt, isNull);
     });
   });
 }
