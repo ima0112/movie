@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:injectable/injectable.dart';
+import 'package:sqlite3/sqlite3.dart' show SqliteException;
 
 import '../domain/entities/media_type.dart';
 
@@ -310,9 +311,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(tasteProfileTable);
       }
       if (from < 3) {
-        await m.addColumn(userMediaEntries, userMediaEntries.runtimeMinutes);
-        await m.addColumn(userMediaEntries, userMediaEntries.episodeCount);
-        await m.addColumn(
+        await _addColumn(m, userMediaEntries, userMediaEntries.runtimeMinutes);
+        await _addColumn(m, userMediaEntries, userMediaEntries.episodeCount);
+        await _addColumn(
+          m,
           userMediaEntries,
           userMediaEntries.episodeRuntimeMinutes,
         );
@@ -333,13 +335,13 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(savedPeopleTable);
       }
       if (from < 9) {
-        await m.addColumn(userMediaEntries, userMediaEntries.favoritedAt);
-        await m.addColumn(userMediaEntries, userMediaEntries.watchLaterAt);
+        await _addColumn(m, userMediaEntries, userMediaEntries.favoritedAt);
+        await _addColumn(m, userMediaEntries, userMediaEntries.watchLaterAt);
       }
       if (from < 10) {
-        await m.addColumn(tasteProfileTable, tasteProfileTable.yearTo);
-        await m.addColumn(tasteProfileTable, tasteProfileTable.preferredType);
-        await m.addColumn(tasteProfileTable, tasteProfileTable.platformIds);
+        await _addColumn(m, tasteProfileTable, tasteProfileTable.yearTo);
+        await _addColumn(m, tasteProfileTable, tasteProfileTable.preferredType);
+        await _addColumn(m, tasteProfileTable, tasteProfileTable.platformIds);
       }
     },
   );
@@ -347,4 +349,24 @@ class AppDatabase extends _$AppDatabase {
 
 QueryExecutor _openConnection() {
   return driftDatabase(name: 'pako_tv');
+}
+
+/// `Migrator.addColumn`, but a column that is already there is not an error.
+///
+/// A migration step can find its column present when an earlier run of the
+/// step was cut short (the app killed between the `ALTER TABLE` and drift
+/// recording the new `user_version`), or when a development database was
+/// written by another build and then opened by one with a lower version.
+/// Without this the app would crash on every launch with "duplicate column
+/// name"; here it carries on, since the column is what the step wanted.
+Future<void> _addColumn(
+  Migrator m,
+  TableInfo<Table, Object?> table,
+  GeneratedColumn<Object> column,
+) async {
+  try {
+    await m.addColumn(table, column);
+  } on SqliteException catch (e) {
+    if (!e.message.toLowerCase().contains('duplicate column name')) rethrow;
+  }
 }
