@@ -49,6 +49,7 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart'
 import 'package:movies/core/domain/repositories/user_profile_repository.dart'
     as _i824;
 import 'package:movies/core/network/api_client.dart' as _i152;
+import 'package:movies/core/network/network_status.dart' as _i320;
 import 'package:movies/core/persistence/app_database.dart' as _i231;
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart'
     as _i661;
@@ -70,6 +71,7 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.lazySingleton<_i320.NetworkStatus>(() => _i320.NetworkStatus());
     gh.lazySingleton<_i231.AppDatabase>(() => _i231.AppDatabase());
     gh.lazySingleton<_i942.SearchHistoryRepository>(
       () => _i598.DriftSearchHistoryRepository(gh<_i231.AppDatabase>()),
@@ -96,7 +98,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i497.DriftUserLibraryRepository(gh<_i231.AppDatabase>()),
     );
     gh.lazySingleton<_i152.ApiClient>(
-      () => _i152.ApiClient(gh<_i780.SettingsRepository>()),
+      () => _i152.ApiClient(
+        gh<_i780.SettingsRepository>(),
+        gh<_i320.NetworkStatus>(),
+      ),
       registerFor: {_real},
     );
     gh.lazySingleton<_i263.PersonRepository>(

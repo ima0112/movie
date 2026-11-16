@@ -12,6 +12,20 @@ import '../domain/entities/result.dart';
 /// (status code, URI, `exception.message`) is real, useful information,
 /// but it's diagnostic, not something to show a user, so it's dropped
 /// here rather than smuggled into `Failure` under a different name.
+/// Whether [exception] means the server couldn't be reached at all (no
+/// connection, a timeout) — what makes a failure [FailureReason.network] and
+/// the app "offline". An HTTP answer, even an error one, never does.
+bool isUnreachable(DioException exception) =>
+    exception.response == null &&
+    switch (exception.type) {
+      DioExceptionType.connectionError ||
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout ||
+      DioExceptionType.transformTimeout => true,
+      _ => false,
+    };
+
 Failure<T> mapDioExceptionToFailure<T>(DioException exception) {
   final statusCode = exception.response?.statusCode;
 

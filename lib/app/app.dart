@@ -7,9 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/domain/entities/app_settings.dart';
 import '../core/domain/repositories/settings_repository.dart';
 import '../core/domain/repositories/taste_profile_repository.dart';
+import '../core/network/network_status.dart';
 import '../core/domain/repositories/user_profile_repository.dart';
 import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
+import 'cubits/connectivity_cubit.dart';
 import 'cubits/taste_profile_cubit.dart';
 import 'cubits/user_profile_cubit.dart';
 import 'di.dart';
@@ -72,6 +74,7 @@ class _PakoTvAppState extends State<PakoTvApp> {
         BlocProvider(
           create: (_) => TasteProfileCubit(getIt<TasteProfileRepository>()),
         ),
+        BlocProvider(create: (_) => ConnectivityCubit(getIt<NetworkStatus>())),
       ],
       child: MaterialApp.router(
         title: 'PakoTV',
