@@ -127,7 +127,7 @@ SearchResult? searchResultFromJson(
 List<StreamingService> streamingServicesFromJson(
   List<Map<String, dynamic>> raw, {
   required TmdbImagesConfig imagesConfig,
-  required int limit,
+  int? limit,
   String? regionCode,
 }) {
   final byId = <int, ({StreamingService service, int priority})>{};
@@ -167,7 +167,9 @@ List<StreamingService> streamingServicesFromJson(
           ? byPriority
           : a.service.name.compareTo(b.service.name);
     });
-  return [for (final e in sorted.take(limit)) e.service];
+  return [
+    for (final e in (limit == null ? sorted : sorted.take(limit))) e.service,
+  ];
 }
 
 /// TMDB's provider list also holds storefronts and re-sold bundles that aren't

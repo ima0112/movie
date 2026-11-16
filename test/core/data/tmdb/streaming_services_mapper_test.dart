@@ -49,6 +49,19 @@ void main() {
     expect(services.map((s) => s.name), isNot(contains('Peacock Premium')));
   });
 
+  test('no limit at all (the picker\'s search): every service of the region, '
+      'still ranked', () {
+    final services = streamingServicesFromJson(
+      raw,
+      imagesConfig: config,
+      regionCode: 'US',
+    );
+
+    expect(services, hasLength(20));
+    expect(services.first.name, 'Service 1');
+    expect(services.last.name, 'Service 20');
+  });
+
   test('without the region it falls back to the global display_priority', () {
     final services = streamingServicesFromJson(
       raw,

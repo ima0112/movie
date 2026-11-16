@@ -1191,6 +1191,7 @@ class FakeMediaRepository implements MediaRepository {
   @override
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
+    bool all = false,
   }) async {
     await Future.delayed(_delay);
     return const Success([
