@@ -7,6 +7,7 @@ import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/media_type_localization.dart';
+import '../../../../l10n/full_date_format.dart';
 import '../../../../l10n/library_date_localization.dart';
 import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/library_row_status.dart';
@@ -75,7 +76,7 @@ class MyListEntryTile extends StatelessWidget {
           ? null
           : LibraryRowStatus.watched(
               stars: entry.rating,
-              label: l10n.watchedLabel(watchedAt),
+              label: l10n.fullDate(watchedAt),
             );
     }
     final added = tab == LibraryTab.favorites

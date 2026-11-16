@@ -54,6 +54,8 @@ class ActionsSheet extends StatelessWidget {
   }) async {
     final chosen = await showModalBottomSheet<SheetAction>(
       context: context,
+      // Over the floating tab bar, not under it.
+      useRootNavigator: true,
       builder: (_) => ActionsSheet(
         leading: leading,
         title: title,

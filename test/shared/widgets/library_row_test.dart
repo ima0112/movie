@@ -64,20 +64,23 @@ void main() {
         _row(
           status: const LibraryRowStatus.watched(
             stars: 4,
-            label: 'Watched 8 Nov, 2026',
+            label: '8 Nov, 2026',
           ),
         ),
       );
 
       expect(find.byIcon(AppIcons.starFill), findsNWidgets(4));
       expect(find.byIcon(AppIcons.star), findsOneWidget);
-      expect(find.text('Watched 8 Nov, 2026'), findsOneWidget);
+      expect(find.text('8 Nov, 2026'), findsOneWidget);
     });
 
     testWidgets('unrated shows five outlined stars, not none', (tester) async {
       await tester.pumpWidget(
         _row(
-          status: const LibraryRowStatus.watched(stars: null, label: 'Watched'),
+          status: const LibraryRowStatus.watched(
+            stars: null,
+            label: '8 Nov, 2026',
+          ),
         ),
       );
 

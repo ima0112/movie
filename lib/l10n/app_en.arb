@@ -694,15 +694,6 @@
       }
     }
   },
-  "libraryRowWatchedOn": "Watched {date}",
-  "@libraryRowWatchedOn": {
-    "description": "A Watched row's line, next to the stars. {date} is the app's full date (12 Jan, 2026).",
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
 
   "myListUndoAction": "Undo",
   "@myListUndoAction": {
