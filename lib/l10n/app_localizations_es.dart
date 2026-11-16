@@ -1050,9 +1050,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myTastesTypeHint => 'Define qué catálogo mostramos primero.';
 
   @override
-  String get myTastesFooter => 'Todo se guarda solo en tu dispositivo.';
-
-  @override
   String get myTastesVibesTitle => 'Vibes favoritas';
 
   @override
@@ -1061,10 +1058,31 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get releaseRangeFrom => 'Desde';
+
+  @override
+  String get releaseRangeTo => 'Hasta';
+
+  @override
+  String get releaseRangeToday => 'Hoy';
+
+  @override
+  String get releaseRangeAll => 'Todos';
+
+  @override
+  String get releaseRange2020s => '2020s';
+
+  @override
+  String get releaseRange2010s => '2010s';
+
+  @override
+  String get releaseRangeEarlier => 'Anteriores';
+
+  @override
   String get myTastesErasTitle => 'Épocas';
 
   @override
-  String get myTastesErasHint => 'Rango de años de estreno que prefieres.';
+  String get myTastesErasHint => 'Elige un rango de estreno';
 
   @override
   String get myTastesPlatformsAdd => 'Añadir';

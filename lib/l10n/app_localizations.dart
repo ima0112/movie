@@ -1832,12 +1832,6 @@ abstract class AppLocalizations {
   /// **'It sets which catalog we show first.'**
   String get myTastesTypeHint;
 
-  /// No description provided for @myTastesFooter.
-  ///
-  /// In en, this message translates to:
-  /// **'Everything is saved only on your device.'**
-  String get myTastesFooter;
-
   /// No description provided for @myTastesVibesTitle.
   ///
   /// In en, this message translates to:
@@ -1850,6 +1844,48 @@ abstract class AppLocalizations {
   /// **'Up to {max}. They set the tone of what we suggest.'**
   String myTastesVibesHint(int max);
 
+  /// Label of the first card of a release-year range picker (shown in capitals), over the first year.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get releaseRangeFrom;
+
+  /// No description provided for @releaseRangeTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get releaseRangeTo;
+
+  /// A release range's open end: the current year, shown as a word.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get releaseRangeToday;
+
+  /// No description provided for @releaseRangeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get releaseRangeAll;
+
+  /// No description provided for @releaseRange2020s.
+  ///
+  /// In en, this message translates to:
+  /// **'2020s'**
+  String get releaseRange2020s;
+
+  /// No description provided for @releaseRange2010s.
+  ///
+  /// In en, this message translates to:
+  /// **'2010s'**
+  String get releaseRange2010s;
+
+  /// Release-range preset: everything before the 2010s.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get releaseRangeEarlier;
+
   /// No description provided for @myTastesErasTitle.
   ///
   /// In en, this message translates to:
@@ -1859,7 +1895,7 @@ abstract class AppLocalizations {
   /// No description provided for @myTastesErasHint.
   ///
   /// In en, this message translates to:
-  /// **'The release years you prefer.'**
+  /// **'Choose a release range'**
   String get myTastesErasHint;
 
   /// The chip in C5's "My platforms" that opens the picker of the region's streaming services.

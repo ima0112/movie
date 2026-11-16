@@ -961,7 +961,6 @@
 
   "myTastesTypeTitle": "What do you usually watch?",
   "myTastesTypeHint": "It sets which catalog we show first.",
-  "myTastesFooter": "Everything is saved only on your device.",
   "myTastesVibesTitle": "Favorite vibes",
   "myTastesVibesHint": "Up to {max}. They set the tone of what we suggest.",
   "@myTastesVibesHint": {
@@ -972,8 +971,24 @@
       }
     }
   },
+  "releaseRangeFrom": "From",
+  "@releaseRangeFrom": {
+    "description": "Label of the first card of a release-year range picker (shown in capitals), over the first year."
+  },
+  "releaseRangeTo": "To",
+  "releaseRangeToday": "Today",
+  "@releaseRangeToday": {
+    "description": "A release range's open end: the current year, shown as a word."
+  },
+  "releaseRangeAll": "All",
+  "releaseRange2020s": "2020s",
+  "releaseRange2010s": "2010s",
+  "releaseRangeEarlier": "Earlier",
+  "@releaseRangeEarlier": {
+    "description": "Release-range preset: everything before the 2010s."
+  },
   "myTastesErasTitle": "Eras",
-  "myTastesErasHint": "The release years you prefer.",
+  "myTastesErasHint": "Choose a release range",
   "myTastesPlatformsAdd": "Add",
   "@myTastesPlatformsAdd": {
     "description": "The chip in C5's \"My platforms\" that opens the picker of the region's streaming services."
