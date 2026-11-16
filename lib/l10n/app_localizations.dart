@@ -2882,6 +2882,30 @@ abstract class AppLocalizations {
   /// **'Delete My List'**
   String get settingsDeleteMyListLabel;
 
+  /// C6's Data row that forgets every title Surprise me has shown (the local history that keeps it from repeating itself). "Surprise me" is the feature's name.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Surprise me history'**
+  String get settingsDeleteSurpriseHistoryLabel;
+
+  /// No description provided for @settingsDeleteSurpriseHistoryDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your Surprise me history?'**
+  String get settingsDeleteSurpriseHistoryDialogTitle;
+
+  /// No description provided for @settingsSurpriseHistoryDeletedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise me history deleted'**
+  String get settingsSurpriseHistoryDeletedSnackbar;
+
+  /// No description provided for @settingsDeleteSurpriseHistoryFailedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete the Surprise me history'**
+  String get settingsDeleteSurpriseHistoryFailedSnackbar;
+
   /// No description provided for @settingsDeleteMyTastesLabel.
   ///
   /// In en, this message translates to:

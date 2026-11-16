@@ -87,12 +87,16 @@ class TasteProfileBuilder {
     final Set<Genre> vetoedGenres;
     final Set<String> likedVibes;
     final int yearFrom;
+    int? yearTo;
+    var platformIds = const <int>{};
 
     if (profile != null && profile.isUsableForSuggestions) {
       likedGenres = profile.likedGenres;
       vetoedGenres = profile.vetoedGenres;
       likedVibes = profile.likedVibes;
       yearFrom = profile.yearFrom;
+      yearTo = profile.yearTo;
+      platformIds = profile.platformIds;
     } else if (libraryEntries.length >= minInferredEntries) {
       final affinity = genreAffinityFrom(libraryEntries);
       likedGenres = {
@@ -126,6 +130,8 @@ class TasteProfileBuilder {
       yearFrom: yearFrom,
       excludeWatched: true,
       watchedKeys: watchedKeys,
+      yearTo: yearTo,
+      platformIds: platformIds,
     );
   }
 

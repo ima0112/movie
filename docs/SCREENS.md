@@ -175,7 +175,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - Access: gear icon in B5. Back button, no bottom bar.
 - Elements (grouped list: each group is a `surfaceRaised` card (radius 16) with hairline dividers; 56 px row, 16 px white label, gray value, chevron; no icons; small spaced-out uppercase gray group header):
   - Preferences: Language ("Español" → H5) — one setting for both the app's own interface and TMDB's content, not two separate preferences — Region ("Spain" → H6, with search). No Theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` for why Family mode specifically was dropped rather than built partially.
-  - Data: "Export My List" (JSON → the system share sheet); "Delete My List", "Delete My Tastes" in red → I1 (the dialog states how many items it deletes).
+  - Data: "Export My List" (JSON → the system share sheet); "Delete My List", "Delete My Tastes", "Delete Surprise me history" (every title Surprise me has shown, kept on the device so it doesn't repeat itself) in red → I1 (the dialog states how many items it deletes).
   - About: "Attribution and credits" (→ C7), Version (long-press copies the build number), Source code (GitHub, external link), Licenses (`showLicensePage`).
 - Sheets H5–H6 are lists with an amber check on the active option; tapping applies and closes.
 - No Pako.
@@ -291,6 +291,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - Motion (loops while it lasts): each card slides to the centre and back in 2.4 s (eased, symmetric, each a little behind the one before — the shuffle); each star pulses (opacity 0.25 → 1 → 0.25, scale 1 → 1.4 → 1) in 1.2 s, out of step, so a wave runs along the row. With **reduce motion** on, nothing moves: the fan stays open and the stars are at full opacity.
 - Behaviour: it shows for **at least 1.8 s** even when the answer is instant, so the animation doesn't flash; past 8 s it gives up and shows E3's error. **×** cancels the search (what it finds is thrown away) and goes back **one step** — to E1 — where picking a type works again. The blocks are laid out in a flexible column, not at fixed offsets, so it fits a short phone and scrolls with large text; the text block is a live region and the cards and stars are hidden from accessibility.
 - Exits: E3 (the result), E3's error state, or back to E1.
+- E3's data: each search returns a batch of five (ranked, with details and a "% for you"); "Another suggestion" walks them and, after the fifth, "That's all for now" → **"Search again"** asks for a new batch that skips every title already shown (this session and the last 30 days).
 
 ---
 

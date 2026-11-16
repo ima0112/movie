@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
 import '../../../../core/domain/entities/media_item.dart';
+import '../../../../core/domain/entities/surprise_history_entry.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -49,9 +50,12 @@ class SurpriseResultContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           SurpriseResultCard(
             item: item,
-            onViewDetails: () => context.pushMediaDetail(item.key),
+            onViewDetails: () {
+              context.read<SurpriseCubit>().recordOutcome(SurpriseOutcome.seen);
+              context.pushMediaDetail(item.key);
+            },
           ),
-          if (state.relaxationsApplied.isNotEmpty) ...[
+          if (state.relaxations.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.md),
             // E3's own "We widened the search to 1990" is this specific
             // — MatchResult only carries *which* Relaxation steps fired,
@@ -67,7 +71,12 @@ class SurpriseResultContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           PrimaryButton(
             label: l10n.surpriseAddToWatchLater,
-            onTap: () => _addToWatchLater(context, item),
+            onTap: () {
+              context.read<SurpriseCubit>().recordOutcome(
+                SurpriseOutcome.saved,
+              );
+              _addToWatchLater(context, item);
+            },
           ),
           const SizedBox(height: AppSpacing.md),
           SecondaryButton(

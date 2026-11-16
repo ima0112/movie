@@ -1693,6 +1693,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsDeleteMyListLabel => 'Eliminar mi lista';
 
   @override
+  String get settingsDeleteSurpriseHistoryLabel =>
+      'Eliminar historial de Sorpréndeme';
+
+  @override
+  String get settingsDeleteSurpriseHistoryDialogTitle =>
+      '¿Eliminar tu historial de Sorpréndeme?';
+
+  @override
+  String get settingsSurpriseHistoryDeletedSnackbar =>
+      'Historial de Sorpréndeme eliminado';
+
+  @override
+  String get settingsDeleteSurpriseHistoryFailedSnackbar =>
+      'No se pudo eliminar el historial de Sorpréndeme';
+
+  @override
   String get settingsDeleteMyTastesLabel => 'Eliminar mis gustos';
 
   @override

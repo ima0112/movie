@@ -299,26 +299,29 @@ void main() {
       }
     });
 
-    test('titles without a poster are never suggested', () async {
-      final repo = _FakeRepository([
-        ..._catalog(60),
-        for (var i = 1000; i < 1030; i++)
-          Movie(
-            id: i,
-            title: 'No poster $i',
-            posterUrl: null,
-            genres: const [Genre(id: 'action')],
-            releaseDate: DateTime(2020),
-            voteAverage: 9,
-            voteCount: 9000,
-            popularity: 99999,
-          ),
-      ]);
+    test(
+      'titles without a poster sink below every title that has one',
+      () async {
+        final repo = _FakeRepository([
+          ..._catalog(60),
+          for (var i = 1000; i < 1030; i++)
+            Movie(
+              id: i,
+              title: 'No poster $i',
+              posterUrl: null,
+              genres: const [Genre(id: 'action')],
+              releaseDate: DateTime(2020),
+              voteAverage: 9,
+              voteCount: 9000,
+              popularity: 99999,
+            ),
+        ]);
 
-      final batch = await _resolve(repo, _request());
+        final batch = await _resolve(repo, _request());
 
-      expect(batch.suggestions.every((s) => s.item.id < 1000), isTrue);
-    });
+        expect(batch.suggestions.every((s) => s.item.id < 1000), isTrue);
+      },
+    );
   });
 
   group('typical questionnaires', () {

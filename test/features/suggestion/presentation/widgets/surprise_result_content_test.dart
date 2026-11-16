@@ -13,9 +13,6 @@ import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
-import 'package:movies/features/match_engine/domain/match_engine.dart';
-import 'package:movies/features/match_engine/domain/match_query.dart';
-import 'package:movies/features/match_engine/domain/match_result.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/suggestion/presentation/cubit/surprise_cubit.dart';
 import 'package:movies/features/suggestion/presentation/cubit/surprise_state.dart';
@@ -23,13 +20,7 @@ import 'package:movies/features/suggestion/presentation/widgets/surprise_result_
 import 'package:movies/features/taste_profile/domain/taste_profile_builder.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
-class _NoopMatchEngine implements MatchEngine {
-  @override
-  Future<MatchResult?> resolve(
-    MatchQuery query, {
-    required MatchOptions options,
-  }) async => null;
-}
+import '../../surprise_test_data.dart';
 
 class _FakeTasteProfileRepository implements TasteProfileRepository {
   @override
@@ -98,9 +89,9 @@ final _movie = Movie(
 
 SurpriseResult _resultState(SuggestionSource source) {
   return SurpriseResult(
-    candidates: [_movie],
+    suggestions: [suggestionOf(_movie)],
     index: 0,
-    relaxationsApplied: const [],
+    relaxations: const [],
     source: source,
   );
 }
@@ -142,7 +133,7 @@ void main() {
   group('SurpriseResultContent — source subtitle', () {
     testWidgets('profile source shows "Based on your tastes"', (tester) async {
       final cubit = SurpriseCubit(
-        _NoopMatchEngine(),
+        FakeSurpriseEngine(),
         TasteProfileBuilder(VibeCatalog(const [])),
         _FakeTasteProfileRepository(),
         _FakeUserLibraryRepository(),
@@ -159,7 +150,7 @@ void main() {
     testWidgets('quiz source now shows its own subtitle too, not '
         'nothing', (tester) async {
       final cubit = SurpriseCubit(
-        _NoopMatchEngine(),
+        FakeSurpriseEngine(),
         TasteProfileBuilder(VibeCatalog(const [])),
         _FakeTasteProfileRepository(),
         _FakeUserLibraryRepository(),
@@ -178,7 +169,7 @@ void main() {
     testWidgets('shown for profile/inferredList, opens E2 via '
         'pushReplacement when tapped', (tester) async {
       final cubit = SurpriseCubit(
-        _NoopMatchEngine(),
+        FakeSurpriseEngine(),
         TasteProfileBuilder(VibeCatalog(const [])),
         _FakeTasteProfileRepository(),
         _FakeUserLibraryRepository(),
@@ -202,7 +193,7 @@ void main() {
 
     testWidgets('not shown for quiz — nothing left to offer', (tester) async {
       final cubit = SurpriseCubit(
-        _NoopMatchEngine(),
+        FakeSurpriseEngine(),
         TasteProfileBuilder(VibeCatalog(const [])),
         _FakeTasteProfileRepository(),
         _FakeUserLibraryRepository(),
@@ -229,7 +220,7 @@ void main() {
       getIt.registerSingleton<UserLibraryRepository>(userLibraryRepository);
       addTearDown(() => getIt.unregister<UserLibraryRepository>());
       final cubit = SurpriseCubit(
-        _NoopMatchEngine(),
+        FakeSurpriseEngine(),
         TasteProfileBuilder(VibeCatalog(const [])),
         _FakeTasteProfileRepository(),
         userLibraryRepository,
