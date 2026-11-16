@@ -2603,7 +2603,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizGenreSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Skip up to 3 genres'**
+  /// **'Skip 1 to 3 genres'**
   String get quizGenreSubtitle;
 
   /// E2's final-step button, replacing commonNext (docs/SCREENS.md E2: "Final button 'Search'").
@@ -2633,7 +2633,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizVibeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Pick up to 3 vibes'**
+  /// **'Pick 1 to 3 vibes'**
   String get quizVibeSubtitle;
 
   /// E2 step 3's headline, three parts so "platforms" can be coloured: before + accent + after = "Which platforms shall we search?".

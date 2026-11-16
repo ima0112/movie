@@ -34,15 +34,16 @@ void main() {
     test('produces the correct ParticipantAnswers at the end', () {
       final cubit = QuizCubit(MediaType.movie);
 
-      // Step 1 — up to 3 excluded genres; valid even before touching it.
-      expect(cubit.state.isCurrentStepValid, isTrue);
+      // Step 1 — 1 to 3 excluded genres; "Continue" waits for the first.
+      expect(cubit.state.isCurrentStepValid, isFalse);
       cubit.toggleExcludedGenre(_horror);
+      expect(cubit.state.isCurrentStepValid, isTrue);
       cubit.toggleExcludedGenre(_action);
       cubit.nextStep();
       expect(cubit.state.step, 2);
 
-      // Step 2 — up to 3 vibes; valid at any count, even none.
-      expect(cubit.state.isCurrentStepValid, isTrue);
+      // Step 2 — 1 to 3 vibes; "Continue" waits for the first.
+      expect(cubit.state.isCurrentStepValid, isFalse);
       cubit.toggleVibe('feel-good');
       cubit.toggleVibe('date-night');
       cubit.toggleVibe('cozy');
@@ -158,25 +159,45 @@ void main() {
   });
 
   group('QuizCubit — step validation and the "Next" button', () {
-    test('step 1 is always valid, even with 0 vetoes', () {
-      expect(QuizCubit(MediaType.movie).state.isCurrentStepValid, isTrue);
+    test('step 1 needs at least one veto, and takes up to 3', () {
+      final cubit = QuizCubit(MediaType.movie);
+      expect(cubit.state.isCurrentStepValid, isFalse);
+
+      cubit.toggleExcludedGenre(_horror);
+      expect(cubit.state.isCurrentStepValid, isTrue);
+      cubit
+        ..toggleExcludedGenre(_action)
+        ..toggleExcludedGenre(_comedy);
+      expect(cubit.state.isCurrentStepValid, isTrue);
+
+      // Taking the last ones back out blocks it again.
+      cubit
+        ..toggleExcludedGenre(_horror)
+        ..toggleExcludedGenre(_action)
+        ..toggleExcludedGenre(_comedy);
+      expect(cubit.state.isCurrentStepValid, isFalse);
     });
 
-    test(
-      'step 2 is valid with no vibes, with some, and with the 3 allowed',
-      () {
-        final cubit = QuizCubit(MediaType.movie)..nextStep();
-        expect(cubit.state.step, 2);
+    test('step 2 needs at least one vibe, and takes up to 3', () {
+      final cubit = QuizCubit(MediaType.movie)
+        ..toggleExcludedGenre(_horror)
+        ..nextStep();
+      expect(cubit.state.step, 2);
 
-        expect(cubit.state.isCurrentStepValid, isTrue);
-        cubit.toggleVibe('a');
-        expect(cubit.state.isCurrentStepValid, isTrue);
-        cubit
-          ..toggleVibe('b')
-          ..toggleVibe('c');
-        expect(cubit.state.isCurrentStepValid, isTrue);
-      },
-    );
+      expect(cubit.state.isCurrentStepValid, isFalse);
+      cubit.toggleVibe('a');
+      expect(cubit.state.isCurrentStepValid, isTrue);
+      cubit
+        ..toggleVibe('b')
+        ..toggleVibe('c');
+      expect(cubit.state.isCurrentStepValid, isTrue);
+
+      cubit
+        ..toggleVibe('a')
+        ..toggleVibe('b')
+        ..toggleVibe('c');
+      expect(cubit.state.isCurrentStepValid, isFalse);
+    });
 
     test('a 4th vibe is ignored once 3 are already selected', () {
       final cubit = QuizCubit(MediaType.movie)
@@ -206,14 +227,44 @@ void main() {
       expect(cubit.state.excludedGenres, isEmpty);
     });
 
-    test('no step blocks "Next": every one has a default', () {
-      final cubit = QuizCubit(MediaType.movie)..nextStep(); // step 1 → 2
-      cubit.nextStep(); // no vibes picked: still advances
+    test(
+      'nextStep() is a no-op on steps 1 and 2 until something is picked',
+      () {
+        final cubit = QuizCubit(MediaType.movie)..nextStep(); // nothing vetoed
+        expect(cubit.state.step, 1);
+
+        cubit
+          ..toggleExcludedGenre(_horror)
+          ..nextStep();
+        expect(cubit.state.step, 2);
+
+        cubit.nextStep(); // no vibe yet
+        expect(cubit.state.step, 2);
+
+        cubit
+          ..toggleVibe('a')
+          ..nextStep();
+        expect(cubit.state.step, 3);
+      },
+    );
+
+    test('steps 3 and 4 never block: they have defaults', () {
+      final cubit = QuizCubit(MediaType.movie)
+        ..toggleExcludedGenre(_horror)
+        ..nextStep()
+        ..toggleVibe('a')
+        ..nextStep();
       expect(cubit.state.step, 3);
+      expect(cubit.state.isCurrentStepValid, isTrue);
+
+      cubit.nextStep();
+      expect(cubit.state.step, 4);
+      expect(cubit.state.isCurrentStepValid, isTrue);
     });
 
     test('nextStep() does nothing past step 4', () {
       final cubit = QuizCubit(MediaType.movie)
+        ..toggleExcludedGenre(_horror)
         ..toggleVibe('a')
         ..toggleVibe('b')
         ..toggleVibe('c');

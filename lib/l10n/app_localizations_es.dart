@@ -1541,7 +1541,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizGenreHeadlineAfter => ' te apetece hoy?';
 
   @override
-  String get quizGenreSubtitle => 'Descarta hasta 3 géneros';
+  String get quizGenreSubtitle => 'Descarta de 1 a 3 géneros';
 
   @override
   String get quizSearchButton => 'Buscar';
@@ -1556,7 +1556,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizVibeHeadlineAfter => ' te apetecen hoy?';
 
   @override
-  String get quizVibeSubtitle => 'Elige hasta 3 vibes';
+  String get quizVibeSubtitle => 'Elige de 1 a 3 vibes';
 
   @override
   String get quizPlatformHeadlineBefore => '¿En qué ';
