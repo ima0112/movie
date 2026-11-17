@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 
-/// A progress ring with the affinity in the middle ("88"): an accent arc over a
-/// `lineStrong` track, filled to [percent] of the circle. Used on the closing
-/// screen's chosen card. Pure presentation.
-class SurpriseAffinityRing extends StatelessWidget {
+/// A progress ring with the affinity in the middle ("88%"): an accent arc over
+/// a `lineStrong` track. Used on the closing screen's chosen card. When it
+/// appears the arc **fills** from empty to [percent] of the circle (about 1.1 s
+/// after a short wait, easing out); with "reduce motion" it is drawn full at
+/// once. The number itself is there from the start.
+class SurpriseAffinityRing extends StatefulWidget {
   const SurpriseAffinityRing({super.key, required this.percent});
 
   /// 0–100.
@@ -17,17 +19,56 @@ class SurpriseAffinityRing extends StatelessWidget {
   static const double size = 64;
   static const double _stroke = 5;
 
+  /// The whole animation, wait included.
+  static const Duration duration = Duration(milliseconds: 1600);
+
+  @override
+  State<SurpriseAffinityRing> createState() => _SurpriseAffinityRingState();
+}
+
+class _SurpriseAffinityRingState extends State<SurpriseAffinityRing>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: SurpriseAffinityRing.duration,
+  );
+
+  /// The first part of the run is the wait (the card is still settling in).
+  static const Curve _fill = Interval(0.3, 1, curve: Curves.easeOutCubic);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller.value = 1;
+    } else if (_controller.status == AnimationStatus.dismissed) {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size,
-      height: size,
-      child: CustomPaint(
-        painter: _RingPainter(percent / 100),
+      width: SurpriseAffinityRing.size,
+      height: SurpriseAffinityRing.size,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) => CustomPaint(
+          painter: SurpriseRingPainter(
+            widget.percent / 100 * _fill.transform(_controller.value),
+          ),
+          child: child,
+        ),
         child: Center(
           child: Text.rich(
             TextSpan(
-              text: '$percent',
+              text: '${widget.percent}',
               style: AppTextStyles.h3,
               children: [
                 TextSpan(text: '%', style: AppTextStyles.captionStrong),
@@ -40,8 +81,9 @@ class SurpriseAffinityRing extends StatelessWidget {
   }
 }
 
-class _RingPainter extends CustomPainter {
-  const _RingPainter(this.fraction);
+/// Draws the ring: the track and the arc filled to [fraction] (0–1).
+class SurpriseRingPainter extends CustomPainter {
+  const SurpriseRingPainter(this.fraction);
 
   final double fraction;
 
@@ -70,5 +112,5 @@ class _RingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_RingPainter old) => old.fraction != fraction;
+  bool shouldRepaint(SurpriseRingPainter old) => old.fraction != fraction;
 }
