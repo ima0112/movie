@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../../../app/router.dart';
@@ -18,15 +20,32 @@ import 'surprise_thumbnail_strip.dart';
 /// among sparkles, its affinity ring next to an "In Watch later" line, and a
 /// "View details" link. Nothing here changes any more, so it is built once from
 /// the [SurpriseChosen] it is given.
-class SurpriseClosingView extends StatelessWidget {
+class SurpriseClosingView extends StatefulWidget {
   const SurpriseClosingView({
     super.key,
     required this.chosen,
     required this.onClose,
+    this.random,
   });
 
   final SurpriseChosen chosen;
   final VoidCallback onClose;
+
+  /// Where the stars' sizes and positions come from (a test hands in a seeded
+  /// one); a fresh set is drawn each time the screen opens.
+  final math.Random? random;
+
+  @override
+  State<SurpriseClosingView> createState() => _SurpriseClosingViewState();
+}
+
+class _SurpriseClosingViewState extends State<SurpriseClosingView> {
+  late final List<SurpriseSparkle> _stars = SurpriseSparkle.random(
+    widget.random ?? math.Random(),
+  );
+
+  SurpriseChosen get chosen => widget.chosen;
+  VoidCallback get onClose => widget.onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +88,11 @@ class SurpriseClosingView extends StatelessWidget {
                     child: _Entrance(
                       child: Stack(
                         children: [
-                          const Positioned.fill(
-                            child: SurpriseSparkles.behind(),
+                          Positioned.fill(
+                            child: SurpriseSparkles(
+                              stars: _stars,
+                              front: false,
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
@@ -102,8 +124,8 @@ class SurpriseClosingView extends StatelessWidget {
                             ),
                           ),
                           // A few stars over the card itself.
-                          const Positioned.fill(
-                            child: SurpriseSparkles.front(),
+                          Positioned.fill(
+                            child: SurpriseSparkles(stars: _stars, front: true),
                           ),
                         ],
                       ),

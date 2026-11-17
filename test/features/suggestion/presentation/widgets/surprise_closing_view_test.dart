@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -90,7 +92,13 @@ void main() {
     expect(find.textContaining('% for you'), findsNothing);
   });
 
-  testWidgets('sparkles both behind and over the chosen card', (tester) async {
+  testWidgets('three to five stars, behind and over the chosen card', (
+    tester,
+  ) async {
+    // A seed that puts at least one star over the card.
+    final seed = [for (var s = 0; s < 100; s++) s].firstWhere(
+      (s) => SurpriseSparkle.random(math.Random(s)).any((x) => x.front),
+    );
     final batch = batchOf(5);
     await tester.pumpWidget(
       MaterialApp(
@@ -104,6 +112,7 @@ void main() {
             source: SuggestionSource.quiz,
           ),
           onClose: () {},
+          random: math.Random(seed),
         ),
       ),
     );
@@ -121,5 +130,12 @@ void main() {
     expect((order[0] as SurpriseSparkles).front, isFalse);
     expect(order[1], isA<SurpriseSuggestionCard>());
     expect((order[2] as SurpriseSparkles).front, isTrue);
+
+    // Only 3 to 5 stars in all.
+    final icons = find.descendant(
+      of: find.byType(SurpriseSparkles),
+      matching: find.byType(Icon),
+    );
+    expect(icons.evaluate().length, inInclusiveRange(3, 5));
   });
 }
