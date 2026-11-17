@@ -39,10 +39,7 @@ class SurpriseSparkles extends StatefulWidget {
   static const List<(double, double, double, double)> frontStars = [
     (0.30, 0.30, 14, 0.1),
     (0.72, 0.46, 18, 0.5),
-    (0.20, 0.56, 12, 0.8),
-    (0.86, 0.30, 12, 0.35),
-    (0.56, 0.18, 10, 0.65),
-    (0.64, 0.66, 12, 0.25),
+    (0.20, 0.58, 12, 0.8),
   ];
 
   @override
