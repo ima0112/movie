@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../match_engine/domain/surprise_batch.dart';
 import 'surprise_card_back.dart';
-import 'surprise_edge_arrows.dart';
 import 'surprise_flip_card.dart';
 import 'surprise_suggestion_card.dart';
 
@@ -31,7 +30,7 @@ class SurpriseDeckController {
 ///   tap waits a moment to tell them apart. A card goes back to its front when
 ///   it leaves the top.
 /// While dragged the card follows the finger with a turn proportional to how far
-/// it went, and the arrow on that edge shows ([SurpriseEdgeArrows]). With one
+/// it went (no edge arrows: those are only in the first-time tour). With one
 /// card there is nowhere to go, so dragging is off.
 ///
 /// With "reduce motion" nothing turns or flies: the deck just changes.
@@ -317,8 +316,6 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
           animation: Listenable.merge([_controller, _zoom]),
           builder: (context, _) {
             final dx = _offset();
-            final p = (dx.abs() / (width * SurpriseDeckStack.confirmFraction))
-                .clamp(0.0, 1.0);
             // Back to front: the farthest slot first, the top card last.
             final order = [for (var i = 0; i < n; i++) i]
               ..sort((a, b) => _slot(b).compareTo(_slot(a)));
@@ -336,12 +333,6 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
                       if (_leavingIndex != null)
                         _leaving(_leavingIndex!, dx: dx, width: width),
                     ],
-                  ),
-                ),
-                Positioned.fill(
-                  child: SurpriseEdgeArrows(
-                    leftProgress: dx < 0 ? p : 0,
-                    rightProgress: dx > 0 ? p : 0,
                   ),
                 ),
               ],
