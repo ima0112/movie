@@ -12,11 +12,13 @@ import '../../../../../l10n/l10n_extension.dart';
 class SurpriseCardTags extends StatelessWidget {
   const SurpriseCardTags({
     super.key,
-    required this.affinityPercent,
+    this.affinityPercent,
     required this.mediaType,
   });
 
-  final int affinityPercent;
+  /// `null` leaves the "% for you" tag out (the closing screen shows it as a
+  /// ring instead).
+  final int? affinityPercent;
   final MediaType mediaType;
 
   static const double _iconSize = 14;
@@ -29,15 +31,16 @@ class SurpriseCardTags extends StatelessWidget {
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.xs,
       children: [
-        _Pill(
-          border: AppColors.accentLine,
-          child: Text(
-            l10n.surpriseCardAffinity(affinityPercent),
-            style: AppTextStyles.captionStrong.copyWith(
-              color: AppColors.accent,
+        if (affinityPercent case final percent?)
+          _Pill(
+            border: AppColors.accentLine,
+            child: Text(
+              l10n.surpriseCardAffinity(percent),
+              style: AppTextStyles.captionStrong.copyWith(
+                color: AppColors.accent,
+              ),
             ),
           ),
-        ),
         _Pill(
           border: AppColors.lineStrong,
           child: Row(

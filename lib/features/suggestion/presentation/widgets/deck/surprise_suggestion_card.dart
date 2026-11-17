@@ -31,6 +31,8 @@ class SurpriseSuggestionCard extends StatelessWidget {
     required this.number,
     required this.total,
     this.topAction,
+    this.showAffinity = true,
+    this.bottomEnd,
   });
 
   final SurpriseSuggestion suggestion;
@@ -42,6 +44,17 @@ class SurpriseSuggestionCard extends StatelessWidget {
   /// A control in the top-right corner (the Watch later button); it takes its
   /// own touches, so the card's tap and double tap don't fire under it.
   final Widget? topAction;
+
+  /// Whether the "% for you" tag is shown. The closing screen turns it off and
+  /// shows the affinity as a ring in [bottomEnd].
+  final bool showAffinity;
+
+  /// A widget in the bottom-right corner (the closing screen's affinity ring);
+  /// the tagline and the platforms keep clear of it.
+  final Widget? bottomEnd;
+
+  /// How much room the tagline and platforms leave for [bottomEnd].
+  static const double _bottomEndInset = 76;
 
   /// How much of the card's height the dark fade covers.
   static const double _fadeHeightFactor = 0.7;
@@ -56,6 +69,7 @@ class SurpriseSuggestionCard extends StatelessWidget {
     final item = suggestion.item;
     final meta = surpriseMetaLine(suggestion.detail, l10n);
     final tagline = suggestion.detail.tagline;
+    final endInset = bottomEnd == null ? 0.0 : _bottomEndInset;
     final locale = Localizations.localeOf(context).toString();
     final rating = item.voteAverage > 0
         ? NumberFormat('0.0', locale).format(item.voteAverage)
@@ -141,6 +155,12 @@ class SurpriseSuggestionCard extends StatelessWidget {
                   top: -SurpriseCardNumber.overhang,
                   child: SurpriseCardNumber(number: number),
                 ),
+                if (bottomEnd != null)
+                  Positioned(
+                    right: AppSpacing.xl,
+                    bottom: AppSpacing.xl,
+                    child: bottomEnd!,
+                  ),
                 if (topAction != null)
                   Positioned(
                     top: AppSpacing.md,
@@ -160,7 +180,9 @@ class SurpriseSuggestionCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SurpriseCardTags(
-                          affinityPercent: suggestion.affinityPercent,
+                          affinityPercent: showAffinity
+                              ? suggestion.affinityPercent
+                              : null,
                           mediaType: item.type,
                         ),
                         const SizedBox(height: AppSpacing.md),
@@ -198,19 +220,25 @@ class SurpriseSuggestionCard extends StatelessWidget {
                         ),
                         if (tagline != null && tagline.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.sm),
-                          Text(
-                            '«$tagline»',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.bodySm.copyWith(
-                              fontStyle: FontStyle.italic,
+                          Padding(
+                            padding: EdgeInsets.only(right: endInset),
+                            child: Text(
+                              '«$tagline»',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.bodySm.copyWith(
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
                           ),
                         ],
                         if (suggestion.platforms.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.md),
-                          SurpriseCardPlatforms(
-                            platforms: suggestion.platforms,
+                          Padding(
+                            padding: EdgeInsets.only(right: endInset),
+                            child: SurpriseCardPlatforms(
+                              platforms: suggestion.platforms,
+                            ),
                           ),
                         ],
                       ],

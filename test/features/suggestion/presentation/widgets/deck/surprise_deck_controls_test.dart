@@ -95,9 +95,8 @@ void main() {
     });
 
     testWidgets('closing: the chosen card has a check instead of the '
-        'bookmark, nothing is "current", and the strip is inactive', (
-      tester,
-    ) async {
+        'bookmark and is lit with the accent border, and the strip is '
+        'inactive', (tester) async {
       await tester.pumpWidget(
         _host(_strip(current: 2, saved: {2, 4}, chosen: 2)),
       );
@@ -110,7 +109,7 @@ void main() {
             final border = (b.decoration as BoxDecoration).border;
             return border != null && border.top.color == AppColors.accent;
           });
-      expect(accentBorders, isEmpty);
+      expect(accentBorders, hasLength(1)); // the chosen one, lit
 
       // Inactive: no tap callback to call.
       final cells = find.descendant(

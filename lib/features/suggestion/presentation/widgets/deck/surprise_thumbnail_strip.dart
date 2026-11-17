@@ -103,6 +103,8 @@ class _Thumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final isCurrent = state == SurpriseThumbnailState.current;
+    // The chosen one (the closing screen) is lit like the top card was.
+    final lit = isCurrent || state == SurpriseThumbnailState.chosen;
     final badge = switch (state) {
       SurpriseThumbnailState.chosen => AppIcons.check,
       _ when saved => AppIcons.watchLaterFill,
@@ -135,12 +137,10 @@ class _Thumbnail extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(AppSpacing.xs),
                         border: Border.all(
-                          color: isCurrent
-                              ? AppColors.accent
-                              : AppColors.lineStrong,
-                          width: isCurrent ? 2 : 1,
+                          color: lit ? AppColors.accent : AppColors.lineStrong,
+                          width: lit ? 2 : 1,
                         ),
-                        boxShadow: isCurrent
+                        boxShadow: lit
                             ? [
                                 BoxShadow(
                                   color: AppColors.accent.withValues(
