@@ -24,7 +24,6 @@ Widget _host(ValueNotifier<int> index, VoidCallback onNext) => MaterialApp(
           suggestions: _cards,
           index: i,
           onNext: onNext,
-          onSaveAndNext: onNext,
           onChoose: () {},
           onOpenDetail: () {},
         ),

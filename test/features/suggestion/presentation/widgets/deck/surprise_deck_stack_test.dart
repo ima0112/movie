@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_deck_stack.dart';
-import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_edge_bubbles.dart';
+import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_edge_arrows.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_suggestion_card.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
@@ -10,7 +10,6 @@ import '../../../surprise_test_data.dart';
 
 class _Calls {
   int next = 0;
-  int saveNext = 0;
   int choose = 0;
   int detail = 0;
   int hint = 0;
@@ -38,7 +37,6 @@ Widget _host(
           suggestions: batchOf(cards).suggestions,
           index: index,
           onNext: () => calls.next++,
-          onSaveAndNext: () => calls.saveNext++,
           onChoose: () => calls.choose++,
           onOpenDetail: () => calls.detail++,
           showHint: hint,
@@ -98,7 +96,7 @@ void main() {
     expect(opacityOf(3), 0);
   });
 
-  testWidgets('drag LEFT past a third of the width: save and pass, once', (
+  testWidgets('drag LEFT past a third of the width: pass, once', (
     tester,
   ) async {
     final calls = _Calls();
@@ -107,8 +105,7 @@ void main() {
     await tester.drag(_top, const Offset(-200, 0));
     await tester.pumpAndSettle();
 
-    expect(calls.saveNext, 1);
-    expect(calls.next, 0);
+    expect(calls.next, 1);
   });
 
   testWidgets('drag RIGHT past a third of the width: pass, once', (
@@ -121,7 +118,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(calls.next, 1);
-    expect(calls.saveNext, 0);
   });
 
   testWidgets('a drag that stops short springs back and does nothing', (
@@ -140,7 +136,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.getCenter(_top).dx, closeTo(start, 0.5));
-    expect(calls.saveNext + calls.next, 0);
+    expect(calls.next, 0);
   });
 
   testWidgets('a quick flick counts even if it did not go far', (tester) async {
@@ -162,7 +158,7 @@ void main() {
     await tester.drag(_top, const Offset(-250, 0));
     await tester.pumpAndSettle();
 
-    expect(calls.saveNext + calls.next, 0);
+    expect(calls.next, 0);
   });
 
   testWidgets('double tap chooses; a single tap opens the detail', (
@@ -184,25 +180,25 @@ void main() {
     expect(calls.choose, 1);
   });
 
-  testWidgets('while dragged, the bubble on that edge grows; at rest both '
-      'are quiet', (tester) async {
+  testWidgets('an arrow shows on the edge being dragged toward, and only '
+      'while dragging', (tester) async {
     await tester.pumpWidget(_host(_Calls()));
-    SurpriseEdgeBubbles bubbles() =>
-        tester.widget<SurpriseEdgeBubbles>(find.byType(SurpriseEdgeBubbles));
-    expect(bubbles().saveProgress, 0);
-    expect(bubbles().nextProgress, 0);
+    SurpriseEdgeArrows arrows() =>
+        tester.widget<SurpriseEdgeArrows>(find.byType(SurpriseEdgeArrows));
+    expect(arrows().leftProgress, 0);
+    expect(arrows().rightProgress, 0);
 
     final gesture = await tester.startGesture(tester.getCenter(_top));
     await gesture.moveBy(const Offset(-20, 0)); // past the touch slop
     await gesture.moveBy(const Offset(-100, 0));
     await tester.pump();
-    expect(bubbles().saveProgress, greaterThan(0));
-    expect(bubbles().nextProgress, 0);
+    expect(arrows().leftProgress, greaterThan(0));
+    expect(arrows().rightProgress, 0);
 
     await gesture.moveBy(const Offset(220, 0)); // past centre, to the right
     await tester.pump();
-    expect(bubbles().saveProgress, 0);
-    expect(bubbles().nextProgress, greaterThan(0));
+    expect(arrows().leftProgress, 0);
+    expect(arrows().rightProgress, greaterThan(0));
     await gesture.up();
     await tester.pumpAndSettle();
   });
@@ -232,7 +228,7 @@ void main() {
     await tester.drag(_top, const Offset(-220, 0));
     await tester.pumpAndSettle();
 
-    expect(calls.saveNext, 1);
+    expect(calls.next, 1);
   });
 
   testWidgets('reduced motion: the deck changes at once, nothing turns', (
@@ -260,7 +256,7 @@ void main() {
     expect(rotations.every((r) => r < 0.001), isTrue);
   });
 
-  testWidgets('buzzes: light on save, medium on choose', (tester) async {
+  testWidgets('buzzes: none for passing, medium on choose', (tester) async {
     final buzzes = <String>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
       SystemChannels.platform,
@@ -286,9 +282,6 @@ void main() {
     await tester.tap(_top);
     await tester.pumpAndSettle();
 
-    expect(buzzes, [
-      'HapticFeedbackType.lightImpact',
-      'HapticFeedbackType.mediumImpact',
-    ]);
+    expect(buzzes, ['HapticFeedbackType.mediumImpact']);
   });
 }

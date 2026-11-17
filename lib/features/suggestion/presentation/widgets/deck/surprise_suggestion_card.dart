@@ -30,6 +30,7 @@ class SurpriseSuggestionCard extends StatelessWidget {
     required this.suggestion,
     required this.number,
     required this.total,
+    this.topAction,
   });
 
   final SurpriseSuggestion suggestion;
@@ -37,6 +38,10 @@ class SurpriseSuggestionCard extends StatelessWidget {
   /// 1-based position in the batch — the card's identity for the session.
   final int number;
   final int total;
+
+  /// A control in the top-right corner (the Watch later button); it takes its
+  /// own touches, so the card's tap and double tap don't fire under it.
+  final Widget? topAction;
 
   /// How much of the card's height the dark fade covers.
   static const double _fadeHeightFactor = 0.7;
@@ -136,6 +141,12 @@ class SurpriseSuggestionCard extends StatelessWidget {
                   top: -SurpriseCardNumber.overhang,
                   child: SurpriseCardNumber(number: number),
                 ),
+                if (topAction != null)
+                  Positioned(
+                    top: AppSpacing.md,
+                    right: AppSpacing.md,
+                    child: topAction!,
+                  ),
                 Positioned(
                   left: AppSpacing.xl,
                   right: AppSpacing.xl,

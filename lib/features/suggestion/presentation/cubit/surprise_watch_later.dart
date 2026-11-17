@@ -1,3 +1,4 @@
+import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
@@ -35,4 +36,17 @@ Future<Result<void>> saveToWatchLater(
             isWatchLater: true,
           );
   return library.upsert(entry);
+}
+
+/// Takes the title at [key] out of Watch later. What else is saved about it (a
+/// favorite, a watched date) stays; an entry left in no list at all is deleted.
+Future<Result<void>> removeFromWatchLater(
+  UserLibraryRepository library,
+  MediaKey key,
+) async {
+  final existing = await library.watchEntry(key).first;
+  if (existing == null || !existing.isWatchLater) return const Success(null);
+  final left = existing.copyWith(isWatchLater: false);
+  final inAList = left.isFavorite || left.isWatchLater || left.isWatched;
+  return inAList ? library.upsert(left) : library.remove(key);
 }
