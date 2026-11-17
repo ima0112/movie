@@ -82,8 +82,9 @@ class SurpriseClosingView extends StatelessWidget {
                               button: true,
                               hint: l10n.surpriseViewDetailsLink,
                               child: GestureDetector(
-                                onTap: () =>
-                                    context.pushMediaDetail(card.item.key),
+                                onTap: () => context.goToMediaDetailOverHome(
+                                  card.item.key,
+                                ),
                                 child: _ChosenFrame(
                                   child: SurpriseSuggestionCard(
                                     suggestion: card,
