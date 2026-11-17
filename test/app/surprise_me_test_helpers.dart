@@ -160,6 +160,6 @@ Future<void> settleSearch(WidgetTester tester) async {
 }
 
 void expectOnSurpriseResultScreen() {
-  expect(find.text('Double-tap to choose'), findsOneWidget);
+  expect(find.text('SURPRISE ME'), findsOneWidget);
   expect(find.text('Ask for another 5'), findsOneWidget);
 }

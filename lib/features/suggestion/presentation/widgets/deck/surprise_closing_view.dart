@@ -69,10 +69,20 @@ class SurpriseClosingView extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.xxxl,
                             ),
-                            child: SurpriseSuggestionCard(
-                              suggestion: card,
-                              number: chosen.index + 1,
-                              total: chosen.suggestions.length,
+                            // The one way to the full detail: tap the card you
+                            // chose.
+                            child: Semantics(
+                              button: true,
+                              hint: l10n.surpriseViewDetailsLink,
+                              child: GestureDetector(
+                                onTap: () =>
+                                    context.pushMediaDetail(card.item.key),
+                                child: SurpriseSuggestionCard(
+                                  suggestion: card,
+                                  number: chosen.index + 1,
+                                  total: chosen.suggestions.length,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -99,13 +109,7 @@ class SurpriseClosingView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(AppSpacing.screenMargin),
-                    child: TextButton(
-                      onPressed: () => context.pushMediaDetail(card.item.key),
-                      child: Text(l10n.surpriseViewDetailsLink),
-                    ),
-                  ),
+                  const SizedBox(height: AppSpacing.screenMargin),
                 ],
               ),
             ),

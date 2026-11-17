@@ -30,6 +30,5 @@ void main() {
 
     expect(overflows.where((e) => e.contains('overflowed')), isEmpty);
     expect(find.text('Ask for another 5'), findsOneWidget);
-    expect(find.text('Double-tap to choose'), findsOneWidget);
   });
 }

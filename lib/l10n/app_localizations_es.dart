@@ -1702,9 +1702,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get surpriseHelpDoubleTap => 'Toca dos veces para elegir';
-
-  @override
   String get surpriseRerollButton => 'Volver a pedir otras 5';
 
   @override
@@ -1924,5 +1921,5 @@ class AppLocalizationsEs extends AppLocalizations {
   String get surpriseControlNext => 'Siguiente';
 
   @override
-  String get surpriseActionViewDetails => 'Ver detalles';
+  String get surpriseActionFlip => 'Voltear carta';
 }

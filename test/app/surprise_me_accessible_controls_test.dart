@@ -23,7 +23,6 @@ void main() {
     expect(find.text('Choose this'), findsOneWidget);
     expect(find.text('Save'), findsOneWidget);
     expect(find.text('Next'), findsOneWidget);
-    expect(find.text('Double-tap to choose'), findsNothing);
 
     await tester.tap(find.text('Next'));
     await tester.pump(const Duration(seconds: 1));

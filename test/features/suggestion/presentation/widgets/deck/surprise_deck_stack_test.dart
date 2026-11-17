@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_card_back.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_deck_stack.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_edge_arrows.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_suggestion_card.dart';
@@ -11,7 +12,7 @@ import '../../../surprise_test_data.dart';
 class _Calls {
   int next = 0;
   int choose = 0;
-  int detail = 0;
+  int flipped = 0;
   int hint = 0;
 }
 
@@ -38,7 +39,7 @@ Widget _host(
           index: index,
           onNext: () => calls.next++,
           onChoose: () => calls.choose++,
-          onOpenDetail: () => calls.detail++,
+          onFlipped: () => calls.flipped++,
           showHint: hint,
           onHintDismissed: () => calls.hint++,
         ),
@@ -161,7 +162,7 @@ void main() {
     expect(calls.next, 0);
   });
 
-  testWidgets('double tap chooses; a single tap opens the detail', (
+  testWidgets('double tap chooses; a single tap turns the card over', (
     tester,
   ) async {
     final calls = _Calls();
@@ -172,11 +173,11 @@ void main() {
     await tester.tap(_top);
     await tester.pumpAndSettle();
     expect(calls.choose, 1);
-    expect(calls.detail, 0);
+    expect(calls.flipped, 0);
 
     await tester.tap(_top);
     await tester.pumpAndSettle(const Duration(milliseconds: 400));
-    expect(calls.detail, 1);
+    expect(calls.flipped, 1);
     expect(calls.choose, 1);
   });
 
@@ -283,5 +284,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(buzzes, ['HapticFeedbackType.mediumImpact']);
+  });
+
+  testWidgets('a tap turns the top card over, another turns it back', (
+    tester,
+  ) async {
+    final calls = _Calls();
+    await tester.pumpWidget(_host(calls));
+    expect(find.byType(SurpriseCardBack), findsNothing);
+
+    await tester.tap(_top);
+    await tester.pumpAndSettle(const Duration(milliseconds: 400));
+    expect(find.byType(SurpriseCardBack), findsOneWidget);
+    expect(calls.flipped, 1);
+
+    await tester.tap(find.byType(SurpriseCardBack));
+    await tester.pumpAndSettle(const Duration(milliseconds: 400));
+    expect(find.byType(SurpriseCardBack), findsNothing);
+    expect(calls.flipped, 1, reason: 'only turning to the back is reported');
   });
 }

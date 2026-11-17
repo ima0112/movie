@@ -2847,12 +2847,6 @@ abstract class AppLocalizations {
   /// **'Card {number}, saved'**
   String surpriseThumbnailSaved(int number);
 
-  /// No description provided for @surpriseHelpDoubleTap.
-  ///
-  /// In en, this message translates to:
-  /// **'Double-tap to choose'**
-  String get surpriseHelpDoubleTap;
-
   /// No description provided for @surpriseRerollButton.
   ///
   /// In en, this message translates to:
@@ -3231,11 +3225,11 @@ abstract class AppLocalizations {
   /// **'Next'**
   String get surpriseControlNext;
 
-  /// Screen-reader action on the deck's top card: opens its detail.
+  /// Screen-reader action on the deck's top card: turns it over to its back (or back to the front).
   ///
   /// In en, this message translates to:
-  /// **'View details'**
-  String get surpriseActionViewDetails;
+  /// **'Flip card'**
+  String get surpriseActionFlip;
 }
 
 class _AppLocalizationsDelegate

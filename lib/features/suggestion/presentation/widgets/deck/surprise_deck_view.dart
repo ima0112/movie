@@ -3,20 +3,16 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/di.dart';
-import '../../../../../app/router.dart';
 import '../../../../../core/domain/repositories/local_flags_repository.dart';
-import '../../../../../core/domain/entities/surprise_history_entry.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../l10n/l10n_extension.dart';
-import '../../../../../shared/widgets/detail_choose_overlay.dart';
 import '../../cubit/surprise_cubit.dart';
 import '../../../../match_engine/domain/surprise_batch.dart';
 import '../../cubit/surprise_state.dart';
 import 'surprise_accessible_controls.dart';
 import 'surprise_deck_stack.dart';
 import 'surprise_deck_top_bar.dart';
-import 'surprise_help_row.dart';
 import 'surprise_notice_listener.dart';
 import 'surprise_reroll_button.dart';
 import 'surprise_save_button.dart';
@@ -40,6 +36,7 @@ class SurpriseDeckView extends StatefulWidget {
 class _SurpriseDeckViewState extends State<SurpriseDeckView> {
   final LocalFlagsRepository _flags = getIt<LocalFlagsRepository>();
   bool _showHint = false;
+  final SurpriseDeckController _deck = SurpriseDeckController();
 
   @override
   void initState() {
@@ -54,16 +51,6 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
     if (mounted) setState(() => _showHint = false);
   }
 
-  void _openDetail(BuildContext context) {
-    final cubit = context.read<SurpriseCubit>();
-    final key = (cubit.state as SurpriseResult).current.key;
-    cubit.recordOutcome(SurpriseOutcome.revisited);
-    context.pushMediaDetail(
-      key,
-      choose: DetailChooseAction(onChoose: cubit.choose),
-    );
-  }
-
   /// The screen-reader actions on the deck: the gestures, by name.
   Widget _withActions(BuildContext context, SurpriseCubit cubit, Widget deck) {
     final l10n = context.l10n;
@@ -72,8 +59,7 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
         CustomSemanticsAction(label: l10n.surpriseControlNext): cubit.next,
         CustomSemanticsAction(label: l10n.surpriseControlSave): cubit.save,
         CustomSemanticsAction(label: l10n.surpriseChooseThis): cubit.choose,
-        CustomSemanticsAction(label: l10n.surpriseActionViewDetails): () =>
-            _openDetail(context),
+        CustomSemanticsAction(label: l10n.surpriseActionFlip): _deck.flipTop,
       },
       child: deck,
     );
@@ -117,7 +103,8 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
                             index: data.index,
                             onNext: cubit.next,
                             onChoose: cubit.choose,
-                            onOpenDetail: () => _openDetail(context),
+                            onFlipped: cubit.cardFlipped,
+                            controller: _deck,
                             cardAction: (i) => SurpriseSaveButton(
                               mediaKey: data.suggestions[i].item.key,
                             ),
@@ -138,9 +125,7 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
                     onNext: cubit.next,
                     canNext: count > 1,
                   ),
-                )
-              else
-                const SurpriseHelpRow(),
+                ),
               Padding(
                 padding: const EdgeInsets.all(AppSpacing.screenMargin),
                 child: SurpriseRerollButton(onTap: cubit.reroll),
