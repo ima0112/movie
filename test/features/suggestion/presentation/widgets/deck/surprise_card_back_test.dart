@@ -194,4 +194,23 @@ void main() {
     expect(find.text('Role 0'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('the scrolling content fades out into the card at the top and '
+      'bottom instead of running into the number', (tester) async {
+    await tester.pumpWidget(_host(_movie()));
+
+    final mask = tester.widget<ShaderMask>(find.byType(ShaderMask));
+    expect(mask.blendMode, BlendMode.dstIn);
+    expect(
+      find.descendant(
+        of: find.byType(ShaderMask),
+        matching: find.byType(SingleChildScrollView),
+      ),
+      findsOneWidget,
+    );
+    // At rest the title is below the veiled zone: nothing is hidden.
+    final titleTop = tester.getTopLeft(find.text('Dune')).dy;
+    final cardTop = tester.getTopLeft(find.byType(SurpriseCardBack)).dy;
+    expect(titleTop - cardTop, greaterThanOrEqualTo(128));
+  });
 }
