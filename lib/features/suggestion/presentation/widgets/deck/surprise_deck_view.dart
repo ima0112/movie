@@ -16,6 +16,7 @@ import 'surprise_deck_top_bar.dart';
 import 'surprise_notice_listener.dart';
 import 'surprise_reroll_button.dart';
 import 'surprise_save_button.dart';
+import 'surprise_tour_overlay.dart';
 import 'surprise_thumbnail_strip.dart';
 
 /// Surprise me's deck page (`docs/SCREENS.md` E3): top bar, the thumbnail
@@ -35,20 +36,20 @@ class SurpriseDeckView extends StatefulWidget {
 
 class _SurpriseDeckViewState extends State<SurpriseDeckView> {
   final LocalFlagsRepository _flags = getIt<LocalFlagsRepository>();
-  bool _showHint = false;
+  bool _showTour = false;
   final SurpriseDeckController _deck = SurpriseDeckController();
 
   @override
   void initState() {
     super.initState();
-    _flags.isSet(LocalFlag.surpriseDoubleTapHintSeen).then((seen) {
-      if (mounted && !seen) setState(() => _showHint = true);
+    _flags.isSet(LocalFlag.surpriseTourSeen).then((seen) {
+      if (mounted && !seen) setState(() => _showTour = true);
     });
   }
 
-  void _hintDismissed() {
-    _flags.set(LocalFlag.surpriseDoubleTapHintSeen);
-    if (mounted) setState(() => _showHint = false);
+  void _tourFinished() {
+    _flags.set(LocalFlag.surpriseTourSeen);
+    if (mounted) setState(() => _showTour = false);
   }
 
   /// The screen-reader actions on the deck: the gestures, by name.
@@ -71,67 +72,75 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
     return SurpriseNoticeListener(
       child: Scaffold(
         backgroundColor: AppColors.surface,
-        body: SafeArea(
-          child: Column(
-            children: [
-              SurpriseDeckTopBar(
-                title: context.l10n.matchHubSurpriseMeTitle,
-                onClose: widget.onClose,
-              ),
-              BlocSelector<SurpriseCubit, SurpriseState, _StripData?>(
-                selector: (s) => s is SurpriseResult ? _StripData(s) : null,
-                builder: (context, data) => data == null
-                    ? const SizedBox.shrink()
-                    : SurpriseThumbnailStrip(
-                        posterUrls: data.posters,
-                        currentIndex: data.index,
-                        savedIndexes: data.saved,
-                        onTap: cubit.jumpTo,
-                      ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Expanded(
-                child: BlocSelector<SurpriseCubit, SurpriseState, _DeckData?>(
-                  selector: (s) => s is SurpriseResult ? _DeckData(s) : null,
-                  builder: (context, data) => data == null
-                      ? const SizedBox.shrink()
-                      : _withActions(
-                          context,
-                          cubit,
-                          SurpriseDeckStack(
-                            suggestions: data.suggestions,
-                            index: data.index,
-                            onNext: cubit.next,
-                            onChoose: cubit.choose,
-                            onFlipped: cubit.cardFlipped,
-                            controller: _deck,
-                            cardAction: (i) => SurpriseSaveButton(
-                              mediaKey: data.suggestions[i].item.key,
-                            ),
-                            showHint: _showHint,
-                            onHintDismissed: _hintDismissed,
-                          ),
-                        ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              if (MediaQuery.accessibleNavigationOf(context))
-                BlocSelector<SurpriseCubit, SurpriseState, int>(
-                  selector: (s) =>
-                      s is SurpriseResult ? s.suggestions.length : 0,
-                  builder: (context, count) => SurpriseAccessibleControls(
-                    onSave: cubit.save,
-                    onChoose: cubit.choose,
-                    onNext: cubit.next,
-                    canNext: count > 1,
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Column(
+                children: [
+                  SurpriseDeckTopBar(
+                    title: context.l10n.matchHubSurpriseMeTitle,
+                    onClose: widget.onClose,
                   ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.screenMargin),
-                child: SurpriseRerollButton(onTap: cubit.reroll),
+                  BlocSelector<SurpriseCubit, SurpriseState, _StripData?>(
+                    selector: (s) => s is SurpriseResult ? _StripData(s) : null,
+                    builder: (context, data) => data == null
+                        ? const SizedBox.shrink()
+                        : SurpriseThumbnailStrip(
+                            posterUrls: data.posters,
+                            currentIndex: data.index,
+                            savedIndexes: data.saved,
+                            onTap: cubit.jumpTo,
+                          ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Expanded(
+                    child:
+                        BlocSelector<SurpriseCubit, SurpriseState, _DeckData?>(
+                          selector: (s) =>
+                              s is SurpriseResult ? _DeckData(s) : null,
+                          builder: (context, data) => data == null
+                              ? const SizedBox.shrink()
+                              : _withActions(
+                                  context,
+                                  cubit,
+                                  SurpriseDeckStack(
+                                    suggestions: data.suggestions,
+                                    index: data.index,
+                                    onNext: cubit.next,
+                                    onChoose: cubit.choose,
+                                    onFlipped: cubit.cardFlipped,
+                                    controller: _deck,
+                                    cardAction: (i) => SurpriseSaveButton(
+                                      mediaKey: data.suggestions[i].item.key,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  if (MediaQuery.accessibleNavigationOf(context))
+                    BlocSelector<SurpriseCubit, SurpriseState, int>(
+                      selector: (s) =>
+                          s is SurpriseResult ? s.suggestions.length : 0,
+                      builder: (context, count) => SurpriseAccessibleControls(
+                        onSave: cubit.save,
+                        onChoose: cubit.choose,
+                        onNext: cubit.next,
+                        canNext: count > 1,
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.screenMargin),
+                    child: SurpriseRerollButton(onTap: cubit.reroll),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            if (_showTour)
+              Positioned.fill(
+                child: SurpriseTourOverlay(onFinished: _tourFinished),
+              ),
+          ],
         ),
       ),
     );

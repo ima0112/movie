@@ -520,5 +520,16 @@
   "editProfileSheetTitle": "Editar perfil",
   "surpriseControlSave": "Guardar",
   "surpriseControlNext": "Siguiente",
-  "surpriseActionFlip": "Voltear carta"
+  "surpriseActionFlip": "Voltear carta",
+  "surpriseTourSwipeTitle": "Desliza para pasar de carta",
+  "surpriseTourSwipeBody": "Hacia el lado que quieras.",
+  "surpriseTourFlipTitle": "Toca la carta para darle la vuelta",
+  "surpriseTourFlipBody": "Descubre más detalles que te ayudan a decidir.",
+  "surpriseTourChooseTitle": "Toca dos veces para elegirla",
+  "surpriseTourChooseBody": "Si ya sabes cuál quieres, dale dos toques y listo.",
+  "surpriseTourSkip": "Omitir",
+  "surpriseTourNext": "Siguiente",
+  "surpriseTourBack": "Atrás",
+  "surpriseTourDone": "Entendido",
+  "surpriseTourStep": "Paso {step} de {total}"
 }

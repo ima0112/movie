@@ -1922,4 +1922,41 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get surpriseActionFlip => 'Voltear carta';
+
+  @override
+  String get surpriseTourSwipeTitle => 'Desliza para pasar de carta';
+
+  @override
+  String get surpriseTourSwipeBody => 'Hacia el lado que quieras.';
+
+  @override
+  String get surpriseTourFlipTitle => 'Toca la carta para darle la vuelta';
+
+  @override
+  String get surpriseTourFlipBody =>
+      'Descubre más detalles que te ayudan a decidir.';
+
+  @override
+  String get surpriseTourChooseTitle => 'Toca dos veces para elegirla';
+
+  @override
+  String get surpriseTourChooseBody =>
+      'Si ya sabes cuál quieres, dale dos toques y listo.';
+
+  @override
+  String get surpriseTourSkip => 'Omitir';
+
+  @override
+  String get surpriseTourNext => 'Siguiente';
+
+  @override
+  String get surpriseTourBack => 'Atrás';
+
+  @override
+  String get surpriseTourDone => 'Entendido';
+
+  @override
+  String surpriseTourStep(int step, int total) {
+    return 'Paso $step de $total';
+  }
 }

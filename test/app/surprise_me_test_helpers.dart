@@ -31,7 +31,8 @@ import 'package:movies/shared/widgets/app_chip.dart';
 /// instance and with `VibeCatalog.loadFromAssets()`'s own caching
 /// removed, so it isn't either of those. Each scenario gets its own
 /// file/process instead of chasing that further.
-void configureSurpriseMeDependencies() {
+/// [tourSeen] false leaves the first-time tour to show.
+void configureSurpriseMeDependencies({bool tourSeen = true}) {
   configureDependencies(fake.name);
   // The real drift-backed repositories need path_provider, unavailable
   // in `flutter test`'s host environment.
@@ -49,11 +50,13 @@ void configureSurpriseMeDependencies() {
   );
   getIt.unregister<LocalFlagsRepository>();
   getIt.registerLazySingleton<LocalFlagsRepository>(
-    // The first-time "2×" overlay pulses forever, which `pumpAndSettle`
-    // never gets past; these files are not about it.
-    () =>
-        InMemoryLocalFlagsRepository()
-          ..set(LocalFlag.surpriseDoubleTapHintSeen),
+    // The tour's markers pulse forever, which `pumpAndSettle` never gets past;
+    // most files are not about it.
+    () {
+      final flags = InMemoryLocalFlagsRepository();
+      if (tourSeen) flags.set(LocalFlag.surpriseTourSeen);
+      return flags;
+    },
   );
   getIt.unregister<OnboardingRepository>();
   getIt.registerLazySingleton<OnboardingRepository>(
@@ -125,7 +128,7 @@ Future<void> pumpSurpriseMe(WidgetTester tester) async {
 
 /// Taps through E2's 4 steps with the minimum each needs: one genre to skip,
 /// one vibe; the platforms, years and limits steps have defaults.
-Future<void> completeQuiz(WidgetTester tester) async {
+Future<void> completeQuiz(WidgetTester tester, {bool settle = true}) async {
   // "Continue" waits for one pick on each of the first two steps.
   expect(find.text('Continue'), findsOneWidget);
   final chips = find.byType(AppChip);
@@ -143,7 +146,7 @@ Future<void> completeQuiz(WidgetTester tester) async {
   await tester.pumpAndSettle();
 
   await tester.tap(find.text('Search')); // step 4 -> SurpriseCubit.answerWith
-  await settleSearch(tester);
+  await settleSearch(tester, settle: settle);
 }
 
 /// `pumpAndSettle` only keeps pumping while a frame is actually
@@ -154,9 +157,16 @@ Future<void> completeQuiz(WidgetTester tester) async {
 /// actually elapsed. An explicit pump longer than
 /// `maxSearchingDuration` first guarantees the search has genuinely
 /// resolved one way or another before the final settle.
-Future<void> settleSearch(WidgetTester tester) async {
+///
+/// [settle] false pumps a fixed beat instead of settling — for a screen with
+/// something that animates forever (the first-time tour).
+Future<void> settleSearch(WidgetTester tester, {bool settle = true}) async {
   await tester.pump(const Duration(seconds: 9));
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump(const Duration(milliseconds: 500));
+  }
 }
 
 void expectOnSurpriseResultScreen() {

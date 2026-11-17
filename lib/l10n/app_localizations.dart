@@ -3230,6 +3230,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Flip card'**
   String get surpriseActionFlip;
+
+  /// Step 1 of Surprise me's first-time tour: how to pass a card.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to pass a card'**
+  String get surpriseTourSwipeTitle;
+
+  /// No description provided for @surpriseTourSwipeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Whichever way you like.'**
+  String get surpriseTourSwipeBody;
+
+  /// Step 2 of the tour: tapping the card turns it over.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the card to turn it over'**
+  String get surpriseTourFlipTitle;
+
+  /// No description provided for @surpriseTourFlipBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Find more details that help you decide.'**
+  String get surpriseTourFlipBody;
+
+  /// Step 3 of the tour: double-tapping chooses the card.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-tap to choose it'**
+  String get surpriseTourChooseTitle;
+
+  /// No description provided for @surpriseTourChooseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you already know which one you want, double-tap it and that\'s it.'**
+  String get surpriseTourChooseBody;
+
+  /// Tour button: leave the tour (counts as seen).
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get surpriseTourSkip;
+
+  /// No description provided for @surpriseTourNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get surpriseTourNext;
+
+  /// No description provided for @surpriseTourBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get surpriseTourBack;
+
+  /// Tour button on the last step: finish the tour.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get surpriseTourDone;
+
+  /// Screen-reader label of the tour's progress dots.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String surpriseTourStep(int step, int total);
 }
 
 class _AppLocalizationsDelegate

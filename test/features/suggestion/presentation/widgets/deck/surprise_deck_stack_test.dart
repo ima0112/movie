@@ -13,14 +13,12 @@ class _Calls {
   int next = 0;
   int choose = 0;
   int flipped = 0;
-  int hint = 0;
 }
 
 Widget _host(
   _Calls calls, {
   int cards = 5,
   int index = 0,
-  bool hint = false,
   bool disableAnimations = false,
 }) => MaterialApp(
   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -40,8 +38,6 @@ Widget _host(
           onNext: () => calls.next++,
           onChoose: () => calls.choose++,
           onFlipped: () => calls.flipped++,
-          showHint: hint,
-          onHintDismissed: () => calls.hint++,
         ),
       ),
     ),
@@ -202,34 +198,6 @@ void main() {
     expect(arrows().rightProgress, greaterThan(0));
     await gesture.up();
     await tester.pumpAndSettle();
-  });
-
-  testWidgets('the first-time hint shows "2×" and goes at the first touch, '
-      'once', (tester) async {
-    final calls = _Calls();
-    await tester.pumpWidget(_host(calls, hint: true));
-
-    expect(find.text('2×'), findsOneWidget);
-
-    await tester.tapAt(tester.getCenter(_top));
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('2×'), findsNothing);
-    await tester.tapAt(tester.getCenter(_top));
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(calls.hint, 1);
-    await tester.pumpAndSettle();
-  });
-
-  testWidgets('the hint does not stand in the way of the gestures', (
-    tester,
-  ) async {
-    final calls = _Calls();
-    await tester.pumpWidget(_host(calls, hint: true));
-
-    await tester.drag(_top, const Offset(-220, 0));
-    await tester.pumpAndSettle();
-
-    expect(calls.next, 1);
   });
 
   testWidgets('reduced motion: the deck changes at once, nothing turns', (
