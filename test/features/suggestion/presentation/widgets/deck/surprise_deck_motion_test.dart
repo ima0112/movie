@@ -11,7 +11,11 @@ import '../../../surprise_test_data.dart';
 /// the other way toward a lower one.
 final _cards = batchOf(5).suggestions;
 
-Widget _host(ValueNotifier<int> index, VoidCallback onNext) => MaterialApp(
+Widget _host(
+  ValueNotifier<int> index,
+  VoidCallback onNext, {
+  SurpriseDeckController? controller,
+}) => MaterialApp(
   localizationsDelegates: AppLocalizations.localizationsDelegates,
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
@@ -25,6 +29,7 @@ Widget _host(ValueNotifier<int> index, VoidCallback onNext) => MaterialApp(
           index: i,
           onNext: onNext,
           onChoose: () {},
+          controller: controller,
         ),
       ),
     ),
@@ -130,5 +135,55 @@ void main() {
     await tester.pumpAndSettle();
     expect(_leaving, findsNothing);
     expect(_fades(tester, 3).where((o) => o < 1), isEmpty);
+  });
+
+  /// Whether the card that was on top zooms toward the viewer (forward) or away
+  /// from it (backward) when the deck goes from card [from] to card [to].
+  Future<bool> zoomsForward(WidgetTester tester, int from, int to) async {
+    final index = ValueNotifier(from - 1);
+    await tester.pumpWidget(_host(index, () {}));
+    index.value = to - 1;
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    final scale = tester
+        .widget<Transform>(
+          find.descendant(of: _leaving, matching: find.byType(Transform)).first,
+        )
+        .transform
+        .storage[0];
+    await tester.pumpAndSettle();
+    return scale > 1;
+  }
+
+  testWidgets('only the numbers decide the direction, card 5 included: 1→5 '
+      'and 4→5 go forward, 5→1 and 5→4 go backward', (tester) async {
+    expect(await zoomsForward(tester, 1, 5), isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(await zoomsForward(tester, 5, 1), isFalse);
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(await zoomsForward(tester, 4, 5), isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(await zoomsForward(tester, 5, 4), isFalse);
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(await zoomsForward(tester, 1, 2), isTrue);
+  });
+
+  testWidgets('swipeNext passes the card like a swipe: it flies off and the '
+      'deck is told once, also from the last card', (tester) async {
+    var nexts = 0;
+    final controller = SurpriseDeckController();
+    final index = ValueNotifier(4);
+    await tester.pumpWidget(
+      _host(index, () => nexts++, controller: controller),
+    );
+
+    controller.swipeNext();
+    await tester.pump(const Duration(milliseconds: 40));
+
+    expect(nexts, 1);
+    expect(_leaving, findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(_leaving, findsNothing);
+    expect(nexts, 1);
   });
 }

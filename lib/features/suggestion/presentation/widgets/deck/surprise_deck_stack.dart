@@ -12,9 +12,25 @@ import 'surprise_suggestion_card.dart';
 /// Turns the card on top of a [SurpriseDeckStack] from outside it.
 class SurpriseDeckController {
   VoidCallback? _flip;
+  VoidCallback? _swipeNext;
 
   /// Turns the top card over (or back).
   void flipTop() => _flip?.call();
+
+  /// Passes the top card exactly as a swipe to the right would — the card flies
+  /// off and the next one rises — for controls that can't swipe ("Next" for a
+  /// screen reader). Does nothing with one card.
+  void swipeNext() => _swipeNext?.call();
+
+  void _attach(_SurpriseDeckStackState state) {
+    _flip = state._toggleFlip;
+    _swipeNext = state._swipeNext;
+  }
+
+  void _detach() {
+    _flip = null;
+    _swipeNext = null;
+  }
 }
 
 /// The deck itself (`docs/SCREENS.md` E3): the card on top and the next one behind it —
@@ -165,7 +181,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   @override
   void initState() {
     super.initState();
-    widget.controller?._flip = _toggleFlip;
+    widget.controller?._attach(this);
   }
 
   @override
@@ -178,8 +194,8 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
       _flips[old.index].value = false;
     }
     if (old.controller != widget.controller) {
-      old.controller?._flip = null;
-      widget.controller?._flip = _toggleFlip;
+      old.controller?._detach();
+      widget.controller?._attach(this);
     }
     final n = widget.suggestions.length;
     // A swipe leaves through its own animation; a new batch just appears.
@@ -190,15 +206,11 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
         _still) {
       return;
     }
-    // Another card was brought up (a thumbnail, "Next"): toward a higher number
+    // Another card was brought up from the thumbnails: toward a higher number
     // the old top comes toward the viewer and fades; toward a lower one the new
-    // top arrives from the front. One step around the circle counts as forward.
-    final step = (widget.index - old.index) % n;
-    final forward = step == 1
-        ? true
-        : step == n - 1
-        ? false
-        : widget.index > old.index;
+    // top arrives from the front. Only the numbers count — card 5 is after card
+    // 1 here even though the deck is circular ("Next" is a swipe, not this).
+    final forward = widget.index > old.index;
     _leavingIndex = old.index;
     _zoomForward = forward;
     _zoom
@@ -213,13 +225,21 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
 
   @override
   void dispose() {
-    widget.controller?._flip = null;
+    widget.controller?._detach();
     for (final n in _flips) {
       n.dispose();
     }
     _zoom.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  /// The card width as last laid out (what a swipe measures against).
+  double _width = 0;
+
+  void _swipeNext() {
+    if (!_canSwipe || _animating || _width <= 0) return;
+    _fling(1, width: _width, speed: 0);
   }
 
   void _toggleFlip() {
@@ -312,6 +332,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth - 2 * _sideMargin;
+        _width = width;
         return AnimatedBuilder(
           animation: Listenable.merge([_controller, _zoom]),
           builder: (context, _) {
