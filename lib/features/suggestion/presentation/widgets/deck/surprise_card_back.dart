@@ -39,6 +39,10 @@ class SurpriseCardBack extends StatelessWidget {
 
   /// The title never grows up into the number's corner.
   static const double _numberClearance = 128;
+
+  /// How much of the top clearance is fully hidden before the content starts
+  /// to show (the number's and the Watch later button's corner).
+  static const double _fadeHidden = 64;
   static const double _starSize = 14;
 
   @override
@@ -70,76 +74,79 @@ class SurpriseCardBack extends StatelessWidget {
               child: SurpriseCardNumber(number: number),
             ),
             Positioned.fill(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
-                  _numberClearance,
-                  AppSpacing.xl,
-                  AppSpacing.xl,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(item.title, style: AppTextStyles.h1),
-                    const SizedBox(height: AppSpacing.xs),
-                    Row(
-                      children: [
-                        if (meta != null)
-                          Flexible(
-                            child: Text(
-                              meta,
-                              style: AppTextStyles.bodySm.copyWith(
-                                color: AppColors.inkMuted,
+              child: _FadedEdges(
+                top: _numberClearance,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xl,
+                    _numberClearance,
+                    AppSpacing.xl,
+                    AppSpacing.xl,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.title, style: AppTextStyles.h1),
+                      const SizedBox(height: AppSpacing.xs),
+                      Row(
+                        children: [
+                          if (meta != null)
+                            Flexible(
+                              child: Text(
+                                meta,
+                                style: AppTextStyles.bodySm.copyWith(
+                                  color: AppColors.inkMuted,
+                                ),
                               ),
                             ),
-                          ),
-                        if (rating != null) ...[
-                          const SizedBox(width: AppSpacing.md),
-                          const Icon(
-                            AppIcons.starFill,
-                            size: _starSize,
-                            color: AppColors.accent,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Text(rating, style: AppTextStyles.bodySmStrong),
+                          if (rating != null) ...[
+                            const SizedBox(width: AppSpacing.md),
+                            const Icon(
+                              AppIcons.starFill,
+                              size: _starSize,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Text(rating, style: AppTextStyles.bodySmStrong),
+                          ],
                         ],
-                      ],
-                    ),
-                    if (item.genres.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.md),
-                      LayoutBuilder(
-                        builder: (context, box) => Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.xs,
-                          children: [
-                            for (final genre in item.genres)
-                              // A long name at a large text size shrinks to
-                              // fit the line rather than overflowing it.
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: box.maxWidth,
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  alignment: Alignment.centerLeft,
-                                  child: InfoChip(
-                                    label: genre.localizedName(l10n),
+                      ),
+                      if (item.genres.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        LayoutBuilder(
+                          builder: (context, box) => Wrap(
+                            spacing: AppSpacing.sm,
+                            runSpacing: AppSpacing.xs,
+                            children: [
+                              for (final genre in item.genres)
+                                // A long name at a large text size shrinks to
+                                // fit the line rather than overflowing it.
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: box.maxWidth,
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: InfoChip(
+                                      label: genre.localizedName(l10n),
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                    if (overview.isNotEmpty) ...[
+                      ],
+                      if (overview.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        OverlineLabel(l10n.mediaDetailSynopsis),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(overview, style: AppTextStyles.bodySm),
+                      ],
                       const SizedBox(height: AppSpacing.lg),
-                      OverlineLabel(l10n.mediaDetailSynopsis),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(overview, style: AppTextStyles.bodySm),
+                      SurpriseCardCredits(detail: detail),
                     ],
-                    const SizedBox(height: AppSpacing.lg),
-                    SurpriseCardCredits(detail: detail),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -152,6 +159,47 @@ class SurpriseCardBack extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Fades [child]'s top and bottom edges into the card, like a transparent veil:
+/// the scrolling content is gone over the top [top] dp's first part and shows
+/// fully by [top] — which is where it rests, so nothing is veiled at rest —
+/// and eases out over the last [bottom] dp. So what scrolls up never mixes with
+/// the number and the corner button, and never ends in a hard line.
+class _FadedEdges extends StatelessWidget {
+  const _FadedEdges({required this.top, required this.child});
+
+  final double top;
+  final Widget child;
+
+  static const double _bottom = AppSpacing.xl;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, box) {
+        final h = box.maxHeight;
+        if (!h.isFinite || h <= top + _bottom) return child;
+        final hidden = SurpriseCardBack._fadeHidden / h;
+        return ShaderMask(
+          blendMode: BlendMode.dstIn,
+          shaderCallback: (rect) => LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0, hidden, top / h, 1 - _bottom / h, 1],
+            colors: [
+              AppColors.ink.withValues(alpha: 0),
+              AppColors.ink.withValues(alpha: 0),
+              AppColors.ink,
+              AppColors.ink,
+              AppColors.ink.withValues(alpha: 0),
+            ],
+          ).createShader(rect),
+          child: child,
+        );
+      },
     );
   }
 }
