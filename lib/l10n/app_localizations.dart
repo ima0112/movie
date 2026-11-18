@@ -2756,6 +2756,24 @@ abstract class AppLocalizations {
   /// **'Find something to watch'**
   String get surpriseChooseSourceTitle;
 
+  /// H11 subtitle naming the user's liked genres (up to 3).
+  ///
+  /// In en, this message translates to:
+  /// **'Your tastes: {genres}.'**
+  String surpriseSourceProfileGenres(String genres);
+
+  /// Joins a list of genre names: 'Crime, Sci-Fi and Thriller'.
+  ///
+  /// In en, this message translates to:
+  /// **'{rest} and {last}'**
+  String surpriseGenresAnd(String rest, String last);
+
+  /// No description provided for @surpriseQuizNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The quiz doesn\'t change your saved tastes.'**
+  String get surpriseQuizNote;
+
   /// H11's primary button (docs/SCREENS.md H11) — launches Surprise me with the already-usable profile/inferred-list signal.
   ///
   /// In en, this message translates to:

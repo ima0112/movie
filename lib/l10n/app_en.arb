@@ -1535,6 +1535,28 @@
   "@surpriseChooseSourceTitle": {
     "description": "H11's own headline (docs/SCREENS.md H11), shown above the subtitle naming where the suggestion would come from."
   },
+  "surpriseSourceProfileGenres": "Your tastes: {genres}.",
+  "@surpriseSourceProfileGenres": {
+    "description": "H11 subtitle naming the user's liked genres (up to 3).",
+    "placeholders": {
+      "genres": {
+        "type": "String"
+      }
+    }
+  },
+  "surpriseGenresAnd": "{rest} and {last}",
+  "@surpriseGenresAnd": {
+    "description": "Joins a list of genre names: 'Crime, Sci-Fi and Thriller'.",
+    "placeholders": {
+      "rest": {
+        "type": "String"
+      },
+      "last": {
+        "type": "String"
+      }
+    }
+  },
+  "surpriseQuizNote": "The quiz doesn't change your saved tastes.",
   "surpriseUseMyTastes": "Use my tastes",
   "@surpriseUseMyTastes": {
     "description": "H11's primary button (docs/SCREENS.md H11) — launches Surprise me with the already-usable profile/inferred-list signal."

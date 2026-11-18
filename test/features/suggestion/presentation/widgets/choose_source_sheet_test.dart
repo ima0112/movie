@@ -181,9 +181,50 @@ void main() {
 
       await tester.pumpWidget(_wrap(cubit, state));
 
-      expect(find.text('Based on your tastes'), findsOneWidget);
+      expect(find.text('Your tastes: Drama.'), findsOneWidget);
+      expect(
+        find.text("The quiz doesn't change your saved tastes."),
+        findsOneWidget,
+      );
       expect(find.text('Use my tastes'), findsOneWidget);
       expect(find.text('Answer the quiz instead'), findsOneWidget);
+    });
+
+    testWidgets('names up to three genres, then how many more', (tester) async {
+      Future<void> pumpWith(Set<Genre> genres) async {
+        final cubit = await _cubitAtChooseSource(
+          profile: TasteProfile(
+            likedGenres: genres,
+            vetoedGenres: const {},
+            likedVibes: const {},
+            yearFrom: 2000,
+            updatedAt: DateTime(2024),
+          ),
+        );
+        addTearDown(cubit.close);
+        await tester.pumpWidget(_wrap(cubit, cubit.state as ChooseSource));
+      }
+
+      await pumpWith({
+        const Genre(id: 'crime'),
+        const Genre(id: 'drama'),
+        const Genre(id: 'thriller'),
+      });
+      expect(
+        find.text('Your tastes: Crime, Drama and Thriller.'),
+        findsOneWidget,
+      );
+
+      await pumpWith({
+        const Genre(id: 'crime'),
+        const Genre(id: 'drama'),
+        const Genre(id: 'thriller'),
+        const Genre(id: 'comedy'),
+      });
+      expect(
+        find.textContaining('Your tastes: Comedy, Crime, Drama +1'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows the inferred-list subtitle when source is '
@@ -197,7 +238,10 @@ void main() {
 
       await tester.pumpWidget(_wrap(cubit, state));
 
-      expect(find.text('Based on your list'), findsOneWidget);
+      // An inferred list has no saved tastes to name or to protect.
+      expect(find.textContaining('Your tastes'), findsNothing);
+      expect(find.textContaining('Based on'), findsNothing);
+      expect(find.textContaining('saved tastes'), findsNothing);
     });
 
     testWidgets('tapping "Use my tastes" calls useMyTastes() and closes '

@@ -1624,6 +1624,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get surpriseChooseSourceTitle => 'Encuentra algo para ver';
 
   @override
+  String surpriseSourceProfileGenres(String genres) {
+    return 'Tus gustos: $genres.';
+  }
+
+  @override
+  String surpriseGenresAnd(String rest, String last) {
+    return '$rest y $last';
+  }
+
+  @override
+  String get surpriseQuizNote =>
+      'El cuestionario no cambia tus gustos guardados.';
+
+  @override
   String get surpriseUseMyTastes => 'Usar mis gustos';
 
   @override

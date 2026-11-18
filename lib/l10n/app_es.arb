@@ -503,6 +503,9 @@
   "surpriseAnotherSuggestion": "Otra sugerencia",
   "surpriseAddedToWatchLaterSnackbar": "Añadido a ver después",
   "surpriseChooseSourceTitle": "Encuentra algo para ver",
+  "surpriseSourceProfileGenres": "Tus gustos: {genres}.",
+  "surpriseGenresAnd": "{rest} y {last}",
+  "surpriseQuizNote": "El cuestionario no cambia tus gustos guardados.",
   "surpriseUseMyTastes": "Usar mis gustos",
   "surpriseAnswerQuizInstead": "Responder el cuestionario",
 
