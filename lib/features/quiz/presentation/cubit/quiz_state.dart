@@ -20,16 +20,22 @@ class QuizState {
     this.tvStatus,
     this.maxSeasons,
     this.excludeWatched = false,
+    this.yearTo,
+    this.platformIds = const {},
+    this.includeRentBuy = false,
   });
 
   /// No doc gives an explicit default for "how far back" — reuses
   /// `MyTastesState.defaultYearFrom`'s own choice for the identical
   /// slider (H8/C5/E2 all share the same 1950–present range), rather
   /// than inventing a second value.
-  static const int defaultYearFrom = 1990;
+  /// The first year of the year range's scale, and the default start — the
+  /// range opens on "all years" and only filters what the user touches.
+  static const int minYear = 1950;
+  static const int defaultYearFrom = minYear;
 
   static const int maxExcludedGenres = 3;
-  static const int requiredVibeCount = 3;
+  static const int maxVibes = 3;
 
   /// Fixed for the whole quiz session — never part of [copyWith].
   final MediaType mediaType;
@@ -73,23 +79,26 @@ class QuizState {
   /// already watched".
   final bool excludeWatched;
 
+  /// The latest year accepted; `null` = up to today (the range's open end,
+  /// "Today").
+  final int? yearTo;
+
+  /// The streaming services the user has (TMDB provider ids). Empty = "All":
+  /// no platform filter.
+  final Set<int> platformIds;
+
+  /// "Include rent and buy" — only means something with [platformIds].
+  final bool includeRentBuy;
+
   /// What the "Next" button's "disabled until the step's rule is met"
   /// binds to. Step 1 is always valid ("up to 3" allows 0); step 2 needs
   /// *exactly* 3, not "up to 3"; steps 3/4 always already hold a real
   /// value (a slider/toggle default), so there's nothing to withhold
   /// "Next" for.
-  bool get isCurrentStepValid => switch (step) {
-    2 => vibeIds.length == requiredVibeCount,
-    _ => true,
-  };
+  /// Every step has a sensible default (no vetoes, no vibes, every
+  /// platform, every year, no limit), so "Next" is never blocked.
+  bool get isCurrentStepValid => true;
 
-  /// [maxRuntimeMinutes]/[tvStatus]/[maxSeasons] take a *function*
-  /// returning the new value, not the value itself — same sentinel idiom
-  /// `DiscoverFilter.copyWith`/`MatchQuery.copyWith` already use, and for
-  /// the same reason: the usual `?? this.x` shortcut can't tell "leave
-  /// this alone" apart from "clear it to null" for an already-nullable
-  /// field. Every other field here always holds a real value, so the
-  /// plain `?? this.x` form is unambiguous for them.
   QuizState copyWith({
     int? step,
     Set<Genre>? excludedGenres,
@@ -99,6 +108,9 @@ class QuizState {
     DiscoverTvStatus? Function()? tvStatus,
     int? Function()? maxSeasons,
     bool? excludeWatched,
+    int? Function()? yearTo,
+    Set<int>? platformIds,
+    bool? includeRentBuy,
   }) {
     return QuizState(
       mediaType: mediaType,
@@ -112,6 +124,9 @@ class QuizState {
       tvStatus: tvStatus == null ? this.tvStatus : tvStatus(),
       maxSeasons: maxSeasons == null ? this.maxSeasons : maxSeasons(),
       excludeWatched: excludeWatched ?? this.excludeWatched,
+      yearTo: yearTo == null ? this.yearTo : yearTo(),
+      platformIds: platformIds ?? this.platformIds,
+      includeRentBuy: includeRentBuy ?? this.includeRentBuy,
     );
   }
 
@@ -126,7 +141,10 @@ class QuizState {
       other.maxRuntimeMinutes == maxRuntimeMinutes &&
       other.tvStatus == tvStatus &&
       other.maxSeasons == maxSeasons &&
-      other.excludeWatched == excludeWatched;
+      other.excludeWatched == excludeWatched &&
+      other.yearTo == yearTo &&
+      _setEquals(other.platformIds, platformIds) &&
+      other.includeRentBuy == includeRentBuy;
 
   @override
   int get hashCode => Object.hash(
@@ -139,6 +157,9 @@ class QuizState {
     tvStatus,
     maxSeasons,
     excludeWatched,
+    yearTo,
+    Object.hashAllUnordered(platformIds),
+    includeRentBuy,
   );
 
   @override
@@ -147,7 +168,8 @@ class QuizState {
       'excludedGenres: $excludedGenres, vibeIds: $vibeIds, '
       'yearFrom: $yearFrom, maxRuntimeMinutes: $maxRuntimeMinutes, '
       'tvStatus: $tvStatus, maxSeasons: $maxSeasons, '
-      'excludeWatched: $excludeWatched)';
+      'excludeWatched: $excludeWatched, yearTo: $yearTo, '
+      'platformIds: $platformIds, includeRentBuy: $includeRentBuy)';
 }
 
 /// Order-independent set content equality — same local stand-in used
