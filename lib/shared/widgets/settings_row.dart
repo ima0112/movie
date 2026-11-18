@@ -34,6 +34,9 @@ class SettingsRow extends StatelessWidget {
 
   static const double _height = 56;
 
+  /// The most of the screen's width the value and chevron may take.
+  static const double _trailingShare = 0.5;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -45,6 +48,7 @@ class SettingsRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Row(
             children: [
+              // The label takes whatever the trailing part leaves…
               Expanded(
                 child: Text(
                   label,
@@ -55,25 +59,40 @@ class SettingsRow extends StatelessWidget {
                   ),
                 ),
               ),
-              if (value != null) ...[
-                Flexible(
-                  child: Text(
-                    value!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.right,
-                    style: AppTextStyles.bodySm.copyWith(
-                      color: AppColors.inkMuted,
-                    ),
+              // …and the value and the chevron hug the right edge together, so
+              // every row's chevron sits in the same column, whether or not it
+              // has a value. A long value is cut with an ellipsis before it
+              // can squeeze the label below its share.
+              if (value != null || showChevron)
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width * _trailingShare,
                   ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-              ],
-              if (showChevron)
-                const Icon(
-                  AppIcons.chevronRight,
-                  size: 20,
-                  color: AppColors.inkMuted,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (value != null)
+                        Flexible(
+                          child: Text(
+                            value!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            style: AppTextStyles.bodySm.copyWith(
+                              color: AppColors.inkMuted,
+                            ),
+                          ),
+                        ),
+                      if (value != null && showChevron)
+                        const SizedBox(width: AppSpacing.sm),
+                      if (showChevron)
+                        const Icon(
+                          AppIcons.chevronRight,
+                          size: 20,
+                          color: AppColors.inkMuted,
+                        ),
+                    ],
+                  ),
                 ),
             ],
           ),
