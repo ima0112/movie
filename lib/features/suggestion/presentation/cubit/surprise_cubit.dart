@@ -246,23 +246,32 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     _showCard(deck, (deck.index + 1) % deck.suggestions.length);
   }
 
-  /// Save the card on top to Watch later and pass (the left swipe). A card
-  /// already there is just passed.
-  Future<void> saveAndNext() async {
-    final deck = state;
-    if (deck is! SurpriseResult) return;
-    final saving = _saveCard(deck.index);
-    next();
-    await saving;
-  }
-
-  /// Save the card on top to Watch later, staying on it (the "Save" control);
-  /// a no-op if it is already there. Saving is one-way here: taking a card out
-  /// of Watch later is done from My List.
+  /// Save the card on top to Watch later, staying on it (the accessible "Save"
+  /// control); a no-op if it is already there.
   Future<void> save() async {
     final deck = state;
     if (deck is! SurpriseResult) return;
     await _saveCard(deck.index);
+  }
+
+  /// The Watch later button of the card for [key]: in → out, out → in. The deck
+  /// shows the change at once and takes it back if the write fails. Saving
+  /// counts as a taste signal (`saved`); taking it out again does not undo it.
+  Future<void> toggleSaved(MediaKey key) async {
+    final deck = state;
+    if (deck is! SurpriseResult) return;
+    final i = deck.suggestions.indexWhere((s) => s.item.key == key);
+    if (i < 0) return;
+    if (!deck.savedKeys.contains(key)) return _saveCard(i);
+
+    emit(deck.copyWith(savedKeys: {...deck.savedKeys}..remove(key)));
+    final result = await removeFromWatchLater(_userLibraryRepository, key);
+    if (result is Failure<void> && !isClosed) {
+      final now = state;
+      if (now is SurpriseResult) {
+        emit(now.copyWith(savedKeys: {...now.savedKeys, key}));
+      }
+    }
   }
 
   /// Bring card [index] to the top (a thumbnail tapped).

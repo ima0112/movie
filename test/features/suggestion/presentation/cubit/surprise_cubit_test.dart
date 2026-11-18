@@ -120,6 +120,12 @@ class _MapLibrary extends _FakeUserLibraryRepository {
       Success(_map.values.toList());
 
   @override
+  Future<Result<void>> remove(MediaKey key) async {
+    _map.remove(key);
+    return const Success(null);
+  }
+
+  @override
   Future<Result<void>> upsert(UserMediaEntry entry) async {
     upserts++;
     if (failWrites) return Failure(FailureReason.storage);
@@ -945,25 +951,41 @@ void main() {
       });
     });
 
-    test('left swipe: saveAndNext puts the card in Watch later and passes; '
-        'a card already there is just passed', () {
+    test('toggleSaved: out → in → out, the deck shows it at once and the '
+        'library follows; a favorite is kept when it leaves Watch later', () {
+      fakeAsync((async) {
+        final library = _MapLibrary([
+          UserMediaEntry(key: key(0), title: 'Movie 0', isFavorite: true),
+        ]);
+        final cubit = openDeck(async, library: library);
+
+        unawaited(cubit.toggleSaved(key(0)));
+        async.flushMicrotasks();
+        expect(deck(cubit).isSaved(0), isTrue);
+        expect(deck(cubit).index, 0); // saving never passes
+        expect(library[key(0)]!.isWatchLater, isTrue);
+
+        unawaited(cubit.toggleSaved(key(0)));
+        async.flushMicrotasks();
+        expect(deck(cubit).isSaved(0), isFalse);
+        expect(library[key(0)]!.isWatchLater, isFalse);
+        expect(library[key(0)]!.isFavorite, isTrue);
+        cubit.close();
+      });
+    });
+
+    test('toggleSaved out of Watch later deletes an entry left in no list', () {
       fakeAsync((async) {
         final library = _MapLibrary();
         final cubit = openDeck(async, library: library);
 
-        unawaited(cubit.saveAndNext());
+        unawaited(cubit.toggleSaved(key(1)));
         async.flushMicrotasks();
-        expect(library[key(0)]!.isWatchLater, isTrue);
-        expect(deck(cubit).index, 1);
-        expect(deck(cubit).savedKeys, {key(0)});
-        expect(library.upserts, 1);
+        unawaited(cubit.toggleSaved(key(1)));
+        async.flushMicrotasks();
 
-        // Round the deck and swipe left on card 0 again: no second write.
-        cubit.jumpTo(0);
-        unawaited(cubit.saveAndNext());
-        async.flushMicrotasks();
-        expect(library.upserts, 1);
-        expect(deck(cubit).index, 1);
+        expect(library[key(1)], isNull);
+        expect(deck(cubit).isSaved(1), isFalse);
         cubit.close();
       });
     });

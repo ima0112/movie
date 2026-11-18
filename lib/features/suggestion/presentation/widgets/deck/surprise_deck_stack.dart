@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../match_engine/domain/surprise_batch.dart';
 import 'surprise_double_tap_hint.dart';
-import 'surprise_edge_bubbles.dart';
+import 'surprise_edge_arrows.dart';
 import 'surprise_suggestion_card.dart';
 
 /// The deck itself (`docs/SCREENS.md` E3): the card on top and the next one behind it —
@@ -15,13 +15,12 @@ import 'surprise_suggestion_card.dart';
 /// the back.
 ///
 /// **Gestures on the top card:**
-/// - drag **left** past a third of the width (or a fast flick): *save and pass*
-///   ([onSaveAndNext], a light buzz); drag **right**: *pass* ([onNext]); a drag
-///   that stops short springs back;
+/// - drag **either way** past a third of the width (or a fast flick): *pass*
+///   ([onNext]); a drag that stops short springs back;
 /// - **double tap**: *choose* ([onChoose], a medium buzz); **tap**: open the
 ///   detail ([onOpenDetail]) — the tap waits a moment to tell them apart.
 /// While dragged the card follows the finger with a turn proportional to how far
-/// it went, and the bubble on that edge grows ([SurpriseEdgeBubbles]). With one
+/// it went, and the arrow on that edge shows ([SurpriseEdgeArrows]). With one
 /// card there is nowhere to go, so dragging is off.
 ///
 /// With "reduce motion" nothing turns or flies: the deck just changes.
@@ -31,11 +30,11 @@ class SurpriseDeckStack extends StatefulWidget {
     required this.suggestions,
     required this.index,
     required this.onNext,
-    required this.onSaveAndNext,
     required this.onChoose,
     required this.onOpenDetail,
     this.showHint = false,
     this.onHintDismissed,
+    this.cardAction,
   });
 
   final List<SurpriseSuggestion> suggestions;
@@ -43,13 +42,16 @@ class SurpriseDeckStack extends StatefulWidget {
   /// The card on top.
   final int index;
   final VoidCallback onNext;
-  final VoidCallback onSaveAndNext;
   final VoidCallback onChoose;
   final VoidCallback onOpenDetail;
 
   /// The first-time "2×" overlay; [onHintDismissed] fires at the first touch.
   final bool showHint;
   final VoidCallback? onHintDismissed;
+
+  /// The control in each card's top-right corner (Watch later), built once per
+  /// card of the batch.
+  final Widget Function(int index)? cardAction;
 
   /// A drag confirms past this fraction of the card's width…
   static const double confirmFraction = 1 / 3;
@@ -87,7 +89,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   bool _animating = false;
   bool _hintDismissed = false;
 
-  static const double _sideMargin = AppSpacing.xxxl;
+  static const double _sideMargin = AppSpacing.screenMargin;
   static const double _maxTurn = 0.2; // radians at a full card width
   static const double _behindShift = 14;
   static const double _behindScale = 0.06;
@@ -124,6 +126,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
               suggestion: widget.suggestions[k],
               number: k + 1,
               total: widget.suggestions.length,
+              topAction: widget.cardAction?.call(k),
             ),
           ),
       ];
@@ -196,9 +199,9 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     final v = d.primaryVelocity ?? 0;
     final far = width * SurpriseDeckStack.confirmFraction;
     if (_dx < 0 && (-_dx > far || v < -SurpriseDeckStack.flickVelocity)) {
-      _fling(-1, save: true, width: width, speed: v);
+      _fling(-1, width: width, speed: v);
     } else if (_dx > 0 && (_dx > far || v > SurpriseDeckStack.flickVelocity)) {
-      _fling(1, save: false, width: width, speed: v);
+      _fling(1, width: width, speed: v);
     } else {
       _run(0, SurpriseDeckStack.bounceDuration, Curves.easeOutBack);
     }
@@ -206,16 +209,14 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
 
   Future<void> _fling(
     int dir, {
-    required bool save,
     required double width,
     required double speed,
   }) async {
-    if (save) HapticFeedback.lightImpact();
     // The deck moves on at once — the next card rises while this one leaves —
     // instead of waiting for the exit to end.
     final leaving = widget.index;
     if (!_still) _leavingIndex = leaving;
-    (save ? widget.onSaveAndNext : widget.onNext)();
+    widget.onNext();
     // Keep the finger's speed: the card does not slow down to start over.
     final target = dir * width * 1.3;
     final seconds =
@@ -296,10 +297,9 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
                     ),
                   ),
                   Positioned.fill(
-                    child: SurpriseEdgeBubbles(
-                      saveProgress: dx < 0 ? p : 0,
-                      nextProgress: dx > 0 ? p : 0,
-                      showNext: _canSwipe,
+                    child: SurpriseEdgeArrows(
+                      leftProgress: dx < 0 ? p : 0,
+                      rightProgress: dx > 0 ? p : 0,
                     ),
                   ),
                   if (widget.showHint && !_hintDismissed)

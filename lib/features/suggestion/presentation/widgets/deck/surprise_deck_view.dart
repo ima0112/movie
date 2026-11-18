@@ -19,6 +19,7 @@ import 'surprise_deck_top_bar.dart';
 import 'surprise_help_row.dart';
 import 'surprise_notice_listener.dart';
 import 'surprise_reroll_button.dart';
+import 'surprise_save_button.dart';
 import 'surprise_thumbnail_strip.dart';
 
 /// Surprise me's deck page (`docs/SCREENS.md` E3): top bar, the thumbnail
@@ -115,9 +116,11 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
                             suggestions: data.suggestions,
                             index: data.index,
                             onNext: cubit.next,
-                            onSaveAndNext: cubit.saveAndNext,
                             onChoose: cubit.choose,
                             onOpenDetail: () => _openDetail(context),
+                            cardAction: (i) => SurpriseSaveButton(
+                              mediaKey: data.suggestions[i].item.key,
+                            ),
                             showHint: _showHint,
                             onHintDismissed: _hintDismissed,
                           ),
