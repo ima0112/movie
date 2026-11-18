@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_initializing_formals
 import 'dart:async';
 
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/result.dart';
@@ -53,6 +54,25 @@ SurpriseBatch batchOf(
   ],
   relaxations: relaxations,
 );
+
+/// Like [batchOf], every title with the genre [genreId].
+SurpriseBatch batchOfGenre(int size, String genreId, {int first = 0}) =>
+    SurpriseBatch(
+      sessionId: 's',
+      suggestions: [
+        for (var i = first; i < first + size; i++)
+          suggestionOf(
+            Movie(
+              id: i,
+              title: 'Movie $i',
+              posterUrl: null,
+              genres: [Genre(id: genreId)],
+              releaseDate: null,
+              voteAverage: 8,
+            ),
+          ),
+      ],
+    );
 
 /// A [SurpriseEngine] whose `resolve` takes exactly [delay] (or never
 /// completes) and answers with the next of [results], repeating the last —
