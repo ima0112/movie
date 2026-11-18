@@ -7,6 +7,7 @@ import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/result.dart';
 import 'package:movies/core/domain/entities/streaming_service.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
+import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/quiz/presentation/cubit/quiz_platforms_cubit.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_platform_step.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_platform_tile.dart';
@@ -72,7 +73,9 @@ Future<_FakeRepo> _register(
 
 void main() {
   testWidgets('shows the first 12 services of the region for this kind of '
-      'title, with the headline and the "All" link', (tester) async {
+      'title, with the headline and the "All platforms" switch', (
+    tester,
+  ) async {
     final repo = await _register(() async => Success(_services(15)));
 
     await tester.pumpWidget(_host());
@@ -83,12 +86,41 @@ void main() {
     expect(find.text('Service 12'), findsOneWidget);
     expect(find.text('Service 13'), findsNothing);
     expect(find.text('Which platforms shall we search?'), findsOneWidget);
-    expect(find.text('All'), findsOneWidget);
+    expect(find.text('All platforms'), findsOneWidget);
     expect(find.text('Include rent and buy'), findsOneWidget);
   });
 
-  testWidgets('tapping a tile toggles it; "All" clears — and does nothing '
-      'while nothing is picked', (tester) async {
+  Switch allSwitch(WidgetTester tester) => tester.widget<Switch>(
+    find.descendant(
+      of: find.ancestor(
+        of: find.text('All platforms'),
+        matching: find.byType(DecoratedBox),
+      ),
+      matching: find.byType(Switch),
+    ),
+  );
+
+  testWidgets('"All platforms" is on exactly while nothing is picked, and '
+      'tiles show unselected then', (tester) async {
+    await _register(() async => Success(_services(6)));
+
+    await tester.pumpWidget(_host());
+    await tester.pumpAndSettle();
+    expect(allSwitch(tester).value, isTrue);
+    expect(find.byIcon(AppIcons.check), findsNothing);
+
+    await tester.pumpWidget(_host(selected: {3}));
+    await tester.pumpAndSettle();
+    expect(allSwitch(tester).value, isFalse);
+    expect(find.byIcon(AppIcons.check), findsOneWidget);
+
+    await tester.pumpWidget(_host(selected: const {}));
+    await tester.pumpAndSettle();
+    expect(allSwitch(tester).value, isTrue);
+  });
+
+  testWidgets('tapping a tile toggles it; the switch clears the picks when '
+      'off and does nothing when on', (tester) async {
     await _register(() async => Success(_services(6)));
     final toggled = <int>[];
     var clears = 0;
@@ -98,48 +130,43 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Service 3'));
-    await tester.tap(find.text('All'));
     expect(toggled, [3]);
+
+    // On (nothing picked): tapping it does not clear anything.
+    await tester.tap(find.text('All platforms'));
+    await tester.tap(find.byType(Switch).first);
     expect(clears, 0);
 
+    // Off (something picked): turning it on clears the picks.
     await tester.pumpWidget(
       _host(selected: {3}, onToggle: toggled.add, onClear: () => clears++),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('All'));
+    await tester.tap(find.byType(Switch).first);
     expect(clears, 1);
   });
 
-  testWidgets('rent and buy: dimmed and inert with no platform, live with '
-      'one', (tester) async {
+  testWidgets('rent and buy works the same with "All platforms" and with '
+      'platforms picked', (tester) async {
     await _register(() async => Success(_services(6)));
     final changes = <bool>[];
 
     await tester.pumpWidget(_host(rentBuy: true, onRentBuy: changes.add));
     await tester.pumpAndSettle();
-    var switchWidget = tester.widget<Switch>(find.byType(Switch));
-    expect(switchWidget.onChanged, isNull);
-    expect(switchWidget.value, isTrue); // remembered while dimmed
-    expect(
-      tester
-          .widget<Opacity>(
-            find.ancestor(
-              of: find.byType(Switch),
-              matching: find.byType(Opacity),
-            ),
-          )
-          .opacity,
-      lessThan(1),
-    );
+    var rentBuy = tester.widget<Switch>(find.byType(Switch).last);
+    expect(rentBuy.onChanged, isNotNull);
+    expect(rentBuy.value, isTrue);
+    await tester.tap(find.byType(Switch).last);
+    expect(changes, [false]);
 
     await tester.pumpWidget(
       _host(selected: {1}, rentBuy: true, onRentBuy: changes.add),
     );
     await tester.pumpAndSettle();
-    switchWidget = tester.widget<Switch>(find.byType(Switch));
-    expect(switchWidget.onChanged, isNotNull);
-    await tester.tap(find.byType(Switch));
-    expect(changes, [false]);
+    rentBuy = tester.widget<Switch>(find.byType(Switch).last);
+    expect(rentBuy.onChanged, isNotNull);
+    await tester.tap(find.byType(Switch).last);
+    expect(changes, [false, false]);
   });
 
   testWidgets('loading: skeletons first, then the tiles', (tester) async {
@@ -195,7 +222,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('¿En qué plataformas buscamos?'), findsOneWidget);
-    expect(find.text('Todas'), findsOneWidget);
+    expect(find.text('Todas las plataformas'), findsOneWidget);
     expect(find.text('Incluir alquiler y compra'), findsOneWidget);
   });
 

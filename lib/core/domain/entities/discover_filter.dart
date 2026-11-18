@@ -155,10 +155,11 @@ class DiscoverFilter {
   /// what [withoutGenres] already stands in for on TV.
   final Set<int> withoutKeywords;
 
-  /// How the title must be available on [withWatchProviders]
-  /// (`with_watch_monetization_types`, any of them). Empty = TMDB's own
-  /// default, which does **not** restrict to the subscription: pass
-  /// [WatchMonetization.flatrate] to mean "included in my plan".
+  /// How the title must be available (`with_watch_monetization_types`, any of
+  /// them) — on [withWatchProviders] when given, else on **any** service of the
+  /// user's region. Empty = TMDB's own default, which restricts nothing and does
+  /// **not** mean "included in my plan": pass [WatchMonetization.flatrate] for
+  /// that.
   final Set<WatchMonetization> monetizationTypes;
 
   /// H8's "Reset" only shows "if something's active" — i.e. this isn't

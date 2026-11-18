@@ -195,15 +195,17 @@ class SurpriseCandidateSource {
           ? max(state.minVoteCount, ratingSortVoteFloor)
           : state.minVoteCount,
       withWatchProviders: a.platformIds,
-      monetizationTypes: a.platformIds.isEmpty
-          ? const {}
-          : {
-              WatchMonetization.flatrate,
-              if (a.includeRentBuy) ...{
-                WatchMonetization.rent,
-                WatchMonetization.buy,
-              },
-            },
+      // Always a hard filter: with platforms picked, on those services; with
+      // none ("All platforms"), on any service of the user's region — never a
+      // title that isn't available anywhere there. Included in the plan,
+      // plus rent and buy when asked.
+      monetizationTypes: {
+        WatchMonetization.flatrate,
+        if (a.includeRentBuy) ...{
+          WatchMonetization.rent,
+          WatchMonetization.buy,
+        },
+      },
     );
   }
 }

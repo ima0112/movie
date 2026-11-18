@@ -1550,7 +1550,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizPlatformHeadlineAfter => ' shall we search?';
 
   @override
-  String get quizPlatformAll => 'All';
+  String get quizPlatformAll => 'All platforms';
 
   @override
   String get quizPlatformRentBuy => 'Include rent and buy';

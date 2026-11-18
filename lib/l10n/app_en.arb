@@ -1473,9 +1473,9 @@
   },
   "quizPlatformHeadlineAccent": "platforms",
   "quizPlatformHeadlineAfter": " shall we search?",
-  "quizPlatformAll": "All",
+  "quizPlatformAll": "All platforms",
   "@quizPlatformAll": {
-    "description": "E2 step 3's link that clears the picked services (no platform filter)."
+    "description": "E2 step 3's switch, on while no service is picked: the search covers every streaming service of the user's region."
   },
   "quizPlatformRentBuy": "Include rent and buy",
   "quizPlatformNone": "No streaming services are listed for your region, so the search will not filter by platform.",

@@ -84,10 +84,16 @@ Map<String, dynamic> discoverQueryParams(
     params['vote_count.lte'] = filter.maxVoteCount;
   }
 
-  // A provider filter only means something within a region.
-  if (filter.withWatchProviders.isNotEmpty && watchRegion != null) {
-    params['with_watch_providers'] = filter.withWatchProviders.join('|');
+  // Availability only means something within a region. Specific providers
+  // narrow it to those services; monetization types alone ("any service in the
+  // region, included in a plan / to rent / to buy") need no provider list.
+  if (watchRegion != null &&
+      (filter.withWatchProviders.isNotEmpty ||
+          filter.monetizationTypes.isNotEmpty)) {
     params['watch_region'] = watchRegion;
+    if (filter.withWatchProviders.isNotEmpty) {
+      params['with_watch_providers'] = filter.withWatchProviders.join('|');
+    }
     if (filter.monetizationTypes.isNotEmpty) {
       params['with_watch_monetization_types'] = filter.monetizationTypes
           .map((m) => m.name)

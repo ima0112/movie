@@ -405,7 +405,8 @@ void main() {
       }
     });
 
-    test('"include rent and buy" adds them, and only with platforms', () async {
+    test('"include rent and buy" adds them — with platforms, and with '
+        '"All platforms" (no list: any service of the region)', () async {
       final repo = _FakeRepository(_catalog(300));
       await _resolve(
         repo,
@@ -419,6 +420,7 @@ void main() {
         ),
       );
       for (final c in repo.calls) {
+        expect(c.filter.withWatchProviders, {8});
         expect(c.filter.monetizationTypes, {
           WatchMonetization.flatrate,
           WatchMonetization.rent,
@@ -426,9 +428,9 @@ void main() {
         });
       }
 
-      final noPlatforms = _FakeRepository(_catalog(300));
+      final all = _FakeRepository(_catalog(300));
       await _resolve(
-        noPlatforms,
+        all,
         _request(
           answers: const ParticipantAnswers(
             participantId: 'me',
@@ -437,9 +439,26 @@ void main() {
           ),
         ),
       );
-      for (final c in noPlatforms.calls) {
+      for (final c in all.calls) {
         expect(c.filter.withWatchProviders, isEmpty);
-        expect(c.filter.monetizationTypes, isEmpty);
+        expect(c.filter.monetizationTypes, {
+          WatchMonetization.flatrate,
+          WatchMonetization.rent,
+          WatchMonetization.buy,
+        });
+      }
+    });
+
+    test('"All platforms" is still a hard filter: any service of the region '
+        'by subscription — never a title available nowhere', () async {
+      final repo = _FakeRepository(_catalog(300));
+
+      await _resolve(repo, _request());
+
+      expect(repo.calls, isNotEmpty);
+      for (final c in repo.calls) {
+        expect(c.filter.withWatchProviders, isEmpty);
+        expect(c.filter.monetizationTypes, {WatchMonetization.flatrate});
       }
     });
 

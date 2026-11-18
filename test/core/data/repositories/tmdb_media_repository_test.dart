@@ -451,6 +451,21 @@ void main() {
       expect(q['watch_region'], isNotNull);
     });
 
+    test('"All platforms": the region and the types reach /discover without a '
+        'provider list', () async {
+      await repository.discoverPage(
+        const DiscoverFilter(
+          type: MediaType.movie,
+          monetizationTypes: {WatchMonetization.flatrate},
+        ),
+      );
+
+      final q = adapter.lastQueryParameters!;
+      expect(q['watch_region'], isNotNull);
+      expect(q['with_watch_monetization_types'], 'flatrate');
+      expect(q.containsKey('with_watch_providers'), isFalse);
+    });
+
     test('All merges both types for the same page', () async {
       final result = await repository.discoverPage(
         const DiscoverFilter(),
