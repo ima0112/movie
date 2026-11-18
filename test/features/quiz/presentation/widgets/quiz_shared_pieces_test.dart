@@ -8,6 +8,7 @@ import 'package:movies/features/quiz/presentation/widgets/quiz_platform_tile.dar
 import 'package:movies/features/quiz/presentation/widgets/quiz_progress_bar.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_top_bar.dart';
 import 'package:movies/shared/widgets/accent_headline.dart';
+import 'package:movies/shared/widgets/streaming_service_logo.dart';
 
 Widget _host(Widget child) => MaterialApp(
   home: Scaffold(body: Center(child: child)),
@@ -128,6 +129,57 @@ void main() {
         ),
       );
       expect(find.byIcon(AppIcons.check), findsOneWidget);
+    });
+
+    testWidgets('the logo and the name are centred in the tile, short name or '
+        'long', (tester) async {
+      Future<void> check(String name) async {
+        await tester.pumpWidget(
+          _host(
+            SizedBox(
+              width: 120,
+              height: 100,
+              child: QuizPlatformTile(
+                service: StreamingService(id: 1, name: name),
+                selected: false,
+                onTap: () {},
+              ),
+            ),
+          ),
+        );
+        final tile = tester.getRect(find.byType(QuizPlatformTile));
+        final logo = tester.getRect(find.byType(StreamingServiceLogo));
+        final label = tester.getRect(find.text(name));
+        expect(logo.center.dx, closeTo(tile.center.dx, 0.5), reason: name);
+        expect(label.center.dx, closeTo(tile.center.dx, 0.5), reason: name);
+      }
+
+      await check('Hulu');
+      await check('Netflix');
+      await check('Paramount Plus Premium Essential');
+    });
+
+    testWidgets('selected or not, the content stays where it was', (
+      tester,
+    ) async {
+      Future<Rect> logoRect(bool selected) async {
+        await tester.pumpWidget(
+          _host(
+            SizedBox(
+              width: 120,
+              height: 100,
+              child: QuizPlatformTile(
+                service: netflix,
+                selected: selected,
+                onTap: () {},
+              ),
+            ),
+          ),
+        );
+        return tester.getRect(find.byType(StreamingServiceLogo));
+      }
+
+      expect(await logoRect(true), await logoRect(false));
     });
   });
 }

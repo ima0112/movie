@@ -57,7 +57,11 @@ class QuizPlatformTile extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
+          // `expand` so the content fills the tile and centres in it: a loose
+          // Stack would shrink the column to its widest text and leave it in the
+          // top-left corner.
           child: Stack(
+            fit: StackFit.expand,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(
