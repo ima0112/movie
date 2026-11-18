@@ -73,8 +73,10 @@ void main() {
 
       await tester.tap(find.text('2010s'));
       expect(reported, (2010, 2019));
+      await tester.tap(find.text('2000s'));
+      expect(reported, (2000, 2009));
       await tester.tap(find.text('Earlier'));
-      expect(reported, (1950, 2009));
+      expect(reported, (1950, 1999)); // before 2000
       await tester.tap(find.text('All'));
       expect(reported, (1950, 2026));
       await tester.tap(find.text('2020s'));

@@ -256,10 +256,15 @@ void main() {
     expect(c.tastes.state.yearFrom, 2020);
     expect(c.tastes.state.yearTo, isNull); // ends today
 
+    await tester.tap(find.text('2000s'));
+    await tester.pump();
+    expect(c.tastes.state.yearFrom, 2000);
+    expect(c.tastes.state.yearTo, 2009);
+
     await tester.tap(find.text('Earlier'));
     await tester.pump();
     expect(c.tastes.state.yearFrom, 1950);
-    expect(c.tastes.state.yearTo, 2009);
+    expect(c.tastes.state.yearTo, 1999); // before 2000
 
     await tester.tap(find.text('All').last); // the preset, not the segment
     await tester.pump();

@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/quiz_cubit.dart';
 import '../cubit/quiz_state.dart';
-import 'quiz_final_step.dart';
 import 'quiz_genre_step.dart';
 import 'quiz_vibe_step.dart';
 import 'quiz_platform_step.dart';
+import 'quiz_year_limits_step.dart';
 
 /// The one `BlocBuilder` for "whichever step is showing" — the same
 /// "content legitimately varies together" shape `DiscoverContentArea`/
@@ -46,14 +46,16 @@ class QuizStepContent extends StatelessWidget {
             onClear: cubit.clearPlatforms,
             onIncludeRentBuyChanged: cubit.setIncludeRentBuy,
           ),
-          _ => QuizFinalStep(
+          _ => QuizYearLimitsStep(
             mediaType: state.mediaType,
+            yearFrom: state.yearFrom,
+            yearTo: state.yearTo,
+            onYearRangeChanged: (from, to, currentYear) =>
+                cubit.setYearRange(from, to, currentYear: currentYear),
             maxRuntimeMinutes: state.maxRuntimeMinutes,
-            onMaxRuntimeMinutesChanged: cubit.setMaxRuntimeMinutes,
+            onMaxRuntimeChanged: cubit.setMaxRuntimeMinutes,
             tvStatus: state.tvStatus,
             onTvStatusChanged: cubit.setTvStatus,
-            maxSeasons: state.maxSeasons,
-            onMaxSeasonsChanged: cubit.setMaxSeasons,
             excludeWatched: state.excludeWatched,
             onExcludeWatchedChanged: cubit.setExcludeWatched,
           ),

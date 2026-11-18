@@ -157,12 +157,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tvStatusCancelled => 'Cancelled';
 
   @override
-  String get quizFinishedToggleFinished => 'Finished';
-
-  @override
-  String get quizFinishedToggleEither => 'Either';
-
-  @override
   String get mediaTypeMovieSingular => 'Movie';
 
   @override
@@ -1213,6 +1207,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get releaseRange2010s => '2010s';
 
   @override
+  String get releaseRange2000s => '2000s';
+
+  @override
   String get releaseRangeEarlier => 'Earlier';
 
   @override
@@ -1529,9 +1526,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizGenreSubtitle => 'Skip up to 3 genres';
 
   @override
-  String get quizMaxSeasonsLabel => 'Max seasons';
-
-  @override
   String get quizSearchButton => 'Search';
 
   @override
@@ -1566,10 +1560,44 @@ class AppLocalizationsEn extends AppLocalizations {
       'No streaming services are listed for your region, so the search will not filter by platform.';
 
   @override
-  String get quizContinueButton => 'Continue';
+  String get quizYearHeadlineBefore => 'Which ';
 
   @override
-  String get quizYearStepHeadline => 'How far back do you want to go?';
+  String get quizYearHeadlineAccent => 'years';
+
+  @override
+  String get quizYearHeadlineAfter => '?';
+
+  @override
+  String get quizYearSubtitle => 'Choose a release range';
+
+  @override
+  String get quizLimitsTitle => 'Limits';
+
+  @override
+  String get quizMaxDuration => 'Max duration';
+
+  @override
+  String quizDurationHours(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String quizDurationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get quizStatusLabel => 'Status';
+
+  @override
+  String get quizStatusAny => 'Any';
+
+  @override
+  String get quizStatusFinished => 'Finished';
+
+  @override
+  String get quizContinueButton => 'Continue';
 
   @override
   String get surpriseErrorMessage => 'Couldn\'t find a match. Try again.';

@@ -87,10 +87,6 @@ class QuizCubit extends Cubit<QuizState> {
   void setTvStatus(DiscoverTvStatus? status) =>
       emit(state.copyWith(tvStatus: () => status));
 
-  /// Step 4, TV sessions only. `null` = "No limit".
-  void setMaxSeasons(int? seasons) =>
-      emit(state.copyWith(maxSeasons: () => seasons));
-
   /// Step 4's watched-exclusion toggle, common to both session types.
   void setExcludeWatched(bool value) =>
       emit(state.copyWith(excludeWatched: value));
@@ -130,7 +126,6 @@ class QuizCubit extends Cubit<QuizState> {
           ? s.maxRuntimeMinutes
           : null,
       tvStatus: s.mediaType == MediaType.tvShow ? s.tvStatus : null,
-      maxSeasons: s.mediaType == MediaType.tvShow ? s.maxSeasons : null,
       excludeWatched: s.excludeWatched,
       watchedKeys: watchedKeys,
       yearTo: s.yearTo,

@@ -27,7 +27,6 @@ void main() {
     expect(cubit.state.includeRentBuy, isFalse);
     expect(cubit.state.maxRuntimeMinutes, isNull);
     expect(cubit.state.tvStatus, isNull);
-    expect(cubit.state.maxSeasons, isNull);
     expect(cubit.state.excludeWatched, isFalse);
   });
 
@@ -72,7 +71,6 @@ void main() {
       expect(answers.yearFrom, 2005);
       expect(answers.maxRuntimeMinutes, 150);
       expect(answers.tvStatus, isNull);
-      expect(answers.maxSeasons, isNull);
       expect(answers.excludeWatched, isTrue);
       expect(answers.watchedKeys, {dune});
     });
@@ -141,14 +139,12 @@ void main() {
   });
 
   group('QuizCubit — a TV session', () {
-    test('buildAnswers fills tvStatus/maxSeasons, never '
-        'maxRuntimeMinutes', () {
+    test('buildAnswers fills tvStatus, never maxRuntimeMinutes', () {
       final cubit = QuizCubit(MediaType.tvShow)
         ..toggleVibe('superhero')
         ..toggleVibe('gritty')
         ..toggleVibe('tearjerker')
         ..setTvStatus(DiscoverTvStatus.ended)
-        ..setMaxSeasons(5)
         // Set on a TV session anyway — buildAnswers must still drop it,
         // not just happen to leave it null because nobody called this.
         ..setMaxRuntimeMinutes(120);
@@ -156,7 +152,7 @@ void main() {
       final answers = cubit.buildAnswers(participantId: 'ana');
 
       expect(answers.tvStatus, DiscoverTvStatus.ended);
-      expect(answers.maxSeasons, 5);
+      expect(answers.maxSeasons, isNull); // no longer asked
       expect(answers.maxRuntimeMinutes, isNull);
     });
   });

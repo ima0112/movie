@@ -65,7 +65,8 @@ class _ReleaseRangePickerState extends State<ReleaseRangePicker> {
       (l10n.releaseRangeAll, widget.minYear, widget.maxYear),
       (l10n.releaseRange2020s, 2020, widget.maxYear),
       (l10n.releaseRange2010s, 2010, 2019),
-      (l10n.releaseRangeEarlier, widget.minYear, 2009),
+      (l10n.releaseRange2000s, 2000, 2009),
+      (l10n.releaseRangeEarlier, widget.minYear, 1999),
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -18,7 +18,6 @@ class QuizState {
     this.yearFrom = defaultYearFrom,
     this.maxRuntimeMinutes,
     this.tvStatus,
-    this.maxSeasons,
     this.excludeWatched = false,
     this.yearTo,
     this.platformIds = const {},
@@ -70,11 +69,6 @@ class QuizState {
   /// this quiz never produces [DiscoverTvStatus.airing] either.
   final DiscoverTvStatus? tvStatus;
 
-  /// Step 4, TV sessions only — "Max seasons" stepper (1–10, "No
-  /// limit"). `null` = "No limit", same convention as
-  /// [maxRuntimeMinutes].
-  final int? maxSeasons;
-
   /// Step 4's "discreet toggle, not a question" — "Exclude what I've
   /// already watched".
   final bool excludeWatched;
@@ -106,7 +100,6 @@ class QuizState {
     int? yearFrom,
     int? Function()? maxRuntimeMinutes,
     DiscoverTvStatus? Function()? tvStatus,
-    int? Function()? maxSeasons,
     bool? excludeWatched,
     int? Function()? yearTo,
     Set<int>? platformIds,
@@ -122,7 +115,6 @@ class QuizState {
           ? this.maxRuntimeMinutes
           : maxRuntimeMinutes(),
       tvStatus: tvStatus == null ? this.tvStatus : tvStatus(),
-      maxSeasons: maxSeasons == null ? this.maxSeasons : maxSeasons(),
       excludeWatched: excludeWatched ?? this.excludeWatched,
       yearTo: yearTo == null ? this.yearTo : yearTo(),
       platformIds: platformIds ?? this.platformIds,
@@ -140,7 +132,6 @@ class QuizState {
       other.yearFrom == yearFrom &&
       other.maxRuntimeMinutes == maxRuntimeMinutes &&
       other.tvStatus == tvStatus &&
-      other.maxSeasons == maxSeasons &&
       other.excludeWatched == excludeWatched &&
       other.yearTo == yearTo &&
       _setEquals(other.platformIds, platformIds) &&
@@ -155,7 +146,6 @@ class QuizState {
     yearFrom,
     maxRuntimeMinutes,
     tvStatus,
-    maxSeasons,
     excludeWatched,
     yearTo,
     Object.hashAllUnordered(platformIds),
@@ -167,7 +157,7 @@ class QuizState {
       'QuizState(mediaType: $mediaType, step: $step, '
       'excludedGenres: $excludedGenres, vibeIds: $vibeIds, '
       'yearFrom: $yearFrom, maxRuntimeMinutes: $maxRuntimeMinutes, '
-      'tvStatus: $tvStatus, maxSeasons: $maxSeasons, '
+      'tvStatus: $tvStatus, '
       'excludeWatched: $excludeWatched, yearTo: $yearTo, '
       'platformIds: $platformIds, includeRentBuy: $includeRentBuy)';
 }

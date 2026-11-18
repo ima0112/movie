@@ -106,14 +106,6 @@
   "@tvStatusCancelled": {
     "description": "D2's Status card only — the raw-TMDB-string branch for \"Canceled\"; DiscoverTvStatus (the H8 filter enum) has no cancelled value."
   },
-  "quizFinishedToggleFinished": "Finished",
-  "@quizFinishedToggleFinished": {
-    "description": "E2 step 4's own \"Finished | Either\" toggle (TV shows) — deliberately its own word, not tvStatusEnded, even though it maps to the same DiscoverTvStatus.ended value."
-  },
-  "quizFinishedToggleEither": "Either",
-  "@quizFinishedToggleEither": {
-    "description": "E2 step 4's own \"Finished | Either\" toggle — the null/no-filter option."
-  },
 
   "mediaTypeMovieSingular": "Movie",
   "@mediaTypeMovieSingular": {
@@ -1137,6 +1129,7 @@
   "releaseRangeAll": "All",
   "releaseRange2020s": "2020s",
   "releaseRange2010s": "2010s",
+  "releaseRange2000s": "2000s",
   "releaseRangeEarlier": "Earlier",
   "@releaseRangeEarlier": {
     "description": "Release-range preset: everything before the 2010s."
@@ -1463,10 +1456,6 @@
   "@quizGenreStepHeadline": {
     "description": "E2 step 1's own headline (docs/SCREENS.md E2)."
   },
-  "quizMaxSeasonsLabel": "Max seasons",
-  "@quizMaxSeasonsLabel": {
-    "description": "E2 step 4's own stepper label (docs/SCREENS.md E2) — reuses discoverRangeFiltersNoLimit for its \"No limit\" value."
-  },
   "quizSearchButton": "Search",
   "@quizSearchButton": {
     "description": "E2's final-step button, replacing commonNext (docs/SCREENS.md E2: \"Final button 'Search'\")."
@@ -1490,16 +1479,45 @@
   },
   "quizPlatformRentBuy": "Include rent and buy",
   "quizPlatformNone": "No streaming services are listed for your region, so the search will not filter by platform.",
+  "quizYearHeadlineBefore": "Which ",
+  "@quizYearHeadlineBefore": {
+    "description": "E2 step 4's headline, three parts so \"years\" can be coloured: before + accent + after = \"Which years?\"."
+  },
+  "quizYearHeadlineAccent": "years",
+  "quizYearHeadlineAfter": "?",
+  "quizYearSubtitle": "Choose a release range",
+  "quizLimitsTitle": "Limits",
+  "quizMaxDuration": "Max duration",
+  "quizDurationHours": "{hours} h",
+  "@quizDurationHours": {
+    "description": "A whole number of hours, the max-duration slider's value (\"2 h\").",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "quizDurationHoursMinutes": "{hours} h {minutes} min",
+  "@quizDurationHoursMinutes": {
+    "description": "Hours and minutes, the max-duration slider's value (\"2 h 30 min\").",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "quizStatusLabel": "Status",
+  "quizStatusAny": "Any",
+  "quizStatusFinished": "Finished",
   "quizContinueButton": "Continue",
   "@quizContinueButton": {
     "description": "E2's \"next step\" button (the last step's is quizSearchButton)."
   },
   "@quizVibeStepHeadline": {
     "description": "E2 step 2's own headline (docs/SCREENS.md E2)."
-  },
-  "quizYearStepHeadline": "How far back do you want to go?",
-  "@quizYearStepHeadline": {
-    "description": "E2 step 3's own headline (docs/SCREENS.md E2)."
   },
 
   "surpriseErrorMessage": "Couldn't find a match. Try again.",
