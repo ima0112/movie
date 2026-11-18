@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/surprise_history_entry.dart';
@@ -92,7 +93,7 @@ void main() {
   group('SurpriseHistoryEntry', () {
     final shownAt = DateTime(2026, 11, 16, 9);
 
-    test('starts as shown and withOutcome changes only the outcome', () {
+    test('starts as viewed and withOutcome changes only the outcome', () {
       final entry = SurpriseHistoryEntry(
         key: key,
         sessionId: 's1',
@@ -100,13 +101,79 @@ void main() {
       );
       final chosen = entry.withOutcome(SurpriseOutcome.chosen);
 
-      expect(entry.outcome, SurpriseOutcome.shown);
+      expect(entry.outcome, SurpriseOutcome.viewed);
       expect(chosen.outcome, SurpriseOutcome.chosen);
       expect(chosen.key, key);
       expect(chosen.sessionId, 's1');
       expect(chosen.shownAt, shownAt);
       expect(chosen, isNot(entry));
-      expect(chosen.withOutcome(SurpriseOutcome.shown), entry);
+      expect(chosen.withOutcome(SurpriseOutcome.viewed), entry);
+    });
+  });
+
+  group('SurpriseOutcome', () {
+    test('goes from neutral to strong: viewed, rerolled, revisited, saved, '
+        'chosen', () {
+      expect(SurpriseOutcome.values, [
+        SurpriseOutcome.viewed,
+        SurpriseOutcome.rerolled,
+        SurpriseOutcome.revisited,
+        SurpriseOutcome.saved,
+        SurpriseOutcome.chosen,
+      ]);
+    });
+
+    test('a stronger outcome replaces a weaker one, never the reverse', () {
+      expect(SurpriseOutcome.saved.canReplace(SurpriseOutcome.viewed), isTrue);
+      expect(SurpriseOutcome.chosen.canReplace(SurpriseOutcome.saved), isTrue);
+      expect(SurpriseOutcome.viewed.canReplace(SurpriseOutcome.saved), isFalse);
+      expect(
+        SurpriseOutcome.revisited.canReplace(SurpriseOutcome.saved),
+        isFalse,
+      );
+      expect(SurpriseOutcome.saved.canReplace(SurpriseOutcome.saved), isFalse);
+    });
+
+    test('only saved and chosen are picks', () {
+      expect(
+        [
+          for (final o in SurpriseOutcome.values)
+            if (o.isPick) o,
+        ],
+        [SurpriseOutcome.saved, SurpriseOutcome.chosen],
+      );
+    });
+
+    test('an entry carries its batch and genres', () {
+      final entry = SurpriseHistoryEntry(
+        key: key,
+        sessionId: 's1',
+        shownAt: DateTime(2026, 11, 16),
+        batch: 2,
+        genres: const [
+          Genre(id: 'drama'),
+          Genre(id: 'crime'),
+        ],
+      );
+
+      expect(entry.batch, 2);
+      expect(entry.withOutcome(SurpriseOutcome.saved).genres, entry.genres);
+      expect(entry.withOutcome(SurpriseOutcome.saved).batch, 2);
+      expect(
+        entry,
+        isNot(
+          SurpriseHistoryEntry(
+            key: key,
+            sessionId: 's1',
+            shownAt: DateTime(2026, 11, 16),
+            batch: 1,
+            genres: const [
+              Genre(id: 'drama'),
+              Genre(id: 'crime'),
+            ],
+          ),
+        ),
+      );
     });
   });
 

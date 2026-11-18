@@ -29,8 +29,30 @@ class InMemorySurpriseHistoryRepository implements SurpriseHistoryRepository {
   }) async {
     for (var i = 0; i < _entries.length; i++) {
       final e = _entries[i];
-      if (e.key == key && e.sessionId == sessionId) {
+      if (e.key == key &&
+          e.sessionId == sessionId &&
+          outcome.canReplace(e.outcome)) {
         _entries[i] = e.withOutcome(outcome);
+      }
+    }
+    return const Success(null);
+  }
+
+  @override
+  Future<Result<void>> markBatchRerolled({
+    required String sessionId,
+    required int batch,
+  }) async {
+    final inBatch = _entries.where(
+      (e) => e.sessionId == sessionId && e.batch == batch,
+    );
+    if (inBatch.any((e) => e.outcome.isPick)) return const Success(null);
+    for (var i = 0; i < _entries.length; i++) {
+      final e = _entries[i];
+      if (e.sessionId == sessionId &&
+          e.batch == batch &&
+          e.outcome == SurpriseOutcome.viewed) {
+        _entries[i] = e.withOutcome(SurpriseOutcome.rerolled);
       }
     }
     return const Success(null);

@@ -279,6 +279,13 @@ class SurpriseHistoryTable extends Table {
   /// `SurpriseOutcome`, as its name.
   TextColumn get outcome => textEnum<SurpriseOutcome>()();
 
+  /// Which batch of the session it was shown in (1 = the first five).
+  IntColumn get batch => integer().withDefault(const Constant(1))();
+
+  /// The title's genre ids, comma-separated (`'action,drama'`), so the engine
+  /// can learn from it without another request.
+  TextColumn get genres => text().withDefault(const Constant(''))();
+
   @override
   Set<Column> get primaryKey => {mediaType, tmdbId, sessionId};
 }
@@ -319,12 +326,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, and to 11 when [SurpriseHistoryTable] was added — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, and to 12 when it gained its batch number and genres and its outcomes were renamed — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -369,6 +376,22 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 11) {
         await m.createTable(surpriseHistoryTable);
+      }
+      if (from == 11) {
+        // v11 -> v12: batch and genres, and the outcomes renamed (shown ->
+        // viewed; seen -> revisited; discarded — a per-card "passed" — was
+        // never a verdict, so it becomes viewed). Only a v11 database can hold
+        // the old names; a table created at v12 never does.
+        await _addColumn(m, surpriseHistoryTable, surpriseHistoryTable.batch);
+        await _addColumn(m, surpriseHistoryTable, surpriseHistoryTable.genres);
+        await customStatement(
+          "UPDATE surprise_history_table SET outcome = 'viewed' "
+          "WHERE outcome IN ('shown', 'discarded')",
+        );
+        await customStatement(
+          "UPDATE surprise_history_table SET outcome = 'revisited' "
+          "WHERE outcome = 'seen'",
+        );
       }
     },
   );

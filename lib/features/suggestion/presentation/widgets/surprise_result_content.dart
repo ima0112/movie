@@ -51,7 +51,9 @@ class SurpriseResultContent extends StatelessWidget {
           SurpriseResultCard(
             item: item,
             onViewDetails: () {
-              context.read<SurpriseCubit>().recordOutcome(SurpriseOutcome.seen);
+              context.read<SurpriseCubit>().recordOutcome(
+                SurpriseOutcome.revisited,
+              );
               context.pushMediaDetail(item.key);
             },
           ),

@@ -10,6 +10,7 @@ final class WatchProviders {
     required this.buy,
     required this.link,
     this.logos = const {},
+    this.ids = const {},
   });
 
   final List<String> flatrate;
@@ -20,6 +21,10 @@ final class WatchProviders {
   /// Provider name → logo URL, for whichever providers TMDB has a logo for.
   /// Optional: a provider missing here simply has no logo to draw.
   final Map<String, String> logos;
+
+  /// Each service's TMDB provider id (what `with_watch_providers` takes), by
+  /// the same names as the lists. A service TMDB gave no id for is absent.
+  final Map<String, int> ids;
 
   bool get hasAny => flatrate.isNotEmpty || rent.isNotEmpty || buy.isNotEmpty;
 

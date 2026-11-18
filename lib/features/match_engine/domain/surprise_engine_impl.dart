@@ -6,6 +6,7 @@ import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/result.dart';
 import '../../../core/domain/repositories/media_repository.dart';
 import 'surprise_batch.dart';
+import 'surprise_platforms.dart';
 import 'surprise_candidates.dart';
 import 'surprise_engine.dart';
 import 'surprise_request.dart';
@@ -193,6 +194,7 @@ class SurpriseEngineImpl implements SurpriseEngine {
         SurpriseSuggestion(
           detail: detail,
           matchedVibeIds: c.candidate.vibeIds,
+          platforms: platformsFor(detail.watchProviders, request.answers),
           affinityPercent: SurpriseScoring.percent(
             c.score,
             scored,

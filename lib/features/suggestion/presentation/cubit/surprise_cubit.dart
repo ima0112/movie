@@ -100,6 +100,10 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   String _sessionId = '';
   final Set<MediaKey> _sessionShown = {};
 
+  /// The batch of this session on screen (1 = the first five, 2 = after one
+  /// "other 5"…); 0 before the first.
+  int _batch = 0;
+
   /// Taste for the engine: the library's genre affinity plus the profile's
   /// liked genres. Computed in [chooseType], where both are at hand.
   Map<Genre, int> _genreAffinity = const {};
@@ -224,9 +228,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final current = state;
     if (current is! SurpriseResult) return;
 
-    // Asked for another without picking this one.
-    unawaited(_markOutcome(current.current.key, SurpriseOutcome.discarded));
-
+    // Passing a card is never recorded as a rejection.
     final nextIndex = current.index + 1;
     if (nextIndex >= current.suggestions.length) {
       emit(const Exhausted());
@@ -251,6 +253,15 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final answers = _lastAnswers;
     final source = _lastSource;
     if (mediaType == null || answers == null || source == null) return;
+
+    // Asking again after a batch: its cards are marked as a fact (nothing in it
+    // was saved or chosen, if so), then a new batch of the same session.
+    if (_batch > 0) {
+      unawaited(
+        _history?.markBatchRerolled(sessionId: _sessionId, batch: _batch) ??
+            Future<void>.value(),
+      );
+    }
 
     final generation = ++_searchGeneration;
     emit(Searching(mediaType));
@@ -304,6 +315,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
       _sessionId =
           '${_clock().microsecondsSinceEpoch}-${_random.nextInt(1 << 31)}';
       _sessionShown.clear();
+      _batch = 0;
     }
 
     final excluded = {
@@ -367,14 +379,17 @@ class SurpriseCubit extends Cubit<SurpriseState> {
 
     final keys = {for (final s in batch.suggestions) s.item.key};
     _sessionShown.addAll(keys);
+    _batch++;
     final now = _clock();
     unawaited(
       _history?.recordShown([
-            for (final key in keys)
+            for (final s in batch.suggestions)
               SurpriseHistoryEntry(
-                key: key,
+                key: s.item.key,
                 sessionId: _sessionId,
                 shownAt: now,
+                batch: _batch,
+                genres: s.item.genres,
               ),
           ]) ??
           Future<void>.value(),
