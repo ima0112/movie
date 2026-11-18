@@ -91,9 +91,11 @@ class SurpriseClosingView extends StatelessWidget {
                         color: AppColors.accent,
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        l10n.surpriseChosenInWatchLater,
-                        style: AppTextStyles.bodySmStrong,
+                      Flexible(
+                        child: Text(
+                          l10n.surpriseChosenInWatchLater,
+                          style: AppTextStyles.bodySmStrong,
+                        ),
                       ),
                     ],
                   ),

@@ -283,6 +283,8 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - "Ask for another 5": the deck stays under E3a; if nothing new is found or TMDB can't be reached the deck comes back with a snackbar ("No more surprises with these answers." / "You're offline — couldn't ask for more."). When the first batch needed a relaxation: "We widened the search a little to find these."
 - **Closing screen** ("Your surprise of the day"): the strip (inactive, a check on the chosen one), the chosen card alone among twinkling sparkles (still with reduce motion), the affinity ring and "In Watch later", and a "View details" link. The card is already in Watch later.
 - Leaving: "×" or the system back leave the whole flow from the deck and the closing screen; from E3a they cancel the search (back to the deck if there was one, else one step back).
+- Orientation: E3, E3a and the closing screen are locked to portrait while open (`PortraitOnly`); the previous freedom returns on leaving.
+- Large text: checked at 200 % on a 320×568 screen — the closing screen scrolls, the deck keeps "Ask for another 5" and the help line on screen.
 - States: searching → **E3a**, error with "Retry", offline notice.
 
 ### E3a. Searching
