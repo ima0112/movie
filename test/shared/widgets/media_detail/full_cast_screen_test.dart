@@ -111,6 +111,26 @@ void main() {
       expect(find.text('Denis Villeneuve'), findsNothing);
     });
 
+    testWidgets('accents do not matter: "timothee" finds Timothée and '
+        '"TIMOTHÉE" too', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: FullCastScreen(title: 'Dune', cast: _cast, crew: _crew),
+        ),
+      );
+
+      await tester.enterText(find.byType(TextField), 'timothee');
+      await tester.pump();
+      expect(find.text('Timothée Chalamet'), findsOneWidget);
+      expect(find.text('Zendaya'), findsNothing);
+
+      await tester.enterText(find.byType(TextField), 'TIMOTHÉE');
+      await tester.pump();
+      expect(find.text('Timothée Chalamet'), findsOneWidget);
+    });
+
     testWidgets('a query matching nobody shows "No matches"', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

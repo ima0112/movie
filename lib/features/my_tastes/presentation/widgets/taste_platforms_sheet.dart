@@ -15,6 +15,7 @@ import '../../../../shared/widgets/streaming_service_logo.dart';
 import '../cubit/my_tastes_cubit.dart';
 import '../cubit/my_tastes_state.dart';
 import '../cubit/taste_platforms_cubit.dart';
+import '../../../../core/domain/text/search_text.dart';
 
 /// Opens the platform picker over C5: every streaming service of the user's
 /// region in a searchable list, multi-select. Each tap saves at once (C5 is
@@ -124,9 +125,7 @@ class _List extends StatelessWidget {
         TastePlatformsLoaded(:final services) => _Matches(
           services: [
             for (final s in services)
-              if (query.isEmpty ||
-                  s.name.toLowerCase().contains(query.toLowerCase()))
-                s,
+              if (matchesSearch(s.name, query)) s,
           ],
         ),
       },
