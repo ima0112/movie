@@ -12,6 +12,7 @@ abstract interface class LocalFlagsRepository {
 
 /// The flags the app keeps. Add a value here, not a loose string.
 enum LocalFlag {
-  /// Surprise me's first-time "2×" double-tap hint was shown and dismissed.
-  surpriseDoubleTapHintSeen,
+  /// Surprise me's first-time tour (swipe, tap to turn over, double-tap to
+  /// choose) was finished or skipped.
+  surpriseTourSeen,
 }

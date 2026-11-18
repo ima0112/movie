@@ -1803,5 +1803,42 @@
   "surpriseActionFlip": "Flip card",
   "@surpriseActionFlip": {
     "description": "Screen-reader action on the deck's top card: turns it over to its back (or back to the front)."
+  },
+  "surpriseTourSwipeTitle": "Swipe to pass a card",
+  "@surpriseTourSwipeTitle": {
+    "description": "Step 1 of Surprise me's first-time tour: how to pass a card."
+  },
+  "surpriseTourSwipeBody": "Whichever way you like.",
+  "surpriseTourFlipTitle": "Tap the card to turn it over",
+  "@surpriseTourFlipTitle": {
+    "description": "Step 2 of the tour: tapping the card turns it over."
+  },
+  "surpriseTourFlipBody": "Find more details that help you decide.",
+  "surpriseTourChooseTitle": "Double-tap to choose it",
+  "@surpriseTourChooseTitle": {
+    "description": "Step 3 of the tour: double-tapping chooses the card."
+  },
+  "surpriseTourChooseBody": "If you already know which one you want, double-tap it and that's it.",
+  "surpriseTourSkip": "Skip",
+  "@surpriseTourSkip": {
+    "description": "Tour button: leave the tour (counts as seen)."
+  },
+  "surpriseTourNext": "Next",
+  "surpriseTourBack": "Back",
+  "surpriseTourDone": "Got it",
+  "@surpriseTourDone": {
+    "description": "Tour button on the last step: finish the tour."
+  },
+  "surpriseTourStep": "Step {step} of {total}",
+  "@surpriseTourStep": {
+    "description": "Screen-reader label of the tour's progress dots.",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   }
 }

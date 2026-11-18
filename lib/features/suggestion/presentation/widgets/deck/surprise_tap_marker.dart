@@ -3,24 +3,26 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 
-/// The first-time hint over the top card: a circle with "2×" and rings that
-/// widen and fade in a loop — "double-tap to choose". It lets touches through
-/// and the deck takes it away on the first touch or gesture; the help row under
-/// the deck stays for good. With "reduce motion" on, the rings are drawn still.
-class SurpriseDoubleTapHint extends StatefulWidget {
-  const SurpriseDoubleTapHint({super.key});
+/// A tour marker: a circle with a label ("1×", "2×") and rings that widen and
+/// fade in a loop — where and how many times to tap. It lets touches through.
+/// With "reduce motion" on, the rings are drawn still.
+class SurpriseTapMarker extends StatefulWidget {
+  const SurpriseTapMarker({super.key, required this.label});
+
+  /// What the circle says: "1×" (tap) or "2×" (double tap).
+  final String label;
 
   static const Duration cycle = Duration(milliseconds: 1800);
 
   @override
-  State<SurpriseDoubleTapHint> createState() => _SurpriseDoubleTapHintState();
+  State<SurpriseTapMarker> createState() => _SurpriseTapMarkerState();
 }
 
-class _SurpriseDoubleTapHintState extends State<SurpriseDoubleTapHint>
+class _SurpriseTapMarkerState extends State<SurpriseTapMarker>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: SurpriseDoubleTapHint.cycle,
+    duration: SurpriseTapMarker.cycle,
   );
 
   static const double _core = 56;
@@ -71,7 +73,7 @@ class _SurpriseDoubleTapHintState extends State<SurpriseDoubleTapHint>
                         height: _core,
                         child: Center(
                           child: Text(
-                            '2×',
+                            widget.label,
                             style: AppTextStyles.h3.copyWith(
                               color: AppColors.onAccent,
                             ),

@@ -1899,4 +1899,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get surpriseActionFlip => 'Flip card';
+
+  @override
+  String get surpriseTourSwipeTitle => 'Swipe to pass a card';
+
+  @override
+  String get surpriseTourSwipeBody => 'Whichever way you like.';
+
+  @override
+  String get surpriseTourFlipTitle => 'Tap the card to turn it over';
+
+  @override
+  String get surpriseTourFlipBody => 'Find more details that help you decide.';
+
+  @override
+  String get surpriseTourChooseTitle => 'Double-tap to choose it';
+
+  @override
+  String get surpriseTourChooseBody =>
+      'If you already know which one you want, double-tap it and that\'s it.';
+
+  @override
+  String get surpriseTourSkip => 'Skip';
+
+  @override
+  String get surpriseTourNext => 'Next';
+
+  @override
+  String get surpriseTourBack => 'Back';
+
+  @override
+  String get surpriseTourDone => 'Got it';
+
+  @override
+  String surpriseTourStep(int step, int total) {
+    return 'Step $step of $total';
+  }
 }

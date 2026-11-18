@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../match_engine/domain/surprise_batch.dart';
 import 'surprise_card_back.dart';
-import 'surprise_double_tap_hint.dart';
 import 'surprise_edge_arrows.dart';
 import 'surprise_flip_card.dart';
 import 'surprise_suggestion_card.dart';
@@ -44,8 +43,6 @@ class SurpriseDeckStack extends StatefulWidget {
     required this.onNext,
     required this.onChoose,
     this.onFlipped,
-    this.showHint = false,
-    this.onHintDismissed,
     this.cardAction,
     this.controller,
   });
@@ -60,10 +57,6 @@ class SurpriseDeckStack extends StatefulWidget {
   /// The top card was turned to its back (a taste signal: the user wanted to
   /// know more).
   final VoidCallback? onFlipped;
-
-  /// The first-time "2×" overlay; [onHintDismissed] fires at the first touch.
-  final bool showHint;
-  final VoidCallback? onHintDismissed;
 
   /// The control in each card's top-right corner (Watch later), built once per
   /// card of the batch.
@@ -106,7 +99,6 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   double _to = 0;
   Curve _curve = Curves.easeOut;
   bool _animating = false;
-  bool _hintDismissed = false;
 
   static const double _sideMargin = AppSpacing.screenMargin;
   static const double _maxTurn = 0.2; // radians at a full card width
@@ -231,14 +223,6 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     super.dispose();
   }
 
-  void _dismissHint() {
-    if (widget.showHint && !_hintDismissed) {
-      _hintDismissed = true;
-      widget.onHintDismissed?.call();
-      setState(() {});
-    }
-  }
-
   void _toggleFlip() {
     _cardOf(widget.index); // (makes sure the flags exist)
     final flip = _flips[widget.index];
@@ -329,46 +313,40 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth - 2 * _sideMargin;
-        return Listener(
-          behavior: HitTestBehavior.translucent,
-          onPointerDown: (_) => _dismissHint(),
-          child: AnimatedBuilder(
-            animation: Listenable.merge([_controller, _zoom]),
-            builder: (context, _) {
-              final dx = _offset();
-              final p = (dx.abs() / (width * SurpriseDeckStack.confirmFraction))
-                  .clamp(0.0, 1.0);
-              // Back to front: the farthest slot first, the top card last.
-              final order = [for (var i = 0; i < n; i++) i]
-                ..sort((a, b) => _slot(b).compareTo(_slot(a)));
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    left: _sideMargin,
-                    right: _sideMargin,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        for (final i in order)
-                          _slotted(i, cards[i], dx: dx, width: width),
-                        if (_leavingIndex != null)
-                          _leaving(_leavingIndex!, dx: dx, width: width),
-                      ],
-                    ),
+        return AnimatedBuilder(
+          animation: Listenable.merge([_controller, _zoom]),
+          builder: (context, _) {
+            final dx = _offset();
+            final p = (dx.abs() / (width * SurpriseDeckStack.confirmFraction))
+                .clamp(0.0, 1.0);
+            // Back to front: the farthest slot first, the top card last.
+            final order = [for (var i = 0; i < n; i++) i]
+              ..sort((a, b) => _slot(b).compareTo(_slot(a)));
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned.fill(
+                  left: _sideMargin,
+                  right: _sideMargin,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      for (final i in order)
+                        _slotted(i, cards[i], dx: dx, width: width),
+                      if (_leavingIndex != null)
+                        _leaving(_leavingIndex!, dx: dx, width: width),
+                    ],
                   ),
-                  Positioned.fill(
-                    child: SurpriseEdgeArrows(
-                      leftProgress: dx < 0 ? p : 0,
-                      rightProgress: dx > 0 ? p : 0,
-                    ),
+                ),
+                Positioned.fill(
+                  child: SurpriseEdgeArrows(
+                    leftProgress: dx < 0 ? p : 0,
+                    rightProgress: dx > 0 ? p : 0,
                   ),
-                  if (widget.showHint && !_hintDismissed)
-                    const Positioned.fill(child: SurpriseDoubleTapHint()),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
