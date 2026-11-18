@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/core/theme/app_spacing.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_edge_bubbles.dart';
 
 Future<void> _pump(WidgetTester tester, {double save = 0, double next = 0}) {
@@ -20,6 +21,10 @@ Future<void> _pump(WidgetTester tester, {double save = 0, double next = 0}) {
 }
 
 void main() {
+  test('at rest a bubble stays within the margin beside the cards', () {
+    expect(SurpriseEdgeBubbles.restWidth, lessThanOrEqualTo(AppSpacing.xxxl));
+  });
+
   testWidgets('at rest: outline bookmark in amber, whole icon on screen', (
     tester,
   ) async {

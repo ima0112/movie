@@ -93,10 +93,40 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   static const double _behindScale = 0.06;
   static const double _behindFade = 0.35;
   static const double _behindTurn = 0.05;
-  static const Duration _reorder = Duration(milliseconds: 220);
+  static const Duration _reorder = Duration(milliseconds: 200);
+
+  /// The exit lasts as long as the finger's speed says, within these limits.
+  static const double _minExitSpeed = 1400; // px / s
+  static const Duration _minExit = Duration(milliseconds: 120);
+  static const Duration _maxExit = Duration(milliseconds: 220);
 
   /// How far the zooming card grows toward the viewer.
-  static const double _zoomGrowth = 0.18;
+  static const double _zoomGrowth = 0.28;
+
+  /// A card arriving from the front starts this faint.
+  static const double _arrivingStart = 0.15;
+
+  /// The cards, built once per batch: an animation frame moves them without
+  /// rebuilding (or repainting) their poster, text and gradients.
+  List<Widget>? _cardWidgets;
+  List<SurpriseSuggestion>? _cardsFor;
+
+  Widget _cardOf(int i) {
+    if (!identical(_cardsFor, widget.suggestions)) {
+      _cardsFor = widget.suggestions;
+      _cardWidgets = [
+        for (var k = 0; k < widget.suggestions.length; k++)
+          RepaintBoundary(
+            child: SurpriseSuggestionCard(
+              suggestion: widget.suggestions[k],
+              number: k + 1,
+              total: widget.suggestions.length,
+            ),
+          ),
+      ];
+    }
+    return _cardWidgets![i];
+  }
 
   bool get _canSwipe => widget.suggestions.length >= 2;
   bool get _still => MediaQuery.disableAnimationsOf(context);
@@ -164,9 +194,9 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     final v = d.primaryVelocity ?? 0;
     final far = width * SurpriseDeckStack.confirmFraction;
     if (_dx < 0 && (-_dx > far || v < -SurpriseDeckStack.flickVelocity)) {
-      _fling(-1, save: true, width: width);
+      _fling(-1, save: true, width: width, speed: v);
     } else if (_dx > 0 && (_dx > far || v > SurpriseDeckStack.flickVelocity)) {
-      _fling(1, save: false, width: width);
+      _fling(1, save: false, width: width, speed: v);
     } else {
       _run(0, SurpriseDeckStack.bounceDuration, Curves.easeOutBack);
     }
@@ -176,6 +206,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     int dir, {
     required bool save,
     required double width,
+    required double speed,
   }) async {
     if (save) HapticFeedback.lightImpact();
     // The deck moves on at once — the next card rises while this one leaves —
@@ -183,10 +214,17 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     final leaving = widget.index;
     if (!_still) _leavingIndex = leaving;
     (save ? widget.onSaveAndNext : widget.onNext)();
+    // Keep the finger's speed: the card does not slow down to start over.
+    final target = dir * width * 1.3;
+    final seconds =
+        ((target - _dx).abs() / math.max(speed.abs(), _minExitSpeed)).clamp(
+          _minExit.inMilliseconds / 1000,
+          _maxExit.inMilliseconds / 1000,
+        );
     await _run(
-      dir * width * 1.3,
-      SurpriseDeckStack.exitDuration,
-      Curves.easeIn,
+      target,
+      Duration(milliseconds: (seconds * 1000).round()),
+      Curves.easeOutCubic,
     );
     if (mounted && _leavingIndex == leaving) {
       setState(() => _leavingIndex = null);
@@ -276,11 +314,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   /// The card on its way out, drawn above the deck: flying off with the swipe,
   /// or growing toward the viewer and fading when another card was brought up.
   Widget _leaving(int i, {required double dx, required double width}) {
-    final card = SurpriseSuggestionCard(
-      suggestion: widget.suggestions[i],
-      number: i + 1,
-      total: widget.suggestions.length,
-    );
+    final card = _cardOf(i);
     final Widget moving;
     if (_zoom.isAnimating) {
       final t = Curves.easeOutCubic.transform(_zoom.value);
@@ -313,11 +347,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     final isTop = slot == 0;
     final visible = slot < 3;
     final side = slot.isOdd ? -1.0 : 1.0;
-    final card = SurpriseSuggestionCard(
-      suggestion: suggestion,
-      number: i + 1,
-      total: widget.suggestions.length,
-    );
+    final card = _cardOf(i);
 
     final body = isTop
         ? GestureDetector(
@@ -345,7 +375,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
     final t = Curves.easeOutCubic.transform(_zoom.value);
     final shown = arriving
         ? Opacity(
-            opacity: t,
+            opacity: _arrivingStart + (1 - _arrivingStart) * t,
             child: Transform.scale(
               scale: 1 + _zoomGrowth * (1 - t),
               child: body,
