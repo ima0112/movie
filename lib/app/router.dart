@@ -46,6 +46,13 @@ class AppRoutes {
 
   static String tvDetail(int id) => '/tv/$id';
 
+  /// A title's detail as a child of Home, so that `go` to it leaves Home
+  /// underneath (back lands on Home): see `goToMediaDetailOverHome`.
+  static String homeDetail(MediaKey key) => switch (key.type) {
+    MediaType.movie => '/detail/movie/${key.tmdbId}',
+    MediaType.tvShow => '/detail/tv/${key.tmdbId}',
+  };
+
   static String personDetail(int id) => '/person/$id';
 
   /// B2 (Explore), a root tab.
@@ -212,13 +219,16 @@ extension MediaDetailNavigation on BuildContext {
   /// same `MediaKey` every repository call and `UserLibraryRepository`
   /// entry already uses, so a caller never has to re-derive which route
   /// shape a given id needs.
-  Future<T?> pushMediaDetail<T>(MediaKey key) {
-    final path = switch (key.type) {
-      MediaType.movie => AppRoutes.movieDetail(key.tmdbId),
-      MediaType.tvShow => AppRoutes.tvDetail(key.tmdbId),
-    };
-    return push<T>(path);
-  }
+  Future<T?> pushMediaDetail<T>(MediaKey key) => push<T>(switch (key.type) {
+    MediaType.movie => AppRoutes.movieDetail(key.tmdbId),
+    MediaType.tvShow => AppRoutes.tvDetail(key.tmdbId),
+  });
+
+  /// Goes straight to [key]'s detail — in one step, with no stop on Home — but
+  /// with Home underneath it instead of the flow it came from, so going back
+  /// from the detail lands on Home (Surprise me's closing screen, whose game is
+  /// over). Uses the detail routes nested under Home (`AppRoutes.homeDetail`).
+  void goToMediaDetailOverHome(MediaKey key) => go(AppRoutes.homeDetail(key));
 
   /// D3 (Person detail) — cast/crew rows and search results that are
   /// people push here.
@@ -270,6 +280,24 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/',
               builder: (context, state) => const DiscoverScreen(),
+              routes: [
+                // The same details as `/movie/:id` and `/tv/:id`, but with Home
+                // beneath them (see `AppRoutes.homeDetail`).
+                GoRoute(
+                  path: 'detail/movie/:id',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => MovieDetailScreen(
+                    movieId: int.parse(state.pathParameters['id']!),
+                  ),
+                ),
+                GoRoute(
+                  path: 'detail/tv/:id',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => TvDetailScreen(
+                    tvId: int.parse(state.pathParameters['id']!),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
