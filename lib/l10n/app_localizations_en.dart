@@ -1575,6 +1575,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get surpriseYourSuggestionTitle => 'Your suggestion';
 
   @override
+  String get surpriseShufflingTitle => 'Shuffling your 5 surprises';
+
+  @override
+  String get surpriseShufflingSubtitle =>
+      'Mixing what you like with what you don\'t expect';
+
+  @override
   String get surpriseSearchingLabel => 'Searching…';
 
   @override

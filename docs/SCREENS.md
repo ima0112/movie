@@ -283,7 +283,14 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
   - Primary button "Add to Watch later".
   - Secondary button "Another suggestion".
   - If it came from the profile or the inferred list: link "Answer the quiz instead" (→ E2, same media type; finishing the quiz replaces this screen rather than stacking a second E3 on top).
-- States: loading (card skeleton with "Searching…" text), error with "Retry", offline.
+- States: loading → **E3a**, error with "Retry", offline.
+
+### E3a. Searching
+- Access: E3's loading state — whenever a Surprise-me search runs (from "Use my tastes" in H11, from the quiz, or a retry), whatever the type or source. Replaces E3's page while it lasts.
+- Elements (a solid `surface` page, no gradient): a **×** at the top left; the amber eyebrow "SURPRISE ME"; the **fan of five "?" cards** (150×214, radius 22, a 160° gradient each — teal, amber-brown, violet, rose, slate —, a hairline border, a soft shadow, two ring outlines in the top-left corner and a big amber "?"), open at rest (−96 … +96 offsets, −18° … +18° tilts, the middle card on top); the headline "Shuffling your 5 surprises" (centred, extra bold) and "Mixing what you like with what you don't expect"; and, under them, a row of **five outlined four-point stars**.
+- Motion (loops while it lasts): each card slides to the centre and back in 2.4 s (eased, symmetric, each a little behind the one before — the shuffle); each star pulses (opacity 0.25 → 1 → 0.25, scale 1 → 1.4 → 1) in 1.2 s, out of step, so a wave runs along the row. With **reduce motion** on, nothing moves: the fan stays open and the stars are at full opacity.
+- Behaviour: it shows for **at least 1.8 s** even when the answer is instant, so the animation doesn't flash; past 8 s it gives up and shows E3's error. **×** cancels the search (what it finds is thrown away) and goes back **one step** — to E1 — where picking a type works again. The blocks are laid out in a flexible column, not at fixed offsets, so it fits a short phone and scrolls with large text; the text block is a live region and the cards and stars are hidden from accessibility.
+- Exits: E3 (the result), E3's error state, or back to E1.
 
 ---
 

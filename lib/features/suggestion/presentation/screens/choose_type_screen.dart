@@ -96,12 +96,20 @@ class _ChooseTypeViewState extends State<_ChooseTypeView> {
   Widget build(BuildContext context) {
     return BlocListener<SurpriseCubit, SurpriseState>(
       listenWhen: (previous, current) =>
-          !_hasNavigated &&
-          (current is ChooseSource ||
-              current is NeedsQuiz ||
-              current is SurpriseResult ||
-              current is SurpriseError),
+          // Back at the start (E3a's "×" cancelled the search): the next
+          // pick may route again.
+          current is ChoosingType ||
+          (!_hasNavigated &&
+              (current is ChooseSource ||
+                  current is NeedsQuiz ||
+                  current is Searching ||
+                  current is SurpriseResult ||
+                  current is SurpriseError)),
       listener: (context, state) {
+        if (state is ChoosingType) {
+          _hasNavigated = false;
+          return;
+        }
         if (state is ChooseSource) {
           // A sheet pushed via showModalBottomSheet is a sibling of
           // this screen's own subtree — it does NOT see this screen's

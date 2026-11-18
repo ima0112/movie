@@ -10,7 +10,7 @@ import '../../../../shared/widgets/state_views.dart';
 import '../cubit/surprise_cubit.dart';
 import '../cubit/surprise_state.dart';
 import '../widgets/surprise_result_content.dart';
-import '../widgets/surprise_searching_content.dart';
+import '../widgets/surprise_searching_view.dart';
 
 /// E3 (Surprise me result) — `docs/SCREENS.md` E3.
 ///
@@ -43,50 +43,67 @@ class _SurpriseResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(AppIcons.close, color: AppColors.ink),
-          onPressed: () => _returnToWhereYouWere(context),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: BlocBuilder<SurpriseCubit, SurpriseState>(
-            builder: (context, state) {
-              return switch (state) {
-                Searching() => const SurpriseSearchingContent(),
-                SurpriseResult() => SurpriseResultContent(state: state),
-                Exhausted() => EmptyStateView(
-                  icon: AppIcons.dice,
-                  title: context.l10n.surpriseNoMoreSuggestionsTitle,
-                  body: context.l10n.surpriseNoMoreSuggestionsBody,
-                  ctaLabel: context.l10n.surpriseSearchAgain,
-                  onCtaTap: () => context.read<SurpriseCubit>().retry(),
-                ),
-                SurpriseError() => ErrorStateView(
-                  title: context.l10n.surpriseNoMatchTitle,
-                  body: context.l10n.surpriseErrorMessage,
-                  onRetry: () => context.read<SurpriseCubit>().retry(),
-                ),
-                // ChoosingType/ChooseSource/NeedsQuiz never reach E3 —
-                // only ChooseTypeScreen's own BlocListener pushes here,
-                // and only once the Cubit has already moved past all
-                // three (ChooseSource opens H11 in place instead of
-                // navigating at all — see that listener's own doc
-                // comment).
-                ChoosingType() ||
-                ChooseSource() ||
-                NeedsQuiz() => const SizedBox.shrink(),
-              };
+    return BlocBuilder<SurpriseCubit, SurpriseState>(
+      // Only the switch between the searching screen (E3a, its own page) and
+      // the result page needs a rebuild; a new result inside the page is the
+      // content's own job.
+      buildWhen: (previous, current) =>
+          // (ChoosingType is the cancel on its way out: leave the page as is
+          // while it pops.)
+          current is! ChoosingType &&
+          (previous is Searching) != (current is Searching),
+      builder: (context, state) {
+        if (state is Searching) {
+          return SurpriseSearchingView(
+            onCancel: () {
+              context.read<SurpriseCubit>().cancelSearch();
+              context.pop();
             },
+          );
+        }
+        return Scaffold(
+          backgroundColor: AppColors.surface,
+          appBar: AppBar(
+            backgroundColor: AppColors.surface,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(AppIcons.close, color: AppColors.ink),
+              onPressed: () => _returnToWhereYouWere(context),
+            ),
           ),
-        ),
-      ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              child: BlocBuilder<SurpriseCubit, SurpriseState>(
+                builder: (context, state) {
+                  return switch (state) {
+                    SurpriseResult() => SurpriseResultContent(state: state),
+                    Exhausted() => EmptyStateView(
+                      icon: AppIcons.dice,
+                      title: context.l10n.surpriseNoMoreSuggestionsTitle,
+                      body: context.l10n.surpriseNoMoreSuggestionsBody,
+                      ctaLabel: context.l10n.surpriseSearchAgain,
+                      onCtaTap: () => context.read<SurpriseCubit>().retry(),
+                    ),
+                    SurpriseError() => ErrorStateView(
+                      title: context.l10n.surpriseNoMatchTitle,
+                      body: context.l10n.surpriseErrorMessage,
+                      onRetry: () => context.read<SurpriseCubit>().retry(),
+                    ),
+                    // Searching has its own page above; the other three never
+                    // reach E3 (only ChooseTypeScreen's BlocListener pushes
+                    // here, once the Cubit has moved past them).
+                    Searching() ||
+                    ChoosingType() ||
+                    ChooseSource() ||
+                    NeedsQuiz() => const SizedBox.shrink(),
+                  };
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
