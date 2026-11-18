@@ -1,46 +1,91 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_icons.dart';
 
-/// Small four-point stars scattered over the closing screen's chosen card,
-/// twinkling in a loop. Two layers: the [SurpriseSparkles.behind] stars sit
-/// around the card — the ones in the margins show, the rest hide behind it —
-/// and the [SurpriseSparkles.front] ones are drawn over the card itself, a bit
-/// fainter and smaller so they never get in the way of the text. With "reduce
-/// motion" they sit still. Decoration only: no semantics, no touches.
+/// One star of the closing screen: where it is (fractions of the box), how big,
+/// where it is in the twinkle cycle, and whether it is drawn over the card
+/// ([front]) or behind it.
+class SurpriseSparkle {
+  const SurpriseSparkle({
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.phase,
+    required this.front,
+  });
+
+  final double x;
+  final double y;
+  final double size;
+  final double phase;
+  final bool front;
+
+  static const int minCount = 3;
+  static const int maxCount = 5;
+  static const double _minSize = 10;
+  static const double _maxSize = 20;
+
+  /// At most this many over the card; the rest around it.
+  static const int _maxFront = 2;
+
+  /// A fresh set for one showing of the screen: [minCount] to [maxCount] stars
+  /// (3, 4 or 5) of random size and position. The ones behind the card sit near
+  /// its edges, where they show; the (up to two) over the card keep to the
+  /// poster's open middle so they never land on the text.
+  static List<SurpriseSparkle> random(math.Random random) {
+    final count = minCount + random.nextInt(maxCount - minCount + 1);
+    final frontCount = random.nextInt(_maxFront + 1).clamp(0, count - 1);
+    double between(double a, double b) => a + random.nextDouble() * (b - a);
+    return [
+      for (var i = 0; i < count; i++)
+        if (i < frontCount)
+          SurpriseSparkle(
+            x: between(0.2, 0.8),
+            y: between(0.2, 0.55),
+            size: between(_minSize, _maxSize),
+            phase: random.nextDouble(),
+            front: true,
+          )
+        else
+          () {
+            // Around the card: a side margin, or the strip above/below it.
+            final side = random.nextBool();
+            return SurpriseSparkle(
+              x: side
+                  ? (random.nextBool()
+                        ? between(0.01, 0.07)
+                        : between(0.93, 0.99))
+                  : between(0.05, 0.95),
+              y: side
+                  ? between(0.02, 0.98)
+                  : (random.nextBool()
+                        ? between(0.0, 0.03)
+                        : between(0.97, 1.0)),
+              size: between(_minSize, _maxSize),
+              phase: random.nextDouble(),
+              front: false,
+            );
+          }(),
+    ];
+  }
+}
+
+/// The closing screen's stars, twinkling in a loop: the ones of [stars] that are
+/// [front] (over the card, a bit fainter) or not (behind it). Two instances —
+/// one on each side of the card — draw a whole set. With "reduce motion" they
+/// sit still. Decoration only: no semantics, no touches.
 class SurpriseSparkles extends StatefulWidget {
-  const SurpriseSparkles.behind({super.key}) : front = false;
+  const SurpriseSparkles({super.key, required this.stars, required this.front});
 
-  const SurpriseSparkles.front({super.key}) : front = true;
+  final List<SurpriseSparkle> stars;
 
-  /// Over the card (true) or behind it (false).
+  /// Draw the stars over the card (true) or the ones behind it (false).
   final bool front;
 
   static const Duration cycle = Duration(milliseconds: 2400);
-
-  /// (x, y as fractions of the box, size, phase of the twinkle).
-  static const List<(double, double, double, double)> behindStars = [
-    (0.08, 0.04, 18, 0.0),
-    (0.90, 0.02, 14, 0.3),
-    (0.97, 0.20, 12, 0.85),
-    (0.96, 0.36, 20, 0.6),
-    (0.03, 0.30, 14, 0.5),
-    (0.04, 0.56, 12, 0.15),
-    (0.98, 0.58, 12, 0.7),
-    (0.02, 0.78, 16, 0.4),
-    (0.92, 0.80, 12, 0.45),
-    (0.96, 0.96, 18, 0.2),
-    (0.12, 0.97, 14, 0.75),
-    (0.50, 0.01, 10, 0.55),
-  ];
-
-  /// Over the card: kept to the poster's open areas, small.
-  static const List<(double, double, double, double)> frontStars = [
-    (0.30, 0.30, 14, 0.1),
-    (0.72, 0.46, 18, 0.5),
-    (0.20, 0.58, 12, 0.8),
-  ];
 
   @override
   State<SurpriseSparkles> createState() => _SurpriseSparklesState();
@@ -75,9 +120,10 @@ class _SurpriseSparklesState extends State<SurpriseSparkles>
   @override
   Widget build(BuildContext context) {
     final still = MediaQuery.disableAnimationsOf(context);
-    final stars = widget.front
-        ? SurpriseSparkles.frontStars
-        : SurpriseSparkles.behindStars;
+    final stars = [
+      for (final s in widget.stars)
+        if (s.front == widget.front) s,
+    ];
     final scale = widget.front ? _frontAlpha : 1.0;
     return IgnorePointer(
       child: ExcludeSemantics(
@@ -87,19 +133,19 @@ class _SurpriseSparklesState extends State<SurpriseSparkles>
             builder: (context, _) => Stack(
               clipBehavior: Clip.none,
               children: [
-                for (final (x, y, size, phase) in stars)
+                for (final s in stars)
                   Positioned(
-                    left: c.maxWidth * x - size / 2,
-                    top: c.maxHeight * y - size / 2,
+                    left: c.maxWidth * s.x - s.size / 2,
+                    top: c.maxHeight * s.y - s.size / 2,
                     child: Opacity(
                       opacity:
                           scale *
                           (still
                               ? 0.8
-                              : _twinkle((_controller.value + phase) % 1)),
+                              : _twinkle((_controller.value + s.phase) % 1)),
                       child: Icon(
                         AppIcons.shiningFill,
-                        size: size,
+                        size: s.size,
                         color: AppColors.accent,
                       ),
                     ),
