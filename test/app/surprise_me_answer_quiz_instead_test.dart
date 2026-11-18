@@ -35,6 +35,5 @@ void main() {
     await completeQuiz(tester);
 
     expectOnSurpriseResultScreen();
-    expect(find.text('Based on your answers'), findsOneWidget);
   });
 }

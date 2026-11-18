@@ -274,17 +274,15 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - States: in the Matcher, if submission fails → inline error with retry.
 - Exits: E3a → E3 (solo) or F3 (group).
 
-### E3. Surprise me result
-- Access: E1 (via H11) or E2.
-- Elements:
-  - Standard background. Headline "Your suggestion".
-  - Subtitle per source: from the profile → "Based on your tastes"; from the inferred list → "Based on your list"; from the quiz → "Based on your answers".
-  - White card: large poster, title, "Year · Genres", rating, 2-line synopsis, "View details" link (→ D1/D2).
-  - If filters were relaxed: discreet note "We widened the search to 1990".
-  - Primary button "Add to Watch later".
-  - Secondary button "Another suggestion".
-  - If it came from the profile or the inferred list: link "Answer the quiz instead" (→ E2, same media type; finishing the quiz replaces this screen rather than stacking a second E3 on top).
-- States: loading → **E3a**, error with "Retry", offline.
+### E3. Surprise me deck and closing
+- Access: E1 (via H11) or E2, after E3a. One page that shows the deck while playing and the closing screen once a card is chosen.
+- **Deck** (the batch of up to 5): "×" and the amber eyebrow "SURPRISE ME" on top; the **thumbnail strip** (28×38 drawn, 48 dp touch; the top card has an accent border, the ones in Watch later a bookmark badge; tapping one brings it to the top — it counts as "revisited"); the **cards** (the top one full size, two behind it smaller, lower, turned a few degrees and fainter; the order is circular); the line "Double-tap to choose"; and the secondary button "Ask for another 5".
+- Card: poster over the whole card with a dark fade up the lower third, the outlined number, "% for you" and type tags, title, year/duration (or years/seasons) and rating, tagline, platforms.
+- Gestures on the top card: **swipe left** = save to Watch later and pass (a card already there is only passed); **swipe right** = pass; **double tap** = choose (medium buzz); **tap** = open the detail (D1/D2) with a fixed "Choose this" button that does the same as the double tap. A first-time "2×" overlay (once ever, kept in `LocalFlag.surpriseDoubleTapHintSeen`) teaches the double tap. Bubbles at the edges (Save left, Next right) grow while dragging.
+- "Ask for another 5": the deck stays under E3a; if nothing new is found or TMDB can't be reached the deck comes back with a snackbar ("No more surprises with these answers." / "You're offline — couldn't ask for more."). When the first batch needed a relaxation: "We widened the search a little to find these."
+- **Closing screen** ("Your surprise of the day"): the strip (inactive, a check on the chosen one), the chosen card alone among twinkling sparkles (still with reduce motion), the affinity ring and "In Watch later", and a "View details" link. The card is already in Watch later.
+- Leaving: "×" or the system back leave the whole flow from the deck and the closing screen; from E3a they cancel the search (back to the deck if there was one, else one step back).
+- States: searching → **E3a**, error with "Retry", offline notice.
 
 ### E3a. Searching
 - Access: E3's loading state — whenever a Surprise-me search runs (from "Use my tastes" in H11, from the quiz, or a retry), whatever the type or source. Replaces E3's page while it lasts.

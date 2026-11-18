@@ -43,6 +43,5 @@ void main() {
     await settleSearch(tester);
 
     expectOnSurpriseResultScreen();
-    expect(find.text('Based on your tastes'), findsOneWidget);
   });
 }

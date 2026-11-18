@@ -7,16 +7,17 @@ import 'surprise_me_test_helpers.dart';
 void main() {
   setUpAll(configureSurpriseMeDependencies);
 
-  testWidgets('"Another suggestion" rotates without crashing', (tester) async {
+  testWidgets('"Ask for another 5" searches again and comes back to a deck', (
+    tester,
+  ) async {
     await pumpSurpriseMe(tester);
     await tester.tap(find.text('A movie'));
     await tester.pumpAndSettle();
     await completeQuiz(tester);
     expectOnSurpriseResultScreen();
 
-    await tester.ensureVisible(find.text('Another suggestion'));
-    await tester.tap(find.text('Another suggestion'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ask for another 5'));
+    await settleSearch(tester);
 
     expectOnSurpriseResultScreen();
   });
