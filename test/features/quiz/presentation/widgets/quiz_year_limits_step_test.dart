@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_limits_card.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_year_limits_step.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';
+import 'package:movies/shared/widgets/app_slider_theme.dart';
+import 'package:movies/shared/widgets/year_bound_card.dart';
 import 'package:movies/shared/widgets/release_range_picker.dart';
 
 class _Calls {
@@ -24,24 +27,30 @@ Widget _host(
   DiscoverTvStatus? status,
   bool excludeWatched = false,
   Locale locale = const Locale('en'),
+  double? width,
 }) => MaterialApp(
+  // The app's own theme: slider defaults differ from a bare MaterialApp's.
+  theme: AppTheme.dark,
   locale: locale,
   localizationsDelegates: AppLocalizations.localizationsDelegates,
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
     body: SingleChildScrollView(
-      child: QuizYearLimitsStep(
-        mediaType: type,
-        yearFrom: yearFrom,
-        yearTo: yearTo,
-        onYearRangeChanged: (f, t, c) => calls.ranges.add((f, t, c)),
-        maxRuntimeMinutes: runtime,
-        onMaxRuntimeChanged: calls.runtimes.add,
-        tvStatus: status,
-        onTvStatusChanged: calls.statuses.add,
-        excludeWatched: excludeWatched,
-        onExcludeWatchedChanged: calls.watched.add,
-        currentYear: 2026,
+      child: SizedBox(
+        width: width,
+        child: QuizYearLimitsStep(
+          mediaType: type,
+          yearFrom: yearFrom,
+          yearTo: yearTo,
+          onYearRangeChanged: (f, t, c) => calls.ranges.add((f, t, c)),
+          maxRuntimeMinutes: runtime,
+          onMaxRuntimeChanged: calls.runtimes.add,
+          tvStatus: status,
+          onTvStatusChanged: calls.statuses.add,
+          excludeWatched: excludeWatched,
+          onExcludeWatchedChanged: calls.watched.add,
+          currentYear: 2026,
+        ),
       ),
     ),
   ),
@@ -111,6 +120,53 @@ void main() {
     await tester.pump();
     expect(calls.runtimes.last! % 5, 0);
     expect(calls.runtimes.last, lessThan(75));
+  });
+
+  testWidgets('the duration track runs the full width of its content: the '
+      'thumbs\' outer edges are on the content edges, not 24 px in', (
+    tester,
+  ) async {
+    final calls = _Calls();
+    await tester.pumpWidget(_host(calls, runtime: 150, width: 300));
+
+    final box = tester.getRect(find.byType(Slider));
+    // A quarter of the way along a track inset by one thumb radius (10). With
+    // Flutter's default inset of 24 the same tap would read 100 min.
+    final x = box.left + 10 + 0.25 * (box.width - 20);
+    await tester.tapAt(Offset(x, box.center.dy));
+    await tester.pump();
+
+    expect(calls.runtimes.last, 105);
+  });
+
+  testWidgets('both sliders — the year range and the duration — inherit the '
+      'app theme that insets the track by just the thumb', (tester) async {
+    await tester.pumpWidget(_host(_Calls(), runtime: 150));
+
+    for (final finder in [find.byType(RangeSlider), find.byType(Slider)]) {
+      final theme = SliderTheme.of(tester.element(finder));
+      expect(
+        theme.overlayShape!.getPreferredSize(true, false).width,
+        AppSliderTheme.thumbRadius * 2,
+        reason: '$finder',
+      );
+    }
+  });
+
+  testWidgets('the labels under the year slider sit on the same edges as the '
+      'cards above', (tester) async {
+    await tester.pumpWidget(_host(_Calls()));
+
+    final cardsLeft = tester.getTopLeft(find.byType(YearBoundCard).first).dx;
+    final cardsRight = tester.getTopRight(find.byType(YearBoundCard).last).dx;
+    expect(
+      tester.getTopLeft(find.text('1950').last).dx,
+      closeTo(cardsLeft, 0.5),
+    );
+    expect(
+      tester.getTopRight(find.text('Today').last).dx,
+      closeTo(cardsRight, 0.5),
+    );
   });
 
   testWidgets('the exclude switch reports', (tester) async {
