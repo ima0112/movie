@@ -6,6 +6,7 @@ import 'package:movies/features/suggestion/presentation/cubit/surprise_state.dar
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_affinity_ring.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_closing_view.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_in_watch_later_badge.dart';
+import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_sparkles.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_suggestion_card.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_thumbnail_strip.dart';
 import 'package:movies/l10n/app_localizations.dart';
@@ -87,5 +88,38 @@ void main() {
     expect(ring.right, lessThanOrEqualTo(card.right));
     expect(ring.bottom, lessThanOrEqualTo(card.bottom));
     expect(find.textContaining('% for you'), findsNothing);
+  });
+
+  testWidgets('sparkles both behind and over the chosen card', (tester) async {
+    final batch = batchOf(5);
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: SurpriseClosingView(
+          chosen: SurpriseChosen(
+            suggestions: batch.suggestions,
+            index: 2,
+            savedKeys: const {},
+            source: SuggestionSource.quiz,
+          ),
+          onClose: () {},
+        ),
+      ),
+    );
+    await tester.pump(const Duration(seconds: 1));
+
+    // In paint order: the back layer, the card, the front layer.
+    final order = tester
+        .widgetList(
+          find.byWidgetPredicate(
+            (w) => w is SurpriseSparkles || w is SurpriseSuggestionCard,
+          ),
+        )
+        .toList();
+    expect(order, hasLength(3));
+    expect((order[0] as SurpriseSparkles).front, isFalse);
+    expect(order[1], isA<SurpriseSuggestionCard>());
+    expect((order[2] as SurpriseSparkles).front, isTrue);
   });
 }

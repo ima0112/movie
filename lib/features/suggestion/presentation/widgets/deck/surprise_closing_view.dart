@@ -69,7 +69,9 @@ class SurpriseClosingView extends StatelessWidget {
                     child: _Entrance(
                       child: Stack(
                         children: [
-                          const Positioned.fill(child: SurpriseSparkles()),
+                          const Positioned.fill(
+                            child: SurpriseSparkles.behind(),
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.screenMargin,
@@ -97,6 +99,10 @@ class SurpriseClosingView extends StatelessWidget {
                                 ),
                               ),
                             ),
+                          ),
+                          // A few stars over the card itself.
+                          const Positioned.fill(
+                            child: SurpriseSparkles.front(),
                           ),
                         ],
                       ),
