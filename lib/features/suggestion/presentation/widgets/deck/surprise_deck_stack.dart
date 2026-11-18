@@ -9,7 +9,7 @@ import 'surprise_double_tap_hint.dart';
 import 'surprise_edge_bubbles.dart';
 import 'surprise_suggestion_card.dart';
 
-/// The deck itself (`docs/SCREENS.md` E3): the card on top and two behind it —
+/// The deck itself (`docs/SCREENS.md` E3): the card on top and the next one behind it —
 /// smaller, lower, turned a few degrees in opposite directions and fainter —
 /// all cards living in one circular order, so the top one that leaves goes to
 /// the back.
@@ -345,7 +345,9 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   }) {
     final slot = _slot(i);
     final isTop = slot == 0;
-    final visible = slot < 3;
+    // Only the next card shows behind the top one: the ones past it would be
+    // revealed while a card leaves and then hide again, which reads as a glitch.
+    final visible = slot < 2;
     final side = slot.isOdd ? -1.0 : 1.0;
     final card = _cardOf(i);
 

@@ -53,8 +53,8 @@ Finder get _top =>
     find.byWidgetPredicate((w) => w is SurpriseSuggestionCard && w.number == 1);
 
 void main() {
-  testWidgets('every card is in the deck; only the top three show, the '
-      'farther ones fainter', (tester) async {
+  testWidgets('every card is in the deck; only the top two show, the '
+      'next one fainter', (tester) async {
     await tester.pumpWidget(_host(_Calls()));
     await tester.pumpAndSettle();
 
@@ -71,7 +71,7 @@ void main() {
         .opacity;
     expect(opacityOf(1), 1);
     expect(opacityOf(2), lessThan(1));
-    expect(opacityOf(3), lessThan(opacityOf(2)));
+    expect(opacityOf(3), 0);
     expect(opacityOf(4), 0);
     expect(opacityOf(5), 0);
   });
