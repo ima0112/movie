@@ -31,7 +31,7 @@ class QuizProgressBar extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: step <= currentStep
-                    ? AppColors.ink
+                    ? AppColors.accent
                     : AppColors.lineStrong,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
               ),
