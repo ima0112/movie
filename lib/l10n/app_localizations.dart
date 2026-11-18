@@ -2648,6 +2648,42 @@ abstract class AppLocalizations {
   /// **'Pick up to 3 vibes'**
   String get quizVibeSubtitle;
 
+  /// E2 step 3's headline, three parts so "platforms" can be coloured: before + accent + after = "Which platforms shall we search?".
+  ///
+  /// In en, this message translates to:
+  /// **'Which '**
+  String get quizPlatformHeadlineBefore;
+
+  /// No description provided for @quizPlatformHeadlineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'platforms'**
+  String get quizPlatformHeadlineAccent;
+
+  /// No description provided for @quizPlatformHeadlineAfter.
+  ///
+  /// In en, this message translates to:
+  /// **' shall we search?'**
+  String get quizPlatformHeadlineAfter;
+
+  /// E2 step 3's link that clears the picked services (no platform filter).
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get quizPlatformAll;
+
+  /// No description provided for @quizPlatformRentBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Include rent and buy'**
+  String get quizPlatformRentBuy;
+
+  /// No description provided for @quizPlatformNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No streaming services are listed for your region, so the search will not filter by platform.'**
+  String get quizPlatformNone;
+
   /// E2's "next step" button (the last step's is quizSearchButton).
   ///
   /// In en, this message translates to:

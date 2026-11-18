@@ -1547,6 +1547,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizVibeSubtitle => 'Pick up to 3 vibes';
 
   @override
+  String get quizPlatformHeadlineBefore => 'Which ';
+
+  @override
+  String get quizPlatformHeadlineAccent => 'platforms';
+
+  @override
+  String get quizPlatformHeadlineAfter => ' shall we search?';
+
+  @override
+  String get quizPlatformAll => 'All';
+
+  @override
+  String get quizPlatformRentBuy => 'Include rent and buy';
+
+  @override
+  String get quizPlatformNone =>
+      'No streaming services are listed for your region, so the search will not filter by platform.';
+
+  @override
   String get quizContinueButton => 'Continue';
 
   @override

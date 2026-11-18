@@ -484,6 +484,12 @@
   "quizVibeHeadlineAccent": "vibes",
   "quizVibeHeadlineAfter": " te apetecen hoy?",
   "quizVibeSubtitle": "Elige hasta 3 vibes",
+  "quizPlatformHeadlineBefore": "¿En qué ",
+  "quizPlatformHeadlineAccent": "plataformas",
+  "quizPlatformHeadlineAfter": " buscamos?",
+  "quizPlatformAll": "Todas",
+  "quizPlatformRentBuy": "Incluir alquiler y compra",
+  "quizPlatformNone": "No hay plataformas de streaming listadas para tu región, así que la búsqueda no filtrará por plataforma.",
   "quizContinueButton": "Continuar",
   "quizYearStepHeadline": "¿Hasta cuándo quieres retroceder?",
 

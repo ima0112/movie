@@ -25,6 +25,17 @@ class QuizPlatformTile extends StatelessWidget {
   final VoidCallback onTap;
 
   static const double _logoSize = 40;
+
+  /// The name's line height at the default text size (`captionStrong`).
+  static const double _nameLine = 18;
+
+  /// The tile's height for the user's text size: logo, gap, the name's line
+  /// and the padding — so a larger text grows the tile instead of overflowing.
+  static double heightFor(BuildContext context) =>
+      AppSpacing.md * 2 +
+      _logoSize +
+      AppSpacing.sm +
+      MediaQuery.textScalerOf(context).scale(_nameLine);
   static const double _badgeSize = 18;
   static const double _badgeIcon = 12;
 

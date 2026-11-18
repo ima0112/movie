@@ -1478,6 +1478,18 @@
   "quizVibeHeadlineAccent": "vibes",
   "quizVibeHeadlineAfter": " are you in the mood for today?",
   "quizVibeSubtitle": "Pick up to 3 vibes",
+  "quizPlatformHeadlineBefore": "Which ",
+  "@quizPlatformHeadlineBefore": {
+    "description": "E2 step 3's headline, three parts so \"platforms\" can be coloured: before + accent + after = \"Which platforms shall we search?\"."
+  },
+  "quizPlatformHeadlineAccent": "platforms",
+  "quizPlatformHeadlineAfter": " shall we search?",
+  "quizPlatformAll": "All",
+  "@quizPlatformAll": {
+    "description": "E2 step 3's link that clears the picked services (no platform filter)."
+  },
+  "quizPlatformRentBuy": "Include rent and buy",
+  "quizPlatformNone": "No streaming services are listed for your region, so the search will not filter by platform.",
   "quizContinueButton": "Continue",
   "@quizContinueButton": {
     "description": "E2's \"next step\" button (the last step's is quizSearchButton)."

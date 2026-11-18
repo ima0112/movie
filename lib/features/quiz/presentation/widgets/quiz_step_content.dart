@@ -7,7 +7,7 @@ import '../cubit/quiz_state.dart';
 import 'quiz_final_step.dart';
 import 'quiz_genre_step.dart';
 import 'quiz_vibe_step.dart';
-import 'quiz_year_step.dart';
+import 'quiz_platform_step.dart';
 
 /// The one `BlocBuilder` for "whichever step is showing" — the same
 /// "content legitimately varies together" shape `DiscoverContentArea`/
@@ -38,9 +38,13 @@ class QuizStepContent extends StatelessWidget {
             selected: state.vibeIds,
             onToggle: cubit.toggleVibe,
           ),
-          3 => QuizYearStep(
-            yearFrom: state.yearFrom,
-            onChanged: cubit.setYearFrom,
+          3 => QuizPlatformStep(
+            mediaType: state.mediaType,
+            selected: state.platformIds,
+            includeRentBuy: state.includeRentBuy,
+            onToggle: cubit.togglePlatform,
+            onClear: cubit.clearPlatforms,
+            onIncludeRentBuyChanged: cubit.setIncludeRentBuy,
           ),
           _ => QuizFinalStep(
             mediaType: state.mediaType,
