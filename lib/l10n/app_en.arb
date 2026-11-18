@@ -1639,7 +1639,6 @@
       }
     }
   },
-  "surpriseHelpDoubleTap": "Double-tap to choose",
   "surpriseRerollButton": "Ask for another 5",
   "surpriseChooseThis": "Choose this",
   "@surpriseChooseThis": {
@@ -1801,8 +1800,8 @@
   "@surpriseControlNext": {
     "description": "The visible Next control of Surprise me's deck: passes to the next card."
   },
-  "surpriseActionViewDetails": "View details",
-  "@surpriseActionViewDetails": {
-    "description": "Screen-reader action on the deck's top card: opens its detail."
+  "surpriseActionFlip": "Flip card",
+  "@surpriseActionFlip": {
+    "description": "Screen-reader action on the deck's top card: turns it over to its back (or back to the front)."
   }
 }

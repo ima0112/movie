@@ -642,7 +642,7 @@ void main() {
         cubit.recordOutcome(SurpriseOutcome.saved); // title 0 saved
         cubit.next(); // …and passed: nothing is recorded for passing
         async.flushMicrotasks();
-        cubit.recordOutcome(SurpriseOutcome.revisited); // title 1 opened
+        cubit.cardFlipped(); // title 1 turned over to read its back
         async.flushMicrotasks();
 
         late List<SurpriseHistoryEntry> all;

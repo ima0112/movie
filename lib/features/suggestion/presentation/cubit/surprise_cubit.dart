@@ -359,6 +359,10 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     }
   }
 
+  /// The card on top was turned over to read its back: kept in the history as a
+  /// taste signal (they wanted to know more about it).
+  void cardFlipped() => recordOutcome(SurpriseOutcome.revisited);
+
   /// The user did something with the card on top — opened its details: kept in
   /// the history as a taste signal. A no-op outside a deck.
   void recordOutcome(SurpriseOutcome outcome) {

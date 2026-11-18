@@ -457,7 +457,6 @@
   "surpriseCardSemantics": "Carta {number} de {total}: {title}, {type}, {percent} % para ti{platforms}",
   "surpriseThumbnailLabel": "Carta {number}",
   "surpriseThumbnailSaved": "Carta {number}, guardada",
-  "surpriseHelpDoubleTap": "Toca dos veces para elegir",
   "surpriseRerollButton": "Volver a pedir otras 5",
   "surpriseChooseThis": "Elegir esta",
   "surpriseChosenLabel": "Tu sorpresa de hoy",
@@ -521,5 +520,5 @@
   "editProfileSheetTitle": "Editar perfil",
   "surpriseControlSave": "Guardar",
   "surpriseControlNext": "Siguiente",
-  "surpriseActionViewDetails": "Ver detalles"
+  "surpriseActionFlip": "Voltear carta"
 }

@@ -5,9 +5,19 @@ import 'package:flutter/services.dart';
 
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../match_engine/domain/surprise_batch.dart';
+import 'surprise_card_back.dart';
 import 'surprise_double_tap_hint.dart';
 import 'surprise_edge_arrows.dart';
+import 'surprise_flip_card.dart';
 import 'surprise_suggestion_card.dart';
+
+/// Turns the card on top of a [SurpriseDeckStack] from outside it.
+class SurpriseDeckController {
+  VoidCallback? _flip;
+
+  /// Turns the top card over (or back).
+  void flipTop() => _flip?.call();
+}
 
 /// The deck itself (`docs/SCREENS.md` E3): the card on top and the next one behind it —
 /// smaller, lower, turned a few degrees in opposite directions and fainter —
@@ -17,8 +27,10 @@ import 'surprise_suggestion_card.dart';
 /// **Gestures on the top card:**
 /// - drag **either way** past a third of the width (or a fast flick): *pass*
 ///   ([onNext]); a drag that stops short springs back;
-/// - **double tap**: *choose* ([onChoose], a medium buzz); **tap**: open the
-///   detail ([onOpenDetail]) — the tap waits a moment to tell them apart.
+/// - **double tap**: *choose* ([onChoose], a medium buzz); **tap**: turn the card
+///   over to its back and, tapped again, back to the front ([onFlipped]) — the
+///   tap waits a moment to tell them apart. A card goes back to its front when
+///   it leaves the top.
 /// While dragged the card follows the finger with a turn proportional to how far
 /// it went, and the arrow on that edge shows ([SurpriseEdgeArrows]). With one
 /// card there is nowhere to go, so dragging is off.
@@ -31,10 +43,11 @@ class SurpriseDeckStack extends StatefulWidget {
     required this.index,
     required this.onNext,
     required this.onChoose,
-    required this.onOpenDetail,
+    this.onFlipped,
     this.showHint = false,
     this.onHintDismissed,
     this.cardAction,
+    this.controller,
   });
 
   final List<SurpriseSuggestion> suggestions;
@@ -43,7 +56,10 @@ class SurpriseDeckStack extends StatefulWidget {
   final int index;
   final VoidCallback onNext;
   final VoidCallback onChoose;
-  final VoidCallback onOpenDetail;
+
+  /// The top card was turned to its back (a taste signal: the user wanted to
+  /// know more).
+  final VoidCallback? onFlipped;
 
   /// The first-time "2×" overlay; [onHintDismissed] fires at the first touch.
   final bool showHint;
@@ -52,6 +68,9 @@ class SurpriseDeckStack extends StatefulWidget {
   /// The control in each card's top-right corner (Watch later), built once per
   /// card of the batch.
   final Widget Function(int index)? cardAction;
+
+  /// Lets code outside the deck (a screen-reader action) turn the top card.
+  final SurpriseDeckController? controller;
 
   /// A drag confirms past this fraction of the card's width…
   static const double confirmFraction = 1 / 3;
@@ -116,17 +135,32 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   List<Widget>? _cardWidgets;
   List<SurpriseSuggestion>? _cardsFor;
 
+  /// Whether each card shows its back.
+  List<ValueNotifier<bool>> _flips = [];
+
   Widget _cardOf(int i) {
     if (!identical(_cardsFor, widget.suggestions)) {
       _cardsFor = widget.suggestions;
+      for (final n in _flips) {
+        n.dispose();
+      }
+      _flips = [for (final _ in widget.suggestions) ValueNotifier(false)];
       _cardWidgets = [
         for (var k = 0; k < widget.suggestions.length; k++)
           RepaintBoundary(
-            child: SurpriseSuggestionCard(
-              suggestion: widget.suggestions[k],
-              number: k + 1,
-              total: widget.suggestions.length,
-              topAction: widget.cardAction?.call(k),
+            child: SurpriseFlipCard(
+              flipped: _flips[k],
+              front: SurpriseSuggestionCard(
+                suggestion: widget.suggestions[k],
+                number: k + 1,
+                total: widget.suggestions.length,
+                topAction: widget.cardAction?.call(k),
+              ),
+              back: SurpriseCardBack(
+                suggestion: widget.suggestions[k],
+                number: k + 1,
+                topAction: widget.cardAction?.call(k),
+              ),
             ),
           ),
       ];
@@ -138,8 +172,24 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   bool get _still => MediaQuery.disableAnimationsOf(context);
 
   @override
+  void initState() {
+    super.initState();
+    widget.controller?._flip = _toggleFlip;
+  }
+
+  @override
   void didUpdateWidget(SurpriseDeckStack old) {
     super.didUpdateWidget(old);
+    // A card that left the top shows its front again.
+    if (identical(old.suggestions, widget.suggestions) &&
+        old.index != widget.index &&
+        old.index < _flips.length) {
+      _flips[old.index].value = false;
+    }
+    if (old.controller != widget.controller) {
+      old.controller?._flip = null;
+      widget.controller?._flip = _toggleFlip;
+    }
     final n = widget.suggestions.length;
     // A swipe leaves through its own animation; a new batch just appears.
     if (old.index == widget.index ||
@@ -172,6 +222,10 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
 
   @override
   void dispose() {
+    widget.controller?._flip = null;
+    for (final n in _flips) {
+      n.dispose();
+    }
     _zoom.dispose();
     _controller.dispose();
     super.dispose();
@@ -183,6 +237,13 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
       widget.onHintDismissed?.call();
       setState(() {});
     }
+  }
+
+  void _toggleFlip() {
+    _cardOf(widget.index); // (makes sure the flags exist)
+    final flip = _flips[widget.index];
+    flip.value = !flip.value;
+    if (flip.value) widget.onFlipped?.call();
   }
 
   double _offset() => _animating
@@ -362,7 +423,7 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
         ? GestureDetector(
             onHorizontalDragUpdate: _onDragUpdate,
             onHorizontalDragEnd: (d) => _onDragEnd(d, width),
-            onTap: _animating ? null : widget.onOpenDetail,
+            onTap: _animating ? null : _toggleFlip,
             onDoubleTap: _animating
                 ? null
                 : () {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
-import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_help_row.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_reroll_button.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_thumbnail_strip.dart';
 import 'package:movies/l10n/app_localizations.dart';
@@ -142,21 +141,6 @@ void main() {
       expect(find.bySemanticsLabel('Card 1'), findsOneWidget);
       expect(find.bySemanticsLabel('Card 2, saved'), findsOneWidget);
       handle.dispose();
-    });
-  });
-
-  group('SurpriseHelpRow', () {
-    testWidgets('the double-tap hint, in both languages — text, not a '
-        'button', (tester) async {
-      await tester.pumpWidget(_host(const SurpriseHelpRow()));
-      expect(find.text('Double-tap to choose'), findsOneWidget);
-      expect(find.byType(InkWell), findsNothing);
-      expect(find.byType(GestureDetector), findsNothing);
-
-      await tester.pumpWidget(
-        _host(const SurpriseHelpRow(), locale: const Locale('es')),
-      );
-      expect(find.text('Toca dos veces para elegir'), findsOneWidget);
     });
   });
 

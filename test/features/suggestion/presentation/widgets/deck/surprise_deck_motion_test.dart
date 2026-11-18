@@ -25,7 +25,6 @@ Widget _host(ValueNotifier<int> index, VoidCallback onNext) => MaterialApp(
           index: i,
           onNext: onNext,
           onChoose: () {},
-          onOpenDetail: () {},
         ),
       ),
     ),
