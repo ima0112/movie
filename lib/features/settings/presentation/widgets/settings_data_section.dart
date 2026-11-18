@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/surprise_history_entry.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
+import '../../../../core/domain/repositories/surprise_history_repository.dart';
 import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -15,7 +17,8 @@ import '../../domain/library_export.dart';
 import 'confirm_deletion_dialog.dart';
 
 /// C6's Data group — `docs/SCREENS.md` C6: "Export My List" (JSON → the
-/// system share sheet); "Delete My List", "Delete My Tastes" in red →
+/// system share sheet); "Delete My List", "Delete My Tastes", "Delete Surprise
+/// me history" in red →
 /// I1 (the dialog states how many items it deletes). Talks to
 /// [UserLibraryRepository]/[TasteProfileRepository] directly (CLAUDE.md
 /// rule 10) — none of these three actions have state that outlives a
@@ -25,10 +28,12 @@ class SettingsDataSection extends StatelessWidget {
     super.key,
     required this.userLibraryRepository,
     required this.tasteProfileRepository,
+    required this.surpriseHistoryRepository,
   });
 
   final UserLibraryRepository userLibraryRepository;
   final TasteProfileRepository tasteProfileRepository;
+  final SurpriseHistoryRepository surpriseHistoryRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +56,12 @@ class SettingsDataSection extends StatelessWidget {
           labelColor: AppColors.danger,
           showChevron: false,
           onTap: () => _deleteTastes(context),
+        ),
+        SettingsRow(
+          label: context.l10n.settingsDeleteSurpriseHistoryLabel,
+          labelColor: AppColors.danger,
+          showChevron: false,
+          onTap: () => _deleteSurpriseHistory(context),
         ),
       ],
     );
@@ -135,6 +146,34 @@ class SettingsDataSection extends StatelessWidget {
       deleteResult is Success<void>
           ? l10n.settingsMyTastesDeletedSnackbar
           : l10n.settingsDeleteMyTastesFailedSnackbar,
+    );
+  }
+
+  Future<void> _deleteSurpriseHistory(BuildContext context) async {
+    final l10n = context.l10n;
+    final history = await surpriseHistoryRepository.all();
+    final itemCount = history is Success<List<SurpriseHistoryEntry>>
+        ? history.value.length
+        : 0;
+
+    if (!context.mounted) return;
+    final confirmed = await showConfirmDeletionDialog(
+      context,
+      title: l10n.settingsDeleteSurpriseHistoryDialogTitle,
+      body: l10n.settingsDeleteDialogBody(
+        l10n.settingsDataDeleteItemCount(itemCount),
+      ),
+    );
+    if (!confirmed) return;
+    if (!context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final deleteResult = await surpriseHistoryRepository.clear();
+    AppSnackBar.showOn(
+      messenger,
+      deleteResult is Success<void>
+          ? l10n.settingsSurpriseHistoryDeletedSnackbar
+          : l10n.settingsDeleteSurpriseHistoryFailedSnackbar,
     );
   }
 }

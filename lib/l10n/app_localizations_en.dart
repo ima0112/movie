@@ -1674,6 +1674,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDeleteMyListLabel => 'Delete My List';
 
   @override
+  String get settingsDeleteSurpriseHistoryLabel => 'Delete Surprise me history';
+
+  @override
+  String get settingsDeleteSurpriseHistoryDialogTitle =>
+      'Delete your Surprise me history?';
+
+  @override
+  String get settingsSurpriseHistoryDeletedSnackbar =>
+      'Surprise me history deleted';
+
+  @override
+  String get settingsDeleteSurpriseHistoryFailedSnackbar =>
+      'Couldn\'t delete the Surprise me history';
+
+  @override
   String get settingsDeleteMyTastesLabel => 'Delete My Tastes';
 
   @override

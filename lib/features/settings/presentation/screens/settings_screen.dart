@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../core/domain/repositories/settings_repository.dart';
+import '../../../../core/domain/repositories/surprise_history_repository.dart';
 import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -62,6 +63,7 @@ class _SettingsView extends StatelessWidget {
             SettingsDataSection(
               userLibraryRepository: getIt<UserLibraryRepository>(),
               tasteProfileRepository: getIt<TasteProfileRepository>(),
+              surpriseHistoryRepository: getIt<SurpriseHistoryRepository>(),
             ),
             const SettingsAboutSection(),
           ],

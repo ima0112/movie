@@ -322,9 +322,9 @@ First tap: movie or TV show? Then (`SurpriseCubit`, via
    never saved back to the profile — see
    `docs/decisions/quiz-answers-not-saved-to-profile.md`.
 
-The engine picks with some randomness among the top-5 scored so "Surprise me" doesn't repeat.
+Surprise me uses `SurpriseEngine` (next section) — five different suggestions per batch, never repeating what its session, or the last 30 days of history, already showed.
 
-### Surprise me engine (`SurpriseEngine`) — in progress
+### Surprise me engine (`SurpriseEngine`)
 
 Replaces the single-page, popularity-only pick above (which always returned the same five: it called `/discover` page 1 only and "randomised" among the top 5 of a deterministic ranking). Five suggestions per batch, no AI, only TMDB. Domain contract in `features/match_engine/domain/` (`SurpriseRequest`, `SurpriseBatch`, `SurpriseEngine`); `MatchEngine` stays as is for the Matcher (v1.1).
 
@@ -338,6 +338,7 @@ Replaces the single-page, popularity-only pick above (which always returned the 
 - **Details of the 5 chosen only**: one `/{movie|tv}/{id}?append_to_response=watch/providers` call each (runtime or seasons, tagline, providers); a failed one is replaced by the next candidate.
 - **Dropped**: "Max seasons" (not in the new questionnaire; it would need a detail call per candidate) — removed from the engine when the new one is wired.
 - **As built** (`features/match_engine/domain/`: `surprise_candidates.dart`, `surprise_scoring.dart`, `surprise_engine_impl.dart`): score = vibes matched / vibes chosen (×1.0) + taste (×0.25, normalised over the candidates, from `SurpriseRequest.genreAffinity`) + quality (×1.0: the Bayesian rating with a prior of 150 votes, 5.0→0 … 9.0→1) + noise (×0.15). The five are drawn with weight `score³` from the top 20 after: one per chosen vibe, one wildcard outside the liked genres (only when there are any), max 2 per main genre. The taste weight was tuned on a synthetic catalog: 0.8 and 0.5 put 80% of a batch in the one liked genre; 0.25 gives ~60% against ~20% of the catalog. Titles with no poster are dropped. Detail calls go with the request's region; a failed one is replaced by the next-best candidate (2 rounds). Not yet used: the history's outcomes as a taste signal (a row stores no genres) — the history only excludes for now.
+- **Wired into `SurpriseCubit`**: each fresh ask (tastes used or quiz answered) opens a session; the batch is the pool E3's "Another suggestion" walks (a title left behind is recorded as `discarded`, "Add to Watch later" as `saved`, "View details" as `seen`); "Search again" after the fifth asks for a new batch of the same session, which skips everything shown. An empty batch is "Couldn't find a match" on a first search and "That's all for now" after earlier batches. The profile's platforms and latest year now travel in the answers; "Delete Surprise me history" in Settings → Data wipes the table. The old `MatchEngine` stays for the Matcher (v1.1). "Max seasons" never filtered anything in the old engine (only a relaxation step used it) and is ignored by the new one; its stepper stays in the quiz until the new questionnaire replaces it. Titles with no poster sink below those with one instead of being dropped (a card needs a poster, but the fake catalog has none).
 - **Stack**: (1) domain contract, (2) drift history, (3) data layer (TV genre map, keywords, monetization, random pages), (4) the engine + tests, (5) wired into `SurpriseCubit` ("Another suggestion" rotates the 5, "Search again" fetches a new batch).
 
 ### Recommendations ("For you" / "Because you…", B1 F1b)

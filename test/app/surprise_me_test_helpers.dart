@@ -5,7 +5,9 @@ import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/app/router.dart';
 import 'package:movies/core/data/local/in_memory_onboarding_repository.dart';
+import 'package:movies/core/data/local/in_memory_surprise_history_repository.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
+import 'package:movies/core/domain/repositories/surprise_history_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/repositories/onboarding_repository.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
@@ -38,6 +40,10 @@ void configureSurpriseMeDependencies() {
   getIt.unregister<TasteProfileRepository>();
   getIt.registerLazySingleton<TasteProfileRepository>(
     InMemoryTasteProfileRepository.new,
+  );
+  getIt.unregister<SurpriseHistoryRepository>();
+  getIt.registerLazySingleton<SurpriseHistoryRepository>(
+    InMemorySurpriseHistoryRepository.new,
   );
   getIt.unregister<OnboardingRepository>();
   getIt.registerLazySingleton<OnboardingRepository>(

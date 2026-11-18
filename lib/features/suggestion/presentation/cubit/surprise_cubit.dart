@@ -1,16 +1,22 @@
+// ignore_for_file: prefer_initializing_formals
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/result.dart';
+import '../../../../core/domain/entities/surprise_history_entry.dart';
 import '../../../../core/domain/entities/user_media_entry.dart';
+import '../../../../core/domain/repositories/surprise_history_repository.dart';
 import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
-import '../../../match_engine/domain/match_engine.dart';
-import '../../../match_engine/domain/match_query.dart';
-import '../../../match_engine/domain/match_result.dart';
 import '../../../match_engine/domain/participant_answers.dart';
+import '../../../match_engine/domain/surprise_batch.dart';
+import '../../../match_engine/domain/surprise_engine.dart';
+import '../../../match_engine/domain/surprise_request.dart';
 import '../../../taste_profile/domain/taste_profile_builder.dart';
 import 'surprise_state.dart';
 
@@ -23,17 +29,34 @@ import 'surprise_state.dart';
 /// already follow.
 class SurpriseCubit extends Cubit<SurpriseState> {
   SurpriseCubit(
-    this._matchEngine,
+    this._engine,
     this._tasteProfileBuilder,
     this._tasteProfileRepository,
     this._userLibraryRepository, {
     this.participantId = 'me',
-  }) : super(const ChoosingType());
+    SurpriseHistoryRepository? history,
+    String Function()? region,
+    Random? random,
+    DateTime Function()? clock,
+  }) : _history = history,
+       _region = region ?? (() => 'US'),
+       _random = random ?? Random(),
+       _clock = clock ?? DateTime.now,
+       super(const ChoosingType());
 
-  final MatchEngine _matchEngine;
+  final SurpriseEngine _engine;
   final TasteProfileBuilder _tasteProfileBuilder;
   final TasteProfileRepository _tasteProfileRepository;
   final UserLibraryRepository _userLibraryRepository;
+
+  /// What Surprise me has shown, kept on the device (`null` = not kept:
+  /// only this session's own titles are skipped).
+  final SurpriseHistoryRepository? _history;
+
+  /// The user's region (Settings → Region), read at each search.
+  final String Function() _region;
+  final Random _random;
+  final DateTime Function() _clock;
 
   /// Surprise-me is always N=1 — nothing in E1/E3 lets this vary, so
   /// unlike `QuizScreen` (which the Matcher will eventually override),
@@ -43,18 +66,16 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   /// reason `QuizCubit.buildAnswers` already keeps it one.
   final String participantId;
 
-  /// `docs/DECISIONS.md`'s own "top-5" — how many of the best-scored
-  /// candidates `MatchEngine` randomizes the winner among
-  /// (`MatchOptions.randomizeTop`), and so the size of the pool
-  /// [another] rotates through afterward.
-  static const int poolSize = 5;
+  /// A redone questionnaire also skips what Surprise me showed in this many
+  /// days (`docs/DECISIONS.md` §5).
+  static const Duration recentWindow = Duration(days: 30);
 
   /// "Searching…" never flashes for less than this, even if
-  /// [MatchEngine.resolve] is instant.
+  /// [SurpriseEngine.resolve] is instant.
   static const Duration minSearchingDuration = Duration(milliseconds: 1800);
 
   /// Past this, [_search] gives up and emits [SurpriseError] instead of
-  /// continuing to wait on [MatchEngine.resolve].
+  /// continuing to wait on [SurpriseEngine.resolve].
   static const Duration maxSearchingDuration = Duration(seconds: 8);
 
   int _searchGeneration = 0;
@@ -73,6 +94,18 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   /// second time from scratch.
   ParticipantAnswers? _pendingAnswers;
 
+  /// The Surprise-me session ("shuffle"): one per fresh ask (a type chosen and
+  /// tastes or quiz answered); [retry] and "other 5" keep it, so what it
+  /// already showed is never suggested again.
+  String _sessionId = '';
+  final Set<MediaKey> _sessionShown = {};
+
+  /// Taste for the engine: the library's genre affinity plus the profile's
+  /// liked genres. Computed in [chooseType], where both are at hand.
+  Map<Genre, int> _genreAffinity = const {};
+
+  static const int _profileLikedWeight = 3;
+
   /// E1's "First tap: movie or TV show?" — resolves which of
   /// `docs/DECISIONS.md`'s 3 cases applies (usable profile / inferred
   /// from the list / neither). The first two no longer launch the
@@ -89,6 +122,13 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final profile = await _tasteProfileRepository.watch().first;
     final libraryEntries = await _libraryEntries();
     if (generation != _searchGeneration || isClosed) return;
+
+    _genreAffinity = {
+      ...genreAffinityFrom(libraryEntries),
+      if (profile != null)
+        for (final g in profile.likedGenres)
+          g: (genreAffinityFrom(libraryEntries)[g] ?? 0) + _profileLikedWeight,
+    };
 
     final answers = _tasteProfileBuilder.build(
       profile: profile,
@@ -129,7 +169,13 @@ class SurpriseCubit extends Cubit<SurpriseState> {
 
     final generation = ++_searchGeneration;
     emit(Searching(current.mediaType));
-    await _search(current.mediaType, answers, current.source, generation);
+    await _search(
+      current.mediaType,
+      answers,
+      current.source,
+      generation,
+      newSession: true,
+    );
   }
 
   /// H11's own "Answer the quiz instead" — the user had a usable
@@ -153,7 +199,13 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final generation = ++_searchGeneration;
     final mediaType = current.mediaType;
     emit(Searching(mediaType));
-    await _search(mediaType, answers, SuggestionSource.quiz, generation);
+    await _search(
+      mediaType,
+      answers,
+      SuggestionSource.quiz,
+      generation,
+      newSession: true,
+    );
   }
 
   /// E3's "Another suggestion" — rotates to the next candidate in the
@@ -165,17 +217,20 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final current = state;
     if (current is! SurpriseResult) return;
 
+    // Asked for another without picking this one.
+    unawaited(_markOutcome(current.current.key, SurpriseOutcome.discarded));
+
     final nextIndex = current.index + 1;
-    if (nextIndex >= current.candidates.length) {
+    if (nextIndex >= current.suggestions.length) {
       emit(const Exhausted());
       return;
     }
 
     emit(
       SurpriseResult(
-        candidates: current.candidates,
+        suggestions: current.suggestions,
         index: nextIndex,
-        relaxationsApplied: current.relaxationsApplied,
+        relaxations: current.relaxations,
         source: current.source,
       ),
     );
@@ -193,6 +248,23 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     final generation = ++_searchGeneration;
     emit(Searching(mediaType));
     await _search(mediaType, answers, source, generation);
+  }
+
+  /// The user did something with the suggestion on screen — saved it to
+  /// Watch later, opened its details: kept in the history as a taste signal.
+  /// A no-op outside a result.
+  void recordOutcome(SurpriseOutcome outcome) {
+    final current = state;
+    if (current is! SurpriseResult) return;
+    unawaited(_markOutcome(current.current.key, outcome));
+  }
+
+  Future<void> _markOutcome(MediaKey key, SurpriseOutcome outcome) async {
+    await _history?.setOutcome(
+      sessionId: _sessionId,
+      key: key,
+      outcome: outcome,
+    );
   }
 
   /// E3a's "×": gives up the search in flight — whatever it finds is thrown
@@ -215,51 +287,97 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     MediaType mediaType,
     ParticipantAnswers answers,
     SuggestionSource source,
-    int generation,
-  ) async {
+    int generation, {
+    bool newSession = false,
+  }) async {
     _lastMediaType = mediaType;
     _lastAnswers = answers;
     _lastSource = source;
+    if (newSession || _sessionId.isEmpty) {
+      _sessionId =
+          '${_clock().microsecondsSinceEpoch}-${_random.nextInt(1 << 31)}';
+      _sessionShown.clear();
+    }
 
-    final query = MatchQuery.aggregate(mediaType, [answers]);
-    final options = MatchOptions(
+    final excluded = {
+      ..._sessionShown,
+      if (answers.excludeWatched) ...answers.watchedKeys,
+    };
+    final recent = await _history?.shownKeys(
+      mediaType,
+      since: _clock().subtract(recentWindow),
+    );
+    if (recent case Success<Set<MediaKey>>(:final value)) {
+      excluded.addAll(value);
+    }
+    if (generation != _searchGeneration || isClosed) return;
+
+    final request = SurpriseRequest(
+      type: mediaType,
+      answers: answers,
+      sessionId: _sessionId,
+      region: _region(),
+      seed: _random.nextInt(1 << 31),
+      excludeKeys: excluded,
+      genreAffinity: _genreAffinity,
+    );
+
+    // Future.wait races the engine against the minimum delay — the combined
+    // wait is whichever of the two takes longer, not their sum. .timeout()
+    // wraps that whole wait so a slow engine can't push past the maximum
+    // either.
+    final resolveFuture = _engine.resolve(
+      request,
       vibeCatalog: _tasteProfileBuilder.vibeCatalog,
-      randomizeTop: poolSize,
     );
+    final delayFuture = Future<Object?>.delayed(minSearchingDuration);
 
-    // Future.wait races the engine against the minimum delay — the
-    // combined wait is whichever of the two takes longer, not their sum.
-    // .timeout() wraps that whole wait so a slow engine can't push past
-    // the maximum either.
-    final resolveFuture = _matchEngine.resolve(query, options: options);
-    final delayFuture = Future<MatchResult?>.delayed(
-      minSearchingDuration,
-      () => null,
-    );
-
-    MatchResult? result;
+    Result<SurpriseBatch>? result;
     try {
-      final results = await Future.wait([
+      final results = await Future.wait<Object?>([
         resolveFuture,
         delayFuture,
       ]).timeout(maxSearchingDuration, onTimeout: () => [null, null]);
-      result = results[0];
+      result = results[0] as Result<SurpriseBatch>?;
     } catch (_) {
       result = null;
     }
 
     if (generation != _searchGeneration || isClosed) return;
 
-    if (result == null) {
+    if (result is! Success<SurpriseBatch>) {
       emit(const SurpriseError());
       return;
     }
+    final batch = result.value;
+
+    if (batch.isEmpty) {
+      // Nothing (more) that satisfies the filters: after earlier batches
+      // that's "that's all for now"; on a first search, no match at all.
+      emit(_sessionShown.isEmpty ? const SurpriseError() : const Exhausted());
+      return;
+    }
+
+    final keys = {for (final s in batch.suggestions) s.item.key};
+    _sessionShown.addAll(keys);
+    final now = _clock();
+    unawaited(
+      _history?.recordShown([
+            for (final key in keys)
+              SurpriseHistoryEntry(
+                key: key,
+                sessionId: _sessionId,
+                shownAt: now,
+              ),
+          ]) ??
+          Future<void>.value(),
+    );
 
     emit(
       SurpriseResult(
-        candidates: [result.winner, ...result.alternatives],
+        suggestions: batch.suggestions,
         index: 0,
-        relaxationsApplied: result.relaxationsApplied,
+        relaxations: batch.relaxations,
         source: source,
       ),
     );

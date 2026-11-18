@@ -99,8 +99,6 @@ class SurpriseCandidateSource {
     void absorb(Vibe? vibe, List<MediaItem> items) {
       for (final item in items) {
         if (request.excludeKeys.contains(item.key)) continue;
-        final poster = item.posterUrl;
-        if (poster == null || poster.isEmpty) continue;
         final candidate = byKey.putIfAbsent(
           item.key,
           () => SurpriseCandidate(item),

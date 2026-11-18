@@ -11,9 +11,6 @@ import 'package:movies/core/domain/entities/taste_profile.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
 import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
-import 'package:movies/features/match_engine/domain/match_engine.dart';
-import 'package:movies/features/match_engine/domain/match_query.dart';
-import 'package:movies/features/match_engine/domain/match_result.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/suggestion/presentation/cubit/surprise_cubit.dart';
 import 'package:movies/features/suggestion/presentation/cubit/surprise_state.dart';
@@ -21,17 +18,7 @@ import 'package:movies/features/suggestion/presentation/widgets/choose_source_sh
 import 'package:movies/features/taste_profile/domain/taste_profile_builder.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
-/// A [MatchEngine] that never actually resolves — these tests only
-/// care about what happens the instant a button is tapped (which
-/// cubit method ran, whether the sheet closed), never about the
-/// search that follows.
-class _NeverResolvingMatchEngine implements MatchEngine {
-  @override
-  Future<MatchResult?> resolve(
-    MatchQuery query, {
-    required MatchOptions options,
-  }) => Completer<MatchResult?>().future;
-}
+import '../../surprise_test_data.dart';
 
 class _FakeTasteProfileRepository implements TasteProfileRepository {
   _FakeTasteProfileRepository(this.profile);
@@ -97,7 +84,7 @@ class _FakeUserLibraryRepository implements UserLibraryRepository {
 /// machine.
 Future<SurpriseCubit> _cubitAtChooseSource({TasteProfile? profile}) async {
   final cubit = SurpriseCubit(
-    _NeverResolvingMatchEngine(),
+    FakeSurpriseEngine(neverCompletes: true),
     TasteProfileBuilder(VibeCatalog(const [])),
     _FakeTasteProfileRepository(profile),
     _FakeUserLibraryRepository(),

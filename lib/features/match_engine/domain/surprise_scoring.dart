@@ -23,6 +23,11 @@ abstract final class SurpriseScoring {
   static const double qualityWeight = 1.0;
   static const double noiseWeight = 0.15;
 
+  /// Taken off a title with no poster: a card without one is a poor
+  /// surprise, so it sinks below every title that has one — but is still
+  /// there when there are fewer than five with a poster.
+  static const double noPosterPenalty = 2.0;
+
   /// The prior of the Bayesian rating `(v·R + m·C) / (v + m)`: the votes a
   /// title needs before its own average counts for more than the pool's.
   static const int priorVotes = 150;
@@ -63,10 +68,14 @@ abstract final class SurpriseScoring {
           vibeWeight * (chosenVibes == 0 ? 0 : c.vibeIds.length / chosenVibes) +
               tasteWeight * (maxTaste == 0 ? 0 : taste(c) / maxTaste) +
               qualityWeight * _quality(c, meanRating) +
-              noiseWeight * rng.nextDouble(),
+              noiseWeight * rng.nextDouble() -
+              (hasPoster(c) ? 0 : noPosterPenalty),
         ),
     ];
   }
+
+  static bool hasPoster(SurpriseCandidate c) =>
+      (c.item.posterUrl ?? '').isNotEmpty;
 
   /// The Bayesian rating mapped onto 0–1 (5.0 → 0, 9.0 → 1).
   static double _quality(SurpriseCandidate c, double meanRating) {
@@ -181,10 +190,15 @@ abstract final class SurpriseScoring {
     int lowest,
     int highest,
   ) {
-    final scores = all.map((c) => c.score);
+    // The no-poster penalty must not stretch the range everyone else is
+    // scaled over.
+    final withPoster = all.where((c) => hasPoster(c.candidate));
+    final scores = (withPoster.isEmpty ? all : withPoster).map((c) => c.score);
     final lo = scores.reduce(min);
     final hi = scores.reduce(max);
     if (hi - lo < 1e-9) return ((lowest + highest) / 2).round();
-    return (lowest + (highest - lowest) * (score - lo) / (hi - lo)).round();
+    return (lowest + (highest - lowest) * (score - lo) / (hi - lo))
+        .round()
+        .clamp(lowest, highest);
   }
 }

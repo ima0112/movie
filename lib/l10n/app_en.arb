@@ -1606,6 +1606,13 @@
   "settingsDataHeader": "Data",
   "settingsExportMyList": "Export My List",
   "settingsDeleteMyListLabel": "Delete My List",
+  "settingsDeleteSurpriseHistoryLabel": "Delete Surprise me history",
+  "@settingsDeleteSurpriseHistoryLabel": {
+    "description": "C6's Data row that forgets every title Surprise me has shown (the local history that keeps it from repeating itself). \"Surprise me\" is the feature's name."
+  },
+  "settingsDeleteSurpriseHistoryDialogTitle": "Delete your Surprise me history?",
+  "settingsSurpriseHistoryDeletedSnackbar": "Surprise me history deleted",
+  "settingsDeleteSurpriseHistoryFailedSnackbar": "Couldn't delete the Surprise me history",
   "settingsDeleteMyTastesLabel": "Delete My Tastes",
   "settingsExportFailedSnackbar": "Couldn't export My List",
   "settingsMyListDeletedSnackbar": "My List deleted",
