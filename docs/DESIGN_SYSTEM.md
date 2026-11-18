@@ -37,6 +37,8 @@ icono relleno de acciones activas (favorito/después/vista), caja "Streaming" de
 otro sitio, si dudas si algo debería ser ámbar, la respuesta por defecto es
 no.
 
+**Cartas de Sorpréndeme (E3a):** cinco degradadas a 160° (azul petróleo, ámbar tostado, violeta, rosa, azul pizarra; de claro a oscuro) en `AppColors.surpriseCardGradients`, más `surpriseCardBorder` (`ink` al 18 %), `surpriseCardRing`/`surpriseCardRingSoft` (anillos de esquina, 14 %/12 %) y `surpriseCardShadow` (negro al 50 %). Solo las usa esa pantalla; el "?" de cada carta es ámbar.
+
 **Modo claro:** se define en una iteración posterior (ver DECISIONES.md).
 No implementar todavía — dejar `ThemeMode.dark` fijo con un
 `// TODO(light-theme)`.
@@ -54,6 +56,7 @@ Familia única: **Manrope** (Google Fonts), pesos 400 (regular) y 600
 | `display` | 32 / 1.15 | 600 | Título de detalle (película/serie) |
 | `h1` | 26–28 / 1.15 | 600 | Titulares de flujo (onboarding, resultado, portada) |
 | `h1Strong` | 26 / 1.15 | 800 | Titular de flujo con más peso (E1) |
+| `surpriseQuestion` | 64 / 1 | 600 | El "?" ámbar de las cartas de Sorpréndeme (E3a) |
 | `h2` | 20–22 / 1.2 | 600 | Título de sección, título de tarjeta grande |
 | `h3` | 15–16 / 1.25 | 600 | Título de fila destacada, nombre en tarjeta |
 | `body` | 14–15 / 1.5 | 400 | Sinopsis, texto de tarjeta |

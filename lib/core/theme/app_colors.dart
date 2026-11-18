@@ -64,6 +64,26 @@ class AppColors {
   /// Text/icons on top of an [accent] background.
   static const Color onAccent = Color(0xFF1A1204);
 
+  /// The five "?" cards of Surprise me's searching screen (E3a): each a
+  /// 160° gradient, light to dark, left to right in the fan.
+  static const List<List<Color>> surpriseCardGradients = [
+    [Color(0xFF3D7185), Color(0xFF17303B), Color(0xFF241A1C)],
+    [Color(0xFF8A5A2F), Color(0xFF3A2312), Color(0xFF140D0A)],
+    [Color(0xFF6B4A8A), Color(0xFF2A1C3D), Color(0xFF120D1A)],
+    [Color(0xFFA03D5A), Color(0xFF3A1424), Color(0xFF150A10)],
+    [Color(0xFF5A6B8A), Color(0xFF202838), Color(0xFF0F121A)],
+  ];
+
+  /// A Surprise-me card's hairline border (`ink` at 18%).
+  static const Color surpriseCardBorder = Color(0x2EF5F5F7);
+
+  /// The two corner rings drawn on a Surprise-me card (`ink` at 14% / 12%).
+  static const Color surpriseCardRing = Color(0x24F5F5F7);
+  static const Color surpriseCardRingSoft = Color(0x1FF5F5F7);
+
+  /// Drop shadow under a Surprise-me card (black at 50%).
+  static const Color surpriseCardShadow = Color(0x80000000);
+
   /// Perfect match, participant-ready check.
   static const Color success = Color(0xFF6FCF97);
 

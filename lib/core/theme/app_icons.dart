@@ -66,6 +66,9 @@ class AppIcons {
 
   /// The Match button's sparkle (replaces Pako's face there).
   static const IconData match = RemixIcons.sparkling_2_fill;
+
+  /// The four-point star of Surprise me's searching row (outline).
+  static const IconData shining = RemixIcons.shining_line;
   static const IconData dice = RemixIcons.dice_5_line;
   static const IconData useMyTastes = RemixIcons.user_add_line;
 

@@ -39,6 +39,14 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// The big amber "?" on a Surprise-me card (E3a): 64, semibold.
+  static final TextStyle surpriseQuestion = GoogleFonts.manrope(
+    fontSize: 64,
+    height: 1,
+    fontWeight: _semibold,
+    color: AppColors.accent,
+  );
+
   /// A flow headline with more weight (E1's "What are you in the mood for
   /// today?"). 26 / 1.15, extra bold.
   static final TextStyle h1Strong = GoogleFonts.manrope(
