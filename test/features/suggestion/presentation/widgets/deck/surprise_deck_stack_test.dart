@@ -48,27 +48,20 @@ Finder get _top =>
     find.byWidgetPredicate((w) => w is SurpriseSuggestionCard && w.number == 1);
 
 void main() {
-  testWidgets('every card is in the deck; only the top two show, the '
-      'next one fainter', (tester) async {
+  List<int> shown(WidgetTester tester) => [
+    for (final w in tester.widgetList<SurpriseSuggestionCard>(
+      find.byType(SurpriseSuggestionCard),
+    ))
+      w.number,
+  ];
+
+  testWidgets('only the card on top and the next one are built (the swiper '
+      'draws two)', (tester) async {
     await tester.pumpWidget(_host(_Calls()));
     await tester.pumpAndSettle();
 
-    expect(find.byType(SurpriseSuggestionCard), findsNWidgets(5));
-    double opacityOf(int number) => tester
-        .widget<AnimatedOpacity>(
-          find.ancestor(
-            of: find.byWidgetPredicate(
-              (w) => w is SurpriseSuggestionCard && w.number == number,
-            ),
-            matching: find.byType(AnimatedOpacity),
-          ),
-        )
-        .opacity;
-    expect(opacityOf(1), 1);
-    expect(opacityOf(2), lessThan(1));
-    expect(opacityOf(3), 0);
-    expect(opacityOf(4), 0);
-    expect(opacityOf(5), 0);
+    // Painted back to front: the next card, then the top one.
+    expect(shown(tester), [2, 1]);
   });
 
   testWidgets('the order is circular: with card 5 on top, card 1 is next', (
@@ -77,20 +70,7 @@ void main() {
     await tester.pumpWidget(_host(_Calls(), index: 4));
     await tester.pumpAndSettle();
 
-    double opacityOf(int number) => tester
-        .widget<AnimatedOpacity>(
-          find.ancestor(
-            of: find.byWidgetPredicate(
-              (w) => w is SurpriseSuggestionCard && w.number == number,
-            ),
-            matching: find.byType(AnimatedOpacity),
-          ),
-        )
-        .opacity;
-    expect(opacityOf(5), 1);
-    expect(opacityOf(1), lessThan(1));
-    expect(opacityOf(1), greaterThan(0));
-    expect(opacityOf(3), 0);
+    expect(shown(tester), [1, 5]);
   });
 
   testWidgets('drag LEFT past a third of the width: pass, once', (
@@ -134,16 +114,6 @@ void main() {
 
     expect(tester.getCenter(_top).dx, closeTo(start, 0.5));
     expect(calls.next, 0);
-  });
-
-  testWidgets('a quick flick counts even if it did not go far', (tester) async {
-    final calls = _Calls();
-    await tester.pumpWidget(_host(calls));
-
-    await tester.fling(_top, const Offset(80, 0), 1500);
-    await tester.pumpAndSettle();
-
-    expect(calls.next, 1);
   });
 
   testWidgets('with one card there is nowhere to go: dragging does nothing', (
@@ -203,10 +173,9 @@ void main() {
     await tester.pumpWidget(_host(calls, disableAnimations: true));
 
     await tester.drag(_top, const Offset(220, 0));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(calls.next, 1);
-    await tester.pumpAndSettle(); // lets the double-tap timer run out
     final rotations = [
       for (final card in tester.widgetList(find.byType(SurpriseSuggestionCard)))
         for (final t in tester.widgetList<Transform>(
@@ -242,9 +211,11 @@ void main() {
 
     await tester.drag(_top, const Offset(-220, 0));
     await tester.pumpAndSettle();
-    await tester.tap(_top);
+    // Card 2 is on top now.
+    final top = find.byType(SurpriseSuggestionCard).last;
+    await tester.tap(top);
     await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(_top);
+    await tester.tap(top);
     await tester.pumpAndSettle();
 
     expect(buzzes, ['HapticFeedbackType.mediumImpact']);

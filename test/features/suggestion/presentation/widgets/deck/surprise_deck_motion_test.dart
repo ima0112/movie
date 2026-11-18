@@ -51,9 +51,8 @@ List<double> _fades(WidgetTester tester, int number) => [
 ];
 
 void main() {
-  testWidgets('a swipe moves the deck on as it starts, not after it ends', (
-    tester,
-  ) async {
+  testWidgets('a swipe tells the deck once the card has gone, and uses no '
+      'zoom overlay', (tester) async {
     var nexts = 0;
     final index = ValueNotifier(0);
     await tester.pumpWidget(_host(index, () => nexts++));
@@ -63,13 +62,11 @@ void main() {
     await drag.moveBy(const Offset(160, 0));
     await drag.up();
     await tester.pump(const Duration(milliseconds: 40));
-
-    // The exit takes 200 ms; the deck was already told.
-    expect(nexts, 1);
-    expect(_leaving, findsOneWidget);
+    expect(nexts, 0, reason: 'the package reports when the card has left');
+    expect(_leaving, findsNothing);
 
     await tester.pumpAndSettle();
-    expect(_leaving, findsNothing);
+    expect(nexts, 1);
   });
 
   /// The combined scale of every Transform around card [number].
@@ -179,11 +176,9 @@ void main() {
 
     controller.swipeNext();
     await tester.pump(const Duration(milliseconds: 40));
+    expect(nexts, 0);
 
-    expect(nexts, 1);
-    expect(_leaving, findsOneWidget);
     await tester.pumpAndSettle();
-    expect(_leaving, findsNothing);
     expect(nexts, 1);
   });
 }
