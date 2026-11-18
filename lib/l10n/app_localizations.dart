@@ -2816,6 +2816,73 @@ abstract class AppLocalizations {
   /// **'Your suggestion'**
   String get surpriseYourSuggestionTitle;
 
+  /// A Surprise-me card's affinity tag: the engine's score scaled to 60-98 — a relative affinity, not a probability.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} % for you'**
+  String surpriseCardAffinity(int percent);
+
+  /// A Surprise-me series card's season count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 season} other{{count} seasons}}'**
+  String surpriseCardSeasons(int count);
+
+  /// A series still airing: the year it started.
+  ///
+  /// In en, this message translates to:
+  /// **'since {year}'**
+  String surpriseCardSince(int year);
+
+  /// How many services a Surprise-me card's title is on (shown when it is on three or fewer).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 platform} other{{count} platforms}}'**
+  String surpriseCardPlatforms(int count);
+
+  /// A Surprise-me card on more than three services: how many beyond the three logos shown.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count}'**
+  String surpriseCardPlatformsMore(int count);
+
+  /// A Surprise-me card's full label for a screen reader. {platforms} is empty or already starts with a comma.
+  ///
+  /// In en, this message translates to:
+  /// **'Card {number} of {total}: {title}, {type}, {percent} % for you{platforms}'**
+  String surpriseCardSemantics(
+    int number,
+    int total,
+    String title,
+    String type,
+    int percent,
+    String platforms,
+  );
+
+  /// A thumbnail of the Surprise-me strip, for a screen reader.
+  ///
+  /// In en, this message translates to:
+  /// **'Card {number}'**
+  String surpriseThumbnailLabel(int number);
+
+  /// A thumbnail of a card that is in Watch later.
+  ///
+  /// In en, this message translates to:
+  /// **'Card {number}, saved'**
+  String surpriseThumbnailSaved(int number);
+
+  /// No description provided for @surpriseHelpDoubleTap.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-tap to choose'**
+  String get surpriseHelpDoubleTap;
+
+  /// No description provided for @surpriseRerollButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for another 5'**
+  String get surpriseRerollButton;
+
   /// E3a (Surprise me, searching): the headline under the shuffling cards.
   ///
   /// In en, this message translates to:

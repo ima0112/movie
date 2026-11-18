@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_theme.dart';
-import 'package:movies/features/quiz/presentation/widgets/quiz_limits_card.dart';
+import 'package:movies/l10n/runtime_format.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_year_limits_step.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';

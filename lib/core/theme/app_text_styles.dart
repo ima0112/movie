@@ -39,6 +39,14 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// The big outlined card number ("03") on a Surprise-me card: 56, semibold.
+  /// Drawn with `OutlinedText`, so it takes no colour of its own.
+  static final TextStyle deckNumber = GoogleFonts.manrope(
+    fontSize: 56,
+    height: 1,
+    fontWeight: _semibold,
+  );
+
   /// The big amber "?" on a Surprise-me card (E3a): 64, semibold.
   static final TextStyle surpriseQuestion = GoogleFonts.manrope(
     fontSize: 64,
