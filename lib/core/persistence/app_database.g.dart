@@ -3582,6 +3582,392 @@ class SavedPeopleTableCompanion extends UpdateCompanion<SavedPersonRow> {
   }
 }
 
+class $SurpriseHistoryTableTable extends SurpriseHistoryTable
+    with TableInfo<$SurpriseHistoryTableTable, SurpriseHistoryRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SurpriseHistoryTableTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumnWithTypeConverter<MediaType, String> mediaType =
+      GeneratedColumn<String>(
+        'media_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<MediaType>(
+        $SurpriseHistoryTableTable.$convertermediaType,
+      );
+  static const VerificationMeta _tmdbIdMeta = const VerificationMeta('tmdbId');
+  @override
+  late final GeneratedColumn<int> tmdbId = GeneratedColumn<int>(
+    'tmdb_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
+  );
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+    'session_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _shownAtMeta = const VerificationMeta(
+    'shownAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> shownAt = GeneratedColumn<DateTime>(
+    'shown_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SurpriseOutcome, String> outcome =
+      GeneratedColumn<String>(
+        'outcome',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<SurpriseOutcome>(
+        $SurpriseHistoryTableTable.$converteroutcome,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    mediaType,
+    tmdbId,
+    sessionId,
+    shownAt,
+    outcome,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'surprise_history_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SurpriseHistoryRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('tmdb_id')) {
+      context.handle(
+        _tmdbIdMeta,
+        tmdbId.isAcceptableOrUnknown(data['tmdb_id']!, _tmdbIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tmdbIdMeta);
+    }
+    if (data.containsKey('session_id')) {
+      context.handle(
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sessionIdMeta);
+    }
+    if (data.containsKey('shown_at')) {
+      context.handle(
+        _shownAtMeta,
+        shownAt.isAcceptableOrUnknown(data['shown_at']!, _shownAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_shownAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {mediaType, tmdbId, sessionId};
+  @override
+  SurpriseHistoryRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SurpriseHistoryRow(
+      mediaType: $SurpriseHistoryTableTable.$convertermediaType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}media_type'],
+        )!,
+      ),
+      tmdbId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tmdb_id'],
+      )!,
+      sessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}session_id'],
+      )!,
+      shownAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}shown_at'],
+      )!,
+      outcome: $SurpriseHistoryTableTable.$converteroutcome.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}outcome'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  $SurpriseHistoryTableTable createAlias(String alias) {
+    return $SurpriseHistoryTableTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<MediaType, String, String> $convertermediaType =
+      const EnumNameConverter<MediaType>(MediaType.values);
+  static JsonTypeConverter2<SurpriseOutcome, String, String> $converteroutcome =
+      const EnumNameConverter<SurpriseOutcome>(SurpriseOutcome.values);
+}
+
+class SurpriseHistoryRow extends DataClass
+    implements Insertable<SurpriseHistoryRow> {
+  /// `MediaKey.type`, stored as the enum's name (like [UserMediaEntries]).
+  final MediaType mediaType;
+  final int tmdbId;
+
+  /// The Surprise-me session ("shuffle") it was shown in.
+  final String sessionId;
+  final DateTime shownAt;
+
+  /// `SurpriseOutcome`, as its name.
+  final SurpriseOutcome outcome;
+  const SurpriseHistoryRow({
+    required this.mediaType,
+    required this.tmdbId,
+    required this.sessionId,
+    required this.shownAt,
+    required this.outcome,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    {
+      map['media_type'] = Variable<String>(
+        $SurpriseHistoryTableTable.$convertermediaType.toSql(mediaType),
+      );
+    }
+    map['tmdb_id'] = Variable<int>(tmdbId);
+    map['session_id'] = Variable<String>(sessionId);
+    map['shown_at'] = Variable<DateTime>(shownAt);
+    {
+      map['outcome'] = Variable<String>(
+        $SurpriseHistoryTableTable.$converteroutcome.toSql(outcome),
+      );
+    }
+    return map;
+  }
+
+  SurpriseHistoryTableCompanion toCompanion(bool nullToAbsent) {
+    return SurpriseHistoryTableCompanion(
+      mediaType: Value(mediaType),
+      tmdbId: Value(tmdbId),
+      sessionId: Value(sessionId),
+      shownAt: Value(shownAt),
+      outcome: Value(outcome),
+    );
+  }
+
+  factory SurpriseHistoryRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SurpriseHistoryRow(
+      mediaType: $SurpriseHistoryTableTable.$convertermediaType.fromJson(
+        serializer.fromJson<String>(json['mediaType']),
+      ),
+      tmdbId: serializer.fromJson<int>(json['tmdbId']),
+      sessionId: serializer.fromJson<String>(json['sessionId']),
+      shownAt: serializer.fromJson<DateTime>(json['shownAt']),
+      outcome: $SurpriseHistoryTableTable.$converteroutcome.fromJson(
+        serializer.fromJson<String>(json['outcome']),
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'mediaType': serializer.toJson<String>(
+        $SurpriseHistoryTableTable.$convertermediaType.toJson(mediaType),
+      ),
+      'tmdbId': serializer.toJson<int>(tmdbId),
+      'sessionId': serializer.toJson<String>(sessionId),
+      'shownAt': serializer.toJson<DateTime>(shownAt),
+      'outcome': serializer.toJson<String>(
+        $SurpriseHistoryTableTable.$converteroutcome.toJson(outcome),
+      ),
+    };
+  }
+
+  SurpriseHistoryRow copyWith({
+    MediaType? mediaType,
+    int? tmdbId,
+    String? sessionId,
+    DateTime? shownAt,
+    SurpriseOutcome? outcome,
+  }) => SurpriseHistoryRow(
+    mediaType: mediaType ?? this.mediaType,
+    tmdbId: tmdbId ?? this.tmdbId,
+    sessionId: sessionId ?? this.sessionId,
+    shownAt: shownAt ?? this.shownAt,
+    outcome: outcome ?? this.outcome,
+  );
+  SurpriseHistoryRow copyWithCompanion(SurpriseHistoryTableCompanion data) {
+    return SurpriseHistoryRow(
+      mediaType: data.mediaType.present ? data.mediaType.value : this.mediaType,
+      tmdbId: data.tmdbId.present ? data.tmdbId.value : this.tmdbId,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      shownAt: data.shownAt.present ? data.shownAt.value : this.shownAt,
+      outcome: data.outcome.present ? data.outcome.value : this.outcome,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SurpriseHistoryRow(')
+          ..write('mediaType: $mediaType, ')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('shownAt: $shownAt, ')
+          ..write('outcome: $outcome')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(mediaType, tmdbId, sessionId, shownAt, outcome);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SurpriseHistoryRow &&
+          other.mediaType == this.mediaType &&
+          other.tmdbId == this.tmdbId &&
+          other.sessionId == this.sessionId &&
+          other.shownAt == this.shownAt &&
+          other.outcome == this.outcome);
+}
+
+class SurpriseHistoryTableCompanion
+    extends UpdateCompanion<SurpriseHistoryRow> {
+  final Value<MediaType> mediaType;
+  final Value<int> tmdbId;
+  final Value<String> sessionId;
+  final Value<DateTime> shownAt;
+  final Value<SurpriseOutcome> outcome;
+  final Value<int> rowid;
+  const SurpriseHistoryTableCompanion({
+    this.mediaType = const Value.absent(),
+    this.tmdbId = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.shownAt = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SurpriseHistoryTableCompanion.insert({
+    required MediaType mediaType,
+    required int tmdbId,
+    required String sessionId,
+    required DateTime shownAt,
+    required SurpriseOutcome outcome,
+    this.rowid = const Value.absent(),
+  }) : mediaType = Value(mediaType),
+       tmdbId = Value(tmdbId),
+       sessionId = Value(sessionId),
+       shownAt = Value(shownAt),
+       outcome = Value(outcome);
+  static Insertable<SurpriseHistoryRow> custom({
+    Expression<String>? mediaType,
+    Expression<int>? tmdbId,
+    Expression<String>? sessionId,
+    Expression<DateTime>? shownAt,
+    Expression<String>? outcome,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (mediaType != null) 'media_type': mediaType,
+      if (tmdbId != null) 'tmdb_id': tmdbId,
+      if (sessionId != null) 'session_id': sessionId,
+      if (shownAt != null) 'shown_at': shownAt,
+      if (outcome != null) 'outcome': outcome,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SurpriseHistoryTableCompanion copyWith({
+    Value<MediaType>? mediaType,
+    Value<int>? tmdbId,
+    Value<String>? sessionId,
+    Value<DateTime>? shownAt,
+    Value<SurpriseOutcome>? outcome,
+    Value<int>? rowid,
+  }) {
+    return SurpriseHistoryTableCompanion(
+      mediaType: mediaType ?? this.mediaType,
+      tmdbId: tmdbId ?? this.tmdbId,
+      sessionId: sessionId ?? this.sessionId,
+      shownAt: shownAt ?? this.shownAt,
+      outcome: outcome ?? this.outcome,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (mediaType.present) {
+      map['media_type'] = Variable<String>(
+        $SurpriseHistoryTableTable.$convertermediaType.toSql(mediaType.value),
+      );
+    }
+    if (tmdbId.present) {
+      map['tmdb_id'] = Variable<int>(tmdbId.value);
+    }
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (shownAt.present) {
+      map['shown_at'] = Variable<DateTime>(shownAt.value);
+    }
+    if (outcome.present) {
+      map['outcome'] = Variable<String>(
+        $SurpriseHistoryTableTable.$converteroutcome.toSql(outcome.value),
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SurpriseHistoryTableCompanion(')
+          ..write('mediaType: $mediaType, ')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('shownAt: $shownAt, ')
+          ..write('outcome: $outcome, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3604,6 +3990,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SavedPeopleTableTable savedPeopleTable = $SavedPeopleTableTable(
     this,
   );
+  late final $SurpriseHistoryTableTable surpriseHistoryTable =
+      $SurpriseHistoryTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3617,6 +4005,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     settingsTable,
     recentlyViewedTable,
     savedPeopleTable,
+    surpriseHistoryTable,
   ];
 }
 
@@ -5580,6 +5969,235 @@ typedef $$SavedPeopleTableTableProcessedTableManager =
       SavedPersonRow,
       PrefetchHooks Function()
     >;
+typedef $$SurpriseHistoryTableTableCreateCompanionBuilder =
+    SurpriseHistoryTableCompanion Function({
+      required MediaType mediaType,
+      required int tmdbId,
+      required String sessionId,
+      required DateTime shownAt,
+      required SurpriseOutcome outcome,
+      Value<int> rowid,
+    });
+typedef $$SurpriseHistoryTableTableUpdateCompanionBuilder =
+    SurpriseHistoryTableCompanion Function({
+      Value<MediaType> mediaType,
+      Value<int> tmdbId,
+      Value<String> sessionId,
+      Value<DateTime> shownAt,
+      Value<SurpriseOutcome> outcome,
+      Value<int> rowid,
+    });
+
+class $$SurpriseHistoryTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SurpriseHistoryTableTable> {
+  $$SurpriseHistoryTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnWithTypeConverterFilters<MediaType, MediaType, String> get mediaType =>
+      $composableBuilder(
+        column: $table.mediaType,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<int> get tmdbId => $composableBuilder(
+    column: $table.tmdbId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sessionId => $composableBuilder(
+    column: $table.sessionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get shownAt => $composableBuilder(
+    column: $table.shownAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<SurpriseOutcome, SurpriseOutcome, String>
+  get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+}
+
+class $$SurpriseHistoryTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SurpriseHistoryTableTable> {
+  $$SurpriseHistoryTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get mediaType => $composableBuilder(
+    column: $table.mediaType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get tmdbId => $composableBuilder(
+    column: $table.tmdbId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sessionId => $composableBuilder(
+    column: $table.sessionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get shownAt => $composableBuilder(
+    column: $table.shownAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SurpriseHistoryTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SurpriseHistoryTableTable> {
+  $$SurpriseHistoryTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumnWithTypeConverter<MediaType, String> get mediaType =>
+      $composableBuilder(column: $table.mediaType, builder: (column) => column);
+
+  GeneratedColumn<int> get tmdbId =>
+      $composableBuilder(column: $table.tmdbId, builder: (column) => column);
+
+  GeneratedColumn<String> get sessionId =>
+      $composableBuilder(column: $table.sessionId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get shownAt =>
+      $composableBuilder(column: $table.shownAt, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<SurpriseOutcome, String> get outcome =>
+      $composableBuilder(column: $table.outcome, builder: (column) => column);
+}
+
+class $$SurpriseHistoryTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SurpriseHistoryTableTable,
+          SurpriseHistoryRow,
+          $$SurpriseHistoryTableTableFilterComposer,
+          $$SurpriseHistoryTableTableOrderingComposer,
+          $$SurpriseHistoryTableTableAnnotationComposer,
+          $$SurpriseHistoryTableTableCreateCompanionBuilder,
+          $$SurpriseHistoryTableTableUpdateCompanionBuilder,
+          (
+            SurpriseHistoryRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SurpriseHistoryTableTable,
+              SurpriseHistoryRow
+            >,
+          ),
+          SurpriseHistoryRow,
+          PrefetchHooks Function()
+        > {
+  $$SurpriseHistoryTableTableTableManager(
+    _$AppDatabase db,
+    $SurpriseHistoryTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SurpriseHistoryTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SurpriseHistoryTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SurpriseHistoryTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<MediaType> mediaType = const Value.absent(),
+                Value<int> tmdbId = const Value.absent(),
+                Value<String> sessionId = const Value.absent(),
+                Value<DateTime> shownAt = const Value.absent(),
+                Value<SurpriseOutcome> outcome = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SurpriseHistoryTableCompanion(
+                mediaType: mediaType,
+                tmdbId: tmdbId,
+                sessionId: sessionId,
+                shownAt: shownAt,
+                outcome: outcome,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required MediaType mediaType,
+                required int tmdbId,
+                required String sessionId,
+                required DateTime shownAt,
+                required SurpriseOutcome outcome,
+                Value<int> rowid = const Value.absent(),
+              }) => SurpriseHistoryTableCompanion.insert(
+                mediaType: mediaType,
+                tmdbId: tmdbId,
+                sessionId: sessionId,
+                shownAt: shownAt,
+                outcome: outcome,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SurpriseHistoryTableTable, SurpriseHistoryRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SurpriseHistoryTableTable,
+                    SurpriseHistoryRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SurpriseHistoryTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SurpriseHistoryTableTable,
+      SurpriseHistoryRow,
+      $$SurpriseHistoryTableTableFilterComposer,
+      $$SurpriseHistoryTableTableOrderingComposer,
+      $$SurpriseHistoryTableTableAnnotationComposer,
+      $$SurpriseHistoryTableTableCreateCompanionBuilder,
+      $$SurpriseHistoryTableTableUpdateCompanionBuilder,
+      (
+        SurpriseHistoryRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SurpriseHistoryTableTable,
+          SurpriseHistoryRow
+        >,
+      ),
+      SurpriseHistoryRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5600,4 +6218,6 @@ class $AppDatabaseManager {
       $$RecentlyViewedTableTableTableManager(_db, _db.recentlyViewedTable);
   $$SavedPeopleTableTableTableManager get savedPeopleTable =>
       $$SavedPeopleTableTableTableManager(_db, _db.savedPeopleTable);
+  $$SurpriseHistoryTableTableTableManager get surpriseHistoryTable =>
+      $$SurpriseHistoryTableTableTableManager(_db, _db.surpriseHistoryTable);
 }
