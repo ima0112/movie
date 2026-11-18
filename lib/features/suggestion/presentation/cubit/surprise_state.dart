@@ -1,5 +1,6 @@
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_item.dart';
+import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../match_engine/domain/surprise_batch.dart';
 
@@ -59,34 +60,92 @@ final class ChooseSource extends SurpriseState {
   final Set<Genre> tasteGenres;
 }
 
+/// A short message the deck wants shown once (a snackbar, a discreet line) and
+/// then forgotten — `SurpriseCubit.noticeShown` clears it. No text here:
+/// the screen supplies the copy (CLAUDE.md rule 15).
+enum SurpriseNotice {
+  none,
+
+  /// The first batch needed a relaxation: the search was widened a little.
+  widenedSearch,
+
+  /// "Other 5" found nothing new for these answers; the deck stays as it was.
+  noMoreSurprises,
+
+  /// "Other 5" couldn't reach TMDB; the deck stays as it was.
+  offline,
+}
+
+/// The deck in play (the PDF's `playing`): the batch the engine returned (up to
+/// five, ranked, each with its details and "% for you") as a **circular** deck
+/// — passing the last card brings the first — with the card on top, which ones
+/// are in Watch later, and a pending [notice].
+///
+/// Fewer than five cards is fine (the deck is just shorter; with one there is
+/// nowhere to pass to).
 final class SurpriseResult extends SurpriseState {
   const SurpriseResult({
     required this.suggestions,
     required this.index,
     required this.relaxations,
     required this.source,
+    this.savedKeys = const {},
+    this.notice = SurpriseNotice.none,
   });
 
-  /// The batch the engine returned (five, ranked), each with its details and
-  /// "% for you". [SurpriseCubit.another] only ever advances [index] through
-  /// it; asking for a new batch is `retry()` after [Exhausted].
   final List<SurpriseSuggestion> suggestions;
+
+  /// The card on top.
   final int index;
 
-  /// What the engine had to loosen to find these (`SurpriseRelaxation`) —
-  /// drives E3's "We widened the search" note.
+  /// What the engine had to loosen to find these (`SurpriseRelaxation`).
   final List<SurpriseRelaxation> relaxations;
   final SuggestionSource source;
+
+  /// The cards of this batch that are in Watch later — already there when the
+  /// deck opened, or saved from it.
+  final Set<MediaKey> savedKeys;
+
+  final SurpriseNotice notice;
 
   List<MediaItem> get candidates => [for (final s in suggestions) s.item];
   SurpriseSuggestion get currentSuggestion => suggestions[index];
   MediaItem get current => currentSuggestion.item;
+  bool isSaved(int i) => savedKeys.contains(suggestions[i].item.key);
+
+  SurpriseResult copyWith({
+    int? index,
+    Set<MediaKey>? savedKeys,
+    SurpriseNotice? notice,
+  }) => SurpriseResult(
+    suggestions: suggestions,
+    index: index ?? this.index,
+    relaxations: relaxations,
+    source: source,
+    savedKeys: savedKeys ?? this.savedKeys,
+    notice: notice ?? this.notice,
+  );
 }
 
-/// Every candidate in the pool has already been shown —
-/// `SurpriseCubit.another`'s own "after the 5th, Exhausted".
-final class Exhausted extends SurpriseState {
-  const Exhausted();
+/// The user picked a card (the PDF's `chosen`): it is already in Watch later
+/// and the closing screen shows it alone. The batch stays so the thumbnails can
+/// show it, inactive.
+final class SurpriseChosen extends SurpriseState {
+  const SurpriseChosen({
+    required this.suggestions,
+    required this.index,
+    required this.savedKeys,
+    required this.source,
+  });
+
+  final List<SurpriseSuggestion> suggestions;
+
+  /// The chosen card.
+  final int index;
+  final Set<MediaKey> savedKeys;
+  final SuggestionSource source;
+
+  SurpriseSuggestion get chosen => suggestions[index];
 }
 
 /// `MatchEngine.resolve` either took longer than `SurpriseCubit`'s own

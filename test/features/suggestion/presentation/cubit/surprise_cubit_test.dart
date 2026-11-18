@@ -15,6 +15,7 @@ import 'package:movies/core/domain/repositories/taste_profile_repository.dart';
 import 'package:movies/core/domain/repositories/user_library_repository.dart';
 import 'package:movies/features/match_engine/domain/participant_answers.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
+import 'package:movies/features/match_engine/domain/surprise_batch.dart';
 import 'package:movies/features/suggestion/presentation/cubit/surprise_cubit.dart';
 import 'package:movies/features/suggestion/presentation/cubit/surprise_state.dart';
 import 'package:movies/features/taste_profile/domain/taste_profile_builder.dart';
@@ -97,6 +98,36 @@ class _FakeUserLibraryRepository implements UserLibraryRepository {
   Future<Result<List<UserMediaEntry>>> all() async => Success(entries);
 }
 
+/// A library that remembers what is written to it (the deck tests look at it).
+class _MapLibrary extends _FakeUserLibraryRepository {
+  _MapLibrary([List<UserMediaEntry> initial = const []]) {
+    for (final e in initial) {
+      _map[e.key] = e;
+    }
+  }
+
+  final Map<MediaKey, UserMediaEntry> _map = {};
+  int upserts = 0;
+  bool failWrites = false;
+
+  UserMediaEntry? operator [](MediaKey key) => _map[key];
+
+  @override
+  Stream<UserMediaEntry?> watchEntry(MediaKey key) => Stream.value(_map[key]);
+
+  @override
+  Future<Result<List<UserMediaEntry>>> all() async =>
+      Success(_map.values.toList());
+
+  @override
+  Future<Result<void>> upsert(UserMediaEntry entry) async {
+    upserts++;
+    if (failWrites) return Failure(FailureReason.storage);
+    _map[entry.key] = entry;
+    return const Success(null);
+  }
+}
+
 SurpriseCubit _cubit({
   required FakeSurpriseEngine engine,
   TasteProfile? profile,
@@ -104,12 +135,13 @@ SurpriseCubit _cubit({
   SurpriseHistoryRepository? history,
   DateTime Function()? clock,
   String Function()? region,
+  UserLibraryRepository? library,
 }) {
   return SurpriseCubit(
     engine,
     TasteProfileBuilder(_emptyVibeCatalog),
     _FakeTasteProfileRepository(profile),
-    _FakeUserLibraryRepository(libraryEntries),
+    library ?? _FakeUserLibraryRepository(libraryEntries),
     history: history,
     clock: clock,
     region: region,
@@ -216,47 +248,7 @@ void main() {
     });
   });
 
-  group('SurpriseCubit — another() rotation', () {
-    test('rotates through the whole pool, calling the engine only '
-        'once, then emits Exhausted on the 6th call', () {
-      fakeAsync((async) {
-        final engine = FakeSurpriseEngine.returning(batchOf(5));
-        final cubit = _cubit(engine: engine, profile: _profile());
-
-        unawaited(cubit.chooseType(MediaType.movie));
-        async.flushMicrotasks();
-        unawaited(cubit.useMyTastes());
-        async.elapse(SurpriseCubit.minSearchingDuration);
-
-        final firstResult = cubit.state as SurpriseResult;
-        expect(firstResult.index, 0);
-
-        for (var i = 1; i < 5; i++) {
-          cubit.another();
-          expect((cubit.state as SurpriseResult).index, i);
-        }
-
-        // All 5 shown — the next call exhausts the pool.
-        cubit.another();
-        expect(cubit.state, isA<Exhausted>());
-
-        // Only the initial chooseType() call ever reached the engine.
-        expect(engine.callCount, 1);
-
-        cubit.close();
-      });
-    });
-
-    test('another() is a no-op outside of SurpriseResult', () {
-      final engine = FakeSurpriseEngine();
-      final cubit = _cubit(engine: engine);
-
-      cubit.another();
-      expect(cubit.state, isA<ChoosingType>());
-
-      cubit.close();
-    });
-  });
+  // (the deck group is further down)
 
   group('SurpriseCubit — the 3-case decision', () {
     test('a usable profile emits ChooseSource(source: profile), not a '
@@ -529,12 +521,13 @@ void main() {
         async.flushMicrotasks();
         expect(cubit.state, isA<SurpriseResult>());
 
-        // Walk past the fifth: Exhausted, then ask again.
+        // The deck is circular: past the fifth it is the first again. Then ask
+        // for a new batch.
         for (var i = 0; i < 5; i++) {
-          cubit.another();
+          cubit.next();
         }
-        expect(cubit.state, isA<Exhausted>());
-        unawaited(cubit.retry());
+        expect((cubit.state as SurpriseResult).index, 0);
+        unawaited(cubit.reroll());
         async.elapse(SurpriseCubit.minSearchingDuration);
         async.flushMicrotasks();
 
@@ -606,7 +599,7 @@ void main() {
         async.flushMicrotasks();
 
         cubit.recordOutcome(SurpriseOutcome.saved); // title 0 saved
-        cubit.another(); // …and passed: nothing is recorded for passing
+        cubit.next(); // …and passed: nothing is recorded for passing
         async.flushMicrotasks();
         cubit.recordOutcome(SurpriseOutcome.revisited); // title 1 opened
         async.flushMicrotasks();
@@ -640,8 +633,8 @@ void main() {
       });
     });
 
-    test('nothing found on a first search is an error; after earlier batches '
-        'it is "that\'s all for now"', () {
+    test('nothing found on a first search is an error; over a deck, "other 5" '
+        'finding nothing keeps the deck with a notice', () {
       fakeAsync((async) {
         final first = FakeSurpriseEngine.returning(batchOf(0));
         final a = _cubit(engine: first, profile: _profile());
@@ -655,12 +648,13 @@ void main() {
         final b = _cubit(engine: engine, profile: _profile());
         runSearch(b, async);
         async.flushMicrotasks();
-        for (var i = 0; i < 5; i++) {
-          b.another();
-        }
-        unawaited(b.retry());
+        b.next();
+        unawaited(b.reroll());
         async.elapse(SurpriseCubit.minSearchingDuration);
-        expect(b.state, isA<Exhausted>());
+
+        final deck = b.state as SurpriseResult;
+        expect(deck.index, 1, reason: 'the deck is as it was left');
+        expect(deck.notice, SurpriseNotice.noMoreSurprises);
         b.close();
       });
     });
@@ -683,11 +677,10 @@ void main() {
           runSearch(cubit, async);
           async.flushMicrotasks();
 
-          for (var i = 0; i < 5; i++) {
-            cubit.another(); // passing: neutral
+          for (var i = 0; i < 4; i++) {
+            cubit.next(); // passing: neutral — each card seen once
           }
-          expect(cubit.state, isA<Exhausted>());
-          unawaited(cubit.retry());
+          unawaited(cubit.reroll());
           async.elapse(SurpriseCubit.minSearchingDuration);
           async.flushMicrotasks();
 
@@ -727,9 +720,9 @@ void main() {
         cubit.recordOutcome(SurpriseOutcome.saved);
         async.flushMicrotasks();
         for (var i = 0; i < 5; i++) {
-          cubit.another();
+          cubit.next();
         }
-        unawaited(cubit.retry());
+        unawaited(cubit.reroll());
         async.elapse(SurpriseCubit.minSearchingDuration);
         async.flushMicrotasks();
 
@@ -787,9 +780,9 @@ void main() {
         cubit.recordOutcome(SurpriseOutcome.saved);
         async.flushMicrotasks();
         for (var i = 0; i < 5; i++) {
-          cubit.another();
+          cubit.next();
         }
-        unawaited(cubit.retry());
+        unawaited(cubit.reroll());
         async.elapse(SurpriseCubit.minSearchingDuration);
         async.flushMicrotasks();
 
@@ -818,6 +811,354 @@ void main() {
 
         expect(seen, [NeedsQuiz, ChoosingType, NeedsQuiz]);
         unawaited(sub.cancel());
+        cubit.close();
+      });
+    });
+  });
+
+  group('SurpriseCubit — the deck', () {
+    final now = DateTime(2026, 11, 16, 12);
+    MediaKey key(int id) => MediaKey(type: MediaType.movie, tmdbId: id);
+
+    /// Opens a deck of [size] cards (titles 0…size-1).
+    SurpriseCubit openDeck(
+      FakeAsync async, {
+      int size = 5,
+      UserLibraryRepository? library,
+      SurpriseHistoryRepository? history,
+      FakeSurpriseEngine? engine,
+    }) {
+      final cubit = _cubit(
+        engine: engine ?? FakeSurpriseEngine.returning(batchOf(size)),
+        profile: _profile(),
+        library: library,
+        history: history,
+        clock: () => now,
+      );
+      unawaited(cubit.chooseType(MediaType.movie));
+      async.flushMicrotasks();
+      unawaited(cubit.useMyTastes());
+      async.elapse(SurpriseCubit.minSearchingDuration);
+      async.flushMicrotasks();
+      expect(cubit.state, isA<SurpriseResult>());
+      return cubit;
+    }
+
+    SurpriseResult deck(SurpriseCubit c) => c.state as SurpriseResult;
+
+    Map<int, SurpriseOutcome> outcomes(
+      FakeAsync async,
+      InMemorySurpriseHistoryRepository history,
+    ) {
+      late List<SurpriseHistoryEntry> all;
+      unawaited(
+        history.all().then(
+          (r) => all = (r as Success<List<SurpriseHistoryEntry>>).value,
+        ),
+      );
+      async.flushMicrotasks();
+      return {for (final e in all) e.key.tmdbId: e.outcome};
+    }
+
+    test('it is circular: past the last card comes the first, and the engine '
+        'was only asked once', () {
+      fakeAsync((async) {
+        final engine = FakeSurpriseEngine.returning(batchOf(5));
+        final cubit = openDeck(async, engine: engine);
+
+        final seen = <int>[deck(cubit).index];
+        for (var i = 0; i < 6; i++) {
+          cubit.next();
+          seen.add(deck(cubit).index);
+        }
+
+        expect(seen, [0, 1, 2, 3, 4, 0, 1]);
+        expect(engine.callCount, 1);
+        cubit.close();
+      });
+    });
+
+    test('with one card there is nowhere to go; with two it still cycles', () {
+      fakeAsync((async) {
+        final one = openDeck(async, size: 1);
+        one.next();
+        one.jumpTo(0);
+        expect(deck(one).index, 0);
+        one.close();
+
+        final two = openDeck(async, size: 2);
+        two.next();
+        expect(deck(two).index, 1);
+        two.next();
+        expect(deck(two).index, 0);
+        two.close();
+      });
+    });
+
+    test('jumpTo brings a card to the top; a bad or current index does '
+        'nothing', () {
+      fakeAsync((async) {
+        final cubit = openDeck(async);
+
+        cubit.jumpTo(3);
+        expect(deck(cubit).index, 3);
+        cubit.jumpTo(3);
+        cubit.jumpTo(-1);
+        cubit.jumpTo(5);
+        expect(deck(cubit).index, 3);
+        cubit.close();
+      });
+    });
+
+    test('left swipe: saveAndNext puts the card in Watch later and passes; '
+        'a card already there is just passed', () {
+      fakeAsync((async) {
+        final library = _MapLibrary();
+        final cubit = openDeck(async, library: library);
+
+        unawaited(cubit.saveAndNext());
+        async.flushMicrotasks();
+        expect(library[key(0)]!.isWatchLater, isTrue);
+        expect(deck(cubit).index, 1);
+        expect(deck(cubit).savedKeys, {key(0)});
+        expect(library.upserts, 1);
+
+        // Round the deck and swipe left on card 0 again: no second write.
+        cubit.jumpTo(0);
+        unawaited(cubit.saveAndNext());
+        async.flushMicrotasks();
+        expect(library.upserts, 1);
+        expect(deck(cubit).index, 1);
+        cubit.close();
+      });
+    });
+
+    test('save() stays on the card, is one-way and idempotent', () {
+      fakeAsync((async) {
+        final library = _MapLibrary();
+        final cubit = openDeck(async, library: library);
+
+        unawaited(cubit.save());
+        unawaited(cubit.save());
+        async.flushMicrotasks();
+
+        expect(deck(cubit).index, 0);
+        expect(deck(cubit).isSaved(0), isTrue);
+        expect(library.upserts, 1);
+        cubit.close();
+      });
+    });
+
+    test('saving keeps what the library already knows about the title (a '
+        'favorite, a rating)', () {
+      fakeAsync((async) {
+        final library = _MapLibrary([
+          UserMediaEntry(
+            key: key(0),
+            title: 'Movie 0',
+            isFavorite: true,
+            rating: 5,
+          ),
+        ]);
+        final cubit = openDeck(async, library: library);
+
+        unawaited(cubit.save());
+        async.flushMicrotasks();
+
+        final entry = library[key(0)]!;
+        expect(entry.isWatchLater, isTrue);
+        expect(entry.isFavorite, isTrue);
+        expect(entry.rating, 5);
+        cubit.close();
+      });
+    });
+
+    test('cards already in Watch later show as saved from the start', () {
+      fakeAsync((async) {
+        final library = _MapLibrary([
+          UserMediaEntry(key: key(2), title: 'Movie 2', isWatchLater: true),
+          UserMediaEntry(key: key(3), title: 'Movie 3', isFavorite: true),
+        ]);
+        final cubit = openDeck(async, library: library);
+
+        expect(deck(cubit).savedKeys, {key(2)});
+        cubit.close();
+      });
+    });
+
+    test('a failed write takes the saved mark back', () {
+      fakeAsync((async) {
+        final library = _MapLibrary()..failWrites = true;
+        final cubit = openDeck(async, library: library);
+
+        unawaited(cubit.save());
+        async.flushMicrotasks();
+
+        expect(deck(cubit).savedKeys, isEmpty);
+        cubit.close();
+      });
+    });
+
+    test('choose: the card goes into Watch later by itself, is recorded as '
+        'chosen, and the game ends — once, even on a double call', () {
+      fakeAsync((async) {
+        final library = _MapLibrary();
+        final history = InMemorySurpriseHistoryRepository();
+        final cubit = openDeck(async, library: library, history: history);
+        cubit.jumpTo(2);
+
+        unawaited(cubit.choose());
+        unawaited(cubit.choose());
+        async.flushMicrotasks();
+
+        final chosen = cubit.state as SurpriseChosen;
+        expect(chosen.index, 2);
+        expect(chosen.chosen.item.id, 2);
+        expect(chosen.savedKeys, contains(key(2)));
+        expect(library[key(2)]!.isWatchLater, isTrue);
+        expect(library.upserts, 1);
+        expect(outcomes(async, history)[2], SurpriseOutcome.chosen);
+        cubit.close();
+      });
+    });
+
+    test('choosing a card already saved does not write again', () {
+      fakeAsync((async) {
+        final library = _MapLibrary();
+        final cubit = openDeck(async, library: library);
+        unawaited(cubit.save());
+        async.flushMicrotasks();
+
+        unawaited(cubit.choose());
+        async.flushMicrotasks();
+
+        expect(cubit.state, isA<SurpriseChosen>());
+        expect(library.upserts, 1);
+        cubit.close();
+      });
+    });
+
+    test('"other 5": a new deck of the same session; the batch before is '
+        'marked rerolled when nothing in it was picked', () {
+      fakeAsync((async) {
+        final history = InMemorySurpriseHistoryRepository();
+        final engine = FakeSurpriseEngine(
+          results: [Success(batchOf(5)), Success(batchOf(5, first: 5))],
+        );
+        final cubit = openDeck(async, history: history, engine: engine);
+        cubit.next();
+
+        unawaited(cubit.reroll());
+        async.flushMicrotasks();
+        expect(cubit.state, isA<Searching>());
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
+
+        expect(deck(cubit).index, 0);
+        expect(deck(cubit).suggestions.first.item.id, 5);
+        expect(engine.requests[1].sessionId, engine.requests[0].sessionId);
+        expect(outcomes(async, history)[0], SurpriseOutcome.rerolled);
+        cubit.close();
+      });
+    });
+
+    test('"other 5" that cannot reach TMDB: the deck comes back as it was, '
+        'with an offline notice, and nothing is marked rerolled', () {
+      fakeAsync((async) {
+        final history = InMemorySurpriseHistoryRepository();
+        final engine = FakeSurpriseEngine(
+          results: [Success(batchOf(5)), Failure(FailureReason.network)],
+        );
+        final cubit = openDeck(async, history: history, engine: engine);
+        cubit.next();
+        cubit.next();
+
+        unawaited(cubit.reroll());
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
+
+        expect(cubit.state, isA<SurpriseResult>());
+        expect(deck(cubit).index, 2);
+        expect(deck(cubit).suggestions.first.item.id, 0);
+        expect(deck(cubit).notice, SurpriseNotice.offline);
+        expect(outcomes(async, history)[0], SurpriseOutcome.viewed);
+        cubit.close();
+      });
+    });
+
+    test('noticeShown clears the notice', () {
+      fakeAsync((async) {
+        final engine = FakeSurpriseEngine(
+          results: [Success(batchOf(5)), Failure(FailureReason.network)],
+        );
+        final cubit = openDeck(async, engine: engine);
+        unawaited(cubit.reroll());
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
+        expect(deck(cubit).notice, SurpriseNotice.offline);
+
+        cubit.noticeShown();
+
+        expect(deck(cubit).notice, SurpriseNotice.none);
+        cubit.close();
+      });
+    });
+
+    test('a batch that needed the search widened says so, once', () {
+      fakeAsync((async) {
+        final cubit = openDeck(
+          async,
+          engine: FakeSurpriseEngine.returning(
+            batchOf(5, relaxations: const [SurpriseRelaxation.widenYears]),
+          ),
+        );
+
+        expect(deck(cubit).notice, SurpriseNotice.widenedSearch);
+        cubit.noticeShown();
+        expect(deck(cubit).notice, SurpriseNotice.none);
+        cubit.close();
+      });
+    });
+
+    test('a card that stays on top for 3 s counts as revisited — but not if '
+        'the deck moves on first or the user leaves', () {
+      fakeAsync((async) {
+        final history = InMemorySurpriseHistoryRepository();
+        final cubit = openDeck(async, history: history);
+
+        async.elapse(const Duration(seconds: 2));
+        cubit.next(); // card 0 left before 3 s
+        async.elapse(const Duration(seconds: 3));
+        async.flushMicrotasks();
+        var o = outcomes(async, history);
+        expect(o[0], SurpriseOutcome.viewed);
+        expect(o[1], SurpriseOutcome.revisited, reason: 'lingered on 3 s');
+
+        cubit.next();
+        cubit.closeDeck(); // leaves: the timer is stopped
+        async.elapse(const Duration(seconds: 5));
+        async.flushMicrotasks();
+        o = outcomes(async, history);
+        expect(o[2], SurpriseOutcome.viewed);
+        cubit.close();
+      });
+    });
+
+    test('a card that comes back (the deck cycles, or a thumbnail) counts as '
+        'revisited at once', () {
+      fakeAsync((async) {
+        final history = InMemorySurpriseHistoryRepository();
+        final cubit = openDeck(async, history: history);
+
+        cubit.next();
+        cubit.next();
+        expect(outcomes(async, history)[1], SurpriseOutcome.viewed);
+
+        cubit.jumpTo(1); // back to a card already seen
+        async.flushMicrotasks();
+
+        expect(outcomes(async, history)[1], SurpriseOutcome.revisited);
+        expect(outcomes(async, history)[3], SurpriseOutcome.viewed);
         cubit.close();
       });
     });

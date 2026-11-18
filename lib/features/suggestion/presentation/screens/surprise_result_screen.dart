@@ -78,13 +78,6 @@ class _SurpriseResultView extends StatelessWidget {
                 builder: (context, state) {
                   return switch (state) {
                     SurpriseResult() => SurpriseResultContent(state: state),
-                    Exhausted() => EmptyStateView(
-                      icon: AppIcons.dice,
-                      title: context.l10n.surpriseNoMoreSuggestionsTitle,
-                      body: context.l10n.surpriseNoMoreSuggestionsBody,
-                      ctaLabel: context.l10n.surpriseSearchAgain,
-                      onCtaTap: () => context.read<SurpriseCubit>().retry(),
-                    ),
                     SurpriseError() => ErrorStateView(
                       title: context.l10n.surpriseNoMatchTitle,
                       body: context.l10n.surpriseErrorMessage,
@@ -93,6 +86,9 @@ class _SurpriseResultView extends StatelessWidget {
                     // Searching has its own page above; the other three never
                     // reach E3 (only ChooseTypeScreen's BlocListener pushes
                     // here, once the Cubit has moved past them).
+                    // The closing screen (the chosen card) is built later in
+                    // this stack; nothing reaches it yet.
+                    SurpriseChosen() ||
                     Searching() ||
                     ChoosingType() ||
                     ChooseSource() ||
