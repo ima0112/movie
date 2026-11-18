@@ -30,6 +30,9 @@ class ParticipantAnswers {
     this.maxSeasons,
     this.excludeWatched = false,
     this.watchedKeys = const {},
+    this.yearTo,
+    this.platformIds = const {},
+    this.includeRentBuy = false,
   });
 
   final String participantId;
@@ -82,6 +85,22 @@ class ParticipantAnswers {
   /// object's job to fetch.
   final Set<MediaKey> watchedKeys;
 
+  /// The latest year this participant will accept, inclusive — the "To"
+  /// card of the quiz's year range. `null` = up to today (the open end).
+  /// Only the Surprise-me engine reads it for now.
+  final int? yearTo;
+
+  /// The streaming services this participant has (TMDB provider ids, from
+  /// `/watch/providers` for the user's region — never hardcoded). Empty =
+  /// "All": no platform filter at all. A hard filter for the Surprise-me
+  /// engine.
+  final Set<int> platformIds;
+
+  /// "Include rent and buy": with [platformIds] set, also accept titles
+  /// that are only rentable/buyable there, not just included in the
+  /// subscription. Meaningless while [platformIds] is empty.
+  final bool includeRentBuy;
+
   @override
   bool operator ==(Object other) =>
       other is ParticipantAnswers &&
@@ -93,7 +112,10 @@ class ParticipantAnswers {
       other.tvStatus == tvStatus &&
       other.maxSeasons == maxSeasons &&
       other.excludeWatched == excludeWatched &&
-      _setEquals(other.watchedKeys, watchedKeys);
+      _setEquals(other.watchedKeys, watchedKeys) &&
+      other.yearTo == yearTo &&
+      _setEquals(other.platformIds, platformIds) &&
+      other.includeRentBuy == includeRentBuy;
 
   @override
   int get hashCode => Object.hash(
@@ -106,6 +128,9 @@ class ParticipantAnswers {
     maxSeasons,
     excludeWatched,
     Object.hashAllUnordered(watchedKeys),
+    yearTo,
+    Object.hashAllUnordered(platformIds),
+    includeRentBuy,
   );
 
   @override
@@ -114,7 +139,8 @@ class ParticipantAnswers {
       'vibeIds: $vibeIds, yearFrom: $yearFrom, '
       'maxRuntimeMinutes: $maxRuntimeMinutes, tvStatus: $tvStatus, '
       'maxSeasons: $maxSeasons, excludeWatched: $excludeWatched, '
-      'watchedKeys: $watchedKeys)';
+      'watchedKeys: $watchedKeys, yearTo: $yearTo, '
+      'platformIds: $platformIds, includeRentBuy: $includeRentBuy)';
 }
 
 /// Order-independent set content equality — same local stand-in for

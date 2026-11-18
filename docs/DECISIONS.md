@@ -324,6 +324,21 @@ First tap: movie or TV show? Then (`SurpriseCubit`, via
 
 The engine picks with some randomness among the top-5 scored so "Surprise me" doesn't repeat.
 
+### Surprise me engine (`SurpriseEngine`) — in progress
+
+Replaces the single-page, popularity-only pick above (which always returned the same five: it called `/discover` page 1 only and "randomised" among the top 5 of a deterministic ranking). Five suggestions per batch, no AI, only TMDB. Domain contract in `features/match_engine/domain/` (`SurpriseRequest`, `SurpriseBatch`, `SurpriseEngine`); `MatchEngine` stays as is for the Matcher (v1.1).
+
+- **Hard filters, never broken**: vetoes (`without_genres`), platforms (`with_watch_providers` OR'd with `|` + `watch_region` from Settings → Region; none chosen = no platform filter at all), years (from/to), movie max runtime, TV status (finished), "exclude what I've watched" (local), a quality floor (`vote_count.gte` ≈ 150, `vote_average.gte` ≈ 6.0). `with_watch_monetization_types=flatrate` is sent explicitly with platforms; "include rent and buy" adds `rent|buy`. Verified live: TMDB caps `page` at 500; `with_status=3` works; no HTTP cache sits in front of Dio.
+- **Soft signals, only order**: vibes (genres/keywords of the 16-vibe catalog, 11 on TV), taste (liked genres, history), Bayesian rating `(v·R + m·C)/(v + m)` (C from the candidate set itself), small noise with a per-batch seed.
+- **Candidates**: one query per chosen vibe (max 3) plus one general query (the source of the "wildcard outside your tastes"); the first call reads `total_pages`, then 2–3 random pages per query with a bias to the first ones (`page = 1 + floor(min(total_pages, 25)·r²)`), alternating `popularity.desc` and `vote_average.desc` (the latter always with a vote floor). 40–60 unique candidates after removing watched, shown-this-session and shown-recently.
+- **Selection**: weighted sampling without replacement from the top ~20; at most 2 of the same main genre, at least 1 per chosen vibe, 1 wildcard. "% for you" = the score scaled to 60–98, relative to the batch.
+- **Other 5 / redo**: a `sessionId` and the set of shown ids; a new seed and unused pages. A redone questionnaire also skips the last 30 days of history. History = drift table `surprise_history` (`tmdbId`, type, `shownAt`, `sessionId`, outcome: shown/chosen/saved/seen/discarded) behind `SurpriseHistoryRepository`; local only, wiped by "clear my data", never written into the taste profile.
+- **Few results — relaxation ladder** (stops at 15 candidates): lower `vote_count.gte` to 50 → drop the vibes → widen the year **lower bound** 10 years back (and say so). **Never** relaxed: vetoes, platforms, runtime, the upper year. Still too few → a "few options with your platforms" state (not designed yet) offering to widen them.
+- **TV genres**: TMDB's TV list has no Horror, Romance, Thriller, History, Music or Fantasy, merges Action & Adventure and Sci-Fi & Fantasy, and id 37 is *Western* (the old mapper sent Thriller there). Vetoes with no TV genre use `without_keywords` (partial coverage; e.g. "horror" removes ~4% of series); the genre map is fixed per type.
+- **Details of the 5 chosen only**: one `/{movie|tv}/{id}?append_to_response=watch/providers` call each (runtime or seasons, tagline, providers); a failed one is replaced by the next candidate.
+- **Dropped**: "Max seasons" (not in the new questionnaire; it would need a detail call per candidate) — removed from the engine when the new one is wired.
+- **Stack**: (1) domain contract, (2) drift history, (3) data layer (TV genre map, keywords, monetization, random pages), (4) the engine + tests, (5) wired into `SurpriseCubit` ("Another suggestion" rotates the 5, "Search again" fetches a new batch).
+
 ### Recommendations ("For you" / "Because you…", B1 F1b)
 
 Two pure domain pieces (`features/recommendations/domain/`): **`RecommendationPlanner`** decides *what each section is about* for a segment and a day, and **`RecommendationBuilder`** only cleans up what TMDB returns (drops posterless items and anything already in My List; fewer than 6 left → the section hides). It is not `MatchEngine` (built to resolve one N≥1 answer), but reuses `Vibe.genresFor`/`.keywordIdsFor` and `genreAffinityFrom`.
