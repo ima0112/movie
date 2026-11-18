@@ -16,6 +16,10 @@ enum ChipState {
   /// hairline ([AppColors.accentLine]) and `accent` text/icon.
   selected,
 
+  /// Selected with high emphasis (the quiz's vibes): a solid `accent` fill
+  /// with `onAccent` text and icon.
+  solid,
+
   /// Dashed `lineStrong` border, no fill — a suggestion the user can tap
   /// to add (e.g. a suggested genre).
   suggestion,
@@ -60,7 +64,10 @@ class AppChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSelected = state == ChipState.selected;
     final isVetoed = state == ChipState.vetoed;
-    final textColor = isSelected ? AppColors.accent : AppColors.ink;
+    final isSolid = state == ChipState.solid;
+    final textColor = isSolid
+        ? AppColors.onAccent
+        : (isSelected ? AppColors.accent : AppColors.ink);
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
@@ -110,6 +117,13 @@ class AppChip extends StatelessWidget {
           color: AppColors.accentSoft,
           borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           border: Border.all(color: AppColors.accentLine),
+        ),
+        child: content,
+      ),
+      ChipState.solid => DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.accent,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
         ),
         child: content,
       ),

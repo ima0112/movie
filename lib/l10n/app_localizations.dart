@@ -2588,17 +2588,29 @@ abstract class AppLocalizations {
   /// **'Exclude what I\'ve already watched'**
   String get quizExcludeWatchedToggle;
 
-  /// E2 step 1's own headline (docs/SCREENS.md E2).
+  /// E2 step 1's headline, three parts so one word can be coloured (red): before + accent + after = "What are you NOT in the mood for today?".
   ///
   /// In en, this message translates to:
-  /// **'Pick up to 3 you\'re NOT in the mood for'**
-  String get quizGenreStepHeadline;
+  /// **'What are you '**
+  String get quizGenreHeadlineBefore;
 
-  /// E2 steps 1 and 2's own "N of M" counter under each headline (docs/SCREENS.md E2).
+  /// No description provided for @quizGenreHeadlineAccent.
   ///
   /// In en, this message translates to:
-  /// **'{selected} of {max}'**
-  String quizSelectionCounter(int selected, int max);
+  /// **'NOT'**
+  String get quizGenreHeadlineAccent;
+
+  /// No description provided for @quizGenreHeadlineAfter.
+  ///
+  /// In en, this message translates to:
+  /// **' in the mood for today?'**
+  String get quizGenreHeadlineAfter;
+
+  /// No description provided for @quizGenreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip up to 3 genres'**
+  String get quizGenreSubtitle;
 
   /// E2 step 4's own stepper label (docs/SCREENS.md E2) — reuses discoverRangeFiltersNoLimit for its "No limit" value.
   ///
@@ -2612,11 +2624,35 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get quizSearchButton;
 
-  /// E2 step 2's own headline (docs/SCREENS.md E2).
+  /// E2 step 2's headline, three parts so "vibes" can be coloured (amber): before + accent + after.
   ///
   /// In en, this message translates to:
-  /// **'Now pick 3 you ARE in the mood for'**
-  String get quizVibeStepHeadline;
+  /// **'Which '**
+  String get quizVibeHeadlineBefore;
+
+  /// No description provided for @quizVibeHeadlineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'vibes'**
+  String get quizVibeHeadlineAccent;
+
+  /// No description provided for @quizVibeHeadlineAfter.
+  ///
+  /// In en, this message translates to:
+  /// **' are you in the mood for today?'**
+  String get quizVibeHeadlineAfter;
+
+  /// No description provided for @quizVibeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to 3 vibes'**
+  String get quizVibeSubtitle;
+
+  /// E2's "next step" button (the last step's is quizSearchButton).
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get quizContinueButton;
 
   /// E2 step 3's own headline (docs/SCREENS.md E2).
   ///

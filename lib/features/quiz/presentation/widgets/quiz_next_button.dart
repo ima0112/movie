@@ -38,7 +38,7 @@ class QuizNextButton extends StatelessWidget {
         return PrimaryButton(
           label: isLastStep
               ? context.l10n.quizSearchButton
-              : context.l10n.commonNext,
+              : context.l10n.quizContinueButton,
           isDisabled: !isValid,
           onTap: () => _handleTap(context, isLastStep),
         );

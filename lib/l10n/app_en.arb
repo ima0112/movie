@@ -1453,21 +1453,15 @@
   "@quizExcludeWatchedToggle": {
     "description": "E2 step 4's own discreet toggle (docs/SCREENS.md E2) — deliberately its own key, not myListHideWatchedToggle (\"Hide what I've watched\"), since the two controls use different wording in the existing code."
   },
-  "quizGenreStepHeadline": "Pick up to 3 you're NOT in the mood for",
+  "quizGenreHeadlineBefore": "What are you ",
+  "@quizGenreHeadlineBefore": {
+    "description": "E2 step 1's headline, three parts so one word can be coloured (red): before + accent + after = \"What are you NOT in the mood for today?\"."
+  },
+  "quizGenreHeadlineAccent": "NOT",
+  "quizGenreHeadlineAfter": " in the mood for today?",
+  "quizGenreSubtitle": "Skip up to 3 genres",
   "@quizGenreStepHeadline": {
     "description": "E2 step 1's own headline (docs/SCREENS.md E2)."
-  },
-  "quizSelectionCounter": "{selected} of {max}",
-  "@quizSelectionCounter": {
-    "description": "E2 steps 1 and 2's own \"N of M\" counter under each headline (docs/SCREENS.md E2).",
-    "placeholders": {
-      "selected": {
-        "type": "int"
-      },
-      "max": {
-        "type": "int"
-      }
-    }
   },
   "quizMaxSeasonsLabel": "Max seasons",
   "@quizMaxSeasonsLabel": {
@@ -1477,7 +1471,17 @@
   "@quizSearchButton": {
     "description": "E2's final-step button, replacing commonNext (docs/SCREENS.md E2: \"Final button 'Search'\")."
   },
-  "quizVibeStepHeadline": "Now pick 3 you ARE in the mood for",
+  "quizVibeHeadlineBefore": "Which ",
+  "@quizVibeHeadlineBefore": {
+    "description": "E2 step 2's headline, three parts so \"vibes\" can be coloured (amber): before + accent + after."
+  },
+  "quizVibeHeadlineAccent": "vibes",
+  "quizVibeHeadlineAfter": " are you in the mood for today?",
+  "quizVibeSubtitle": "Pick up to 3 vibes",
+  "quizContinueButton": "Continue",
+  "@quizContinueButton": {
+    "description": "E2's \"next step\" button (the last step's is quizSearchButton)."
+  },
   "@quizVibeStepHeadline": {
     "description": "E2 step 2's own headline (docs/SCREENS.md E2)."
   },

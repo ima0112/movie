@@ -1517,13 +1517,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizExcludeWatchedToggle => 'Exclude what I\'ve already watched';
 
   @override
-  String get quizGenreStepHeadline =>
-      'Pick up to 3 you\'re NOT in the mood for';
+  String get quizGenreHeadlineBefore => 'What are you ';
 
   @override
-  String quizSelectionCounter(int selected, int max) {
-    return '$selected of $max';
-  }
+  String get quizGenreHeadlineAccent => 'NOT';
+
+  @override
+  String get quizGenreHeadlineAfter => ' in the mood for today?';
+
+  @override
+  String get quizGenreSubtitle => 'Skip up to 3 genres';
 
   @override
   String get quizMaxSeasonsLabel => 'Max seasons';
@@ -1532,7 +1535,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizSearchButton => 'Search';
 
   @override
-  String get quizVibeStepHeadline => 'Now pick 3 you ARE in the mood for';
+  String get quizVibeHeadlineBefore => 'Which ';
+
+  @override
+  String get quizVibeHeadlineAccent => 'vibes';
+
+  @override
+  String get quizVibeHeadlineAfter => ' are you in the mood for today?';
+
+  @override
+  String get quizVibeSubtitle => 'Pick up to 3 vibes';
+
+  @override
+  String get quizContinueButton => 'Continue';
 
   @override
   String get quizYearStepHeadline => 'How far back do you want to go?';

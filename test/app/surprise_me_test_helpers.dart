@@ -17,7 +17,7 @@ import 'package:movies/features/suggestion/presentation/screens/choose_type_scre
 import 'package:movies/features/suggestion/presentation/screens/surprise_quiz_screen.dart';
 import 'package:movies/features/suggestion/presentation/screens/surprise_result_screen.dart';
 import 'package:movies/l10n/app_localizations.dart';
-import 'package:movies/shared/widgets/vibe_tile_grid.dart';
+import 'package:movies/shared/widgets/app_chip.dart';
 
 /// Shared setup for the Surprise-me end-to-end files
 /// (`surprise_me_*_test.dart`) — split one scenario per file rather
@@ -113,27 +113,21 @@ Future<void> pumpSurpriseMe(WidgetTester tester) async {
   expect(find.text('To get hooked over several nights'), findsOneWidget);
 }
 
-/// Taps through E2's 4 steps with the minimum valid selection on each —
-/// step 1 (vetoes) and steps 3/4 always start valid; step 2 needs
-/// exactly 3 vibes.
+/// Taps through E2's 4 steps — every step has a default, so only one vibe is
+/// picked (to see the chips answer) before going on.
 Future<void> completeQuiz(WidgetTester tester) async {
-  expect(find.text('Next'), findsOneWidget);
-  await tester.tap(find.text('Next')); // step 1 -> 2
+  expect(find.text('Continue'), findsOneWidget);
+  await tester.tap(find.text('Continue')); // step 1 -> 2
   await tester.pumpAndSettle();
 
-  final tiles = find.descendant(
-    of: find.byType(VibeTileGrid),
-    matching: find.byType(GestureDetector),
-  );
-  expect(tiles, findsWidgets);
-  await tester.tap(tiles.at(0));
-  await tester.tap(tiles.at(1));
-  await tester.tap(tiles.at(2));
+  final chips = find.byType(AppChip);
+  expect(chips, findsWidgets);
+  await tester.tap(chips.at(0));
   await tester.pump();
 
-  await tester.tap(find.text('Next')); // step 2 -> 3
+  await tester.tap(find.text('Continue')); // step 2 -> 3
   await tester.pumpAndSettle();
-  await tester.tap(find.text('Next')); // step 3 -> 4
+  await tester.tap(find.text('Continue')); // step 3 -> 4
   await tester.pumpAndSettle();
 
   await tester.tap(find.text('Search')); // step 4 -> SurpriseCubit.answerWith
