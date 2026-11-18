@@ -140,7 +140,7 @@ void main() {
         (await db.customSelect('PRAGMA user_version').getSingle()).read<int>(
           'user_version',
         ),
-        12,
+        13,
       );
     });
 
@@ -208,5 +208,15 @@ void main() {
         expect(rows.values.every((r) => r.genres == ''), isTrue);
       },
     );
+
+    test('upgrading from schema v12 creates LocalFlagsTable, empty', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      raw.execute('PRAGMA user_version = 12;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      expect(await db.select(db.localFlagsTable).get(), isEmpty);
+    });
   });
 }

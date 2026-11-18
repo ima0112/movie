@@ -290,6 +290,17 @@ class SurpriseHistoryTable extends Table {
   Set<Column> get primaryKey => {mediaType, tmdbId, sessionId};
 }
 
+/// Small on/off facts remembered on the device (`LocalFlagsRepository`): one
+/// row per flag that has been set.
+@DataClassName('LocalFlagRow')
+class LocalFlagsTable extends Table {
+  /// `LocalFlag`, as its name.
+  TextColumn get flag => text()();
+
+  @override
+  Set<Column> get primaryKey => {flag};
+}
+
 /// The app's single SQLite (drift) database.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/persistence/
@@ -310,6 +321,7 @@ class SurpriseHistoryTable extends Table {
     RecentlyViewedTable,
     SavedPeopleTable,
     SurpriseHistoryTable,
+    LocalFlagsTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -326,12 +338,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, and to 12 when it gained its batch number and genres and its outcomes were renamed — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, to 12 when it gained its batch number and genres and its outcomes were renamed, and to 13 when [LocalFlagsTable] was added — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -392,6 +404,9 @@ class AppDatabase extends _$AppDatabase {
           "UPDATE surprise_history_table SET outcome = 'revisited' "
           "WHERE outcome = 'seen'",
         );
+      }
+      if (from < 13) {
+        await m.createTable(localFlagsTable);
       }
     },
   );

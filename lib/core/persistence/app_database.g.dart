@@ -4066,6 +4066,165 @@ class SurpriseHistoryTableCompanion
   }
 }
 
+class $LocalFlagsTableTable extends LocalFlagsTable
+    with TableInfo<$LocalFlagsTableTable, LocalFlagRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalFlagsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _flagMeta = const VerificationMeta('flag');
+  @override
+  late final GeneratedColumn<String> flag = GeneratedColumn<String>(
+    'flag',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [flag];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_flags_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalFlagRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('flag')) {
+      context.handle(
+        _flagMeta,
+        flag.isAcceptableOrUnknown(data['flag']!, _flagMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_flagMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {flag};
+  @override
+  LocalFlagRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalFlagRow(
+      flag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}flag'],
+      )!,
+    );
+  }
+
+  @override
+  $LocalFlagsTableTable createAlias(String alias) {
+    return $LocalFlagsTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalFlagRow extends DataClass implements Insertable<LocalFlagRow> {
+  /// `LocalFlag`, as its name.
+  final String flag;
+  const LocalFlagRow({required this.flag});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['flag'] = Variable<String>(flag);
+    return map;
+  }
+
+  LocalFlagsTableCompanion toCompanion(bool nullToAbsent) {
+    return LocalFlagsTableCompanion(flag: Value(flag));
+  }
+
+  factory LocalFlagRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalFlagRow(flag: serializer.fromJson<String>(json['flag']));
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{'flag': serializer.toJson<String>(flag)};
+  }
+
+  LocalFlagRow copyWith({String? flag}) =>
+      LocalFlagRow(flag: flag ?? this.flag);
+  LocalFlagRow copyWithCompanion(LocalFlagsTableCompanion data) {
+    return LocalFlagRow(flag: data.flag.present ? data.flag.value : this.flag);
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalFlagRow(')
+          ..write('flag: $flag')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => flag.hashCode;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalFlagRow && other.flag == this.flag);
+}
+
+class LocalFlagsTableCompanion extends UpdateCompanion<LocalFlagRow> {
+  final Value<String> flag;
+  final Value<int> rowid;
+  const LocalFlagsTableCompanion({
+    this.flag = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LocalFlagsTableCompanion.insert({
+    required String flag,
+    this.rowid = const Value.absent(),
+  }) : flag = Value(flag);
+  static Insertable<LocalFlagRow> custom({
+    Expression<String>? flag,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (flag != null) 'flag': flag,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LocalFlagsTableCompanion copyWith({Value<String>? flag, Value<int>? rowid}) {
+    return LocalFlagsTableCompanion(
+      flag: flag ?? this.flag,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (flag.present) {
+      map['flag'] = Variable<String>(flag.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalFlagsTableCompanion(')
+          ..write('flag: $flag, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4090,6 +4249,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $SurpriseHistoryTableTable surpriseHistoryTable =
       $SurpriseHistoryTableTable(this);
+  late final $LocalFlagsTableTable localFlagsTable = $LocalFlagsTableTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4104,6 +4266,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recentlyViewedTable,
     savedPeopleTable,
     surpriseHistoryTable,
+    localFlagsTable,
   ];
 }
 
@@ -6334,6 +6497,129 @@ typedef $$SurpriseHistoryTableTableProcessedTableManager =
       SurpriseHistoryRow,
       PrefetchHooks Function()
     >;
+typedef $$LocalFlagsTableTableCreateCompanionBuilder =
+    LocalFlagsTableCompanion Function({required String flag, Value<int> rowid});
+typedef $$LocalFlagsTableTableUpdateCompanionBuilder =
+    LocalFlagsTableCompanion Function({Value<String> flag, Value<int> rowid});
+
+class $$LocalFlagsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalFlagsTableTable> {
+  $$LocalFlagsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get flag => $composableBuilder(
+    column: $table.flag,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalFlagsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalFlagsTableTable> {
+  $$LocalFlagsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get flag => $composableBuilder(
+    column: $table.flag,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalFlagsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalFlagsTableTable> {
+  $$LocalFlagsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get flag =>
+      $composableBuilder(column: $table.flag, builder: (column) => column);
+}
+
+class $$LocalFlagsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalFlagsTableTable,
+          LocalFlagRow,
+          $$LocalFlagsTableTableFilterComposer,
+          $$LocalFlagsTableTableOrderingComposer,
+          $$LocalFlagsTableTableAnnotationComposer,
+          $$LocalFlagsTableTableCreateCompanionBuilder,
+          $$LocalFlagsTableTableUpdateCompanionBuilder,
+          (
+            LocalFlagRow,
+            BaseReferences<_$AppDatabase, $LocalFlagsTableTable, LocalFlagRow>,
+          ),
+          LocalFlagRow,
+          PrefetchHooks Function()
+        > {
+  $$LocalFlagsTableTableTableManager(
+    _$AppDatabase db,
+    $LocalFlagsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalFlagsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalFlagsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocalFlagsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> flag = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LocalFlagsTableCompanion(flag: flag, rowid: rowid),
+          createCompanionCallback:
+              ({
+                required String flag,
+                Value<int> rowid = const Value.absent(),
+              }) => LocalFlagsTableCompanion.insert(flag: flag, rowid: rowid),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$LocalFlagsTableTable, LocalFlagRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $LocalFlagsTableTable,
+                    LocalFlagRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalFlagsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalFlagsTableTable,
+      LocalFlagRow,
+      $$LocalFlagsTableTableFilterComposer,
+      $$LocalFlagsTableTableOrderingComposer,
+      $$LocalFlagsTableTableAnnotationComposer,
+      $$LocalFlagsTableTableCreateCompanionBuilder,
+      $$LocalFlagsTableTableUpdateCompanionBuilder,
+      (
+        LocalFlagRow,
+        BaseReferences<_$AppDatabase, $LocalFlagsTableTable, LocalFlagRow>,
+      ),
+      LocalFlagRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6356,4 +6642,6 @@ class $AppDatabaseManager {
       $$SavedPeopleTableTableTableManager(_db, _db.savedPeopleTable);
   $$SurpriseHistoryTableTableTableManager get surpriseHistoryTable =>
       $$SurpriseHistoryTableTableTableManager(_db, _db.surpriseHistoryTable);
+  $$LocalFlagsTableTableTableManager get localFlagsTable =>
+      $$LocalFlagsTableTableTableManager(_db, _db.localFlagsTable);
 }
