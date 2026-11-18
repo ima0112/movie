@@ -57,7 +57,7 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
     final l10n = context.l10n;
     return Semantics(
       customSemanticsActions: {
-        CustomSemanticsAction(label: l10n.surpriseControlNext): cubit.next,
+        CustomSemanticsAction(label: l10n.surpriseControlNext): _deck.swipeNext,
         CustomSemanticsAction(label: l10n.surpriseControlSave): cubit.save,
         CustomSemanticsAction(label: l10n.surpriseChooseThis): cubit.choose,
         CustomSemanticsAction(label: l10n.surpriseActionFlip): _deck.flipTop,
@@ -125,7 +125,7 @@ class _SurpriseDeckViewState extends State<SurpriseDeckView> {
                       builder: (context, count) => SurpriseAccessibleControls(
                         onSave: cubit.save,
                         onChoose: cubit.choose,
-                        onNext: cubit.next,
+                        onNext: _deck.swipeNext,
                         canNext: count > 1,
                       ),
                     ),
