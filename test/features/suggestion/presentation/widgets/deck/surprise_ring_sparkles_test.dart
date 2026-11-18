@@ -80,7 +80,8 @@ void main() {
         find.byType(Icon).evaluate().length,
         SurpriseSparkles.frontStars.length,
       );
-      expect(SurpriseSparkles.frontStars, isNotEmpty);
+      // Only a few over the card, fewer than around it.
+      expect(SurpriseSparkles.frontStars.length, inInclusiveRange(1, 3));
     });
   });
 }
