@@ -1893,4 +1893,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfileSheetTitle => 'Edit profile';
+
+  @override
+  String get surpriseControlSave => 'Save';
+
+  @override
+  String get surpriseControlNext => 'Next';
+
+  @override
+  String get surpriseActionViewDetails => 'View details';
 }
