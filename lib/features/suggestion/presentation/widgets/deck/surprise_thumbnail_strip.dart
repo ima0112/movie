@@ -47,7 +47,11 @@ class SurpriseThumbnailStrip extends StatelessWidget {
 
   static const double thumbWidth = 28;
   static const double thumbHeight = 38;
-  static const double touchSize = 48;
+
+  /// The touch area: 48 tall, but only 34 wide — close enough that the strip
+  /// reads as one group.
+  static const double touchHeight = 48;
+  static const double touchWidth = 34;
 
   SurpriseThumbnailState _stateOf(int i) {
     if (i == chosenIndex) return SurpriseThumbnailState.chosen;
@@ -117,8 +121,8 @@ class _Thumbnail extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: SizedBox(
-          width: SurpriseThumbnailStrip.touchSize,
-          height: SurpriseThumbnailStrip.touchSize,
+          width: SurpriseThumbnailStrip.touchWidth,
+          height: SurpriseThumbnailStrip.touchHeight,
           child: Center(
             child: SizedBox(
               width: SurpriseThumbnailStrip.thumbWidth,

@@ -113,7 +113,7 @@ void main() {
 
   group('SurpriseSuggestionCard', () {
     testWidgets('a movie: number, tags, title, meta, rating, tagline and the '
-        'three platform logos with their count', (tester) async {
+        'three platform logos (no count text)', (tester) async {
       await tester.pumpWidget(
         _host(
           SurpriseSuggestionCard(
@@ -132,7 +132,8 @@ void main() {
       expect(find.text('8.2'), findsOneWidget);
       expect(find.text('«Long live the fighters.»'), findsOneWidget);
       expect(find.byType(StreamingServiceLogo), findsNWidgets(3));
-      expect(find.text('3 platforms'), findsOneWidget);
+      // Three logos say it all: no "3 platforms" text.
+      expect(find.text('3 platforms'), findsNothing);
     });
 
     testWidgets('more than three platforms: three logos and "+2"', (
@@ -240,7 +241,7 @@ void main() {
 
       expect(find.text('88 % para ti'), findsOneWidget);
       expect(find.text('Serie'), findsOneWidget);
-      expect(find.text('2 plataformas'), findsOneWidget);
+      expect(find.text('2 plataformas'), findsNothing); // the logos say it
       expect(find.text('2017–2020 · 3 temporadas'), findsOneWidget);
       expect(find.text('8,7'), findsOneWidget); // comma decimal
     });

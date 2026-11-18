@@ -71,7 +71,7 @@ class AppIcons {
   static const IconData next = RemixIcons.arrow_right_line;
 
   /// "Tap" — Surprise me's "Double-tap to choose" hint.
-  static const IconData touch = RemixIcons.cursor_hand;
+  static const IconData touch = RemixIcons.focus_2_line;
 
   /// The same four-point star, filled — the closing screen's sparkles.
   static const IconData shiningFill = RemixIcons.shining_fill;
