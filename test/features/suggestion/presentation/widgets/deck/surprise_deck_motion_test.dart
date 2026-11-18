@@ -69,9 +69,16 @@ void main() {
     expect(_leaving, findsNothing);
   });
 
-  testWidgets('to a higher number (2 → 5): the old top comes toward the viewer '
-      'and fades', (tester) async {
-    final index = ValueNotifier(1);
+  /// The combined scale of every Transform around card [number].
+  double scaleOf(WidgetTester tester, int number) => tester
+      .widgetList<Transform>(
+        find.ancestor(of: _card(number).last, matching: find.byType(Transform)),
+      )
+      .fold(1.0, (p, t) => p * t.transform.storage[0]);
+
+  testWidgets('to a higher number (3 → 5): the old top grows and fades, the '
+      'new one comes from small and faint', (tester) async {
+    final index = ValueNotifier(2);
     await tester.pumpWidget(_host(index, () {}));
 
     index.value = 4;
@@ -79,19 +86,27 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(_leaving, findsOneWidget);
-    final scale = tester.widget<Transform>(
-      find.descendant(of: _leaving, matching: find.byType(Transform)).first,
+    expect(
+      tester
+          .widget<Transform>(
+            find
+                .descendant(of: _leaving, matching: find.byType(Transform))
+                .first,
+          )
+          .transform
+          .storage[0],
+      greaterThan(1),
     );
-    expect(scale.transform.getMaxScaleOnAxis(), greaterThan(1));
-    expect(_fades(tester, 2).any((o) => o < 1 && o > 0), isTrue);
+    expect(_fades(tester, 5).any((o) => o < 1 && o > 0), isTrue);
+    expect(scaleOf(tester, 5), lessThan(1));
 
     await tester.pumpAndSettle();
     expect(_leaving, findsNothing);
+    expect(_fades(tester, 5).where((o) => o < 1), isEmpty);
   });
 
-  testWidgets('to a lower number (5 → 3): the new top arrives from the front', (
-    tester,
-  ) async {
+  testWidgets('to a lower number (5 → 3): the old top shrinks back and fades, '
+      'the new one comes from large and faint', (tester) async {
     final index = ValueNotifier(4);
     await tester.pumpWidget(_host(index, () {}));
 
@@ -99,10 +114,23 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(_leaving, findsNothing);
+    expect(_leaving, findsOneWidget);
+    expect(
+      tester
+          .widget<Transform>(
+            find
+                .descendant(of: _leaving, matching: find.byType(Transform))
+                .first,
+          )
+          .transform
+          .storage[0],
+      lessThan(1),
+    );
     expect(_fades(tester, 3).any((o) => o < 1 && o > 0), isTrue);
+    expect(scaleOf(tester, 3), greaterThan(1));
 
     await tester.pumpAndSettle();
+    expect(_leaving, findsNothing);
     expect(_fades(tester, 3).where((o) => o < 1), isEmpty);
   });
 }
