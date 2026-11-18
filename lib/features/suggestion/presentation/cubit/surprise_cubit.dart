@@ -119,6 +119,13 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   Future<void> chooseType(MediaType mediaType) async {
     final generation = ++_searchGeneration;
 
+    // A fresh pick starts from "choosing": E1 routes once per pick (to H11, the
+    // quiz or the result), and it only knows a pick is new when the state
+    // passes through [ChoosingType]. Without this, coming back to E1 from the
+    // quiz (or H11, or the result) left the state at [NeedsQuiz] and E1 still
+    // "already navigated" — the cards did nothing.
+    if (state is! ChoosingType) emit(const ChoosingType());
+
     final profile = await _tasteProfileRepository.watch().first;
     final libraryEntries = await _libraryEntries();
     if (generation != _searchGeneration || isClosed) return;
