@@ -8,7 +8,7 @@ import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../l10n/l10n_extension.dart';
 import '../../cubit/surprise_state.dart';
 import 'surprise_affinity_ring.dart';
-import 'surprise_deck_top_bar.dart';
+import 'surprise_in_watch_later_badge.dart';
 import 'surprise_sparkles.dart';
 import 'surprise_suggestion_card.dart';
 import 'surprise_thumbnail_strip.dart';
@@ -41,23 +41,28 @@ class SurpriseClosingView extends StatelessWidget {
               hasScrollBody: false,
               child: Column(
                 children: [
-                  SurpriseDeckTopBar(
-                    title: l10n.surpriseChosenLabel,
+                  _TopRow(
                     onClose: onClose,
+                    strip: SurpriseThumbnailStrip(
+                      posterUrls: [
+                        for (final s in chosen.suggestions) s.item.posterUrl,
+                      ],
+                      currentIndex: chosen.index,
+                      savedIndexes: {
+                        for (var i = 0; i < chosen.suggestions.length; i++)
+                          if (chosen.savedKeys.contains(
+                            chosen.suggestions[i].item.key,
+                          ))
+                            i,
+                      },
+                      chosenIndex: chosen.index,
+                    ),
                   ),
-                  SurpriseThumbnailStrip(
-                    posterUrls: [
-                      for (final s in chosen.suggestions) s.item.posterUrl,
-                    ],
-                    currentIndex: chosen.index,
-                    savedIndexes: {
-                      for (var i = 0; i < chosen.suggestions.length; i++)
-                        if (chosen.savedKeys.contains(
-                          chosen.suggestions[i].item.key,
-                        ))
-                          i,
-                    },
-                    chosenIndex: chosen.index,
+                  Text(
+                    l10n.surpriseChosenLabel.toUpperCase(),
+                    style: AppTextStyles.overline.copyWith(
+                      color: AppColors.accent,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Expanded(
@@ -67,7 +72,7 @@ class SurpriseClosingView extends StatelessWidget {
                           const Positioned.fill(child: SurpriseSparkles()),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.xxxl,
+                              horizontal: AppSpacing.screenMargin,
                             ),
                             // The one way to the full detail: tap the card you
                             // chose.
@@ -77,10 +82,18 @@ class SurpriseClosingView extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: () =>
                                     context.pushMediaDetail(card.item.key),
-                                child: SurpriseSuggestionCard(
-                                  suggestion: card,
-                                  number: chosen.index + 1,
-                                  total: chosen.suggestions.length,
+                                child: _ChosenFrame(
+                                  child: SurpriseSuggestionCard(
+                                    suggestion: card,
+                                    number: chosen.index + 1,
+                                    total: chosen.suggestions.length,
+                                    showAffinity: false,
+                                    topAction:
+                                        const SurpriseInWatchLaterBadge(),
+                                    bottomEnd: SurpriseAffinityRing(
+                                      percent: card.affinityPercent,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -88,26 +101,6 @@ class SurpriseClosingView extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SurpriseAffinityRing(percent: card.affinityPercent),
-                      const SizedBox(width: AppSpacing.lg),
-                      const Icon(
-                        AppIcons.watchLaterFill,
-                        size: 18,
-                        color: AppColors.accent,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Flexible(
-                        child: Text(
-                          l10n.surpriseChosenInWatchLater,
-                          style: AppTextStyles.bodySmStrong,
-                        ),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: AppSpacing.screenMargin),
                 ],
@@ -138,6 +131,68 @@ class _Entrance extends StatelessWidget {
         child: Transform.scale(scale: 0.9 + 0.1 * t, child: child),
       ),
       child: child,
+    );
+  }
+}
+
+/// The "×" on the left and the strip centred on the page, on one line.
+class _TopRow extends StatelessWidget {
+  const _TopRow({required this.onClose, required this.strip});
+
+  final VoidCallback onClose;
+  final Widget strip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: IconButton(
+            tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+            icon: const Icon(AppIcons.close, color: AppColors.ink),
+            onPressed: onClose,
+          ),
+        ),
+        Expanded(child: Center(child: strip)),
+        // As wide as the button, so the strip is centred on the page.
+        const SizedBox(width: kMinInteractiveDimension + 2 * AppSpacing.sm),
+      ],
+    );
+  }
+}
+
+/// The chosen card's frame: an amber border and a soft amber glow around it.
+class _ChosenFrame extends StatelessWidget {
+  const _ChosenFrame({required this.child});
+
+  final Widget child;
+
+  static const double _border = 2;
+  static const double _glowBlur = 28;
+  static const double _glowAlpha = 0.35;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppSpacing.radiusXxl);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: _glowAlpha),
+            blurRadius: _glowBlur,
+          ),
+        ],
+      ),
+      child: DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          border: Border.all(color: AppColors.accent, width: _border),
+        ),
+        child: child,
+      ),
     );
   }
 }

@@ -24,7 +24,17 @@ class SurpriseAffinityRing extends StatelessWidget {
       height: size,
       child: CustomPaint(
         painter: _RingPainter(percent / 100),
-        child: Center(child: Text('$percent', style: AppTextStyles.h3)),
+        child: Center(
+          child: Text.rich(
+            TextSpan(
+              text: '$percent',
+              style: AppTextStyles.h3,
+              children: [
+                TextSpan(text: '%', style: AppTextStyles.captionStrong),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

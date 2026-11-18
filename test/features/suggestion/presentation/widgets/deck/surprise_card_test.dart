@@ -267,5 +267,27 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('without the affinity tag, with a corner widget: the type tag '
+        'stays and the tagline keeps clear of the corner', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          SurpriseSuggestionCard(
+            suggestion: movieSuggestion(),
+            number: 3,
+            total: 5,
+            showAffinity: false,
+            bottomEnd: const SizedBox(key: Key('ring'), width: 64, height: 64),
+          ),
+        ),
+      );
+
+      expect(find.text('88 % for you'), findsNothing);
+      expect(find.text('Movie'), findsOneWidget);
+      expect(find.byKey(const Key('ring')), findsOneWidget);
+      final ring = tester.getRect(find.byKey(const Key('ring')));
+      final tagline = tester.getRect(find.text('«Long live the fighters.»'));
+      expect(tagline.right, lessThanOrEqualTo(ring.left));
+    });
   });
 }
