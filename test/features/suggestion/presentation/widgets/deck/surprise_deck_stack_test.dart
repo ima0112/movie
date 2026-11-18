@@ -177,25 +177,21 @@ void main() {
     expect(calls.choose, 1);
   });
 
-  testWidgets('an arrow shows on the edge being dragged toward, and only '
-      'while dragging', (tester) async {
+  testWidgets('dragging shows no edge arrows (they are only in the tour)', (
+    tester,
+  ) async {
     await tester.pumpWidget(_host(_Calls()));
-    SurpriseEdgeArrows arrows() =>
-        tester.widget<SurpriseEdgeArrows>(find.byType(SurpriseEdgeArrows));
-    expect(arrows().leftProgress, 0);
-    expect(arrows().rightProgress, 0);
+    expect(find.byType(SurpriseEdgeArrows), findsNothing);
 
     final gesture = await tester.startGesture(tester.getCenter(_top));
     await gesture.moveBy(const Offset(-20, 0)); // past the touch slop
     await gesture.moveBy(const Offset(-100, 0));
     await tester.pump();
-    expect(arrows().leftProgress, greaterThan(0));
-    expect(arrows().rightProgress, 0);
+    expect(find.byType(SurpriseEdgeArrows), findsNothing);
 
-    await gesture.moveBy(const Offset(220, 0)); // past centre, to the right
+    await gesture.moveBy(const Offset(220, 0));
     await tester.pump();
-    expect(arrows().leftProgress, 0);
-    expect(arrows().rightProgress, greaterThan(0));
+    expect(find.byType(SurpriseEdgeArrows), findsNothing);
     await gesture.up();
     await tester.pumpAndSettle();
   });

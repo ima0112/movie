@@ -137,9 +137,10 @@ void main() {
     expect(find.text('Science Fiction'), findsOneWidget);
     expect(find.text('SYNOPSIS'), findsOneWidget);
     expect(find.text('A long road home.'), findsOneWidget);
-    expect(find.text('DIRECTED BY'), findsOneWidget);
-    expect(find.text('Tom · Ana'), findsOneWidget);
-    expect(find.text('CAST'), findsOneWidget);
+    expect(find.text('Directed by '), findsOneWidget);
+    expect(find.text('Tom'), findsOneWidget);
+    expect(find.text('Ana'), findsOneWidget);
+    expect(find.text('Cast'), findsOneWidget);
     expect(find.text('Actor 0'), findsOneWidget);
     expect(find.text('Role 2'), findsOneWidget);
     expect(find.text('Actor 3'), findsNothing);
@@ -149,8 +150,8 @@ void main() {
   testWidgets('a series says "Created by"', (tester) async {
     await tester.pumpWidget(_host(_show()));
 
-    expect(find.text('CREATED BY'), findsOneWidget);
-    expect(find.text('DIRECTED BY'), findsNothing);
+    expect(find.text('Created by '), findsOneWidget);
+    expect(find.text('Directed by '), findsNothing);
     expect(find.text('Tom'), findsOneWidget);
   });
 
@@ -163,8 +164,8 @@ void main() {
     );
 
     expect(find.text('SYNOPSIS'), findsNothing);
-    expect(find.textContaining('DIRECTED'), findsNothing);
-    expect(find.text('CAST'), findsOneWidget);
+    expect(find.textContaining('Directed'), findsNothing);
+    expect(find.text('Cast'), findsOneWidget);
     expect(find.text('Actor 0'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -172,9 +173,9 @@ void main() {
   testWidgets('in Spanish', (tester) async {
     await tester.pumpWidget(_host(_show(), locale: const Locale('es')));
 
-    expect(find.text('CREADA POR'), findsOneWidget);
+    expect(find.text('Creada por '), findsOneWidget);
     expect(find.text('SINOPSIS'), findsOneWidget);
-    expect(find.text('REPARTO'), findsOneWidget);
+    expect(find.text('Reparto'), findsOneWidget);
   });
 
   testWidgets('at 200 % text on a small card it scrolls, nothing overflows', (

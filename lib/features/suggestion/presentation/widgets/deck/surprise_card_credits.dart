@@ -6,12 +6,13 @@ import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../l10n/l10n_extension.dart';
 import '../../../../../shared/widgets/media_detail/media_cast_circle.dart';
-import '../../../../../shared/widgets/overline_label.dart';
+import '../../../../../shared/widgets/media_detail/media_byline.dart';
 
-/// The people on the back of a Surprise-me card: a muted credit line — "Created
-/// by" (a series' creators) or "Directed by" (a film's directors) — and, under
-/// "Cast", the three leading actors as avatars with name and character.
-/// Each part is left out when TMDB has nothing for it.
+/// The people on the back of a Surprise-me card, laid out like the detail
+/// screens' Cast section: the "Cast" heading, a credit line under it — "Created
+/// by" (a series' creators) or "Directed by" (a film's directors), muted label
+/// and the names — and the three leading actors as 64 dp avatars with name and
+/// character. Each part is left out when TMDB has nothing for it.
 ///
 /// Pure presentation — everything comes from the [detail] it is given.
 class SurpriseCardCredits extends StatelessWidget {
@@ -21,7 +22,7 @@ class SurpriseCardCredits extends StatelessWidget {
 
   /// The actors shown.
   static const int castCount = 3;
-  static const double _avatar = 56;
+  static const double _avatar = 64;
 
   /// The people behind the title: a series' creators or a film's directors, each
   /// once, in TMDB's order.
@@ -43,25 +44,27 @@ class SurpriseCardCredits extends StatelessWidget {
     final l10n = context.l10n;
     final people = creditedPeople(detail);
     final cast = detail.cast.take(castCount).toList();
-    final label = detail is TvShowDetail
-        ? l10n.mediaCreatedByLabel
-        : l10n.mediaDirectedByLabel;
+    final byline = MediaByline(
+      label: detail is TvShowDetail
+          ? l10n.mediaCreatedByLabel
+          : l10n.mediaDirectedByLabel,
+      people: people,
+    );
 
+    // As on the detail screens: the "Cast" heading, the credit line under it,
+    // then the avatars.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (people.isNotEmpty) ...[
-          OverlineLabel(label.trim()),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            people.map((p) => p.name).join(' · '),
-            style: AppTextStyles.bodySmStrong,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-        ],
         if (cast.isNotEmpty) ...[
-          OverlineLabel(l10n.fullCastCastLabel),
+          Text(l10n.fullCastCastLabel, style: AppTextStyles.h2),
+          const SizedBox(height: AppSpacing.headingGap),
+        ],
+        if (people.isNotEmpty) ...[
+          byline,
           const SizedBox(height: AppSpacing.md),
+        ],
+        if (cast.isNotEmpty)
           Row(
             children: [
               for (final member in cast)
@@ -70,7 +73,7 @@ class SurpriseCardCredits extends StatelessWidget {
                     child: MediaCastCircle(
                       member: member,
                       size: _avatar,
-                      // The card's own tap flips it back; people aren't links
+                      // The card's own tap turns it back; people aren't links
                       // here.
                       onTap: () {},
                     ),
@@ -81,7 +84,6 @@ class SurpriseCardCredits extends StatelessWidget {
                 const Expanded(child: SizedBox.shrink()),
             ],
           ),
-        ],
       ],
     );
   }
