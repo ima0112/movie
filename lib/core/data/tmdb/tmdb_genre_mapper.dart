@@ -51,7 +51,6 @@ abstract final class TmdbGenreMapper {
     10751: 'family',
     9648: 'mystery',
     10765: 'sci-fi', // "Sci-Fi & Fantasy" — see class doc comment.
-    37: 'thriller',
   };
 
   /// TV-only, [toTmdbId]-only entries for a normalized genre that
@@ -68,6 +67,23 @@ abstract final class TmdbGenreMapper {
   /// apart for a TV show. Vetoing one in [toTmdbId]'s `without_genres`
   /// use vetoes the other too. Movies don't have this problem: Fantasy
   /// (14) is its own distinct id in [_movieIds].
+  /// Catalog genres TMDB's TV list has no genre for at all (it has no Horror,
+  /// Romance, Thriller, History or Music; id 37 is *Western*, which the
+  /// catalog doesn't have — an earlier version mapped Thriller there, so
+  /// vetoing Thriller on TV excluded Westerns) → a TMDB *keyword* that
+  /// approximates each, used with `without_keywords` so a veto still does
+  /// something on TV. Coverage is partial by nature: of ~3300 series with
+  /// 150+ votes, horror tags 120, romance 338, thriller 105, history 10 and
+  /// music 14 — History and Music are nearly no-ops, kept so the map is
+  /// complete. Ids resolved with `/search/keyword`.
+  static const Map<String, int> _tvVetoKeywords = {
+    'horror': 315058,
+    'romance': 9840,
+    'thriller': 316362,
+    'history': 282633,
+    'music': 283297,
+  };
+
   static const Map<String, int> _tvToTmdbIdOnly = {'fantasy': 10765};
 
   /// `null` when [tmdbId] has no equivalent in [GenreCatalog.all] for
@@ -86,6 +102,12 @@ abstract final class TmdbGenreMapper {
     }
     return null;
   }
+
+  /// The `without_keywords` ids that stand in, on TV, for the vetoed [genres]
+  /// that have no genre of their own there (see [_tvVetoKeywords]).
+  static Set<int> tvVetoKeywordIds(Iterable<Genre> genres) => {
+    for (final genre in genres) ?_tvVetoKeywords[genre.id],
+  };
 
   /// The reverse of [fromTmdbId] — `tmdb_discover_params.dart`'s own
   /// `with_genres`/`without_genres` translation. `null` when [genre] has
