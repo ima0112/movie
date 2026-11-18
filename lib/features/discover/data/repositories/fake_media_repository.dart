@@ -17,6 +17,7 @@ import '../../../../core/domain/entities/trailer_item.dart';
 import '../../../../core/domain/entities/video.dart';
 import '../../../../core/domain/entities/watch_providers.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../core/domain/text/search_text.dart';
 
 /// Hardcoded stand-in for `MediaRepositoryImpl` (TMDB not wired up yet).
 ///
@@ -1112,7 +1113,7 @@ class FakeMediaRepository implements MediaRepository {
 
     final titles = [
       for (final item in [..._movies, ..._tvShows])
-        if (item.title.toLowerCase().contains(trimmed)) MediaResult(item),
+        if (matchesSearch(item.title, trimmed)) MediaResult(item),
     ];
     // The people of the sample cast/crew, each once.
     final seen = <int>{};
@@ -1122,8 +1123,7 @@ class FakeMediaRepository implements MediaRepository {
           ...detail.cast.map((c) => c.person),
           ...detail.crew.map((c) => c.person),
         ])
-          if (person.name.toLowerCase().contains(trimmed) &&
-              seen.add(person.id))
+          if (matchesSearch(person.name, trimmed) && seen.add(person.id))
             PersonResult(person),
     ];
     return Success([...titles, ...people]);

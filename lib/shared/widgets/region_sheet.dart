@@ -7,6 +7,7 @@ import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'checkable_option_row.dart';
 import 'sheet_search_field.dart';
+import '../../core/domain/text/search_text.dart';
 
 /// H6 (Region) — `docs/SCREENS.md` H6: "Searchable list of countries."
 /// [selectedRegionCode] is `AppSettings.regionCode`; [onSelected] is
@@ -35,11 +36,7 @@ class _RegionSheetState extends State<RegionSheet> {
   @override
   Widget build(BuildContext context) {
     final results = countryCatalog
-        .where(
-          (country) =>
-              _query.isEmpty ||
-              country.name.toLowerCase().contains(_query.toLowerCase()),
-        )
+        .where((country) => matchesSearch(country.name, _query))
         .toList();
 
     return SafeArea(

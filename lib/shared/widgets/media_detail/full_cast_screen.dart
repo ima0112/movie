@@ -11,6 +11,7 @@ import '../../../l10n/app_localizations.dart';
 import '../overline_label.dart';
 import '../app_segmented_control.dart';
 import 'full_cast_person_tile.dart';
+import '../../../core/domain/text/search_text.dart';
 
 /// Which list [FullCastScreen] is showing.
 enum CastCrewTab { cast, crew }
@@ -56,8 +57,7 @@ class _FullCastScreenState extends State<FullCastScreen> {
 
   static const int _columns = 3;
 
-  bool _matches(String name) =>
-      _query.isEmpty || name.toLowerCase().contains(_query.toLowerCase());
+  bool _matches(String name) => matchesSearch(name, _query);
 
   List<_Entry> get _cast => [
     for (final m in widget.cast) (m.person, m.character),

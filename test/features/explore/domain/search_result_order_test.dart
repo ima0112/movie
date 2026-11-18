@@ -63,4 +63,24 @@ void main() {
     final only = [_movie(1, 'A'), _movie(2, 'B')];
     expect(orderSearchResults('x', only).map(_label), ['A', 'B']);
   });
+
+  test('the exact-name rule ignores accents: "zoe saldana" puts Zoë Saldaña '
+      'first, "JOSE" does the same for José', () {
+    final zoe = orderSearchResults('zoe saldana', [
+      _movie(1, 'Zoe Saldana: A Life'),
+      _person(2, 'Zoë Saldaña Fan'),
+      _person(3, 'Zoë Saldaña'),
+    ]);
+    expect(zoe.map(_label), [
+      'Zoë Saldaña',
+      'Zoe Saldana: A Life',
+      'Zoë Saldaña Fan',
+    ]);
+
+    final jose = orderSearchResults('JOSE', [
+      _movie(1, 'Jose y Pilar'),
+      _person(2, 'José'),
+    ]);
+    expect(jose.map(_label), ['José', 'Jose y Pilar']);
+  });
 }
