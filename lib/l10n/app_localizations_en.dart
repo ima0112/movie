@@ -1523,7 +1523,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizGenreHeadlineAfter => ' in the mood for today?';
 
   @override
-  String get quizGenreSubtitle => 'Skip up to 3 genres';
+  String get quizGenreSubtitle => 'Skip 1 to 3 genres';
 
   @override
   String get quizSearchButton => 'Search';
@@ -1538,7 +1538,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizVibeHeadlineAfter => ' are you in the mood for today?';
 
   @override
-  String get quizVibeSubtitle => 'Pick up to 3 vibes';
+  String get quizVibeSubtitle => 'Pick 1 to 3 vibes';
 
   @override
   String get quizPlatformHeadlineBefore => 'Which ';

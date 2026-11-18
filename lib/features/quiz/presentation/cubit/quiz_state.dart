@@ -84,14 +84,15 @@ class QuizState {
   /// "Include rent and buy" — only means something with [platformIds].
   final bool includeRentBuy;
 
-  /// What the "Next" button's "disabled until the step's rule is met"
-  /// binds to. Step 1 is always valid ("up to 3" allows 0); step 2 needs
-  /// *exactly* 3, not "up to 3"; steps 3/4 always already hold a real
-  /// value (a slider/toggle default), so there's nothing to withhold
-  /// "Next" for.
-  /// Every step has a sensible default (no vetoes, no vibes, every
-  /// platform, every year, no limit), so "Next" is never blocked.
-  bool get isCurrentStepValid => true;
+  /// Whether "Continue" is enabled: the first two steps need **at least one**
+  /// pick (a genre to skip, a vibe), up to three — the caps are enforced as
+  /// they are tapped; the platforms, years and limits steps have defaults
+  /// (every platform, every year, no limit), so they never block.
+  bool get isCurrentStepValid => switch (step) {
+    1 => excludedGenres.isNotEmpty,
+    2 => vibeIds.isNotEmpty,
+    _ => true,
+  };
 
   QuizState copyWith({
     int? step,

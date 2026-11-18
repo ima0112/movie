@@ -113,18 +113,20 @@ Future<void> pumpSurpriseMe(WidgetTester tester) async {
   expect(find.text('To get hooked over several nights'), findsOneWidget);
 }
 
-/// Taps through E2's 4 steps — every step has a default, so only one vibe is
-/// picked (to see the chips answer) before going on.
+/// Taps through E2's 4 steps with the minimum each needs: one genre to skip,
+/// one vibe; the platforms, years and limits steps have defaults.
 Future<void> completeQuiz(WidgetTester tester) async {
+  // "Continue" waits for one pick on each of the first two steps.
   expect(find.text('Continue'), findsOneWidget);
+  final chips = find.byType(AppChip);
+  expect(chips, findsWidgets);
+  await tester.tap(chips.at(0)); // a genre to skip
+  await tester.pump();
   await tester.tap(find.text('Continue')); // step 1 -> 2
   await tester.pumpAndSettle();
 
-  final chips = find.byType(AppChip);
-  expect(chips, findsWidgets);
-  await tester.tap(chips.at(0));
+  await tester.tap(find.byType(AppChip).at(0)); // a vibe
   await tester.pump();
-
   await tester.tap(find.text('Continue')); // step 2 -> 3
   await tester.pumpAndSettle();
   await tester.tap(find.text('Continue')); // step 3 -> 4

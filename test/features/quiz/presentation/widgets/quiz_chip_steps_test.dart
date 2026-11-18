@@ -46,7 +46,7 @@ void main() {
               .cast<TextSpan>();
       expect(spans[1].text, 'NOT');
       expect(spans[1].style?.color, AppColors.danger);
-      expect(find.text('Skip up to 3 genres'), findsOneWidget);
+      expect(find.text('Skip 1 to 3 genres'), findsOneWidget);
       expect(find.byType(AppChip), findsNWidgets(16));
       expect(find.text('Music'), findsOneWidget);
     });
@@ -100,7 +100,7 @@ void main() {
       );
 
       expect(find.text('¿Qué NO te apetece hoy?'), findsOneWidget);
-      expect(find.text('Descarta hasta 3 géneros'), findsOneWidget);
+      expect(find.text('Descarta de 1 a 3 géneros'), findsOneWidget);
       expect(find.text('Música'), findsOneWidget);
     });
   });
@@ -131,7 +131,7 @@ void main() {
         find.text('Which vibes are you in the mood for today?'),
         findsOneWidget,
       );
-      expect(find.text('Pick up to 3 vibes'), findsOneWidget);
+      expect(find.text('Pick 1 to 3 vibes'), findsOneWidget);
       expect(find.byType(AppChip), findsNWidgets(4));
       expect(_states(tester).every((s) => s == ChipState.normal), isTrue);
     });
