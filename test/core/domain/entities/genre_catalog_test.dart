@@ -89,4 +89,31 @@ void main() {
       expect(folded, ['adventure', 'fantasy']);
     });
   });
+
+  group('GenreCatalog.chipsOf', () {
+    const adventure = Genre(id: 'adventure');
+    const action = Genre(id: 'action');
+    const fantasy = Genre(id: 'fantasy');
+    const sciFi = Genre(id: 'sci-fi');
+    const comedy = Genre(id: 'comedy');
+
+    test('on TV, Adventure and Fantasy show as their combined chip', () {
+      expect(
+        GenreCatalog.chipsOf(MediaType.tvShow, [adventure, fantasy, comedy]),
+        {action, sciFi, comedy},
+      );
+      expect(GenreCatalog.chipsOf(MediaType.tvShow, [action, adventure]), {
+        action,
+      });
+    });
+
+    test('for movies or no type, unchanged', () {
+      expect(GenreCatalog.chipsOf(MediaType.movie, [adventure]), {adventure});
+      expect(GenreCatalog.chipsOf(null, [fantasy]), {fantasy});
+    });
+
+    test('availableFor(null) is every genre', () {
+      expect(GenreCatalog.availableFor(null), GenreCatalog.all);
+    });
+  });
 }

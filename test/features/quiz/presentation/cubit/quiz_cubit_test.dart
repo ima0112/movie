@@ -194,6 +194,32 @@ void main() {
       expect(cubit.state.isCurrentStepValid, isFalse);
     });
 
+    test('on TV a combined chip vetoes all its genres and counts as one', () {
+      final cubit = QuizCubit(MediaType.tvShow)
+        ..toggleExcludedGenre(_action)
+        ..toggleExcludedGenre(const Genre(id: 'sci-fi'));
+      expect(cubit.state.excludedGenres, {
+        _action,
+        const Genre(id: 'adventure'),
+        const Genre(id: 'sci-fi'),
+        const Genre(id: 'fantasy'),
+      });
+      expect(cubit.state.excludedChipCount, 2);
+
+      cubit
+        ..toggleExcludedGenre(_comedy)
+        ..toggleExcludedGenre(_drama); // a 4th chip: ignored
+      expect(cubit.state.excludedChipCount, 3);
+      expect(cubit.state.excludedGenres, isNot(contains(_drama)));
+
+      cubit.toggleExcludedGenre(_action); // takes the whole chip back out
+      expect(cubit.state.excludedGenres, isNot(contains(_action)));
+      expect(
+        cubit.state.excludedGenres,
+        isNot(contains(const Genre(id: 'adventure'))),
+      );
+    });
+
     test('step 2 needs at least one vibe, and takes up to 3', () {
       final cubit = QuizCubit(MediaType.movie)
         ..toggleExcludedGenre(_horror)

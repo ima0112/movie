@@ -54,6 +54,24 @@ void main() {
       expect(find.text('Western'), findsOneWidget);
     });
 
+    testWidgets('on TV the genres are the 16 TMDB has, with the combined '
+        'ones named so', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          QuizGenreStep(
+            selected: const {},
+            mediaType: MediaType.tvShow,
+            onToggle: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.byType(AppChip), findsNWidgets(16));
+      expect(find.text('Action & Adventure'), findsOneWidget);
+      expect(find.text('Sci-Fi & Fantasy'), findsOneWidget);
+      expect(find.text('Adventure'), findsNothing);
+    });
+
     testWidgets('a vetoed genre is struck out and tapping toggles it', (
       tester,
     ) async {
