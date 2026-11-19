@@ -392,13 +392,13 @@ class TmdbMediaRepository implements MediaRepository {
       case MediaType.movie:
         return _moviesPage((p) => _discoverMovies(filter, p), page);
       case MediaType.tvShow:
-        return _tvPage((p) => _discoverTv(filter, p), page);
+        return _discoverTvPage(filter, page);
       case null:
         // C1: "All = both interleaved" — the same page of each type, woven
         // together. A type that has run out of pages contributes nothing.
         final parts = await Future.wait([
           _moviesPageOrEnd((p) => _discoverMovies(filter, p), page),
-          _tvPageOrEnd((p) => _discoverTv(filter, p), page),
+          _orEnd(() => _discoverTvPage(filter, page), page),
         ]);
         return _mergedPage(parts, page);
     }
@@ -412,17 +412,28 @@ class TmdbMediaRepository implements MediaRepository {
     'page': page,
   });
 
-  Future<TmdbPagedResponseDto<TmdbTvListItemDto>> _discoverTv(
-    DiscoverFilter filter,
-    int page,
-  ) => _datasource.discoverTv({
-    ...discoverQueryParams(
+  /// A TV page: one `/discover/tv` call, or — for a filter that likes a genre
+  /// TMDB's TV list lacks (`discoverQueryParamSets`) — one per stand-in group,
+  /// run together and woven into one page, repeats dropped.
+  Future<DiscoverPage> _discoverTvPage(DiscoverFilter filter, int page) async {
+    final sets = discoverQueryParamSets(
       filter,
       type: MediaType.tvShow,
       watchRegion: _region,
-    ),
-    'page': page,
-  });
+    );
+    Future<TmdbPagedResponseDto<TmdbTvListItemDto>> fetch(
+      Map<String, dynamic> params,
+      int p,
+    ) => _datasource.discoverTv({...params, 'page': p});
+
+    if (sets.length == 1) {
+      return _tvPage((p) => fetch(sets.first, p), page);
+    }
+    final parts = await Future.wait([
+      for (final params in sets) _tvPageOrEnd((p) => fetch(params, p), page),
+    ]);
+    return _mergedPage(parts, page);
+  }
 
   Future<DiscoverPage> _moviesPage(
     Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> Function(int page) fetch,
