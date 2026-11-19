@@ -2777,7 +2777,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizCollectionSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Pick up to 2, or skip to see everything'**
+  /// **'Pick one, or skip to see everything'**
   String get quizCollectionSubtitle;
 
   /// No description provided for @quizCollectionGroupWorld.
