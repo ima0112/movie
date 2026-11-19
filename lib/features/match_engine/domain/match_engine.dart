@@ -217,6 +217,7 @@ class MatchEngineImpl implements MatchEngine {
       type: query.mediaType,
       withGenres: vibe.genresFor(query.mediaType),
       withoutGenres: query.excludedGenres,
+      excludeTalkAndNews: true,
       withKeywords: vibe.keywordIdsFor(query.mediaType),
       yearFrom: query.yearFrom,
       yearTo: vibe.maxReleaseYear,

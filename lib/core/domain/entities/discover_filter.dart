@@ -66,6 +66,7 @@ class DiscoverFilter {
     this.releasedTo,
     this.withoutKeywords = const {},
     this.monetizationTypes = const {},
+    this.excludeTalkAndNews = false,
   });
 
   /// `null` = "All" (H8: "Type (All/Movies/TV Shows)"). C1: "All = both
@@ -155,6 +156,13 @@ class DiscoverFilter {
   /// what [withoutGenres] already stands in for on TV.
   final Set<int> withoutKeywords;
 
+  /// Leave out TV's talk shows and news programmes (TMDB's "Talk" and "News"
+  /// genres — The Tonight Show, The Daily Show): formats, not something to
+  /// recommend. Set by what *suggests* (Home's sections, Surprise me, the match
+  /// engine); never by browsing (Explore, H8), where they stay findable. No
+  /// effect on movies.
+  final bool excludeTalkAndNews;
+
   /// How the title must be available (`with_watch_monetization_types`, any of
   /// them) — on [withWatchProviders] when given, else on **any** service of the
   /// user's region. Empty = TMDB's own default, which restricts nothing and does
@@ -215,6 +223,7 @@ class DiscoverFilter {
     DateTime? Function()? releasedTo,
     Set<int>? withoutKeywords,
     Set<WatchMonetization>? monetizationTypes,
+    bool? excludeTalkAndNews,
   }) {
     return DiscoverFilter(
       type: type == null ? this.type : type(),
@@ -244,6 +253,7 @@ class DiscoverFilter {
       releasedTo: releasedTo == null ? this.releasedTo : releasedTo(),
       withoutKeywords: withoutKeywords ?? this.withoutKeywords,
       monetizationTypes: monetizationTypes ?? this.monetizationTypes,
+      excludeTalkAndNews: excludeTalkAndNews ?? this.excludeTalkAndNews,
     );
   }
 
@@ -268,7 +278,8 @@ class DiscoverFilter {
       other.releasedFrom == releasedFrom &&
       other.releasedTo == releasedTo &&
       _setEquals(other.withoutKeywords, withoutKeywords) &&
-      _setEquals(other.monetizationTypes, monetizationTypes);
+      _setEquals(other.monetizationTypes, monetizationTypes) &&
+      other.excludeTalkAndNews == excludeTalkAndNews;
 
   @override
   int get hashCode => Object.hash(
@@ -291,6 +302,7 @@ class DiscoverFilter {
     releasedTo,
     Object.hashAllUnordered(withoutKeywords),
     Object.hashAllUnordered(monetizationTypes),
+    excludeTalkAndNews,
   );
 
   @override
@@ -307,7 +319,8 @@ class DiscoverFilter {
       'withWatchProviders: $withWatchProviders, '
       'releasedFrom: $releasedFrom, releasedTo: $releasedTo, '
       'withoutKeywords: $withoutKeywords, '
-      'monetizationTypes: $monetizationTypes)';
+      'monetizationTypes: $monetizationTypes, '
+      'excludeTalkAndNews: $excludeTalkAndNews)';
 }
 
 /// Order-independent set content equality — same local stand-in for
