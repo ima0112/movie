@@ -48,10 +48,7 @@ abstract interface class UserLibraryRepository {
 
   /// IDs only — used to exclude watched titles in the match engine and to
   /// publish into a Matcher room (capped at [limit], most recent first).
-  Future<Result<List<MediaKey>>> watchedKeys(
-    MediaType type, {
-    int limit = 500,
-  });
+  Future<Result<List<MediaKey>>> watchedKeys(MediaType type, {int limit = 500});
 
   /// Raw material for Stats and the taste profile's implicit signals.
   Future<Result<List<UserMediaEntry>>> all();

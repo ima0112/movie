@@ -1,5 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/data/tmdb/tmdb_genre_mapper.dart';
+import '../../../../core/domain/entities/collection.dart';
+import '../../../../core/domain/entities/collection_catalog.dart';
 import '../../../../core/domain/entities/discover_filter.dart'
     show DiscoverTvStatus;
 import '../../../../core/domain/entities/genre.dart';
@@ -7,6 +10,9 @@ import '../../../../core/domain/entities/genre_catalog.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../match_engine/domain/participant_answers.dart';
+import '../../../match_engine/domain/vibe.dart';
+import '../../../match_engine/domain/vibe_catalog.dart';
+import '../../domain/quiz_options.dart';
 import 'quiz_state.dart';
 
 /// E2 (Quiz)'s state machine — `docs/SCREENS.md` E2: "1 screen, 4
@@ -28,9 +34,87 @@ import 'quiz_state.dart';
 /// screen can just call this Cubit's own setters with a profile's
 /// values instead of this Cubit reaching for the profile itself.
 class QuizCubit extends Cubit<QuizState> {
-  QuizCubit(MediaType mediaType) : super(QuizState(mediaType: mediaType));
+  // The fields are private, so the named parameters can't initialize them
+  // directly.
+  // ignore_for_file: prefer_initializing_formals
+  QuizCubit(
+    MediaType mediaType, {
+    CollectionCatalog collectionCatalog = const CollectionCatalog([]),
+    VibeCatalog vibeCatalog = const VibeCatalog([]),
+    GenreOfTmdbId genreOf = TmdbGenreMapper.fromTmdbId,
+  }) : _collectionCatalog = collectionCatalog,
+       _vibeCatalog = vibeCatalog,
+       _genreOf = genreOf,
+       super(QuizState(mediaType: mediaType));
 
-  /// Step 1's veto grid tap — toggles [genre]'s chip, a no-op past "up to 3"
+  final CollectionCatalog _collectionCatalog;
+  final VibeCatalog _vibeCatalog;
+  final GenreOfTmdbId _genreOf;
+
+  List<Collection> get _chosenCollections => [
+    for (final id in state.collectionIds)
+      if (_collectionCatalog.byId(id) case final Collection c) c,
+  ];
+
+  /// Step 2's chips: the genres of the kind of title, less what the chosen
+  /// collections already require or exclude.
+  List<Genre> get vetoOptions =>
+      QuizOptions.vetoOptions(state.mediaType, _chosenCollections, _genreOf);
+
+  /// Step 3's chips: the vibes that can still produce something given the
+  /// collections and the genres skipped.
+  List<Vibe> get vibeOptions => QuizOptions.vibeOptions(
+    _vibeCatalog.availableFor(state.mediaType),
+    state.mediaType,
+    _chosenCollections,
+    state.excludedGenres,
+    _genreOf,
+  );
+
+  /// Emits [next] with what an earlier answer made impossible taken out, in
+  /// silence: a skipped genre a collection now requires, a vibe left with no
+  /// genre to use.
+  void _emitPruned(QuizState next) {
+    final type = next.mediaType;
+    final collections = [
+      for (final id in next.collectionIds)
+        if (_collectionCatalog.byId(id) case final Collection c) c,
+    ];
+    final vetoed = QuizOptions.prunedVetoes(
+      next.excludedGenres,
+      type,
+      collections,
+      _genreOf,
+    );
+    // With no vibe catalog (nothing to check against) the picks stay as they are.
+    final vibes = _vibeCatalog.all().isEmpty
+        ? next.vibeIds
+        : QuizOptions.prunedVibes(
+            next.vibeIds,
+            _vibeCatalog.availableFor(type),
+            type,
+            collections,
+            vetoed,
+            _genreOf,
+          );
+    emit(next.copyWith(excludedGenres: vetoed, vibeIds: vibes));
+  }
+
+  /// Step 1's chip tap — toggles [collectionId], a no-op past
+  /// [QuizState.maxCollections].
+  void toggleCollection(String collectionId) {
+    final current = state.collectionIds;
+    if (current.contains(collectionId)) {
+      _emitPruned(
+        state.copyWith(collectionIds: Set.of(current)..remove(collectionId)),
+      );
+      return;
+    }
+    if (current.length >= QuizState.maxCollections) return;
+    _emitPruned(state.copyWith(collectionIds: {...current, collectionId}));
+  }
+
+  /// Step 2's veto grid tap — toggles [genre]'s chip, a no-op past "up to 3"
   /// chips. On TV, Action & Adventure and Sci-Fi & Fantasy are one chip each:
   /// picking one vetoes every genre it stands for (TMDB excludes a combined TV
   /// genre only when all its members are vetoed), and the cap counts chips.
@@ -40,14 +124,14 @@ class QuizCubit extends Cubit<QuizState> {
         ? GenreCatalog.tvMembers(genre)
         : {genre};
     if (members.every(current.contains)) {
-      emit(state.copyWith(excludedGenres: current.difference(members)));
+      _emitPruned(state.copyWith(excludedGenres: current.difference(members)));
       return;
     }
     if (state.excludedChipCount >= QuizState.maxExcludedGenres) return;
-    emit(state.copyWith(excludedGenres: {...current, ...members}));
+    _emitPruned(state.copyWith(excludedGenres: {...current, ...members}));
   }
 
-  /// Step 2's vibe grid tap — toggles [vibeId], a no-op past "exactly 3".
+  /// Step 3's vibe grid tap — toggles [vibeId], a no-op past "exactly 3".
   void toggleVibe(String vibeId) {
     final current = state.vibeIds;
     if (current.contains(vibeId)) {
@@ -58,7 +142,7 @@ class QuizCubit extends Cubit<QuizState> {
     emit(state.copyWith(vibeIds: {...current, vibeId}));
   }
 
-  /// Step 3's year slider.
+  /// The year slider.
   void setYearFrom(int year) => emit(state.copyWith(yearFrom: year));
 
   /// The year range's two handles. [to] at or past [currentYear] means "up to
@@ -85,11 +169,11 @@ class QuizCubit extends Cubit<QuizState> {
   void setIncludeRentBuy(bool value) =>
       emit(state.copyWith(includeRentBuy: value));
 
-  /// Step 4, movie sessions only. `null` = "No limit".
+  /// Last step, movie sessions only. `null` = "No limit".
   void setMaxRuntimeMinutes(int? minutes) =>
       emit(state.copyWith(maxRuntimeMinutes: () => minutes));
 
-  /// Step 4, TV sessions only. `null` = "Either",
+  /// Last step, TV sessions only. `null` = "Either",
   /// [DiscoverTvStatus.ended] = "Finished".
   void setTvStatus(DiscoverTvStatus? status) =>
       emit(state.copyWith(tvStatus: () => status));
@@ -99,10 +183,10 @@ class QuizCubit extends Cubit<QuizState> {
       emit(state.copyWith(excludeWatched: value));
 
   /// The "Next" button — a no-op if the current step's own rule isn't
-  /// met yet, or if already on step 4 (E2's own last step ends in
+  /// met yet, or if already on the last step (E2's own last step ends in
   /// "Search", not another "Next").
   void nextStep() {
-    if (!state.isCurrentStepValid || state.step >= 4) return;
+    if (!state.isCurrentStepValid || state.step >= QuizState.stepCount) return;
     emit(state.copyWith(step: state.step + 1));
   }
 
@@ -138,6 +222,7 @@ class QuizCubit extends Cubit<QuizState> {
       yearTo: s.yearTo,
       platformIds: s.platformIds,
       includeRentBuy: s.includeRentBuy,
+      collectionIds: s.collectionIds,
     );
   }
 }

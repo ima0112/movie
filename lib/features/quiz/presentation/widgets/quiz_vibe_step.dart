@@ -9,6 +9,7 @@ import '../../../../l10n/vibe_localization.dart';
 import '../../../../shared/widgets/accent_headline.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import '../../../../shared/widgets/vibe_icon.dart';
+import '../../../match_engine/domain/vibe.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/quiz_state.dart';
 
@@ -23,12 +24,16 @@ class QuizVibeStep extends StatelessWidget {
     required this.vibeCatalog,
     required this.mediaType,
     required this.selected,
+    this.options,
     required this.onToggle,
   });
 
   final VibeCatalog vibeCatalog;
   final MediaType mediaType;
   final Set<String> selected;
+
+  /// The vibes to show; every one of [mediaType] when `null`.
+  final List<Vibe>? options;
   final ValueChanged<String> onToggle;
 
   static const double _disabledOpacity = 0.3;
@@ -36,7 +41,7 @@ class QuizVibeStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final vibes = vibeCatalog.availableFor(mediaType);
+    final vibes = options ?? vibeCatalog.availableFor(mediaType);
     final atMax = selected.length >= QuizState.maxVibes;
 
     return Column(

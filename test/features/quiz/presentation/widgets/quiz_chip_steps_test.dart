@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/genre_catalog.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/match_engine/domain/vibe.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
+import 'package:movies/features/quiz/presentation/widgets/quiz_collection_step.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_genre_step.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_vibe_step.dart';
 import 'package:movies/l10n/app_localizations.dart';
@@ -123,6 +127,67 @@ void main() {
       expect(find.text('¿Qué NO te apetece hoy?'), findsOneWidget);
       expect(find.text('Descarta de 1 a 3 géneros'), findsOneWidget);
       expect(find.text('Música'), findsOneWidget);
+    });
+  });
+
+  group('QuizCollectionStep', () {
+    final catalog = CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    );
+
+    Widget step(
+      MediaType type,
+      Set<String> selected, {
+      ValueChanged<String>? onToggle,
+      Locale locale = const Locale('en'),
+    }) => _host(
+      QuizCollectionStep(
+        collectionCatalog: catalog,
+        mediaType: type,
+        selected: selected,
+        onToggle: onToggle ?? (_) {},
+      ),
+      locale: locale,
+    );
+
+    testWidgets('the headline, the subtitle and the collections of the kind '
+        'of title, grouped: 9 on TV, 6 on movies', (tester) async {
+      await tester.pumpWidget(step(MediaType.tvShow, const {}));
+      expect(find.text('Where should it come from?'), findsOneWidget);
+      expect(
+        find.text('Pick up to 2, or skip to see everything'),
+        findsOneWidget,
+      );
+      expect(find.byType(AppChip), findsNWidgets(9));
+      expect(find.text('Turkish series'), findsOneWidget);
+      expect(find.text('FROM THE WORLD'), findsOneWidget);
+
+      await tester.pumpWidget(step(MediaType.movie, const {}));
+      expect(find.byType(AppChip), findsNWidgets(6));
+      expect(find.text('Turkish series'), findsNothing);
+      expect(find.text('Bollywood'), findsOneWidget);
+    });
+
+    testWidgets('chosen ones are filled; at two the rest dim and do nothing, '
+        'a chosen one still comes back out', (tester) async {
+      final taps = <String>[];
+      await tester.pumpWidget(
+        step(MediaType.tvShow, const {'anime', 'soaps'}, onToggle: taps.add),
+      );
+      expect(_states(tester).where((s) => s == ChipState.solid), hasLength(2));
+
+      await tester.tap(find.text('Turkish series'));
+      expect(taps, isEmpty);
+      await tester.tap(find.text('Anime'));
+      expect(taps, ['anime']);
+    });
+
+    testWidgets('the Spanish copy', (tester) async {
+      await tester.pumpWidget(
+        step(MediaType.tvShow, const {}, locale: const Locale('es')),
+      );
+      expect(find.text('¿De dónde la quieres?'), findsOneWidget);
+      expect(find.text('Novelas'), findsOneWidget);
     });
   });
 

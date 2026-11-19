@@ -21,6 +21,7 @@ class QuizGenreStep extends StatelessWidget {
     super.key,
     required this.selected,
     this.mediaType,
+    this.options,
     required this.onToggle,
   });
 
@@ -28,6 +29,10 @@ class QuizGenreStep extends StatelessWidget {
 
   /// The kind of title being picked: on TV the combined genres are one chip.
   final MediaType? mediaType;
+
+  /// The chips to show; every genre of [mediaType] when `null`. The quiz
+  /// passes fewer when a collection already requires or excludes some.
+  final List<Genre>? options;
   final ValueChanged<Genre> onToggle;
 
   /// A disabled chip is shown at this opacity (the quiz tiles' own 30%).
@@ -58,7 +63,7 @@ class QuizGenreStep extends StatelessWidget {
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.md,
           children: [
-            for (final genre in GenreCatalog.availableFor(mediaType))
+            for (final genre in options ?? GenreCatalog.availableFor(mediaType))
               _chip(context, genre, chips.contains(genre), atMax),
           ],
         ),
