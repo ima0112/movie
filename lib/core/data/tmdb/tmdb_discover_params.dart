@@ -259,8 +259,34 @@ List<Map<String, dynamic>> _withCollectionQuery(
   DiscoverFilter filter,
   MediaType type,
 ) {
-  if (query.withKeywordIds.isNotEmpty && base['with_keywords'] != null) {
-    return const [];
+  // Two keyword sets in one request would be OR-ed, so each pair of keywords
+  // (the collection's, the filter's) is its own request, `with_keywords=a,b`
+  // (a comma is AND) — as long as that is a handful; past it, the query drops.
+  final baseKeywords = base['with_keywords'] == null
+      ? const <String>[]
+      : '${base['with_keywords']}'.split('|');
+  if (query.withKeywordIds.isNotEmpty && baseKeywords.isNotEmpty) {
+    if (query.withKeywordIds.length * baseKeywords.length > _maxKeywordPairs) {
+      return const [];
+    }
+    return [
+      for (final c in query.withKeywordIds)
+        for (final b in baseKeywords)
+          ..._withCollectionQuery(
+            {...base, 'with_keywords': '$c,$b'},
+            CollectionQuery(
+              originCountries: query.originCountries,
+              originalLanguage: query.originalLanguage,
+              withTmdbGenreIds: query.withTmdbGenreIds,
+              requireAllGenres: query.requireAllGenres,
+              withoutTmdbGenreIds: query.withoutTmdbGenreIds,
+              tvType: query.tvType,
+              minVoteCount: query.minVoteCount,
+            ),
+            filter,
+            type,
+          ),
+    ];
   }
   final params = {...base};
   // Any floor but the default is the section's own (Top rated 300, New releases
@@ -308,6 +334,9 @@ List<Map<String, dynamic>> _withCollectionQuery(
       for (final p in picked) {...params, 'with_genres': '$a,$p'},
   ];
 }
+
+/// The most keyword pairs one collection query expands into.
+const int _maxKeywordPairs = 8;
 
 /// TMDB's TV "Talk" (10767) and "News" (10763) genres.
 const Set<int> _tvTalkAndNewsGenreIds = {10767, 10763};
