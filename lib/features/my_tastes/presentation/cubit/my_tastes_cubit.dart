@@ -7,6 +7,8 @@ import '../../../../app/cubits/taste_profile_cubit.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
+import '../../../../core/domain/entities/collection.dart';
+import '../../../../core/domain/entities/collection_catalog.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import 'my_tastes_state.dart';
 
@@ -36,12 +38,25 @@ import 'my_tastes_state.dart';
 /// enumerating the full genre list is left for whoever assembles C5's
 /// actual screen.
 class MyTastesCubit extends Cubit<MyTastesState> {
-  MyTastesCubit(this._tasteProfileCubit, VibeCatalog vibeCatalog)
-    : super(
-        MyTastesState.fromProfile(_tasteProfileCubit.state, vibeCatalog.all()),
-      ) {
+  MyTastesCubit(
+    this._tasteProfileCubit,
+    VibeCatalog vibeCatalog, [
+    CollectionCatalog collectionCatalog = const CollectionCatalog([]),
+  ]) : super(
+         MyTastesState.fromProfile(
+           _tasteProfileCubit.state,
+           vibeCatalog.all(),
+           _keepable(collectionCatalog),
+         ),
+       ) {
     _subscription = _tasteProfileCubit.stream.listen(_onProfileChanged);
   }
+
+  /// Kids is a suggestion collection only: it never goes in My Tastes.
+  static List<Collection> _keepable(CollectionCatalog catalog) => [
+    for (final c in catalog.all())
+      if (c.inTastes) c,
+  ];
 
   final TasteProfileCubit _tasteProfileCubit;
   late final StreamSubscription<TasteProfile?> _subscription;
@@ -50,7 +65,11 @@ class MyTastesCubit extends Cubit<MyTastesState> {
   static const _savedIndicatorDuration = Duration(seconds: 2);
 
   void _onProfileChanged(TasteProfile? profile) {
-    final next = MyTastesState.fromProfile(profile, state.availableVibes);
+    final next = MyTastesState.fromProfile(
+      profile,
+      state.availableVibes,
+      state.availableCollections,
+    );
     // The save we just made echoes back through the global cubit: keep the
     // sets we already hold when they are equal, so the sections watching them
     // (each with its own selector) don't rebuild for their own edit.
@@ -61,6 +80,7 @@ class MyTastesCubit extends Cubit<MyTastesState> {
         likedGenres: keep(state.likedGenres, next.likedGenres),
         vetoedGenres: keep(state.vetoedGenres, next.vetoedGenres),
         likedVibes: keep(state.likedVibes, next.likedVibes),
+        likedCollections: keep(state.likedCollections, next.likedCollections),
         platformIds: keep(state.platformIds, next.platformIds),
         justSaved: state.justSaved,
       ),
@@ -99,6 +119,13 @@ class MyTastesCubit extends Cubit<MyTastesState> {
     _apply(state.copyWith(likedVibes: _toggled(liked, vibeId)));
   }
 
+  /// "Collections you like" — no cap (like genres): each one on or off.
+  void toggleCollection(String collectionId) => _apply(
+    state.copyWith(
+      likedCollections: _toggled(state.likedCollections, collectionId),
+    ),
+  );
+
   /// "Eras": the release years [from]–[to] we lean towards. A [to] of
   /// [latestYear] means "up to today" and is kept as `null`.
   void setYearRange(int from, int to, {required int latestYear}) {
@@ -133,6 +160,7 @@ class MyTastesCubit extends Cubit<MyTastesState> {
         likedVibes: const {},
         yearFrom: MyTastesState.defaultYearFrom,
         availableVibes: state.availableVibes,
+        availableCollections: state.availableCollections,
       ),
     );
   }
@@ -145,6 +173,7 @@ class MyTastesCubit extends Cubit<MyTastesState> {
           likedGenres: next.likedGenres,
           vetoedGenres: next.vetoedGenres,
           likedVibes: next.likedVibes,
+          likedCollections: next.likedCollections,
           yearFrom: next.yearFrom,
           yearTo: next.yearTo,
           preferredType: next.preferredType,

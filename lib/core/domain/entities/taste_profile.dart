@@ -22,6 +22,7 @@ class TasteProfile {
     this.yearTo,
     this.preferredType,
     this.platformIds = const {},
+    this.likedCollections = const {},
   });
 
   final Set<Genre> likedGenres;
@@ -54,6 +55,11 @@ class TasteProfile {
   /// "My platforms"). Ids, not names (rule 15): the services' names and logos
   /// come from the catalog of the user's region.
   final Set<int> platformIds;
+
+  /// Collection ids from `assets/collections.json` (Turkish series, Anime…)
+  /// the user likes — plain strings, like [likedVibes]. Never Kids: it is a
+  /// suggestion collection, outside My Tastes.
+  final Set<String> likedCollections;
 
   /// When this profile last changed — same purpose as
   /// `UserMediaEntry`/its table's `updatedAt`: a future sync step's
@@ -89,6 +95,7 @@ class TasteProfile {
     MediaType? preferredType,
     bool clearPreferredType = false,
     Set<int>? platformIds,
+    Set<String>? likedCollections,
     DateTime? updatedAt,
   }) => TasteProfile(
     likedGenres: likedGenres ?? this.likedGenres,
@@ -100,6 +107,7 @@ class TasteProfile {
         ? null
         : (preferredType ?? this.preferredType),
     platformIds: platformIds ?? this.platformIds,
+    likedCollections: likedCollections ?? this.likedCollections,
     updatedAt: updatedAt ?? DateTime.now(),
   );
 
@@ -113,6 +121,7 @@ class TasteProfile {
       other.yearTo == yearTo &&
       other.preferredType == preferredType &&
       _setEquals(other.platformIds, platformIds) &&
+      _setEquals(other.likedCollections, likedCollections) &&
       other.updatedAt == updatedAt;
 
   @override
@@ -124,6 +133,7 @@ class TasteProfile {
     yearTo,
     preferredType,
     Object.hashAllUnordered(platformIds),
+    Object.hashAllUnordered(likedCollections),
     updatedAt,
   );
 
@@ -132,7 +142,7 @@ class TasteProfile {
       'TasteProfile(liked: $likedGenres, vetoed: $vetoedGenres, '
       'vibes: $likedVibes, yearFrom: $yearFrom, yearTo: $yearTo, '
       'preferredType: $preferredType, platforms: $platformIds, '
-      'updatedAt: $updatedAt)';
+      'collections: $likedCollections, updatedAt: $updatedAt)';
 }
 
 /// Order-independent set content equality — a local stand-in for

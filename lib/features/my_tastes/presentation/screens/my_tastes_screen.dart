@@ -8,6 +8,8 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../core/data/assets/collection_catalog_loader.dart';
+import '../../../../core/domain/entities/collection_catalog.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/my_tastes_cubit.dart';
 import '../widgets/taste_avoided_genres_section.dart';
@@ -16,6 +18,7 @@ import '../widgets/taste_footer.dart';
 import '../widgets/taste_liked_genres_section.dart';
 import '../widgets/taste_platforms_section.dart';
 import '../widgets/taste_type_section.dart';
+import '../widgets/taste_collections_section.dart';
 import '../widgets/taste_vibes_section.dart';
 
 /// My Tastes (C5) — pushed from B5's My Tastes card.
@@ -41,21 +44,32 @@ class MyTastesScreen extends StatelessWidget {
       future: VibeCatalog.loadFromAssets(),
       builder: (context, snapshot) {
         final catalog = snapshot.data;
-        if (catalog == null) {
-          return const Scaffold(
-            backgroundColor: AppColors.surface,
-            body: Center(
-              child: CircularProgressIndicator(color: AppColors.ink),
-            ),
-          );
-        }
-        return BlocProvider(
-          create: (_) => MyTastesCubit(tasteProfileCubit, catalog),
-          child: const _MyTastesView(),
+        if (catalog == null) return const _Loading();
+        return FutureBuilder<CollectionCatalog>(
+          future: loadCollectionCatalog(),
+          builder: (context, collections) {
+            final collectionCatalog = collections.data;
+            if (collectionCatalog == null) return const _Loading();
+            return BlocProvider(
+              create: (_) =>
+                  MyTastesCubit(tasteProfileCubit, catalog, collectionCatalog),
+              child: const _MyTastesView(),
+            );
+          },
         );
       },
     );
   }
+}
+
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) => const Scaffold(
+    backgroundColor: AppColors.surface,
+    body: Center(child: CircularProgressIndicator(color: AppColors.ink)),
+  );
 }
 
 class _MyTastesView extends StatelessWidget {
@@ -96,6 +110,7 @@ class _MyTastesView extends StatelessWidget {
           TasteLikedGenresSection(),
           TasteAvoidedGenresSection(),
           TasteVibesSection(),
+          TasteCollectionsSection(),
           TasteErasSection(),
           TastePlatformsSection(),
           TasteFooter(),
