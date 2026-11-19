@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/tmdb/tmdb_genre_mapper.dart';
 import 'package:movies/core/domain/entities/genre.dart';
+import 'package:movies/core/domain/entities/genre_catalog.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 
 const _action = Genre(id: 'action');
@@ -101,21 +102,32 @@ void main() {
   });
 
   group('TmdbGenreMapper.tvVetoKeywordIds', () {
-    test(
-      'Horror, Romance, Thriller, History and Music stand in as keywords',
-      () {
-        expect(
-          TmdbGenreMapper.tvVetoKeywordIds(const [
-            Genre(id: 'horror'),
-            Genre(id: 'romance'),
-            Genre(id: 'thriller'),
-            Genre(id: 'history'),
-            Genre(id: 'music'),
-          ]),
-          {315058, 9840, 316362, 282633, 283297},
-        );
-      },
-    );
+    test('Horror, Romance, Thriller, History and Music stand in as keywords — '
+        'History and Music with the whole set that stands in for them', () {
+      expect(
+        TmdbGenreMapper.tvVetoKeywordIds(const [
+          Genre(id: 'horror'),
+          Genre(id: 'romance'),
+          Genre(id: 'thriller'),
+        ]),
+        {315058, 9840, 316362},
+      );
+      expect(TmdbGenreMapper.tvVetoKeywordIds(const [Genre(id: 'history')]), {
+        15060,
+        15126,
+        282633,
+      });
+      expect(TmdbGenreMapper.tvVetoKeywordIds(const [Genre(id: 'music')]), {
+        283297,
+        4344,
+        10229,
+        186120,
+        4048,
+        311916,
+        236650,
+        6029,
+      });
+    });
 
     test('genres TV does have (or any other) add nothing', () {
       expect(
@@ -124,6 +136,124 @@ void main() {
           Genre(id: 'comedy'),
           Genre(id: 'fantasy'),
         ]),
+        isEmpty,
+      );
+    });
+  });
+
+  group('TmdbGenreMapper.isStandInOnTv', () {
+    test('exactly the five genres TMDB\'s TV list lacks', () {
+      final standIns = [
+        for (final g in GenreCatalog.all)
+          if (TmdbGenreMapper.isStandInOnTv(g)) g.id,
+      ];
+      expect(standIns, ['history', 'horror', 'music', 'romance', 'thriller']);
+    });
+  });
+
+  group('TmdbGenreMapper.tvLikeGenreIds', () {
+    test('a like asks for the genre\'s own TV id; Adventure and Fantasy ask '
+        'for the combined ones', () {
+      expect(
+        TmdbGenreMapper.tvLikeGenreIds(const [
+          Genre(id: 'comedy'),
+          Genre(id: 'adventure'),
+          Genre(id: 'fantasy'),
+          Genre(id: 'war'),
+          Genre(id: 'western'),
+        ]),
+        {35, 10759, 10765, 10768, 37},
+      );
+    });
+
+    test('the stand-in genres have no TV id to like by', () {
+      expect(
+        TmdbGenreMapper.tvLikeGenreIds(const [
+          Genre(id: 'horror'),
+          Genre(id: 'history'),
+        ]),
+        isEmpty,
+      );
+    });
+  });
+
+  group('TmdbGenreMapper.tvVetoGenreIds', () {
+    test('a plain genre is excluded by its own id', () {
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [
+          Genre(id: 'comedy'),
+          Genre(id: 'war'),
+          Genre(id: 'western'),
+        ]),
+        {35, 10768, 37},
+      );
+    });
+
+    test('vetoing Fantasy alone leaves Sci-Fi & Fantasy in; Sci-Fi alone too; '
+        'both exclude it', () {
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [Genre(id: 'fantasy')]),
+        isEmpty,
+      );
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [Genre(id: 'sci-fi')]),
+        isEmpty,
+      );
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [
+          Genre(id: 'sci-fi'),
+          Genre(id: 'fantasy'),
+        ]),
+        {10765},
+      );
+    });
+
+    test('Action & Adventure likewise needs both vetoed', () {
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [Genre(id: 'action')]),
+        isEmpty,
+      );
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [Genre(id: 'adventure')]),
+        isEmpty,
+      );
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [
+          Genre(id: 'action'),
+          Genre(id: 'adventure'),
+        ]),
+        {10759},
+      );
+    });
+
+    test('a stand-in genre has no id to exclude by (a keyword does it)', () {
+      expect(
+        TmdbGenreMapper.tvVetoGenreIds(const [Genre(id: 'horror')]),
+        isEmpty,
+      );
+    });
+  });
+
+  group('TmdbGenreMapper.tvStandInGroups', () {
+    test('every stand-in but Music shares one group; Music has its own, with '
+        'Talk left out', () {
+      final groups = TmdbGenreMapper.tvStandInGroups(const [
+        Genre(id: 'horror'),
+        Genre(id: 'history'),
+        Genre(id: 'music'),
+        Genre(id: 'comedy'),
+      ]);
+
+      expect(groups, hasLength(2));
+      expect(groups[0].keywordIds, {315058, 15060, 15126, 282633});
+      expect(groups[0].withoutTmdbGenreIds, isEmpty);
+      expect(groups[1].keywordIds, contains(283297));
+      expect(groups[1].withoutTmdbGenreIds, {10767});
+    });
+
+    test('no stand-in among the genres, no group', () {
+      expect(
+        TmdbGenreMapper.tvStandInGroups(const [Genre(id: 'comedy')]),
         isEmpty,
       );
     });
