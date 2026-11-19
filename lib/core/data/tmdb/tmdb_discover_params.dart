@@ -28,10 +28,15 @@ Map<String, dynamic> discoverQueryParams(
     'sort_by': _sortBy(filter.sortBy, isMovie),
   };
 
-  final withGenreIds = filter.withGenres
-      .map((g) => TmdbGenreMapper.toTmdbId(g, type))
-      .nonNulls
-      .toList();
+  // On TV the likes are TMDB's own TV genres (a genre TMDB's TV list lacks is
+  // asked for by keyword — see [discoverQueryParamSets]); in movies every
+  // genre has its id.
+  final withGenreIds = isMovie
+      ? filter.withGenres
+            .map((g) => TmdbGenreMapper.toTmdbId(g, type))
+            .nonNulls
+            .toList()
+      : TmdbGenreMapper.tvLikeGenreIds(filter.withGenres).toList();
   if (withGenreIds.isNotEmpty) {
     // DiscoverFilter.withGenres' own doc comment: "an item matching
     // *any* of these qualifies" — TMDB's with_genres is AND by default
@@ -39,10 +44,14 @@ Map<String, dynamic> discoverQueryParams(
     params['with_genres'] = withGenreIds.join('|');
   }
 
-  final withoutGenreIds = filter.withoutGenres
-      .map((g) => TmdbGenreMapper.toTmdbId(g, type))
-      .nonNulls
-      .toList();
+  // A veto on TV excludes a combined TV genre ("Action & Adventure", "Sci-Fi &
+  // Fantasy") only when every genre of ours it stands for is vetoed.
+  final withoutGenreIds = isMovie
+      ? filter.withoutGenres
+            .map((g) => TmdbGenreMapper.toTmdbId(g, type))
+            .nonNulls
+            .toList()
+      : TmdbGenreMapper.tvVetoGenreIds(filter.withoutGenres).toList();
   if (withoutGenreIds.isNotEmpty) {
     params['without_genres'] = withoutGenreIds.join(',');
   }
@@ -152,3 +161,57 @@ String _sortBy(DiscoverSortBy sortBy, bool isMovie) => switch (sortBy) {
   // `popularity`, which is TMDB's rolling current-interest figure.
   DiscoverSortBy.voteCount => 'vote_count.desc',
 };
+
+/// The `/discover` queries one [filter] needs for [type] — one for every filter
+/// but a TV filter that **likes** a genre TMDB's TV list lacks (horror, romance,
+/// thriller, history, music), whose keyword stand-in cannot share a request with
+/// the genres TV does have: TMDB would AND the `with_genres` and `with_keywords`
+/// of one request, while a like means "any of these". So that filter becomes up
+/// to three requests — the native genres, the keyword stand-ins, and music's
+/// (which carries its own exclusion) — whose results the repository merges.
+///
+/// A filter that already has `withKeywords` (a vibe's) cannot take a stand-in
+/// either: both would land in the same `with_keywords`, OR-ed instead of AND-ed.
+/// There the stand-in genres are left out, as they were before they existed.
+List<Map<String, dynamic>> discoverQueryParamSets(
+  DiscoverFilter filter, {
+  required MediaType type,
+  String? watchRegion,
+}) {
+  final single = discoverQueryParams(
+    filter,
+    type: type,
+    watchRegion: watchRegion,
+  );
+  if (type == MediaType.movie || filter.withKeywords.isNotEmpty) {
+    return [single];
+  }
+  final groups = TmdbGenreMapper.tvStandInGroups(filter.withGenres);
+  if (groups.isEmpty) return [single];
+
+  final hasNative = TmdbGenreMapper.tvLikeGenreIds(
+    filter.withGenres,
+  ).isNotEmpty;
+  final noLikes = discoverQueryParams(
+    filter.copyWith(withGenres: const {}),
+    type: type,
+    watchRegion: watchRegion,
+  );
+  return [
+    if (hasNative) single,
+    for (final group in groups)
+      {
+        ...noLikes,
+        'with_keywords': group.keywordIds.join('|'),
+        if (group.withoutTmdbGenreIds.isNotEmpty)
+          'without_genres': {
+            ...?_ids(noLikes['without_genres']),
+            ...group.withoutTmdbGenreIds,
+          }.join(','),
+      },
+  ];
+}
+
+Set<int>? _ids(Object? commaSeparated) => commaSeparated == null
+    ? null
+    : {for (final id in '$commaSeparated'.split(',')) int.parse(id)};

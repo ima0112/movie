@@ -37,6 +37,7 @@ import 'package:movies/core/persistence/app_database.dart';
 class _FixtureRoutedAdapter implements HttpClientAdapter {
   final List<String> requestedPaths = [];
   Map<String, dynamic>? lastQueryParameters;
+  final List<Map<String, dynamic>> allQueryParameters = [];
 
   @override
   Future<ResponseBody> fetch(
@@ -46,6 +47,7 @@ class _FixtureRoutedAdapter implements HttpClientAdapter {
   ) async {
     requestedPaths.add(options.path);
     lastQueryParameters = options.queryParameters;
+    allQueryParameters.add(options.queryParameters);
 
     final path = options.path;
     final fixture = switch (path) {
@@ -416,6 +418,35 @@ void main() {
       expect(page.totalPages, 42); // from the fixture
       expect(page.totalResults, greaterThan(0));
       expect(page.hasMore, isTrue);
+    });
+
+    test('a TV filter that likes a genre TMDB\'s TV list lacks asks twice — by '
+        'genre and by keyword — and weaves the answers into one page, '
+        'repeats dropped', () async {
+      final result = await repository.discoverPage(
+        DiscoverFilter(
+          type: MediaType.tvShow,
+          withGenres: {
+            Genre(id: 'drama'),
+            Genre(id: 'horror'),
+          },
+        ),
+      );
+
+      expect(adapter.requestedPaths, ['/discover/tv', '/discover/tv']);
+      final queries = adapter.allQueryParameters;
+      expect(queries.map((q) => q['with_genres']), contains('18'));
+      expect(queries.map((q) => q['with_keywords']), contains('315058'));
+      // Both requests got the same fixture: the union is that fixture's
+      // titles once, not twice.
+      final merged = (result as Success<DiscoverPage>).value;
+      final single = await repository.discoverPage(
+        const DiscoverFilter(type: MediaType.tvShow),
+      );
+      expect(
+        merged.items.map((i) => i.id).toList(),
+        (single as Success<DiscoverPage>).value.items.map((i) => i.id).toList(),
+      );
     });
 
     test('a page past TMDB\'s cap of 500 (or below 1) is clamped, not sent '

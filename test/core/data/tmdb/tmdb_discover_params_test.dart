@@ -355,7 +355,6 @@ void main() {
 
   group('discoverQueryParams — Surprise me\'s filters', () {
     const horror = Genre(id: 'horror');
-    const action = Genre(id: 'action');
 
     test('without_keywords: explicit ids, comma-joined', () {
       final params = discoverQueryParams(
@@ -370,11 +369,16 @@ void main() {
       'a TV veto with no TV genre becomes a keyword, not a dropped veto',
       () {
         final params = discoverQueryParams(
-          DiscoverFilter(withoutGenres: {horror, action}),
+          DiscoverFilter(
+            withoutGenres: {
+              horror,
+              const Genre(id: 'comedy'),
+            },
+          ),
           type: MediaType.tvShow,
         );
 
-        expect(params['without_genres'], '10759');
+        expect(params['without_genres'], '35');
         expect(params['without_keywords'], '315058');
       },
     );
@@ -464,6 +468,178 @@ void main() {
         const DiscoverFilter(withoutKeywords: {1}),
         const DiscoverFilter(withoutKeywords: {1}),
       );
+    });
+  });
+
+  group('discoverQueryParams — TV genres', () {
+    const tv = MediaType.tvShow;
+
+    test('liking Adventure or Fantasy on TV asks for the combined genre', () {
+      final params = discoverQueryParams(
+        DiscoverFilter(
+          withGenres: {
+            const Genre(id: 'adventure'),
+            const Genre(id: 'fantasy'),
+          },
+        ),
+        type: tv,
+      );
+      expect(params['with_genres'], anyOf('10759|10765', '10765|10759'));
+    });
+
+    test('Western and War reach TV by their own ids', () {
+      final params = discoverQueryParams(
+        DiscoverFilter(
+          withGenres: {
+            const Genre(id: 'western'),
+            const Genre(id: 'war'),
+          },
+        ),
+        type: tv,
+      );
+      expect(params['with_genres'], anyOf('37|10768', '10768|37'));
+    });
+
+    test('vetoing Fantasy on TV does not exclude Sci-Fi & Fantasy; vetoing '
+        'both does', () {
+      final one = discoverQueryParams(
+        DiscoverFilter(withoutGenres: {const Genre(id: 'fantasy')}),
+        type: tv,
+      );
+      final both = discoverQueryParams(
+        DiscoverFilter(
+          withoutGenres: {
+            const Genre(id: 'fantasy'),
+            const Genre(id: 'sci-fi'),
+          },
+        ),
+        type: tv,
+      );
+      expect(one.containsKey('without_genres'), isFalse);
+      expect(both['without_genres'], '10765');
+    });
+
+    test('movies are untouched: Fantasy is 14 and Adventure 12 there', () {
+      final params = discoverQueryParams(
+        DiscoverFilter(
+          withGenres: {
+            const Genre(id: 'fantasy'),
+            const Genre(id: 'adventure'),
+          },
+          withoutGenres: {const Genre(id: 'war')},
+        ),
+        type: MediaType.movie,
+      );
+      expect(params['with_genres'], anyOf('14|12', '12|14'));
+      expect(params['without_genres'], '10752');
+    });
+
+    test('vetoing a stand-in genre excludes its keywords', () {
+      final params = discoverQueryParams(
+        DiscoverFilter(withoutGenres: {const Genre(id: 'history')}),
+        type: tv,
+      );
+      expect(params.containsKey('without_genres'), isFalse);
+      expect((params['without_keywords'] as String).split(',').toSet(), {
+        '15060',
+        '15126',
+        '282633',
+      });
+    });
+  });
+
+  group('discoverQueryParamSets', () {
+    const tv = MediaType.tvShow;
+
+    test('a movie filter, or a TV filter with nothing to stand in for, is one '
+        'query — the same as discoverQueryParams', () {
+      final movie = DiscoverFilter(withGenres: {const Genre(id: 'horror')});
+      expect(discoverQueryParamSets(movie, type: MediaType.movie), [
+        discoverQueryParams(movie, type: MediaType.movie),
+      ]);
+      final plain = DiscoverFilter(withGenres: {const Genre(id: 'comedy')});
+      expect(discoverQueryParamSets(plain, type: tv), [
+        discoverQueryParams(plain, type: tv),
+      ]);
+    });
+
+    test('liking only a stand-in genre on TV is one query by keyword', () {
+      final sets = discoverQueryParamSets(
+        DiscoverFilter(withGenres: {const Genre(id: 'horror')}),
+        type: tv,
+      );
+      expect(sets, hasLength(1));
+      expect(sets.single['with_keywords'], '315058');
+      expect(sets.single.containsKey('with_genres'), isFalse);
+    });
+
+    test('a native like and a stand-in like are two queries, both with the '
+        'rest of the filter', () {
+      final sets = discoverQueryParamSets(
+        DiscoverFilter(
+          withGenres: {
+            const Genre(id: 'drama'),
+            const Genre(id: 'horror'),
+          },
+          withoutGenres: {const Genre(id: 'comedy')},
+          yearFrom: 2000,
+          minVoteCount: 150,
+        ),
+        type: tv,
+      );
+
+      expect(sets, hasLength(2));
+      expect(sets[0]['with_genres'], '18');
+      expect(sets[0].containsKey('with_keywords'), isFalse);
+      expect(sets[1]['with_keywords'], '315058');
+      expect(sets[1].containsKey('with_genres'), isFalse);
+      for (final s in sets) {
+        expect(s['without_genres'], '35');
+        expect(s['first_air_date.gte'], '2000-01-01');
+        expect(s['vote_count.gte'], 150);
+      }
+    });
+
+    test('Music is its own query and leaves Talk out, keeping the vetoes', () {
+      final sets = discoverQueryParamSets(
+        DiscoverFilter(
+          withGenres: {
+            const Genre(id: 'music'),
+            const Genre(id: 'romance'),
+          },
+          withoutGenres: {const Genre(id: 'comedy')},
+        ),
+        type: tv,
+      );
+
+      expect(sets, hasLength(2));
+      expect(sets[0]['with_keywords'], '9840');
+      expect(sets[0]['without_genres'], '35');
+      expect(
+        (sets[1]['with_keywords'] as String).split('|').toSet(),
+        containsAll({'283297', '4344'}),
+      );
+      expect((sets[1]['without_genres'] as String).split(',').toSet(), {
+        '35',
+        '10767',
+      });
+    });
+
+    test('a filter that already has keywords (a vibe\'s) leaves the stand-ins '
+        'out: they would be OR-ed into the same with_keywords', () {
+      final sets = discoverQueryParamSets(
+        DiscoverFilter(
+          withGenres: {
+            const Genre(id: 'horror'),
+            const Genre(id: 'drama'),
+          },
+          withKeywords: {1299},
+        ),
+        type: tv,
+      );
+      expect(sets, hasLength(1));
+      expect(sets.single['with_genres'], '18');
+      expect(sets.single['with_keywords'], '1299');
     });
   });
 }
