@@ -1146,6 +1146,11 @@
   "statsEstimatedTvHoursLabel": "Estimated TV hours",
   "myTastesTypeTitle": "What do you usually watch?",
   "myTastesTypeHint": "It sets which catalog we show first.",
+  "myTastesCollectionsTitle": "Collections you like",
+  "@myTastesCollectionsTitle": {
+    "description": "C5's section title for liked collections (Turkish series, Anime, Soap operas…); For kids is not offered here."
+  },
+  "myTastesCollectionsHint": "Series from a country, anime, soaps… the places and formats you come back to.",
   "myTastesVibesTitle": "Favorite vibes",
   "myTastesVibesHint": "Up to {max}. They set the tone of what we suggest.",
   "@myTastesVibesHint": {

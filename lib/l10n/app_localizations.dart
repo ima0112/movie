@@ -2174,6 +2174,18 @@ abstract class AppLocalizations {
   /// **'It sets which catalog we show first.'**
   String get myTastesTypeHint;
 
+  /// C5's section title for liked collections (Turkish series, Anime, Soap operas…); For kids is not offered here.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections you like'**
+  String get myTastesCollectionsTitle;
+
+  /// No description provided for @myTastesCollectionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Series from a country, anime, soaps… the places and formats you come back to.'**
+  String get myTastesCollectionsHint;
+
   /// No description provided for @myTastesVibesTitle.
   ///
   /// In en, this message translates to:

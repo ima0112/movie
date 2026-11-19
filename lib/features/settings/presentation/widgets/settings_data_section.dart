@@ -126,7 +126,8 @@ class SettingsDataSection extends StatelessWidget {
         ? 0
         : profile.likedGenres.length +
               profile.vetoedGenres.length +
-              profile.likedVibes.length;
+              profile.likedVibes.length +
+              profile.likedCollections.length;
 
     if (!context.mounted) return;
     final confirmed = await showConfirmDeletionDialog(

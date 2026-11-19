@@ -140,7 +140,7 @@ void main() {
         (await db.customSelect('PRAGMA user_version').getSingle()).read<int>(
           'user_version',
         ),
-        13,
+        14,
       );
     });
 
@@ -169,6 +169,7 @@ void main() {
       'the old outcomes (shown/discarded → viewed, seen → revisited)',
       () async {
         final raw = sqlite3.sqlite3.openInMemory();
+        _addTasteTable(raw);
         raw.execute(
           'CREATE TABLE surprise_history_table ('
           'media_type TEXT NOT NULL, tmdb_id INTEGER NOT NULL, '
@@ -211,12 +212,31 @@ void main() {
 
     test('upgrading from schema v12 creates LocalFlagsTable, empty', () async {
       final raw = sqlite3.sqlite3.openInMemory();
+      _addTasteTable(raw);
       raw.execute('PRAGMA user_version = 12;');
 
       final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
       addTearDown(db.close);
 
       expect(await db.select(db.localFlagsTable).get(), isEmpty);
+    });
+
+    test('upgrading from schema v13 adds the taste profile\'s liked '
+        'collections column', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      _addTasteTable(raw);
+      raw.execute('PRAGMA user_version = 13;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      final columns = await db
+          .customSelect('PRAGMA table_info(taste_profile_table)')
+          .get();
+      expect(
+        columns.map((c) => c.read<String>('name')),
+        contains('liked_collections'),
+      );
     });
   });
 }

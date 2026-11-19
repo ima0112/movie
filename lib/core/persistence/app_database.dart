@@ -151,6 +151,9 @@ class TasteProfileTable extends Table {
 
   /// `TasteProfile.platformIds`, comma-joined TMDB provider ids (schema v10).
   TextColumn get platformIds => text().withDefault(const Constant(''))();
+
+  /// `TasteProfile.likedCollections`, comma-joined collection ids (schema v14).
+  TextColumn get likedCollections => text().withDefault(const Constant(''))();
   DateTimeColumn get updatedAt => dateTime()();
 
   @override
@@ -338,12 +341,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, to 12 when it gained its batch number and genres and its outcomes were renamed, and to 13 when [LocalFlagsTable] was added — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, to 12 when it gained its batch number and genres and its outcomes were renamed, to 13 when [LocalFlagsTable] was added, and to 14 when the taste profile gained its liked collections — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -407,6 +410,13 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 13) {
         await m.createTable(localFlagsTable);
+      }
+      if (from < 14) {
+        await _addColumn(
+          m,
+          tasteProfileTable,
+          tasteProfileTable.likedCollections,
+        );
       }
     },
   );

@@ -1268,6 +1268,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myTastesTypeHint => 'Define qué catálogo mostramos primero.';
 
   @override
+  String get myTastesCollectionsTitle => 'Colecciones que te gustan';
+
+  @override
+  String get myTastesCollectionsHint =>
+      'Series de un país, anime, novelas… los lugares y formatos a los que vuelves.';
+
+  @override
   String get myTastesVibesTitle => 'Vibes favoritas';
 
   @override
