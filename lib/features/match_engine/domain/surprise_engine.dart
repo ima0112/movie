@@ -1,3 +1,4 @@
+import '../../../core/domain/entities/collection_catalog.dart';
 import '../../../core/domain/entities/result.dart';
 import 'vibe_catalog.dart';
 import 'surprise_batch.dart';
@@ -19,5 +20,6 @@ abstract interface class SurpriseEngine {
   Future<Result<SurpriseBatch>> resolve(
     SurpriseRequest request, {
     required VibeCatalog vibeCatalog,
+    CollectionCatalog collectionCatalog = const CollectionCatalog([]),
   });
 }

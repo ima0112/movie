@@ -33,6 +33,7 @@ class ParticipantAnswers {
     this.yearTo,
     this.platformIds = const {},
     this.includeRentBuy = false,
+    this.collectionIds = const {},
   });
 
   final String participantId;
@@ -101,6 +102,15 @@ class ParticipantAnswers {
   /// when none is picked — not just included in a subscription.
   final bool includeRentBuy;
 
+  /// The quiz's first step: the collections (Turkish series, Anime…) this
+  /// participant wants everything to come from — `Collection.id` values, at
+  /// most [maxCollections]. Empty = "any". A hard filter for the Surprise-me
+  /// engine, never relaxed; the Matcher (v1.1) does not read it yet.
+  final Set<String> collectionIds;
+
+  /// The most collections one search combines (their results are unioned).
+  static const int maxCollections = 2;
+
   @override
   bool operator ==(Object other) =>
       other is ParticipantAnswers &&
@@ -115,7 +125,8 @@ class ParticipantAnswers {
       _setEquals(other.watchedKeys, watchedKeys) &&
       other.yearTo == yearTo &&
       _setEquals(other.platformIds, platformIds) &&
-      other.includeRentBuy == includeRentBuy;
+      other.includeRentBuy == includeRentBuy &&
+      _setEquals(other.collectionIds, collectionIds);
 
   @override
   int get hashCode => Object.hash(
@@ -131,6 +142,7 @@ class ParticipantAnswers {
     yearTo,
     Object.hashAllUnordered(platformIds),
     includeRentBuy,
+    Object.hashAllUnordered(collectionIds),
   );
 
   @override
@@ -140,7 +152,8 @@ class ParticipantAnswers {
       'maxRuntimeMinutes: $maxRuntimeMinutes, tvStatus: $tvStatus, '
       'maxSeasons: $maxSeasons, excludeWatched: $excludeWatched, '
       'watchedKeys: $watchedKeys, yearTo: $yearTo, '
-      'platformIds: $platformIds, includeRentBuy: $includeRentBuy)';
+      'platformIds: $platformIds, includeRentBuy: $includeRentBuy, '
+      'collectionIds: $collectionIds)';
 }
 
 /// Order-independent set content equality — same local stand-in for

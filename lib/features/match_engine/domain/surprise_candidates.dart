@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import '../../../core/domain/entities/collection.dart';
 import '../../../core/domain/entities/discover_filter.dart';
 import '../../../core/domain/entities/discover_page.dart';
 import '../../../core/domain/entities/media_item.dart';
@@ -81,14 +82,22 @@ class SurpriseCandidateSource {
   Future<SurpriseGather> gather(
     SurpriseRequest request,
     List<Vibe> vibes,
+    List<Collection> collections,
     SurpriseSearchState state,
     Random rng,
   ) async {
+    // Every chosen collection is its own set of queries (a title may come from
+    // any of them); none chosen is one unrestricted set.
     final queries = [
-      if (state.useVibes)
-        for (final vibe in vibes)
-          (vibe: vibe, filter: _filter(request, state, rng, vibe)),
-      (vibe: null, filter: _filter(request, state, rng, null)),
+      for (final collection in collections.isEmpty ? [null] : collections) ...[
+        if (state.useVibes)
+          for (final vibe in vibes)
+            (
+              vibe: vibe,
+              filter: _filter(request, state, rng, vibe, collection),
+            ),
+        (vibe: null, filter: _filter(request, state, rng, null, collection)),
+      ],
     ];
 
     final byKey = <MediaKey, SurpriseCandidate>{};
@@ -167,10 +176,15 @@ class SurpriseCandidateSource {
     SurpriseSearchState state,
     Random rng,
     Vibe? vibe,
+    Collection? collection,
   ) {
     final a = request.answers;
     final isMovie = request.type == MediaType.movie;
+    // A collection's catalog can be small (Turkish series), so its own lower
+    // vote floor applies and the rating sort — which needs 300 votes — doesn't.
+    final collectionRule = collection?.ruleFor(request.type);
     final byRating =
+        collectionRule == null &&
         state.minVoteCount >= SurpriseSearchStateDefaults.voteCount &&
         rng.nextBool();
     final vibeMaxYear = vibe?.maxReleaseYear;
@@ -194,7 +208,10 @@ class SurpriseCandidateSource {
       sortBy: byRating ? DiscoverSortBy.rating : DiscoverSortBy.popularity,
       minVoteCount: byRating
           ? max(state.minVoteCount, ratingSortVoteFloor)
-          : state.minVoteCount,
+          : collectionRule == null
+          ? state.minVoteCount
+          : min(state.minVoteCount, collectionRule.minVoteCount),
+      collection: collection,
       withWatchProviders: a.platformIds,
       // Always a hard filter: with platforms picked, on those services; with
       // none ("All platforms"), on any service of the user's region — never a

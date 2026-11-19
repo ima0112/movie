@@ -2,9 +2,12 @@ import 'dart:math';
 
 import 'package:injectable/injectable.dart';
 
+import '../../../core/domain/entities/collection.dart';
+import '../../../core/domain/entities/collection_catalog.dart';
 import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/result.dart';
 import '../../../core/domain/repositories/media_repository.dart';
+import 'participant_answers.dart';
 import 'surprise_batch.dart';
 import 'surprise_platforms.dart';
 import 'surprise_candidates.dart';
@@ -55,8 +58,17 @@ class SurpriseEngineImpl implements SurpriseEngine {
   Future<Result<SurpriseBatch>> resolve(
     SurpriseRequest request, {
     required VibeCatalog vibeCatalog,
+    CollectionCatalog collectionCatalog = const CollectionCatalog([]),
   }) async {
     final rng = Random(request.seed);
+    // The chosen collections that exist for this kind of title: a hard filter
+    // no relaxation step ever touches.
+    final collections = [
+      for (final id in request.answers.collectionIds)
+        if (collectionCatalog.byId(id) case final Collection c
+            when c.isAvailableFor(request.type))
+          c,
+    ].take(ParticipantAnswers.maxCollections).toList();
     final vibes = [
       for (final id in request.answers.vibeIds)
         if (vibeCatalog.byId(id) case final Vibe vibe
@@ -70,7 +82,7 @@ class SurpriseEngineImpl implements SurpriseEngine {
       yearFrom: request.answers.yearFrom,
     );
     final relaxations = <SurpriseRelaxation>[];
-    var gather = await _source.gather(request, vibes, state, rng);
+    var gather = await _source.gather(request, vibes, collections, state, rng);
 
     for (final step in SurpriseRelaxation.values) {
       if (gather.candidates.length >= minCandidates || gather.failure != null) {
@@ -80,7 +92,7 @@ class SurpriseEngineImpl implements SurpriseEngine {
       if (next == null) continue;
       state = next;
       relaxations.add(step);
-      gather = await _source.gather(request, vibes, state, rng);
+      gather = await _source.gather(request, vibes, collections, state, rng);
     }
 
     if (gather.failure != null) return Failure(gather.failure!);
