@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -31,16 +28,6 @@ void main() {
       expect(f.withGenres, {comedy}, reason: '$section');
     }
     expect(filter(ExploreSection.topToday).withGenres, isEmpty);
-  });
-
-  test('every section carries the picked collection too', () {
-    final anime = CollectionCatalog.fromJsonString(
-      File('assets/collections.json').readAsStringSync(),
-    ).byId('anime');
-    for (final section in ExploreSection.values) {
-      final f = exploreSectionFilter(section, today: today, collection: anime);
-      expect(f.collection, anime, reason: '$section');
-    }
   });
 
   test('top today is plain popularity', () {

@@ -508,11 +508,6 @@
   "@carouselSectionPopular": {
     "description": "CarouselSection.popular — TV Shows segment only (docs/SCREENS.md B1). CarouselSection.watchLater reuses myListTabWatchLater instead of its own key."
   },
-  "exploreCollectionLabel": "Collection",
-  "@exploreCollectionLabel": {
-    "description": "B2's overline above the collection pill row (docs/SCREENS.md B2): curated slices by origin, format or audience — Turkish series, Anime, For kids…"
-  },
-  "exploreCollectionAll": "All",
   "collectionTurkishSeries": "Turkish series",
   "collectionSpanishSeries": "Spanish series",
   "collectionLatinAmericanSeries": "Latin American series",
@@ -736,6 +731,10 @@
         "type": "String"
       }
     }
+  },
+  "filterSheetSectionCollection": "Collection",
+  "@filterSheetSectionCollection": {
+    "description": "H8's section for the curated collections (Turkish series, Anime, For kids…), single select, shown for the kinds of title that have them."
   },
   "filterSheetSectionType": "Type",
   "filterSheetSectionYear": "Years",
