@@ -9,6 +9,7 @@ import 'package:movies/core/data/repositories/tmdb_media_repository.dart';
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart';
 import 'package:movies/core/data/tmdb/tmdb_media_datasource.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/discover_page.dart';
 import 'package:movies/core/domain/entities/genre.dart';
@@ -34,6 +35,10 @@ import 'package:movies/core/persistence/app_database.dart';
 /// need the specific edge cases the mapper tests already cover in
 /// detail — this test is about *routing* (does `inTheaters` really hit
 /// `/movie/now_playing`?), not re-proving the mapper itself.
+final _catalog = CollectionCatalog.fromJsonString(
+  File('assets/collections.json').readAsStringSync(),
+);
+
 class _FixtureRoutedAdapter implements HttpClientAdapter {
   final List<String> requestedPaths = [];
   Map<String, dynamic>? lastQueryParameters;
@@ -448,6 +453,40 @@ void main() {
         (single as Success<DiscoverPage>).value.items.map((i) => i.id).toList(),
       );
     });
+
+    test(
+      'a collection with two queries (Soaps) asks twice and merges; one that '
+      "doesn't exist for the type asks nothing",
+      () async {
+        final soaps = _catalog.byId('soaps')!;
+        final result = await repository.discoverPage(
+          DiscoverFilter(type: MediaType.tvShow, collection: soaps),
+        );
+        expect(adapter.requestedPaths, ['/discover/tv', '/discover/tv']);
+        expect(
+          adapter.allQueryParameters.map((q) => q['with_keywords']),
+          contains('199262'),
+        );
+        expect((result as Success<DiscoverPage>).value.items, isNotEmpty);
+
+        adapter.requestedPaths.clear();
+        final none = await repository.discoverPage(
+          DiscoverFilter(type: MediaType.movie, collection: soaps),
+        );
+        expect(adapter.requestedPaths, isEmpty);
+        expect((none as Success<DiscoverPage>).value.items, isEmpty);
+      },
+    );
+
+    test(
+      'in "All", a collection only asks the kinds of title that have it',
+      () async {
+        await repository.discoverPage(
+          DiscoverFilter(collection: _catalog.byId('turkish_series')),
+        );
+        expect(adapter.requestedPaths, ['/discover/tv']);
+      },
+    );
 
     test('a page past TMDB\'s cap of 500 (or below 1) is clamped, not sent '
         'to be refused', () async {

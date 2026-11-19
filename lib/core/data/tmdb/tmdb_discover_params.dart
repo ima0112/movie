@@ -1,3 +1,4 @@
+import '../../domain/entities/collection_query.dart';
 import '../../domain/entities/discover_filter.dart';
 import '../../domain/entities/media_type.dart';
 import 'tmdb_genre_mapper.dart';
@@ -176,7 +177,35 @@ String _sortBy(DiscoverSortBy sortBy, bool isMovie) => switch (sortBy) {
 /// A filter that already has `withKeywords` (a vibe's) cannot take a stand-in
 /// either: both would land in the same `with_keywords`, OR-ed instead of AND-ed.
 /// There the stand-in genres are left out, as they were before they existed.
+///
+/// A filter with a **collection** multiplies that by the collection's own
+/// queries (Soaps: the keyword, or the Soap genre) and, when both name genres,
+/// by the genres' combinations. For a type the collection doesn't exist on the
+/// list is **empty**: nothing to ask TMDB for.
 List<Map<String, dynamic>> discoverQueryParamSets(
+  DiscoverFilter filter, {
+  required MediaType type,
+  String? watchRegion,
+}) {
+  final collection = filter.collection;
+  if (collection == null) {
+    return _plainQueryParamSets(filter, type: type, watchRegion: watchRegion);
+  }
+  final rule = collection.ruleFor(type);
+  if (rule == null) return const [];
+  final bases = _plainQueryParamSets(
+    filter,
+    type: type,
+    watchRegion: watchRegion,
+  );
+  return [
+    for (final base in bases)
+      for (final query in rule.queries)
+        ..._withCollectionQuery(base, query, filter, type),
+  ];
+}
+
+List<Map<String, dynamic>> _plainQueryParamSets(
   DiscoverFilter filter, {
   required MediaType type,
   String? watchRegion,
@@ -212,6 +241,70 @@ List<Map<String, dynamic>> discoverQueryParamSets(
             ...group.withoutTmdbGenreIds,
           }.join(','),
       },
+  ];
+}
+
+/// [base] narrowed by one collection [query]: where it comes from, its
+/// language, its format and genres, all ANDed with what [base] already asks.
+///
+/// Genres cannot be ANDed across two `with_genres` values, so a collection's
+/// genre (Anime: Animation) and the user's picked ones (Comedy, Drama: any)
+/// become one request per pair, `with_genres=a,b` (a comma is AND). A query
+/// whose keywords would share `with_keywords` with a stand-in's (Soaps' "telenovela" +
+/// a picked Horror) is dropped: TMDB would OR them, and the other query of that
+/// collection still covers it.
+List<Map<String, dynamic>> _withCollectionQuery(
+  Map<String, dynamic> base,
+  CollectionQuery query,
+  DiscoverFilter filter,
+  MediaType type,
+) {
+  if (query.withKeywordIds.isNotEmpty && base['with_keywords'] != null) {
+    return const [];
+  }
+  final params = {...base};
+  // A floor above the default is the section's own (Top rated asks for 300); the
+  // default gives way to the collection's, which is lower for small catalogs.
+  if (filter.minVoteCount <= const DiscoverFilter().minVoteCount) {
+    params['vote_count.gte'] = query.minVoteCount;
+  }
+  if (query.originCountries.isNotEmpty) {
+    params['with_origin_country'] = query.originCountries.join('|');
+  }
+  if (query.originalLanguage != null) {
+    params['with_original_language'] = query.originalLanguage;
+  }
+  if (query.withKeywordIds.isNotEmpty) {
+    params['with_keywords'] = query.withKeywordIds.join('|');
+  }
+  if (query.tvType != null && type == MediaType.tvShow) {
+    params['with_type'] = query.tvType;
+  }
+  if (query.withoutTmdbGenreIds.isNotEmpty) {
+    params['without_genres'] = {
+      ...?_ids(base['without_genres']),
+      ...query.withoutTmdbGenreIds,
+    }.join(',');
+  }
+  if (query.withTmdbGenreIds.isEmpty) return [params];
+
+  final alternatives = query.requireAllGenres
+      ? [query.withTmdbGenreIds.join(',')]
+      : [for (final id in query.withTmdbGenreIds) '$id'];
+  final picked = base['with_genres'] == null
+      ? const <String>[]
+      : '${base['with_genres']}'.split('|');
+  if (picked.isEmpty) {
+    return [
+      {
+        ...params,
+        'with_genres': alternatives.join(query.requireAllGenres ? ',' : '|'),
+      },
+    ];
+  }
+  return [
+    for (final a in alternatives)
+      for (final p in picked) {...params, 'with_genres': '$a,$p'},
   ];
 }
 
