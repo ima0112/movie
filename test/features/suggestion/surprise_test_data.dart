@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_initializing_formals
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'dart:async';
 
 import 'package:movies/core/domain/entities/genre.dart';
@@ -101,6 +102,7 @@ class FakeSurpriseEngine implements SurpriseEngine {
   Future<Result<SurpriseBatch>> resolve(
     SurpriseRequest request, {
     required VibeCatalog vibeCatalog,
+    CollectionCatalog collectionCatalog = const CollectionCatalog([]),
   }) async {
     requests.add(request);
     if (neverCompletes) return Completer<Result<SurpriseBatch>>().future;

@@ -21,6 +21,11 @@ class CollectionRule {
 
   final List<CollectionQuery> queries;
 
+  /// The lowest vote floor among the queries — what a search that must reach
+  /// every one of them (Surprise me) can ask at most.
+  int get minVoteCount =>
+      queries.map((q) => q.minVoteCount).reduce((a, b) => a < b ? a : b);
+
   factory CollectionRule.fromJson(Map<String, dynamic> json) => CollectionRule([
     for (final q in json['queries'] as List)
       CollectionQuery.fromJson(q as Map<String, dynamic>),

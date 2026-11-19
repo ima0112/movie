@@ -250,10 +250,24 @@ void main() {
     });
 
     test('a collection keyword and a stand-in genre\'s keyword cannot share '
-        'a request: that query drops, the genre one stays', () {
+        'one with_keywords (it would be an OR): each pair is a request, a '
+        'comma meaning AND', () {
       final sets = tv(of('soaps', genres: {const Genre(id: 'horror')}));
-      expect(sets.every((s) => s['with_keywords'] != '199262'), isTrue);
-      expect(sets, isNotEmpty);
+      expect(sets.map((s) => s['with_keywords']), contains('199262,315058'));
+      // The Soap-genre query has no keyword of its own, so keeps the stand-in's.
+      expect(sets.map((s) => s['with_keywords']), contains('315058'));
+    });
+
+    test('a vibe\'s keywords and Soaps\' "telenovela" are ANDed pair by '
+        'pair', () {
+      final params = tv(
+        DiscoverFilter(
+          collection: catalog.byId('soaps'),
+          withKeywords: {1299, 13031},
+        ),
+      );
+      final keywords = params.map((s) => s['with_keywords']).toSet();
+      expect(keywords, containsAll(['199262,1299', '199262,13031']));
     });
 
     test('a collection counts as one active filter', () {

@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/discover_page.dart';
 import 'package:movies/core/domain/entities/genre.dart';
@@ -376,6 +378,78 @@ void main() {
         }
       },
     );
+  });
+
+  group('collections', () {
+    final collections = CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    );
+    Future<SurpriseBatch> resolveWith(
+      _FakeRepository repo,
+      Set<String> ids, {
+      MediaType type = MediaType.tvShow,
+      Set<String> vibeIds = const {},
+    }) async {
+      final result = await SurpriseEngineImpl(repo).resolve(
+        _request(
+          type: type,
+          answers: ParticipantAnswers(
+            participantId: 'me',
+            yearFrom: 1980,
+            collectionIds: ids,
+            vibeIds: vibeIds,
+          ),
+        ),
+        vibeCatalog: _vibes,
+        collectionCatalog: collections,
+      );
+      return (result as Success<SurpriseBatch>).value;
+    }
+
+    test('every query carries the collection, with its own lower vote floor '
+        'and no rating sort', () async {
+      final repo = _FakeRepository(_catalog(300));
+      await resolveWith(repo, {'turkish_series'});
+
+      expect(repo.calls, isNotEmpty);
+      for (final c in repo.calls) {
+        expect(c.filter.collection, collections.byId('turkish_series'));
+        expect(c.filter.minVoteCount, lessThanOrEqualTo(30));
+        expect(c.filter.sortBy, DiscoverSortBy.popularity);
+      }
+    });
+
+    test('two collections make two sets of queries; one that does not exist '
+        'for the kind of title is ignored; more than two are cut', () async {
+      final repo = _FakeRepository(_catalog(300));
+      await resolveWith(repo, {'turkish_series', 'anime'});
+      expect(
+        {for (final c in repo.calls) c.filter.collection?.id},
+        {'turkish_series', 'anime'},
+      );
+
+      final other = _FakeRepository(_catalog(300));
+      await resolveWith(other, {'bollywood'}); // movies only; this is TV
+      expect({for (final c in other.calls) c.filter.collection}, {null});
+
+      final many = _FakeRepository(_catalog(300));
+      await resolveWith(many, {'turkish_series', 'anime', 'soaps'});
+      expect(
+        {for (final c in many.calls) c.filter.collection?.id}.length,
+        ParticipantAnswers.maxCollections,
+      );
+    });
+
+    test('relaxing never drops the collection', () async {
+      final repo = _FakeRepository(const []);
+      await resolveWith(repo, {'turkish_series'}, vibeIds: {'feel_good'});
+
+      expect(repo.calls.length, greaterThan(3)); // it did relax
+      expect(
+        repo.calls.every((c) => c.filter.collection?.id == 'turkish_series'),
+        isTrue,
+      );
+    });
   });
 
   group('hard filters', () {
