@@ -80,7 +80,9 @@ class TasteProfile {
   /// same as no profile at all: it falls through to the inferred-from-
   /// My-List case, or the quiz.
   bool get isUsableForSuggestions =>
-      likedGenres.isNotEmpty || likedVibes.isNotEmpty;
+      likedGenres.isNotEmpty ||
+      likedVibes.isNotEmpty ||
+      likedCollections.isNotEmpty;
 
   /// This profile with some fields replaced ([updatedAt] is always now, unless
   /// given): C5 edits one field at a time. `clearYearTo` / `clearPreferredType`

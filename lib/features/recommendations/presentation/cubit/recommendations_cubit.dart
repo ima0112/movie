@@ -1,3 +1,4 @@
+import '../../../../core/domain/entities/collection_catalog.dart';
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -122,8 +123,10 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
     this._tasteProfileRepository,
     this._settingsRepository,
     FutureOr<VibeCatalog> vibeCatalog, {
+    FutureOr<CollectionCatalog> collectionCatalog = const CollectionCatalog([]),
     DateTime Function()? clock,
   }) : _vibeCatalog = Future.value(vibeCatalog),
+       _collectionCatalog = Future.value(collectionCatalog),
        _clock = clock ?? DateTime.now,
        super(
          const RecommendationsState(
@@ -145,6 +148,7 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
   final TasteProfileRepository _tasteProfileRepository;
   final SettingsRepository _settingsRepository;
   final Future<VibeCatalog> _vibeCatalog;
+  final Future<CollectionCatalog> _collectionCatalog;
   final DateTime Function() _clock;
   late final StreamSubscription<AppSettings> _settingsSubscription;
 
@@ -155,9 +159,10 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
   /// build this Cubit synchronously, so it is resolved lazily here, once.
   Future<(RecommendationBuilder, RecommendationPlanner)> get _tools async {
     final catalog = await _vibeCatalog;
+    final collections = await _collectionCatalog;
     return (
       _cachedBuilder ??= const RecommendationBuilder(),
-      _cachedPlanner ??= RecommendationPlanner(catalog),
+      _cachedPlanner ??= RecommendationPlanner(catalog, collections),
     );
   }
 
@@ -283,6 +288,7 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
       'title:${entry.key.type.name}:${entry.key.tmdbId}',
     GenreSeed(:final genre) => 'genre:${genre.id}',
     VibeSeed(:final vibe) => 'vibe:${vibe.id}',
+    CollectionSeed(:final collection) => 'collection:${collection.id}',
   };
 
   @override

@@ -9,12 +9,14 @@ TasteProfile _profile({
   Set<Genre> likedGenres = const {},
   Set<Genre> vetoedGenres = const {},
   Set<String> likedVibes = const {},
+  Set<String> likedCollections = const {},
   int yearFrom = 2000,
 }) {
   return TasteProfile(
     likedGenres: likedGenres,
     vetoedGenres: vetoedGenres,
     likedVibes: likedVibes,
+    likedCollections: likedCollections,
     yearFrom: yearFrom,
     updatedAt: DateTime(2024),
   );
@@ -28,6 +30,13 @@ void main() {
 
     test('a liked vibe alone is enough', () {
       expect(_profile(likedVibes: {'cozy'}).isUsableForSuggestions, isTrue);
+    });
+
+    test('a liked collection alone is enough', () {
+      expect(
+        _profile(likedCollections: {'anime'}).isUsableForSuggestions,
+        isTrue,
+      );
     });
 
     test('vetoed genres alone are not enough — a veto says nothing '

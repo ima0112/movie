@@ -89,6 +89,7 @@ class TasteProfileBuilder {
     final int yearFrom;
     int? yearTo;
     var platformIds = const <int>{};
+    var collectionIds = const <String>{};
 
     if (profile != null && profile.isUsableForSuggestions) {
       likedGenres = profile.likedGenres;
@@ -97,6 +98,7 @@ class TasteProfileBuilder {
       yearFrom = profile.yearFrom;
       yearTo = profile.yearTo;
       platformIds = profile.platformIds;
+      collectionIds = profile.likedCollections;
     } else if (libraryEntries.length >= minInferredEntries) {
       final affinity = genreAffinityFrom(libraryEntries);
       likedGenres = {
@@ -132,6 +134,9 @@ class TasteProfileBuilder {
       watchedKeys: watchedKeys,
       yearTo: yearTo,
       platformIds: platformIds,
+      // All of them: the engine keeps the ones that exist for this kind of
+      // title, up to its limit.
+      collectionIds: collectionIds,
     );
   }
 

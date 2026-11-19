@@ -956,6 +956,12 @@ abstract class AppLocalizations {
   /// **'Popular this week'**
   String get carouselSectionPopularThisWeek;
 
+  /// B1's All tab: 'Because you like X' where X is one of the collections (Turkish series, Anime…) in the user's taste profile (docs/SCREENS.md B1).
+  ///
+  /// In en, this message translates to:
+  /// **'Because you like {collection}'**
+  String carouselSectionBecauseYouLikeCollection(String collection);
+
   /// B1's All tab: 'Because you like X' where X is one of the genres in the user's taste profile (docs/SCREENS.md B1).
   ///
   /// In en, this message translates to:
