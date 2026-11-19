@@ -141,6 +141,7 @@ class RecommendationPlanner {
           : DiscoverFilter(
               withGenres: withGenres,
               withoutGenres: profile.vetoedGenres,
+              excludeTalkAndNews: true,
               withKeywords: keywords,
               yearFrom: profile.yearFrom,
               yearTo: profile.yearTo,
@@ -156,12 +157,14 @@ class RecommendationPlanner {
         GenreSeed(:final genre) => DiscoverFilter(
           withGenres: {genre},
           withoutGenres: profile?.vetoedGenres ?? const {},
+          excludeTalkAndNews: true,
           yearFrom: profile?.yearFrom,
           yearTo: profile?.yearTo,
         ),
         VibeSeed(:final vibe) => DiscoverFilter(
           withGenres: vibe.genresFor(MediaType.movie),
           withoutGenres: profile?.vetoedGenres ?? const {},
+          excludeTalkAndNews: true,
           withKeywords: vibe.keywordIdsFor(MediaType.movie),
           yearFrom: profile?.yearFrom,
           // The vibe's own ceiling (a "classic" ends in 1995) and the user's
@@ -208,6 +211,7 @@ class RecommendationPlanner {
               type: type,
               withGenres: chosen.toSet(),
               withoutGenres: disliked.difference(chosen.toSet()),
+              excludeTalkAndNews: true,
             ),
       becauseLike: title == null ? null : TitleSeed(title),
     );
