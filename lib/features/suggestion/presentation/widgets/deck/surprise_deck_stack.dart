@@ -1,7 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../match_engine/domain/surprise_batch.dart';
@@ -9,7 +8,7 @@ import 'surprise_card_back.dart';
 import 'surprise_flip_card.dart';
 import 'surprise_suggestion_card.dart';
 
-/// Turns the card on top of a [SurpriseDeckStack] from outside it.
+/// Acts on a [SurpriseDeckStack] from outside it (a screen-reader action).
 class SurpriseDeckController {
   VoidCallback? _flip;
   VoidCallback? _swipeNext;
@@ -33,23 +32,21 @@ class SurpriseDeckController {
   }
 }
 
-/// The deck itself (`docs/SCREENS.md` E3): the card on top and the next one behind it —
-/// smaller, lower, turned a few degrees in opposite directions and fainter —
-/// all cards living in one circular order, so the top one that leaves goes to
-/// the back.
+/// The deck itself (`docs/SCREENS.md` E3): the card on top and the next one
+/// behind it, smaller and lower, all cards in one circular order. The dragging,
+/// the fly-off and the card behind rising come from the `flutter_card_swiper`
+/// package ([CardSwiper]); everything of ours — the cards' faces and their 3D
+/// turn, the zoom when a thumbnail brings another card up, the screen-reader
+/// controls — is layered on top of it.
 ///
 /// **Gestures on the top card:**
-/// - drag **either way** past a third of the width (or a fast flick): *pass*
-///   ([onNext]); a drag that stops short springs back;
+/// - drag **either way** past the package's threshold: *pass* ([onNext], told
+///   when the card has left); a drag that stops short springs back;
 /// - **double tap**: *choose* ([onChoose], a medium buzz); **tap**: turn the card
-///   over to its back and, tapped again, back to the front ([onFlipped]) — the
-///   tap waits a moment to tell them apart. A card goes back to its front when
-///   it leaves the top.
-/// While dragged the card follows the finger with a turn proportional to how far
-/// it went (no edge arrows: those are only in the first-time tour). With one
-/// card there is nowhere to go, so dragging is off.
-///
-/// With "reduce motion" nothing turns or flies: the deck just changes.
+///   over to its back and, tapped again, back to the front ([onFlipped]). A card
+///   goes back to its front when it leaves the top.
+/// With one card there is nowhere to go, so dragging is off. With "reduce
+/// motion" nothing turns or flies: the deck just changes.
 class SurpriseDeckStack extends StatefulWidget {
   const SurpriseDeckStack({
     super.key,
@@ -80,53 +77,41 @@ class SurpriseDeckStack extends StatefulWidget {
   /// Lets code outside the deck (a screen-reader action) turn the top card.
   final SurpriseDeckController? controller;
 
-  /// A drag confirms past this fraction of the card's width…
-  static const double confirmFraction = 1 / 3;
-
-  /// …or a flick faster than this (logical px / s).
-  static const double flickVelocity = 700;
-
-  static const Duration exitDuration = Duration(milliseconds: 200);
-
   /// The zoom when a thumbnail brings another card up.
   static const Duration zoomDuration = Duration(milliseconds: 300);
-  static const Duration bounceDuration = Duration(milliseconds: 250);
 
   @override
   State<SurpriseDeckStack> createState() => _SurpriseDeckStackState();
 }
 
 class _SurpriseDeckStackState extends State<SurpriseDeckStack>
-    with TickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(vsync: this);
+    with SingleTickerProviderStateMixin {
   late final AnimationController _zoom = AnimationController(vsync: this);
+  final CardSwiperController _swiper = CardSwiperController();
 
-  /// The card that is flying off (a swipe) or zooming out toward the viewer (a
-  /// jump to a higher number) while the deck has already moved on under it.
+  /// The card the swiper has on top. It moves by itself when a card is swiped
+  /// away; the deck's [SurpriseDeckStack.index] follows it (through `onNext`).
+  late int _swiperIndex = widget.index;
+
+  /// The card zooming out (a jump from the thumbnails) while the deck is
+  /// already on the new one.
   int? _leavingIndex;
 
   /// Which way the last jump went: toward a higher number (true) or a lower one.
   bool _zoomForward = true;
 
-  /// The top card's horizontal offset while a finger is on it.
-  double _dx = 0;
-  double _from = 0;
-  double _to = 0;
-  Curve _curve = Curves.easeOut;
-  bool _animating = false;
-
   static const double _sideMargin = AppSpacing.screenMargin;
-  static const double _maxTurn = 0.2; // radians at a full card width
-  static const double _behindShift = 14;
-  static const double _behindScale = 0.06;
-  static const double _behindFade = 0.35;
-  static const double _behindTurn = 0.05;
-  static const Duration _reorder = Duration(milliseconds: 200);
 
-  /// The exit lasts as long as the finger's speed says, within these limits.
-  static const double _minExitSpeed = 1400; // px / s
-  static const Duration _minExit = Duration(milliseconds: 120);
-  static const Duration _maxExit = Duration(milliseconds: 220);
+  /// How much smaller, and how much lower, the card behind is.
+  static const double _behindScale = 0.94;
+  static const double _behindShift = 14;
+
+  /// The most the dragged card turns, in degrees.
+  static const double _maxAngle = 11;
+
+  /// How far (px) a drag must go to pass the card.
+  static const int _threshold = 100;
+  static const Duration _flyDuration = Duration(milliseconds: 220);
 
   /// How far the zooming card grows toward the viewer.
   static const double _zoomGrowth = 0.28;
@@ -145,38 +130,36 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   /// Whether each card shows its back.
   List<ValueNotifier<bool>> _flips = [];
 
-  Widget _cardOf(int i) {
-    if (!identical(_cardsFor, widget.suggestions)) {
-      _cardsFor = widget.suggestions;
-      for (final n in _flips) {
-        n.dispose();
-      }
-      _flips = [for (final _ in widget.suggestions) ValueNotifier(false)];
-      _cardWidgets = [
-        for (var k = 0; k < widget.suggestions.length; k++)
-          RepaintBoundary(
-            child: SurpriseFlipCard(
-              flipped: _flips[k],
-              front: SurpriseSuggestionCard(
-                suggestion: widget.suggestions[k],
-                number: k + 1,
-                total: widget.suggestions.length,
-                topAction: widget.cardAction?.call(k),
-              ),
-              back: SurpriseCardBack(
-                suggestion: widget.suggestions[k],
-                number: k + 1,
-                topAction: widget.cardAction?.call(k),
-              ),
-            ),
-          ),
-      ];
-    }
-    return _cardWidgets![i];
-  }
-
   bool get _canSwipe => widget.suggestions.length >= 2;
   bool get _still => MediaQuery.disableAnimationsOf(context);
+
+  void _ensureCards() {
+    if (identical(_cardsFor, widget.suggestions)) return;
+    _cardsFor = widget.suggestions;
+    for (final n in _flips) {
+      n.dispose();
+    }
+    _flips = [for (final _ in widget.suggestions) ValueNotifier(false)];
+    _cardWidgets = [
+      for (var k = 0; k < widget.suggestions.length; k++)
+        RepaintBoundary(
+          child: SurpriseFlipCard(
+            flipped: _flips[k],
+            front: SurpriseSuggestionCard(
+              suggestion: widget.suggestions[k],
+              number: k + 1,
+              total: widget.suggestions.length,
+              topAction: widget.cardAction?.call(k),
+            ),
+            back: SurpriseCardBack(
+              suggestion: widget.suggestions[k],
+              number: k + 1,
+              topAction: widget.cardAction?.call(k),
+            ),
+          ),
+        ),
+    ];
+  }
 
   @override
   void initState() {
@@ -187,39 +170,42 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
   @override
   void didUpdateWidget(SurpriseDeckStack old) {
     super.didUpdateWidget(old);
-    // A card that left the top shows its front again.
-    if (identical(old.suggestions, widget.suggestions) &&
-        old.index != widget.index &&
-        old.index < _flips.length) {
-      _flips[old.index].value = false;
-    }
     if (old.controller != widget.controller) {
       old.controller?._detach();
       widget.controller?._attach(this);
     }
-    final n = widget.suggestions.length;
-    // A swipe leaves through its own animation; a new batch just appears.
-    if (old.index == widget.index ||
-        _leavingIndex != null ||
-        !identical(old.suggestions, widget.suggestions) ||
-        n < 2 ||
-        _still) {
+    if (!identical(old.suggestions, widget.suggestions)) {
+      // A new batch: a new swiper, starting at the deck's card.
+      _swiperIndex = widget.index;
+      _leavingIndex = null;
       return;
     }
-    // Another card was brought up from the thumbnails: toward a higher number
-    // the old top comes toward the viewer and fades; toward a lower one the new
-    // top arrives from the front. Only the numbers count — card 5 is after card
-    // 1 here even though the deck is circular ("Next" is a swipe, not this).
-    final forward = widget.index > old.index;
+    if (old.index == widget.index) return;
+    // A card that left the top shows its front again.
+    if (old.index < _flips.length) _flips[old.index].value = false;
+    // The swiper already moved there by itself (a swipe).
+    if (widget.index == _swiperIndex) return;
+
+    // Another card was brought up from the thumbnails: the swiper jumps there,
+    // and the two cards zoom — toward a higher number the old top comes toward
+    // the viewer and fades; toward a lower one the new top arrives from the
+    // front. Only the numbers count (card 5 is after card 1).
+    _swiperIndex = widget.index;
+    // After this frame: the swiper drops the controller's pending events when
+    // it is rebuilt (it re-subscribes in its own didUpdateWidget), and it is
+    // being rebuilt right now.
+    final target = widget.index;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && target == _swiperIndex) _swiper.moveTo(target);
+    });
+    if (_still || !_canSwipe) return;
     _leavingIndex = old.index;
-    _zoomForward = forward;
+    _zoomForward = widget.index > old.index;
     _zoom
       ..duration = SurpriseDeckStack.zoomDuration
       ..forward(from: 0).whenComplete(() {
         if (!mounted) return;
-        setState(() {
-          _leavingIndex = null;
-        });
+        setState(() => _leavingIndex = null);
       });
   }
 
@@ -230,252 +216,132 @@ class _SurpriseDeckStackState extends State<SurpriseDeckStack>
       n.dispose();
     }
     _zoom.dispose();
-    _controller.dispose();
+    _swiper.dispose();
     super.dispose();
   }
 
-  /// The card width as last laid out (what a swipe measures against).
-  double _width = 0;
-
-  void _swipeNext() {
-    if (!_canSwipe || _animating || _width <= 0) return;
-    _fling(1, width: _width, speed: 0);
-  }
-
   void _toggleFlip() {
-    _cardOf(widget.index); // (makes sure the flags exist)
-    final flip = _flips[widget.index];
+    _ensureCards();
+    final flip = _flips[_swiperIndex];
     flip.value = !flip.value;
     if (flip.value) widget.onFlipped?.call();
   }
 
-  double _offset() => _animating
-      ? _from + (_to - _from) * _curve.transform(_controller.value)
-      : _dx;
-
-  void _onDragUpdate(DragUpdateDetails d) {
-    if (!_canSwipe || _animating) return;
-    setState(() => _dx += d.delta.dx);
+  void _swipeNext() {
+    if (!_canSwipe) return;
+    _swiper.swipe(CardSwiperDirection.right);
   }
 
-  void _onDragEnd(DragEndDetails d, double width) {
-    if (!_canSwipe || _animating) return;
-    final v = d.primaryVelocity ?? 0;
-    final far = width * SurpriseDeckStack.confirmFraction;
-    if (_dx < 0 && (-_dx > far || v < -SurpriseDeckStack.flickVelocity)) {
-      _fling(-1, width: width, speed: v);
-    } else if (_dx > 0 && (_dx > far || v > SurpriseDeckStack.flickVelocity)) {
-      _fling(1, width: width, speed: v);
-    } else {
-      _run(0, SurpriseDeckStack.bounceDuration, Curves.easeOutBack);
-    }
-  }
-
-  Future<void> _fling(
-    int dir, {
-    required double width,
-    required double speed,
-  }) async {
-    // The deck moves on at once — the next card rises while this one leaves —
-    // instead of waiting for the exit to end.
-    final leaving = widget.index;
-    if (!_still) _leavingIndex = leaving;
+  /// The swiper finished passing card [from]: the deck moves on.
+  bool _onSwipe(int from, int? to, CardSwiperDirection direction) {
+    _swiperIndex = to ?? from;
     widget.onNext();
-    // Keep the finger's speed: the card does not slow down to start over.
-    final target = dir * width * 1.3;
-    final seconds =
-        ((target - _dx).abs() / math.max(speed.abs(), _minExitSpeed)).clamp(
-          _minExit.inMilliseconds / 1000,
-          _maxExit.inMilliseconds / 1000,
-        );
-    await _run(
-      target,
-      Duration(milliseconds: (seconds * 1000).round()),
-      Curves.easeOutCubic,
-    );
-    if (mounted && _leavingIndex == leaving) {
-      setState(() => _leavingIndex = null);
-    }
+    return true;
   }
 
-  /// Slides the top card from where it is to [to], then runs [then] (the deck
-  /// moves on) and puts the offset back to zero — the next card is on top by
-  /// then, so nothing jumps.
-  Future<void> _run(
-    double to,
-    Duration duration,
-    Curve curve, {
-    VoidCallback? then,
-  }) async {
-    _from = _dx;
-    _to = to;
-    _curve = curve;
-    _animating = true;
-    if (_still) {
-      _controller.value = 1;
-    } else {
-      _controller.duration = duration;
-      await _controller.forward(from: 0);
-    }
-    if (!mounted) return;
-    then?.call();
-    setState(() {
-      _animating = false;
-      _dx = 0;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final cards = widget.suggestions;
-    final n = cards.length;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth - 2 * _sideMargin;
-        _width = width;
-        return AnimatedBuilder(
-          animation: Listenable.merge([_controller, _zoom]),
-          builder: (context, _) {
-            final dx = _offset();
-            // Back to front: the farthest slot first, the top card last.
-            final order = [for (var i = 0; i < n; i++) i]
-              ..sort((a, b) => _slot(b).compareTo(_slot(a)));
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned.fill(
-                  left: _sideMargin,
-                  right: _sideMargin,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      for (final i in order)
-                        _slotted(i, cards[i], dx: dx, width: width),
-                      if (_leavingIndex != null)
-                        _leaving(_leavingIndex!, dx: dx, width: width),
-                    ],
-                  ),
-                ),
-              ],
+  /// The card for [index]: its faces, its taps (the top card only), and, during
+  /// a thumbnail zoom, the pose the zoom puts it in.
+  Widget _card(int index) {
+    final isTop = index == _swiperIndex;
+    final zooming = _leavingIndex != null;
+    Widget card = _cardWidgets![index];
+    if (isTop) {
+      card = GestureDetector(
+        onTap: _toggleFlip,
+        onDoubleTap: () {
+          HapticFeedback.mediumImpact();
+          widget.onChoose();
+        },
+        child: card,
+      );
+      if (zooming) {
+        card = AnimatedBuilder(
+          animation: _zoom,
+          child: card,
+          builder: (context, child) {
+            final t = Curves.easeOutCubic.transform(_zoom.value);
+            // Forward: from small and far; backward: from large and near.
+            final scale = _zoomForward
+                ? 1 - _zoomShrink * (1 - t)
+                : 1 + _zoomGrowth * (1 - t);
+            return Opacity(
+              opacity: _arrivingStart + (1 - _arrivingStart) * t,
+              child: Transform.scale(scale: scale, child: child),
             );
           },
+        );
+      }
+      return card;
+    }
+    // The cards behind take no touches, and the one that is zooming out is
+    // hidden (a copy of it is drawn on top).
+    return IgnorePointer(
+      child: Opacity(
+        opacity: zooming && index == _leavingIndex ? 0 : 1,
+        child: card,
+      ),
+    );
+  }
+
+  /// The old top card, drawn over the deck while it zooms out.
+  Widget _leaving() {
+    return AnimatedBuilder(
+      animation: _zoom,
+      child: _cardWidgets![_leavingIndex!],
+      builder: (context, child) {
+        final t = Curves.easeOutCubic.transform(_zoom.value);
+        // Forward: toward the viewer, larger; backward: away, smaller. Fading
+        // out either way.
+        return Opacity(
+          opacity: 1 - t,
+          child: Transform.scale(
+            scale: _zoomForward ? 1 + _zoomGrowth * t : 1 - _zoomShrink * t,
+            child: child,
+          ),
         );
       },
     );
   }
 
-  /// The card on its way out, drawn above the deck: flying off with the swipe,
-  /// or growing toward the viewer and fading when another card was brought up.
-  Widget _leaving(int i, {required double dx, required double width}) {
-    final card = _cardOf(i);
-    final Widget moving;
-    if (_zoom.isAnimating) {
-      final t = Curves.easeOutCubic.transform(_zoom.value);
-      // Forward: toward the viewer, larger; backward: away, smaller. Fading
-      // out either way.
-      moving = Opacity(
-        opacity: 1 - t,
-        child: Transform.scale(
-          scale: _zoomForward ? 1 + _zoomGrowth * t : 1 - _zoomShrink * t,
-          child: card,
+  @override
+  Widget build(BuildContext context) {
+    _ensureCards();
+    final n = widget.suggestions.length;
+    final padding = const EdgeInsets.symmetric(horizontal: _sideMargin);
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // A new batch is a new swiper (keyed by the batch itself).
+        CardSwiper(
+          key: ValueKey(widget.suggestions),
+          controller: _swiper,
+          cardsCount: n,
+          initialIndex: widget.index,
+          numberOfCardsDisplayed: n < 2 ? 1 : 2,
+          isLoop: true,
+          isDisabled: !_canSwipe,
+          allowedSwipeDirection: const AllowedSwipeDirection.symmetric(
+            horizontal: true,
+          ),
+          padding: padding,
+          scale: _behindScale,
+          backCardOffset: const Offset(0, _behindShift),
+          maxAngle: _maxAngle,
+          threshold: _threshold,
+          duration: _still ? const Duration(milliseconds: 1) : _flyDuration,
+          onSwipe: _onSwipe,
+          cardBuilder: (context, index, horizontalPercent, verticalPercent) =>
+              _card(index),
         ),
-      );
-    } else {
-      moving = Transform.translate(
-        offset: Offset(dx, 0),
-        child: Transform.rotate(angle: dx / width * _maxTurn, child: card),
-      );
-    }
-    return Positioned.fill(
-      key: const ValueKey('leaving'),
-      child: IgnorePointer(child: ExcludeSemantics(child: moving)),
-    );
-  }
-
-  /// 0 = the top card, 1 = the next one…, around the circular order.
-  int _slot(int i) => (i - widget.index) % widget.suggestions.length;
-
-  Widget _slotted(
-    int i,
-    SurpriseSuggestion suggestion, {
-    required double dx,
-    required double width,
-  }) {
-    final slot = _slot(i);
-    final isTop = slot == 0;
-    // Only the next card shows behind the top one: the ones past it would be
-    // revealed while a card leaves and then hide again, which reads as a glitch.
-    final visible = slot < 2;
-    final side = slot.isOdd ? -1.0 : 1.0;
-    final card = _cardOf(i);
-
-    final body = isTop
-        ? GestureDetector(
-            onHorizontalDragUpdate: _onDragUpdate,
-            onHorizontalDragEnd: (d) => _onDragEnd(d, width),
-            onTap: _animating ? null : _toggleFlip,
-            onDoubleTap: _animating
-                ? null
-                : () {
-                    HapticFeedback.mediumImpact();
-                    widget.onChoose();
-                  },
-            child: Transform.translate(
-              offset: Offset(_leavingIndex == null ? dx : 0, 0),
-              child: Transform.rotate(
-                angle: _still || _leavingIndex != null
-                    ? 0
-                    : dx / width * _maxTurn,
-                child: card,
-              ),
+        if (_leavingIndex != null)
+          Positioned.fill(
+            key: const ValueKey('leaving'),
+            child: Padding(
+              padding: padding,
+              child: IgnorePointer(child: ExcludeSemantics(child: _leaving())),
             ),
-          )
-        : IgnorePointer(child: card);
-    final zooming = _zoom.isAnimating;
-    final arriving = isTop && zooming;
-    final t = Curves.easeOutCubic.transform(_zoom.value);
-    final shown = arriving
-        ? Opacity(
-            opacity: _arrivingStart + (1 - _arrivingStart) * t,
-            child: Transform.scale(
-              // Forward: from small and far; backward: from large and near.
-              scale: _zoomForward
-                  ? 1 - _zoomShrink * (1 - t)
-                  : 1 + _zoomGrowth * (1 - t),
-              child: body,
-            ),
-          )
-        : body;
-
-    return Positioned.fill(
-      key: ValueKey(suggestion.item.key),
-      child: AnimatedOpacity(
-        // (A zoom draws the two cards itself: the leaving one is hidden here and
-        // the arriving one starts from its zoom pose, not from its old slot.)
-        duration: _still || (zooming && (isTop || i == _leavingIndex))
-            ? Duration.zero
-            : _reorder,
-        opacity: !visible || (zooming && i == _leavingIndex)
-            ? 0
-            : 1 - _behindFade * slot,
-        child: AnimatedContainer(
-          duration: _still || (zooming && isTop) ? Duration.zero : _reorder,
-          curve: Curves.easeOut,
-          transformAlignment: Alignment.center,
-          transform: Matrix4.identity()
-            ..translateByDouble(0, isTop ? 0 : _behindShift * slot, 0, 1)
-            ..rotateZ(
-              _still || isTop ? 0 : side * _behindTurn * math.min(slot, 2),
-            )
-            ..scaleByDouble(
-              1 - _behindScale * math.min(slot, 3),
-              1 - _behindScale * math.min(slot, 3),
-              1,
-              1,
-            ),
-          child: shown,
-        ),
-      ),
+          ),
+      ],
     );
   }
 }
