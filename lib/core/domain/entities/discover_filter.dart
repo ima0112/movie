@@ -1,3 +1,4 @@
+import 'collection.dart';
 import 'discover_preset.dart';
 import 'genre.dart';
 import 'media_type.dart';
@@ -67,6 +68,7 @@ class DiscoverFilter {
     this.withoutKeywords = const {},
     this.monetizationTypes = const {},
     this.excludeTalkAndNews = false,
+    this.collection,
   });
 
   /// `null` = "All" (H8: "Type (All/Movies/TV Shows)"). C1: "All = both
@@ -163,6 +165,13 @@ class DiscoverFilter {
   /// effect on movies.
   final bool excludeTalkAndNews;
 
+  /// Narrow to a curated collection (Turkish series, Anime, Kids…) — its
+  /// [CollectionRule] for [type], unioned if it has several queries — on top of
+  /// every other filter here. A collection that doesn't exist for [type] leaves
+  /// nothing for that type (Turkish series among movies), so in "All" only the
+  /// kinds that have it contribute.
+  final Collection? collection;
+
   /// How the title must be available (`with_watch_monetization_types`, any of
   /// them) — on [withWatchProviders] when given, else on **any** service of the
   /// user's region. Empty = TMDB's own default, which restricts nothing and does
@@ -186,6 +195,7 @@ class DiscoverFilter {
       (yearFrom != null || yearTo != null ? 1 : 0) +
       (hasRatingRange ? 1 : 0) +
       (originalLanguage != null ? 1 : 0) +
+      (collection != null ? 1 : 0) +
       (preset != null ? 1 : 0);
 
   /// Whether a rating floor above 0 or a ceiling is set.
@@ -224,6 +234,7 @@ class DiscoverFilter {
     Set<int>? withoutKeywords,
     Set<WatchMonetization>? monetizationTypes,
     bool? excludeTalkAndNews,
+    Collection? Function()? collection,
   }) {
     return DiscoverFilter(
       type: type == null ? this.type : type(),
@@ -254,6 +265,7 @@ class DiscoverFilter {
       withoutKeywords: withoutKeywords ?? this.withoutKeywords,
       monetizationTypes: monetizationTypes ?? this.monetizationTypes,
       excludeTalkAndNews: excludeTalkAndNews ?? this.excludeTalkAndNews,
+      collection: collection == null ? this.collection : collection(),
     );
   }
 
@@ -279,10 +291,11 @@ class DiscoverFilter {
       other.releasedTo == releasedTo &&
       _setEquals(other.withoutKeywords, withoutKeywords) &&
       _setEquals(other.monetizationTypes, monetizationTypes) &&
-      other.excludeTalkAndNews == excludeTalkAndNews;
+      other.excludeTalkAndNews == excludeTalkAndNews &&
+      other.collection == collection;
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     type,
     Object.hashAllUnordered(withGenres),
     Object.hashAllUnordered(withoutGenres),
@@ -303,7 +316,8 @@ class DiscoverFilter {
     Object.hashAllUnordered(withoutKeywords),
     Object.hashAllUnordered(monetizationTypes),
     excludeTalkAndNews,
-  );
+    collection,
+  ]);
 
   @override
   String toString() =>
@@ -320,7 +334,7 @@ class DiscoverFilter {
       'releasedFrom: $releasedFrom, releasedTo: $releasedTo, '
       'withoutKeywords: $withoutKeywords, '
       'monetizationTypes: $monetizationTypes, '
-      'excludeTalkAndNews: $excludeTalkAndNews)';
+      'excludeTalkAndNews: $excludeTalkAndNews, collection: $collection)';
 }
 
 /// Order-independent set content equality — same local stand-in for

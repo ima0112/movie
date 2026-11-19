@@ -390,27 +390,51 @@ class TmdbMediaRepository implements MediaRepository {
     page = page.clamp(1, _maxPage);
     switch (filter.type) {
       case MediaType.movie:
-        return _moviesPage((p) => _discoverMovies(filter, p), page);
+        return _discoverMoviesPage(filter, page);
       case MediaType.tvShow:
         return _discoverTvPage(filter, page);
       case null:
         // C1: "All = both interleaved" — the same page of each type, woven
         // together. A type that has run out of pages contributes nothing.
         final parts = await Future.wait([
-          _moviesPageOrEnd((p) => _discoverMovies(filter, p), page),
+          _orEnd(() => _discoverMoviesPage(filter, page), page),
           _orEnd(() => _discoverTvPage(filter, page), page),
         ]);
         return _mergedPage(parts, page);
     }
   }
 
-  Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> _discoverMovies(
+  /// A movie page: one `/discover/movie` call per query the filter needs
+  /// (`discoverQueryParamSets`: a collection with several queries, or genre
+  /// combinations), woven into one page, repeats dropped; none at all when the
+  /// collection doesn't exist for movies.
+  Future<DiscoverPage> _discoverMoviesPage(
     DiscoverFilter filter,
     int page,
-  ) => _datasource.discoverMovie({
-    ...discoverQueryParams(filter, type: MediaType.movie, watchRegion: _region),
-    'page': page,
-  });
+  ) async {
+    final sets = discoverQueryParamSets(
+      filter,
+      type: MediaType.movie,
+      watchRegion: _region,
+    );
+    Future<TmdbPagedResponseDto<TmdbMovieListItemDto>> fetch(
+      Map<String, dynamic> params,
+      int p,
+    ) => _datasource.discoverMovie({...params, 'page': p});
+
+    if (sets.isEmpty) return _emptyPage(page);
+    if (sets.length == 1) {
+      return _moviesPage((p) => fetch(sets.first, p), page);
+    }
+    final parts = await Future.wait([
+      for (final params in sets)
+        _moviesPageOrEnd((p) => fetch(params, p), page),
+    ]);
+    return _mergedPage(parts, page);
+  }
+
+  DiscoverPage _emptyPage(int page) =>
+      DiscoverPage(items: const [], page: page, totalPages: 0, totalResults: 0);
 
   /// A TV page: one `/discover/tv` call, or — for a filter that likes a genre
   /// TMDB's TV list lacks (`discoverQueryParamSets`) — one per stand-in group,
@@ -426,6 +450,7 @@ class TmdbMediaRepository implements MediaRepository {
       int p,
     ) => _datasource.discoverTv({...params, 'page': p});
 
+    if (sets.isEmpty) return _emptyPage(page);
     if (sets.length == 1) {
       return _tvPage((p) => fetch(sets.first, p), page);
     }
