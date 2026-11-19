@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/data/assets/collection_catalog_loader.dart';
+import '../../../../core/domain/entities/collection_catalog.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -53,40 +55,57 @@ class QuizScreen extends StatelessWidget {
     // need.
     return FutureBuilder<VibeCatalog>(
       future: VibeCatalog.loadFromAssets(),
-      builder: (context, snapshot) {
-        final catalog = snapshot.data;
-        if (catalog == null) {
-          return const Scaffold(
-            backgroundColor: AppColors.surface,
-            body: Center(
-              child: CircularProgressIndicator(color: AppColors.ink),
-            ),
-          );
-        }
-        return BlocProvider(
-          create: (_) => QuizCubit(mediaType),
-          child: _QuizView(
-            mediaType: mediaType,
-            vibeCatalog: catalog,
-            participantId: participantId,
-            onComplete: onComplete,
-          ),
+      builder: (context, vibes) {
+        final vibeCatalog = vibes.data;
+        if (vibeCatalog == null) return const _Loading();
+        return FutureBuilder<CollectionCatalog>(
+          future: loadCollectionCatalog(),
+          builder: (context, collections) {
+            final collectionCatalog = collections.data;
+            if (collectionCatalog == null) return const _Loading();
+            return BlocProvider(
+              create: (_) => QuizCubit(
+                mediaType,
+                collectionCatalog: collectionCatalog,
+                vibeCatalog: vibeCatalog,
+              ),
+              child: _QuizView(
+                mediaType: mediaType,
+                vibeCatalog: vibeCatalog,
+                collectionCatalog: collectionCatalog,
+                participantId: participantId,
+                onComplete: onComplete,
+              ),
+            );
+          },
         );
       },
     );
   }
 }
 
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) => const Scaffold(
+    backgroundColor: AppColors.surface,
+    body: Center(child: CircularProgressIndicator(color: AppColors.ink)),
+  );
+}
+
 class _QuizView extends StatelessWidget {
   const _QuizView({
     required this.mediaType,
     required this.vibeCatalog,
+    required this.collectionCatalog,
     required this.participantId,
     required this.onComplete,
   });
 
   final MediaType mediaType;
   final VibeCatalog vibeCatalog;
+  final CollectionCatalog collectionCatalog;
   final String participantId;
   final ValueChanged<ParticipantAnswers> onComplete;
 
@@ -111,7 +130,10 @@ class _QuizView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: QuizStepContent(vibeCatalog: vibeCatalog),
+                      child: QuizStepContent(
+                        vibeCatalog: vibeCatalog,
+                        collectionCatalog: collectionCatalog,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -129,9 +151,9 @@ class _QuizView extends StatelessWidget {
     );
   }
 
-  // E2's "back button" is common to all 4 steps, but only step 1's
+  // E2's "back button" is common to all steps, but only step 1's
   // actually leaves the screen (`QuizCubit.previousStep()` exists
-  // precisely so steps 2-4 go back a step instead of exiting the quiz).
+  // precisely so the later steps go back a step instead of exiting the quiz).
   void _handleBack(BuildContext context) {
     final cubit = context.read<QuizCubit>();
     if (cubit.state.step > 1) {

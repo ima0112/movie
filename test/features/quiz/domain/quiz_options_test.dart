@@ -26,7 +26,6 @@ void main() {
   final turkish = collections.byId('turkish_series')!;
   const genreOf = TmdbGenreMapper.fromTmdbId;
 
-
   test('with no collection, the veto list is every genre of the type', () {
     expect(
       QuizOptions.vetoOptions(MediaType.movie, const [], genreOf),

@@ -34,7 +34,7 @@ class QuizNextButton extends StatelessWidget {
       selector: (state) => (state.step, state.isCurrentStepValid),
       builder: (context, data) {
         final (step, isValid) = data;
-        final isLastStep = step >= 4;
+        final isLastStep = step >= QuizState.stepCount;
         return PrimaryButton(
           label: isLastStep
               ? context.l10n.quizSearchButton

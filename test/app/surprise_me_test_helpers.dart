@@ -126,26 +126,31 @@ Future<void> pumpSurpriseMe(WidgetTester tester) async {
   expect(find.text('To get hooked over several nights'), findsOneWidget);
 }
 
-/// Taps through E2's 4 steps with the minimum each needs: one genre to skip,
-/// one vibe; the platforms, years and limits steps have defaults.
+/// Taps through E2's 5 steps with the minimum each needs: no collection, one
+/// genre to skip, one vibe; the platforms, years and limits steps have
+/// defaults.
 Future<void> completeQuiz(WidgetTester tester, {bool settle = true}) async {
-  // "Continue" waits for one pick on each of the first two steps.
+  // The collections step is optional: "Continue" is on from the start.
   expect(find.text('Continue'), findsOneWidget);
+  await tester.tap(find.text('Continue')); // step 1 -> 2
+  await tester.pumpAndSettle();
+
+  // "Continue" waits for one pick on the genre and vibe steps.
   final chips = find.byType(AppChip);
   expect(chips, findsWidgets);
   await tester.tap(chips.at(0)); // a genre to skip
   await tester.pump();
-  await tester.tap(find.text('Continue')); // step 1 -> 2
+  await tester.tap(find.text('Continue')); // step 2 -> 3
   await tester.pumpAndSettle();
 
   await tester.tap(find.byType(AppChip).at(0)); // a vibe
   await tester.pump();
-  await tester.tap(find.text('Continue')); // step 2 -> 3
-  await tester.pumpAndSettle();
   await tester.tap(find.text('Continue')); // step 3 -> 4
   await tester.pumpAndSettle();
+  await tester.tap(find.text('Continue')); // step 4 -> 5
+  await tester.pumpAndSettle();
 
-  await tester.tap(find.text('Search')); // step 4 -> SurpriseCubit.answerWith
+  await tester.tap(find.text('Search')); // step 5 -> SurpriseCubit.answerWith
   await settleSearch(tester, settle: settle);
 }
 

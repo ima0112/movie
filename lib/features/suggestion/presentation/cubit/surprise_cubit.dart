@@ -4,6 +4,8 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/data/assets/collection_catalog_loader.dart';
+import '../../../../core/domain/entities/collection_catalog.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
@@ -467,6 +469,21 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     };
   }
 
+  /// The engine's answer, handing it the collection catalog only when the
+  /// answers name a collection (the common search never reads the asset).
+  Future<Result<SurpriseBatch>> _resolveWithCollections(
+    SurpriseRequest request,
+  ) async {
+    final collectionCatalog = request.answers.collectionIds.isEmpty
+        ? const CollectionCatalog([])
+        : await loadCollectionCatalog();
+    return _engine.resolve(
+      request,
+      vibeCatalog: _tasteProfileBuilder.vibeCatalog,
+      collectionCatalog: collectionCatalog,
+    );
+  }
+
   Future<void> _search(
     MediaType mediaType,
     ParticipantAnswers answers,
@@ -511,10 +528,7 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     // wait is whichever of the two takes longer, not their sum. .timeout()
     // wraps that whole wait so a slow engine can't push past the maximum
     // either.
-    final resolveFuture = _engine.resolve(
-      request,
-      vibeCatalog: _tasteProfileBuilder.vibeCatalog,
-    );
+    final resolveFuture = _resolveWithCollections(request);
     final delayFuture = Future<Object?>.delayed(minSearchingDuration);
 
     Result<SurpriseBatch>? result;
