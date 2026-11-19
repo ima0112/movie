@@ -101,6 +101,37 @@ void main() {
     });
   });
 
+  group('discoverQueryParams — excludeTalkAndNews', () {
+    const suggesting = DiscoverFilter(excludeTalkAndNews: true);
+
+    test('on TV it excludes Talk (10767) and News (10763), joined with the '
+        'user\'s own vetoes', () {
+      final params = discoverQueryParams(
+        suggesting.copyWith(withoutGenres: {const Genre(id: 'comedy')}),
+        type: MediaType.tvShow,
+      );
+      expect((params['without_genres'] as String).split(',').toSet(), {
+        '35',
+        '10767',
+        '10763',
+      });
+    });
+
+    test(
+      'browsing (the default) excludes nothing, and movies are untouched',
+      () {
+        expect(
+          discoverQueryParams(const DiscoverFilter(), type: MediaType.tvShow),
+          isNot(contains('without_genres')),
+        );
+        expect(
+          discoverQueryParams(suggesting, type: MediaType.movie),
+          isNot(contains('without_genres')),
+        );
+      },
+    );
+  });
+
   group('discoverQueryParams — withKeywords', () {
     test('OR semantics -> pipe-separated ids, several of them', () {
       final params = discoverQueryParams(

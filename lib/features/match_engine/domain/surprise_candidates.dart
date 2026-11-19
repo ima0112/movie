@@ -185,6 +185,7 @@ class SurpriseCandidateSource {
       withGenres: vibe?.genresFor(request.type) ?? const {},
       withKeywords: vibe?.keywordIdsFor(request.type) ?? const {},
       withoutGenres: a.excludedGenres,
+      excludeTalkAndNews: true,
       yearFrom: state.yearFrom,
       yearTo: yearTo,
       minVoteAverage: max(minVoteAverage, vibe?.minVoteAverage ?? 0),
