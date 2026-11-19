@@ -95,7 +95,7 @@ class FilteredListChipsRow extends StatelessWidget {
     for (final genre in filter.withGenres) {
       chips.add(
         _ActiveChip(
-          label: genre.localizedName(l10n),
+          label: genre.localizedName(l10n, type: filter.type),
           remove: () => filter.copyWith(
             withGenres: Set.of(filter.withGenres)..remove(genre),
           ),
@@ -106,7 +106,9 @@ class FilteredListChipsRow extends StatelessWidget {
     for (final genre in filter.withoutGenres) {
       chips.add(
         _ActiveChip(
-          label: l10n.filteredListExcludeGenreChip(genre.localizedName(l10n)),
+          label: l10n.filteredListExcludeGenreChip(
+            genre.localizedName(l10n, type: filter.type),
+          ),
           remove: () => filter.copyWith(
             withoutGenres: Set.of(filter.withoutGenres)..remove(genre),
           ),

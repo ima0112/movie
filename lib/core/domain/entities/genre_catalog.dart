@@ -47,8 +47,8 @@ class GenreCatalog {
   /// combined chips (see [tvMembers]) and the other two have no chip of their
   /// own. (A TV genre TMDB lacks — horror, romance, thriller, history, music —
   /// stays: the data layer stands in for it with keywords.)
-  static List<Genre> availableFor(MediaType type) => switch (type) {
-    MediaType.movie => all,
+  static List<Genre> availableFor(MediaType? type) => switch (type) {
+    null || MediaType.movie => all,
     MediaType.tvShow => [
       for (final genre in all)
         if (!_tvFoldedInto.containsKey(genre.id)) genre,
@@ -65,6 +65,21 @@ class GenreCatalog {
     return {
       for (final g in all)
         if (g.id == primary || _tvFoldedInto[g.id] == primary) g,
+    };
+  }
+
+  /// The chips a list for [type] shows for [genres]: on TV, Adventure shows as
+  /// Action's chip and Fantasy as Sci-Fi's (their genre there), anything else
+  /// as itself; with no [type], or for movies, [genres] unchanged. Use it to
+  /// keep a picked set valid when the kind of title changes, and to count chips.
+  static Set<Genre> chipsOf(MediaType? type, Iterable<Genre> genres) {
+    if (type != MediaType.tvShow) return genres.toSet();
+    return {
+      for (final genre in genres)
+        if (_tvFoldedInto[genre.id] case final primary?)
+          ?byId(primary)
+        else
+          genre,
     };
   }
 

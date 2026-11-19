@@ -28,7 +28,8 @@ class ListingContextPill extends StatelessWidget {
     final l10n = context.l10n;
     final c = listingContext;
     final label = c.showsFilters
-        ? c.genre?.localizedName(l10n) ?? l10n.sectionListingAllGenres
+        ? c.genre?.localizedName(l10n, type: c.segment.mediaType) ??
+              l10n.sectionListingAllGenres
         : c.segment.localizedLabel(l10n);
     final platform = c.showsFilters ? c.platform : null;
     return Container(

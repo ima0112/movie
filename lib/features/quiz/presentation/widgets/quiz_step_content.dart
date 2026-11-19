@@ -30,6 +30,7 @@ class QuizStepContent extends StatelessWidget {
         return switch (state.step) {
           1 => QuizGenreStep(
             selected: state.excludedGenres,
+            mediaType: state.mediaType,
             onToggle: cubit.toggleExcludedGenre,
           ),
           2 => QuizVibeStep(

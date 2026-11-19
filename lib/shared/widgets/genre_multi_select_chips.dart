@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/genre.dart';
+import '../../core/domain/entities/media_type.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../l10n/genre_localization.dart';
 import '../../l10n/l10n_extension.dart';
@@ -22,6 +23,7 @@ class GenreMultiSelectChips extends StatelessWidget {
     this.selectedState = ChipState.selected,
     this.disabled = const {},
     this.alignment = WrapAlignment.start,
+    this.type,
   });
 
   final List<Genre> genres;
@@ -38,6 +40,9 @@ class GenreMultiSelectChips extends StatelessWidget {
 
   /// How the chips sit on a row (centered on the onboarding's screens).
   final WrapAlignment alignment;
+
+  /// The kind of title the genres are for: names TV's combined genres.
+  final MediaType? type;
 
   static const double disabledOpacity = 0.3;
 
@@ -56,14 +61,14 @@ class GenreMultiSelectChips extends StatelessWidget {
                     child: Semantics(
                       enabled: false,
                       child: AppChip(
-                        label: genre.localizedName(context.l10n),
+                        label: genre.localizedName(context.l10n, type: type),
                         state: ChipState.normal,
                       ),
                     ),
                   ),
                 )
               : AppChip(
-                  label: genre.localizedName(context.l10n),
+                  label: genre.localizedName(context.l10n, type: type),
                   state: selected.contains(genre)
                       ? selectedState
                       : ChipState.normal,

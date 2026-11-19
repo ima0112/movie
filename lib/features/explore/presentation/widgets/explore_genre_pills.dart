@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/cubits/taste_profile_cubit.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/genre_catalog.dart';
+import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
@@ -31,9 +32,14 @@ class ExploreGenrePills extends StatelessWidget {
       child: BlocSelector<TasteProfileCubit, TasteProfile?, Set<Genre>>(
         selector: (profile) => profile?.likedGenres ?? const {},
         builder: (context, liked) =>
-            BlocSelector<ExploreBrowseCubit, ExploreBrowseState, Genre?>(
-              selector: (state) => state.genre,
-              builder: (context, picked) {
+            BlocSelector<
+              ExploreBrowseCubit,
+              ExploreBrowseState,
+              (Genre?, MediaType?)
+            >(
+              selector: (state) => (state.genre, state.segment.mediaType),
+              builder: (context, current) {
+                final (picked, type) = current;
                 final cubit = context.read<ExploreBrowseCubit>();
                 return ExplorePillRow(
                   pills: [
@@ -43,11 +49,11 @@ class ExploreGenrePills extends StatelessWidget {
                       onTap: () => cubit.selectGenre(null),
                     ),
                     for (final genre in priorityFirst(
-                      GenreCatalog.all,
-                      liked.contains,
+                      GenreCatalog.availableFor(type),
+                      GenreCatalog.chipsOf(type, liked).contains,
                     ))
                       ExplorePill(
-                        label: genre.localizedName(l10n),
+                        label: genre.localizedName(l10n, type: type),
                         selected: picked == genre,
                         onTap: () => cubit.selectGenre(genre),
                       ),
