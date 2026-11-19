@@ -1,3 +1,4 @@
+import '../../../../core/domain/entities/collection.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_segment.dart';
@@ -55,6 +56,7 @@ final class ExploreBrowseState {
   const ExploreBrowseState({
     required this.segment,
     this.genre,
+    this.collection,
     this.service,
     this.services = const ExploreServicesLoading(),
     this.sections = const {},
@@ -63,6 +65,9 @@ final class ExploreBrowseState {
 
   final MediaSegment segment;
   final Genre? genre;
+
+  /// The picked collection (Turkish series, Anime…); `null` = "All".
+  final Collection? collection;
   final StreamingService? service;
   final ExploreServicesState services;
 
@@ -81,6 +86,7 @@ final class ExploreBrowseState {
   ExploreBrowseState copyWith({
     MediaSegment? segment,
     Genre? Function()? genre,
+    Collection? Function()? collection,
     StreamingService? Function()? service,
     ExploreServicesState? services,
     Map<ExploreSection, ExploreSectionState>? sections,
@@ -89,6 +95,7 @@ final class ExploreBrowseState {
     return ExploreBrowseState(
       segment: segment ?? this.segment,
       genre: genre == null ? this.genre : genre(),
+      collection: collection == null ? this.collection : collection(),
       service: service == null ? this.service : service(),
       services: services ?? this.services,
       sections: sections ?? this.sections,

@@ -1,3 +1,4 @@
+import '../../../core/domain/entities/collection.dart';
 import '../../../core/domain/entities/discover_filter.dart';
 import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_type.dart';
@@ -50,11 +51,13 @@ DiscoverFilter exploreSectionFilter(
   MediaType? type,
   int? providerId,
   Genre? genre,
+  Collection? collection,
 }) {
   final base = DiscoverFilter(
     type: type,
     withGenres: genre == null ? const {} : {genre},
     withWatchProviders: providerId == null ? const {} : {providerId},
+    collection: collection,
   );
   return switch (section) {
     ExploreSection.topToday => base,

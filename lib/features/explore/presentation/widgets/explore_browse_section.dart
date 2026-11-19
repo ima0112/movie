@@ -107,6 +107,7 @@ class ExploreBrowseSection extends StatelessWidget {
             type: browse.segment.mediaType,
             providerId: browse.service?.id,
             genre: browse.genre,
+            collection: browse.collection,
           ),
           today: today,
         ),
@@ -114,6 +115,7 @@ class ExploreBrowseSection extends StatelessWidget {
         listingContext: ListingContext.explore(
           segment: browse.segment,
           genre: browse.genre,
+          collection: browse.collection,
           platform: browse.service,
         ),
       ),

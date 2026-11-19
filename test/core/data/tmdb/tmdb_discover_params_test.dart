@@ -169,6 +169,12 @@ void main() {
       );
     });
 
+    test('New releases (floor 10) and Coming soon (0) keep their own floors '
+        'under a collection', () {
+      expect(tv(of('turkish_series', votes: 10)).single['vote_count.gte'], 10);
+      expect(tv(of('turkish_series', votes: 0)).single['vote_count.gte'], 0);
+    });
+
     test('several countries are OR-ed with a pipe; a language is single', () {
       expect(
         (tv(of('latin_american_series')).single['with_origin_country']

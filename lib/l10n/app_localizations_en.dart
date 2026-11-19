@@ -589,6 +589,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get carouselSectionPopular => 'Popular';
 
   @override
+  String get exploreCollectionLabel => 'Collection';
+
+  @override
+  String get exploreCollectionAll => 'All';
+
+  @override
+  String get collectionTurkishSeries => 'Turkish series';
+
+  @override
+  String get collectionSpanishSeries => 'Spanish series';
+
+  @override
+  String get collectionLatinAmericanSeries => 'Latin American series';
+
+  @override
+  String get collectionKDramas => 'K-dramas';
+
+  @override
+  String get collectionBritishSeries => 'British series';
+
+  @override
+  String get collectionSpanishCinema => 'Spanish-language cinema';
+
+  @override
+  String get collectionKoreanCinema => 'Korean cinema';
+
+  @override
+  String get collectionBollywood => 'Bollywood';
+
+  @override
+  String get collectionIndianCinema => 'Indian cinema';
+
+  @override
+  String get collectionSoaps => 'Soap operas';
+
+  @override
+  String get collectionAnime => 'Anime';
+
+  @override
+  String get collectionRealityShows => 'Reality shows';
+
+  @override
+  String get collectionKids => 'For kids';
+
+  @override
   String get exploreGenreLabel => 'Genre';
 
   @override
