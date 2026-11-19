@@ -385,6 +385,16 @@
   },
   "carouselSectionForYou": "For You",
   "carouselSectionPopularThisWeek": "Popular this week",
+  "carouselSectionBecauseYouLikeCollection": "Because you like {collection}",
+  "@carouselSectionBecauseYouLikeCollection": {
+    "description": "B1's All tab: 'Because you like X' where X is one of the collections (Turkish series, Anime…) in the user's taste profile (docs/SCREENS.md B1).",
+    "placeholders": {
+      "collection": {
+        "type": "String",
+        "example": "Anime"
+      }
+    }
+  },
   "carouselSectionBecauseYouLikeGenre": "Because you like {genre}",
   "@carouselSectionBecauseYouLikeGenre": {
     "description": "B1's All tab: 'Because you like X' where X is one of the genres in the user's taste profile (docs/SCREENS.md B1).",

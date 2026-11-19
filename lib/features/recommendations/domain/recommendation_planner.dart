@@ -1,3 +1,5 @@
+import '../../../core/domain/entities/collection.dart';
+import '../../../core/domain/entities/collection_catalog.dart';
 import '../../../core/domain/entities/discover_filter.dart';
 import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_type.dart';
@@ -26,6 +28,13 @@ final class GenreSeed extends BecauseSeed {
   final Genre genre;
 }
 
+/// A liked collection ("Because you like {collection}") → `/discover`.
+final class CollectionSeed extends BecauseSeed {
+  const CollectionSeed(this.collection);
+
+  final Collection collection;
+}
+
 /// A liked vibe ("Because you want {vibe}") → `/discover`.
 final class VibeSeed extends BecauseSeed {
   const VibeSeed(this.vibe);
@@ -43,7 +52,8 @@ class RecommendationPlan {
 
   final DiscoverFilter? forYou;
 
-  /// "Because you like …" — a title (Movies/TV Shows) or a genre (All).
+  /// "Because you like …" — a title (Movies/TV Shows) or a genre or a
+  /// collection (All).
   final BecauseSeed? becauseLike;
 
   /// "Because you want {vibe}" — the All tab only.
@@ -69,9 +79,13 @@ class RecommendationPlan {
 /// watched and rated ≤3★ — or watched and never rated — never is: there is
 /// no evidence they liked it.
 class RecommendationPlanner {
-  const RecommendationPlanner(this.vibeCatalog);
+  const RecommendationPlanner(
+    this.vibeCatalog, [
+    this.collectionCatalog = const CollectionCatalog([]),
+  ]);
 
   final VibeCatalog vibeCatalog;
+  final CollectionCatalog collectionCatalog;
 
   /// Weights of a saved title as a seed.
   static const int favoriteWeight = 3;
@@ -107,8 +121,18 @@ class RecommendationPlanner {
             .toList()
           ..sort((a, b) => a.id.compareTo(b.id));
 
-    final likeGenre = picker.pick([
-      for (final g in genres) (g, 1),
+    final collections =
+        profile.likedCollections
+            .map(collectionCatalog.byId)
+            .nonNulls
+            .where((c) => c.inTastes)
+            .toList()
+          ..sort((a, b) => a.id.compareTo(b.id));
+
+    // "Because you like" is one liked genre or one liked collection.
+    final likeUnit = picker.pick([
+      for (final g in genres) (g as Object, 1),
+      for (final c in collections) (c as Object, 1),
     ], salt: 'all-like');
     final wantVibe = picker.pick([
       for (final v in vibes) (v, 1),
@@ -117,7 +141,7 @@ class RecommendationPlanner {
     // "For you" mixes up to two tastes, preferring ones the other two
     // sections aren't already about.
     final units = <Object>[for (final g in genres) g, for (final v in vibes) v];
-    final fresh = units.where((u) => u != likeGenre && u != wantVibe).toList();
+    final fresh = units.where((u) => u != likeUnit && u != wantVibe).toList();
     final pool = fresh.isEmpty ? units : fresh;
     final chosen = picker.pickMany(
       [for (final u in pool) (u, 1)],
@@ -146,7 +170,11 @@ class RecommendationPlanner {
               yearFrom: profile.yearFrom,
               yearTo: profile.yearTo,
             ),
-      becauseLike: likeGenre == null ? null : GenreSeed(likeGenre),
+      becauseLike: switch (likeUnit) {
+        final Genre g => GenreSeed(g),
+        final Collection c => CollectionSeed(c),
+        _ => null,
+      },
       becauseWant: wantVibe == null ? null : VibeSeed(wantVibe),
     );
   }
@@ -171,6 +199,13 @@ class RecommendationPlanner {
           // eras: whichever ends sooner.
           yearTo: _earlier(vibe.maxReleaseYear, profile?.yearTo),
           minVoteAverage: vibe.minVoteAverage,
+        ),
+        CollectionSeed(:final collection) => DiscoverFilter(
+          collection: collection,
+          withoutGenres: profile?.vetoedGenres ?? const {},
+          excludeTalkAndNews: true,
+          yearFrom: profile?.yearFrom,
+          yearTo: profile?.yearTo,
         ),
         TitleSeed() => throw ArgumentError(
           'a title seed uses /recommendations',
