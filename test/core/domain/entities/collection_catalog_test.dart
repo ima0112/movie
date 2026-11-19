@@ -13,11 +13,11 @@ void main() {
 
   List<String> ids(Iterable<Collection> cs) => [for (final c in cs) c.id];
 
-  test('13 collections: 9 of the world, 3 formats and 1 occasion', () {
-    expect(catalog.all(), hasLength(13));
+  test('12 collections: 8 of the world, 3 formats and 1 occasion', () {
+    expect(catalog.all(), hasLength(12));
     expect(
       catalog.inGroup(CollectionGroup.world, MediaType.movie),
-      hasLength(4),
+      hasLength(3),
     );
     expect(
       catalog.inGroup(CollectionGroup.world, MediaType.tvShow),
@@ -38,7 +38,6 @@ void main() {
       'spanish_cinema',
       'korean_cinema',
       'bollywood',
-      'indian_cinema',
       'anime',
       'kids',
     ]);
@@ -56,7 +55,7 @@ void main() {
   });
 
   test('ids are unique and byId finds one, or null for a stale id', () {
-    expect({for (final c in catalog.all()) c.id}, hasLength(13));
+    expect({for (final c in catalog.all()) c.id}, hasLength(12));
     expect(catalog.byId('anime')?.id, 'anime');
     expect(catalog.byId('western'), isNull);
   });
@@ -113,15 +112,13 @@ void main() {
     );
   });
 
-  test('Bollywood is by language, Indian cinema by country — both exist', () {
-    expect(
-      catalog.byId('bollywood')!.movie!.queries.single.originalLanguage,
-      'hi',
-    );
-    expect(
-      catalog.byId('indian_cinema')!.movie!.queries.single.originCountries,
-      {'IN'},
-    );
+  test('Bollywood is one collection: Hindi-language films or films from '
+      'India (RRR and the cinema of the south included), merged', () {
+    expect(catalog.byId('indian_cinema'), isNull);
+    final queries = catalog.byId('bollywood')!.movie!.queries;
+    expect(queries, hasLength(2));
+    expect(queries[0].originalLanguage, 'hi');
+    expect(queries[1].originCountries, {'IN'});
   });
 
   test('Kids: family or animation without horror, thriller and crime on '

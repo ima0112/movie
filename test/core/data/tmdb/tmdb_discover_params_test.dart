@@ -182,7 +182,10 @@ void main() {
             .split('|'),
         containsAll(['MX', 'CO', 'AR']),
       );
-      expect(movie(of('bollywood')).single['with_original_language'], 'hi');
+      final bollywood = movie(of('bollywood'));
+      expect(bollywood, hasLength(2)); // the language, or the country
+      expect(bollywood.map((s) => s['with_original_language']), contains('hi'));
+      expect(bollywood.map((s) => s['with_origin_country']), contains('IN'));
     });
 
     test('Reality is a TV type; the type means nothing on movies', () {

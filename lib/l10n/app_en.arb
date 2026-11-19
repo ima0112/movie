@@ -516,7 +516,6 @@
   "collectionSpanishCinema": "Spanish-language cinema",
   "collectionKoreanCinema": "Korean cinema",
   "collectionBollywood": "Bollywood",
-  "collectionIndianCinema": "Indian cinema",
   "collectionSoaps": "Soap operas",
   "collectionAnime": "Anime",
   "collectionRealityShows": "Reality shows",
@@ -1514,7 +1513,7 @@
   },
   "quizGenreHeadlineAccent": "NOT",
   "quizGenreHeadlineAfter": " in the mood for today?",
-  "quizGenreSubtitle": "Skip 1 to 3 genres",
+  "quizGenreSubtitle": "Skip up to 3 genres, or none",
   "@quizGenreStepHeadline": {
     "description": "E2 step 1's own headline (docs/SCREENS.md E2)."
   },
@@ -1538,7 +1537,7 @@
   },
   "quizVibeHeadlineAccent": "vibes",
   "quizVibeHeadlineAfter": " are you in the mood for today?",
-  "quizVibeSubtitle": "Pick 1 to 3 vibes",
+  "quizVibeSubtitle": "Pick up to 3 vibes, or none",
   "quizPlatformHeadlineBefore": "Which ",
   "@quizPlatformHeadlineBefore": {
     "description": "E2 step 3's headline, three parts so \"platforms\" can be coloured: before + accent + after = \"Which platforms shall we search?\"."

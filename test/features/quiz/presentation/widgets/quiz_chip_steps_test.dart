@@ -51,7 +51,7 @@ void main() {
               .cast<TextSpan>();
       expect(spans[1].text, 'NOT');
       expect(spans[1].style?.color, AppColors.danger);
-      expect(find.text('Skip 1 to 3 genres'), findsOneWidget);
+      expect(find.text('Skip up to 3 genres, or none'), findsOneWidget);
       expect(find.byType(AppChip), findsNWidgets(GenreCatalog.all.length));
       expect(find.text('Music'), findsOneWidget);
       expect(find.text('War'), findsOneWidget);
@@ -125,7 +125,7 @@ void main() {
       );
 
       expect(find.text('¿Qué NO te apetece hoy?'), findsOneWidget);
-      expect(find.text('Descarta de 1 a 3 géneros'), findsOneWidget);
+      expect(find.text('Descarta hasta 3 géneros, o ninguno'), findsOneWidget);
       expect(find.text('Música'), findsOneWidget);
     });
   });
@@ -151,7 +151,7 @@ void main() {
     );
 
     testWidgets('the headline, the subtitle and the collections of the kind '
-        'of title, grouped: 9 on TV, 6 on movies', (tester) async {
+        'of title, grouped: 9 on TV, 5 on movies', (tester) async {
       await tester.pumpWidget(step(MediaType.tvShow, const {}));
       expect(find.text('Where should it come from?'), findsOneWidget);
       expect(
@@ -163,7 +163,7 @@ void main() {
       expect(find.text('FROM THE WORLD'), findsOneWidget);
 
       await tester.pumpWidget(step(MediaType.movie, const {}));
-      expect(find.byType(AppChip), findsNWidgets(6));
+      expect(find.byType(AppChip), findsNWidgets(5));
       expect(find.text('Turkish series'), findsNothing);
       expect(find.text('Bollywood'), findsOneWidget);
     });
@@ -217,7 +217,7 @@ void main() {
         find.text('Which vibes are you in the mood for today?'),
         findsOneWidget,
       );
-      expect(find.text('Pick 1 to 3 vibes'), findsOneWidget);
+      expect(find.text('Pick up to 3 vibes, or none'), findsOneWidget);
       expect(find.byType(AppChip), findsNWidgets(4));
       expect(_states(tester).every((s) => s == ChipState.normal), isTrue);
     });
