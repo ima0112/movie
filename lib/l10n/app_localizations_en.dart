@@ -1613,8 +1613,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizCollectionHeadlineAfter => '?';
 
   @override
-  String get quizCollectionSubtitle =>
-      'Pick up to 2, or skip to see everything';
+  String get quizCollectionSubtitle => 'Pick one, or skip to see everything';
 
   @override
   String get quizCollectionGroupWorld => 'From the world';

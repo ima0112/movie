@@ -154,10 +154,7 @@ void main() {
         'of title, grouped: 9 on TV, 5 on movies', (tester) async {
       await tester.pumpWidget(step(MediaType.tvShow, const {}));
       expect(find.text('Where should it come from?'), findsOneWidget);
-      expect(
-        find.text('Pick up to 2, or skip to see everything'),
-        findsOneWidget,
-      );
+      expect(find.text('Pick one, or skip to see everything'), findsOneWidget);
       expect(find.byType(AppChip), findsNWidgets(9));
       expect(find.text('Turkish series'), findsOneWidget);
       expect(find.text('FROM THE WORLD'), findsOneWidget);
@@ -168,18 +165,18 @@ void main() {
       expect(find.text('Bollywood'), findsOneWidget);
     });
 
-    testWidgets('chosen ones are filled; at two the rest dim and do nothing, '
-        'a chosen one still comes back out', (tester) async {
+    testWidgets('the chosen one is filled; every chip stays tappable, so '
+        'another replaces it and the chosen one clears', (tester) async {
       final taps = <String>[];
       await tester.pumpWidget(
-        step(MediaType.tvShow, const {'anime', 'soaps'}, onToggle: taps.add),
+        step(MediaType.tvShow, const {'anime'}, onToggle: taps.add),
       );
-      expect(_states(tester).where((s) => s == ChipState.solid), hasLength(2));
+      expect(_states(tester).where((s) => s == ChipState.solid), hasLength(1));
+      expect(find.byType(Opacity), findsNothing);
 
       await tester.tap(find.text('Turkish series'));
-      expect(taps, isEmpty);
       await tester.tap(find.text('Anime'));
-      expect(taps, ['anime']);
+      expect(taps, ['turkish_series', 'anime']);
     });
 
     testWidgets('the Spanish copy', (tester) async {

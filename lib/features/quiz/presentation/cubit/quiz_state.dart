@@ -3,7 +3,6 @@ import '../../../../core/domain/entities/discover_filter.dart'
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/genre_catalog.dart';
 import '../../../../core/domain/entities/media_type.dart';
-import '../../../match_engine/domain/participant_answers.dart';
 
 /// E2 (Quiz)'s own draft state across all 4 steps — `docs/SCREENS.md` E2.
 /// One flat class, not a sealed per-step hierarchy: E2's own back button
@@ -38,7 +37,10 @@ class QuizState {
 
   static const int maxExcludedGenres = 3;
   static const int maxVibes = 3;
-  static const int maxCollections = ParticipantAnswers.maxCollections;
+
+  /// The quiz asks for one collection at most (the engine itself can union
+  /// two, which "Use my tastes" may hand it).
+  static const int maxCollections = 1;
 
   /// Collections, genres to skip, vibes, platforms, years.
   static const int stepCount = 5;
@@ -51,7 +53,7 @@ class QuizState {
   final int step;
 
   /// Step 1: the collections the results must come from (`Collection.id`), up
-  /// to [maxCollections]; none = anything.
+  /// to [maxCollections] (one); none = anything.
   final Set<String> collectionIds;
 
   /// Step 2: "Pick up to 3 you're NOT in the mood for" — up to

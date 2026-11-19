@@ -1631,8 +1631,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizCollectionHeadlineAfter => '?';
 
   @override
-  String get quizCollectionSubtitle =>
-      'Elige hasta 2, o sáltalo para verlo todo';
+  String get quizCollectionSubtitle => 'Elige una, o sáltalo para verlo todo';
 
   @override
   String get quizCollectionGroupWorld => 'Del mundo';
