@@ -1154,6 +1154,96 @@ abstract class AppLocalizations {
   /// **'Popular'**
   String get carouselSectionPopular;
 
+  /// B2's overline above the collection pill row (docs/SCREENS.md B2): curated slices by origin, format or audience — Turkish series, Anime, For kids…
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get exploreCollectionLabel;
+
+  /// No description provided for @exploreCollectionAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get exploreCollectionAll;
+
+  /// No description provided for @collectionTurkishSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Turkish series'**
+  String get collectionTurkishSeries;
+
+  /// No description provided for @collectionSpanishSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish series'**
+  String get collectionSpanishSeries;
+
+  /// No description provided for @collectionLatinAmericanSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Latin American series'**
+  String get collectionLatinAmericanSeries;
+
+  /// No description provided for @collectionKDramas.
+  ///
+  /// In en, this message translates to:
+  /// **'K-dramas'**
+  String get collectionKDramas;
+
+  /// No description provided for @collectionBritishSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'British series'**
+  String get collectionBritishSeries;
+
+  /// No description provided for @collectionSpanishCinema.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish-language cinema'**
+  String get collectionSpanishCinema;
+
+  /// No description provided for @collectionKoreanCinema.
+  ///
+  /// In en, this message translates to:
+  /// **'Korean cinema'**
+  String get collectionKoreanCinema;
+
+  /// No description provided for @collectionBollywood.
+  ///
+  /// In en, this message translates to:
+  /// **'Bollywood'**
+  String get collectionBollywood;
+
+  /// No description provided for @collectionIndianCinema.
+  ///
+  /// In en, this message translates to:
+  /// **'Indian cinema'**
+  String get collectionIndianCinema;
+
+  /// No description provided for @collectionSoaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Soap operas'**
+  String get collectionSoaps;
+
+  /// No description provided for @collectionAnime.
+  ///
+  /// In en, this message translates to:
+  /// **'Anime'**
+  String get collectionAnime;
+
+  /// No description provided for @collectionRealityShows.
+  ///
+  /// In en, this message translates to:
+  /// **'Reality shows'**
+  String get collectionRealityShows;
+
+  /// No description provided for @collectionKids.
+  ///
+  /// In en, this message translates to:
+  /// **'For kids'**
+  String get collectionKids;
+
   /// B2's overline above the genre pill row at rest (docs/SCREENS.md B2).
   ///
   /// In en, this message translates to:

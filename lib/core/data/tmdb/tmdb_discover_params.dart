@@ -263,9 +263,10 @@ List<Map<String, dynamic>> _withCollectionQuery(
     return const [];
   }
   final params = {...base};
-  // A floor above the default is the section's own (Top rated asks for 300); the
-  // default gives way to the collection's, which is lower for small catalogs.
-  if (filter.minVoteCount <= const DiscoverFilter().minVoteCount) {
+  // Any floor but the default is the section's own (Top rated 300, New releases
+  // 10, Coming soon 0) and wins; the default gives way to the collection's,
+  // which is lower for small catalogs.
+  if (filter.minVoteCount == const DiscoverFilter().minVoteCount) {
     params['vote_count.gte'] = query.minVoteCount;
   }
   if (query.originCountries.isNotEmpty) {

@@ -1,3 +1,4 @@
+import '../../../core/domain/entities/collection.dart';
 import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_segment.dart';
 import '../../../core/domain/entities/streaming_service.dart';
@@ -53,17 +54,20 @@ ListingStyle listingStyleFor(ListingSort sort, ListingStyle base) =>
 class ListingContext {
   const ListingContext.home(this.segment)
     : genre = null,
+      collection = null,
       platform = null,
       showsFilters = false;
 
   const ListingContext.explore({
     required this.segment,
     this.genre,
+    this.collection,
     this.platform,
   }) : showsFilters = true;
 
   final MediaSegment segment;
   final Genre? genre;
+  final Collection? collection;
   final StreamingService? platform;
 
   /// Whether the genre / platform parts are shown at all (Explore only).
