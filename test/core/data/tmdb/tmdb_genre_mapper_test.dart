@@ -6,6 +6,8 @@ import 'package:movies/core/domain/entities/media_type.dart';
 const _action = Genre(id: 'action');
 const _sciFi = Genre(id: 'sci-fi');
 const _fantasy = Genre(id: 'fantasy');
+const _war = Genre(id: 'war');
+const _western = Genre(id: 'western');
 
 void main() {
   group('TmdbGenreMapper.fromTmdbId', () {
@@ -29,14 +31,34 @@ void main() {
       expect(TmdbGenreMapper.fromTmdbId(10765, MediaType.tvShow), _sciFi);
     });
 
-    test('an id with no catalog equivalent at all (War, 10752) returns '
+    test('an id with no catalog equivalent at all (TV Movie, 10770) returns '
         'null for both types, not an error', () {
-      expect(TmdbGenreMapper.fromTmdbId(10752, MediaType.movie), isNull);
+      expect(TmdbGenreMapper.fromTmdbId(10770, MediaType.movie), isNull);
+      expect(TmdbGenreMapper.fromTmdbId(10770, MediaType.tvShow), isNull);
+    });
+
+    test('War and Western resolve: War is 10752 in movies and "War & '
+        'Politics" (10768) in TV; Western is 37 in both', () {
+      expect(TmdbGenreMapper.fromTmdbId(10752, MediaType.movie), _war);
+      expect(TmdbGenreMapper.fromTmdbId(10768, MediaType.tvShow), _war);
+      expect(TmdbGenreMapper.fromTmdbId(37, MediaType.movie), _western);
+      expect(TmdbGenreMapper.fromTmdbId(37, MediaType.tvShow), _western);
+    });
+
+    test('a movie-only id means nothing on TV and the reverse', () {
       expect(TmdbGenreMapper.fromTmdbId(10752, MediaType.tvShow), isNull);
+      expect(TmdbGenreMapper.fromTmdbId(10768, MediaType.movie), isNull);
     });
   });
 
   group('TmdbGenreMapper.toTmdbId', () {
+    test('War and Western go back to each kind of title\'s own id', () {
+      expect(TmdbGenreMapper.toTmdbId(_war, MediaType.movie), 10752);
+      expect(TmdbGenreMapper.toTmdbId(_war, MediaType.tvShow), 10768);
+      expect(TmdbGenreMapper.toTmdbId(_western, MediaType.movie), 37);
+      expect(TmdbGenreMapper.toTmdbId(_western, MediaType.tvShow), 37);
+    });
+
     test('resolves a known movie genre', () {
       expect(TmdbGenreMapper.toTmdbId(_action, MediaType.movie), 28);
     });
@@ -64,12 +86,13 @@ void main() {
       );
     });
 
-    test('thriller has no TV id (37 is Western — it used to map there)', () {
+    test('thriller has no TV id (37 is Western now, it used to be sent for '
+        'thriller by mistake)', () {
       expect(
         TmdbGenreMapper.toTmdbId(const Genre(id: 'thriller'), MediaType.tvShow),
         isNull,
       );
-      expect(TmdbGenreMapper.fromTmdbId(37, MediaType.tvShow), isNull);
+      expect(TmdbGenreMapper.fromTmdbId(37, MediaType.tvShow), _western);
       expect(
         TmdbGenreMapper.toTmdbId(const Genre(id: 'thriller'), MediaType.movie),
         53,

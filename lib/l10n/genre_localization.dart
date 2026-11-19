@@ -1,4 +1,5 @@
 import '../core/domain/entities/genre.dart';
+import '../core/domain/entities/media_type.dart';
 import 'app_localizations.dart';
 
 /// The single mapper from a [Genre]'s stable [Genre.id] to its display
@@ -14,7 +15,25 @@ import 'app_localizations.dart';
 /// matching case here — at the first attempt to render its label, not
 /// at compile time. Keep every `GenreCatalog.all` id covered by hand.
 extension GenreLocalization on Genre {
-  String localizedName(AppLocalizations l10n) => switch (id) {
+  /// [type] `tvShow` names the genres TMDB combines on TV the way TMDB does —
+  /// "Action & Adventure", "Sci-Fi & Fantasy", "War & Politics" — because that
+  /// is what the chip stands for there (`GenreCatalog.tvMembers`). Without a
+  /// type, or for movies, the genre's own name.
+  String localizedName(AppLocalizations l10n, {MediaType? type}) {
+    if (type == MediaType.tvShow) {
+      switch (id) {
+        case 'action':
+          return l10n.genreActionAdventure;
+        case 'sci-fi':
+          return l10n.genreSciFiFantasy;
+        case 'war':
+          return l10n.genreWarPolitics;
+      }
+    }
+    return _ownName(l10n);
+  }
+
+  String _ownName(AppLocalizations l10n) => switch (id) {
     'action' => l10n.genreAction,
     'adventure' => l10n.genreAdventure,
     'animation' => l10n.genreAnimation,
@@ -31,6 +50,8 @@ extension GenreLocalization on Genre {
     'romance' => l10n.genreRomance,
     'sci-fi' => l10n.genreSciFi,
     'thriller' => l10n.genreThriller,
+    'war' => l10n.genreWar,
+    'western' => l10n.genreWestern,
     _ => throw ArgumentError('Unknown genre id: $id'),
   };
 }

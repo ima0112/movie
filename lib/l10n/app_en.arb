@@ -67,6 +67,20 @@
   "genreRomance": "Romance",
   "genreSciFi": "Science Fiction",
   "genreThriller": "Thriller",
+  "genreWar": "War",
+  "genreWestern": "Western",
+  "genreActionAdventure": "Action & Adventure",
+  "@genreActionAdventure": {
+    "description": "On TV, TMDB has one genre that combines action and adventure; this is the chip's name for TV shows."
+  },
+  "genreSciFiFantasy": "Sci-Fi & Fantasy",
+  "@genreSciFiFantasy": {
+    "description": "On TV, TMDB has one genre that combines science fiction and fantasy; this is the chip's name for TV shows."
+  },
+  "genreWarPolitics": "War & Politics",
+  "@genreWarPolitics": {
+    "description": "On TV, TMDB's war genre is 'War & Politics'; this is the war chip's name for TV shows."
+  },
   "vibeFeelGood": "Feel Good",
   "vibeIndie": "Indie",
   "vibeMonster": "Monster",

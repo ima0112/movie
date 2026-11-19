@@ -248,6 +248,36 @@ abstract class AppLocalizations {
   /// **'Thriller'**
   String get genreThriller;
 
+  /// No description provided for @genreWar.
+  ///
+  /// In en, this message translates to:
+  /// **'War'**
+  String get genreWar;
+
+  /// No description provided for @genreWestern.
+  ///
+  /// In en, this message translates to:
+  /// **'Western'**
+  String get genreWestern;
+
+  /// On TV, TMDB has one genre that combines action and adventure; this is the chip's name for TV shows.
+  ///
+  /// In en, this message translates to:
+  /// **'Action & Adventure'**
+  String get genreActionAdventure;
+
+  /// On TV, TMDB has one genre that combines science fiction and fantasy; this is the chip's name for TV shows.
+  ///
+  /// In en, this message translates to:
+  /// **'Sci-Fi & Fantasy'**
+  String get genreSciFiFantasy;
+
+  /// On TV, TMDB's war genre is 'War & Politics'; this is the war chip's name for TV shows.
+  ///
+  /// In en, this message translates to:
+  /// **'War & Politics'**
+  String get genreWarPolitics;
+
   /// No description provided for @vibeFeelGood.
   ///
   /// In en, this message translates to:

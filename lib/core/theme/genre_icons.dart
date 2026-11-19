@@ -39,4 +39,6 @@ const Map<String, IconData> _icons = {
   'romance': AppIcons.genreRomance,
   'sci-fi': AppIcons.genreSciFi,
   'thriller': AppIcons.genreThriller,
+  'war': AppIcons.genreWar,
+  'western': AppIcons.genreWestern,
 };

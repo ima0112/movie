@@ -97,6 +97,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get genreThriller => 'Thriller';
 
   @override
+  String get genreWar => 'War';
+
+  @override
+  String get genreWestern => 'Western';
+
+  @override
+  String get genreActionAdventure => 'Action & Adventure';
+
+  @override
+  String get genreSciFiFantasy => 'Sci-Fi & Fantasy';
+
+  @override
+  String get genreWarPolitics => 'War & Politics';
+
+  @override
   String get vibeFeelGood => 'Feel Good';
 
   @override

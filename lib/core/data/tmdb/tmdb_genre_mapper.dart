@@ -39,6 +39,8 @@ abstract final class TmdbGenreMapper {
     10749: 'romance',
     878: 'sci-fi',
     53: 'thriller',
+    10752: 'war',
+    37: 'western',
   };
 
   static const Map<int, String> _tvIds = {
@@ -51,6 +53,8 @@ abstract final class TmdbGenreMapper {
     10751: 'family',
     9648: 'mystery',
     10765: 'sci-fi', // "Sci-Fi & Fantasy" — see class doc comment.
+    10768: 'war', // "War & Politics"
+    37: 'western',
   };
 
   /// TV-only, [toTmdbId]-only entries for a normalized genre that

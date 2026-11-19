@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/genre.dart';
+import 'package:movies/core/domain/entities/genre_catalog.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/match_engine/domain/vibe.dart';
@@ -30,8 +31,8 @@ List<ChipState> _states(WidgetTester tester) => [
 
 void main() {
   group('QuizGenreStep', () {
-    testWidgets('the headline with a red NOT, the subtitle and all 16 genres '
-        'as chips — Music included', (tester) async {
+    testWidgets('the headline with a red NOT, the subtitle and every genre '
+        'as a chip — Music, War and Western included', (tester) async {
       await tester.pumpWidget(
         _host(QuizGenreStep(selected: const {}, onToggle: (_) {})),
       );
@@ -47,8 +48,10 @@ void main() {
       expect(spans[1].text, 'NOT');
       expect(spans[1].style?.color, AppColors.danger);
       expect(find.text('Skip 1 to 3 genres'), findsOneWidget);
-      expect(find.byType(AppChip), findsNWidgets(16));
+      expect(find.byType(AppChip), findsNWidgets(GenreCatalog.all.length));
       expect(find.text('Music'), findsOneWidget);
+      expect(find.text('War'), findsOneWidget);
+      expect(find.text('Western'), findsOneWidget);
     });
 
     testWidgets('a vetoed genre is struck out and tapping toggles it', (
