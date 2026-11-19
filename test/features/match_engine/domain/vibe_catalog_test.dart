@@ -6,18 +6,13 @@ import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 
-/// Every vibe whose TV rule was deliberately emptied by the
-/// `vibe-keywords-curated` branch's own `--final-pools` measurement
-/// (its own report: `tv ≥200` below 30) — kept as one named list so
-/// each test below documents *why* these three, not just *that* they
-/// don't show up on TV.
-const _tvEmptiedByPoolSize = {'tearjerker', 'gangster', 'musical'};
+/// The vibes that only make sense for movies — their keyword pools are too
+/// small on TV (Tearjerker 24, Musical 23, Heist 21 titles with 100+ votes,
+/// Indie none), so their TV rule is empty and they don't show on TV.
+const _movieOnly = {'tearjerker', 'musical', 'indie', 'heist'};
 
-/// `indie`/`fantasy` are deliberate, permanent TV exclusions (not
-/// pool-size-driven) — Indie never had a TV-side rule to begin with,
-/// and "Fantasy entra solo en película" is this branch's own curated
-/// decision.
-const _neverMeaningfulForTv = {'indie', 'fantasy'};
+/// The "ambientes": defined by genres, not keywords, and pruned by vetoes.
+const _ambientes = {'feel_good', 'date'};
 
 void main() {
   late VibeCatalog catalog;
@@ -28,10 +23,28 @@ void main() {
   });
 
   group('VibeCatalog.loadFromAssets', () {
-    test('loads assets/vibes.json without error, has exactly 16 vibes, '
-        'and cult is gone', () {
-      expect(catalog.all(), hasLength(16));
-      expect(catalog.byId('cult'), isNull);
+    test('loads assets/vibes.json: 19 vibes for movies, 15 for TV, and the '
+        'four that became plain genres are gone', () {
+      expect(catalog.all(), hasLength(19));
+      expect(catalog.availableFor(MediaType.movie), hasLength(19));
+      expect(catalog.availableFor(MediaType.tvShow), hasLength(15));
+      for (final removed in ['fantasy', 'future', 'explosive', 'detective']) {
+        expect(
+          catalog.byId(removed),
+          isNull,
+          reason: '$removed is a genre now',
+        );
+      }
+    });
+
+    test('only the two ambientes use genres (plus Monster and Gritty, which '
+        'pair them with keywords); the rest are keyword themes', () {
+      for (final vibe in catalog.all()) {
+        if (_ambientes.contains(vibe.id)) {
+          expect(vibe.movie.genreIds, isNotEmpty);
+          expect(vibe.movie.keywordIds, isEmpty);
+        }
+      }
     });
 
     test('every vibe has a non-empty id and icon', () {
@@ -90,45 +103,20 @@ void main() {
       }
     });
 
-    test('indie and fantasy are not meaningful for tv', () {
-      for (final id in _neverMeaningfulForTv) {
+    test('the movie-only vibes are not meaningful for tv, but are for '
+        'movies', () {
+      for (final id in _movieOnly) {
         final vibe = catalog.byId(id)!;
-        expect(
-          vibe.isMeaningfulFor(MediaType.tvShow),
-          isFalse,
-          reason: '$id should have an empty tv rule',
-        );
+        expect(vibe.isMeaningfulFor(MediaType.tvShow), isFalse, reason: id);
+        expect(vibe.isMeaningfulFor(MediaType.movie), isTrue, reason: id);
       }
     });
 
-    test('every vibe not deliberately excluded from tv is meaningful '
-        'for tv', () {
-      final excluded = {..._neverMeaningfulForTv, ..._tvEmptiedByPoolSize};
+    test('every other vibe is meaningful for both types', () {
       for (final vibe in catalog.all()) {
-        if (excluded.contains(vibe.id)) continue;
-        expect(
-          vibe.isMeaningfulFor(MediaType.tvShow),
-          isTrue,
-          reason: '${vibe.id} should still be meaningful for tv',
-        );
-      }
-    });
-
-    test('tearjerker/gangster/musical — emptied for tv by the '
-        '--final-pools pool-size rule — are not meaningful for tv, but '
-        'still are for movie', () {
-      for (final id in _tvEmptiedByPoolSize) {
-        final vibe = catalog.byId(id)!;
-        expect(
-          vibe.isMeaningfulFor(MediaType.tvShow),
-          isFalse,
-          reason: '$id should have an empty tv rule',
-        );
-        expect(
-          vibe.isMeaningfulFor(MediaType.movie),
-          isTrue,
-          reason: '$id should still be meaningful for movie',
-        );
+        if (_movieOnly.contains(vibe.id)) continue;
+        expect(vibe.isMeaningfulFor(MediaType.movie), isTrue, reason: vibe.id);
+        expect(vibe.isMeaningfulFor(MediaType.tvShow), isTrue, reason: vibe.id);
       }
     });
 

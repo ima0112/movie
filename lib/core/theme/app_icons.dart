@@ -93,24 +93,27 @@ class AppIcons {
   static const IconData vibeFeelGood = RemixIcons.sun_line;
   static const IconData vibeIndie = RemixIcons.seedling_line;
   static const IconData vibeMonster = RemixIcons.ghost_line;
-  static const IconData vibeDetective = RemixIcons.search_eye_line;
   static const IconData vibeClassic = RemixIcons.medal_line;
   static const IconData vibeSuperhero = RemixIcons.shield_flash_line;
   static const IconData vibeTearjerker = RemixIcons.heart_pulse_line;
   static const IconData vibeSports = RemixIcons.football_line;
   static const IconData vibeDate = RemixIcons.hand_heart_line;
-  static const IconData vibeFuture = RemixIcons.rocket_line;
-  static const IconData vibeExplosive = RemixIcons.fire_line;
   static const IconData vibeGritty = RemixIcons.knife_line;
   static const IconData vibeTrueStory = RemixIcons.newspaper_line;
   static const IconData vibeGangster = RemixIcons.money_dollar_circle_line;
   static const IconData vibeMusical = RemixIcons.music_line;
-  static const IconData vibeFantasy = RemixIcons.sparkling_line;
+  static const IconData vibeTimeTravel = RemixIcons.time_line;
+  static const IconData vibeComingOfAge = RemixIcons.footprint_line;
+  static const IconData vibeDystopia = RemixIcons.building_2_line;
+  static const IconData vibeSurvival = RemixIcons.tent_line;
+  static const IconData vibeRevenge = RemixIcons.fire_line;
+  static const IconData vibeMartialArts = RemixIcons.boxing_line;
+  static const IconData vibeHeist = RemixIcons.safe_2_line;
 
   // Genre catalog (16, GenreCatalog — core/domain/entities/
   // genre_catalog.dart) — same one-plain-icon convention as the vibes
   // above, for the same reason (QuizTile recolors, never swaps glyphs).
-  static const IconData genreAction = RemixIcons.boxing_line;
+  static const IconData genreAction = RemixIcons.run_line;
   static const IconData genreAdventure = RemixIcons.map_line;
   static const IconData genreAnimation = RemixIcons.palette_line;
   static const IconData genreComedy = RemixIcons.emotion_laugh_line;

@@ -21,7 +21,7 @@ final Map<String, dynamic> _vibes = {
       ('feel_good', 'vibeFeelGood'),
       ('indie', 'vibeIndie'),
       ('monster', 'vibeMonster'),
-      ('detective', 'vibeDetective'),
+      ('sports', 'vibeSports'),
       ('classic', 'vibeClassic'),
       ('superhero', 'vibeSuperhero'),
     ])
@@ -198,13 +198,7 @@ void main() {
       findsOneWidget,
     );
 
-    for (final id in [
-      'feel_good',
-      'indie',
-      'monster',
-      'detective',
-      'classic',
-    ]) {
+    for (final id in ['feel_good', 'indie', 'monster', 'sports', 'classic']) {
       c.tastes.toggleVibe(id);
     }
     await tester.pump();
