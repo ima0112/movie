@@ -1160,18 +1160,6 @@ abstract class AppLocalizations {
   /// **'Popular'**
   String get carouselSectionPopular;
 
-  /// B2's overline above the collection pill row (docs/SCREENS.md B2): curated slices by origin, format or audience — Turkish series, Anime, For kids…
-  ///
-  /// In en, this message translates to:
-  /// **'Collection'**
-  String get exploreCollectionLabel;
-
-  /// No description provided for @exploreCollectionAll.
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get exploreCollectionAll;
-
   /// No description provided for @collectionTurkishSeries.
   ///
   /// In en, this message translates to:
@@ -1555,6 +1543,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rating {min}–{max}'**
   String filteredListRatingRangeChip(String min, String max);
+
+  /// H8's section for the curated collections (Turkish series, Anime, For kids…), single select, shown for the kinds of title that have them.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get filterSheetSectionCollection;
 
   /// No description provided for @filterSheetSectionType.
   ///

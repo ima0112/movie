@@ -1,3 +1,4 @@
+import '../../core/domain/entities/collection_catalog.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ import 'filter_platform_chips.dart';
 import 'media_segmented_control.dart';
 import 'filter_section_header.dart';
 import 'year_range_fields.dart';
+import 'filter_collection_chips.dart';
 import 'genre_multi_select_chips.dart';
 
 /// H8 (Filters) — `docs/SCREENS.md` H8. Used from both B2 and C1, so it takes
@@ -49,6 +51,7 @@ class ExploreFilterSheet extends StatefulWidget {
     required this.mediaRepository,
     required this.regionName,
     required this.onApply,
+    this.collectionCatalog,
   });
 
   final DiscoverFilter initialFilter;
@@ -57,6 +60,9 @@ class ExploreFilterSheet extends StatefulWidget {
   /// The Settings region's display name, shown next to the streaming row.
   final String regionName;
   final ValueChanged<DiscoverFilter> onApply;
+
+  /// The collections to offer; the bundled catalog when `null`.
+  final Future<CollectionCatalog>? collectionCatalog;
 
   /// Opens the sheet as a modal bottom sheet on the root navigator (above
   /// the floating tab bar) at most [maxHeightFraction] of the screen tall, so
@@ -150,6 +156,13 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
             type: () => type,
             withWatchProviders: const {},
             withGenres: GenreCatalog.chipsOf(type, _draft.withGenres),
+            // A collection that doesn't exist for the new kind goes.
+            collection: () =>
+                type == null ||
+                    _draft.collection == null ||
+                    _draft.collection!.isAvailableFor(type)
+                ? _draft.collection
+                : null,
           )
           .withPreset(null),
     );
@@ -231,6 +244,14 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                         _draft.copyWith(
                           withWatchProviders: id == null ? {} : {id},
                         ),
+                      ),
+                    ),
+                    FilterCollectionChips(
+                      catalog: widget.collectionCatalog,
+                      type: _draft.type,
+                      selected: _draft.collection,
+                      onChanged: (collection) => _setDraft(
+                        _draft.copyWith(collection: () => collection),
                       ),
                     ),
                     FilterSectionHeader(l10n.commonGenres),

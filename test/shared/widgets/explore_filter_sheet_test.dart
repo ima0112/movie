@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/discover_preset.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -17,6 +20,11 @@ Future<void> _pump(
   DiscoverFilter filter = const DiscoverFilter(),
   required ValueChanged<DiscoverFilter> onApply,
 }) async {
+  final collections = Future.value(
+    CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    ),
+  );
   tester.view.physicalSize = const Size(800, 2400);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -32,6 +40,7 @@ Future<void> _pump(
           mediaRepository: FakeMediaRepository(),
           regionName: 'United States',
           onApply: onApply,
+          collectionCatalog: collections,
         ),
       ),
     ),
@@ -64,6 +73,56 @@ void main() {
     expect(find.text('STATUS'), findsNothing);
     expect(find.byType(YearRangeFields), findsOneWidget);
     expect(find.byType(RatingRangeFilter), findsOneWidget);
+  });
+
+  testWidgets('a COLLECTION section above the genres: single select, tapping '
+      'the picked one clears it, and changing to a kind without it drops it', (
+    tester,
+  ) async {
+    DiscoverFilter? applied;
+    await _pump(
+      tester,
+      filter: const DiscoverFilter(type: MediaType.tvShow),
+      onApply: (f) => applied = f,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getTopLeft(find.text('COLLECTION')).dy,
+      lessThan(tester.getTopLeft(find.text('GENRES')).dy),
+    );
+    expect(find.text('Turkish series'), findsOneWidget);
+    expect(find.text('Bollywood'), findsNothing); // movies only
+
+    await tester.tap(find.text('Turkish series'));
+    await tester.pump();
+    await tester.tap(find.text('Anime'));
+    await tester.pump(); // single select: Anime replaces it
+    await tester.pump(const Duration(seconds: 1)); // the live count's debounce
+    await tester.tap(find.text('See results'));
+    expect(applied!.collection?.id, 'anime');
+  });
+
+  testWidgets('a collection missing for the new kind is dropped; the badge '
+      'counts it', (tester) async {
+    DiscoverFilter? applied;
+    await _pump(
+      tester,
+      filter: const DiscoverFilter(type: MediaType.tvShow),
+      onApply: (f) => applied = f,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Turkish series'));
+    await tester.pump();
+
+    await tester.tap(find.text('Movies').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Turkish series'), findsNothing);
+    expect(find.text('Bollywood'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1)); // the live count's debounce
+    await tester.tap(find.text('See results'));
+    expect(applied!.collection, isNull);
   });
 
   testWidgets('Clear only shows while something is set, and goes back to the '
