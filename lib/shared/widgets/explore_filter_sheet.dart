@@ -146,7 +146,11 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
     if (type == _draft.type) return;
     _setDraft(
       _draft
-          .copyWith(type: () => type, withWatchProviders: const {})
+          .copyWith(
+            type: () => type,
+            withWatchProviders: const {},
+            withGenres: GenreCatalog.chipsOf(type, _draft.withGenres),
+          )
           .withPreset(null),
     );
   }
@@ -231,8 +235,12 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                     ),
                     FilterSectionHeader(l10n.commonGenres),
                     GenreMultiSelectChips(
-                      genres: GenreCatalog.all,
-                      selected: _draft.withGenres,
+                      type: _draft.type,
+                      genres: GenreCatalog.availableFor(_draft.type),
+                      selected: GenreCatalog.chipsOf(
+                        _draft.type,
+                        _draft.withGenres,
+                      ),
                       onToggle: (genre) => _setDraft(
                         _draft.copyWith(
                           withGenres: _toggled(_draft.withGenres, genre),

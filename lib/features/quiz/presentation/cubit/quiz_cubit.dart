@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/domain/entities/discover_filter.dart'
     show DiscoverTvStatus;
 import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/genre_catalog.dart';
 import '../../../../core/domain/entities/media_key.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../match_engine/domain/participant_answers.dart';
@@ -29,15 +30,21 @@ import 'quiz_state.dart';
 class QuizCubit extends Cubit<QuizState> {
   QuizCubit(MediaType mediaType) : super(QuizState(mediaType: mediaType));
 
-  /// Step 1's veto grid tap — toggles [genre], a no-op past "up to 3".
+  /// Step 1's veto grid tap — toggles [genre]'s chip, a no-op past "up to 3"
+  /// chips. On TV, Action & Adventure and Sci-Fi & Fantasy are one chip each:
+  /// picking one vetoes every genre it stands for (TMDB excludes a combined TV
+  /// genre only when all its members are vetoed), and the cap counts chips.
   void toggleExcludedGenre(Genre genre) {
     final current = state.excludedGenres;
-    if (current.contains(genre)) {
-      emit(state.copyWith(excludedGenres: Set.of(current)..remove(genre)));
+    final members = state.mediaType == MediaType.tvShow
+        ? GenreCatalog.tvMembers(genre)
+        : {genre};
+    if (members.every(current.contains)) {
+      emit(state.copyWith(excludedGenres: current.difference(members)));
       return;
     }
-    if (current.length >= QuizState.maxExcludedGenres) return;
-    emit(state.copyWith(excludedGenres: {...current, genre}));
+    if (state.excludedChipCount >= QuizState.maxExcludedGenres) return;
+    emit(state.copyWith(excludedGenres: {...current, ...members}));
   }
 
   /// Step 2's vibe grid tap — toggles [vibeId], a no-op past "exactly 3".

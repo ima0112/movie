@@ -1,6 +1,7 @@
 import '../../../../core/domain/entities/discover_filter.dart'
     show DiscoverTvStatus;
 import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/genre_catalog.dart';
 import '../../../../core/domain/entities/media_type.dart';
 
 /// E2 (Quiz)'s own draft state across all 4 steps — `docs/SCREENS.md` E2.
@@ -84,6 +85,11 @@ class QuizState {
   /// "Include rent and buy" — on the picked [platformIds], or on any service of
   /// the region while none is picked ("All platforms").
   final bool includeRentBuy;
+
+  /// How many genre chips the vetoes fill: on TV a combined chip (Action &
+  /// Adventure, Sci-Fi & Fantasy) is one however many genres it stands for.
+  int get excludedChipCount =>
+      GenreCatalog.chipsOf(mediaType, excludedGenres).length;
 
   /// Whether "Continue" is enabled: the first two steps need **at least one**
   /// pick (a genre to skip, a vibe), up to three — the caps are enforced as

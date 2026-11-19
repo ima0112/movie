@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/domain/entities/app_settings.dart';
 import '../../../../core/domain/entities/discover_filter.dart';
 import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/genre_catalog.dart';
 import '../../../../core/domain/entities/media_item.dart';
 import '../../../../core/domain/entities/media_segment.dart';
 import '../../../../core/domain/entities/result.dart';
@@ -66,7 +67,17 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
   /// platform that the new list doesn't have is dropped.
   Future<void> setSegment(MediaSegment segment) async {
     if (segment == state.segment) return;
-    _clearSections(segment: segment, services: const ExploreServicesLoading());
+    // A genre with no chip of its own on the new kind (Adventure on TV) shows
+    // under the one that stands for it.
+    final picked = state.genre;
+    final remapped = picked == null
+        ? null
+        : GenreCatalog.chipsOf(segment.mediaType, [picked]).first;
+    _clearSections(
+      segment: segment,
+      services: const ExploreServicesLoading(),
+      genre: () => remapped,
+    );
     await _loadServices();
   }
 
