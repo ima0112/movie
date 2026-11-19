@@ -22,6 +22,18 @@ DriftTasteProfileRepository _repo() {
 }
 
 void main() {
+  test(
+    'liked collections round-trip through drift, and default to none',
+    () async {
+      final repo = _repo();
+      await repo.save(_base());
+      expect((await repo.watch().first)!.likedCollections, isEmpty);
+
+      await repo.save(_base().copyWith(likedCollections: {'anime', 'soaps'}));
+      expect((await repo.watch().first)!.likedCollections, {'anime', 'soaps'});
+    },
+  );
+
   group('the type, eras and platforms round-trip through drift', () {
     test('all three set', () async {
       final repo = _repo();

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/domain/entities/collection.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
@@ -19,6 +20,8 @@ class MyTastesState {
     required this.likedVibes,
     required this.yearFrom,
     required this.availableVibes,
+    this.likedCollections = const {},
+    this.availableCollections = const [],
     this.yearTo,
     this.preferredType,
     this.platformIds = const {},
@@ -36,6 +39,9 @@ class MyTastesState {
   final Set<Genre> likedGenres;
   final Set<Genre> vetoedGenres;
   final Set<String> likedVibes;
+
+  /// Liked collection ids (never Kids).
+  final Set<String> likedCollections;
   final int yearFrom;
 
   /// The eras' upper bound; `null` = today.
@@ -52,6 +58,10 @@ class MyTastesState {
   /// [likedVibes].
   final List<Vibe> availableVibes;
 
+  /// The collections the user can keep (`inTastes`), resolved once like
+  /// [availableVibes].
+  final List<Collection> availableCollections;
+
   /// Drives C5's "discreet 'Saved' text on change" — briefly `true`
   /// right after any edit, cleared a couple seconds later by
   /// `MyTastesCubit`'s own timer.
@@ -59,8 +69,9 @@ class MyTastesState {
 
   factory MyTastesState.fromProfile(
     TasteProfile? profile,
-    List<Vibe> availableVibes,
-  ) {
+    List<Vibe> availableVibes, [
+    List<Collection> availableCollections = const [],
+  ]) {
     return MyTastesState(
       likedGenres: profile?.likedGenres ?? const {},
       vetoedGenres: profile?.vetoedGenres ?? const {},
@@ -70,6 +81,8 @@ class MyTastesState {
       preferredType: profile?.preferredType,
       platformIds: profile?.platformIds ?? const {},
       availableVibes: availableVibes,
+      likedCollections: profile?.likedCollections ?? const {},
+      availableCollections: availableCollections,
     );
   }
 
@@ -77,6 +90,7 @@ class MyTastesState {
     Set<Genre>? likedGenres,
     Set<Genre>? vetoedGenres,
     Set<String>? likedVibes,
+    Set<String>? likedCollections,
     int? yearFrom,
     int? yearTo,
     bool clearYearTo = false,
@@ -96,6 +110,8 @@ class MyTastesState {
           : (preferredType ?? this.preferredType),
       platformIds: platformIds ?? this.platformIds,
       availableVibes: availableVibes,
+      likedCollections: likedCollections ?? this.likedCollections,
+      availableCollections: availableCollections,
       justSaved: justSaved ?? this.justSaved,
     );
   }
@@ -106,6 +122,7 @@ class MyTastesState {
       setEquals(other.likedGenres, likedGenres) &&
       setEquals(other.vetoedGenres, vetoedGenres) &&
       setEquals(other.likedVibes, likedVibes) &&
+      setEquals(other.likedCollections, likedCollections) &&
       other.yearFrom == yearFrom &&
       other.yearTo == yearTo &&
       other.preferredType == preferredType &&
@@ -117,6 +134,7 @@ class MyTastesState {
     Object.hashAllUnordered(likedGenres),
     Object.hashAllUnordered(vetoedGenres),
     Object.hashAllUnordered(likedVibes),
+    Object.hashAllUnordered(likedCollections),
     yearFrom,
     yearTo,
     preferredType,

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/domain/entities/genre.dart';
@@ -44,6 +47,54 @@ void main() {
 
     expect(c.tastes.state.likedGenres, isEmpty);
     expect(c.tastes.state.vetoedGenres, {_horror});
+  });
+
+  group('collections', () {
+    final catalog = CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    );
+
+    ({MyTastesCubit tastes, TasteProfileCubit profile}) build() {
+      final profile = TasteProfileCubit(InMemoryTasteProfileRepository());
+      final tastes = MyTastesCubit(
+        profile,
+        VibeCatalog.fromJson(const {'vibes': []}),
+        catalog,
+      );
+      addTearDown(() async {
+        await tastes.close();
+        await profile.close();
+      });
+      return (tastes: tastes, profile: profile);
+    }
+
+    test('every collection but Kids can be kept', () {
+      final ids = build().tastes.state.availableCollections.map((c) => c.id);
+      expect(ids, hasLength(12));
+      expect(ids, isNot(contains('kids')));
+    });
+
+    test('toggling saves through the global cubit, with no cap', () async {
+      final c = build();
+      for (final id in ['anime', 'soaps', 'k_dramas', 'bollywood', 'kids']) {
+        c.tastes.toggleCollection(id);
+      }
+      await _settle();
+      expect(c.profile.state!.likedCollections, hasLength(5));
+
+      c.tastes.toggleCollection('anime');
+      await _settle();
+      expect(c.profile.state!.likedCollections, isNot(contains('anime')));
+    });
+
+    test('reset clears them', () async {
+      final c = build();
+      c.tastes.toggleCollection('anime');
+      c.tastes.reset();
+      await _settle();
+      expect(c.tastes.state.likedCollections, isEmpty);
+      expect(c.tastes.state.availableCollections, hasLength(12));
+    });
   });
 
   group('vibes: up to 5', () {

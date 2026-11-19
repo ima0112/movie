@@ -346,6 +346,8 @@
   "statsEstimatedTvHoursLabel": "Horas estimadas de series",
   "myTastesTypeTitle": "¿Qué sueles ver?",
   "myTastesTypeHint": "Define qué catálogo mostramos primero.",
+  "myTastesCollectionsTitle": "Colecciones que te gustan",
+  "myTastesCollectionsHint": "Series de un país, anime, novelas… los lugares y formatos a los que vuelves.",
   "myTastesVibesTitle": "Vibes favoritas",
   "myTastesVibesHint": "Hasta {max}. Marcan el tono de lo que te sugerimos.",
   "releaseRangeFrom": "Desde",
