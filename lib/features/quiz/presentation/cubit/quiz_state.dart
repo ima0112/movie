@@ -102,15 +102,12 @@ class QuizState {
   int get excludedChipCount =>
       GenreCatalog.chipsOf(mediaType, excludedGenres).length;
 
-  /// Whether "Continue" is enabled: the genre and vibe steps need **at least
-  /// one** pick (a genre to skip, a vibe), up to three — the caps are enforced
-  /// as they are tapped; the collections (none = anything), platforms, years
-  /// and limits steps have defaults, so they never block.
-  bool get isCurrentStepValid => switch (step) {
-    2 => excludedGenres.isNotEmpty,
-    3 => vibeIds.isNotEmpty,
-    _ => true,
-  };
+  /// Whether "Continue" is enabled. Every step is optional — collections,
+  /// genres to skip and vibes take up to their caps, or none (the caps are
+  /// enforced as they are tapped), and platforms, years and limits have
+  /// defaults — so nothing ever blocks; the lists of the later steps follow
+  /// whatever was picked.
+  bool get isCurrentStepValid => true;
 
   QuizState copyWith({
     int? step,

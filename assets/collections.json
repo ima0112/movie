@@ -126,15 +126,7 @@
         "queries": [
           {
             "originalLanguage": "hi"
-          }
-        ]
-      }
-    },
-    {
-      "id": "indian_cinema",
-      "group": "world",
-      "movie": {
-        "queries": [
+          },
           {
             "originCountries": [
               "IN"
