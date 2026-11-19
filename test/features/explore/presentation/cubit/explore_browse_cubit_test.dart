@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
-import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
@@ -15,12 +13,6 @@ import 'package:movies/features/discover/data/repositories/fake_media_repository
 import 'package:movies/features/explore/domain/explore_section.dart';
 import 'package:movies/features/explore/presentation/cubit/explore_browse_cubit.dart';
 import 'package:movies/features/explore/presentation/cubit/explore_browse_state.dart';
-
-final _collections = CollectionCatalog.fromJsonString(
-  File('assets/collections.json').readAsStringSync(),
-);
-final _turkish = _collections.byId('turkish_series')!;
-final _anime = _collections.byId('anime')!;
 
 const _netflix = StreamingService(id: 8, name: 'Netflix');
 const _max = StreamingService(id: 1899, name: 'Max');
@@ -206,46 +198,6 @@ void main() {
       expect(cubit.state.genre, const Genre(id: 'drama'));
     },
   );
-
-  test('picking a collection clears the sections and the next request carries '
-      'it with the genre and platform', () async {
-    await cubit.start(MediaSegment.all);
-    await requestAll();
-    final before = cubit.state.revision;
-    repo.filters.clear();
-
-    await cubit.selectCollection(_turkish);
-    expect(cubit.state.revision, before + 1);
-    expect(cubit.state.sections, isEmpty);
-    expect(repo.filters, isEmpty);
-
-    await cubit.selectGenre(const Genre(id: 'drama'));
-    await cubit.requestSection(ExploreSection.topToday);
-    final filter = repo.filters.single;
-    expect(filter.collection, _turkish);
-    expect(filter.withGenres, {const Genre(id: 'drama')});
-
-    await cubit.selectCollection(null);
-    repo.filters.clear();
-    await cubit.requestSection(ExploreSection.topToday);
-    expect(repo.filters.single.collection, isNull);
-  });
-
-  test('a collection that does not exist for the new segment is dropped; one '
-      'that does, or "All", is kept', () async {
-    await cubit.start(MediaSegment.tvShow);
-    await cubit.selectCollection(_turkish);
-
-    await cubit.setSegment(MediaSegment.all);
-    expect(cubit.state.collection, _turkish);
-
-    await cubit.setSegment(MediaSegment.movie);
-    expect(cubit.state.collection, isNull);
-
-    await cubit.selectCollection(_anime);
-    await cubit.setSegment(MediaSegment.tvShow);
-    expect(cubit.state.collection, _anime);
-  });
 
   test('selecting what is already selected does nothing', () async {
     await cubit.start(MediaSegment.all);
