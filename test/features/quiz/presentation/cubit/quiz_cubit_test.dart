@@ -38,26 +38,20 @@ void main() {
     test('produces the correct ParticipantAnswers at the end', () {
       final cubit = QuizCubit(MediaType.movie);
 
-      // Step 1 — collections: optional, up to 2; "Continue" is on from the
-      // start.
-      expect(cubit.state.isCurrentStepValid, isTrue);
+      // Step 1 — collections: optional, up to 2.
       cubit.nextStep();
       expect(cubit.state.step, 2);
 
-      // Step 2 — 1 to 3 excluded genres; "Continue" waits for the first.
-      expect(cubit.state.isCurrentStepValid, isFalse);
+      // Step 2 — up to 3 excluded genres.
       cubit.toggleExcludedGenre(_horror);
-      expect(cubit.state.isCurrentStepValid, isTrue);
       cubit.toggleExcludedGenre(_action);
       cubit.nextStep();
       expect(cubit.state.step, 3);
 
-      // Step 3 — 1 to 3 vibes; "Continue" waits for the first.
-      expect(cubit.state.isCurrentStepValid, isFalse);
+      // Step 3 — up to 3 vibes.
       cubit.toggleVibe('feel-good');
       cubit.toggleVibe('date-night');
       cubit.toggleVibe('cozy');
-      expect(cubit.state.isCurrentStepValid, isTrue);
       cubit.nextStep();
       expect(cubit.state.step, 4);
 
@@ -185,23 +179,21 @@ void main() {
   });
 
   group('QuizCubit — step validation and the "Next" button', () {
-    test('step 2 needs at least one veto, and takes up to 3', () {
-      final cubit = QuizCubit(MediaType.movie)..nextStep();
-      expect(cubit.state.isCurrentStepValid, isFalse);
+    test('every step is optional: Continue never blocks, and the genre step '
+        'takes up to 3', () {
+      final cubit = QuizCubit(MediaType.movie);
+      for (var i = 0; i < 4; i++) {
+        expect(cubit.state.isCurrentStepValid, isTrue);
+        cubit.nextStep();
+      }
+      expect(cubit.state.step, 5); // nothing picked anywhere
 
-      cubit.toggleExcludedGenre(_horror);
-      expect(cubit.state.isCurrentStepValid, isTrue);
-      cubit
-        ..toggleExcludedGenre(_action)
-        ..toggleExcludedGenre(_comedy);
-      expect(cubit.state.isCurrentStepValid, isTrue);
-
-      // Taking the last ones back out blocks it again.
-      cubit
+      final genres = QuizCubit(MediaType.movie)
         ..toggleExcludedGenre(_horror)
         ..toggleExcludedGenre(_action)
-        ..toggleExcludedGenre(_comedy);
-      expect(cubit.state.isCurrentStepValid, isFalse);
+        ..toggleExcludedGenre(_comedy)
+        ..toggleExcludedGenre(_drama);
+      expect(genres.state.excludedGenres, {_horror, _action, _comedy});
     });
 
     test('on TV a combined chip vetoes all its genres and counts as one', () {
@@ -228,28 +220,6 @@ void main() {
         cubit.state.excludedGenres,
         isNot(contains(const Genre(id: 'adventure'))),
       );
-    });
-
-    test('step 3 needs at least one vibe, and takes up to 3', () {
-      final cubit = QuizCubit(MediaType.movie)
-        ..nextStep()
-        ..toggleExcludedGenre(_horror)
-        ..nextStep();
-      expect(cubit.state.step, 3);
-
-      expect(cubit.state.isCurrentStepValid, isFalse);
-      cubit.toggleVibe('a');
-      expect(cubit.state.isCurrentStepValid, isTrue);
-      cubit
-        ..toggleVibe('b')
-        ..toggleVibe('c');
-      expect(cubit.state.isCurrentStepValid, isTrue);
-
-      cubit
-        ..toggleVibe('a')
-        ..toggleVibe('b')
-        ..toggleVibe('c');
-      expect(cubit.state.isCurrentStepValid, isFalse);
     });
 
     test('a 4th vibe is ignored once 3 are already selected', () {
@@ -280,28 +250,7 @@ void main() {
       expect(cubit.state.excludedGenres, isEmpty);
     });
 
-    test('nextStep() is a no-op on the genre and vibe steps until something is '
-        'picked', () {
-      final cubit = QuizCubit(MediaType.movie)..nextStep(); // collections
-      expect(cubit.state.step, 2);
-      cubit.nextStep(); // nothing vetoed
-      expect(cubit.state.step, 2);
-
-      cubit
-        ..toggleExcludedGenre(_horror)
-        ..nextStep();
-      expect(cubit.state.step, 3);
-
-      cubit.nextStep(); // no vibe yet
-      expect(cubit.state.step, 3);
-
-      cubit
-        ..toggleVibe('a')
-        ..nextStep();
-      expect(cubit.state.step, 4);
-    });
-
-    test('the collections, platforms and years steps never block', () {
+    test('a search can go through with nothing picked at all', () {
       final cubit = QuizCubit(MediaType.movie);
       expect(cubit.state.isCurrentStepValid, isTrue);
       cubit
@@ -319,9 +268,7 @@ void main() {
     });
 
     test('nextStep() does nothing past the last step', () {
-      final cubit = QuizCubit(MediaType.movie)
-        ..toggleExcludedGenre(_horror)
-        ..toggleVibe('a');
+      final cubit = QuizCubit(MediaType.movie);
       for (var i = 0; i < 8; i++) {
         cubit.nextStep();
       }
@@ -333,15 +280,42 @@ void main() {
       expect(cubit.state.step, 1);
     });
 
-    test('previousStep() preserves earlier answers — the back button '
-        'never discards anything', () {
+    test('going back clears what the step you leave had collected, and '
+        'keeps the earlier steps\' answers', () {
       final cubit = QuizCubit(MediaType.movie)
+        ..toggleCollection('anime')
+        ..nextStep() // → 2
         ..toggleExcludedGenre(_horror)
-        ..nextStep(); // → step 2
-      cubit.previousStep(); // → step 1
+        ..nextStep() // → 3
+        ..toggleVibe('a')
+        ..nextStep() // → 4
+        ..togglePlatform(8)
+        ..setIncludeRentBuy(true)
+        ..nextStep() // → 5
+        ..setYearRange(1990, 2010, currentYear: 2026)
+        ..setMaxRuntimeMinutes(120)
+        ..setExcludeWatched(true);
 
-      expect(cubit.state.step, 1);
+      cubit.previousStep(); // 5 → 4: the years and limits go
+      expect(cubit.state.step, 4);
+      expect(cubit.state.yearFrom, QuizState.defaultYearFrom);
+      expect(cubit.state.yearTo, isNull);
+      expect(cubit.state.maxRuntimeMinutes, isNull);
+      expect(cubit.state.excludeWatched, isFalse);
+      expect(cubit.state.platformIds, {8});
+
+      cubit.previousStep(); // 4 → 3: the platforms go
+      expect(cubit.state.platformIds, isEmpty);
+      expect(cubit.state.includeRentBuy, isFalse);
+      expect(cubit.state.vibeIds, {'a'});
+
+      cubit.previousStep(); // 3 → 2: the vibes go
+      expect(cubit.state.vibeIds, isEmpty);
       expect(cubit.state.excludedGenres, {_horror});
+
+      cubit.previousStep(); // 2 → 1: the genres go
+      expect(cubit.state.excludedGenres, isEmpty);
+      expect(cubit.state.collectionIds, {'anime'});
     });
   });
 

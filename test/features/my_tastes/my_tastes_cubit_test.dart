@@ -68,9 +68,9 @@ void main() {
       return (tastes: tastes, profile: profile);
     }
 
-    test('every collection but Kids can be kept', () {
+    test('every collection but For kids can be kept', () {
       final ids = build().tastes.state.availableCollections.map((c) => c.id);
-      expect(ids, hasLength(12));
+      expect(ids, hasLength(11));
       expect(ids, isNot(contains('kids')));
     });
 
@@ -93,7 +93,7 @@ void main() {
       c.tastes.reset();
       await _settle();
       expect(c.tastes.state.likedCollections, isEmpty);
-      expect(c.tastes.state.availableCollections, hasLength(12));
+      expect(c.tastes.state.availableCollections, hasLength(11));
     });
   });
 

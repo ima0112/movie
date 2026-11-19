@@ -1208,12 +1208,6 @@ abstract class AppLocalizations {
   /// **'Bollywood'**
   String get collectionBollywood;
 
-  /// No description provided for @collectionIndianCinema.
-  ///
-  /// In en, this message translates to:
-  /// **'Indian cinema'**
-  String get collectionIndianCinema;
-
   /// No description provided for @collectionSoaps.
   ///
   /// In en, this message translates to:
@@ -2753,7 +2747,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizGenreSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Skip 1 to 3 genres'**
+  /// **'Skip up to 3 genres, or none'**
   String get quizGenreSubtitle;
 
   /// E2's final-step button, replacing commonNext (docs/SCREENS.md E2: "Final button 'Search'").
@@ -2825,7 +2819,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizVibeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Pick 1 to 3 vibes'**
+  /// **'Pick up to 3 vibes, or none'**
   String get quizVibeSubtitle;
 
   /// E2 step 3's headline, three parts so "platforms" can be coloured: before + accent + after = "Which platforms shall we search?".

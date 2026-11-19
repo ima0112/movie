@@ -15,7 +15,6 @@ extension CollectionLocalization on Collection {
     'spanish_cinema' => l10n.collectionSpanishCinema,
     'korean_cinema' => l10n.collectionKoreanCinema,
     'bollywood' => l10n.collectionBollywood,
-    'indian_cinema' => l10n.collectionIndianCinema,
     'soaps' => l10n.collectionSoaps,
     'anime' => l10n.collectionAnime,
     'reality_shows' => l10n.collectionRealityShows,
