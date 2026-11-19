@@ -86,6 +86,7 @@ void main() {
       AppColors.accent,
       AppColors.lineStrong,
       AppColors.lineStrong,
+      AppColors.lineStrong,
     ]);
   });
 

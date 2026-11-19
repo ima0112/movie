@@ -3,6 +3,7 @@ import '../../../../core/domain/entities/discover_filter.dart'
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/genre_catalog.dart';
 import '../../../../core/domain/entities/media_type.dart';
+import '../../../match_engine/domain/participant_answers.dart';
 
 /// E2 (Quiz)'s own draft state across all 4 steps — `docs/SCREENS.md` E2.
 /// One flat class, not a sealed per-step hierarchy: E2's own back button
@@ -23,6 +24,7 @@ class QuizState {
     this.yearTo,
     this.platformIds = const {},
     this.includeRentBuy = false,
+    this.collectionIds = const {},
   });
 
   /// No doc gives an explicit default for "how far back" — reuses
@@ -36,20 +38,29 @@ class QuizState {
 
   static const int maxExcludedGenres = 3;
   static const int maxVibes = 3;
+  static const int maxCollections = ParticipantAnswers.maxCollections;
+
+  /// Collections, genres to skip, vibes, platforms, years.
+  static const int stepCount = 5;
 
   /// Fixed for the whole quiz session — never part of [copyWith].
   final MediaType mediaType;
 
-  /// 1–4, matching E2's own "Step X of 4" indicator.
+  /// 1–[stepCount]: 1 collections, 2 genres to skip, 3 vibes, 4 platforms, 5
+  /// years and limits.
   final int step;
 
-  /// Step 1: "Pick up to 3 you're NOT in the mood for" — up to
+  /// Step 1: the collections the results must come from (`Collection.id`), up
+  /// to [maxCollections]; none = anything.
+  final Set<String> collectionIds;
+
+  /// Step 2: "Pick up to 3 you're NOT in the mood for" — up to
   /// [maxExcludedGenres]. The cap is enforced by `QuizCubit
   /// .toggleExcludedGenre`, not here: a plain data class has no reason
   /// to reject an already-invalid value if one somehow arrived.
   final Set<Genre> excludedGenres;
 
-  /// Step 2: "pick 3 you ARE in the mood for" — `Vibe.id` values. Stays
+  /// Step 3: "pick 3 you ARE in the mood for" — `Vibe.id` values. Stays
   /// decoupled from `VibeCatalog`: this only ever needs the ids the user
   /// picked, never the full catalog used to enumerate them (that's
   /// whichever screen renders the vibe grid).
@@ -91,13 +102,13 @@ class QuizState {
   int get excludedChipCount =>
       GenreCatalog.chipsOf(mediaType, excludedGenres).length;
 
-  /// Whether "Continue" is enabled: the first two steps need **at least one**
-  /// pick (a genre to skip, a vibe), up to three — the caps are enforced as
-  /// they are tapped; the platforms, years and limits steps have defaults
-  /// (every platform, every year, no limit), so they never block.
+  /// Whether "Continue" is enabled: the genre and vibe steps need **at least
+  /// one** pick (a genre to skip, a vibe), up to three — the caps are enforced
+  /// as they are tapped; the collections (none = anything), platforms, years
+  /// and limits steps have defaults, so they never block.
   bool get isCurrentStepValid => switch (step) {
-    1 => excludedGenres.isNotEmpty,
-    2 => vibeIds.isNotEmpty,
+    2 => excludedGenres.isNotEmpty,
+    3 => vibeIds.isNotEmpty,
     _ => true,
   };
 
@@ -112,6 +123,7 @@ class QuizState {
     int? Function()? yearTo,
     Set<int>? platformIds,
     bool? includeRentBuy,
+    Set<String>? collectionIds,
   }) {
     return QuizState(
       mediaType: mediaType,
@@ -127,6 +139,7 @@ class QuizState {
       yearTo: yearTo == null ? this.yearTo : yearTo(),
       platformIds: platformIds ?? this.platformIds,
       includeRentBuy: includeRentBuy ?? this.includeRentBuy,
+      collectionIds: collectionIds ?? this.collectionIds,
     );
   }
 
@@ -143,7 +156,8 @@ class QuizState {
       other.excludeWatched == excludeWatched &&
       other.yearTo == yearTo &&
       _setEquals(other.platformIds, platformIds) &&
-      other.includeRentBuy == includeRentBuy;
+      other.includeRentBuy == includeRentBuy &&
+      _setEquals(other.collectionIds, collectionIds);
 
   @override
   int get hashCode => Object.hash(
@@ -158,6 +172,7 @@ class QuizState {
     yearTo,
     Object.hashAllUnordered(platformIds),
     includeRentBuy,
+    Object.hashAllUnordered(collectionIds),
   );
 
   @override
@@ -167,7 +182,8 @@ class QuizState {
       'yearFrom: $yearFrom, maxRuntimeMinutes: $maxRuntimeMinutes, '
       'tvStatus: $tvStatus, '
       'excludeWatched: $excludeWatched, yearTo: $yearTo, '
-      'platformIds: $platformIds, includeRentBuy: $includeRentBuy)';
+      'platformIds: $platformIds, includeRentBuy: $includeRentBuy, '
+      'collectionIds: $collectionIds)';
 }
 
 /// Order-independent set content equality — same local stand-in used

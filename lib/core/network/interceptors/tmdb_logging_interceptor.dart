@@ -19,9 +19,7 @@ class TmdbLoggingInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
-      debugPrint(
-        '← ${response.statusCode} ${response.requestOptions.uri}',
-      );
+      debugPrint('← ${response.statusCode} ${response.requestOptions.uri}');
     }
     handler.next(response);
   }

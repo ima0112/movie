@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/domain/entities/collection_catalog.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import '../cubit/quiz_cubit.dart';
 import '../cubit/quiz_state.dart';
+import 'quiz_collection_step.dart';
 import 'quiz_genre_step.dart';
 import 'quiz_vibe_step.dart';
 import 'quiz_platform_step.dart';
@@ -18,9 +20,14 @@ import 'quiz_year_limits_step.dart';
 /// `quiz_screen.dart` to keep that file within CLAUDE.md rule 11's line
 /// limit.
 class QuizStepContent extends StatelessWidget {
-  const QuizStepContent({super.key, required this.vibeCatalog});
+  const QuizStepContent({
+    super.key,
+    required this.vibeCatalog,
+    required this.collectionCatalog,
+  });
 
   final VibeCatalog vibeCatalog;
+  final CollectionCatalog collectionCatalog;
 
   @override
   Widget build(BuildContext context) {
@@ -28,18 +35,26 @@ class QuizStepContent extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<QuizCubit>();
         return switch (state.step) {
-          1 => QuizGenreStep(
+          1 => QuizCollectionStep(
+            collectionCatalog: collectionCatalog,
+            mediaType: state.mediaType,
+            selected: state.collectionIds,
+            onToggle: cubit.toggleCollection,
+          ),
+          2 => QuizGenreStep(
             selected: state.excludedGenres,
             mediaType: state.mediaType,
+            options: cubit.vetoOptions,
             onToggle: cubit.toggleExcludedGenre,
           ),
-          2 => QuizVibeStep(
+          3 => QuizVibeStep(
             vibeCatalog: vibeCatalog,
             mediaType: state.mediaType,
             selected: state.vibeIds,
+            options: cubit.vibeOptions,
             onToggle: cubit.toggleVibe,
           ),
-          3 => QuizPlatformStep(
+          4 => QuizPlatformStep(
             mediaType: state.mediaType,
             selected: state.platformIds,
             includeRentBuy: state.includeRentBuy,

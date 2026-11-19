@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
+import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart'
     show DiscoverTvStatus;
 import 'package:movies/core/domain/entities/genre.dart';
@@ -30,33 +34,39 @@ void main() {
     expect(cubit.state.excludeWatched, isFalse);
   });
 
-  group('QuizCubit — a movie session walking all 4 steps', () {
+  group('QuizCubit — a movie session walking all 5 steps', () {
     test('produces the correct ParticipantAnswers at the end', () {
       final cubit = QuizCubit(MediaType.movie);
 
-      // Step 1 — 1 to 3 excluded genres; "Continue" waits for the first.
+      // Step 1 — collections: optional, up to 2; "Continue" is on from the
+      // start.
+      expect(cubit.state.isCurrentStepValid, isTrue);
+      cubit.nextStep();
+      expect(cubit.state.step, 2);
+
+      // Step 2 — 1 to 3 excluded genres; "Continue" waits for the first.
       expect(cubit.state.isCurrentStepValid, isFalse);
       cubit.toggleExcludedGenre(_horror);
       expect(cubit.state.isCurrentStepValid, isTrue);
       cubit.toggleExcludedGenre(_action);
       cubit.nextStep();
-      expect(cubit.state.step, 2);
+      expect(cubit.state.step, 3);
 
-      // Step 2 — 1 to 3 vibes; "Continue" waits for the first.
+      // Step 3 — 1 to 3 vibes; "Continue" waits for the first.
       expect(cubit.state.isCurrentStepValid, isFalse);
       cubit.toggleVibe('feel-good');
       cubit.toggleVibe('date-night');
       cubit.toggleVibe('cozy');
       expect(cubit.state.isCurrentStepValid, isTrue);
       cubit.nextStep();
-      expect(cubit.state.step, 3);
-
-      // Step 3 — how far back.
-      cubit.setYearFrom(2005);
-      cubit.nextStep();
       expect(cubit.state.step, 4);
 
-      // Step 4 — movie branch: max runtime + the watched toggle.
+      // Step 4 — platforms (defaults).
+      cubit.nextStep();
+      expect(cubit.state.step, 5);
+
+      // Step 5 — how far back; movie branch: max runtime + the watched toggle.
+      cubit.setYearFrom(2005);
       cubit.setMaxRuntimeMinutes(150);
       cubit.setExcludeWatched(true);
 
@@ -175,8 +185,8 @@ void main() {
   });
 
   group('QuizCubit — step validation and the "Next" button', () {
-    test('step 1 needs at least one veto, and takes up to 3', () {
-      final cubit = QuizCubit(MediaType.movie);
+    test('step 2 needs at least one veto, and takes up to 3', () {
+      final cubit = QuizCubit(MediaType.movie)..nextStep();
       expect(cubit.state.isCurrentStepValid, isFalse);
 
       cubit.toggleExcludedGenre(_horror);
@@ -220,11 +230,12 @@ void main() {
       );
     });
 
-    test('step 2 needs at least one vibe, and takes up to 3', () {
+    test('step 3 needs at least one vibe, and takes up to 3', () {
       final cubit = QuizCubit(MediaType.movie)
+        ..nextStep()
         ..toggleExcludedGenre(_horror)
         ..nextStep();
-      expect(cubit.state.step, 2);
+      expect(cubit.state.step, 3);
 
       expect(cubit.state.isCurrentStepValid, isFalse);
       cubit.toggleVibe('a');
@@ -269,52 +280,52 @@ void main() {
       expect(cubit.state.excludedGenres, isEmpty);
     });
 
-    test(
-      'nextStep() is a no-op on steps 1 and 2 until something is picked',
-      () {
-        final cubit = QuizCubit(MediaType.movie)..nextStep(); // nothing vetoed
-        expect(cubit.state.step, 1);
+    test('nextStep() is a no-op on the genre and vibe steps until something is '
+        'picked', () {
+      final cubit = QuizCubit(MediaType.movie)..nextStep(); // collections
+      expect(cubit.state.step, 2);
+      cubit.nextStep(); // nothing vetoed
+      expect(cubit.state.step, 2);
 
-        cubit
-          ..toggleExcludedGenre(_horror)
-          ..nextStep();
-        expect(cubit.state.step, 2);
+      cubit
+        ..toggleExcludedGenre(_horror)
+        ..nextStep();
+      expect(cubit.state.step, 3);
 
-        cubit.nextStep(); // no vibe yet
-        expect(cubit.state.step, 2);
+      cubit.nextStep(); // no vibe yet
+      expect(cubit.state.step, 3);
 
-        cubit
-          ..toggleVibe('a')
-          ..nextStep();
-        expect(cubit.state.step, 3);
-      },
-    );
+      cubit
+        ..toggleVibe('a')
+        ..nextStep();
+      expect(cubit.state.step, 4);
+    });
 
-    test('steps 3 and 4 never block: they have defaults', () {
-      final cubit = QuizCubit(MediaType.movie)
+    test('the collections, platforms and years steps never block', () {
+      final cubit = QuizCubit(MediaType.movie);
+      expect(cubit.state.isCurrentStepValid, isTrue);
+      cubit
+        ..nextStep()
         ..toggleExcludedGenre(_horror)
         ..nextStep()
         ..toggleVibe('a')
         ..nextStep();
-      expect(cubit.state.step, 3);
+      expect(cubit.state.step, 4);
       expect(cubit.state.isCurrentStepValid, isTrue);
 
       cubit.nextStep();
-      expect(cubit.state.step, 4);
+      expect(cubit.state.step, 5);
       expect(cubit.state.isCurrentStepValid, isTrue);
     });
 
-    test('nextStep() does nothing past step 4', () {
+    test('nextStep() does nothing past the last step', () {
       final cubit = QuizCubit(MediaType.movie)
         ..toggleExcludedGenre(_horror)
-        ..toggleVibe('a')
-        ..toggleVibe('b')
-        ..toggleVibe('c');
-      cubit.nextStep(); // 1 → 2
-      cubit.nextStep(); // 2 → 3
-      cubit.nextStep(); // 3 → 4
-      cubit.nextStep(); // stays at 4
-      expect(cubit.state.step, 4);
+        ..toggleVibe('a');
+      for (var i = 0; i < 8; i++) {
+        cubit.nextStep();
+      }
+      expect(cubit.state.step, QuizState.stepCount);
     });
 
     test('previousStep() does nothing before step 1', () {
@@ -331,6 +342,67 @@ void main() {
 
       expect(cubit.state.step, 1);
       expect(cubit.state.excludedGenres, {_horror});
+    });
+  });
+
+  group('QuizCubit — collections', () {
+    final catalog = CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    );
+    final vibes = VibeCatalog.fromJsonString(
+      File('assets/vibes.json').readAsStringSync(),
+    );
+    QuizCubit build(MediaType type) =>
+        QuizCubit(type, collectionCatalog: catalog, vibeCatalog: vibes);
+
+    test('up to two; a third is ignored; taking one out frees it', () {
+      final cubit = build(MediaType.tvShow)
+        ..toggleCollection('turkish_series')
+        ..toggleCollection('anime')
+        ..toggleCollection('soaps');
+      expect(cubit.state.collectionIds, {'turkish_series', 'anime'});
+
+      cubit
+        ..toggleCollection('anime')
+        ..toggleCollection('soaps');
+      expect(cubit.state.collectionIds, {'turkish_series', 'soaps'});
+    });
+
+    test('they reach the answers', () {
+      final cubit = build(MediaType.tvShow)..toggleCollection('k_dramas');
+      expect(cubit.buildAnswers(participantId: 'me').collectionIds, {
+        'k_dramas',
+      });
+    });
+
+    test('Kids on movies takes Family, Animation, Horror, Thriller and Crime '
+        'out of the veto list', () {
+      final cubit = build(MediaType.movie);
+      expect(cubit.vetoOptions, hasLength(18));
+      cubit.toggleCollection('kids');
+      expect(cubit.vetoOptions, hasLength(13));
+    });
+
+    test('choosing a collection silently drops a veto and a vibe it makes '
+        'impossible', () {
+      final cubit = build(MediaType.movie)
+        ..toggleExcludedGenre(_horror)
+        ..toggleExcludedGenre(_comedy)
+        ..toggleVibe('gritty')
+        ..toggleVibe('superhero');
+
+      cubit.toggleCollection('kids');
+
+      expect(cubit.state.excludedGenres, {_comedy}); // Horror is excluded
+      expect(cubit.state.vibeIds, {'superhero'}); // Gritty has no genre left
+    });
+
+    test('vetoing every genre of an ambiente drops it from the picks', () {
+      final cubit = build(MediaType.movie)
+        ..toggleVibe('feel_good')
+        ..toggleExcludedGenre(_comedy)
+        ..toggleExcludedGenre(const Genre(id: 'family'));
+      expect(cubit.state.vibeIds, isEmpty);
     });
   });
 }

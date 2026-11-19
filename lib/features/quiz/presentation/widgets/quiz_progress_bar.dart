@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../cubit/quiz_state.dart';
 
 /// E2's "'Step X of 4' indicator" (`docs/SCREENS.md` E2), shown here as
 /// 4 equal segments rather than (or alongside) the text — no explicit
@@ -15,10 +16,10 @@ import '../../../../core/theme/app_spacing.dart';
 class QuizProgressBar extends StatelessWidget {
   const QuizProgressBar({super.key, required this.currentStep});
 
-  /// 1–4.
+  /// 1–[QuizState.stepCount].
   final int currentStep;
 
-  static const int _stepCount = 4;
+  static const int _stepCount = QuizState.stepCount;
   static const double _height = 4;
 
   @override

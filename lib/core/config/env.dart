@@ -8,7 +8,7 @@ abstract final class Env {
     defaultValue: 'https://api.themoviedb.org/3',
   );
 
-/// When true, the app runs against FakeMediaRepository (no network, no token).
+  /// When true, the app runs against FakeMediaRepository (no network, no token).
   static const useFake = bool.fromEnvironment('USE_FAKE');
 
   static void validate() {

@@ -1605,6 +1605,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizSearchButton => 'Search';
 
   @override
+  String get quizCollectionHeadlineBefore => 'Where should it ';
+
+  @override
+  String get quizCollectionHeadlineAccent => 'come from';
+
+  @override
+  String get quizCollectionHeadlineAfter => '?';
+
+  @override
+  String get quizCollectionSubtitle =>
+      'Pick up to 2, or skip to see everything';
+
+  @override
+  String get quizCollectionGroupWorld => 'From the world';
+
+  @override
+  String get quizCollectionGroupFormat => 'Formats';
+
+  @override
+  String get quizCollectionGroupOccasion => 'For everyone';
+
+  @override
   String get quizVibeHeadlineBefore => 'Which ';
 
   @override
