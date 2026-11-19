@@ -187,19 +187,22 @@ regular/fill para los 8 conceptos que lo necesitan.
 | Vibe: Feel Good | `sun_line` |
 | Vibe: Indie | `seedling_line` |
 | Vibe: Monster | `ghost_line` |
-| Vibe: Detective | `search_eye_line` |
 | Vibe: Classic | `medal_line` |
 | Vibe: Superhero | `shield_flash_line` |
-| Vibe: Cult | `moon_line` |
 | Vibe: Tearjerker | `heart_pulse_line` |
 | Vibe: Sports | `football_line` |
 | Vibe: Date Night | `hand_heart_line` |
-| Vibe: Future | `rocket_line` |
-| Vibe: Explosive | `fire_line` |
 | Vibe: Gritty | `knife_line` |
 | Vibe: True Story | `newspaper_line` |
 | Vibe: Gangster | `money_dollar_circle_line` |
 | Vibe: Musical | `music_line` |
+| Vibe: Time Travel | `time_line` |
+| Vibe: Coming of Age | `footprint_line` |
+| Vibe: Dystopia | `building_2_line` |
+| Vibe: Survival | `tent_line` |
+| Vibe: Revenge | `fire_line` |
+| Vibe: Martial Arts | `boxing_line` |
+| Vibe: Heist | `safe_2_line` |
 | Género: Action | `boxing_line` |
 | Género: Adventure | `map_line` |
 | Género: Animation | `palette_line` |

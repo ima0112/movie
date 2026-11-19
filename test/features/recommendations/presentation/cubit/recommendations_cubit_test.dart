@@ -181,8 +181,8 @@ TasteProfile _profile({
 
 final _vibes = VibeCatalog([
   const Vibe(
-    id: 'explosive',
-    icon: 'vibeExplosive',
+    id: 'revenge',
+    icon: 'vibeRevenge',
     movie: VibeRule(genreIds: ['action'], keywordIds: []),
     tv: VibeRule(genreIds: ['action'], keywordIds: []),
   ),
@@ -235,7 +235,7 @@ void main() {
       final media = _FakeMediaRepository();
       final tastes = InMemoryTasteProfileRepository();
       await tastes.save(
-        _profile(genres: {_action, _drama}, vibes: {'explosive'}),
+        _profile(genres: {_action, _drama}, vibes: {'revenge'}),
       );
       final cubit = _make(media, tastes: tastes);
       addTearDown(cubit.close);
@@ -246,7 +246,7 @@ void main() {
       final like = cubit.state.becauseYouLike as RecommendationSectionLoaded;
       expect(like.seed, isA<GenreSeed>());
       final want = cubit.state.becauseYouWant as RecommendationSectionLoaded;
-      expect((want.seed! as VibeSeed).vibe.id, 'explosive');
+      expect((want.seed! as VibeSeed).vibe.id, 'revenge');
       // Genre and vibe sections use /discover, never /recommendations.
       expect(media.recommendationsCalls, 0);
     });
