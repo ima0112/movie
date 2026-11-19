@@ -12,13 +12,12 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/accent_headline.dart';
 import '../../../../shared/widgets/app_chip.dart';
 import '../../../../shared/widgets/overline_label.dart';
-import '../cubit/quiz_state.dart';
 
 /// E2 step 1 — "Where should it **come from**?": the collections that exist
 /// for the kind of title (Turkish series, Anime, For kids…), grouped by what
-/// they are, as chips filled in amber — **up to [QuizState.maxCollections]**,
-/// and none is fine: the search then comes from everything. Once the cap is
-/// reached the rest dim and stop answering taps. Pure presentation.
+/// they are, as chips filled in amber — **one at most** (tapping another
+/// replaces it, tapping the picked one clears it), and none is fine: the search
+/// then comes from everything. Pure presentation.
 class QuizCollectionStep extends StatelessWidget {
   const QuizCollectionStep({
     super.key,
@@ -33,12 +32,9 @@ class QuizCollectionStep extends StatelessWidget {
   final Set<String> selected;
   final ValueChanged<String> onToggle;
 
-  static const double _disabledOpacity = 0.3;
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final atMax = selected.length >= QuizState.maxCollections;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -52,13 +48,12 @@ class QuizCollectionStep extends StatelessWidget {
           l10n.quizCollectionSubtitle,
           style: AppTextStyles.bodySm.copyWith(color: AppColors.inkMuted),
         ),
-        for (final group in CollectionGroup.values)
-          ..._group(context, group, atMax),
+        for (final group in CollectionGroup.values) ..._group(context, group),
       ],
     );
   }
 
-  List<Widget> _group(BuildContext context, CollectionGroup group, bool atMax) {
+  List<Widget> _group(BuildContext context, CollectionGroup group) {
     final collections = collectionCatalog.inGroup(group, mediaType);
     if (collections.isEmpty) return const [];
     final l10n = context.l10n;
@@ -70,30 +65,27 @@ class QuizCollectionStep extends StatelessWidget {
         spacing: AppSpacing.sm,
         runSpacing: AppSpacing.md,
         children: [
-          for (final collection in collections)
-            _chip(context, collection, atMax),
+          for (final collection in collections) _chip(context, collection),
         ],
       ),
     ];
   }
 
-  Widget _chip(BuildContext context, Collection collection, bool atMax) {
+  Widget _chip(BuildContext context, Collection collection) {
     final isSelected = selected.contains(collection.id);
-    final disabled = atMax && !isSelected;
     final name = collection.localizedName(context.l10n);
     final chip = AppChip(
       label: name,
       state: isSelected ? ChipState.solid : ChipState.normal,
-      onTap: disabled ? null : () => onToggle(collection.id),
+      onTap: () => onToggle(collection.id),
     );
     return Semantics(
       button: true,
       selected: isSelected,
-      enabled: !disabled,
       excludeSemantics: true,
       label: name,
-      onTap: disabled ? null : () => onToggle(collection.id),
-      child: disabled ? Opacity(opacity: _disabledOpacity, child: chip) : chip,
+      onTap: () => onToggle(collection.id),
+      child: chip,
     );
   }
 

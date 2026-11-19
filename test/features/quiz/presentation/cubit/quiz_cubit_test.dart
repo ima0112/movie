@@ -329,17 +329,16 @@ void main() {
     QuizCubit build(MediaType type) =>
         QuizCubit(type, collectionCatalog: catalog, vibeCatalog: vibes);
 
-    test('up to two; a third is ignored; taking one out frees it', () {
-      final cubit = build(MediaType.tvShow)
-        ..toggleCollection('turkish_series')
-        ..toggleCollection('anime')
-        ..toggleCollection('soaps');
-      expect(cubit.state.collectionIds, {'turkish_series', 'anime'});
+    test('one at most: picking another replaces it, picking the same one '
+        'clears it', () {
+      final cubit = build(MediaType.tvShow)..toggleCollection('turkish_series');
+      expect(cubit.state.collectionIds, {'turkish_series'});
 
-      cubit
-        ..toggleCollection('anime')
-        ..toggleCollection('soaps');
-      expect(cubit.state.collectionIds, {'turkish_series', 'soaps'});
+      cubit.toggleCollection('anime');
+      expect(cubit.state.collectionIds, {'anime'});
+
+      cubit.toggleCollection('anime');
+      expect(cubit.state.collectionIds, isEmpty);
     });
 
     test('they reach the answers', () {
