@@ -143,6 +143,7 @@
   "commonGenres": "Géneros",
   "carouselSectionForYou": "Para ti",
   "carouselSectionPopularThisWeek": "Popular esta semana",
+  "carouselSectionBecauseYouLikeCollection": "Porque te gusta {collection}",
   "carouselSectionBecauseYouLikeGenre": "Porque te gusta {genre}",
   "carouselSectionBecauseYouWantVibe": "Porque quieres {vibe}",
   "carouselSectionBecauseYouLike": "Porque te gusta {title}",

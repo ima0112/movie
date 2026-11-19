@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -155,6 +158,85 @@ void main() {
       final seen = {for (var d = 1; d <= 20; d++) seed(DateTime(2026, 5, d))};
       expect(seen.length, greaterThan(2));
     });
+  });
+
+  group('All: a liked collection', () {
+    final collections = CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    );
+    final withCollections = RecommendationPlanner(catalog, collections);
+
+    TasteProfile profileWith(Set<String> ids, {Set<Genre> genres = const {}}) =>
+        TasteProfile(
+          likedGenres: genres,
+          vetoedGenres: {_horror},
+          likedVibes: const {},
+          likedCollections: ids,
+          yearFrom: 1990,
+          updatedAt: DateTime(2026),
+        );
+
+    test('alone it is usable: "Because you like {collection}", and nothing '
+        'for "For you"', () {
+      final plan = withCollections.plan(
+        type: null,
+        profile: profileWith({'anime'}),
+        library: const [],
+        today: today,
+      );
+      expect((plan.becauseLike! as CollectionSeed).collection.id, 'anime');
+      expect(plan.forYou, isNull);
+    });
+
+    test('its filter is the collection with the user\'s vetoes and eras, no '
+        'talk or news, for every kind of title', () {
+      final plan = withCollections.plan(
+        type: null,
+        profile: profileWith({'anime'}),
+        library: const [],
+        today: today,
+      );
+      final filter = withCollections.filterForSeed(
+        plan.becauseLike!,
+        profileWith({'anime'}),
+      );
+      expect(filter.collection?.id, 'anime');
+      expect(filter.type, isNull);
+      expect(filter.withoutGenres, {_horror});
+      expect(filter.excludeTalkAndNews, isTrue);
+      expect(filter.yearFrom, 1990);
+    });
+
+    test('it shares the "like" slot with the liked genres, day by day', () {
+      final seen = <String>{};
+      for (var d = 1; d <= 20; d++) {
+        final plan = withCollections.plan(
+          type: null,
+          profile: profileWith({'anime'}, genres: {_drama}),
+          library: const [],
+          today: DateTime(2026, 5, d),
+        );
+        seen.add(switch (plan.becauseLike) {
+          CollectionSeed() => 'collection',
+          GenreSeed() => 'genre',
+          _ => 'other',
+        });
+      }
+      expect(seen, {'collection', 'genre'});
+    });
+
+    test(
+      'a collection the catalog does not know, or Kids, is never a seed',
+      () {
+        final plan = withCollections.plan(
+          type: null,
+          profile: profileWith({'kids', 'no_such'}),
+          library: const [],
+          today: today,
+        );
+        expect(plan.becauseLike, isNull);
+      },
+    );
   });
 
   group('All follows the taste profile', () {
