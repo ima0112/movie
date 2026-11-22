@@ -35,7 +35,8 @@ class QuizNextButton extends StatelessWidget {
       builder: (context, data) {
         final (step, isValid) = data;
         final isLastStep = step >= QuizState.stepCount;
-        return PrimaryButton(
+        // The amber call-to-action of the flow, like onboarding's.
+        return AccentButton(
           label: isLastStep
               ? context.l10n.quizSearchButton
               : context.l10n.quizContinueButton,
