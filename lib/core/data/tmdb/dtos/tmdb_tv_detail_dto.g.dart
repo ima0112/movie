@@ -68,6 +68,9 @@ TmdbTvDetailDto _$TmdbTvDetailDtoFromJson(Map<String, dynamic> json) =>
           : TmdbAggregateCreditsDto.fromJson(
               json['aggregate_credits'] as Map<String, dynamic>,
             ),
+      keywordIds: json['keywords'] == null
+          ? []
+          : TmdbTvDetailDto._keywordIds(json['keywords']),
     );
 
 TmdbCreatorDto _$TmdbCreatorDtoFromJson(Map<String, dynamic> json) =>

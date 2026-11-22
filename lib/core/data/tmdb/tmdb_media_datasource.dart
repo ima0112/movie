@@ -125,7 +125,7 @@ class TmdbMediaDatasource {
       queryParameters: const {
         'append_to_response':
             'credits,aggregate_credits,videos,similar,content_ratings,'
-            'watch/providers',
+            'watch/providers,keywords',
       },
     );
     return TmdbTvDetailDto.fromJson(response.data!);

@@ -141,6 +141,26 @@ void main() {
     });
   });
 
+  group('TmdbGenreMapper.tvStandInGenres', () {
+    test('the keywords that stand in for a genre give the show that genre', () {
+      expect(TmdbGenreMapper.tvStandInGenres([315058, 9840, 999]), {
+        const Genre(id: 'horror'),
+        const Genre(id: 'romance'),
+      });
+      expect(TmdbGenreMapper.tvStandInGenres(const []), isEmpty);
+    });
+
+    test('Music is not given to a talk show with a music keyword', () {
+      expect(TmdbGenreMapper.tvStandInGenres([4344]), {
+        const Genre(id: 'music'),
+      });
+      expect(
+        TmdbGenreMapper.tvStandInGenres([4344], tmdbGenreIds: [10767]),
+        isEmpty,
+      );
+    });
+  });
+
   group('TmdbGenreMapper.isStandInOnTv', () {
     test('exactly the five genres TMDB\'s TV list lacks', () {
       final standIns = [

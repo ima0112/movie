@@ -145,6 +145,24 @@ abstract final class TmdbGenreMapper {
     };
   }
 
+  /// The stand-in genres a TV show has, from its [keywordIds] — TMDB's TV list
+  /// gives it no Horror, Romance, Thriller, History or Music of its own, so the
+  /// same keywords that stand in for them in a search say which it is. Music
+  /// is left out for a talk show (its [tmdbGenreIds] hold Talk, 10767).
+  static Set<Genre> tvStandInGenres(
+    Iterable<int> keywordIds, {
+    Iterable<int> tmdbGenreIds = const [],
+  }) {
+    final keywords = keywordIds.toSet();
+    final genreIds = tmdbGenreIds.toSet();
+    return {
+      for (final entry in _tvStandIns.entries)
+        if (entry.value.keywordIds.any(keywords.contains) &&
+            !entry.value.withoutTmdbGenreIds.any(genreIds.contains))
+          ?GenreCatalog.byId(entry.key),
+    };
+  }
+
   /// The keywords that exclude the stand-in genres among [genres] on TV.
   static Set<int> tvVetoKeywordIds(Iterable<Genre> genres) => {
     for (final genre in genres) ...?_tvStandIns[genre.id]?.keywordIds,
