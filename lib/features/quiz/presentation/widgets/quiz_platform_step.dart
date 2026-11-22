@@ -1,3 +1,4 @@
+import '../../../../shared/preferred_platforms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -47,7 +48,11 @@ class QuizPlatformStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return BlocProvider(
-      create: (_) => QuizPlatformsCubit(getIt<MediaRepository>(), mediaType),
+      create: (_) => QuizPlatformsCubit(
+        getIt<MediaRepository>(),
+        mediaType,
+        preferredPlatformIds(context),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

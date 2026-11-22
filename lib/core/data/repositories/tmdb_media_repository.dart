@@ -645,12 +645,13 @@ class TmdbMediaRepository implements MediaRepository {
   /// region's top ones (TMDB's own ranking there). The rest are still found by
   /// searching without a platform, which mixes every service — these pills are
   /// just a useful shortcut.
-  static const int _maxStreamingServices = 8;
 
   @override
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
     bool all = false,
+    Set<int> preferredIds = const {},
+    int limit = MediaRepository.defaultServiceLimit,
   }) async {
     try {
       final types = switch (type) {
@@ -666,8 +667,9 @@ class TmdbMediaRepository implements MediaRepository {
         streamingServicesFromJson(
           raw,
           imagesConfig: _imagesConfig,
-          limit: all ? null : _maxStreamingServices,
+          limit: all ? null : limit,
           regionCode: _region,
+          preferredIds: preferredIds,
         ),
       );
     } on DioException catch (e) {

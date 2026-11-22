@@ -29,6 +29,7 @@ class FilterPlatformChips extends StatefulWidget {
     required this.regionName,
     required this.selectedId,
     required this.onChanged,
+    this.preferredIds = const {},
   });
 
   final MediaRepository mediaRepository;
@@ -39,6 +40,9 @@ class FilterPlatformChips extends StatefulWidget {
   final int? selectedId;
   final ValueChanged<int?> onChanged;
 
+  /// The user's own services, listed first.
+  final Set<int> preferredIds;
+
   @override
   State<FilterPlatformChips> createState() => _FilterPlatformChipsState();
 }
@@ -46,7 +50,7 @@ class FilterPlatformChips extends StatefulWidget {
 class _FilterPlatformChipsState extends State<FilterPlatformChips> {
   late final Future<Result<List<StreamingService>>> _services = widget
       .mediaRepository
-      .streamingServices(type: widget.type);
+      .streamingServices(type: widget.type, preferredIds: widget.preferredIds);
 
   @override
   Widget build(BuildContext context) {

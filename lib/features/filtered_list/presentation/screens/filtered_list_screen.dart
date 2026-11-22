@@ -1,3 +1,4 @@
+import '../../../../shared/preferred_platforms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -95,6 +96,7 @@ class _FilteredListView extends StatelessWidget {
       context,
       initialFilter: cubit.state.filter,
       mediaRepository: getIt<MediaRepository>(),
+      preferredPlatformIds: preferredPlatformIds(context),
       regionName: countryName(getIt<SettingsRepository>().current.regionCode),
       onApply: cubit.updateFilter,
     );

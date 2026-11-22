@@ -29,6 +29,8 @@ class _Services implements MediaRepository {
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
     bool all = false,
+    Set<int> preferredIds = const {},
+    int limit = 12,
   }) async {
     calls++;
     lastAll = all;

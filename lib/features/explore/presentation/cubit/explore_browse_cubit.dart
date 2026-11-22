@@ -36,8 +36,10 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
   ExploreBrowseCubit(
     this._mediaRepository,
     this._settingsRepository, {
+    Set<int> Function()? preferredPlatformIds,
     DateTime Function()? clock,
-  }) : _clock = clock ?? DateTime.now,
+  }) : _preferredPlatformIds = preferredPlatformIds ?? (() => const {}),
+       _clock = clock ?? DateTime.now,
        super(const ExploreBrowseState(segment: MediaSegment.all)) {
     _settingsSubscription = _settingsRepository
         .watch()
@@ -48,6 +50,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
 
   final MediaRepository _mediaRepository;
   final SettingsRepository _settingsRepository;
+  final Set<int> Function() _preferredPlatformIds;
   final DateTime Function() _clock;
   late final StreamSubscription<AppSettings> _settingsSubscription;
   int _servicesGeneration = 0;
@@ -93,6 +96,10 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
     _clearSections(service: () => service);
   }
 
+  /// The user's own services changed (My Tastes): ask the list again, with
+  /// no loading state in between.
+  Future<void> reloadServices() => _loadServices();
+
   Future<void> retryServices() async {
     emit(state.copyWith(services: const ExploreServicesLoading()));
     await _loadServices();
@@ -108,6 +115,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
     final generation = ++_servicesGeneration;
     final result = await _mediaRepository.streamingServices(
       type: state.segment.mediaType,
+      preferredIds: _preferredPlatformIds(),
     );
     if (generation != _servicesGeneration || isClosed) return;
     switch (result) {
