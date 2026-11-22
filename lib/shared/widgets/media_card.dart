@@ -26,8 +26,8 @@ enum MediaCardSize {
   /// 90×135. B2's "Coming soon" (a compact strip).
   carouselSmall(width: 90, height: 135, aspectRatio: null),
 
-  /// 330×380. The Discover hero.
-  hero(width: 330, height: 380, aspectRatio: null),
+  /// 360×380. The Discover hero.
+  hero(width: 360, height: 380, aspectRatio: null),
 
   /// 2:3, fluid — C1's 3-column grid. Unlike [carousel]/[hero], this
   /// variant has no fixed pixel size of its own — [width]/[height] are
