@@ -25,22 +25,20 @@ abstract final class CollectionGenres {
     GenreOfTmdbId genreOf,
   ) => _resolve(collection, type, genreOf, (q) => q.withoutTmdbGenreIds);
 
-  /// The genres [collection] excludes for [type]; with no [type] (All), only
-  /// those it excludes on **every** kind of title it exists for — the ones
-  /// that give nothing whichever kind is searched.
+  /// The genres [collection] excludes for [type]; with no [type] (All), those
+  /// it excludes on **any** kind of title it exists for. With All the search
+  /// runs on every kind, so a genre one of them leaves out can only narrow the
+  /// other to the few titles that have it too (For kids: a Kids show that is
+  /// also Horror is none) — better not offered than offered for nothing.
   static Set<Genre> excludedFor(
     Collection collection,
     MediaType? type,
     GenreOfTmdbId genreOf,
   ) {
     if (type != null) return excluded(collection, type, genreOf);
-    Set<Genre>? common;
-    for (final t in MediaType.values) {
-      if (!collection.isAvailableFor(t)) continue;
-      final here = excluded(collection, t, genreOf);
-      common = common == null ? here : common.intersection(here);
-    }
-    return common ?? const {};
+    return {
+      for (final t in MediaType.values) ...excluded(collection, t, genreOf),
+    };
   }
 
   /// The genres [collection] requires on **any** kind of title it exists for —

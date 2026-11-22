@@ -50,6 +50,27 @@ void main() {
     },
   );
 
+  test(
+    'with All, what the collection excludes on any kind: For kids leaves '
+    'out Horror, Thriller and Crime even though its TV side excludes none',
+    () {
+      final kids = catalog.byId('kids')!;
+      expect(CollectionGenres.excludedFor(kids, null, genreOf), {
+        const Genre(id: 'horror'),
+        const Genre(id: 'thriller'),
+        const Genre(id: 'crime'),
+      });
+      expect(
+        CollectionGenres.excludedFor(kids, MediaType.tvShow, genreOf),
+        isEmpty,
+      );
+      expect(
+        CollectionGenres.excludedFor(catalog.byId('anime')!, null, genreOf),
+        isEmpty,
+      );
+    },
+  );
+
   test('a collection that doesn\'t exist for the kind requires nothing', () {
     expect(
       CollectionGenres.required(
