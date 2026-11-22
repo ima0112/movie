@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/shared/widgets/outlined_text.dart';
 import 'package:movies/features/suggestion/presentation/widgets/choose_type_card.dart';
 import 'package:movies/shared/widgets/app_halo.dart';
 
@@ -11,6 +13,7 @@ Widget _host({required VoidCallback onTap, double textScale = 1}) =>
         child: Scaffold(
           body: SingleChildScrollView(
             child: ChooseTypeCard(
+              number: 1,
               icon: AppIcons.movie,
               label: 'A movie',
               subtitle: 'A plan for a couple of hours',
@@ -22,21 +25,52 @@ Widget _host({required VoidCallback onTap, double textScale = 1}) =>
     );
 
 void main() {
-  testWidgets('a tall tile: the icon above the label and its line', (
-    tester,
-  ) async {
+  testWidgets('the number on the left, the label above its line, the icon at '
+      'the top right', (tester) async {
     await tester.pumpWidget(_host(onTap: () {}));
 
     final card = tester.getRect(find.byType(ChooseTypeCard));
-    expect(card.height, greaterThanOrEqualTo(160));
-    expect(
-      tester.getTopLeft(find.byIcon(AppIcons.movie)).dy,
-      lessThan(tester.getTopLeft(find.text('A movie')).dy),
+    final number = tester.getRect(find.byType(OutlinedText));
+    final label = tester.getTopLeft(find.text('A movie'));
+    final line = tester.getTopLeft(find.text('A plan for a couple of hours'));
+    final icon = tester.getRect(find.byIcon(AppIcons.movie));
+
+    expect(number.left, lessThan(label.dx));
+    expect(label.dy, lessThan(line.dy));
+    expect(icon.left, greaterThan(label.dx));
+    expect(icon.right, lessThanOrEqualTo(card.right));
+    expect(icon.top, lessThan(card.top + card.height / 2));
+  });
+
+  testWidgets('the number is two digits, the card\'s place', (tester) async {
+    await tester.pumpWidget(_host(onTap: () {}));
+    expect(find.text('01'), findsWidgets); // the outline and its faint fill
+  });
+
+  testWidgets('it lights up while pressed: amber border, back to neutral '
+      'after', (tester) async {
+    await tester.pumpWidget(_host(onTap: () {}));
+    Color border() {
+      final material = tester.widget<Material>(
+        find
+            .descendant(
+              of: find.byType(ChooseTypeCard),
+              matching: find.byType(Material),
+            )
+            .first,
+      );
+      return ((material.shape! as RoundedRectangleBorder).side.color);
+    }
+
+    expect(border(), AppColors.lineStrong);
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byType(ChooseTypeCard)),
     );
-    expect(
-      tester.getTopLeft(find.text('A movie')).dy,
-      lessThan(tester.getTopLeft(find.text('A plan for a couple of hours')).dy),
-    );
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(border(), AppColors.accent);
+    await gesture.up();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(border(), AppColors.lineStrong);
   });
 
   testWidgets('tapping it runs onTap', (tester) async {
@@ -46,6 +80,34 @@ void main() {
     await tester.tap(find.byType(ChooseTypeCard));
 
     expect(taps, 1);
+  });
+
+  testWidgets('on a 320 px phone at 200% text the long Spanish texts wrap, '
+      'nothing overflows', (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(2)),
+          child: Scaffold(
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: ChooseTypeCard(
+                number: 2,
+                icon: AppIcons.tvShow,
+                label: 'Una serie',
+                subtitle: 'Para engancharte varias noches',
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('at 200% text it grows instead of overflowing', (tester) async {
