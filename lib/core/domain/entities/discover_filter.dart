@@ -21,7 +21,14 @@ enum DiscoverSortBy {
 /// H8's "status Airing/Ended (TV shows only)" — TMDB's own TV status
 /// vocabulary has more values ("Returning Series", "Canceled", ...);
 /// this is deliberately just the two H8 actually exposes as a filter.
-enum DiscoverTvStatus { airing, ended }
+enum DiscoverTvStatus {
+  airing,
+  ended,
+
+  /// Anything but a cancelled show: still running, in production or ended
+  /// (the quiz's "Not cancelled").
+  notCanceled,
+}
 
 /// How a title is available on a streaming service (TMDB's
 /// `with_watch_monetization_types`): included in the subscription, free,

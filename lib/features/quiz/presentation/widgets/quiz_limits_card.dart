@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/domain/entities/discover_filter.dart'
+    show DiscoverTvStatus;
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -20,8 +22,8 @@ class QuizLimitsCard extends StatelessWidget {
     required this.mediaType,
     required this.maxRuntimeMinutes,
     required this.onMaxRuntimeChanged,
-    required this.finishedOnly,
-    required this.onFinishedOnlyChanged,
+    required this.tvStatus,
+    required this.onTvStatusChanged,
     required this.excludeWatched,
     required this.onExcludeWatchedChanged,
   });
@@ -31,8 +33,11 @@ class QuizLimitsCard extends StatelessWidget {
   /// `null` = no limit.
   final int? maxRuntimeMinutes;
   final ValueChanged<int?> onMaxRuntimeChanged;
-  final bool finishedOnly;
-  final ValueChanged<bool> onFinishedOnlyChanged;
+
+  /// TV: `null` = any, [DiscoverTvStatus.notCanceled] or
+  /// [DiscoverTvStatus.ended].
+  final DiscoverTvStatus? tvStatus;
+  final ValueChanged<DiscoverTvStatus?> onTvStatusChanged;
   final bool excludeWatched;
   final ValueChanged<bool> onExcludeWatchedChanged;
 
@@ -58,10 +63,7 @@ class QuizLimitsCard extends StatelessWidget {
               onChanged: onMaxRuntimeChanged,
             )
           else
-            _StatusRow(
-              finishedOnly: finishedOnly,
-              onChanged: onFinishedOnlyChanged,
-            ),
+            _StatusRow(status: tvStatus, onChanged: onTvStatusChanged),
           const Divider(height: 1, color: AppColors.line),
           _SwitchRow(
             label: context.l10n.quizExcludeWatchedToggle,
@@ -136,10 +138,10 @@ class _DurationRow extends StatelessWidget {
 }
 
 class _StatusRow extends StatelessWidget {
-  const _StatusRow({required this.finishedOnly, required this.onChanged});
+  const _StatusRow({required this.status, required this.onChanged});
 
-  final bool finishedOnly;
-  final ValueChanged<bool> onChanged;
+  final DiscoverTvStatus? status;
+  final ValueChanged<DiscoverTvStatus?> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -151,14 +153,21 @@ class _StatusRow extends StatelessWidget {
         children: [
           Text(l10n.quizStatusLabel, style: AppTextStyles.bodySm),
           const SizedBox(height: AppSpacing.md),
-          AppSegmentedControl<bool>(
+          AppSegmentedControl<DiscoverTvStatus?>(
             padding: EdgeInsets.zero,
             onSheet: true,
             segments: [
-              AppSegment(value: false, label: l10n.quizStatusAny),
-              AppSegment(value: true, label: l10n.quizStatusFinished),
+              AppSegment(value: null, label: l10n.quizStatusAny),
+              AppSegment(
+                value: DiscoverTvStatus.notCanceled,
+                label: l10n.quizStatusNotCanceled,
+              ),
+              AppSegment(
+                value: DiscoverTvStatus.ended,
+                label: l10n.quizStatusFinished,
+              ),
             ],
-            selected: finishedOnly,
+            selected: status,
             onSelected: onChanged,
           ),
         ],

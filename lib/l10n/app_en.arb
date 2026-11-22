@@ -1152,8 +1152,6 @@
   "statsHoursOfMoviesLabel": "Hours of movies",
   "statsTvShowsWatchedLabel": "TV shows watched",
   "statsEstimatedTvHoursLabel": "Estimated TV hours",
-  "myTastesTypeTitle": "What do you usually watch?",
-  "myTastesTypeHint": "It sets which catalog we show first.",
   "myTastesCollectionsTitle": "Collections you like",
   "@myTastesCollectionsTitle": {
     "description": "C5's section title for liked collections (Turkish series, Anime, Soap operas…); For kids is not offered here."
@@ -1582,6 +1580,7 @@
   },
   "quizStatusLabel": "Status",
   "quizStatusAny": "Any",
+  "quizStatusNotCanceled": "Not cancelled",
   "quizStatusFinished": "Finished",
   "quizContinueButton": "Continue",
   "@quizContinueButton": {
