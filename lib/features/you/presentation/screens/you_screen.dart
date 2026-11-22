@@ -40,6 +40,9 @@ class YouScreen extends StatelessWidget {
   void _openEditProfile(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
+      // Over the floating tab bar, not under it (every sheet opened from a
+      // root tab goes on the root navigator).
+      useRootNavigator: true,
       isScrollControlled: true,
       builder: (_) => const EditProfileSheet(),
     );
