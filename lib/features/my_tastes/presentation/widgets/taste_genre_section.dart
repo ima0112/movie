@@ -27,6 +27,7 @@ class TasteGenreSection extends StatelessWidget {
     required this.selected,
     required this.onToggle,
     this.selectedState = ChipState.selected,
+    this.disabled = const {},
   });
 
   final String title;
@@ -35,6 +36,9 @@ class TasteGenreSection extends StatelessWidget {
   final Set<Genre> selected;
   final ValueChanged<Genre> onToggle;
   final ChipState selectedState;
+
+  /// Genres that can't be picked here (dimmed and inert).
+  final Set<Genre> disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +57,7 @@ class TasteGenreSection extends StatelessWidget {
             selected: selected,
             onToggle: onToggle,
             selectedState: selectedState,
+            disabled: disabled,
           ),
         ],
       ),

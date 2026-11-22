@@ -1,13 +1,12 @@
 import '../../../core/domain/entities/collection.dart';
+import '../../../core/domain/entities/collection_genres.dart';
 import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/genre_catalog.dart';
 import '../../../core/domain/entities/media_type.dart';
 import '../../match_engine/domain/vibe.dart';
 
-/// Turns a TMDB genre id into the app's [Genre] for a kind of title (`null`
-/// when the app has no genre by that id — Kids, Soap, Reality, Talk, News).
-/// Injected so this file stays free of the TMDB data layer.
-typedef GenreOfTmdbId = Genre? Function(int tmdbId, MediaType type);
+export '../../../core/domain/entities/collection_genres.dart'
+    show GenreOfTmdbId;
 
 /// What each step of the quiz offers, given what the previous steps picked —
 /// collections first, then the genres to skip, then the vibes. Pure functions

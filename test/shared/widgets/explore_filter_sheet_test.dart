@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/discover_preset.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_theme.dart';
@@ -101,6 +102,33 @@ void main() {
     await tester.pump(const Duration(seconds: 1)); // the live count's debounce
     await tester.tap(find.text('See results'));
     expect(applied!.collection?.id, 'anime');
+  });
+
+  testWidgets('a genre the collection leaves out (For kids: Horror) can\'t be '
+      'picked with it, and picking the collection drops one already '
+      'picked', (tester) async {
+    DiscoverFilter? applied;
+    await _pump(
+      tester,
+      filter: DiscoverFilter(
+        type: MediaType.movie,
+        withGenres: {
+          const Genre(id: 'horror'),
+          const Genre(id: 'comedy'),
+        },
+      ),
+      onApply: (f) => applied = f,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('For kids'));
+    await tester.pump();
+    await tester.tap(find.text('Horror')); // inert now
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text('See results'));
+
+    expect(applied!.collection?.id, 'kids');
+    expect(applied!.withGenres, {const Genre(id: 'comedy')});
   });
 
   testWidgets('a collection missing for the new kind is dropped; the badge '

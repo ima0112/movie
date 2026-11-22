@@ -1,9 +1,13 @@
+import '../../core/data/tmdb/tmdb_genre_mapper.dart';
+import '../../core/domain/entities/collection.dart';
 import '../../core/domain/entities/collection_catalog.dart';
+import '../../core/domain/entities/collection_genres.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/discover_filter.dart';
+import '../../core/domain/entities/genre.dart';
 import '../../core/domain/entities/genre_catalog.dart';
 import '../../core/domain/entities/result.dart';
 import '../../core/domain/repositories/media_repository.dart';
@@ -154,6 +158,36 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
   /// What "Clear" goes back to: the default filter of the picked kind.
   DiscoverFilter get _cleared => DiscoverFilter(type: _draft.type);
 
+  /// The genres the picked collection leaves out (For kids: no Horror): they
+  /// would give nothing with it, so they can't be picked.
+  Set<Genre> get _genresExcludedByCollection {
+    final collection = _draft.collection;
+    return collection == null
+        ? const {}
+        : CollectionGenres.excludedFor(
+            collection,
+            _draft.type,
+            TmdbGenreMapper.fromTmdbId,
+          );
+  }
+
+  /// A collection picked: a genre it leaves out is dropped from the picks.
+  void _setCollection(Collection? collection) {
+    final left = collection == null
+        ? const <Genre>{}
+        : CollectionGenres.excludedFor(
+            collection,
+            _draft.type,
+            TmdbGenreMapper.fromTmdbId,
+          );
+    _setDraft(
+      _draft.copyWith(
+        collection: () => collection,
+        withGenres: _draft.withGenres.difference(left),
+      ),
+    );
+  }
+
   /// A different kind of title: what only made sense for the old one goes.
   void _setType(MediaType? type) {
     if (type == _draft.type) return;
@@ -258,13 +292,12 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                       catalog: widget.collectionCatalog,
                       type: _draft.type,
                       selected: _draft.collection,
-                      onChanged: (collection) => _setDraft(
-                        _draft.copyWith(collection: () => collection),
-                      ),
+                      onChanged: _setCollection,
                     ),
                     FilterSectionHeader(l10n.commonGenres),
                     GenreMultiSelectChips(
                       type: _draft.type,
+                      disabled: _genresExcludedByCollection,
                       genres: GenreCatalog.availableFor(_draft.type),
                       selected: GenreCatalog.chipsOf(
                         _draft.type,
