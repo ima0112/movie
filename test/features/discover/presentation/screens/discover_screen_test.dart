@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/in_memory_saved_people_repository.dart';
+import 'package:movies/core/domain/repositories/saved_people_repository.dart';
 import 'package:movies/app/cubits/connectivity_cubit.dart';
 import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/core/network/network_status.dart';
@@ -39,6 +41,10 @@ void main() {
     );
     getIt.unregister<RecentlyViewedRepository>();
     getIt.registerLazySingleton<RecentlyViewedRepository>(() => recent);
+    getIt.unregister<SavedPeopleRepository>();
+    getIt.registerLazySingleton<SavedPeopleRepository>(
+      InMemorySavedPeopleRepository.new,
+    );
     getIt.unregister<TasteProfileRepository>();
     getIt.registerLazySingleton<TasteProfileRepository>(
       InMemoryTasteProfileRepository.new,

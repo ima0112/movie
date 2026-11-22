@@ -21,20 +21,18 @@ class InMemorySavedPeopleRepository implements SavedPeopleRepository {
       _people.values.toList()
         ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
-  /// The current value on subscribe, then one per change — a plain controller
-  /// (not an `async*` generator, whose cancel can wait on a pending yield).
-  Stream<T> _watch<T>(T Function() read) {
-    late final StreamController<T> controller;
-    StreamSubscription<void>? changes;
-    controller = StreamController<T>(
-      onListen: () {
-        controller.add(read());
-        changes = _changes.stream.listen((_) => controller.add(read()));
-      },
-      onCancel: () => changes?.cancel(),
-    );
-    return controller.stream;
-  }
+  /// The current value on subscribe, then one per change. A multi-listener
+  /// stream: it delivers the first value to the listener that asks for it
+  /// (what `.first` needs, also under a widget test's fake clock), and its
+  /// cancel never waits on anything.
+  Stream<T> _watch<T>(T Function() read) => Stream<T>.multi((controller) {
+    controller.add(read());
+    final changes = _changes.stream.listen((_) => controller.add(read()));
+    controller.onCancel = changes.cancel;
+  });
+
+  @override
+  Future<List<Person>> all() async => List.unmodifiable(_sorted);
 
   @override
   Stream<List<Person>> watchAll() => _watch(() => List.unmodifiable(_sorted));

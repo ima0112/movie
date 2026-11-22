@@ -17,6 +17,10 @@ abstract interface class SavedPeopleRepository {
   /// every [save] and [remove].
   Stream<List<Person>> watchAll();
 
+  /// Every saved person, once (a one-shot read of [watchAll]'s list), for what
+  /// only needs today's snapshot — Home's "Because you like {person}".
+  Future<List<Person>> all();
+
   /// Whether [personId] is saved; emits again when that changes.
   Stream<bool> watchIsSaved(int personId);
 

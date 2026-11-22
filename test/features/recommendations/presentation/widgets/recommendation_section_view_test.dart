@@ -141,7 +141,7 @@ class _FakeMediaRepository implements MediaRepository {
 
 void main() {
   testWidgets(
-    '"Porque te gusta {título}" survives a long Spanish title at 200% '
+    '"Porque guardaste {título}" survives a long Spanish title at 200% '
     'text scale with no RenderFlex overflow',
     (tester) async {
       final userLibraryRepository = InMemoryUserLibraryRepository();
@@ -192,7 +192,7 @@ void main() {
       await tester.pump();
 
       expect(tester.takeException(), isNull);
-      expect(find.textContaining('Porque te gusta'), findsOneWidget);
+      expect(find.textContaining('Porque guardaste'), findsOneWidget);
       expect(find.textContaining(_longSpanishTitle), findsOneWidget);
     },
   );

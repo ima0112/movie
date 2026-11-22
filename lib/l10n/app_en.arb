@@ -404,18 +404,27 @@
       }
     }
   },
-  "carouselSectionBecauseYouWantVibe": "Because you want {vibe}",
-  "@carouselSectionBecauseYouWantVibe": {
-    "description": "B1's All tab: 'Because you want X' where X is one of the vibes in the user's taste profile (docs/SCREENS.md B1).",
+  "carouselSectionBecauseYouLikeVibe": "Because you like {vibe}",
+  "@carouselSectionBecauseYouLikeVibe": {
+    "description": "B1's All tab: 'Because you like X' where X is one of the vibes in the user's taste profile (docs/SCREENS.md B1).",
     "placeholders": {
       "vibe": {
         "type": "String"
       }
     }
   },
-  "carouselSectionBecauseYouLike": "Because you like {title}",
-  "@carouselSectionBecauseYouLike": {
-    "description": "B1's \"Because you like X\" carousel header (docs/SCREENS.md B1) — X is RecommendationBuilder's own deterministic seed title, a real UserMediaEntry.title, never a genre.",
+  "carouselSectionBecauseYouLikePerson": "Because you like {person}",
+  "@carouselSectionBecauseYouLikePerson": {
+    "description": "B1's Movies tab: 'Because you like X' where X is a person (actor, director…) the user saved from D3 and appears in the movies of the carousel.",
+    "placeholders": {
+      "person": {
+        "type": "String"
+      }
+    }
+  },
+  "carouselSectionBecauseYouSaved": "Because you saved {title}",
+  "@carouselSectionBecauseYouSaved": {
+    "description": "B1's Movies/TV Shows 'Because you saved X' carousel header (docs/SCREENS.md B1) — X is the day's seed title, a real UserMediaEntry.title the user saved (a favorite, a well-rated watch, or in Watch later), never a genre.",
     "placeholders": {
       "title": {
         "type": "String"
