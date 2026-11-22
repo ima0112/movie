@@ -229,12 +229,23 @@ void main() {
       },
     );
 
-    test('Kids on movies: Family or Animation, so one query per genre when '
-        'one is picked too', () {
-      expect(movie(of('kids')).single['with_genres'], '10751|16');
-      final sets = movie(of('kids', genres: {const Genre(id: 'comedy')}));
-      expect(sets.map((s) => s['with_genres']).toSet(), {'10751,35', '16,35'});
-      expect(sets.first['without_genres'], '27,53,80');
+    test('Kids on movies: Family (required), rated PG or below in the US '
+        'scale, and with a picked genre ANDed: with_genres=10751,35', () {
+      final plain = movie(of('kids')).single;
+      expect(plain['with_genres'], '10751');
+      expect(plain['certification_country'], 'US');
+      expect(plain['certification.lte'], 'PG');
+      final picked = movie(
+        of('kids', genres: {const Genre(id: 'comedy')}),
+      ).single;
+      expect(picked['with_genres'], '10751,35');
+      expect(picked['without_genres'], '27,53,80');
+    });
+
+    test('Kids on TV carries no rating: TMDB has none for shows', () {
+      final params = tv(of('kids')).single;
+      expect(params.containsKey('certification.lte'), isFalse);
+      expect(params['with_genres'], '10762');
     });
 
     test('the user\'s own vetoes join the collection\'s exclusions', () {

@@ -37,13 +37,14 @@ void main() {
     );
   });
 
-  test('Kids on movies hides what it requires (Family, Animation) and what '
-      'it already excludes (Horror, Thriller, Crime): 18 - 5 = 13', () {
+  test('Kids on movies hides what it requires (Family) and what it already '
+      'excludes (Horror, Thriller, Crime): 18 - 4 = 14; Animation stays', () {
     final options = QuizOptions.vetoOptions(MediaType.movie, [kids], genreOf);
-    expect(options, hasLength(13));
-    for (final g in [_animation, _family, _horror, _thriller, _crime]) {
+    expect(options, hasLength(14));
+    for (final g in [_family, _horror, _thriller, _crime]) {
       expect(options, isNot(contains(g)));
     }
+    expect(options, contains(_animation));
   });
 
   test('a collection with genres TMDB has but we do not (Kids on TV, '
