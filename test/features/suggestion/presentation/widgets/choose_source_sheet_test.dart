@@ -176,7 +176,7 @@ void main() {
       );
       expect(find.text('Use my tastes'), findsOneWidget);
       expect(find.text('Answer the quiz instead'), findsOneWidget);
-      // The quiz leads (the main, filled button); the tastes shortcut is under
+      // The quiz leads (the amber, filled button); the tastes shortcut is under
       // it, outlined.
       expect(
         tester.getTopLeft(find.text('Answer the quiz instead')).dy,
@@ -185,7 +185,7 @@ void main() {
       expect(
         find.ancestor(
           of: find.text('Answer the quiz instead'),
-          matching: find.byType(PrimaryButton),
+          matching: find.byType(AccentButton),
         ),
         findsOneWidget,
       );
