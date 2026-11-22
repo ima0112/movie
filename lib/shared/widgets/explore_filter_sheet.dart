@@ -158,8 +158,8 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
   /// What "Clear" goes back to: the default filter of the picked kind.
   DiscoverFilter get _cleared => DiscoverFilter(type: _draft.type);
 
-  /// The genres the picked collection leaves out (For kids: no Horror): they
-  /// would give nothing with it, so they can't be picked.
+  /// The genres the picked collection leaves out (For kids: no Horror, no War):
+  /// they would give nothing with it, so they are not offered.
   Set<Genre> get _genresExcludedByCollection {
     final collection = _draft.collection;
     return collection == null
@@ -306,8 +306,13 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                     FilterSectionHeader(l10n.commonGenres),
                     GenreMultiSelectChips(
                       type: _draft.type,
-                      disabled: _genresExcludedByCollection,
-                      genres: GenreCatalog.availableFor(_draft.type),
+                      genres: [
+                        for (final genre in GenreCatalog.availableFor(
+                          _draft.type,
+                        ))
+                          if (!_genresExcludedByCollection.contains(genre))
+                            genre,
+                      ],
                       selected: GenreCatalog.chipsOf(
                         _draft.type,
                         _draft.withGenres,

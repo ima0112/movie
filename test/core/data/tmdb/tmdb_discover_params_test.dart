@@ -239,7 +239,13 @@ void main() {
         of('kids', genres: {const Genre(id: 'comedy')}),
       ).single;
       expect(picked['with_genres'], '10751,35');
-      expect(picked['without_genres'], '27,53,80');
+      expect((picked['without_genres'] as String).split(',').toSet(), {
+        '27',
+        '53',
+        '80',
+        '10752',
+        '37',
+      });
     });
 
     test('Kids on TV carries no rating: TMDB has none for shows', () {

@@ -104,32 +104,39 @@ void main() {
     expect(applied!.collection?.id, 'anime');
   });
 
-  testWidgets('a genre the collection leaves out (For kids: Horror) can\'t be '
-      'picked with it, and picking the collection drops one already '
-      'picked', (tester) async {
-    DiscoverFilter? applied;
-    await _pump(
-      tester,
-      filter: DiscoverFilter(
-        type: MediaType.movie,
-        withGenres: {
-          const Genre(id: 'horror'),
-          const Genre(id: 'comedy'),
-        },
-      ),
-      onApply: (f) => applied = f,
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'a genre the collection leaves out (For kids: Horror, War…) is not '
+    'offered with it, and picking the collection drops one already '
+    'picked',
+    (tester) async {
+      DiscoverFilter? applied;
+      await _pump(
+        tester,
+        filter: DiscoverFilter(
+          type: MediaType.movie,
+          withGenres: {
+            const Genre(id: 'horror'),
+            const Genre(id: 'comedy'),
+          },
+        ),
+        onApply: (f) => applied = f,
+      );
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('For kids'));
-    await tester.pump();
-    await tester.tap(find.text('Horror')); // inert now
-    await tester.pump(const Duration(seconds: 1));
-    await tester.tap(find.text('See results'));
+      await tester.tap(find.text('For kids'));
+      await tester.pump();
+      // Not offered at all with it: Horror, Thriller, Crime, War, Western.
+      for (final gone in ['Horror', 'Thriller', 'Crime', 'War', 'Western']) {
+        expect(find.text(gone), findsNothing, reason: gone);
+      }
+      expect(find.text('Comedy'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.text('See results'));
 
-    expect(applied!.collection?.id, 'kids');
-    expect(applied!.withGenres, {const Genre(id: 'comedy')});
-  });
+      expect(applied!.collection?.id, 'kids');
+      expect(applied!.withGenres, {const Genre(id: 'comedy')});
+    },
+  );
 
   testWidgets('with All too: For kids leaves out Horror (the movie side '
       'does), and the picked one is dropped', (tester) async {

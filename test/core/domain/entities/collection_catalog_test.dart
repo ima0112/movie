@@ -128,7 +128,9 @@ void main() {
     expect(movie.withTmdbGenreIds, {10751});
     expect(movie.certificationLte, 'PG');
     expect(kids.tv!.queries.single.certificationLte, isNull);
-    expect(movie.withoutTmdbGenreIds, {27, 53, 80});
+    expect(movie.withoutTmdbGenreIds, {27, 53, 80, 10752, 37});
+    expect(kids.hidesVibes, contains('gangster'));
+    expect(catalog.byId('anime')!.hidesVibes, isEmpty);
     expect(kids.tv!.queries.single.withTmdbGenreIds, {10762});
   });
 
