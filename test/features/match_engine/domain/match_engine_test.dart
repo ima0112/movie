@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
@@ -471,6 +474,64 @@ void main() {
 
       expect(repository.capturedFilters, isNotEmpty);
       expect(repository.capturedFilters.first.withKeywords, isEmpty);
+    });
+  });
+
+  group('MatchEngine — collections (the Matcher)', () {
+    final collections = CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    );
+    final catalog = VibeCatalog([
+      vibe('comedy', ['comedy']),
+    ]);
+
+    Future<List<DiscoverFilter>> run(
+      Set<String> chosen, {
+      MediaType type = MediaType.movie,
+    }) async {
+      final repository = _RecordingMediaRepository();
+      await MatchEngineImpl(repository).resolve(
+        MatchQuery.aggregate(type, [
+          ParticipantAnswers(
+            participantId: 'ana',
+            vibeIds: {'comedy'},
+            yearFrom: 1950,
+            collectionIds: chosen,
+          ),
+        ]),
+        options: MatchOptions(
+          vibeCatalog: catalog,
+          collectionCatalog: collections,
+        ),
+      );
+      return repository.capturedFilters;
+    }
+
+    test('every query carries the group\'s collection with its own lower '
+        'vote floor — also after every relaxation step', () async {
+      final filters = await run({'bollywood'});
+      expect(filters.length, greaterThan(1)); // it relaxed
+      for (final f in filters) {
+        expect(f.collection?.id, 'bollywood');
+        expect(f.minVoteCount, lessThanOrEqualTo(100));
+      }
+    });
+
+    test(
+      'the collections that exist for the kind make a query each per vibe; one that does not exist '
+      'for the kind (Turkish series, movies) is ignored',
+      () async {
+        final filters = await run({'turkish_series', 'anime', 'bollywood'});
+        expect(
+          {for (final f in filters) f.collection?.id},
+          {'anime', 'bollywood'},
+        );
+      },
+    );
+
+    test('no collection chosen: unrestricted', () async {
+      final filters = await run(const {});
+      expect({for (final f in filters) f.collection}, {null});
     });
   });
 
