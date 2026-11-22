@@ -87,6 +87,31 @@ void main() {
       expect(c.profile.state!.likedCollections, isNot(contains('anime')));
     });
 
+    test(
+      'a collection needing an avoided genre can\'t be liked (Anime needs '
+      'Animation), and a genre a liked collection needs can\'t be avoided',
+      () async {
+        const animation = Genre(id: 'animation');
+        final c = build();
+
+        c.tastes.toggleVetoedGenre(animation);
+        expect(c.tastes.collectionsBlockedByVetoes, contains('anime'));
+        c.tastes.toggleCollection('anime'); // no-op
+        expect(c.tastes.state.likedCollections, isEmpty);
+
+        c.tastes.toggleVetoedGenre(animation); // un-avoid
+        c.tastes.toggleCollection('anime');
+        expect(c.tastes.state.likedCollections, {'anime'});
+        expect(c.tastes.genresBlockedByCollections, contains(animation));
+        c.tastes.toggleVetoedGenre(animation); // no-op
+        expect(c.tastes.state.vetoedGenres, isEmpty);
+
+        c.tastes.toggleCollection('anime'); // un-like frees it
+        c.tastes.toggleVetoedGenre(animation);
+        expect(c.tastes.state.vetoedGenres, {animation});
+      },
+    );
+
     test('reset clears them', () async {
       final c = build();
       c.tastes.toggleCollection('anime');
