@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../core/domain/entities/media_item.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/genre_localization.dart';
 import '../../l10n/l10n_extension.dart';
@@ -33,8 +32,8 @@ String _heroMetadata(MediaItem item, AppLocalizations l10n) {
 /// Neighbours are shrunk, not the center enlarged, so the hero's height is
 /// always [MediaCardSize.hero]'s and nothing below it shifts.
 ///
-/// Layout: the card is 78% of the page's width (at most [MediaCardSize.hero]'s
-/// 360 px) and [AppSpacing.xs] apart from the next; every card opens its detail
+/// Layout: the card is 82% of the page's width (at most [MediaCardSize.hero]'s
+/// 360 px) and edge to edge with the next; every card opens its detail
 /// on tap, the neighbours included.
 ///
 /// Pure presentation, no Bloc: [saveButtonBuilder] lets the caller put a
@@ -123,7 +122,7 @@ class _MediaHeroCarouselState extends State<MediaHeroCarousel> {
       0.0,
       MediaCardSize.hero.width,
     );
-    final controller = _controllerFor((cardWidth + AppSpacing.xs) / width);
+    final controller = _controllerFor(cardWidth / width);
 
     final items = widget.items;
     final onSave = widget.onSaveTap;
