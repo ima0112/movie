@@ -29,7 +29,14 @@ enum ChipState {
   vetoed,
 }
 
-/// Generic chip used for genres, recent searches, and active filters.
+/// Generic chip used for genres, collections, vibes, sort and filter options and
+/// active filters.
+///
+/// Two sizes, one look. The **regular** chip (the app's default) is a 40 px pill
+/// with a 13 px label — the size of Explore's pills, comfortable to read and to
+/// tap. The **[compact]** one (a 23 px pill, 11 px label) is for onboarding,
+/// where the chips are a decoration around a big headline, and for the bar of
+/// active filters, where they are a dense row.
 ///
 /// Pure presentation — no feature dependency, everything comes in by
 /// parameter.
@@ -42,6 +49,7 @@ class AppChip extends StatelessWidget {
     this.icon,
     this.trailingIcon,
     this.leading,
+    this.compact = false,
   });
 
   final String label;
@@ -54,6 +62,12 @@ class AppChip extends StatelessWidget {
 
   /// A widget before the label — a streaming service's logo.
   final Widget? leading;
+
+  /// The small size (see the class doc); the regular one when `false`.
+  final bool compact;
+
+  /// The regular chip's height, the same as `ExplorePill`'s.
+  static const double regularHeight = 40;
 
   // docs/DESIGN_SYSTEM.md section 4: "20: chips, campos, elementos
   // secundarios" — an icon size, not part of the AppSpacing scale.
@@ -70,7 +84,7 @@ class AppChip extends StatelessWidget {
     final width =
         MediaQuery.sizeOf(context).width -
         2 * AppSpacing.screenMargin -
-        2 * AppSpacing.md -
+        2 * (compact ? AppSpacing.md : AppSpacing.lg) -
         beside;
     return width < 0 ? 0 : width;
   }
@@ -85,48 +99,55 @@ class AppChip extends StatelessWidget {
         : (isSelected ? AppColors.accent : AppColors.ink);
 
     final content = Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? AppSpacing.md : AppSpacing.lg,
+        vertical: compact ? AppSpacing.xs : 0,
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (leading != null) ...[
-            leading!,
-            const SizedBox(width: AppSpacing.sm),
-          ],
-          if (icon != null) ...[
-            Icon(icon, size: _iconSize, color: textColor),
-            const SizedBox(width: AppSpacing.xs),
-          ],
-          // A long label (a long language, 200% text) wraps to a second line
-          // instead of overflowing: capped to the page's width, which also
-          // holds in a horizontal list of chips where the width is unbounded.
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: _labelMaxWidth(context)),
-            child: Text(
-              label,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style:
-                  (isVetoed
-                          ? AppTextStyles.captionStrong
-                          : AppTextStyles.caption)
-                      .copyWith(
-                        color: textColor,
-                        decoration: isVetoed
-                            ? TextDecoration.lineThrough
-                            : null,
-                        decorationColor: textColor,
-                      ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: compact ? 0 : regularHeight),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: AppSpacing.sm),
+            ],
+            if (icon != null) ...[
+              Icon(icon, size: _iconSize, color: textColor),
+              const SizedBox(width: AppSpacing.xs),
+            ],
+            // A long label (a long language, 200% text) wraps to a second line
+            // instead of overflowing: capped to the page's width, which also
+            // holds in a horizontal list of chips where the width is unbounded.
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: _labelMaxWidth(context)),
+              child: Text(
+                label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    (compact
+                            ? (isVetoed
+                                  ? AppTextStyles.captionStrong
+                                  : AppTextStyles.caption)
+                            : (isVetoed
+                                  ? AppTextStyles.bodySmStrong
+                                  : AppTextStyles.bodySm))
+                        .copyWith(
+                          color: textColor,
+                          decoration: isVetoed
+                              ? TextDecoration.lineThrough
+                              : null,
+                          decorationColor: textColor,
+                        ),
+              ),
             ),
-          ),
-          if (trailingIcon != null) ...[
-            const SizedBox(width: AppSpacing.xs),
-            Icon(trailingIcon, size: _iconSize, color: textColor),
+            if (trailingIcon != null) ...[
+              const SizedBox(width: AppSpacing.xs),
+              Icon(trailingIcon, size: _iconSize, color: textColor),
+            ],
           ],
-        ],
+        ),
       ),
     );
 

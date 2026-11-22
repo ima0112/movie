@@ -56,6 +56,7 @@ class FilteredListChipsRow extends StatelessWidget {
             final chip = chips[index];
             return Center(
               child: AppChip(
+                compact: true,
                 label: chip.label,
                 state: ChipState.selected,
                 trailingIcon: AppIcons.close,
