@@ -4119,6 +4119,698 @@ class SurpriseHistoryTableCompanion
   }
 }
 
+class $SurpriseSessionTableTable extends SurpriseSessionTable
+    with TableInfo<$SurpriseSessionTableTable, SurpriseSessionRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SurpriseSessionTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
+  );
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+    'session_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<MediaType, String> mediaType =
+      GeneratedColumn<String>(
+        'media_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<MediaType>(
+        $SurpriseSessionTableTable.$convertermediaType,
+      );
+  @override
+  late final GeneratedColumnWithTypeConverter<SurpriseSessionSource, String>
+  source =
+      GeneratedColumn<String>(
+        'source',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<SurpriseSessionSource>(
+        $SurpriseSessionTableTable.$convertersource,
+      );
+  static const VerificationMeta _collectionIdsMeta = const VerificationMeta(
+    'collectionIds',
+  );
+  @override
+  late final GeneratedColumn<String> collectionIds = GeneratedColumn<String>(
+    'collection_ids',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _vibeIdsMeta = const VerificationMeta(
+    'vibeIds',
+  );
+  @override
+  late final GeneratedColumn<String> vibeIds = GeneratedColumn<String>(
+    'vibe_ids',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _excludedGenresMeta = const VerificationMeta(
+    'excludedGenres',
+  );
+  @override
+  late final GeneratedColumn<String> excludedGenres = GeneratedColumn<String>(
+    'excluded_genres',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _platformIdsMeta = const VerificationMeta(
+    'platformIds',
+  );
+  @override
+  late final GeneratedColumn<String> platformIds = GeneratedColumn<String>(
+    'platform_ids',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _yearFromMeta = const VerificationMeta(
+    'yearFrom',
+  );
+  @override
+  late final GeneratedColumn<int> yearFrom = GeneratedColumn<int>(
+    'year_from',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _yearToMeta = const VerificationMeta('yearTo');
+  @override
+  late final GeneratedColumn<int> yearTo = GeneratedColumn<int>(
+    'year_to',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _relaxationsMeta = const VerificationMeta(
+    'relaxations',
+  );
+  @override
+  late final GeneratedColumn<String> relaxations = GeneratedColumn<String>(
+    'relaxations',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    sessionId,
+    startedAt,
+    mediaType,
+    source,
+    collectionIds,
+    vibeIds,
+    excludedGenres,
+    platformIds,
+    yearFrom,
+    yearTo,
+    relaxations,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'surprise_session_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SurpriseSessionRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('session_id')) {
+      context.handle(
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sessionIdMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startedAtMeta);
+    }
+    if (data.containsKey('collection_ids')) {
+      context.handle(
+        _collectionIdsMeta,
+        collectionIds.isAcceptableOrUnknown(
+          data['collection_ids']!,
+          _collectionIdsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('vibe_ids')) {
+      context.handle(
+        _vibeIdsMeta,
+        vibeIds.isAcceptableOrUnknown(data['vibe_ids']!, _vibeIdsMeta),
+      );
+    }
+    if (data.containsKey('excluded_genres')) {
+      context.handle(
+        _excludedGenresMeta,
+        excludedGenres.isAcceptableOrUnknown(
+          data['excluded_genres']!,
+          _excludedGenresMeta,
+        ),
+      );
+    }
+    if (data.containsKey('platform_ids')) {
+      context.handle(
+        _platformIdsMeta,
+        platformIds.isAcceptableOrUnknown(
+          data['platform_ids']!,
+          _platformIdsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('year_from')) {
+      context.handle(
+        _yearFromMeta,
+        yearFrom.isAcceptableOrUnknown(data['year_from']!, _yearFromMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearFromMeta);
+    }
+    if (data.containsKey('year_to')) {
+      context.handle(
+        _yearToMeta,
+        yearTo.isAcceptableOrUnknown(data['year_to']!, _yearToMeta),
+      );
+    }
+    if (data.containsKey('relaxations')) {
+      context.handle(
+        _relaxationsMeta,
+        relaxations.isAcceptableOrUnknown(
+          data['relaxations']!,
+          _relaxationsMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {sessionId};
+  @override
+  SurpriseSessionRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SurpriseSessionRow(
+      sessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}session_id'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      mediaType: $SurpriseSessionTableTable.$convertermediaType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}media_type'],
+        )!,
+      ),
+      source: $SurpriseSessionTableTable.$convertersource.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}source'],
+        )!,
+      ),
+      collectionIds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}collection_ids'],
+      )!,
+      vibeIds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vibe_ids'],
+      )!,
+      excludedGenres: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}excluded_genres'],
+      )!,
+      platformIds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}platform_ids'],
+      )!,
+      yearFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year_from'],
+      )!,
+      yearTo: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year_to'],
+      ),
+      relaxations: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}relaxations'],
+      )!,
+    );
+  }
+
+  @override
+  $SurpriseSessionTableTable createAlias(String alias) {
+    return $SurpriseSessionTableTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<MediaType, String, String> $convertermediaType =
+      const EnumNameConverter<MediaType>(MediaType.values);
+  static JsonTypeConverter2<SurpriseSessionSource, String, String>
+  $convertersource = const EnumNameConverter<SurpriseSessionSource>(
+    SurpriseSessionSource.values,
+  );
+}
+
+class SurpriseSessionRow extends DataClass
+    implements Insertable<SurpriseSessionRow> {
+  final String sessionId;
+  final DateTime startedAt;
+  final MediaType mediaType;
+
+  /// `SurpriseSessionSource`, as its name.
+  final SurpriseSessionSource source;
+  final String collectionIds;
+  final String vibeIds;
+  final String excludedGenres;
+  final String platformIds;
+  final int yearFrom;
+  final int? yearTo;
+
+  /// `SurpriseRelaxation` names the engine needed, in any batch.
+  final String relaxations;
+  const SurpriseSessionRow({
+    required this.sessionId,
+    required this.startedAt,
+    required this.mediaType,
+    required this.source,
+    required this.collectionIds,
+    required this.vibeIds,
+    required this.excludedGenres,
+    required this.platformIds,
+    required this.yearFrom,
+    this.yearTo,
+    required this.relaxations,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['session_id'] = Variable<String>(sessionId);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    {
+      map['media_type'] = Variable<String>(
+        $SurpriseSessionTableTable.$convertermediaType.toSql(mediaType),
+      );
+    }
+    {
+      map['source'] = Variable<String>(
+        $SurpriseSessionTableTable.$convertersource.toSql(source),
+      );
+    }
+    map['collection_ids'] = Variable<String>(collectionIds);
+    map['vibe_ids'] = Variable<String>(vibeIds);
+    map['excluded_genres'] = Variable<String>(excludedGenres);
+    map['platform_ids'] = Variable<String>(platformIds);
+    map['year_from'] = Variable<int>(yearFrom);
+    if (!nullToAbsent || yearTo != null) {
+      map['year_to'] = Variable<int>(yearTo);
+    }
+    map['relaxations'] = Variable<String>(relaxations);
+    return map;
+  }
+
+  SurpriseSessionTableCompanion toCompanion(bool nullToAbsent) {
+    return SurpriseSessionTableCompanion(
+      sessionId: Value(sessionId),
+      startedAt: Value(startedAt),
+      mediaType: Value(mediaType),
+      source: Value(source),
+      collectionIds: Value(collectionIds),
+      vibeIds: Value(vibeIds),
+      excludedGenres: Value(excludedGenres),
+      platformIds: Value(platformIds),
+      yearFrom: Value(yearFrom),
+      yearTo: yearTo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(yearTo),
+      relaxations: Value(relaxations),
+    );
+  }
+
+  factory SurpriseSessionRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SurpriseSessionRow(
+      sessionId: serializer.fromJson<String>(json['sessionId']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      mediaType: $SurpriseSessionTableTable.$convertermediaType.fromJson(
+        serializer.fromJson<String>(json['mediaType']),
+      ),
+      source: $SurpriseSessionTableTable.$convertersource.fromJson(
+        serializer.fromJson<String>(json['source']),
+      ),
+      collectionIds: serializer.fromJson<String>(json['collectionIds']),
+      vibeIds: serializer.fromJson<String>(json['vibeIds']),
+      excludedGenres: serializer.fromJson<String>(json['excludedGenres']),
+      platformIds: serializer.fromJson<String>(json['platformIds']),
+      yearFrom: serializer.fromJson<int>(json['yearFrom']),
+      yearTo: serializer.fromJson<int?>(json['yearTo']),
+      relaxations: serializer.fromJson<String>(json['relaxations']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'sessionId': serializer.toJson<String>(sessionId),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'mediaType': serializer.toJson<String>(
+        $SurpriseSessionTableTable.$convertermediaType.toJson(mediaType),
+      ),
+      'source': serializer.toJson<String>(
+        $SurpriseSessionTableTable.$convertersource.toJson(source),
+      ),
+      'collectionIds': serializer.toJson<String>(collectionIds),
+      'vibeIds': serializer.toJson<String>(vibeIds),
+      'excludedGenres': serializer.toJson<String>(excludedGenres),
+      'platformIds': serializer.toJson<String>(platformIds),
+      'yearFrom': serializer.toJson<int>(yearFrom),
+      'yearTo': serializer.toJson<int?>(yearTo),
+      'relaxations': serializer.toJson<String>(relaxations),
+    };
+  }
+
+  SurpriseSessionRow copyWith({
+    String? sessionId,
+    DateTime? startedAt,
+    MediaType? mediaType,
+    SurpriseSessionSource? source,
+    String? collectionIds,
+    String? vibeIds,
+    String? excludedGenres,
+    String? platformIds,
+    int? yearFrom,
+    Value<int?> yearTo = const Value.absent(),
+    String? relaxations,
+  }) => SurpriseSessionRow(
+    sessionId: sessionId ?? this.sessionId,
+    startedAt: startedAt ?? this.startedAt,
+    mediaType: mediaType ?? this.mediaType,
+    source: source ?? this.source,
+    collectionIds: collectionIds ?? this.collectionIds,
+    vibeIds: vibeIds ?? this.vibeIds,
+    excludedGenres: excludedGenres ?? this.excludedGenres,
+    platformIds: platformIds ?? this.platformIds,
+    yearFrom: yearFrom ?? this.yearFrom,
+    yearTo: yearTo.present ? yearTo.value : this.yearTo,
+    relaxations: relaxations ?? this.relaxations,
+  );
+  SurpriseSessionRow copyWithCompanion(SurpriseSessionTableCompanion data) {
+    return SurpriseSessionRow(
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      mediaType: data.mediaType.present ? data.mediaType.value : this.mediaType,
+      source: data.source.present ? data.source.value : this.source,
+      collectionIds: data.collectionIds.present
+          ? data.collectionIds.value
+          : this.collectionIds,
+      vibeIds: data.vibeIds.present ? data.vibeIds.value : this.vibeIds,
+      excludedGenres: data.excludedGenres.present
+          ? data.excludedGenres.value
+          : this.excludedGenres,
+      platformIds: data.platformIds.present
+          ? data.platformIds.value
+          : this.platformIds,
+      yearFrom: data.yearFrom.present ? data.yearFrom.value : this.yearFrom,
+      yearTo: data.yearTo.present ? data.yearTo.value : this.yearTo,
+      relaxations: data.relaxations.present
+          ? data.relaxations.value
+          : this.relaxations,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SurpriseSessionRow(')
+          ..write('sessionId: $sessionId, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('mediaType: $mediaType, ')
+          ..write('source: $source, ')
+          ..write('collectionIds: $collectionIds, ')
+          ..write('vibeIds: $vibeIds, ')
+          ..write('excludedGenres: $excludedGenres, ')
+          ..write('platformIds: $platformIds, ')
+          ..write('yearFrom: $yearFrom, ')
+          ..write('yearTo: $yearTo, ')
+          ..write('relaxations: $relaxations')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    sessionId,
+    startedAt,
+    mediaType,
+    source,
+    collectionIds,
+    vibeIds,
+    excludedGenres,
+    platformIds,
+    yearFrom,
+    yearTo,
+    relaxations,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SurpriseSessionRow &&
+          other.sessionId == this.sessionId &&
+          other.startedAt == this.startedAt &&
+          other.mediaType == this.mediaType &&
+          other.source == this.source &&
+          other.collectionIds == this.collectionIds &&
+          other.vibeIds == this.vibeIds &&
+          other.excludedGenres == this.excludedGenres &&
+          other.platformIds == this.platformIds &&
+          other.yearFrom == this.yearFrom &&
+          other.yearTo == this.yearTo &&
+          other.relaxations == this.relaxations);
+}
+
+class SurpriseSessionTableCompanion
+    extends UpdateCompanion<SurpriseSessionRow> {
+  final Value<String> sessionId;
+  final Value<DateTime> startedAt;
+  final Value<MediaType> mediaType;
+  final Value<SurpriseSessionSource> source;
+  final Value<String> collectionIds;
+  final Value<String> vibeIds;
+  final Value<String> excludedGenres;
+  final Value<String> platformIds;
+  final Value<int> yearFrom;
+  final Value<int?> yearTo;
+  final Value<String> relaxations;
+  final Value<int> rowid;
+  const SurpriseSessionTableCompanion({
+    this.sessionId = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.mediaType = const Value.absent(),
+    this.source = const Value.absent(),
+    this.collectionIds = const Value.absent(),
+    this.vibeIds = const Value.absent(),
+    this.excludedGenres = const Value.absent(),
+    this.platformIds = const Value.absent(),
+    this.yearFrom = const Value.absent(),
+    this.yearTo = const Value.absent(),
+    this.relaxations = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SurpriseSessionTableCompanion.insert({
+    required String sessionId,
+    required DateTime startedAt,
+    required MediaType mediaType,
+    required SurpriseSessionSource source,
+    this.collectionIds = const Value.absent(),
+    this.vibeIds = const Value.absent(),
+    this.excludedGenres = const Value.absent(),
+    this.platformIds = const Value.absent(),
+    required int yearFrom,
+    this.yearTo = const Value.absent(),
+    this.relaxations = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : sessionId = Value(sessionId),
+       startedAt = Value(startedAt),
+       mediaType = Value(mediaType),
+       source = Value(source),
+       yearFrom = Value(yearFrom);
+  static Insertable<SurpriseSessionRow> custom({
+    Expression<String>? sessionId,
+    Expression<DateTime>? startedAt,
+    Expression<String>? mediaType,
+    Expression<String>? source,
+    Expression<String>? collectionIds,
+    Expression<String>? vibeIds,
+    Expression<String>? excludedGenres,
+    Expression<String>? platformIds,
+    Expression<int>? yearFrom,
+    Expression<int>? yearTo,
+    Expression<String>? relaxations,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (sessionId != null) 'session_id': sessionId,
+      if (startedAt != null) 'started_at': startedAt,
+      if (mediaType != null) 'media_type': mediaType,
+      if (source != null) 'source': source,
+      if (collectionIds != null) 'collection_ids': collectionIds,
+      if (vibeIds != null) 'vibe_ids': vibeIds,
+      if (excludedGenres != null) 'excluded_genres': excludedGenres,
+      if (platformIds != null) 'platform_ids': platformIds,
+      if (yearFrom != null) 'year_from': yearFrom,
+      if (yearTo != null) 'year_to': yearTo,
+      if (relaxations != null) 'relaxations': relaxations,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SurpriseSessionTableCompanion copyWith({
+    Value<String>? sessionId,
+    Value<DateTime>? startedAt,
+    Value<MediaType>? mediaType,
+    Value<SurpriseSessionSource>? source,
+    Value<String>? collectionIds,
+    Value<String>? vibeIds,
+    Value<String>? excludedGenres,
+    Value<String>? platformIds,
+    Value<int>? yearFrom,
+    Value<int?>? yearTo,
+    Value<String>? relaxations,
+    Value<int>? rowid,
+  }) {
+    return SurpriseSessionTableCompanion(
+      sessionId: sessionId ?? this.sessionId,
+      startedAt: startedAt ?? this.startedAt,
+      mediaType: mediaType ?? this.mediaType,
+      source: source ?? this.source,
+      collectionIds: collectionIds ?? this.collectionIds,
+      vibeIds: vibeIds ?? this.vibeIds,
+      excludedGenres: excludedGenres ?? this.excludedGenres,
+      platformIds: platformIds ?? this.platformIds,
+      yearFrom: yearFrom ?? this.yearFrom,
+      yearTo: yearTo ?? this.yearTo,
+      relaxations: relaxations ?? this.relaxations,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (mediaType.present) {
+      map['media_type'] = Variable<String>(
+        $SurpriseSessionTableTable.$convertermediaType.toSql(mediaType.value),
+      );
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(
+        $SurpriseSessionTableTable.$convertersource.toSql(source.value),
+      );
+    }
+    if (collectionIds.present) {
+      map['collection_ids'] = Variable<String>(collectionIds.value);
+    }
+    if (vibeIds.present) {
+      map['vibe_ids'] = Variable<String>(vibeIds.value);
+    }
+    if (excludedGenres.present) {
+      map['excluded_genres'] = Variable<String>(excludedGenres.value);
+    }
+    if (platformIds.present) {
+      map['platform_ids'] = Variable<String>(platformIds.value);
+    }
+    if (yearFrom.present) {
+      map['year_from'] = Variable<int>(yearFrom.value);
+    }
+    if (yearTo.present) {
+      map['year_to'] = Variable<int>(yearTo.value);
+    }
+    if (relaxations.present) {
+      map['relaxations'] = Variable<String>(relaxations.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SurpriseSessionTableCompanion(')
+          ..write('sessionId: $sessionId, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('mediaType: $mediaType, ')
+          ..write('source: $source, ')
+          ..write('collectionIds: $collectionIds, ')
+          ..write('vibeIds: $vibeIds, ')
+          ..write('excludedGenres: $excludedGenres, ')
+          ..write('platformIds: $platformIds, ')
+          ..write('yearFrom: $yearFrom, ')
+          ..write('yearTo: $yearTo, ')
+          ..write('relaxations: $relaxations, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $LocalFlagsTableTable extends LocalFlagsTable
     with TableInfo<$LocalFlagsTableTable, LocalFlagRow> {
   @override
@@ -4302,6 +4994,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $SurpriseHistoryTableTable surpriseHistoryTable =
       $SurpriseHistoryTableTable(this);
+  late final $SurpriseSessionTableTable surpriseSessionTable =
+      $SurpriseSessionTableTable(this);
   late final $LocalFlagsTableTable localFlagsTable = $LocalFlagsTableTable(
     this,
   );
@@ -4319,6 +5013,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recentlyViewedTable,
     savedPeopleTable,
     surpriseHistoryTable,
+    surpriseSessionTable,
     localFlagsTable,
   ];
 }
@@ -6571,6 +7266,361 @@ typedef $$SurpriseHistoryTableTableProcessedTableManager =
       SurpriseHistoryRow,
       PrefetchHooks Function()
     >;
+typedef $$SurpriseSessionTableTableCreateCompanionBuilder =
+    SurpriseSessionTableCompanion Function({
+      required String sessionId,
+      required DateTime startedAt,
+      required MediaType mediaType,
+      required SurpriseSessionSource source,
+      Value<String> collectionIds,
+      Value<String> vibeIds,
+      Value<String> excludedGenres,
+      Value<String> platformIds,
+      required int yearFrom,
+      Value<int?> yearTo,
+      Value<String> relaxations,
+      Value<int> rowid,
+    });
+typedef $$SurpriseSessionTableTableUpdateCompanionBuilder =
+    SurpriseSessionTableCompanion Function({
+      Value<String> sessionId,
+      Value<DateTime> startedAt,
+      Value<MediaType> mediaType,
+      Value<SurpriseSessionSource> source,
+      Value<String> collectionIds,
+      Value<String> vibeIds,
+      Value<String> excludedGenres,
+      Value<String> platformIds,
+      Value<int> yearFrom,
+      Value<int?> yearTo,
+      Value<String> relaxations,
+      Value<int> rowid,
+    });
+
+class $$SurpriseSessionTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SurpriseSessionTableTable> {
+  $$SurpriseSessionTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get sessionId => $composableBuilder(
+    column: $table.sessionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<MediaType, MediaType, String> get mediaType =>
+      $composableBuilder(
+        column: $table.mediaType,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnWithTypeConverterFilters<
+    SurpriseSessionSource,
+    SurpriseSessionSource,
+    String
+  >
+  get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get collectionIds => $composableBuilder(
+    column: $table.collectionIds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vibeIds => $composableBuilder(
+    column: $table.vibeIds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get excludedGenres => $composableBuilder(
+    column: $table.excludedGenres,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get platformIds => $composableBuilder(
+    column: $table.platformIds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get yearFrom => $composableBuilder(
+    column: $table.yearFrom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get yearTo => $composableBuilder(
+    column: $table.yearTo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get relaxations => $composableBuilder(
+    column: $table.relaxations,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SurpriseSessionTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SurpriseSessionTableTable> {
+  $$SurpriseSessionTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get sessionId => $composableBuilder(
+    column: $table.sessionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mediaType => $composableBuilder(
+    column: $table.mediaType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get collectionIds => $composableBuilder(
+    column: $table.collectionIds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get vibeIds => $composableBuilder(
+    column: $table.vibeIds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get excludedGenres => $composableBuilder(
+    column: $table.excludedGenres,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get platformIds => $composableBuilder(
+    column: $table.platformIds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get yearFrom => $composableBuilder(
+    column: $table.yearFrom,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get yearTo => $composableBuilder(
+    column: $table.yearTo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get relaxations => $composableBuilder(
+    column: $table.relaxations,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SurpriseSessionTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SurpriseSessionTableTable> {
+  $$SurpriseSessionTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get sessionId =>
+      $composableBuilder(column: $table.sessionId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<MediaType, String> get mediaType =>
+      $composableBuilder(column: $table.mediaType, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<SurpriseSessionSource, String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get collectionIds => $composableBuilder(
+    column: $table.collectionIds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get vibeIds =>
+      $composableBuilder(column: $table.vibeIds, builder: (column) => column);
+
+  GeneratedColumn<String> get excludedGenres => $composableBuilder(
+    column: $table.excludedGenres,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get platformIds => $composableBuilder(
+    column: $table.platformIds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get yearFrom =>
+      $composableBuilder(column: $table.yearFrom, builder: (column) => column);
+
+  GeneratedColumn<int> get yearTo =>
+      $composableBuilder(column: $table.yearTo, builder: (column) => column);
+
+  GeneratedColumn<String> get relaxations => $composableBuilder(
+    column: $table.relaxations,
+    builder: (column) => column,
+  );
+}
+
+class $$SurpriseSessionTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SurpriseSessionTableTable,
+          SurpriseSessionRow,
+          $$SurpriseSessionTableTableFilterComposer,
+          $$SurpriseSessionTableTableOrderingComposer,
+          $$SurpriseSessionTableTableAnnotationComposer,
+          $$SurpriseSessionTableTableCreateCompanionBuilder,
+          $$SurpriseSessionTableTableUpdateCompanionBuilder,
+          (
+            SurpriseSessionRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SurpriseSessionTableTable,
+              SurpriseSessionRow
+            >,
+          ),
+          SurpriseSessionRow,
+          PrefetchHooks Function()
+        > {
+  $$SurpriseSessionTableTableTableManager(
+    _$AppDatabase db,
+    $SurpriseSessionTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SurpriseSessionTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SurpriseSessionTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SurpriseSessionTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> sessionId = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<MediaType> mediaType = const Value.absent(),
+                Value<SurpriseSessionSource> source = const Value.absent(),
+                Value<String> collectionIds = const Value.absent(),
+                Value<String> vibeIds = const Value.absent(),
+                Value<String> excludedGenres = const Value.absent(),
+                Value<String> platformIds = const Value.absent(),
+                Value<int> yearFrom = const Value.absent(),
+                Value<int?> yearTo = const Value.absent(),
+                Value<String> relaxations = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SurpriseSessionTableCompanion(
+                sessionId: sessionId,
+                startedAt: startedAt,
+                mediaType: mediaType,
+                source: source,
+                collectionIds: collectionIds,
+                vibeIds: vibeIds,
+                excludedGenres: excludedGenres,
+                platformIds: platformIds,
+                yearFrom: yearFrom,
+                yearTo: yearTo,
+                relaxations: relaxations,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String sessionId,
+                required DateTime startedAt,
+                required MediaType mediaType,
+                required SurpriseSessionSource source,
+                Value<String> collectionIds = const Value.absent(),
+                Value<String> vibeIds = const Value.absent(),
+                Value<String> excludedGenres = const Value.absent(),
+                Value<String> platformIds = const Value.absent(),
+                required int yearFrom,
+                Value<int?> yearTo = const Value.absent(),
+                Value<String> relaxations = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SurpriseSessionTableCompanion.insert(
+                sessionId: sessionId,
+                startedAt: startedAt,
+                mediaType: mediaType,
+                source: source,
+                collectionIds: collectionIds,
+                vibeIds: vibeIds,
+                excludedGenres: excludedGenres,
+                platformIds: platformIds,
+                yearFrom: yearFrom,
+                yearTo: yearTo,
+                relaxations: relaxations,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SurpriseSessionTableTable, SurpriseSessionRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SurpriseSessionTableTable,
+                    SurpriseSessionRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SurpriseSessionTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SurpriseSessionTableTable,
+      SurpriseSessionRow,
+      $$SurpriseSessionTableTableFilterComposer,
+      $$SurpriseSessionTableTableOrderingComposer,
+      $$SurpriseSessionTableTableAnnotationComposer,
+      $$SurpriseSessionTableTableCreateCompanionBuilder,
+      $$SurpriseSessionTableTableUpdateCompanionBuilder,
+      (
+        SurpriseSessionRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SurpriseSessionTableTable,
+          SurpriseSessionRow
+        >,
+      ),
+      SurpriseSessionRow,
+      PrefetchHooks Function()
+    >;
 typedef $$LocalFlagsTableTableCreateCompanionBuilder =
     LocalFlagsTableCompanion Function({required String flag, Value<int> rowid});
 typedef $$LocalFlagsTableTableUpdateCompanionBuilder =
@@ -6716,6 +7766,8 @@ class $AppDatabaseManager {
       $$SavedPeopleTableTableTableManager(_db, _db.savedPeopleTable);
   $$SurpriseHistoryTableTableTableManager get surpriseHistoryTable =>
       $$SurpriseHistoryTableTableTableManager(_db, _db.surpriseHistoryTable);
+  $$SurpriseSessionTableTableTableManager get surpriseSessionTable =>
+      $$SurpriseSessionTableTableTableManager(_db, _db.surpriseSessionTable);
   $$LocalFlagsTableTableTableManager get localFlagsTable =>
       $$LocalFlagsTableTableTableManager(_db, _db.localFlagsTable);
 }
