@@ -36,6 +36,35 @@ ParticipantAnswers _answers(
 }
 
 void main() {
+  group('MatchQuery.aggregate — collections', () {
+    test('the union of what the participants chose; someone who chose none '
+        'adds nothing', () {
+      final query = MatchQuery.aggregate(MediaType.tvShow, [
+        const ParticipantAnswers(
+          participantId: 'a',
+          yearFrom: 1950,
+          collectionIds: {'turkish_series'},
+        ),
+        const ParticipantAnswers(
+          participantId: 'b',
+          yearFrom: 1950,
+          collectionIds: {'anime', 'turkish_series'},
+        ),
+        _answers('c', yearFrom: 1950),
+      ]);
+      expect(query.collectionIds, {'turkish_series', 'anime'});
+    });
+
+    test('nobody chose one: none', () {
+      expect(
+        MatchQuery.aggregate(MediaType.movie, [
+          _answers('a', yearFrom: 1950),
+        ]).collectionIds,
+        isEmpty,
+      );
+    });
+  });
+
   group('MatchQuery.aggregate — a representative 3-person room', () {
     final query = MatchQuery.aggregate(MediaType.movie, [
       _answers(
