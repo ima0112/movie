@@ -1,3 +1,4 @@
+import 'taste_platform_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,6 +52,7 @@ class TastePlatformsSection extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _Grid(
+                  loading: state is TastePlatformsLoading,
                   services: state is TastePlatformsLoaded
                       ? state.services
                       : const [],
@@ -66,10 +68,19 @@ class TastePlatformsSection extends StatelessWidget {
 }
 
 /// The grid of the section: the picked services of the region as logos, then
-/// the "Add" tile as the last cell. While the list loads it is just "Add".
+/// the "Add" tile as the last cell. While the list loads, a skeleton per saved
+/// service and the "Add" tile.
 class _Grid extends StatelessWidget {
-  const _Grid({required this.services, required this.onAdd});
+  const _Grid({
+    required this.loading,
+    required this.services,
+    required this.onAdd,
+  });
 
+  /// While the region's list is on its way, a skeleton stands in for each of
+  /// the user's saved services (their count is known), so the grid doesn't
+  /// pop in.
+  final bool loading;
   final List<StreamingService> services;
   final VoidCallback onAdd;
 
@@ -91,6 +102,9 @@ class _Grid extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           children: [
+            if (loading)
+              for (var i = 0; i < selected.length; i++)
+                const TastePlatformSkeleton(),
             for (final service in mine)
               TastePlatformTile(
                 key: ValueKey(service.id),
