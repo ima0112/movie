@@ -282,6 +282,7 @@ List<Map<String, dynamic>> _withCollectionQuery(
               withoutTmdbGenreIds: query.withoutTmdbGenreIds,
               tvType: query.tvType,
               minVoteCount: query.minVoteCount,
+              certificationLte: query.certificationLte,
             ),
             filter,
             type,
@@ -303,6 +304,10 @@ List<Map<String, dynamic>> _withCollectionQuery(
   }
   if (query.withKeywordIds.isNotEmpty) {
     params['with_keywords'] = query.withKeywordIds.join('|');
+  }
+  if (query.certificationLte != null && type == MediaType.movie) {
+    params['certification_country'] = certificationCountry;
+    params['certification.lte'] = query.certificationLte;
   }
   if (query.tvType != null && type == MediaType.tvShow) {
     params['with_type'] = query.tvType;
@@ -334,6 +339,10 @@ List<Map<String, dynamic>> _withCollectionQuery(
       for (final p in picked) {...params, 'with_genres': '$a,$p'},
   ];
 }
+
+/// The country whose age ratings a collection's `certificationLte` is read in:
+/// the US scale (G, PG, PG-13, R), which the world's films mostly carry.
+const String certificationCountry = 'US';
 
 /// The most keyword pairs one collection query expands into.
 const int _maxKeywordPairs = 8;

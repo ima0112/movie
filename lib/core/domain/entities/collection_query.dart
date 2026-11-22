@@ -15,6 +15,7 @@ class CollectionQuery {
     this.tvType,
     this.minVoteCount = 100,
     this.requireAllGenres = false,
+    this.certificationLte,
   });
 
   /// ISO 3166-1 codes (`with_origin_country`, a title qualifies for any).
@@ -38,6 +39,11 @@ class CollectionQuery {
   /// TMDB's TV `with_type` (2 miniseries, 3 reality…); TV only.
   final int? tvType;
 
+  /// The highest age rating allowed (`certification.lte`, US scale: "PG"),
+  /// movies only — TMDB has no rating for shows. Titles with no US rating are
+  /// left out, which is the safe way for For kids.
+  final String? certificationLte;
+
   /// A floor for `vote_count.gte`: small catalogs (Turkish series) need a
   /// lower one than the default to have anything to show.
   final int minVoteCount;
@@ -58,6 +64,7 @@ class CollectionQuery {
       withKeywordIds: ints('withKeywords'),
       tvType: json['tvType'] as int?,
       minVoteCount: json['minVoteCount'] as int? ?? 100,
+      certificationLte: json['certificationLte'] as String?,
     );
   }
 
@@ -71,7 +78,8 @@ class CollectionQuery {
       _eq(other.withoutTmdbGenreIds, withoutTmdbGenreIds) &&
       _eq(other.withKeywordIds, withKeywordIds) &&
       other.tvType == tvType &&
-      other.minVoteCount == minVoteCount;
+      other.minVoteCount == minVoteCount &&
+      other.certificationLte == certificationLte;
 
   @override
   int get hashCode => Object.hash(
@@ -83,6 +91,7 @@ class CollectionQuery {
     Object.hashAllUnordered(withKeywordIds),
     tvType,
     minVoteCount,
+    certificationLte,
   );
 
   @override
@@ -90,7 +99,8 @@ class CollectionQuery {
       'CollectionQuery(countries: $originCountries, '
       'language: $originalLanguage, genres: $withTmdbGenreIds, '
       'without: $withoutTmdbGenreIds, keywords: $withKeywordIds, '
-      'tvType: $tvType, minVotes: $minVoteCount)';
+      'tvType: $tvType, minVotes: $minVoteCount, '
+      'certification: $certificationLte)';
 }
 
 bool _eq<T>(Set<T> a, Set<T> b) => a.length == b.length && a.containsAll(b);

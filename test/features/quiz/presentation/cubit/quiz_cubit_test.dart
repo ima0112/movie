@@ -348,12 +348,12 @@ void main() {
       });
     });
 
-    test('Kids on movies takes Family, Animation, Horror, Thriller and Crime '
-        'out of the veto list', () {
+    test('Kids on movies takes Family, Horror, Thriller and Crime out of the '
+        'veto list', () {
       final cubit = build(MediaType.movie);
       expect(cubit.vetoOptions, hasLength(18));
       cubit.toggleCollection('kids');
-      expect(cubit.vetoOptions, hasLength(13));
+      expect(cubit.vetoOptions, hasLength(14));
     });
 
     test('choosing a collection silently drops a veto and a vibe it makes '
