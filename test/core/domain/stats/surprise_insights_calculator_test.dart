@@ -84,7 +84,6 @@ SurpriseInsights _calc({
   now: _now,
 );
 
-
 void main() {
   final nov = DateTime(2026, 11, 3);
   final oct = DateTime(2026, 10, 12);

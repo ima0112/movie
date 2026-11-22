@@ -1,5 +1,11 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/stats/stats_period.dart';
+import 'package:movies/core/domain/entities/surprise_session.dart';
+import 'package:movies/core/domain/entities/surprise_history_entry.dart';
+import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/data/local/in_memory_surprise_session_repository.dart';
+import 'package:movies/core/data/local/in_memory_surprise_history_repository.dart';
 import 'package:movies/core/data/local/drift_user_library_repository.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -38,5 +44,53 @@ void main() {
 
     expect(cubit.state.insights.moviesWatched, 0);
     expect(cubit.state.insights.movieHours, 0);
+  });
+
+  test('reads the Surprise-me record once and keeps it per period', () async {
+    final history = InMemorySurpriseHistoryRepository();
+    final sessions = InMemorySurpriseSessionRepository();
+    final now = DateTime(2026, 11, 18);
+    await sessions.recordBatch(
+      SurpriseSession(
+        sessionId: 'new',
+        startedAt: DateTime(2026, 11, 3),
+        mediaType: MediaType.movie,
+        source: SurpriseSessionSource.quiz,
+        yearFrom: 1950,
+      ),
+    );
+    await sessions.recordBatch(
+      SurpriseSession(
+        sessionId: 'old',
+        startedAt: DateTime(2025, 2, 3),
+        mediaType: MediaType.movie,
+        source: SurpriseSessionSource.quiz,
+        yearFrom: 1950,
+      ),
+    );
+    await history.recordShown([
+      SurpriseHistoryEntry(
+        key: const MediaKey(type: MediaType.movie, tmdbId: 1),
+        sessionId: 'new',
+        shownAt: DateTime(2026, 11, 3),
+        outcome: SurpriseOutcome.chosen,
+      ),
+    ]);
+    final cubit = StatsCubit(
+      InMemoryUserLibraryRepository(),
+      history: history,
+      sessions: sessions,
+      clock: () => now,
+    );
+    addTearDown(cubit.close);
+    expect(cubit.state.surprise.isEmpty, isTrue); // before it has read them
+
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+    expect(cubit.state.surprise.hitRate!.sessions, 2);
+
+    cubit.selectPeriod(StatsPeriod.thisMonth);
+    expect(cubit.state.surprise.hitRate!.sessions, 1);
+    expect(cubit.state.surprise.hitRate!.chosenSessions, 1);
   });
 }
