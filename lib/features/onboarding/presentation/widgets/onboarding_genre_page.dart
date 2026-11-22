@@ -132,6 +132,9 @@ class OnboardingGenrePage extends StatelessWidget {
                               selectedState: selectedState,
                               onToggle: onToggle,
                               alignment: WrapAlignment.center,
+                              // Onboarding keeps the small chips: they frame a big
+                              // headline, they are not the content.
+                              compact: true,
                             ),
                           ],
                         ),

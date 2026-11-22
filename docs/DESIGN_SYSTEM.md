@@ -311,3 +311,6 @@ depuración (`/debug/components`) que los liste todos:
 - Cross-fade de resultado (Sorpréndeme "otra sugerencia", Matcher cambio de ganador): 300–400 ms.
 - Nunca fade-and-slide-up genérico en cada tarjeta al cargar — los carruseles de Descubrir entran escalonados una sola vez (60 ms entre secciones), no cada tarjeta individualmente.
 - Respetar siempre "reducir movimiento" del sistema: cuando esté activo, cualquier animación continua (muro de pósters) pasa a estática.
+
+### Chip sizes (genres, collections, vibes, options)
+One look, two sizes. The **regular** chip — the default — is a **40 px pill with a 13 px label** (`bodySm`, `bodySmStrong` when struck out), the same height as Explore's pills (`AppChip.regularHeight`): genres, collections, vibes, sort and filter options in My Tastes, the quiz, the filters sheet and everywhere else. The **compact** chip (`AppChip(compact: true)`: 23 px, 11 px label) is only for **onboarding's genre pages** (the chips frame a big headline) and the **bar of active filters** in C1 (a dense row). A long label wraps to a second line, capped to the page's width.
