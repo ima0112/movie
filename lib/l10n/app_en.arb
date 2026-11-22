@@ -1906,5 +1906,105 @@
         "type": "int"
       }
     }
+  },
+  "statsSurpriseTitle": "Surprise me",
+  "statsSurpriseHitRateCaption": "of your sessions ended with a pick",
+  "statsSurpriseSessions": "{count, plural, =1{1 session} other{{count} sessions}}",
+  "@statsSurpriseSessions": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "statsSurprisePicks": "{count, plural, =1{1 pick} other{{count} picks}}",
+  "@statsSurprisePicks": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "statsSurpriseSavedOnly": "{count, plural, =1{1 session saved something but chose nothing} other{{count} sessions saved something but chose nothing}}",
+  "@statsSurpriseSavedOnly": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "statsSurpriseBatchTitle": "Which round you decide in",
+  "statsSurpriseBatchFirst": "First five",
+  "statsSurpriseBatchSecond": "Second five",
+  "statsSurpriseBatchThird": "Third or later",
+  "statsSurpriseBatchAverage": "On average you decide in round {average}",
+  "@statsSurpriseBatchAverage": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "average": {"type": "String"}
+    }
+  },
+  "statsSurpriseAfterTitle": "What happened to your picks",
+  "statsSurpriseOfTotal": "{count} of {total}",
+  "@statsSurpriseOfTotal": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "count": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "statsSurpriseWatched": "Watched",
+  "statsSurpriseWaiting": "Waiting in Watch later",
+  "statsSurpriseAverageRating": "Average rating",
+  "statsSurpriseBestTitle": "Your best picks",
+  "statsSurpriseNewTitle": "New to you",
+  "statsSurpriseNewHint": "Picks with a genre you had not watched before",
+  "statsSurpriseNewGenres": "New: {genres}",
+  "@statsSurpriseNewGenres": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "genres": {"type": "String"}
+    }
+  },
+  "statsSurpriseGenresTitle": "Your picks by genre",
+  "statsSurpriseGenresHint": "Picked out of those shown",
+  "statsSurpriseAskedTitle": "What you ask for",
+  "statsSurpriseCollections": "Collections",
+  "statsSurpriseVibes": "Vibes",
+  "statsSurpriseAskedRow": "asked {asked}× · picked {picked}×",
+  "@statsSurpriseAskedRow": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "asked": {"type": "int"},
+      "picked": {"type": "int"}
+    }
+  },
+  "statsSurpriseHowYouStart": "How you start",
+  "statsSurpriseViaQuiz": "Quiz",
+  "statsSurpriseViaTastes": "My tastes",
+  "statsSurpriseViaRow": "{sessions} · {picks}",
+  "@statsSurpriseViaRow": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "sessions": {"type": "String"},
+      "picks": {"type": "String"}
+    }
+  },
+  "statsSurpriseRelaxed": "{count, plural, =1{1 session had to widen the search} other{{count} sessions had to widen the search}}",
+  "@statsSurpriseRelaxed": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "statsSurpriseRelaxLowerVotes": "fewer votes",
+  "statsSurpriseRelaxDropVibes": "no vibes",
+  "statsSurpriseRelaxWidenYears": "earlier years",
+  "statsSurpriseHabitTitle": "Your rhythm",
+  "statsSurpriseByMonth": "Sessions by month",
+  "statsSurpriseByWeekday": "By day of the week",
+  "statsSurpriseStreak": "{count, plural, =1{1 week in a row} other{{count} weeks in a row}}",
+  "@statsSurpriseStreak": {
+    "description": "C4 Surprise-me statistics.",
+    "placeholders": {
+      "count": {"type": "int"}
+    }
   }
 }

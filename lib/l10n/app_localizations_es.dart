@@ -2057,4 +2057,167 @@ class AppLocalizationsEs extends AppLocalizations {
   String surpriseTourStep(int step, int total) {
     return 'Paso $step de $total';
   }
+
+  @override
+  String get statsSurpriseTitle => 'Sorpréndeme';
+
+  @override
+  String get statsSurpriseHitRateCaption =>
+      'de tus sesiones terminaron con una elección';
+
+  @override
+  String statsSurpriseSessions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sesiones',
+      one: '1 sesión',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statsSurprisePicks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count elecciones',
+      one: '1 elección',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statsSurpriseSavedOnly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sesiones guardaron algo pero no eligieron nada',
+      one: '1 sesión guardó algo pero no eligió nada',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statsSurpriseBatchTitle => 'En qué tanda decides';
+
+  @override
+  String get statsSurpriseBatchFirst => 'Las primeras 5';
+
+  @override
+  String get statsSurpriseBatchSecond => 'Las segundas 5';
+
+  @override
+  String get statsSurpriseBatchThird => 'Tercera o más';
+
+  @override
+  String statsSurpriseBatchAverage(String average) {
+    return 'De media decides en la tanda $average';
+  }
+
+  @override
+  String get statsSurpriseAfterTitle => 'Qué pasó con lo que elegiste';
+
+  @override
+  String statsSurpriseOfTotal(int count, int total) {
+    return '$count de $total';
+  }
+
+  @override
+  String get statsSurpriseWatched => 'Vistas';
+
+  @override
+  String get statsSurpriseWaiting => 'Esperando en Ver después';
+
+  @override
+  String get statsSurpriseAverageRating => 'Nota media';
+
+  @override
+  String get statsSurpriseBestTitle => 'Tus mejores elecciones';
+
+  @override
+  String get statsSurpriseNewTitle => 'Novedades para ti';
+
+  @override
+  String get statsSurpriseNewHint =>
+      'Elecciones con un género que no habías visto antes';
+
+  @override
+  String statsSurpriseNewGenres(String genres) {
+    return 'Nuevo: $genres';
+  }
+
+  @override
+  String get statsSurpriseGenresTitle => 'Tus elecciones por género';
+
+  @override
+  String get statsSurpriseGenresHint => 'Elegidas de las mostradas';
+
+  @override
+  String get statsSurpriseAskedTitle => 'Lo que pides';
+
+  @override
+  String get statsSurpriseCollections => 'Colecciones';
+
+  @override
+  String get statsSurpriseVibes => 'Vibes';
+
+  @override
+  String statsSurpriseAskedRow(int asked, int picked) {
+    return 'pedida $asked× · elegida $picked×';
+  }
+
+  @override
+  String get statsSurpriseHowYouStart => 'Cómo empiezas';
+
+  @override
+  String get statsSurpriseViaQuiz => 'Cuestionario';
+
+  @override
+  String get statsSurpriseViaTastes => 'Mis gustos';
+
+  @override
+  String statsSurpriseViaRow(String sessions, String picks) {
+    return '$sessions · $picks';
+  }
+
+  @override
+  String statsSurpriseRelaxed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sesiones tuvieron que ampliar la búsqueda',
+      one: '1 sesión tuvo que ampliar la búsqueda',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statsSurpriseRelaxLowerVotes => 'menos votos';
+
+  @override
+  String get statsSurpriseRelaxDropVibes => 'sin vibes';
+
+  @override
+  String get statsSurpriseRelaxWidenYears => 'años anteriores';
+
+  @override
+  String get statsSurpriseHabitTitle => 'Tu ritmo';
+
+  @override
+  String get statsSurpriseByMonth => 'Sesiones por mes';
+
+  @override
+  String get statsSurpriseByWeekday => 'Por día de la semana';
+
+  @override
+  String statsSurpriseStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count semanas seguidas',
+      one: '1 semana seguida',
+    );
+    return '$_temp0';
+  }
 }

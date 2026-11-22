@@ -3482,6 +3482,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Step {step} of {total}'**
   String surpriseTourStep(int step, int total);
+
+  /// No description provided for @statsSurpriseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise me'**
+  String get statsSurpriseTitle;
+
+  /// No description provided for @statsSurpriseHitRateCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'of your sessions ended with a pick'**
+  String get statsSurpriseHitRateCaption;
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 session} other{{count} sessions}}'**
+  String statsSurpriseSessions(int count);
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 pick} other{{count} picks}}'**
+  String statsSurprisePicks(int count);
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 session saved something but chose nothing} other{{count} sessions saved something but chose nothing}}'**
+  String statsSurpriseSavedOnly(int count);
+
+  /// No description provided for @statsSurpriseBatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which round you decide in'**
+  String get statsSurpriseBatchTitle;
+
+  /// No description provided for @statsSurpriseBatchFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'First five'**
+  String get statsSurpriseBatchFirst;
+
+  /// No description provided for @statsSurpriseBatchSecond.
+  ///
+  /// In en, this message translates to:
+  /// **'Second five'**
+  String get statsSurpriseBatchSecond;
+
+  /// No description provided for @statsSurpriseBatchThird.
+  ///
+  /// In en, this message translates to:
+  /// **'Third or later'**
+  String get statsSurpriseBatchThird;
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'On average you decide in round {average}'**
+  String statsSurpriseBatchAverage(String average);
+
+  /// No description provided for @statsSurpriseAfterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened to your picks'**
+  String get statsSurpriseAfterTitle;
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {total}'**
+  String statsSurpriseOfTotal(int count, int total);
+
+  /// No description provided for @statsSurpriseWatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Watched'**
+  String get statsSurpriseWatched;
+
+  /// No description provided for @statsSurpriseWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting in Watch later'**
+  String get statsSurpriseWaiting;
+
+  /// No description provided for @statsSurpriseAverageRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Average rating'**
+  String get statsSurpriseAverageRating;
+
+  /// No description provided for @statsSurpriseBestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your best picks'**
+  String get statsSurpriseBestTitle;
+
+  /// No description provided for @statsSurpriseNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New to you'**
+  String get statsSurpriseNewTitle;
+
+  /// No description provided for @statsSurpriseNewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Picks with a genre you had not watched before'**
+  String get statsSurpriseNewHint;
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'New: {genres}'**
+  String statsSurpriseNewGenres(String genres);
+
+  /// No description provided for @statsSurpriseGenresTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your picks by genre'**
+  String get statsSurpriseGenresTitle;
+
+  /// No description provided for @statsSurpriseGenresHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked out of those shown'**
+  String get statsSurpriseGenresHint;
+
+  /// No description provided for @statsSurpriseAskedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What you ask for'**
+  String get statsSurpriseAskedTitle;
+
+  /// No description provided for @statsSurpriseCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections'**
+  String get statsSurpriseCollections;
+
+  /// No description provided for @statsSurpriseVibes.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibes'**
+  String get statsSurpriseVibes;
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'asked {asked}× · picked {picked}×'**
+  String statsSurpriseAskedRow(int asked, int picked);
+
+  /// No description provided for @statsSurpriseHowYouStart.
+  ///
+  /// In en, this message translates to:
+  /// **'How you start'**
+  String get statsSurpriseHowYouStart;
+
+  /// No description provided for @statsSurpriseViaQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz'**
+  String get statsSurpriseViaQuiz;
+
+  /// No description provided for @statsSurpriseViaTastes.
+  ///
+  /// In en, this message translates to:
+  /// **'My tastes'**
+  String get statsSurpriseViaTastes;
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'{sessions} · {picks}'**
+  String statsSurpriseViaRow(String sessions, String picks);
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 session had to widen the search} other{{count} sessions had to widen the search}}'**
+  String statsSurpriseRelaxed(int count);
+
+  /// No description provided for @statsSurpriseRelaxLowerVotes.
+  ///
+  /// In en, this message translates to:
+  /// **'fewer votes'**
+  String get statsSurpriseRelaxLowerVotes;
+
+  /// No description provided for @statsSurpriseRelaxDropVibes.
+  ///
+  /// In en, this message translates to:
+  /// **'no vibes'**
+  String get statsSurpriseRelaxDropVibes;
+
+  /// No description provided for @statsSurpriseRelaxWidenYears.
+  ///
+  /// In en, this message translates to:
+  /// **'earlier years'**
+  String get statsSurpriseRelaxWidenYears;
+
+  /// No description provided for @statsSurpriseHabitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rhythm'**
+  String get statsSurpriseHabitTitle;
+
+  /// No description provided for @statsSurpriseByMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions by month'**
+  String get statsSurpriseByMonth;
+
+  /// No description provided for @statsSurpriseByWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'By day of the week'**
+  String get statsSurpriseByWeekday;
+
+  /// C4 Surprise-me statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 week in a row} other{{count} weeks in a row}}'**
+  String statsSurpriseStreak(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -1,3 +1,6 @@
+import '../widgets/surprise/surprise_stats_section.dart';
+import '../../../../core/domain/repositories/surprise_session_repository.dart';
+import '../../../../core/domain/repositories/surprise_history_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -43,7 +46,11 @@ class StatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => StatsCubit(getIt<UserLibraryRepository>()),
+      create: (_) => StatsCubit(
+        getIt<UserLibraryRepository>(),
+        history: getIt<SurpriseHistoryRepository>(),
+        sessions: getIt<SurpriseSessionRepository>(),
+      ),
       child: const _StatsView(),
     );
   }
@@ -84,7 +91,8 @@ class _StatsView extends StatelessWidget {
             child: BlocBuilder<StatsCubit, StatsState>(
               builder: (context, state) {
                 final insights = state.insights;
-                if (insights.watchedCount == 0) {
+                final hasLibrary = insights.watchedCount > 0;
+                if (!hasLibrary && state.surprise.isEmpty) {
                   return state.period == StatsPeriod.allTime
                       ? StatsEmptyState(
                           onExploreTap: () => context.go('/explore'),
@@ -99,19 +107,24 @@ class _StatsView extends StatelessWidget {
                     bottom: AppSpacing.sectionGap,
                   ),
                   children: [
-                    PageMargin(child: StatsHeroCard(insights: insights)),
-                    StatsHighlights(insights: insights),
-                    StatsActivitySection(
-                      insights: insights,
-                      today: DateTime.now(),
-                    ),
-                    StatsRatingsSection(insights: insights),
-                    StatsGenresSection(
-                      genres: insights.genres,
-                      genreTotal: insights.genreTotal,
-                    ),
-                    StatsDecadesSection(decades: insights.decades),
-                    PageMargin(child: StatsCoverageNote(insights: insights)),
+                    if (hasLibrary) ...[
+                      PageMargin(child: StatsHeroCard(insights: insights)),
+                      StatsHighlights(insights: insights),
+                      StatsActivitySection(
+                        insights: insights,
+                        today: DateTime.now(),
+                      ),
+                      StatsRatingsSection(insights: insights),
+                      StatsGenresSection(
+                        genres: insights.genres,
+                        genreTotal: insights.genreTotal,
+                      ),
+                      StatsDecadesSection(decades: insights.decades),
+                    ],
+                    // Surprise me's own block, after the library's.
+                    SurpriseStatsSection(insights: state.surprise),
+                    if (hasLibrary)
+                      PageMargin(child: StatsCoverageNote(insights: insights)),
                   ],
                 );
               },
