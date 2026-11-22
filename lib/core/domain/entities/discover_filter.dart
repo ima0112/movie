@@ -76,6 +76,7 @@ class DiscoverFilter {
     this.monetizationTypes = const {},
     this.excludeTalkAndNews = false,
     this.collection,
+    this.withPeople = const {},
   });
 
   /// `null` = "All" (H8: "Type (All/Movies/TV Shows)"). C1: "All = both
@@ -179,6 +180,10 @@ class DiscoverFilter {
   /// kinds that have it contribute.
   final Collection? collection;
 
+  /// TMDB person ids (`with_people`): a movie in which any of them takes part,
+  /// as cast or crew. Movies only — TMDB's TV discover has no such filter.
+  final Set<int> withPeople;
+
   /// How the title must be available (`with_watch_monetization_types`, any of
   /// them) — on [withWatchProviders] when given, else on **any** service of the
   /// user's region. Empty = TMDB's own default, which restricts nothing and does
@@ -242,6 +247,7 @@ class DiscoverFilter {
     Set<WatchMonetization>? monetizationTypes,
     bool? excludeTalkAndNews,
     Collection? Function()? collection,
+    Set<int>? withPeople,
   }) {
     return DiscoverFilter(
       type: type == null ? this.type : type(),
@@ -273,6 +279,7 @@ class DiscoverFilter {
       monetizationTypes: monetizationTypes ?? this.monetizationTypes,
       excludeTalkAndNews: excludeTalkAndNews ?? this.excludeTalkAndNews,
       collection: collection == null ? this.collection : collection(),
+      withPeople: withPeople ?? this.withPeople,
     );
   }
 
@@ -299,7 +306,8 @@ class DiscoverFilter {
       _setEquals(other.withoutKeywords, withoutKeywords) &&
       _setEquals(other.monetizationTypes, monetizationTypes) &&
       other.excludeTalkAndNews == excludeTalkAndNews &&
-      other.collection == collection;
+      other.collection == collection &&
+      _setEquals(other.withPeople, withPeople);
 
   @override
   int get hashCode => Object.hashAll([
@@ -324,6 +332,7 @@ class DiscoverFilter {
     Object.hashAllUnordered(monetizationTypes),
     excludeTalkAndNews,
     collection,
+    Object.hashAllUnordered(withPeople),
   ]);
 
   @override
@@ -341,7 +350,8 @@ class DiscoverFilter {
       'releasedFrom: $releasedFrom, releasedTo: $releasedTo, '
       'withoutKeywords: $withoutKeywords, '
       'monetizationTypes: $monetizationTypes, '
-      'excludeTalkAndNews: $excludeTalkAndNews, collection: $collection)';
+      'excludeTalkAndNews: $excludeTalkAndNews, collection: $collection, '
+      'withPeople: $withPeople)';
 }
 
 /// Order-independent set content equality — same local stand-in for

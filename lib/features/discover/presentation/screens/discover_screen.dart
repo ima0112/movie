@@ -1,3 +1,4 @@
+import '../../../../core/domain/repositories/saved_people_repository.dart';
 import '../../../../core/data/assets/collection_catalog_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,6 +71,7 @@ class DiscoverScreen extends StatelessWidget {
             getIt<SettingsRepository>(),
             VibeCatalog.loadFromAssets(),
             collectionCatalog: loadCollectionCatalog(),
+            savedPeopleRepository: getIt<SavedPeopleRepository>(),
           )..load(first),
         ),
       ],

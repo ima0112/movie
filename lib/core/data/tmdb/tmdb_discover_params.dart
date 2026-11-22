@@ -77,6 +77,11 @@ Map<String, dynamic> discoverQueryParams(
     params['without_keywords'] = withoutKeywordIds.join(',');
   }
 
+  if (isMovie && filter.withPeople.isNotEmpty) {
+    // A movie any of them is in (`|` is TMDB's OR).
+    params['with_people'] = filter.withPeople.join('|');
+  }
+
   final dateField = isMovie ? 'primary_release_date' : 'first_air_date';
   if (filter.yearFrom != null) {
     params['$dateField.gte'] = '${filter.yearFrom}-01-01';

@@ -484,13 +484,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String carouselSectionBecauseYouWantVibe(String vibe) {
-    return 'Because you want $vibe';
+  String carouselSectionBecauseYouLikeVibe(String vibe) {
+    return 'Because you like $vibe';
   }
 
   @override
-  String carouselSectionBecauseYouLike(String title) {
-    return 'Because you like $title';
+  String carouselSectionBecauseYouLikePerson(String person) {
+    return 'Because you like $person';
+  }
+
+  @override
+  String carouselSectionBecauseYouSaved(String title) {
+    return 'Because you saved $title';
   }
 
   @override

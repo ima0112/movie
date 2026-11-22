@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/person.dart';
+import 'package:movies/core/data/local/in_memory_saved_people_repository.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
 import 'package:movies/core/domain/entities/app_settings.dart';
@@ -73,6 +75,7 @@ class _FakeSettingsRepository implements SettingsRepository {
 /// `recommendationsFor` matter for this Cubit.
 class _FakeMediaRepository implements MediaRepository {
   int discoverCalls = 0;
+  final discoverFilters = <DiscoverFilter>[];
   int recommendationsCalls = 0;
   Result<List<MediaItem>> discoverResult = Success(_recommendationPool);
   Result<List<MediaItem>> recommendationsResult = Success(_recommendationPool);
@@ -80,6 +83,7 @@ class _FakeMediaRepository implements MediaRepository {
   @override
   Future<Result<List<MediaItem>>> discover(DiscoverFilter filter) async {
     discoverCalls++;
+    discoverFilters.add(filter);
     return discoverResult;
   }
 
@@ -197,6 +201,7 @@ RecommendationsCubit _make(
   InMemoryUserLibraryRepository? library,
   InMemoryTasteProfileRepository? tastes,
   _FakeSettingsRepository? settings,
+  InMemorySavedPeopleRepository? people,
   DateTime? today,
 }) => RecommendationsCubit(
   media,
@@ -204,6 +209,7 @@ RecommendationsCubit _make(
   tastes ?? InMemoryTasteProfileRepository(),
   settings ?? _FakeSettingsRepository(_settings),
   _vibes,
+  savedPeopleRepository: people,
   clock: () => today ?? DateTime(2026, 5, 4),
 );
 
@@ -292,6 +298,55 @@ void main() {
       expect(cubit.state.becauseYouLike, isA<RecommendationSectionHidden>());
       expect(cubit.state.forYou, isA<RecommendationSectionHidden>());
       expect(media.discoverCalls + media.recommendationsCalls, 0);
+    });
+  });
+
+  group('Movies: Because you like {person}', () {
+    const nolan = Person(id: 525, name: 'Christopher Nolan', profilePath: null);
+
+    test('a saved person gives their movies, with the same threshold as the '
+        'other sections; the plan\'s filter carries them', () async {
+      final media = _FakeMediaRepository();
+      final cubit = _make(
+        media,
+        people: InMemorySavedPeopleRepository([nolan]),
+      );
+      addTearDown(cubit.close);
+
+      await cubit.load(MediaSegment.movie);
+
+      final section =
+          cubit.state.becauseYouLikePerson as RecommendationSectionLoaded;
+      expect((section.seed! as PersonSeed).person, nolan);
+      expect(media.discoverFilters.last.withPeople, {525});
+      expect(media.discoverFilters.last.type, MediaType.movie);
+    });
+
+    test('nobody saved, TV Shows and All: hidden', () async {
+      final media = _FakeMediaRepository();
+      final cubit = _make(media, people: InMemorySavedPeopleRepository());
+      addTearDown(cubit.close);
+      await cubit.load(MediaSegment.movie);
+      expect(
+        cubit.state.becauseYouLikePerson,
+        isA<RecommendationSectionHidden>(),
+      );
+
+      final withPeople = _make(
+        media,
+        people: InMemorySavedPeopleRepository([nolan]),
+      );
+      addTearDown(withPeople.close);
+      await withPeople.load(MediaSegment.tvShow);
+      expect(
+        withPeople.state.becauseYouLikePerson,
+        isA<RecommendationSectionHidden>(),
+      );
+      await withPeople.load(MediaSegment.all);
+      expect(
+        withPeople.state.becauseYouLikePerson,
+        isA<RecommendationSectionHidden>(),
+      );
     });
   });
 

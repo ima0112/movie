@@ -74,7 +74,7 @@ class IntroDiscoverMock extends StatelessWidget {
         _SectionTitle(
           top: 400,
           // Sample title, not UI copy.
-          title: l10n.carouselSectionBecauseYouLike(
+          title: l10n.carouselSectionBecauseYouSaved(
             'Inception',
           ), // l10n-exempt: sample-title
         ),
