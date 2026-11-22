@@ -42,6 +42,7 @@ class TmdbTvDetailDto {
     this.lastEpisodeToAir,
     this.nextEpisodeToAir,
     this.aggregateCredits,
+    this.keywordIds = const [],
   });
 
   final int id;
@@ -109,6 +110,17 @@ class TmdbTvDetailDto {
 
   @JsonKey(name: 'watch/providers')
   final TmdbWatchProvidersDto watchProviders;
+
+  /// The show's keyword ids (`keywords` appended to the call): the only way to
+  /// tell a horror, romance, thriller, history or music show, since TMDB's TV
+  /// genre list has none of those.
+  @JsonKey(name: 'keywords', fromJson: _keywordIds, defaultValue: <int>[])
+  final List<int> keywordIds;
+
+  static List<int> _keywordIds(Object? json) => [
+    for (final k in ((json as Map?)?['results'] as List?) ?? const [])
+      (k as Map)['id'] as int,
+  ];
 
   factory TmdbTvDetailDto.fromJson(Map<String, dynamic> json) =>
       _$TmdbTvDetailDtoFromJson(json);

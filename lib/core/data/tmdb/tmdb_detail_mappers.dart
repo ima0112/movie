@@ -1,3 +1,4 @@
+import 'tmdb_genre_mapper.dart';
 import '../../domain/entities/media_detail.dart';
 import '../../domain/entities/media_item.dart';
 import '../../domain/entities/media_type.dart';
@@ -92,10 +93,17 @@ TvShowDetail mediaDetailFromTvDto(
         path: dto.posterPath,
         size: TmdbImageSizes.posterLarge,
       ),
-      genres: genresFromTmdbIds(
-        dto.genres.map((g) => g.id).toList(),
-        MediaType.tvShow,
-      ),
+      genres: [
+        ...genresFromTmdbIds(
+          dto.genres.map((g) => g.id).toList(),
+          MediaType.tvShow,
+        ),
+        // What TMDB's TV list can't say (Horror, Romance…), from the keywords.
+        ...TmdbGenreMapper.tvStandInGenres(
+          dto.keywordIds,
+          tmdbGenreIds: dto.genres.map((g) => g.id),
+        ),
+      ],
       releaseDate: parseTmdbDate(dto.firstAirDate),
       voteAverage: dto.voteAverage,
     ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/data/tmdb/dtos/tmdb_movie_detail_dto.dart';
 import 'package:movies/core/data/tmdb/dtos/tmdb_season_detail_dto.dart';
 import 'package:movies/core/data/tmdb/dtos/tmdb_tv_detail_dto.dart';
@@ -294,6 +295,29 @@ void main() {
         region: 'ES',
       );
     }
+
+    test('the keywords say what TMDB\'s TV genres cannot: Horror and Thriller '
+        'join the show\'s genres; no keywords adds nothing', () {
+      final plain = load();
+      final json = _loadFixture('tmdb_tv_detail_full.json')
+        ..['keywords'] = {
+          'results': [
+            {'id': 315058, 'name': 'horror'},
+            {'id': 316362, 'name': 'thriller'},
+          ],
+        };
+      final withKeywords = mediaDetailFromTvDto(
+        TmdbTvDetailDto.fromJson(json),
+        imagesConfig: imagesConfig,
+        region: 'ES',
+      );
+
+      final added = withKeywords.item.genres.toSet().difference(
+        plain.item.genres.toSet(),
+      );
+      expect(added, {const Genre(id: 'horror'), const Genre(id: 'thriller')});
+      expect(plain.item.genres, isNot(contains(const Genre(id: 'horror'))));
+    });
 
     test('maps each season summary\'s vote_average; none -> null', () {
       final seasons = load().seasons;
