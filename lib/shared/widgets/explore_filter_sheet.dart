@@ -52,6 +52,7 @@ class ExploreFilterSheet extends StatefulWidget {
     required this.regionName,
     required this.onApply,
     this.collectionCatalog,
+    this.preferredPlatformIds = const {},
   });
 
   final DiscoverFilter initialFilter;
@@ -64,6 +65,10 @@ class ExploreFilterSheet extends StatefulWidget {
   /// The collections to offer; the bundled catalog when `null`.
   final Future<CollectionCatalog>? collectionCatalog;
 
+  /// The user's own streaming services (My Tastes): the platform chips list
+  /// them first.
+  final Set<int> preferredPlatformIds;
+
   /// Opens the sheet as a modal bottom sheet on the root navigator (above
   /// the floating tab bar) at most [maxHeightFraction] of the screen tall, so
   /// it stays a sheet however many filters it has: the filters scroll inside.
@@ -73,6 +78,7 @@ class ExploreFilterSheet extends StatefulWidget {
     required MediaRepository mediaRepository,
     required String regionName,
     required ValueChanged<DiscoverFilter> onApply,
+    Set<int> preferredPlatformIds = const {},
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -86,6 +92,7 @@ class ExploreFilterSheet extends StatefulWidget {
         mediaRepository: mediaRepository,
         regionName: regionName,
         onApply: onApply,
+        preferredPlatformIds: preferredPlatformIds,
       ),
     );
   }
@@ -235,6 +242,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                     ),
                     const SizedBox(height: AppSpacing.sectionGap),
                     FilterPlatformChips(
+                      preferredIds: widget.preferredPlatformIds,
                       key: ValueKey(_draft.type),
                       mediaRepository: widget.mediaRepository,
                       type: _draft.type,
