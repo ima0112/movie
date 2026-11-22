@@ -2594,6 +2594,18 @@ abstract class AppLocalizations {
   /// **'Couldn\'t share'**
   String get mediaDetailShareFailed;
 
+  /// The small label under the number in D1/D2's rating ring: where the rating comes from (a brand name, the same in every language).
+  ///
+  /// In en, this message translates to:
+  /// **'TMDB'**
+  String get mediaDetailRatingSource;
+
+  /// Accessibility label of D1/D2's rating ring.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating {value} out of 10'**
+  String mediaDetailRatingSemantics(String value);
+
   /// D1/D2's primary action button when a trailer exists (docs/SCREENS.md D1) — mediaDetailActionSeeSimilar replaces it when there's no trailer.
   ///
   /// In en, this message translates to:

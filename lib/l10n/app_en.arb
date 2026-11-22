@@ -1418,6 +1418,15 @@
   },
   "mediaDetailShare": "Share",
   "mediaDetailShareFailed": "Couldn't share",
+  "mediaDetailRatingSource": "TMDB",
+  "@mediaDetailRatingSource": {
+    "description": "The small label under the number in D1/D2's rating ring: where the rating comes from (a brand name, the same in every language)."
+  },
+  "mediaDetailRatingSemantics": "Rating {value} out of 10",
+  "@mediaDetailRatingSemantics": {
+    "description": "Accessibility label of D1/D2's rating ring.",
+    "placeholders": {"value": {"type": "String", "example": "9.0"}}
+  },
   "mediaDetailActionTrailer": "Trailer",
   "@mediaDetailActionTrailer": {
     "description": "D1/D2's primary action button when a trailer exists (docs/SCREENS.md D1) — mediaDetailActionSeeSimilar replaces it when there's no trailer."
