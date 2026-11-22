@@ -335,6 +335,33 @@ void main() {
     });
   });
 
+  group('streamingServices — cached and parallel', () {
+    test('the same region and kind asked again is not requested again, '
+        'whoever asks (Explore, H8, the quiz, My Tastes)', () async {
+      await repository.streamingServices(type: MediaType.movie);
+      await repository.streamingServices(type: MediaType.movie, all: true);
+      await repository.streamingServices(
+        type: MediaType.movie,
+        preferredIds: {8},
+      );
+
+      expect(adapter.requestedPaths, ['/watch/providers/movie']);
+    });
+
+    test('All asks both kinds in one go, and later asks for one kind reuse '
+        'what All already fetched', () async {
+      await repository.streamingServices();
+      await repository.streamingServices(type: MediaType.tvShow);
+      await repository.streamingServices(type: MediaType.movie);
+
+      expect(adapter.requestedPaths.toSet(), {
+        '/watch/providers/movie',
+        '/watch/providers/tv',
+      });
+      expect(adapter.requestedPaths, hasLength(2));
+    });
+  });
+
   group('streamingServices', () {
     test('movies -> /watch/providers/movie with the region, most relevant '
         'first, with logo URLs', () async {
