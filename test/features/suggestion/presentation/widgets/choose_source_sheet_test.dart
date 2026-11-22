@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/shared/widgets/app_buttons.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -175,6 +176,26 @@ void main() {
       );
       expect(find.text('Use my tastes'), findsOneWidget);
       expect(find.text('Answer the quiz instead'), findsOneWidget);
+      // The quiz leads (the main, filled button); the tastes shortcut is under
+      // it, outlined.
+      expect(
+        tester.getTopLeft(find.text('Answer the quiz instead')).dy,
+        lessThan(tester.getTopLeft(find.text('Use my tastes')).dy),
+      );
+      expect(
+        find.ancestor(
+          of: find.text('Answer the quiz instead'),
+          matching: find.byType(PrimaryButton),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.ancestor(
+          of: find.text('Use my tastes'),
+          matching: find.byType(SecondaryButton),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('names up to three genres, then how many more', (tester) async {
