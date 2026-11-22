@@ -5,6 +5,7 @@ import 'package:sqlite3/sqlite3.dart' show SqliteException;
 
 import '../domain/entities/media_type.dart';
 import '../domain/entities/surprise_history_entry.dart';
+import '../domain/entities/surprise_session.dart';
 
 part 'app_database.g.dart';
 
@@ -293,6 +294,34 @@ class SurpriseHistoryTable extends Table {
   Set<Column> get primaryKey => {mediaType, tmdbId, sessionId};
 }
 
+/// What each Surprise-me session **asked for** (`SurpriseSession`), beside
+/// [SurpriseHistoryTable] (what it showed). One row per session; the lists are
+/// comma-joined ids.
+@DataClassName('SurpriseSessionRow')
+class SurpriseSessionTable extends Table {
+  TextColumn get sessionId => text()();
+
+  DateTimeColumn get startedAt => dateTime()();
+
+  TextColumn get mediaType => textEnum<MediaType>()();
+
+  /// `SurpriseSessionSource`, as its name.
+  TextColumn get source => textEnum<SurpriseSessionSource>()();
+
+  TextColumn get collectionIds => text().withDefault(const Constant(''))();
+  TextColumn get vibeIds => text().withDefault(const Constant(''))();
+  TextColumn get excludedGenres => text().withDefault(const Constant(''))();
+  TextColumn get platformIds => text().withDefault(const Constant(''))();
+  IntColumn get yearFrom => integer()();
+  IntColumn get yearTo => integer().nullable()();
+
+  /// `SurpriseRelaxation` names the engine needed, in any batch.
+  TextColumn get relaxations => text().withDefault(const Constant(''))();
+
+  @override
+  Set<Column> get primaryKey => {sessionId};
+}
+
 /// Small on/off facts remembered on the device (`LocalFlagsRepository`): one
 /// row per flag that has been set.
 @DataClassName('LocalFlagRow')
@@ -324,6 +353,7 @@ class LocalFlagsTable extends Table {
     RecentlyViewedTable,
     SavedPeopleTable,
     SurpriseHistoryTable,
+    SurpriseSessionTable,
     LocalFlagsTable,
   ],
 )
@@ -341,12 +371,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, to 12 when it gained its batch number and genres and its outcomes were renamed, to 13 when [LocalFlagsTable] was added, and to 14 when the taste profile gained its liked collections — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, to 12 when it gained its batch number and genres and its outcomes were renamed, to 13 when [LocalFlagsTable] was added, to 14 when the taste profile gained its liked collections, and to 15 when [SurpriseSessionTable] was added — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -417,6 +447,9 @@ class AppDatabase extends _$AppDatabase {
           tasteProfileTable,
           tasteProfileTable.likedCollections,
         );
+      }
+      if (from < 15) {
+        await m.createTable(surpriseSessionTable);
       }
     },
   );

@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/repositories/surprise_session_repository.dart';
+import 'package:movies/core/domain/entities/surprise_session.dart';
+import 'package:movies/core/data/local/in_memory_surprise_session_repository.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -139,6 +142,7 @@ SurpriseCubit _cubit({
   TasteProfile? profile,
   List<UserMediaEntry> libraryEntries = const [],
   SurpriseHistoryRepository? history,
+  SurpriseSessionRepository? sessions,
   DateTime Function()? clock,
   String Function()? region,
   UserLibraryRepository? library,
@@ -149,6 +153,7 @@ SurpriseCubit _cubit({
     _FakeTasteProfileRepository(profile),
     library ?? _FakeUserLibraryRepository(libraryEntries),
     history: history,
+    sessions: sessions,
     clock: clock,
     region: region,
   );
@@ -580,6 +585,52 @@ void main() {
             MediaKey(type: MediaType.movie, tmdbId: i),
         });
         expect(cubit.state, isA<SurpriseResult>());
+        cubit.close();
+      });
+    });
+
+    test('the session\'s answers are recorded once, with the source and what '
+        'each batch needed relaxing', () {
+      fakeAsync((async) {
+        final sessions = InMemorySurpriseSessionRepository();
+        final engine = FakeSurpriseEngine(
+          results: [
+            Success(batchOf(5)),
+            Success(
+              SurpriseBatch(
+                sessionId: 's',
+                suggestions: batchOf(5, first: 5).suggestions,
+                relaxations: const [SurpriseRelaxation.dropVibes],
+              ),
+            ),
+          ],
+        );
+        final cubit = _cubit(
+          engine: engine,
+          profile: _profile(),
+          sessions: sessions,
+          clock: () => now,
+        );
+
+        runSearch(cubit, async);
+        async.flushMicrotasks();
+        for (var i = 0; i < 5; i++) {
+          cubit.next();
+        }
+        unawaited(cubit.reroll());
+        async.elapse(SurpriseCubit.minSearchingDuration);
+        async.flushMicrotasks();
+
+        late List<SurpriseSession> recorded;
+        sessions.all().then(
+          (r) => recorded = (r as Success<List<SurpriseSession>>).value,
+        );
+        async.flushMicrotasks();
+        expect(recorded, hasLength(1));
+        expect(recorded.single.sessionId, engine.requests.first.sessionId);
+        expect(recorded.single.source, SurpriseSessionSource.profile);
+        expect(recorded.single.mediaType, MediaType.movie);
+        expect(recorded.single.relaxations, {'dropVibes'});
         cubit.close();
       });
     });
