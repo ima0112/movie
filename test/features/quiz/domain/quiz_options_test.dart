@@ -37,11 +37,19 @@ void main() {
     );
   });
 
-  test('Kids on movies hides what it requires (Family) and what it already '
-      'excludes (Horror, Thriller, Crime): 18 - 4 = 14; Animation stays', () {
+  test('Kids on movies hides what it requires (Family) and what it leaves '
+      'out (Horror, Thriller, Crime, War, Western): 18 - 6 = 12; Animation '
+      'stays', () {
     final options = QuizOptions.vetoOptions(MediaType.movie, [kids], genreOf);
-    expect(options, hasLength(14));
-    for (final g in [_family, _horror, _thriller, _crime]) {
+    expect(options, hasLength(12));
+    for (final g in [
+      _family,
+      _horror,
+      _thriller,
+      _crime,
+      const Genre(id: 'war'),
+      const Genre(id: 'western'),
+    ]) {
       expect(options, isNot(contains(g)));
     }
     expect(options, contains(_animation));
@@ -87,6 +95,32 @@ void main() {
       ),
       hasLength(15),
     );
+  });
+
+  test('Kids hides the vibes that make no sense with it — Gangster, Gritty, '
+      'Revenge, Dystopia, Survival, Heist, Martial Arts, Tearjerker — on both '
+      'kinds of title; the rest stay', () {
+    for (final type in MediaType.values) {
+      final offered = ids2(
+        QuizOptions.vibeOptions(vibes.all(), type, [kids], {}, genreOf),
+      );
+      for (final hidden in [
+        'gangster',
+        'gritty',
+        'revenge',
+        'dystopia',
+        'survival',
+        'heist',
+        'martial_arts',
+        'tearjerker',
+      ]) {
+        expect(offered, isNot(contains(hidden)), reason: '$hidden / $type');
+      }
+      expect(
+        offered,
+        containsAll(['feel_good', 'superhero', 'sports', 'time_travel']),
+      );
+    }
   });
 
   test('Kids loses Gritty (crime and thriller are excluded); keyword themes '

@@ -207,7 +207,9 @@
             "withoutGenres": [
               27,
               53,
-              80
+              80,
+              10752,
+              37
             ],
             "certificationLte": "PG"
           }
@@ -222,7 +224,17 @@
           }
         ]
       },
-      "inTastes": false
+      "inTastes": false,
+      "hidesVibes": [
+        "gangster",
+        "gritty",
+        "revenge",
+        "dystopia",
+        "survival",
+        "heist",
+        "martial_arts",
+        "tearjerker"
+      ]
     }
   ]
 }

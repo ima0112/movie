@@ -76,9 +76,11 @@ abstract final class QuizOptions {
         }
       }
     }
+    final hiddenVibes = {for (final c in collections) ...c.hidesVibes};
     return [
       for (final vibe in vibes)
         if (vibe.isMeaningfulFor(type) &&
+            !hiddenVibes.contains(vibe.id) &&
             _hasUsableGenre(vibe.genresFor(type), {
               ...vetoed,
               ...excluded,

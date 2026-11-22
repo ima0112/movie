@@ -56,6 +56,7 @@ class Collection {
     this.movie,
     this.tv,
     this.inTastes = true,
+    this.hidesVibes = const {},
   });
 
   /// Stable identifier (`turkish_series`) — never a display name; the UI
@@ -70,6 +71,11 @@ class Collection {
   /// Whether the user can keep it in My Tastes. Kids is a suggestion
   /// collection only: it neither feeds the history nor is learned from.
   final bool inTastes;
+
+  /// `Vibe.id`s that make no sense with this collection (For kids: Gangster,
+  /// Revenge…): the quiz doesn't offer them. They only ever leave a list —
+  /// nothing sends them to TMDB.
+  final Set<String> hidesVibes;
 
   CollectionRule? ruleFor(MediaType type) => switch (type) {
     MediaType.movie => movie,
@@ -88,6 +94,9 @@ class Collection {
       movie: rule('movie'),
       tv: rule('tv'),
       inTastes: json['inTastes'] as bool? ?? true,
+      hidesVibes: {
+        for (final v in (json['hidesVibes'] as List?) ?? const []) v as String,
+      },
     );
   }
 
