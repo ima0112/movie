@@ -65,6 +65,7 @@ Familia única: **Manrope** (Google Fonts), pesos 400 (regular) y 600
 | `overline` | 11 / 1.4, tracking 1 | 600 | Etiqueta en mayúsculas sobre un bloque ("SINOPSIS"), en gris |
 | `action` | 13 / 1.5 | 600 | Acción de texto en ámbar ("Leer más", "Ver todo") |
 | `micro` | 9–10 / 1.3 | 400 | Texto dentro de pills muy pequeñas |
+| `ratingValue` | 16 / 1.1 | 600 | El número dentro del anillo de rating de D1/D2 (`RatingRing`, 56 px) |
 
 Variantes ya definidas para no tocar el peso en el widget: `bodyStrong`,
 `bodySmStrong`, `captionStrong`, `h3Regular` y los pares seleccionado /

@@ -1,63 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/shared/widgets/media_detail/media_action_button.dart';
 
-Widget _row({required double textScale}) {
-  return MaterialApp(
-    home: Scaffold(
-      body: MediaQuery(
-        data: MediaQueryData(
-          size: const Size(320, 568),
-          textScaler: TextScaler.linear(textScale),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              MediaActionButton(
-                iconOutline: AppIcons.favorite,
-                iconFill: AppIcons.favoriteFill,
-                label: 'Favorite',
-                isActive: false,
-                onTap: () {},
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: MediaActionButton(
-                  iconOutline: AppIcons.watched,
-                  iconFill: AppIcons.watchedFill,
-                  label: 'Visto con una etiqueta bastante larga',
-                  isActive: true,
-                  showLabel: true,
-                  onTap: () {},
-                ),
-              ),
-            ],
-          ),
+Widget _host({required bool active, double textScale = 1}) => MaterialApp(
+  home: Scaffold(
+    body: MediaQuery(
+      data: MediaQueryData(
+        size: const Size(320, 568),
+        textScaler: TextScaler.linear(textScale),
+      ),
+      child: Center(
+        child: MediaActionButton(
+          iconOutline: AppIcons.favorite,
+          iconFill: AppIcons.favoriteFill,
+          label: 'Favorite',
+          isActive: active,
+          onTap: () {},
         ),
       ),
     ),
-  );
-}
+  ),
+);
+
+BoxDecoration _decoration(WidgetTester tester) =>
+    tester
+            .widget<Container>(
+              find.descendant(
+                of: find.byType(MediaActionButton),
+                matching: find.byType(Container),
+              ),
+            )
+            .decoration!
+        as BoxDecoration;
 
 void main() {
-  testWidgets('icon-only is a 44 px square with a semantics label; the '
-      'labeled one shows its text', (tester) async {
-    await tester.pumpWidget(_row(textScale: 1));
+  testWidgets('a 44 px circle with a semantics label and no visible text', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(active: false));
 
     expect(
-      tester.getSize(find.byType(MediaActionButton).first),
+      tester.getSize(find.byType(MediaActionButton)),
       const Size(MediaActionButton.size, MediaActionButton.size),
     );
+    expect(_decoration(tester).shape, BoxShape.circle);
     expect(find.bySemanticsLabel('Favorite'), findsOneWidget);
-    expect(find.text('Visto con una etiqueta bastante larga'), findsOneWidget);
+    expect(find.text('Favorite'), findsNothing);
   });
 
-  testWidgets('a long label at 200% text scale on a 320 px screen does not '
-      'overflow', (tester) async {
-    await tester.pumpWidget(_row(textScale: 2));
+  testWidgets('off is outlined; on is filled amber with a dark icon', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(active: false));
+    expect(_decoration(tester).color, isNull);
+    expect(find.byIcon(AppIcons.favorite), findsOneWidget);
 
-    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(_host(active: true));
+    expect(_decoration(tester).color, AppColors.accent);
+    expect(
+      tester.widget<Icon>(find.byIcon(AppIcons.favoriteFill)).color,
+      AppColors.onAccent,
+    );
+  });
+
+  testWidgets('it keeps its size at 200% text scale', (tester) async {
+    await tester.pumpWidget(_host(active: true, textScale: 2));
+    expect(tester.getSize(find.byType(MediaActionButton)), const Size(44, 44));
   });
 }

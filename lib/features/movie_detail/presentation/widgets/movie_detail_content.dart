@@ -69,10 +69,9 @@ class MovieDetailContent extends StatelessWidget {
       onRegionSelected: (code) =>
           context.read<MovieDetailCubit>().setRegion(mediaKey, code),
       metaPrefix: movieMetaPrefix(context, detail),
-      extraChips: [
-        if (language != null && language.trim().isNotEmpty)
-          languageDisplayName(context, language),
-      ],
+      language: language != null && language.trim().isNotEmpty
+          ? languageDisplayName(context, language)
+          : null,
       stats: _stats(context),
       castByline: MediaByline(
         label: context.l10n.mediaDirectedByLabel,

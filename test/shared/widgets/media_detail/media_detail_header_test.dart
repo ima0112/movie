@@ -5,7 +5,8 @@ import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_header.dart';
 import 'package:movies/shared/widgets/poster_badge.dart';
-import 'package:movies/shared/widgets/media_detail/media_detail_info_card.dart';
+import 'package:movies/shared/widgets/media_detail/media_meta_line.dart';
+import 'package:movies/shared/widgets/media_detail/rating_ring.dart';
 
 const _action = Genre(id: 'action');
 const _drama = Genre(id: 'drama');
@@ -99,46 +100,72 @@ void main() {
     });
   });
 
-  group('MediaDetailInfoCard', () {
-    testWidgets('shows year, tappable genres, rating and extra chips, and '
-        'the actions slot', (tester) async {
+  group('the header rating and meta line', () {
+    testWidgets('the ring sits at the right of the title and the meta line '
+        'closes the block, language last', (tester) async {
       Genre? tapped;
       await tester.pumpWidget(
         _app(
-          MediaDetailInfoCard(
-            posterUrl: null,
-            metaPrefix: '2010',
+          MediaDetailHeader(
+            imageUrl: null,
+            title: 'Breaking Bad',
+            tagline: 'All bad things must end.',
+            metaPrefix: '2008 – 2013 · United States',
             genres: const [_action, _drama],
-            voteAverage: 8.4,
-            extraChips: const ['2 h 28 min', 'PG-13'],
+            language: 'English',
+            voteAverage: 8.9,
             onGenreTap: (g) => tapped = g,
-            actions: const Text('ACTIONS'),
           ),
         ),
       );
 
-      expect(find.text('2010'), findsOneWidget);
-      expect(find.text('8.4'), findsOneWidget);
-      expect(find.text('2 h 28 min'), findsOneWidget);
-      expect(find.text('PG-13'), findsOneWidget);
-      expect(find.text('ACTIONS'), findsOneWidget);
+      final ring = tester.getRect(find.byType(RatingRing));
+      final title = tester.getRect(find.text('Breaking Bad'));
+      expect(ring.left, greaterThan(title.right));
+      expect(find.text('8.9'), findsOneWidget);
+      final meta = tester.getRect(find.byType(MediaMetaLine));
+      expect(
+        meta.top,
+        greaterThan(tester.getRect(find.byType(RatingRing)).bottom),
+      );
+      expect(find.text('2008 – 2013 · United States'), findsOneWidget);
+      expect(find.text('English'), findsOneWidget);
+      // Left to right: prefix, genres, language.
+      expect(
+        tester.getRect(find.text('Drama')).left,
+        lessThan(tester.getRect(find.text('English')).left),
+      );
 
       await tester.tap(find.text('Action'));
       expect(tapped, _action);
     });
 
-    testWidgets('survives a small device at 200% text scale (es)', (
-      tester,
-    ) async {
+    testWidgets('showRating false (not out yet): no ring', (tester) async {
       await tester.pumpWidget(
         _app(
-          const MediaDetailInfoCard(
-            posterUrl: null,
-            metaPrefix: '2008–2013 · 5 temporadas · 62 episodios',
+          const MediaDetailHeader(
+            imageUrl: null,
+            title: 'Soon',
+            voteAverage: 0,
+            showRating: false,
+          ),
+        ),
+      );
+      expect(find.byType(RatingRing), findsNothing);
+    });
+
+    testWidgets('a long title, tagline and meta line survive a small device '
+        'at 200% text (es)', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          const MediaDetailHeader(
+            imageUrl: null,
+            title: 'El señor de los anillos: la comunidad del anillo',
+            tagline: 'Un anillo para gobernarlos a todos, un anillo para ...',
+            metaPrefix: '2008 – 2013 · Estados Unidos',
             genres: [_action, _drama],
+            language: 'Inglés',
             voteAverage: 9,
-            extraChips: ['2 h 28 min', 'PG-13'],
-            actions: Text('ACTIONS'),
           ),
           locale: const Locale('es'),
           size: const Size(320, 568),

@@ -6,8 +6,7 @@ import '../../../core/theme/app_text_styles.dart';
 
 /// A small pill with a 28 px minimum height: an ink-tinted fill, a hairline
 /// border and a semibold label, optionally led by a 12 px amber [icon] (the
-/// rating's star). The "Detalle" designs' info chips — the detail card, the
-/// season header and the episode sheet all use it.
+/// rating's star). The "Detalle" designs' info chips — the season header and the episode sheet all use it.
 class InfoChip extends StatelessWidget {
   const InfoChip({super.key, required this.label, this.icon});
 
