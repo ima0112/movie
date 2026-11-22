@@ -47,6 +47,8 @@ extension DiscoverFilterPreset on DiscoverFilter {
       return switch (tvStatus!) {
         DiscoverTvStatus.airing => DiscoverPreset.airingNow,
         DiscoverTvStatus.ended => DiscoverPreset.finished,
+        // The quiz's own choice: H8 has no preset for it.
+        DiscoverTvStatus.notCanceled => null,
       };
     }
     final from = releasedFrom;

@@ -183,6 +183,23 @@ void main() {
       expect(withoutFinished.tvStatus, isNull);
     });
 
+    test('"Not cancelled" is kept, but "Finished" (more restrictive) wins', () {
+      MatchQuery of(List<DiscoverTvStatus?> statuses) =>
+          MatchQuery.aggregate(MediaType.tvShow, [
+            for (final (i, s) in statuses.indexed)
+              _answers('p$i', yearFrom: 1990, tvStatus: s),
+          ]);
+
+      expect(
+        of([DiscoverTvStatus.notCanceled, null]).tvStatus,
+        DiscoverTvStatus.notCanceled,
+      );
+      expect(
+        of([DiscoverTvStatus.notCanceled, DiscoverTvStatus.ended]).tvStatus,
+        DiscoverTvStatus.ended,
+      );
+    });
+
     test('excludedWatchedKeys only unions keys from participants who '
         'enabled excludeWatched, but watchedByAnyone unions everyone '
         'regardless — the scoring penalty needs to see it even when '

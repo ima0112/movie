@@ -2156,18 +2156,6 @@ abstract class AppLocalizations {
   /// **'Estimated TV hours'**
   String get statsEstimatedTvHoursLabel;
 
-  /// No description provided for @myTastesTypeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'What do you usually watch?'**
-  String get myTastesTypeTitle;
-
-  /// No description provided for @myTastesTypeHint.
-  ///
-  /// In en, this message translates to:
-  /// **'It sets which catalog we show first.'**
-  String get myTastesTypeHint;
-
   /// C5's section title for liked collections (Turkish series, Anime, Soap operas…); For kids is not offered here.
   ///
   /// In en, this message translates to:
@@ -2917,6 +2905,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Any'**
   String get quizStatusAny;
+
+  /// No description provided for @quizStatusNotCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Not cancelled'**
+  String get quizStatusNotCanceled;
 
   /// No description provided for @quizStatusFinished.
   ///

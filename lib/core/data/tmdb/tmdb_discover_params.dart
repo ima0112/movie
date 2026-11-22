@@ -139,6 +139,9 @@ Map<String, dynamic> discoverQueryParams(
     params['with_status'] = switch (filter.tvStatus!) {
       DiscoverTvStatus.airing => '0',
       DiscoverTvStatus.ended => '3',
+      // Returning (0), in production (2) or ended (3): everything but
+      // cancelled (4). `|` is TMDB's OR.
+      DiscoverTvStatus.notCanceled => '0|2|3',
     };
   }
 
