@@ -39,6 +39,10 @@ class _ChooseTypeCardState extends State<ChooseTypeCard> {
 
   static const double _numberStroke = 1.5;
 
+  /// The number's column: the same width for "01" and "02" (their digits differ
+  /// in width), so the titles of both cards start at the same place.
+  static const double _numberWidth = 76;
+
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppSpacing.radiusXxl);
@@ -70,12 +74,18 @@ class _ChooseTypeCardState extends State<ChooseTypeCard> {
                 // large the user's text is, so the words get the room.
                 MediaQuery.withNoTextScaling(
                   child: ExcludeSemantics(
-                    child: OutlinedText(
-                      NumberFormat('00').format(widget.number),
-                      style: AppTextStyles.deckNumber,
-                      strokeColor: numberColor,
-                      strokeWidth: _numberStroke,
-                      fillOpacity: 0,
+                    child: SizedBox(
+                      width: _numberWidth,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: OutlinedText(
+                          NumberFormat('00').format(widget.number),
+                          style: AppTextStyles.deckNumber,
+                          strokeColor: numberColor,
+                          strokeWidth: _numberStroke,
+                          fillOpacity: 0,
+                        ),
+                      ),
                     ),
                   ),
                 ),
