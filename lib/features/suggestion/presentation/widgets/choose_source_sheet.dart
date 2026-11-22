@@ -17,7 +17,7 @@ import '../cubit/surprise_state.dart';
 ///
 /// "Find something to watch"; a subtitle that names the user's liked genres
 /// when the source is the profile (nothing under the title for a list the
-/// app inferred); "Answer the quiz instead" (primary, first) / "Use my tastes"
+/// app inferred); "Answer the quiz instead" (amber, first) / "Use my tastes"
 /// (outlined); and, for the profile, the note that the quiz leaves the saved
 /// tastes alone.
 ///
@@ -55,9 +55,9 @@ class ChooseSourceSheet extends StatelessWidget {
               ),
             ],
             const SizedBox(height: AppSpacing.xl),
-            // The quiz leads: a fresh answer for today is the main path; "use my
-            // tastes" is the shortcut under it.
-            PrimaryButton(
+            // The quiz leads, in the flow's amber: a fresh answer for today is the
+            // main path; "use my tastes" is the shortcut under it.
+            AccentButton(
               label: l10n.surpriseAnswerQuizInstead,
               onTap: () {
                 cubit.answerQuizInstead();
