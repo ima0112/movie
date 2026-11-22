@@ -3,21 +3,26 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_detail/rating_ring.dart';
 
-Widget _host(double rating, {double textScale = 1, Locale? locale}) =>
-    MaterialApp(
-      locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: TextScaler.linear(textScale)),
-        child: child!,
-      ),
-      home: Scaffold(
-        body: Center(child: RatingRing(rating: rating)),
-      ),
-    );
+Widget _host(
+  double rating, {
+  double textScale = 1,
+  Locale? locale,
+  bool reduceMotion = false,
+}) => MaterialApp(
+  locale: locale,
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  builder: (context, child) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(
+      textScaler: TextScaler.linear(textScale),
+      disableAnimations: reduceMotion,
+    ),
+    child: child!,
+  ),
+  home: Scaffold(
+    body: Center(child: RatingRing(rating: rating)),
+  ),
+);
 
 void main() {
   testWidgets('shows the rating and its source in a fixed-size ring', (
@@ -45,5 +50,36 @@ void main() {
     await tester.pumpWidget(_host(9));
     expect(find.bySemanticsLabel('Rating 9.0 out of 10'), findsOneWidget);
     handle.dispose();
+  });
+
+  /// The arc's sweep fraction, read from the ring's painter.
+  double sweep(WidgetTester tester) {
+    final paint = tester.widget<CustomPaint>(
+      find.descendant(
+        of: find.byType(RatingRing),
+        matching: find.byType(CustomPaint),
+      ),
+    );
+    return (paint.painter! as dynamic).fraction as double;
+  }
+
+  testWidgets('the arc fills from empty to the rating, the number already '
+      'there', (tester) async {
+    await tester.pumpWidget(_host(8));
+    expect(find.text('8.0'), findsOneWidget);
+    expect(sweep(tester), 0);
+
+    await tester.pump(RatingRing.duration * 0.6);
+    final mid = sweep(tester);
+    expect(mid, greaterThan(0));
+    expect(mid, lessThan(0.8));
+
+    await tester.pumpAndSettle();
+    expect(sweep(tester), moreOrLessEquals(0.8));
+  });
+
+  testWidgets('with reduce motion the arc is full at once', (tester) async {
+    await tester.pumpWidget(_host(8, reduceMotion: true));
+    expect(sweep(tester), moreOrLessEquals(0.8));
   });
 }
