@@ -164,6 +164,14 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// The number inside D1/D2's rating ring: 16, bold-ish (semibold), tight.
+  static final TextStyle ratingValue = GoogleFonts.manrope(
+    fontSize: 16,
+    height: 1.1,
+    fontWeight: _semibold,
+    color: AppColors.ink,
+  );
+
   /// Text inside very small pills. 9 / 1.3, regular.
   static final TextStyle micro = GoogleFonts.manrope(
     fontSize: 9,
