@@ -5,8 +5,8 @@ import '../../../../core/domain/entities/person.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/locale_names.dart';
 
-/// D1's metadata-line formatting — "2019 · 2 h 10 min · PG-13". D1's info
-/// card shows the year and country before the genres, and the runtime and
+/// D1's metadata-line formatting — "2019 · 2 h 10 min · PG-13". D1's header
+/// shows the year and country before the genres, and the runtime and
 /// certification live in the stat cards; this combined line stays for places
 /// that want the whole thing in one string. Kept here, not
 /// in the shared `shared/widgets/media_detail/` widgets: each screen
@@ -35,7 +35,7 @@ String _formatRuntime(int minutes, AppLocalizations l10n) {
 String movieRuntimeLabel(int minutes, AppLocalizations l10n) =>
     _formatRuntime(minutes, l10n);
 
-/// The info card's text before the genres: "2010 · United States" — the
+/// The header meta line's text before the genres: "2010 · United States" — the
 /// release year and the main production country's name in the app's language
 /// (`flutter_localized_locales`; the bare code if it has no name for it).
 String movieMetaPrefix(BuildContext context, MovieDetail detail) => [

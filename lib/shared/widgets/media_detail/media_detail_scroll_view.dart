@@ -8,6 +8,7 @@ import '../../../core/domain/entities/country.dart';
 import '../../../core/domain/entities/discover_filter.dart';
 import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_key.dart';
+import '../../../core/domain/entities/release_status.dart';
 import '../../../core/domain/repositories/user_library_repository.dart';
 import '../../../core/launch/launch_external_link.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -24,11 +25,11 @@ import 'media_synopsis_section.dart';
 import 'where_to_watch_section.dart';
 
 /// The whole loaded body of D1/D2, one assembly for both: backdrop header →
-/// trailer + info card → [stats] cards → synopsis → where to watch → cast →
+/// header (title, rating, meta line) → trailer + actions → [stats] cards → synopsis → where to watch → cast →
 /// [castByline] → similar → TMDB footer (`docs/SCREENS.md` D1/D2).
 ///
 /// Movie and TV differ only in what they pass in — [metaPrefix],
-/// [extraChips], [stats], [castByline], [similarTitle] — so the order, the
+/// [language], [stats], [castByline], [similarTitle] — so the order, the
 /// spacing and every navigation (genre → C1, "See all" cast → D1b, a person
 /// → D3, a title → D1/D2, region → H6) live here once.
 ///
@@ -46,7 +47,7 @@ class MediaDetailScrollView extends StatefulWidget {
     required this.regionCode,
     required this.onRegionSelected,
     required this.metaPrefix,
-    this.extraChips = const [],
+    this.language,
     this.stats = const [],
     this.castByline,
     this.similarTitle,
@@ -65,11 +66,12 @@ class MediaDetailScrollView extends StatefulWidget {
   /// The user picked a country in H6 — reload this screen for it only.
   final ValueChanged<String> onRegionSelected;
 
-  /// The info card's text before the genres, and its chips after the rating.
+  /// The header's meta line: the text before the genres (year, country), and
+  /// the original language's name after them.
   final String metaPrefix;
-  final List<String> extraChips;
+  final String? language;
 
-  /// The cards under the info card (D1: Duration/Classification; D2:
+  /// The cards under the action row (D1: Duration/Classification; D2:
   /// Status/Seasons).
   final List<MediaStat> stats;
 
@@ -132,6 +134,22 @@ class _MediaDetailScrollViewState extends State<MediaDetailScrollView> {
             title: detail.item.title,
             tagline: detail.tagline,
             releaseStatus: detail.releaseStatus,
+            metaPrefix: widget.metaPrefix,
+            genres: detail.item.genres,
+            language: widget.language,
+            voteAverage: detail.item.voteAverage,
+            // Not out yet: TMDB reports 0.0, so there is no ring.
+            showRating: detail.releaseStatus?.stage != ReleaseStage.upcoming,
+            onGenreTap: (genre) => context.push(
+              AppRoutes.filteredList,
+              extra: FilteredListRouteArgs(
+                filter: DiscoverFilter(
+                  type: detail.item.type,
+                  withGenres: {genre},
+                ),
+                title: genre.localizedName(context.l10n),
+              ),
+            ),
           ),
         ),
         SliverPadding(
@@ -146,18 +164,6 @@ class _MediaDetailScrollViewState extends State<MediaDetailScrollView> {
               mediaKey: widget.mediaKey,
               userLibraryRepository: widget.userLibraryRepository,
               mediaDetail: detail,
-              metaPrefix: widget.metaPrefix,
-              extraChips: widget.extraChips,
-              onGenreTap: (genre) => context.push(
-                AppRoutes.filteredList,
-                extra: FilteredListRouteArgs(
-                  filter: DiscoverFilter(
-                    type: detail.item.type,
-                    withGenres: {genre},
-                  ),
-                  title: genre.localizedName(context.l10n),
-                ),
-              ),
               onPlayTrailer: (trailer) =>
                   unawaited(launchYoutubeTrailer(context, trailer.key)),
               onSeeSimilar: detail.similar.isEmpty

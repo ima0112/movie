@@ -7,11 +7,11 @@ import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/core/domain/entities/result.dart';
-import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/app_buttons.dart';
+import 'package:movies/shared/widgets/media_detail/media_action_button.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_action_row.dart';
 
 const _dune = MediaKey(type: MediaType.movie, tmdbId: 1);
@@ -68,38 +68,83 @@ Future<void> _pumpRow(WidgetTester tester, MovieDetail detail) async {
 
 void main() {
   group('a title that is not out yet', () {
-    testWidgets('has no Watched button and no rating chip; Watch later '
-        'becomes the wide labeled action', (tester) async {
+    testWidgets('has no Watched button; Favorite and Watch later stay', (
+      tester,
+    ) async {
       final detail = _withStatus(
         await _loadDuneDetail(tester),
         const ReleaseStatus(ReleaseStage.upcoming),
       );
       await _pumpRow(tester, detail);
 
-      expect(find.text('Watched'), findsNothing);
-      expect(find.text('Watch later'), findsOneWidget); // labeled, wide
-      expect(find.byIcon(AppIcons.starFill), findsNothing); // no rating chip
+      expect(find.bySemanticsLabel('Watched'), findsNothing);
+      expect(find.bySemanticsLabel('Watch later'), findsOneWidget);
       expect(find.bySemanticsLabel('Favorite'), findsOneWidget);
     });
 
-    testWidgets('one only in theaters keeps Watched and the rating', (
-      tester,
-    ) async {
+    testWidgets('one only in theaters keeps Watched', (tester) async {
       final detail = _withStatus(
         await _loadDuneDetail(tester),
         ReleaseStatus(ReleaseStage.inTheaters, date: DateTime(2026, 4, 24)),
       );
       await _pumpRow(tester, detail);
 
-      expect(find.text('Watched'), findsOneWidget);
-      expect(find.byIcon(AppIcons.starFill), findsOneWidget);
+      expect(find.bySemanticsLabel('Watched'), findsOneWidget);
     });
 
-    testWidgets('an ordinary released title is unchanged', (tester) async {
+    testWidgets('an ordinary released title has all three circles beside the '
+        'trailer pill, all 44 px tall', (tester) async {
       await _pumpRow(tester, await _loadDuneDetail(tester));
 
-      expect(find.text('Watched'), findsOneWidget);
-      expect(find.byIcon(AppIcons.starFill), findsOneWidget);
+      for (final label in ['Favorite', 'Watch later', 'Watched']) {
+        expect(find.bySemanticsLabel(label), findsOneWidget);
+      }
+      expect(find.byType(MediaActionButton), findsNWidgets(3));
+      final pill = tester.getRect(find.byType(PrimaryButton));
+      expect(pill.height, MediaActionButton.size);
+      for (final c in tester.widgetList(find.byType(MediaActionButton))) {
+        final r = tester.getRect(find.byWidget(c));
+        expect(r.size, const Size(44, 44));
+        expect(r.left, greaterThan(pill.right)); // same row, after the pill
+        expect(r.center.dy, moreOrLessEquals(pill.center.dy, epsilon: 0.5));
+      }
+    });
+
+    testWidgets('at 200% text the pill takes its own row and the circles sit '
+        'under it', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final detail = await _loadDuneDetail(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(20),
+              child: MediaDetailActionRow(
+                mediaKey: _dune,
+                userLibraryRepository: InMemoryUserLibraryRepository(),
+                mediaDetail: detail,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      final pill = tester.getRect(find.byType(PrimaryButton));
+      for (final c in tester.widgetList(find.byType(MediaActionButton))) {
+        expect(tester.getRect(find.byWidget(c)).top, greaterThan(pill.bottom));
+      }
     });
   });
 
@@ -123,7 +168,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Watched'));
+      await tester.tap(find.bySemanticsLabel('Watched'));
       await tester.pumpAndSettle();
 
       // The bug: tapping "Watched" used to upsert immediately. It
@@ -153,7 +198,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Watched'));
+        await tester.tap(find.bySemanticsLabel('Watched'));
         await tester.pumpAndSettle();
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
@@ -215,7 +260,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Watched'));
+      await tester.tap(find.bySemanticsLabel('Watched'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
@@ -292,12 +337,19 @@ void main() {
       expect(taps, 1);
     });
 
-    testWidgets('nothing to jump to: no primary button, the info card '
-        'still shows', (tester) async {
+    testWidgets('nothing to jump to: no primary button, the three circles '
+        'spread over the row', (tester) async {
+      tester.view.physicalSize = const Size(390, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
       await tester.pumpWidget(host());
       expect(find.byType(PrimaryButton), findsNothing);
       expect(find.text('See similar'), findsNothing);
-      expect(find.text('Watched'), findsOneWidget);
+      expect(find.byType(MediaActionButton), findsNWidgets(3));
+      final first = tester.getRect(find.byType(MediaActionButton).first);
+      final last = tester.getRect(find.byType(MediaActionButton).last);
+      expect(first.left, moreOrLessEquals(0, epsilon: 0.5));
+      expect(last.right, moreOrLessEquals(390, epsilon: 0.5));
     });
   });
 }

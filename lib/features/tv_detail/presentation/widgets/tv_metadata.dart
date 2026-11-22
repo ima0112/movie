@@ -15,10 +15,10 @@ String? tvYearRange(TvShowDetail detail) {
   };
 }
 
-/// D2's info-card text before the genres: "2008–2013 · United States" — the
+/// D2's header meta line text before the genres: "2008–2013 · United States" — the
 /// air years and the main origin country's name in the app's language
 /// (`flutter_localized_locales`). Seasons, episodes and the status live in
-/// the cards under the info card instead (`docs/SCREENS.md` D2).
+/// the cards under the action row instead (`docs/SCREENS.md` D2).
 String tvMetaPrefix(BuildContext context, TvShowDetail detail) => [
   ?tvYearRange(detail),
   if (detail.countryCodes.isNotEmpty)

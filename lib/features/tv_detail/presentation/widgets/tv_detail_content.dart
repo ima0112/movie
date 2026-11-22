@@ -19,7 +19,7 @@ import 'tv_status.dart';
 
 /// D2 once `TvDetailCubit` has loaded: hands `MediaDetailScrollView` (the
 /// assembly D1 and D2 share) the show's own values — the air years and
-/// country, the language chip, the Status / Seasons cards (Seasons → D2b)
+/// country, the language, the Status / Seasons cards (Seasons → D2b)
 /// and "Created by" under the Cast heading
 /// (`docs/SCREENS.md` D2).
 ///
@@ -79,10 +79,9 @@ class TvDetailContent extends StatelessWidget {
       onRegionSelected: (code) =>
           context.read<TvDetailCubit>().setRegion(mediaKey, code),
       metaPrefix: tvMetaPrefix(context, detail),
-      extraChips: [
-        if (language != null && language.trim().isNotEmpty)
-          languageDisplayName(context, language),
-      ],
+      language: language != null && language.trim().isNotEmpty
+          ? languageDisplayName(context, language)
+          : null,
       stats: _stats(context),
       castByline: MediaByline(
         label: context.l10n.mediaCreatedByLabel,

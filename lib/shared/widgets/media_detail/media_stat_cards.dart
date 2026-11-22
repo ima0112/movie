@@ -17,7 +17,7 @@ class MediaStat {
   final VoidCallback? onTap;
 }
 
-/// The two stat cards under the info card ("Duration" / "Classification"
+/// The two stat cards under the action row ("Duration" / "Classification"
 /// in the "Detalle" design; D2's "Status" / "Seasons"): a small muted caption
 /// over a bold value, side by side, a card with an `onTap` ending in a chevron. A stat with no value is simply not passed, and no stats means no
 /// widget at all.
