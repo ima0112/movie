@@ -1,74 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/outlined_text.dart';
 
-/// One of E1's two big cards (`docs/SCREENS.md` E1): the amber [icon] at the
-/// top and, pinned to the bottom, the [label] and a muted [subtitle], so the
-/// card reads as a tall tile rather than a stack of three lines. Tapping
-/// gives a ripple clipped to the card's radius.
+/// One of E1's two cards (`docs/SCREENS.md` E1): a big outlined [number]
+/// ("01", "02") on the left, the [label] with a muted [subtitle] beside it and
+/// the [icon] at the top right. While it is pressed (or hovered, or focused) it
+/// lights up — an amber border and tint, the number and the icon in amber;
+/// at rest it is a neutral card.
 ///
 /// Pure presentation — everything comes in by parameter.
-class ChooseTypeCard extends StatelessWidget {
+class ChooseTypeCard extends StatefulWidget {
   const ChooseTypeCard({
     super.key,
+    required this.number,
     required this.icon,
     required this.label,
     required this.subtitle,
     required this.onTap,
   });
 
+  /// 1-based: the card's place in the list.
+  final int number;
   final IconData icon;
   final String label;
   final String subtitle;
   final VoidCallback onTap;
 
-  /// The card never gets shorter than this, so the gap between the icon and
-  /// the text stays whatever the text size.
-  static const double _minHeight = 160;
+  @override
+  State<ChooseTypeCard> createState() => _ChooseTypeCardState();
+}
+
+class _ChooseTypeCardState extends State<ChooseTypeCard> {
+  bool _lit = false;
+
+  static const double _numberStroke = 1.5;
 
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppSpacing.radiusXxl);
+    final accent = _lit;
+    final numberColor = accent ? AppColors.accent : AppColors.inkMuted;
     return Semantics(
       button: true,
-      label: '$label. $subtitle',
+      label: '${widget.label}. ${widget.subtitle}',
       excludeSemantics: true,
       child: Material(
-        color: AppColors.surfaceRaised,
+        color: accent ? AppColors.accentSoft : AppColors.surfaceRaised,
         shape: RoundedRectangleBorder(
           borderRadius: radius,
-          side: const BorderSide(color: AppColors.lineStrong),
+          side: BorderSide(
+            color: accent ? AppColors.accent : AppColors.lineStrong,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: onTap,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: _minHeight),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(icon, color: AppColors.accent),
-                  const SizedBox(height: AppSpacing.xxl),
-                  Column(
+          onTap: widget.onTap,
+          onHighlightChanged: (value) => setState(() => _lit = value),
+          onHover: (value) => setState(() => _lit = value),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // A decoration, not text to read: it keeps its size however
+                // large the user's text is, so the words get the room.
+                MediaQuery.withNoTextScaling(
+                  child: ExcludeSemantics(
+                    child: OutlinedText(
+                      NumberFormat('00').format(widget.number),
+                      style: AppTextStyles.deckNumber,
+                      strokeColor: numberColor,
+                      strokeWidth: _numberStroke,
+                      fillOpacity: 0,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.xl),
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(label, style: AppTextStyles.h2),
+                      Text(widget.label, style: AppTextStyles.h2),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                        subtitle,
+                        widget.subtitle,
                         style: AppTextStyles.bodySm.copyWith(
                           color: AppColors.inkMuted,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Icon(
+                  widget.icon,
+                  color: accent ? AppColors.accent : AppColors.inkMuted,
+                ),
+              ],
             ),
           ),
         ),

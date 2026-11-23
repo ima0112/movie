@@ -31,6 +31,7 @@ class ChooseTypeCards extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ChooseTypeCard(
+                  number: 1,
                   icon: AppIcons.movie,
                   label: l10n.chooseTypeMovieLabel,
                   subtitle: l10n.chooseTypeMovieSubtitle,
@@ -38,6 +39,7 @@ class ChooseTypeCards extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 ChooseTypeCard(
+                  number: 2,
                   icon: AppIcons.tvShow,
                   label: l10n.chooseTypeTvShowLabel,
                   subtitle: l10n.chooseTypeTvShowSubtitle,
