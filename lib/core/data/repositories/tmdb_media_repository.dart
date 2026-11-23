@@ -641,10 +641,25 @@ class TmdbMediaRepository implements MediaRepository {
     }
   }
 
-  /// How many services B2's pill row and H8's streaming row offer: only the
-  /// region's top ones (TMDB's own ranking there). The rest are still found by
-  /// searching without a platform, which mixes every service — these pills are
-  /// just a useful shortcut.
+  /// TMDB's raw provider list per kind of title and region, kept for the life
+  /// of the app: Explore's pills, H8, the quiz and My Tastes all read it, and it
+  /// only changes with the region (part of the key). The in-flight request is
+  /// what is kept, so two screens asking at once share one call; a failed one is
+  /// forgotten so the next ask tries again.
+  final Map<String, Future<List<Map<String, dynamic>>>> _providerCache = {};
+
+  Future<List<Map<String, dynamic>>> _providers(String kind) {
+    final key = '$kind|$_region';
+    return _providerCache[key] ??= _datasource
+        .watchProviders(kind, region: _region)
+        .then<List<Map<String, dynamic>>>(
+          (value) => value,
+          onError: (Object error, StackTrace stack) {
+            _providerCache.remove(key);
+            Error.throwWithStackTrace(error, stack);
+          },
+        );
+  }
 
   @override
   Future<Result<List<StreamingService>>> streamingServices({
@@ -659,10 +674,10 @@ class TmdbMediaRepository implements MediaRepository {
         MediaType.tvShow => ['tv'],
         null => ['movie', 'tv'],
       };
-      final raw = <Map<String, dynamic>>[];
-      for (final t in types) {
-        raw.addAll(await _datasource.watchProviders(t, region: _region));
-      }
+      // Both kinds at once (they were asked one after the other), from the
+      // cache when they have been asked before.
+      final lists = await Future.wait([for (final t in types) _providers(t)]);
+      final raw = <Map<String, dynamic>>[for (final list in lists) ...list];
       return Success(
         streamingServicesFromJson(
           raw,

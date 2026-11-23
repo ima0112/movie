@@ -1,3 +1,5 @@
+import '../widgets/warm_platforms.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -50,8 +52,17 @@ class MyTastesScreen extends StatelessWidget {
             final collectionCatalog = collections.data;
             if (collectionCatalog == null) return const _Loading();
             return BlocProvider(
-              create: (_) =>
-                  MyTastesCubit(tasteProfileCubit, catalog, collectionCatalog),
+              create: (_) {
+                // The platforms are asked for now, not when their section
+                // scrolls into view (it is the last one), so by then the list
+                // is in memory and the logos are decoded.
+                unawaited(warmPlatforms(context, tasteProfileCubit.state));
+                return MyTastesCubit(
+                  tasteProfileCubit,
+                  catalog,
+                  collectionCatalog,
+                );
+              },
               child: const _MyTastesView(),
             );
           },

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,6 +15,7 @@ import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/my_tastes/presentation/cubit/my_tastes_cubit.dart';
+import 'package:movies/features/my_tastes/presentation/widgets/taste_platform_skeleton.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_platform_tile.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_platforms_sheet.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_platforms_section.dart';
@@ -22,6 +25,9 @@ class _Services implements MediaRepository {
   _Services(this.outcome);
 
   Result<List<StreamingService>> outcome;
+
+  /// When set, the list only arrives once this completes.
+  Completer<void>? gate;
   int calls = 0;
   bool? lastAll;
 
@@ -34,6 +40,7 @@ class _Services implements MediaRepository {
   }) async {
     calls++;
     lastAll = all;
+    await gate?.future;
     return outcome;
   }
 
@@ -53,6 +60,7 @@ void main() {
     _Services repo, {
     Locale? locale,
     Set<int> picked = const {},
+    bool settle = true,
   }) async {
     getIt.unregister<MediaRepository>();
     getIt.registerSingleton<MediaRepository>(repo);
@@ -92,9 +100,29 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    if (settle) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump();
+    }
     return tastes;
   }
+
+  testWidgets('while the list loads, a skeleton stands in for each saved '
+      'service, then the logos replace them', (tester) async {
+    final repo = _Services(const Success([_netflix, _max, _prime]))
+      ..gate = Completer<void>();
+    await pump(tester, repo, picked: {8, 9}, settle: false);
+
+    expect(find.byType(TastePlatformSkeleton), findsNWidgets(2));
+    expect(find.byType(TastePlatformTile), findsNothing);
+    expect(find.text('Add'), findsOneWidget);
+
+    repo.gate!.complete();
+    await tester.pumpAndSettle();
+    expect(find.byType(TastePlatformSkeleton), findsNothing);
+    expect(find.byType(TastePlatformTile), findsNWidgets(2));
+  });
 
   testWidgets('nothing picked: just the "Add" chip; the picked ones are '
       'logos you can tap off', (tester) async {
