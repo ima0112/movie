@@ -100,18 +100,13 @@ class QuizCubit extends Cubit<QuizState> {
     emit(next.copyWith(excludedGenres: vetoed, vibeIds: vibes));
   }
 
-  /// Step 1's chip tap — toggles [collectionId], a no-op past
-  /// [QuizState.maxCollections].
+  /// Step 1's chip tap — picks [collectionId], replacing the one picked
+  /// before (there is one at most), or clears it when it is the one picked.
   void toggleCollection(String collectionId) {
-    final current = state.collectionIds;
-    if (current.contains(collectionId)) {
-      _emitPruned(
-        state.copyWith(collectionIds: Set.of(current)..remove(collectionId)),
-      );
-      return;
-    }
-    if (current.length >= QuizState.maxCollections) return;
-    _emitPruned(state.copyWith(collectionIds: {...current, collectionId}));
+    final picked = state.collectionIds.contains(collectionId);
+    _emitPruned(
+      state.copyWith(collectionIds: picked ? const {} : {collectionId}),
+    );
   }
 
   /// Step 2's veto grid tap — toggles [genre]'s chip, a no-op past "up to 3"
