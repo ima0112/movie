@@ -190,11 +190,25 @@ class QuizCubit extends Cubit<QuizState> {
     emit(state.copyWith(step: state.step + 1));
   }
 
-  /// The back button — never discards anything, just moves [QuizState
-  /// .step] back; every field collected so far stays as it was.
+  /// The back button — moves [QuizState.step] back and **clears what the step
+  /// being left had collected** (going from the vibes back to the genres
+  /// empties the vibes); the earlier steps' answers stay as they were.
   void previousStep() {
     if (state.step <= 1) return;
-    emit(state.copyWith(step: state.step - 1));
+    final cleared = switch (state.step) {
+      2 => state.copyWith(excludedGenres: const {}),
+      3 => state.copyWith(vibeIds: const {}),
+      4 => state.copyWith(platformIds: const {}, includeRentBuy: false),
+      5 => state.copyWith(
+        yearFrom: QuizState.defaultYearFrom,
+        yearTo: () => null,
+        maxRuntimeMinutes: () => null,
+        tvStatus: () => null,
+        excludeWatched: false,
+      ),
+      _ => state,
+    };
+    emit(cleared.copyWith(step: state.step - 1));
   }
 
   /// Step 4's "Search" button. [participantId]/[watchedKeys] aren't
