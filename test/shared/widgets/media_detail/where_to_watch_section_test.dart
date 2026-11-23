@@ -166,6 +166,43 @@ void main() {
         expect(pill.right, lessThan(card.right));
       });
 
+      testWidgets('a long country name stays on one line and ends in an '
+          'ellipsis when it does not fit', (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: MediaQuery(
+              data: const MediaQueryData(
+                size: Size(320, 568),
+                textScaler: TextScaler.linear(2),
+              ),
+              child: Scaffold(
+                body: WhereToWatchSection(
+                  providers: all,
+                  regionName: 'Reino Unido de Gran Bretaña e Irlanda del Norte',
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        final text = tester.widget<Text>(
+          find.descendant(
+            of: find.byType(WhereToWatchRegionButton),
+            matching: find.textContaining('Reino Unido'),
+          ),
+        );
+        expect(text.maxLines, 1);
+        expect(text.overflow, TextOverflow.ellipsis);
+        // The pill is one line tall: icon row height, not a wrapped block.
+        expect(
+          tester.getSize(find.byType(WhereToWatchRegionButton)).height,
+          lessThan(80),
+        );
+      });
+
       testWidgets('the footer has the hint on the left and the amber, '
           'non-tappable JustWatch badge on the right; the attribution '
           'comes last', (tester) async {

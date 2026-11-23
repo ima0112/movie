@@ -41,7 +41,14 @@ class WhereToWatchRegionButton extends StatelessWidget {
               children: [
                 const Icon(AppIcons.globe, size: 16, color: AppColors.inkMuted),
                 const SizedBox(width: AppSpacing.xs + 2),
-                Flexible(child: Text(name, style: AppTextStyles.bodySmStrong)),
+                Flexible(
+                  child: Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.bodySmStrong,
+                  ),
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 const Icon(
                   AppIcons.chevronDown,
