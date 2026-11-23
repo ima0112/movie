@@ -2378,6 +2378,30 @@ abstract class AppLocalizations {
   /// **'Specials · E{episode}'**
   String tvEpisodeCodeSpecials(int episode);
 
+  /// The episode sheet's Previous button when there is no previous episode (it is dimmed).
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get tvEpisodePrevious;
+
+  /// The episode sheet's Previous button, with the previous episode's number, e.g. "Previous · E1".
+  ///
+  /// In en, this message translates to:
+  /// **'Previous · E{episode}'**
+  String tvEpisodePreviousWithCode(int episode);
+
+  /// The episode sheet's Next button when there is no next episode (it is dimmed).
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get tvEpisodeNext;
+
+  /// The episode sheet's Next button, with the next episode's number, e.g. "Next · E2".
+  ///
+  /// In en, this message translates to:
+  /// **'Next · E{episode}'**
+  String tvEpisodeNextWithCode(int episode);
+
   /// No description provided for @tvEpisodeGuestStars.
   ///
   /// In en, this message translates to:

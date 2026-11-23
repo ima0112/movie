@@ -1377,6 +1377,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tvEpisodePrevious => 'Previous';
+
+  @override
+  String tvEpisodePreviousWithCode(int episode) {
+    return 'Previous · E$episode';
+  }
+
+  @override
+  String get tvEpisodeNext => 'Next';
+
+  @override
+  String tvEpisodeNextWithCode(int episode) {
+    return 'Next · E$episode';
+  }
+
+  @override
   String get tvEpisodeGuestStars => 'Guest stars';
 
   @override
