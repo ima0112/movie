@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/genre.dart';
+import '../../../../core/domain/entities/genre_catalog.dart';
+import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/genre_icons.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/accent_headline.dart';
@@ -19,10 +20,14 @@ class QuizGenreStep extends StatelessWidget {
   const QuizGenreStep({
     super.key,
     required this.selected,
+    this.mediaType,
     required this.onToggle,
   });
 
   final Set<Genre> selected;
+
+  /// The kind of title being picked: on TV the combined genres are one chip.
+  final MediaType? mediaType;
   final ValueChanged<Genre> onToggle;
 
   /// A disabled chip is shown at this opacity (the quiz tiles' own 30%).
@@ -31,7 +36,8 @@ class QuizGenreStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final atMax = selected.length >= QuizState.maxExcludedGenres;
+    final chips = GenreCatalog.chipsOf(mediaType, selected);
+    final atMax = chips.length >= QuizState.maxExcludedGenres;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,8 +58,8 @@ class QuizGenreStep extends StatelessWidget {
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.md,
           children: [
-            for (final (genre, _) in genreOptions)
-              _chip(context, genre, selected.contains(genre), atMax),
+            for (final genre in GenreCatalog.availableFor(mediaType))
+              _chip(context, genre, chips.contains(genre), atMax),
           ],
         ),
       ],
@@ -63,7 +69,7 @@ class QuizGenreStep extends StatelessWidget {
   Widget _chip(BuildContext context, Genre genre, bool isSelected, bool atMax) {
     final disabled = atMax && !isSelected;
     final chip = AppChip(
-      label: genre.localizedName(context.l10n),
+      label: genre.localizedName(context.l10n, type: mediaType),
       state: isSelected ? ChipState.vetoed : ChipState.normal,
       onTap: disabled ? null : () => onToggle(genre),
     );
@@ -72,7 +78,7 @@ class QuizGenreStep extends StatelessWidget {
       selected: isSelected,
       enabled: !disabled,
       excludeSemantics: true,
-      label: genre.localizedName(context.l10n),
+      label: genre.localizedName(context.l10n, type: mediaType),
       onTap: disabled ? null : () => onToggle(genre),
       child: disabled ? Opacity(opacity: _disabledOpacity, child: chip) : chip,
     );
