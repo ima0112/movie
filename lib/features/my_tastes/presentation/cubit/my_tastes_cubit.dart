@@ -7,7 +7,9 @@ import '../../../../app/cubits/taste_profile_cubit.dart';
 import '../../../../core/domain/entities/genre.dart';
 import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
+import '../../../../core/data/tmdb/tmdb_genre_mapper.dart';
 import '../../../../core/domain/entities/collection.dart';
+import '../../../../core/domain/entities/collection_genres.dart';
 import '../../../../core/domain/entities/collection_catalog.dart';
 import '../../../match_engine/domain/vibe_catalog.dart';
 import 'my_tastes_state.dart';
@@ -42,7 +44,9 @@ class MyTastesCubit extends Cubit<MyTastesState> {
     this._tasteProfileCubit,
     VibeCatalog vibeCatalog, [
     CollectionCatalog collectionCatalog = const CollectionCatalog([]),
-  ]) : super(
+    GenreOfTmdbId genreOf = TmdbGenreMapper.fromTmdbId,
+  ]) : _genreOf = genreOf,
+       super(
          MyTastesState.fromProfile(
            _tasteProfileCubit.state,
            vibeCatalog.all(),
@@ -58,6 +62,7 @@ class MyTastesCubit extends Cubit<MyTastesState> {
       if (c.inTastes) c,
   ];
 
+  final GenreOfTmdbId _genreOf;
   final TasteProfileCubit _tasteProfileCubit;
   late final StreamSubscription<TasteProfile?> _subscription;
   Timer? _savedIndicatorTimer;
@@ -101,6 +106,10 @@ class MyTastesCubit extends Cubit<MyTastesState> {
 
   /// "Genres you never want" — same mutual exclusivity, the other way.
   void toggleVetoedGenre(Genre genre) {
+    if (!state.vetoedGenres.contains(genre) &&
+        genresBlockedByCollections.contains(genre)) {
+      return;
+    }
     final vetoed = _toggled(state.vetoedGenres, genre);
     final stillVetoed = vetoed.contains(genre);
     final liked = stillVetoed
@@ -119,12 +128,36 @@ class MyTastesCubit extends Cubit<MyTastesState> {
     _apply(state.copyWith(likedVibes: _toggled(liked, vibeId)));
   }
 
-  /// "Collections you like" — no cap (like genres): each one on or off.
-  void toggleCollection(String collectionId) => _apply(
-    state.copyWith(
-      likedCollections: _toggled(state.likedCollections, collectionId),
-    ),
-  );
+  /// The liked collections' ids a vetoed genre would empty (Anime needs
+  /// Animation): they can't be liked while that genre is avoided.
+  Set<String> get collectionsBlockedByVetoes => {
+    for (final c in state.availableCollections)
+      if (CollectionGenres.requiredAnywhere(
+        c,
+        _genreOf,
+      ).any(state.vetoedGenres.contains))
+        c.id,
+  };
+
+  /// The genres a liked collection needs: they can't be avoided while it is
+  /// liked.
+  Set<Genre> get genresBlockedByCollections => {
+    for (final c in state.availableCollections)
+      if (state.likedCollections.contains(c.id))
+        ...CollectionGenres.requiredAnywhere(c, _genreOf),
+  };
+
+  /// "Collections you like" — no cap (like genres): each one on or off, but
+  /// not while an avoided genre is one it needs.
+  void toggleCollection(String collectionId) {
+    final liked = state.likedCollections.contains(collectionId);
+    if (!liked && collectionsBlockedByVetoes.contains(collectionId)) return;
+    _apply(
+      state.copyWith(
+        likedCollections: _toggled(state.likedCollections, collectionId),
+      ),
+    );
+  }
 
   /// "Eras": the release years [from]–[to] we lean towards. A [to] of
   /// [latestYear] means "up to today" and is kept as `null`.

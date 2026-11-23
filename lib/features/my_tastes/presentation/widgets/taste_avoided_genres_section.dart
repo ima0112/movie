@@ -19,16 +19,26 @@ class TasteAvoidedGenresSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return BlocSelector<MyTastesCubit, MyTastesState, Set<Genre>>(
-      selector: (state) => state.vetoedGenres,
-      builder: (context, vetoed) => TasteGenreSection(
-        title: l10n.myTastesGenresNeverTitle,
-        hint: l10n.myTastesGenresNeverHint,
-        genres: [for (final (genre, _) in genreOptions) genre],
-        selected: vetoed,
-        onToggle: context.read<MyTastesCubit>().toggleVetoedGenre,
-        selectedState: ChipState.vetoed,
-      ),
+    // The genres a liked collection needs can't be avoided (rule 9: this
+    // watches the avoided set and the liked collections only).
+    return BlocSelector<
+      MyTastesCubit,
+      MyTastesState,
+      (Set<Genre>, Set<String>)
+    >(
+      selector: (state) => (state.vetoedGenres, state.likedCollections),
+      builder: (context, current) {
+        final (vetoed, _) = current;
+        return TasteGenreSection(
+          title: l10n.myTastesGenresNeverTitle,
+          hint: l10n.myTastesGenresNeverHint,
+          genres: [for (final (genre, _) in genreOptions) genre],
+          selected: vetoed,
+          onToggle: context.read<MyTastesCubit>().toggleVetoedGenre,
+          selectedState: ChipState.vetoed,
+          disabled: context.read<MyTastesCubit>().genresBlockedByCollections,
+        );
+      },
     );
   }
 }
