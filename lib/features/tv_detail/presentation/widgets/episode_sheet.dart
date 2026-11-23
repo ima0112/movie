@@ -4,8 +4,10 @@ import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../../shared/widgets/pull_down_to_dismiss.dart';
 import 'episode_nav_button.dart';
 import 'episode_sheet_body.dart';
+import 'episode_sheet_handle.dart';
 
 /// H4b (Episode) — `docs/SCREENS.md` H4b: opened from an episode row in D2c.
 /// The episode's [EpisodeSheetBody] with, pinned at the foot, "‹ Previous" and
@@ -93,45 +95,63 @@ class _EpisodeSheetState extends State<EpisodeSheet> {
     return SafeArea(
       child: FractionallySizedBox(
         heightFactor: EpisodeSheet._heightFactor,
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: still ? Duration.zero : EpisodeSheet._fade,
-                child: EpisodeSheetBody(
-                  // A new key per episode: it fades and its scroll resets.
-                  key: ValueKey(_index),
-                  seasonNumber: widget.seasonNumber,
-                  episode: episode,
-                  onPersonTap: widget.onPersonTap,
-                ),
-              ),
-            ),
-            if (_episodes.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
-                  AppSpacing.md,
-                  AppSpacing.xl,
-                  AppSpacing.lg,
-                ),
-                child: stacked
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          next,
-                          const SizedBox(height: AppSpacing.md),
-                          previous,
-                        ],
-                      )
-                    : Row(
-                        children: [
-                          Expanded(child: previous),
-                          const SizedBox(width: AppSpacing.md),
-                          Expanded(child: next),
-                        ],
+            Column(
+              children: [
+                Expanded(
+                  // Pulling the content down past its top closes the sheet (its
+                  // own swipe never gets past the list).
+                  child: PullDownToDismiss(
+                    onDismiss: () => Navigator.of(context).maybePop(),
+                    child: AnimatedSwitcher(
+                      duration: still ? Duration.zero : EpisodeSheet._fade,
+                      child: EpisodeSheetBody(
+                        // A new key per episode: it fades and its scroll
+                        // resets.
+                        key: ValueKey(_index),
+                        seasonNumber: widget.seasonNumber,
+                        episode: episode,
+                        onPersonTap: widget.onPersonTap,
                       ),
-              ),
+                    ),
+                  ),
+                ),
+                if (_episodes.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.xl,
+                      AppSpacing.md,
+                      AppSpacing.xl,
+                      AppSpacing.lg,
+                    ),
+                    child: stacked
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              next,
+                              const SizedBox(height: AppSpacing.md),
+                              previous,
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              Expanded(child: previous),
+                              const SizedBox(width: AppSpacing.md),
+                              Expanded(child: next),
+                            ],
+                          ),
+                  ),
+              ],
+            ),
+            // Over the still, outside the scrolling content: pulling it down
+            // closes the sheet.
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: EpisodeSheetHandle(),
+            ),
           ],
         ),
       ),
