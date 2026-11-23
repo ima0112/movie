@@ -12,7 +12,6 @@ import '../../domain/explore_section.dart';
 import '../cubit/explore_browse_cubit.dart';
 import '../cubit/explore_browse_state.dart';
 import 'explore_browse_section.dart';
-import 'explore_collection_pills.dart';
 import 'explore_genre_pills.dart';
 import 'explore_platform_pills.dart';
 
@@ -42,7 +41,6 @@ class _Browse extends StatelessWidget {
           bottom: AppTabBar.scrollInset(context),
         ),
         children: [
-          const ExploreCollectionPills(),
           const ExploreGenrePills(),
           const ExplorePlatformPills(),
           for (final section in ExploreSection.values)

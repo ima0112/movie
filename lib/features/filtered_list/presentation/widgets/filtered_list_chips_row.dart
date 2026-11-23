@@ -6,6 +6,7 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../l10n/discover_preset_localization.dart';
+import '../../../../l10n/collection_localization.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_chip.dart';
@@ -88,6 +89,15 @@ class FilteredListChipsRow extends StatelessWidget {
           remove: () => filter.copyWith(
             withWatchProviders: Set.of(filter.withWatchProviders)..remove(id),
           ),
+        ),
+      );
+    }
+
+    if (filter.collection case final collection?) {
+      chips.add(
+        _ActiveChip(
+          label: collection.localizedName(l10n),
+          remove: () => filter.copyWith(collection: () => null),
         ),
       );
     }

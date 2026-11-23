@@ -595,12 +595,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get carouselSectionPopular => 'Populares';
 
   @override
-  String get exploreCollectionLabel => 'Colección';
-
-  @override
-  String get exploreCollectionAll => 'Todas';
-
-  @override
   String get collectionTurkishSeries => 'Series turcas';
 
   @override
@@ -822,6 +816,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String filteredListRatingRangeChip(String min, String max) {
     return 'Nota $min–$max';
   }
+
+  @override
+  String get filterSheetSectionCollection => 'Colección';
 
   @override
   String get filterSheetSectionType => 'Tipo';
