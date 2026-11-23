@@ -222,7 +222,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 ### D2b. Seasons (pushed)
 - Access: the "Seasons" card in D2. Pushed screen: back button, centered "Seasons" title, no bottom bar. Receives the already-loaded show (no network call of its own).
 - Elements (vertical scroll):
-  - Header card (`surfaceRaised`): the show's name and three info chips — status ("Airing" / "Ended" / "Cancelled"), "N seasons", "M episodes".
+  - Header (no card): the show's name big (the `display` style, max 2 lines) and under it **one muted line** — "● Ended · 5 seasons · 62 episodes" — whose **dot is the status colour**: green while it airs, grey when it ended, red when it was cancelled. No chips.
   - "NEXT EPISODE" caption + card: the next scheduled episode (still, "S2 · E6 · Name", air date chip) or, with none, "No next episode" and "No upcoming episode has been announced yet.". **Omitted entirely for a show that has ended or been cancelled** (it can't have one).
   - Every card (header, episode, season) is the full content width, whatever its text.
   - "LAST AIRED EPISODE" caption + card: still (92×56), "S5 · E16 · Name", air-date and ★ rating chips (rating only if TMDB has one). Omitted when TMDB reports none.
