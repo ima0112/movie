@@ -9,6 +9,7 @@ import '../../../../shared/widgets/media_card.dart';
 import '../../../../shared/widgets/media_carousel.dart';
 import '../../../discover/presentation/widgets/discover_content_error.dart';
 import '../../../discover/presentation/widgets/discover_section_skeleton.dart';
+import '../../../../l10n/collection_localization.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/vibe_localization.dart';
 import '../../domain/recommendation_planner.dart';
@@ -84,6 +85,10 @@ class RecommendationSectionView extends StatelessWidget {
       GenreSeed(:final genre) => l10n.carouselSectionBecauseYouLikeGenre(
         genre.localizedName(l10n),
       ),
+      CollectionSeed(:final collection) =>
+        l10n.carouselSectionBecauseYouLikeCollection(
+          collection.localizedName(l10n),
+        ),
       VibeSeed(:final vibe) => l10n.carouselSectionBecauseYouWantVibe(
         vibe.localizedName(l10n),
       ),

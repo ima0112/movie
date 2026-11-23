@@ -73,6 +73,35 @@ TasteProfile _profile({
 }
 
 void main() {
+  group('TasteProfileBuilder.build — collections', () {
+    test('the liked collections become the answers\' collections', () {
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: TasteProfile(
+          likedGenres: {_drama},
+          vetoedGenres: const {},
+          likedVibes: const {},
+          likedCollections: {'anime', 'soaps'},
+          yearFrom: 2000,
+          updatedAt: DateTime(2024),
+        ),
+        libraryEntries: const [],
+        mediaType: MediaType.tvShow,
+        participantId: 'me',
+      );
+      expect(result!.collectionIds, {'anime', 'soaps'});
+    });
+
+    test('an inferred profile has none', () {
+      final result = TasteProfileBuilder(_vibeCatalog).build(
+        profile: null,
+        libraryEntries: [for (var i = 0; i < 5; i++) _entry(i)],
+        mediaType: MediaType.movie,
+        participantId: 'me',
+      );
+      expect(result?.collectionIds ?? const <String>{}, isEmpty);
+    });
+  });
+
   group('TasteProfileBuilder.build — an explicit profile', () {
     test('with exactly 3 vibes already, those are used as-is — library '
         'signals never touch an explicit pick', () {
