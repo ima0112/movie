@@ -8,13 +8,14 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/full_date_format.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/number_format_extension.dart';
+import '../../../../shared/widgets/outlined_text.dart';
 import '../../../../shared/widgets/still_image.dart';
 
 /// One episode in D2c's list: a small still, the title, one muted line with
 /// "date · runtime · ★ rating" (the date in amber if it hasn't aired yet,
 /// "TBA" with no date; the runtime and the rating left out when unknown), a
-/// 1-line synopsis, and the episode's number big and dim at the right ("01",
-/// two digits at least). Hairline divider underneath.
+/// 1-line synopsis, and the episode's number at the right in the outlined
+/// "Top today" rank typography ("01", two digits at least). Hairline divider underneath.
 class SeasonEpisodeRow extends StatelessWidget {
   const SeasonEpisodeRow({super.key, required this.episode, this.onTap});
 
@@ -24,6 +25,9 @@ class SeasonEpisodeRow extends StatelessWidget {
   static const double _stillWidth = 72;
   static const double _stillHeight = 48;
   static const double _starSize = 12;
+
+  /// The same stroke as B2's compact "Top today" ranks.
+  static const double _numberStroke = 1.5;
 
   /// "01", "12", "103": two digits at least, the number as is beyond that.
   static String numberLabel(int number) => number < 10 ? '0$number' : '$number';
@@ -117,9 +121,10 @@ class SeasonEpisodeRow extends StatelessWidget {
             // A number at the right edge, fixed to the text scale 1 so it
             // never squeezes the text beside it.
             MediaQuery.withNoTextScaling(
-              child: Text(
+              child: OutlinedText(
                 numberLabel(episode.episodeNumber),
-                style: AppTextStyles.episodeNumber,
+                style: AppTextStyles.rankCompact,
+                strokeWidth: _numberStroke,
               ),
             ),
           ],

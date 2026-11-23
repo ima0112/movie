@@ -172,15 +172,6 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
-  /// The big episode number at the right of a season's episode row ("01"):
-  /// 24, semibold, dim.
-  static final TextStyle episodeNumber = GoogleFonts.manrope(
-    fontSize: 24,
-    height: 1,
-    fontWeight: _semibold,
-    color: AppColors.inkDim,
-  );
-
   /// Text inside very small pills. 9 / 1.3, regular.
   static final TextStyle micro = GoogleFonts.manrope(
     fontSize: 9,
