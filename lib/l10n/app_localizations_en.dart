@@ -2033,4 +2033,167 @@ class AppLocalizationsEn extends AppLocalizations {
   String surpriseTourStep(int step, int total) {
     return 'Step $step of $total';
   }
+
+  @override
+  String get statsSurpriseTitle => 'Surprise me';
+
+  @override
+  String get statsSurpriseHitRateCaption =>
+      'of your sessions ended with a pick';
+
+  @override
+  String statsSurpriseSessions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions',
+      one: '1 session',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statsSurprisePicks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count picks',
+      one: '1 pick',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statsSurpriseSavedOnly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions saved something but chose nothing',
+      one: '1 session saved something but chose nothing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statsSurpriseBatchTitle => 'Which round you decide in';
+
+  @override
+  String get statsSurpriseBatchFirst => 'First five';
+
+  @override
+  String get statsSurpriseBatchSecond => 'Second five';
+
+  @override
+  String get statsSurpriseBatchThird => 'Third or later';
+
+  @override
+  String statsSurpriseBatchAverage(String average) {
+    return 'On average you decide in round $average';
+  }
+
+  @override
+  String get statsSurpriseAfterTitle => 'What happened to your picks';
+
+  @override
+  String statsSurpriseOfTotal(int count, int total) {
+    return '$count of $total';
+  }
+
+  @override
+  String get statsSurpriseWatched => 'Watched';
+
+  @override
+  String get statsSurpriseWaiting => 'Waiting in Watch later';
+
+  @override
+  String get statsSurpriseAverageRating => 'Average rating';
+
+  @override
+  String get statsSurpriseBestTitle => 'Your best picks';
+
+  @override
+  String get statsSurpriseNewTitle => 'New to you';
+
+  @override
+  String get statsSurpriseNewHint =>
+      'Picks with a genre you had not watched before';
+
+  @override
+  String statsSurpriseNewGenres(String genres) {
+    return 'New: $genres';
+  }
+
+  @override
+  String get statsSurpriseGenresTitle => 'Your picks by genre';
+
+  @override
+  String get statsSurpriseGenresHint => 'Picked out of those shown';
+
+  @override
+  String get statsSurpriseAskedTitle => 'What you ask for';
+
+  @override
+  String get statsSurpriseCollections => 'Collections';
+
+  @override
+  String get statsSurpriseVibes => 'Vibes';
+
+  @override
+  String statsSurpriseAskedRow(int asked, int picked) {
+    return 'asked $asked× · picked $picked×';
+  }
+
+  @override
+  String get statsSurpriseHowYouStart => 'How you start';
+
+  @override
+  String get statsSurpriseViaQuiz => 'Quiz';
+
+  @override
+  String get statsSurpriseViaTastes => 'My tastes';
+
+  @override
+  String statsSurpriseViaRow(String sessions, String picks) {
+    return '$sessions · $picks';
+  }
+
+  @override
+  String statsSurpriseRelaxed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions had to widen the search',
+      one: '1 session had to widen the search',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statsSurpriseRelaxLowerVotes => 'fewer votes';
+
+  @override
+  String get statsSurpriseRelaxDropVibes => 'no vibes';
+
+  @override
+  String get statsSurpriseRelaxWidenYears => 'earlier years';
+
+  @override
+  String get statsSurpriseHabitTitle => 'Your rhythm';
+
+  @override
+  String get statsSurpriseByMonth => 'Sessions by month';
+
+  @override
+  String get statsSurpriseByWeekday => 'By day of the week';
+
+  @override
+  String statsSurpriseStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weeks in a row',
+      one: '1 week in a row',
+    );
+    return '$_temp0';
+  }
 }

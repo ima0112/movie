@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/surprise_session.dart';
+import 'package:movies/core/domain/entities/surprise_history_entry.dart';
+import 'package:movies/core/domain/repositories/surprise_session_repository.dart';
+import 'package:movies/core/domain/repositories/surprise_history_repository.dart';
+import 'package:movies/core/data/local/in_memory_surprise_session_repository.dart';
+import 'package:movies/core/data/local/in_memory_surprise_history_repository.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
@@ -38,6 +44,8 @@ void main() {
     WidgetTester tester,
     List<UserMediaEntry> entries, {
     Locale? locale,
+    InMemorySurpriseHistoryRepository? history,
+    InMemorySurpriseSessionRepository? sessions,
   }) async {
     final library = InMemoryUserLibraryRepository();
     for (final e in entries) {
@@ -45,6 +53,14 @@ void main() {
     }
     getIt.unregister<UserLibraryRepository>();
     getIt.registerSingleton<UserLibraryRepository>(library);
+    getIt.unregister<SurpriseHistoryRepository>();
+    getIt.registerSingleton<SurpriseHistoryRepository>(
+      history ?? InMemorySurpriseHistoryRepository(),
+    );
+    getIt.unregister<SurpriseSessionRepository>();
+    getIt.registerSingleton<SurpriseSessionRepository>(
+      sessions ?? InMemorySurpriseSessionRepository(),
+    );
     tester.view.physicalSize = const Size(390, 1800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -139,5 +155,36 @@ void main() {
     expect(find.text('Este año'), findsOneWidget);
     expect(find.text('Este mes'), findsOneWidget);
     expect(_inHero('1 título'), findsOneWidget);
+  });
+
+  testWidgets('with nothing watched but Surprise-me sessions, the page is the '
+      'Surprise-me block, not the empty state', (tester) async {
+    final history = InMemorySurpriseHistoryRepository();
+    final sessions = InMemorySurpriseSessionRepository();
+    await sessions.recordBatch(
+      SurpriseSession(
+        sessionId: 's',
+        startedAt: DateTime.now(),
+        mediaType: MediaType.movie,
+        source: SurpriseSessionSource.quiz,
+        yearFrom: 1950,
+      ),
+    );
+    await history.recordShown([
+      SurpriseHistoryEntry(
+        key: const MediaKey(type: MediaType.movie, tmdbId: 1),
+        sessionId: 's',
+        shownAt: DateTime.now(),
+        outcome: SurpriseOutcome.chosen,
+      ),
+    ]);
+    await pump(tester, const [], history: history, sessions: sessions);
+
+    expect(find.text('Surprise me'), findsOneWidget);
+    expect(find.text('100%'), findsOneWidget);
+    expect(
+      find.text('Mark something as watched to see your stats'),
+      findsNothing,
+    );
   });
 }
