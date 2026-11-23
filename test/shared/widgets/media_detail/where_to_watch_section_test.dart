@@ -203,6 +203,62 @@ void main() {
         );
       });
 
+      testWidgets('the pill is as wide as its text needs, and the title keeps '
+          'one whole line beside it even with a long country', (tester) async {
+        Future<void> pump(String region) => tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: MediaQuery(
+              data: const MediaQueryData(size: Size(390, 844)),
+              child: Scaffold(
+                body: WhereToWatchSection(providers: all, regionName: region),
+              ),
+            ),
+          ),
+        );
+
+        // Wide enough that the (wide) test font's title and a pill share a row.
+        tester.view.physicalSize = const Size(700, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await pump('Cuba');
+        final short = tester.getSize(find.byType(WhereToWatchRegionButton));
+        await pump('United Kingdom');
+        final long = tester.getSize(find.byType(WhereToWatchRegionButton));
+        expect(short.width, lessThan(long.width)); // sized to the text
+        expect(short.height, long.height); // one line each
+
+        // A very long name: the title stays whole on its line, the pill ends
+        // in an ellipsis beside it.
+        await pump('Reino Unido de Gran Bretaña e Irlanda del Norte');
+        final title = tester.getRect(find.text('Where to watch'));
+        final pill = tester.getRect(find.byType(WhereToWatchRegionButton));
+        expect(tester.takeException(), isNull);
+        expect(title.height, lessThan(40)); // one line of h2
+        expect(pill.left, greaterThan(title.right));
+        expect(pill.height, lessThan(48));
+      });
+
+      testWidgets('when not even a short pill fits beside the title (big '
+          'text, small phone) it goes under it, at the left, and the title '
+          'stays on one line', (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          wrap(all, textScale: 2, size: const Size(320, 568)),
+        );
+
+        expect(tester.takeException(), isNull);
+        final title = tester.getRect(find.text('Where to watch'));
+        final pill = tester.getRect(find.byType(WhereToWatchRegionButton));
+        expect(pill.top, greaterThanOrEqualTo(title.bottom));
+        expect(pill.left, lessThan(title.left + 1));
+        final text = tester.widget<Text>(find.text('Where to watch'));
+        expect(text.maxLines, 1);
+      });
+
       testWidgets('the footer has the hint on the left and the amber, '
           'non-tappable JustWatch badge on the right; the attribution '
           'comes last', (tester) async {
