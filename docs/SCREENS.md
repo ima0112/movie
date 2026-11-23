@@ -223,9 +223,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - Access: the "Seasons" card in D2. Pushed screen: back button, centered "Seasons" title, no bottom bar. Receives the already-loaded show (no network call of its own).
 - Elements (vertical scroll):
   - Header (no card): the show's name big (the `display` style, max 2 lines) and under it **one muted line** — "● Ended · 5 seasons · 62 episodes" — whose **dot is the status colour**: green while it airs, grey when it ended, red when it was cancelled. No chips.
-  - "NEXT EPISODE" caption + card: the next scheduled episode (still, "S2 · E6 · Name", air date chip) or, with none, "No next episode" and "No upcoming episode has been announced yet.". **Omitted entirely for a show that has ended or been cancelled** (it can't have one).
-  - Every card (header, episode, season) is the full content width, whatever its text.
-  - "LAST AIRED EPISODE" caption + card: still (92×56), "S5 · E16 · Name", air-date and ★ rating chips (rating only if TMDB has one). Omitted when TMDB reports none.
+  - **One timeline card** (`surfaceRaised`, radius 16, hairline border; a thin vertical line with a marker per node): **NEXT** on top (a dashed ring) and **LAST AIRED** under it (a solid amber dot, the label in amber). An episode node is the 92×56 still, "S5 · E16 · Name" and a plain muted line with the air date and ★ rating ("29 Sep 2013 · ★ 9.9"; "TBA" with no date, no rating when TMDB has none). The Next node with no episode says **"No next episode"** and why: "This series has ended." (ended), "This series was cancelled." (cancelled) or "No upcoming episode has been announced yet." (still airing). With no last aired episode (TMDB reports none) only the Next node is drawn. The card is the full content width, whatever its text.
   - "SEASONS" caption + one bordered card per season (44×64 thumbnail, "Season N", year, "X episodes", chevron) → D2c. A specials season (TMDB's season 0) sorts last, labeled "Specials", and only appears at all if it has episodes.
 - No Pako.
 - Exits: D2c.
