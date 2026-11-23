@@ -10,12 +10,11 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
-import '../../../../shared/widgets/app_section.dart';
 import '../../../../shared/widgets/state_views.dart';
 import '../cubit/season_cubit.dart';
 import '../widgets/episode_sheet.dart';
 import '../widgets/season_episode_row.dart';
-import '../widgets/season_header_card.dart';
+import '../widgets/season_header.dart';
 import '../widgets/season_overview.dart';
 
 /// D2c (Season, pushed) — `docs/SCREENS.md` D2c (it replaces the old H4
@@ -39,7 +38,7 @@ class SeasonScreen extends StatelessWidget {
   final int tvId;
   final SeasonSummary seasonSummary;
 
-  /// The show's name, shown small over the season title in the header card.
+  /// The show's name, the title of the app bar.
   final String? showTitle;
 
   @override
@@ -114,9 +113,9 @@ class _SeasonView extends StatelessWidget {
                 AppSpacing.screenMargin,
                 0,
               ),
-              child: SeasonHeaderCard(
+              child: SeasonHeader(
                 title: title,
-                posterPath: seasonSummary.posterPath,
+                year: seasonSummary.airDate?.year,
                 voteAverage: seasonSummary.voteAverage,
                 episodeCountLabel: l10n.tvEpisodeCount(
                   seasonSummary.episodeCount,
@@ -150,8 +149,13 @@ class _SeasonView extends StatelessWidget {
                           ),
                           child: SeasonOverview(overview: season.overview),
                         ),
-                      AppSection.overline(
-                        title: l10n.tvEpisodesSectionTitle,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.screenMargin,
+                          AppSpacing.lg,
+                          AppSpacing.screenMargin,
+                          0,
+                        ),
                         child: Column(
                           children: [
                             for (final episode in season.episodes)
