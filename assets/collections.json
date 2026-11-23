@@ -202,14 +202,14 @@
         "queries": [
           {
             "withGenres": [
-              10751,
-              16
+              10751
             ],
             "withoutGenres": [
               27,
               53,
               80
-            ]
+            ],
+            "certificationLte": "PG"
           }
         ]
       },

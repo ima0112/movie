@@ -121,12 +121,13 @@ void main() {
     expect(queries[1].originCountries, {'IN'});
   });
 
-  test('Kids: family or animation without horror, thriller and crime on '
-      'movies; the Kids genre on TV', () {
+  test('Kids: family films rated PG or below, without horror, thriller and '
+      'crime, on movies; the Kids genre on TV', () {
     final kids = catalog.byId('kids')!;
     final movie = kids.movie!.queries.single;
-    expect(movie.withTmdbGenreIds, {10751, 16});
-    expect(movie.requireAllGenres, isFalse);
+    expect(movie.withTmdbGenreIds, {10751});
+    expect(movie.certificationLte, 'PG');
+    expect(kids.tv!.queries.single.certificationLte, isNull);
     expect(movie.withoutTmdbGenreIds, {27, 53, 80});
     expect(kids.tv!.queries.single.withTmdbGenreIds, {10762});
   });
