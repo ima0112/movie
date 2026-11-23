@@ -1432,6 +1432,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tvSpecialsLabel => 'Specials';
 
   @override
+  String tvSeasonBadge(int number) {
+    return 'S$number';
+  }
+
+  @override
   String tvSeasonLabel(int number) {
     return 'Season $number';
   }

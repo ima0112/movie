@@ -1343,6 +1343,15 @@
   "@tvSpecialsLabel": {
     "description": "D2's \"Seasons\" row and H4's own title, for season 0 specifically — shown instead of \"Season 0\"."
   },
+  "tvSeasonBadge": "S{number}",
+  "@tvSeasonBadge": {
+    "description": "The short tag on a season's poster in D2b's grid (\"S1\" / \"T1\"); the specials season uses tvSpecialsLabel instead.",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "tvSeasonLabel": "Season {number}",
   "@tvSeasonLabel": {
     "description": "D2's \"Seasons\" row and H4's own title, for any season other than 0 (see tvSpecialsLabel).",

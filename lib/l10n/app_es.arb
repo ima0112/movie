@@ -400,6 +400,7 @@
   "tvEpisodeCodeSpecialsAndName": "Especiales · E{episode} · {name}",
   "tvSeasonsSectionTitle": "Temporadas",
   "tvSpecialsLabel": "Especiales",
+  "tvSeasonBadge": "T{number}",
   "tvSeasonLabel": "Temporada {number}",
   "tvEpisodeRowTitle": "{number}. {name}",
   "tvEpisodeTba": "Por confirmar",

@@ -233,7 +233,7 @@ void main() {
       await tester.pumpWidget(_app(TvSeasonsScreen(detail: _show())));
 
       expect(find.text('SEASONS'), findsOneWidget);
-      expect(find.text('Season 1'), findsOneWidget);
+      expect(find.text('S1'), findsOneWidget);
     });
 
     testWidgets('survives a small device at 200% text scale (es)', (
