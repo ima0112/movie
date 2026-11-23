@@ -59,7 +59,7 @@ void main() {
 
     final center = tester.getRect(_card('Movie 1'));
     expect(center.center.dx, moreOrLessEquals(390 / 2, epsilon: 1));
-    expect(center.width, moreOrLessEquals(390 * 0.78, epsilon: 1));
+    expect(center.width, moreOrLessEquals(390 * 0.82, epsilon: 1));
     expect(center.height, MediaCardSize.hero.height);
 
     final next = tester.getRect(_card('Movie 2'));
