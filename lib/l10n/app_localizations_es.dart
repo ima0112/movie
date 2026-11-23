@@ -1524,6 +1524,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mediaDetailShareFailed => 'No se pudo compartir';
 
   @override
+  String get mediaDetailRatingSource => 'TMDB';
+
+  @override
+  String mediaDetailRatingSemantics(String value) {
+    return 'Valoración $value de 10';
+  }
+
+  @override
   String get mediaDetailActionTrailer => 'Tráiler';
 
   @override

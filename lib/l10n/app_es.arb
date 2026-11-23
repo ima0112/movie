@@ -416,6 +416,15 @@
   "personDetailSave": "Guardar en Mi lista",
   "mediaDetailShare": "Compartir",
   "mediaDetailShareFailed": "No se pudo compartir",
+  "mediaDetailRatingSource": "TMDB",
+  "@mediaDetailRatingSource": {
+    "description": "The small label under the number in D1/D2's rating ring: where the rating comes from (a brand name, the same in every language)."
+  },
+  "mediaDetailRatingSemantics": "Valoración {value} de 10",
+  "@mediaDetailRatingSemantics": {
+    "description": "Accessibility label of D1/D2's rating ring.",
+    "placeholders": {"value": {"type": "String", "example": "9.0"}}
+  },
   "mediaDetailActionTrailer": "Tráiler",
   "mediaDetailActionSeeSimilar": "Ver similares",
   "mediaDetailActionFavorite": "Favorito",
