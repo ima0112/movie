@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/data/local/in_memory_surprise_history_repository.dart';
+import 'package:movies/core/data/local/in_memory_surprise_session_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
+import 'package:movies/core/domain/entities/surprise_history_entry.dart';
+import 'package:movies/core/domain/entities/surprise_session.dart';
+import 'package:movies/features/you/presentation/cubit/you_surprise_cubit.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/domain/entities/user_media_entry.dart';
@@ -10,6 +15,24 @@ import 'package:movies/features/you/presentation/widgets/you_stats_card.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/activity_bars.dart';
 import 'package:movies/shared/widgets/type_split_bar.dart';
+
+SurpriseSession _session(String id) => SurpriseSession(
+  sessionId: id,
+  startedAt: DateTime(2026, 11, 20),
+  mediaType: MediaType.movie,
+  source: SurpriseSessionSource.quiz,
+  yearFrom: 2000,
+);
+
+SurpriseHistoryEntry _shown(String session, int id, SurpriseOutcome outcome) =>
+    SurpriseHistoryEntry(
+      key: MediaKey(type: MediaType.movie, tmdbId: id),
+      sessionId: session,
+      shownAt: DateTime(2026, 11, 20),
+      batch: 1,
+      genres: const [],
+      outcome: outcome,
+    );
 
 UserMediaEntry _watched(
   int id, {
@@ -31,14 +54,24 @@ Future<void> _pump(
   InMemoryUserLibraryRepository repo, {
   VoidCallback? onSeeStats,
   Locale? locale,
+  InMemorySurpriseSessionRepository? sessions,
+  InMemorySurpriseHistoryRepository? history,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: BlocProvider(
-        create: (_) => YouStatsCubit(repo),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => YouStatsCubit(repo)),
+          BlocProvider(
+            create: (_) => YouSurpriseCubit(
+              sessions ?? InMemorySurpriseSessionRepository(),
+              history ?? InMemorySurpriseHistoryRepository(),
+            ),
+          ),
+        ],
         child: Scaffold(
           body: SingleChildScrollView(
             child: YouStatsCard(onSeeStats: onSeeStats ?? () {}),
@@ -51,17 +84,107 @@ Future<void> _pump(
 }
 
 void main() {
-  testWidgets('nothing watched: an invitation, not a row of zeros', (
-    tester,
-  ) async {
+  testWidgets('nothing watched and no Surprise me session: no card at all, '
+      'and no gap either', (tester) async {
     await _pump(tester, InMemoryUserLibraryRepository());
 
-    expect(
-      find.text('Mark something as watched to see your stats'),
-      findsOneWidget,
-    );
     expect(find.byType(ActivityBars), findsNothing);
     expect(find.text('See stats'), findsNothing);
+    expect(
+      find.text('Mark something as watched to see your stats'),
+      findsNothing,
+    );
+    expect(tester.getSize(find.byType(YouStatsCard)).height, 0);
+  });
+
+  testWidgets('only Favorites or Watch later is not enough: still no card', (
+    tester,
+  ) async {
+    final repo = InMemoryUserLibraryRepository();
+    await repo.upsert(
+      const UserMediaEntry(
+        key: MediaKey(type: MediaType.movie, tmdbId: 1),
+        title: 'Fav',
+        isFavorite: true,
+        isWatchLater: true,
+      ),
+    );
+    await _pump(tester, repo);
+
+    expect(find.text('See stats'), findsNothing);
+    expect(tester.getSize(find.byType(YouStatsCard)).height, 0);
+  });
+
+  testWidgets('only Surprise me: its mini summary (sessions and picks) and the '
+      'link, without the library numbers', (tester) async {
+    final sessions = InMemorySurpriseSessionRepository();
+    final history = InMemorySurpriseHistoryRepository();
+    await sessions.recordBatch(_session('a'));
+    await sessions.recordBatch(_session('b'));
+    await history.recordShown([_shown('a', 1, SurpriseOutcome.chosen)]);
+    var opened = 0;
+    await _pump(
+      tester,
+      InMemoryUserLibraryRepository(),
+      sessions: sessions,
+      history: history,
+      onSeeStats: () => opened++,
+    );
+
+    expect(find.text('SURPRISE ME'), findsOneWidget);
+    expect(find.text('Sessions'), findsOneWidget);
+    expect(find.text('Picks'), findsOneWidget);
+    expect(find.text('2'), findsOneWidget); // sessions
+    expect(find.text('1'), findsOneWidget); // picks
+    expect(find.byType(ActivityBars), findsNothing);
+    expect(find.byType(TypeSplitBar), findsNothing);
+
+    await tester.tap(find.text('See stats'));
+    expect(opened, 1);
+  });
+
+  testWidgets('a session with nothing chosen still counts: 1 session, 0 '
+      'picks', (tester) async {
+    final sessions = InMemorySurpriseSessionRepository();
+    await sessions.recordBatch(_session('a'));
+    await _pump(tester, InMemoryUserLibraryRepository(), sessions: sessions);
+
+    expect(find.text('SURPRISE ME'), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('0'), findsOneWidget);
+  });
+
+  testWidgets('both: the library first, Surprise me under it, one link', (
+    tester,
+  ) async {
+    final repo = InMemoryUserLibraryRepository();
+    await repo.upsert(_watched(1, minutes: 120));
+    final sessions = InMemorySurpriseSessionRepository();
+    await sessions.recordBatch(_session('a'));
+    await _pump(tester, repo, sessions: sessions);
+
+    expect(find.byType(ActivityBars), findsOneWidget);
+    expect(find.text('SURPRISE ME'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.byType(ActivityBars)).dy,
+      lessThan(tester.getTopLeft(find.text('SURPRISE ME')).dy),
+    );
+    expect(
+      tester.getTopLeft(find.text('SURPRISE ME')).dy,
+      lessThan(tester.getTopLeft(find.text('See stats')).dy),
+    );
+    expect(find.text('See stats'), findsOneWidget);
+  });
+
+  testWidgets('the card appears live when Surprise me is used for the first '
+      'time', (tester) async {
+    final sessions = InMemorySurpriseSessionRepository();
+    await _pump(tester, InMemoryUserLibraryRepository(), sessions: sessions);
+    expect(find.text('See stats'), findsNothing);
+
+    await sessions.recordBatch(_session('a'));
+    await tester.pumpAndSettle();
+    expect(find.text('See stats'), findsOneWidget);
   });
 
   testWidgets('the four numbers, the split and the 12-month bars', (

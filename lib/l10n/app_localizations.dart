@@ -1790,6 +1790,24 @@ abstract class AppLocalizations {
   /// **'{count} this month'**
   String youStatsThisMonth(int count);
 
+  /// The label over Surprise me's mini summary in B5's stats card (shown in capitals): the feature's name.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise me'**
+  String get youStatsSurpriseTitle;
+
+  /// Under the number of Surprise me sessions in B5's stats card.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get youStatsSurpriseSessions;
+
+  /// Under the number of titles chosen in Surprise me in B5's stats card.
+  ///
+  /// In en, this message translates to:
+  /// **'Picks'**
+  String get youStatsSurprisePicks;
+
   /// No description provided for @youStatsLast12Months.
   ///
   /// In en, this message translates to:
@@ -2123,7 +2141,7 @@ abstract class AppLocalizations {
   /// No description provided for @statsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Mark something as watched to see your stats'**
+  /// **'Mark something as watched or try Surprise me to see your stats'**
   String get statsEmptyTitle;
 
   /// No description provided for @statsEmptyBody.

@@ -137,24 +137,31 @@ class DriftSurpriseHistoryRepository implements SurpriseHistoryRepository {
       final rows = await (_db.select(
         _db.surpriseHistoryTable,
       )..orderBy([(row) => OrderingTerm.desc(row.shownAt)])).get();
-      return Success([
-        for (final row in rows)
-          SurpriseHistoryEntry(
-            key: MediaKey(type: row.mediaType, tmdbId: row.tmdbId),
-            sessionId: row.sessionId,
-            shownAt: row.shownAt,
-            batch: row.batch,
-            genres: [
-              for (final id in row.genres.split(','))
-                if (id.isNotEmpty) Genre(id: id),
-            ],
-            outcome: row.outcome,
-          ),
-      ]);
+      return Success([for (final row in rows) _toEntry(row)]);
     } catch (_) {
       return Failure(FailureReason.storage);
     }
   }
+
+  @override
+  Stream<List<SurpriseHistoryEntry>> watchAll() =>
+      (_db.select(_db.surpriseHistoryTable)
+            ..orderBy([(row) => OrderingTerm.desc(row.shownAt)]))
+          .watch()
+          .map((rows) => [for (final row in rows) _toEntry(row)]);
+
+  static SurpriseHistoryEntry _toEntry(SurpriseHistoryRow row) =>
+      SurpriseHistoryEntry(
+        key: MediaKey(type: row.mediaType, tmdbId: row.tmdbId),
+        sessionId: row.sessionId,
+        shownAt: row.shownAt,
+        batch: row.batch,
+        genres: [
+          for (final id in row.genres.split(','))
+            if (id.isNotEmpty) Genre(id: id),
+        ],
+        outcome: row.outcome,
+      );
 
   @override
   Future<Result<void>> clear() async {

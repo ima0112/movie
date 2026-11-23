@@ -926,6 +926,18 @@
       }
     }
   },
+  "youStatsSurpriseTitle": "Surprise me",
+  "@youStatsSurpriseTitle": {
+    "description": "The label over Surprise me's mini summary in B5's stats card (shown in capitals): the feature's name."
+  },
+  "youStatsSurpriseSessions": "Sessions",
+  "youStatsSurprisePicks": "Picks",
+  "@youStatsSurpriseSessions": {
+    "description": "Under the number of Surprise me sessions in B5's stats card."
+  },
+  "@youStatsSurprisePicks": {
+    "description": "Under the number of titles chosen in Surprise me in B5's stats card."
+  },
   "youStatsLast12Months": "Last 12 months",
   "youStatsMovies": "{count, plural, =1{1 movie} other{{count} movies}}",
   "@youStatsMovies": {
@@ -1154,7 +1166,7 @@
       }
     }
   },
-  "statsEmptyTitle": "Mark something as watched to see your stats",
+  "statsEmptyTitle": "Mark something as watched or try Surprise me to see your stats",
   "statsEmptyBody": "Your numbers will show up here once you do.",
   "statsGenreBarsTitle": "Genres you watch most",
   "statsMoviesWatchedLabel": "Movies watched",

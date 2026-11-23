@@ -12,6 +12,10 @@ abstract interface class SurpriseSessionRepository {
   /// Every session, newest first.
   Future<Result<List<SurpriseSession>>> all();
 
+  /// Every session, newest first, again whenever one is recorded or the record
+  /// is cleared (the You page's stats card shows up when the first one lands).
+  Stream<List<SurpriseSession>> watchAll();
+
   /// Forgets everything.
   Future<Result<void>> clear();
 }
