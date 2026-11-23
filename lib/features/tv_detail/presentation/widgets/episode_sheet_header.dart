@@ -6,11 +6,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/still_image.dart';
 
 /// The top of the episode sheet: the 16:9 still **edge to edge**, fading into
-/// the sheet's colour at its foot, the sheet's drag handle drawn over it, and
-/// the episode's code ("T1 · E1") in a dark pill at its lower left.
-///
-/// The sheet is opened with its own handle turned off (`showDragHandle: false`)
-/// so this one can sit on the image instead of above it.
+/// the sheet's colour at its foot, and the episode's code ("T1 · E1") in a dark pill at its lower left.
 class EpisodeSheetHeader extends StatelessWidget {
   const EpisodeSheetHeader({
     super.key,
@@ -22,9 +18,6 @@ class EpisodeSheetHeader extends StatelessWidget {
 
   /// Already localized ("T1 · E1", "Especiales · E1").
   final String code;
-
-  static const double _handleWidth = 40;
-  static const double _handleHeight = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -46,21 +39,6 @@ class EpisodeSheetHeader extends StatelessWidget {
                     AppColors.surfaceRaised.withValues(alpha: 0),
                     AppColors.surfaceRaised,
                   ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: AppSpacing.sm,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  width: _handleWidth,
-                  height: _handleHeight,
-                  decoration: BoxDecoration(
-                    color: AppColors.sheetHandle,
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-                  ),
                 ),
               ),
             ),

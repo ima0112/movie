@@ -67,7 +67,11 @@ class _SeasonView extends StatelessWidget {
   final SeasonSummary seasonSummary;
   final String? showTitle;
 
-  void _openEpisode(BuildContext context, Episode episode) {
+  void _openEpisode(
+    BuildContext context,
+    Episode episode,
+    List<Episode> episodes,
+  ) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -76,6 +80,7 @@ class _SeasonView extends StatelessWidget {
       builder: (_) => EpisodeSheet(
         seasonNumber: seasonSummary.seasonNumber,
         episode: episode,
+        episodes: episodes,
         onPersonTap: (person) => context.pushPersonDetail(person.id),
       ),
     );
@@ -163,7 +168,11 @@ class _SeasonView extends StatelessWidget {
                             for (final episode in season.episodes)
                               SeasonEpisodeRow(
                                 episode: episode,
-                                onTap: () => _openEpisode(context, episode),
+                                onTap: () => _openEpisode(
+                                  context,
+                                  episode,
+                                  season.episodes,
+                                ),
                               ),
                           ],
                         ),
