@@ -2462,6 +2462,12 @@ abstract class AppLocalizations {
   /// **'Specials'**
   String get tvSpecialsLabel;
 
+  /// The short tag on a season's poster in D2b's grid ("S1" / "T1"); the specials season uses tvSpecialsLabel instead.
+  ///
+  /// In en, this message translates to:
+  /// **'S{number}'**
+  String tvSeasonBadge(int number);
+
   /// D2's "Seasons" row and H4's own title, for any season other than 0 (see tvSpecialsLabel).
   ///
   /// In en, this message translates to:

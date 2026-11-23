@@ -11,7 +11,7 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
 import '../widgets/seasons_timeline_card.dart';
 import '../widgets/seasons_header.dart';
-import '../widgets/tv_seasons_section.dart';
+import '../widgets/seasons_grid.dart';
 import '../widgets/tv_status.dart';
 
 /// Seasons (D2b) — pushed from D2's Seasons card (`docs/SCREENS.md` D2b).
@@ -86,10 +86,8 @@ class TvSeasonsScreen extends StatelessWidget {
             ),
             AppSection.overline(
               title: l10n.tvSeasonsSectionTitle,
-              child: TvSeasonsSection(
+              child: SeasonsGrid(
                 seasons: detail.seasons,
-                showTitle: false,
-                padding: EdgeInsets.zero,
                 onSeasonTap: (season) => _openSeason(context, season),
               ),
             ),
