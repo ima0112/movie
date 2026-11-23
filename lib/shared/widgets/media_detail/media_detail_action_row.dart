@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../core/domain/entities/genre.dart';
 import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_key.dart';
 import '../../../core/domain/entities/release_status.dart';
@@ -20,7 +19,6 @@ import '../app_buttons.dart';
 import '../mark_as_watched_sheet.dart';
 import '../media_detail_duration.dart';
 import 'media_action_button.dart';
-import 'media_detail_info_card.dart';
 
 /// What the primary (white pill) button does.
 enum PrimaryAction { trailer, similar, whereToWatch, none }
@@ -39,7 +37,8 @@ PrimaryAction primaryActionFor({
   return PrimaryAction.none;
 }
 
-/// D1/D2's Trailer button + the Favorite / Watch later / Watched row.
+/// D1/D2's action row: the white Trailer pill and the Favorite / Watch later /
+/// Watched circles, side by side.
 ///
 /// Source of truth: `docs/SCREENS.md` D1, reused unchanged by D2. Per
 /// CLAUDE.md rule 10, subscribes directly to
@@ -68,9 +67,6 @@ class MediaDetailActionRow extends StatefulWidget {
     required this.mediaKey,
     required this.userLibraryRepository,
     required this.mediaDetail,
-    this.metaPrefix = '',
-    this.extraChips = const [],
-    this.onGenreTap,
     this.onPlayTrailer,
     this.onSeeSimilar,
     this.onSeeWhereToWatch,
@@ -79,15 +75,6 @@ class MediaDetailActionRow extends StatefulWidget {
   final MediaKey mediaKey;
   final UserLibraryRepository userLibraryRepository;
   final MediaDetail mediaDetail;
-
-  /// The info card's text before the genres (a year, D2's year range…).
-  final String metaPrefix;
-
-  /// Extra info chips after the rating (runtime, certification…).
-  final List<String> extraChips;
-
-  /// Tapping a genre → C1 with that genre (the assembling screen owns it).
-  final void Function(Genre genre)? onGenreTap;
 
   /// The primary button's fallbacks (see [primaryActionFor]): no trailer ->
   /// "See similar" (scrolls there), only offered when there are similar
@@ -142,88 +129,89 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
       hasSimilar: widget.onSeeSimilar != null,
       hasWhereToWatch: widget.onSeeWhereToWatch != null,
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (primary != PrimaryAction.none) ...[
-          PrimaryButton(
-            icon: primary == PrimaryAction.trailer ? AppIcons.play : null,
-            label: switch (primary) {
-              PrimaryAction.trailer => l10n.mediaDetailActionTrailer,
-              PrimaryAction.similar => l10n.mediaDetailActionSeeSimilar,
-              _ => l10n.whereToWatchTitle,
-            },
-            onTap: switch (primary) {
-              PrimaryAction.trailer => () => widget.onPlayTrailer?.call(
-                trailer!,
-              ),
-              PrimaryAction.similar => widget.onSeeSimilar,
-              _ => widget.onSeeWhereToWatch,
-            },
-          ),
-          const SizedBox(height: AppSpacing.lg),
-        ],
-        MediaDetailInfoCard(
-          posterUrl: widget.mediaDetail.item.posterUrl,
-          metaPrefix: widget.metaPrefix,
-          genres: widget.mediaDetail.item.genres,
-          voteAverage: widget.mediaDetail.item.voteAverage,
-          showRating: !upcoming,
-          extraChips: widget.extraChips,
-          onGenreTap: widget.onGenreTap,
-          // Favorite and Watch later as square icon buttons, Watched as the
-          // wide one (it opens H2) — inside the card, as in the designs.
-          actions: Row(
-            children: [
-              _ToggleActionButton(
-                entryStream: _entryStream,
-                select: (entry) => entry?.isFavorite ?? false,
-                iconOutline: AppIcons.favorite,
-                iconFill: AppIcons.favoriteFill,
-                label: l10n.mediaDetailActionFavorite,
-                onTap: () =>
-                    _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              // Watch later is the natural action for something not out yet,
-              // so it becomes the wide labeled one when Watched is hidden.
-              if (upcoming)
-                Expanded(child: _watchLater(l10n, wide: true))
-              else ...[
-                _watchLater(l10n),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: _ToggleActionButton(
-                    entryStream: _entryStream,
-                    select: (entry) => entry?.isWatched ?? false,
-                    iconOutline: AppIcons.watched,
-                    iconFill: AppIcons.watchedFill,
-                    label: LibraryTab.watched.localizedLabel(l10n),
-                    showLabel: true,
-                    // Always opens H2 first, even when re-tapping an
-                    // already-watched entry (SCREENS.md D1) — never
-                    // upserts directly.
-                    onTap: _openMarkAsWatchedSheet,
-                  ),
-                ),
-              ],
-            ],
-          ),
+    final label = switch (primary) {
+      PrimaryAction.trailer => l10n.mediaDetailActionTrailer,
+      PrimaryAction.similar => l10n.mediaDetailActionSeeSimilar,
+      _ => l10n.whereToWatchTitle,
+    };
+    final onTap = switch (primary) {
+      PrimaryAction.trailer => () => widget.onPlayTrailer?.call(trailer!),
+      PrimaryAction.similar => widget.onSeeSimilar,
+      _ => widget.onSeeWhereToWatch,
+    };
+    final toggles = [
+      _ToggleActionButton(
+        entryStream: _entryStream,
+        select: (entry) => entry?.isFavorite ?? false,
+        iconOutline: AppIcons.favorite,
+        iconFill: AppIcons.favoriteFill,
+        label: l10n.mediaDetailActionFavorite,
+        onTap: () => _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
+      ),
+      _watchLater(l10n),
+      if (!upcoming)
+        _ToggleActionButton(
+          entryStream: _entryStream,
+          select: (entry) => entry?.isWatched ?? false,
+          iconOutline: AppIcons.watched,
+          iconFill: AppIcons.watchedFill,
+          label: LibraryTab.watched.localizedLabel(l10n),
+          // Always opens H2 first, even when re-tapping an already-watched
+          // entry (SCREENS.md D1) — never upserts directly.
+          onTap: _openMarkAsWatchedSheet,
         ),
+    ];
+    final button = primary == PrimaryAction.none
+        ? null
+        : PrimaryButton(
+            icon: primary == PrimaryAction.trailer ? AppIcons.play : null,
+            label: label,
+            onTap: onTap,
+            height: MediaActionButton.size,
+          );
+
+    // At a large text scale the pill and the three circles don't fit side by
+    // side: the pill gets its own row and the circles sit under it.
+    final stacked =
+        button != null && MediaQuery.textScalerOf(context).scale(1) >= 1.5;
+    if (stacked) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          button,
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: toggles,
+          ),
+        ],
+      );
+    }
+    return Row(
+      // With no pill the toggles spread over the whole row.
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (button != null) ...[
+          Expanded(child: button),
+          const SizedBox(width: AppSpacing.md),
+          for (var i = 0; i < toggles.length; i++) ...[
+            if (i > 0) const SizedBox(width: AppSpacing.sm),
+            toggles[i],
+          ],
+        ] else
+          ...toggles,
       ],
     );
   }
 
-  Widget _watchLater(AppLocalizations l10n, {bool wide = false}) =>
-      _ToggleActionButton(
-        entryStream: _entryStream,
-        select: (entry) => entry?.isWatchLater ?? false,
-        iconOutline: AppIcons.watchLater,
-        iconFill: AppIcons.watchLaterFill,
-        label: LibraryTab.watchLater.localizedLabel(l10n),
-        showLabel: wide,
-        onTap: () => _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
-      );
+  Widget _watchLater(AppLocalizations l10n) => _ToggleActionButton(
+    entryStream: _entryStream,
+    select: (entry) => entry?.isWatchLater ?? false,
+    iconOutline: AppIcons.watchLater,
+    iconFill: AppIcons.watchLaterFill,
+    label: LibraryTab.watchLater.localizedLabel(l10n),
+    onTap: () => _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
+  );
 
   void _toggle(UserMediaEntry Function(UserMediaEntry) transform) {
     // Always re-stamps the catalog snapshot from what's already loaded
@@ -283,7 +271,6 @@ class _ToggleActionButton extends StatelessWidget {
     required this.iconFill,
     required this.label,
     required this.onTap,
-    this.showLabel = false,
   });
 
   final Stream<UserMediaEntry?> entryStream;
@@ -292,7 +279,6 @@ class _ToggleActionButton extends StatelessWidget {
   final IconData iconFill;
   final String label;
   final VoidCallback onTap;
-  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +291,6 @@ class _ToggleActionButton extends StatelessWidget {
           label: label,
           isActive: snapshot.data ?? false,
           onTap: onTap,
-          showLabel: showLabel,
         );
       },
     );

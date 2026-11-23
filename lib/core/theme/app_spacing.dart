@@ -38,7 +38,7 @@ class AppSpacing {
   /// Heading → the content right under it.
   static const double headingGap = md;
 
-  /// Between sibling cards stacked in one group (info card → stat cards).
+  /// Between sibling cards stacked in one group (action row → stat cards).
   static const double cardGap = md;
 
   /// Inside a card, on every side.

@@ -27,12 +27,17 @@ class PrimaryButton extends StatelessWidget {
     this.isLoading = false,
     this.isDisabled = false,
     this.fullWidth = true,
+    this.height,
   });
 
   final String label;
 
   /// Optional leading icon (the detail screens' play icon on "Trailer").
   final IconData? icon;
+
+  /// A fixed pill height, the label on one line (ellipsized): for a button
+  /// that shares a row with 44 px controls (D1/D2's trailer row).
+  final double? height;
   final VoidCallback? onTap;
   final bool isLoading;
   final bool isDisabled;
@@ -47,6 +52,8 @@ class PrimaryButton extends StatelessWidget {
       isLoading: isLoading,
       isDisabled: isDisabled,
       fullWidth: fullWidth,
+      height: height,
+      singleLine: height != null,
       backgroundColor: AppColors.ink,
       // No token for pure black text exists — `surface` is the closest
       // near-black in the palette and reads correctly on a white pill.
@@ -211,10 +218,14 @@ class _BaseButton extends StatelessWidget {
     this.fullWidth = true,
     this.singleLine = false,
     this.dense = false,
+    this.height,
   });
 
   final String label;
   final IconData? icon;
+
+  /// A fixed height (no vertical padding), or `null` for the padded pill.
+  final double? height;
   final Color backgroundColor;
   final Color foregroundColor;
   final Color? borderColor;
@@ -248,7 +259,11 @@ class _BaseButton extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: dense ? AppSpacing.lg : AppSpacing.xl,
-          vertical: dense ? AppSpacing.md : AppSpacing.lg,
+          vertical: height != null
+              ? 0
+              : dense
+              ? AppSpacing.md
+              : AppSpacing.lg,
         ),
         child: Center(
           widthFactor: fullWidth ? null : 1,
@@ -291,6 +306,7 @@ class _BaseButton extends StatelessWidget {
       opacity: isDisabled ? _disabledOpacity : 1,
       child: SizedBox(
         width: fullWidth ? double.infinity : null,
+        height: height,
         child: GestureDetector(
           onTap: isInteractive ? onTap : null,
           child: pill,

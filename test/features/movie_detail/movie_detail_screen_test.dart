@@ -177,7 +177,7 @@ void main() {
     expect(find.byType(MediaDetailActionRow), findsOneWidget);
     expect(find.byType(PrimaryButton), findsNothing);
     expect(find.text('See similar'), findsNothing);
-    expect(find.text('Watched'), findsOneWidget);
+    expect(find.bySemanticsLabel('Watched'), findsOneWidget);
   });
 
   testWidgets('the back button stays pinned while the header scrolls away', (
