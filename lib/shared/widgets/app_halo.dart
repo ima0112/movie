@@ -48,6 +48,12 @@ class AppHalo extends StatelessWidget {
                 )!,
                 AppColors.surface,
               ],
+              // The glow must be gone **before** the box ends: the radius is a
+              // fraction of the box's shortest side, so on a phone about as
+              // wide as the box is tall it reached the bottom edge still
+              // tinted, and that cut showed as a horizontal line across the
+              // page. Fully the page's color by 90% of the radius.
+              stops: const [0, 0.9],
             ),
           ),
         ),
