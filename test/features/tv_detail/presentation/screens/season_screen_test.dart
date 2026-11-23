@@ -4,7 +4,9 @@ import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/features/tv_detail/presentation/screens/season_screen.dart';
+import 'package:movies/features/tv_detail/presentation/widgets/season_header.dart';
 import 'package:movies/l10n/app_localizations.dart';
+import 'package:movies/shared/widgets/poster_image.dart';
 
 const _theBearSeason1 = SeasonSummary(
   seasonNumber: 1,
@@ -32,6 +34,34 @@ void main() {
   setUpAll(() => configureDependencies(fake.name));
 
   group('SeasonScreen', () {
+    testWidgets('the header is the big title and one line: year, episode '
+        'count and rating, no card and no poster', (tester) async {
+      final dated = SeasonSummary(
+        seasonNumber: 1,
+        name: 'Season 1',
+        episodeCount: 7,
+        posterPath: null,
+        airDate: DateTime(2008, 1, 20),
+        voteAverage: 8.7,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SeasonScreen(tvId: 101, seasonSummary: dated),
+        ),
+      );
+
+      expect(find.byType(SeasonHeader), findsOneWidget);
+      expect(find.text('Season 1'), findsOneWidget);
+      expect(
+        find.textContaining('2008 · 7 episodes · ', findRichText: true),
+        findsOneWidget,
+      );
+      expect(find.byType(PosterImage), findsNothing);
+      await tester.pumpAndSettle();
+    });
+
     testWidgets('shows the season title immediately, then its episodes '
         'once loaded', (tester) async {
       await tester.pumpWidget(
@@ -55,8 +85,11 @@ void main() {
       expect(find.text('Hands'), findsOneWidget);
     });
 
-    testWidgets('shows the show name and episode count in the header card, '
-        'and survives a small device at 200% text scale (es)', (tester) async {
+    testWidgets('shows the show name in the app bar and survives a small '
+        'device at 200% text scale (es)', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
       await tester.pumpWidget(
         MaterialApp(
           locale: const Locale('es'),
@@ -79,10 +112,11 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.text('The Bear'), findsOneWidget);
-      expect(find.text('EPISODIOS'), findsOneWidget);
+      // No "Episodes" caption: the list follows the synopsis directly.
+      expect(find.text('EPISODIOS'), findsNothing);
     });
 
-    testWidgets('the header card shows the season rating when TMDB has one', (
+    testWidgets('the header line shows the rating when TMDB has one', (
       tester,
     ) async {
       const rated = SeasonSummary(
@@ -102,7 +136,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('8.7'), findsOneWidget);
+      expect(find.textContaining('8.7'), findsWidgets);
     });
 
     testWidgets('a specials season titles itself "Specials", not '

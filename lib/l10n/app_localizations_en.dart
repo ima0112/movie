@@ -1367,9 +1367,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaDirectedByLabel => 'Directed by ';
 
   @override
-  String get tvEpisodesSectionTitle => 'Episodes';
-
-  @override
   String tvEpisodeCode(int season, int episode) {
     return 'S$season · E$episode';
   }

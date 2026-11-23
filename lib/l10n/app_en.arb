@@ -1263,7 +1263,6 @@
   "@mediaDirectedByLabel": {
     "description": "D1's director credit under the Cast heading (the film's counterpart of D2's Created by) - trailing space is deliberate, same as mediaCreatedByLabel."
   },
-  "tvEpisodesSectionTitle": "Episodes",
   "tvEpisodeCode": "S{season} · E{episode}",
   "@tvEpisodeCode": {
     "description": "H4b's caption over the episode name (e.g. \"S1 · E4\").",
