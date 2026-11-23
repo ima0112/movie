@@ -5,6 +5,7 @@ import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/episode_nav_button.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/episode_sheet.dart';
+import 'package:movies/features/tv_detail/presentation/widgets/episode_sheet_handle.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/episode_sheet_header.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
@@ -337,6 +338,123 @@ void main() {
       final next = tester.getRect(find.text('Siguiente · E3'));
       final previous = tester.getRect(find.text('Anterior · E1'));
       expect(previous.top, greaterThan(next.bottom));
+    });
+  });
+
+  group('closing it with a swipe down', () {
+    Future<void> openModal(WidgetTester tester) async {
+      _usePhoneScreen(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () => showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    showDragHandle: false,
+                    builder: (_) =>
+                        EpisodeSheet(seasonNumber: 1, episode: _episode),
+                  ),
+                  child: const Text('open'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsOneWidget);
+    }
+
+    testWidgets('pulling the handle down closes the sheet', (tester) async {
+      await openModal(tester);
+
+      await tester.fling(
+        find.byType(EpisodeSheetHandle),
+        const Offset(0, 500),
+        1500,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EpisodeSheet), findsNothing);
+    });
+
+    testWidgets('pulling the content (the still, the title) down past its top '
+        'closes it too', (tester) async {
+      await openModal(tester);
+      await tester.flingFrom(
+        tester.getCenter(find.byType(EpisodeSheetHeader)),
+        const Offset(0, 500),
+        1500,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsNothing);
+
+      await openModal(tester);
+      await tester.flingFrom(
+        tester.getCenter(find.text('Hands')),
+        const Offset(0, 500),
+        1500,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsNothing);
+    });
+
+    testWidgets('the same pull closes it with iOS bouncing physics', (
+      tester,
+    ) async {
+      await openModal(tester);
+      await tester.flingFrom(
+        tester.getCenter(find.byType(EpisodeSheetHeader)),
+        const Offset(0, 500),
+        1500,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsNothing);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('a swipe up scrolls the content and does not close the '
+        'sheet', (tester) async {
+      await openModal(tester);
+      await tester.flingFrom(
+        tester.getCenter(find.byType(EpisodeSheetHeader)),
+        const Offset(0, -300),
+        1500,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsOneWidget);
+    });
+
+    testWidgets('scrolling back up to the top by a small drag does not close '
+        'it', (tester) async {
+      await openModal(tester);
+      await tester.dragFrom(
+        tester.getCenter(find.byType(EpisodeSheetHeader)),
+        const Offset(0, 30),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsOneWidget);
+    });
+
+    testWidgets('the handle is drawn over the still, outside the scrolling '
+        'list', (tester) async {
+      await openModal(tester);
+
+      expect(
+        find.descendant(
+          of: find.byType(ListView),
+          matching: find.byType(EpisodeSheetHandle),
+        ),
+        findsNothing,
+      );
+      final handle = tester.getRect(find.byType(EpisodeSheetHandle));
+      final header = tester.getRect(find.byType(EpisodeSheetHeader));
+      expect(handle.top, header.top);
     });
   });
 }

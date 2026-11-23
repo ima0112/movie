@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/theme/app_icons.dart';
+import 'package:movies/core/theme/app_text_styles.dart';
+import 'package:movies/shared/widgets/outlined_text.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/season_episode_row.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
@@ -31,9 +33,16 @@ void main() {
       );
 
       expect(find.text('Silence'), findsOneWidget);
-      expect(find.text('01'), findsOneWidget);
+      // The outlined "Top today" rank typography, at the right.
+      final number = find.byType(OutlinedText);
+      expect(number, findsOneWidget);
+      expect(tester.widget<OutlinedText>(number).text, '01');
       expect(
-        tester.getRect(find.text('01')).left,
+        tester.widget<OutlinedText>(number).style,
+        AppTextStyles.rankCompact,
+      );
+      expect(
+        tester.getRect(number).left,
         greaterThan(tester.getRect(find.text('Silence')).right),
       );
       expect(find.byIcon(AppIcons.chevronRight), findsNothing);
