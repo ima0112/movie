@@ -384,10 +384,18 @@
   "tvEpisodeGuestStars": "Estrellas invitadas",
   "tvSeasonsLinkLabel": "Temporadas",
   "tvSeasonsLinkValue": "{seasons} · {episodes, plural, =1{1 episodio} other{{episodes} episodios}}",
-  "tvNextEpisodeCaption": "Próximo episodio",
-  "tvLastAiredEpisodeCaption": "Último episodio emitido",
+  "tvTimelineNext": "Próximo",
+  "@tvTimelineNext": {
+    "description": "D2b's timeline card: the label of the next-episode node (shown in capitals)."
+  },
+  "tvTimelineLast": "Último emitido",
+  "@tvTimelineLast": {
+    "description": "D2b's timeline card: the label of the last-aired-episode node (shown in capitals)."
+  },
   "tvNoNextEpisodeTitle": "Sin próximo episodio",
   "tvNoNextEpisodeUnknown": "Aún no se ha anunciado ningún episodio próximo.",
+  "tvNoNextEpisodeEnded": "Esta serie ya terminó.",
+  "tvNoNextEpisodeCancelled": "Esta serie fue cancelada.",
   "tvEpisodeCodeAndName": "T{season} · E{episode} · {name}",
   "tvEpisodeCodeSpecialsAndName": "Especiales · E{episode} · {name}",
   "tvSeasonsSectionTitle": "Temporadas",

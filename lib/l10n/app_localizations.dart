@@ -2402,17 +2402,17 @@ abstract class AppLocalizations {
   /// **'{seasons} · {episodes, plural, =1{1 episode} other{{episodes} episodes}}'**
   String tvSeasonsLinkValue(int seasons, int episodes);
 
-  /// No description provided for @tvNextEpisodeCaption.
+  /// D2b's timeline card: the label of the next-episode node (shown in capitals).
   ///
   /// In en, this message translates to:
-  /// **'Next episode'**
-  String get tvNextEpisodeCaption;
+  /// **'Next'**
+  String get tvTimelineNext;
 
-  /// No description provided for @tvLastAiredEpisodeCaption.
+  /// D2b's timeline card: the label of the last-aired-episode node (shown in capitals).
   ///
   /// In en, this message translates to:
-  /// **'Last aired episode'**
-  String get tvLastAiredEpisodeCaption;
+  /// **'Last aired'**
+  String get tvTimelineLast;
 
   /// No description provided for @tvNoNextEpisodeTitle.
   ///
@@ -2425,6 +2425,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No upcoming episode has been announced yet.'**
   String get tvNoNextEpisodeUnknown;
+
+  /// No description provided for @tvNoNextEpisodeEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'This series has ended.'**
+  String get tvNoNextEpisodeEnded;
+
+  /// No description provided for @tvNoNextEpisodeCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'This series was cancelled.'**
+  String get tvNoNextEpisodeCancelled;
 
   /// D2b's episode card title, e.g. "S5 · E16 · Felina".
   ///
