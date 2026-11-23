@@ -9,11 +9,11 @@ import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/release_status_localization.dart';
 import 'justwatch_badge.dart';
 import 'provider_group_box.dart';
-import 'where_to_watch_region_button.dart';
+import 'where_to_watch_header.dart';
 
 /// D1/D2's "Where to watch" card — Streaming / Rent / Buy groups (the
 /// "Dónde ver" design): a `surfaceRaised` card with the title and, on the same
-/// row, the region pill (→ H6, so the country can be changed even when it has
+/// row when it fits, the region pill (→ H6, so the country can be changed even when it has
 /// no data — then the card says so instead of disappearing); the Streaming box
 /// (56 px logos with names), Rent and Buy side by side underneath (36 px
 /// logos), a footer with the hint line and the amber [JustWatchBadge], and the
@@ -69,19 +69,9 @@ class WhereToWatchSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(l10n.whereToWatchTitle, style: AppTextStyles.h2),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Flexible(
-                  child: WhereToWatchRegionButton(
-                    name: regionName,
-                    onTap: onRegionTap,
-                  ),
-                ),
-              ],
+            WhereToWatchHeader(
+              regionName: regionName,
+              onRegionTap: onRegionTap,
             ),
             const SizedBox(height: AppSpacing.md),
             if (!providers.hasAny)
