@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/theme/app_colors.dart';
+import 'package:movies/shared/widgets/media_detail/justwatch_badge.dart';
+import 'package:movies/shared/widgets/media_detail/where_to_watch_region_button.dart';
 import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/l10n/app_localizations.dart';
@@ -147,6 +150,162 @@ void main() {
         expect(find.text('Data from JustWatch'), findsOneWidget);
         // Streaming tiles show the service name under the logo.
         expect(find.text('Netflix'), findsOneWidget);
+      });
+
+      testWidgets('the region pill shares the title row, at the right', (
+        tester,
+      ) async {
+        await tester.pumpWidget(wrap(all));
+
+        final title = tester.getRect(find.text('Where to watch'));
+        final pill = tester.getRect(find.byType(WhereToWatchRegionButton));
+        expect(pill.center.dy, moreOrLessEquals(title.center.dy, epsilon: 6));
+        expect(pill.left, greaterThan(title.right));
+        // Flush with the card's right padding.
+        final card = tester.getRect(find.byType(Container).first);
+        expect(pill.right, lessThan(card.right));
+      });
+
+      testWidgets('a long country name stays on one line and ends in an '
+          'ellipsis when it does not fit', (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: MediaQuery(
+              data: const MediaQueryData(
+                size: Size(320, 568),
+                textScaler: TextScaler.linear(2),
+              ),
+              child: Scaffold(
+                body: WhereToWatchSection(
+                  providers: all,
+                  regionName: 'Reino Unido de Gran Bretaña e Irlanda del Norte',
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        final text = tester.widget<Text>(
+          find.descendant(
+            of: find.byType(WhereToWatchRegionButton),
+            matching: find.textContaining('Reino Unido'),
+          ),
+        );
+        expect(text.maxLines, 1);
+        expect(text.overflow, TextOverflow.ellipsis);
+        // The pill is one line tall: icon row height, not a wrapped block.
+        expect(
+          tester.getSize(find.byType(WhereToWatchRegionButton)).height,
+          lessThan(80),
+        );
+      });
+
+      testWidgets('the pill is as wide as its text needs, and the title keeps '
+          'one whole line beside it even with a long country', (tester) async {
+        Future<void> pump(String region) => tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: MediaQuery(
+              data: const MediaQueryData(size: Size(390, 844)),
+              child: Scaffold(
+                body: WhereToWatchSection(providers: all, regionName: region),
+              ),
+            ),
+          ),
+        );
+
+        // Wide enough that the (wide) test font's title and a pill share a row.
+        tester.view.physicalSize = const Size(700, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await pump('Cuba');
+        final short = tester.getSize(find.byType(WhereToWatchRegionButton));
+        await pump('United Kingdom');
+        final long = tester.getSize(find.byType(WhereToWatchRegionButton));
+        expect(short.width, lessThan(long.width)); // sized to the text
+        expect(short.height, long.height); // one line each
+
+        // A very long name: the title stays whole on its line, the pill ends
+        // in an ellipsis beside it.
+        await pump('Reino Unido de Gran Bretaña e Irlanda del Norte');
+        final title = tester.getRect(find.text('Where to watch'));
+        final pill = tester.getRect(find.byType(WhereToWatchRegionButton));
+        expect(tester.takeException(), isNull);
+        expect(title.height, lessThan(40)); // one line of h2
+        expect(pill.left, greaterThan(title.right));
+        expect(pill.height, lessThan(48));
+      });
+
+      testWidgets('when not even a short pill fits beside the title (big '
+          'text, small phone) it goes under it, at the left, and the title '
+          'stays on one line', (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          wrap(all, textScale: 2, size: const Size(320, 568)),
+        );
+
+        expect(tester.takeException(), isNull);
+        final title = tester.getRect(find.text('Where to watch'));
+        final pill = tester.getRect(find.byType(WhereToWatchRegionButton));
+        expect(pill.top, greaterThanOrEqualTo(title.bottom));
+        expect(pill.left, lessThan(title.left + 1));
+        final text = tester.widget<Text>(find.text('Where to watch'));
+        expect(text.maxLines, 1);
+      });
+
+      testWidgets('the footer has the hint on the left and the amber, '
+          'non-tappable JustWatch badge on the right; the attribution is '
+          'the hint\'s subtitle', (tester) async {
+        await tester.pumpWidget(wrap(all));
+
+        final hint = tester.getRect(
+          find.text('Tap a service to open it in JustWatch'),
+        );
+        final badge = tester.getRect(find.byType(JustWatchBadge));
+        final attribution = tester.getRect(find.text('Data from JustWatch'));
+        final boxes = tester.getRect(find.text('BUY'));
+        expect(badge.center.dy, moreOrLessEquals(hint.center.dy, epsilon: 12));
+        expect(badge.left, greaterThan(hint.right));
+        expect(hint.top, greaterThan(boxes.bottom));
+        // The attribution is the hint's subtitle: under it, at its left edge,
+        // and left of the badge (which stays level with the hint).
+        expect(attribution.top, greaterThanOrEqualTo(hint.bottom));
+        expect(attribution.left, moreOrLessEquals(hint.left, epsilon: 0.5));
+        expect(attribution.right, lessThanOrEqualTo(badge.left));
+        expect(badge.top, lessThan(attribution.top));
+        expect(
+          find.descendant(
+            of: find.byType(JustWatchBadge),
+            matching: find.byType(GestureDetector),
+          ),
+          findsNothing,
+        );
+      });
+
+      testWidgets('Buy\'s dot is red, Rent\'s green', (tester) async {
+        await tester.pumpWidget(wrap(all));
+
+        Color dot(String label) {
+          final row = find.ancestor(
+            of: find.text(label),
+            matching: find.byType(Row),
+          );
+          final box = tester.widget<Container>(
+            find
+                .descendant(of: row.first, matching: find.byType(Container))
+                .first,
+          );
+          return (box.decoration! as BoxDecoration).color!;
+        }
+
+        expect(dot('BUY'), AppColors.danger);
+        expect(dot('RENT'), AppColors.success);
       });
 
       testWidgets('a service with no logo shows its first letter', (
