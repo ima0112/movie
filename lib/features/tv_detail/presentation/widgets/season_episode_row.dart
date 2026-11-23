@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/domain/entities/season_summary.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../l10n/full_date_format.dart';
-import '../../../../l10n/l10n_extension.dart';
-import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/still_image.dart';
+import 'episode_meta_line.dart';
 
 /// One episode in D2c's list: a small still, the title, one muted line with
 /// "date · runtime · ★ rating" (the date in amber if it hasn't aired yet,
@@ -30,11 +27,6 @@ class SeasonEpisodeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final airDate = episode.airDate;
-    final hasAired = airDate == null || !airDate.isAfter(DateTime.now());
-    final l10n = context.l10n;
-    final runtime = episode.runtimeMinutes;
-    final rating = episode.voteAverage;
     final muted = AppTextStyles.caption.copyWith(color: AppColors.inkMuted);
 
     return GestureDetector(
@@ -67,39 +59,10 @@ class SeasonEpisodeRow extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: AppSpacing.xxs),
-                  Text.rich(
-                    TextSpan(
-                      style: muted,
-                      children: [
-                        TextSpan(
-                          text: airDate == null
-                              ? l10n.tvEpisodeTba
-                              : l10n.fullDate(airDate),
-                          style: hasAired
-                              ? null
-                              : muted.copyWith(color: AppColors.accent),
-                        ),
-                        if (runtime != null)
-                          TextSpan(
-                            text:
-                                ' · ${l10n.myListRuntimeMinutesOnly(runtime)}',
-                          ),
-                        if (rating != null) ...[
-                          const TextSpan(text: ' · '),
-                          const WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            child: Icon(
-                              AppIcons.starFill,
-                              size: _starSize,
-                              color: AppColors.accent,
-                            ),
-                          ),
-                          TextSpan(text: ' ${rating.localizedRating(l10n)}'),
-                        ],
-                      ],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  EpisodeMetaLine(
+                    episode: episode,
+                    style: muted,
+                    starSize: _starSize,
                   ),
                   if (episode.overview.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.xs),
