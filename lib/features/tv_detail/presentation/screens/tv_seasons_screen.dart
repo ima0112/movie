@@ -10,7 +10,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
 import '../widgets/episode_ref_card.dart';
-import '../widgets/seasons_summary_card.dart';
+import '../widgets/seasons_header.dart';
 import '../widgets/tv_seasons_section.dart';
 import '../widgets/tv_status.dart';
 
@@ -61,9 +61,10 @@ class TvSeasonsScreen extends StatelessWidget {
                 AppSpacing.screenMargin,
                 0,
               ),
-              child: SeasonsSummaryCard(
+              child: SeasonsHeader(
                 title: detail.item.title,
-                chips: [
+                statusColor: tvStatusColor(detail.status),
+                parts: [
                   tvStatusLabel(detail.status, l10n),
                   if (seasonCount > 0) l10n.myListSeasonsCount(seasonCount),
                   if (detail.numberOfEpisodes > 0)

@@ -4,7 +4,10 @@ import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/tv_detail/presentation/screens/tv_seasons_screen.dart';
+import 'package:movies/features/tv_detail/presentation/widgets/seasons_header.dart';
+import 'package:movies/shared/widgets/media_detail/info_chip.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
 const _s1 = SeasonSummary(
@@ -81,17 +84,53 @@ void _phone(WidgetTester tester) {
 
 void main() {
   group('TvSeasonsScreen', () {
-    testWidgets('header card: show name and status, season and episode '
-        'chips', (tester) async {
+    testWidgets('header: the show name big and one status line, no chips', (
+      tester,
+    ) async {
       _phone(tester);
       await tester.pumpWidget(
         _app(TvSeasonsScreen(detail: _show(last: _felina))),
       );
 
       expect(find.text('Breaking Bad'), findsOneWidget);
-      expect(find.text('Ended'), findsOneWidget);
-      expect(find.text('1 season'), findsOneWidget);
-      expect(find.text('62 episodes'), findsOneWidget);
+      expect(find.text('Ended · 1 season · 62 episodes'), findsOneWidget);
+      expect(find.byType(InfoChip), findsWidgets); // the episode cards' chips
+      expect(
+        find.descendant(
+          of: find.byType(SeasonsHeader),
+          matching: find.byType(InfoChip),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('the status dot is green airing, grey ended, red cancelled', (
+      tester,
+    ) async {
+      _phone(tester);
+      Color dot() =>
+          ((tester
+                      .widget<Container>(
+                        find
+                            .descendant(
+                              of: find.byType(SeasonsHeader),
+                              matching: find.byType(Container),
+                            )
+                            .first,
+                      )
+                      .decoration!)
+                  as BoxDecoration)
+              .color!;
+      for (final (status, color) in [
+        ('Returning Series', AppColors.success),
+        ('Ended', AppColors.inkMuted),
+        ('Canceled', AppColors.danger),
+      ]) {
+        await tester.pumpWidget(
+          _app(TvSeasonsScreen(detail: _show(status: status))),
+        );
+        expect(dot(), color, reason: status);
+      }
     });
 
     testWidgets('last aired episode: code and name, rating chip', (
