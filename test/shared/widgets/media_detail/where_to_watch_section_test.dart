@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/theme/app_colors.dart';
+import 'package:movies/shared/widgets/media_detail/justwatch_badge.dart';
+import 'package:movies/shared/widgets/media_detail/where_to_watch_region_button.dart';
 import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/l10n/app_localizations.dart';
@@ -147,6 +150,64 @@ void main() {
         expect(find.text('Data from JustWatch'), findsOneWidget);
         // Streaming tiles show the service name under the logo.
         expect(find.text('Netflix'), findsOneWidget);
+      });
+
+      testWidgets('the region pill shares the title row, at the right', (
+        tester,
+      ) async {
+        await tester.pumpWidget(wrap(all));
+
+        final title = tester.getRect(find.text('Where to watch'));
+        final pill = tester.getRect(find.byType(WhereToWatchRegionButton));
+        expect(pill.center.dy, moreOrLessEquals(title.center.dy, epsilon: 6));
+        expect(pill.left, greaterThan(title.right));
+        // Flush with the card's right padding.
+        final card = tester.getRect(find.byType(Container).first);
+        expect(pill.right, lessThan(card.right));
+      });
+
+      testWidgets('the footer has the hint on the left and the amber, '
+          'non-tappable JustWatch badge on the right; the attribution '
+          'comes last', (tester) async {
+        await tester.pumpWidget(wrap(all));
+
+        final hint = tester.getRect(
+          find.text('Tap a service to open it in JustWatch'),
+        );
+        final badge = tester.getRect(find.byType(JustWatchBadge));
+        final attribution = tester.getRect(find.text('Data from JustWatch'));
+        final boxes = tester.getRect(find.text('BUY'));
+        expect(badge.center.dy, moreOrLessEquals(hint.center.dy, epsilon: 12));
+        expect(badge.left, greaterThan(hint.right));
+        expect(hint.top, greaterThan(boxes.bottom));
+        expect(attribution.top, greaterThanOrEqualTo(badge.bottom));
+        expect(
+          find.descendant(
+            of: find.byType(JustWatchBadge),
+            matching: find.byType(GestureDetector),
+          ),
+          findsNothing,
+        );
+      });
+
+      testWidgets('Buy\'s dot is red, Rent\'s green', (tester) async {
+        await tester.pumpWidget(wrap(all));
+
+        Color dot(String label) {
+          final row = find.ancestor(
+            of: find.text(label),
+            matching: find.byType(Row),
+          );
+          final box = tester.widget<Container>(
+            find
+                .descendant(of: row.first, matching: find.byType(Container))
+                .first,
+          );
+          return (box.decoration! as BoxDecoration).color!;
+        }
+
+        expect(dot('BUY'), AppColors.danger);
+        expect(dot('RENT'), AppColors.success);
       });
 
       testWidgets('a service with no logo shows its first letter', (

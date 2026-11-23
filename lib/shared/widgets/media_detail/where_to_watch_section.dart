@@ -3,20 +3,21 @@ import 'package:flutter/material.dart';
 import '../../../core/domain/entities/release_status.dart';
 import '../../../core/domain/entities/watch_providers.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/release_status_localization.dart';
+import 'justwatch_badge.dart';
 import 'provider_group_box.dart';
+import 'where_to_watch_region_button.dart';
 
-/// D1/D2's "Where to watch" card — Streaming / Rent / Buy groups, (the
-/// "Dónde ver" design): a `surfaceRaised` card with the title and a
-/// JustWatch badge, the Streaming box on top (56 px logos with names), Rent
-/// and Buy side by side underneath (36 px logos), and a hint line. The
-/// region is a visible pill under the title (→ H6), so it can be changed
-/// even when the region has no data — then the card says so instead of
-/// disappearing. Tapping any service opens TMDB's `link`.
+/// D1/D2's "Where to watch" card — Streaming / Rent / Buy groups (the
+/// "Dónde ver" design): a `surfaceRaised` card with the title and, on the same
+/// row, the region pill (→ H6, so the country can be changed even when it has
+/// no data — then the card says so instead of disappearing); the Streaming box
+/// (56 px logos with names), Rent and Buy side by side underneath (36 px
+/// logos), a footer with the hint line and the amber [JustWatchBadge], and the
+/// mandatory attribution last. Tapping any service opens TMDB's `link`.
 ///
 /// Pure presentation — [providers] arrives as a plain value (CLAUDE.md rule
 /// 9 — the assembling screen already knows it's loaded).
@@ -73,11 +74,15 @@ class WhereToWatchSection extends StatelessWidget {
                 Expanded(
                   child: Text(l10n.whereToWatchTitle, style: AppTextStyles.h2),
                 ),
-                const _JustWatchBadge(),
+                const SizedBox(width: AppSpacing.md),
+                Flexible(
+                  child: WhereToWatchRegionButton(
+                    name: regionName,
+                    onTap: onRegionTap,
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
-            _RegionButton(name: regionName, onTap: onRegionTap),
             const SizedBox(height: AppSpacing.md),
             if (!providers.hasAny)
               Text(
@@ -120,7 +125,7 @@ class WhereToWatchSection extends StatelessWidget {
                     Expanded(
                       child: ProviderGroupBox(
                         label: l10n.whereToWatchBuy,
-                        dotColor: AppColors.inkMuted,
+                        dotColor: AppColors.danger,
                         providers: providers.buy,
                         logos: providers.logos,
                         tileSize: _rentBuyTile,
@@ -133,11 +138,19 @@ class WhereToWatchSection extends StatelessWidget {
             ],
             if (providers.hasAny) ...[
               const SizedBox(height: AppSpacing.md),
-              Text(
-                l10n.whereToWatchTapHint,
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.inkMuted,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.whereToWatchTapHint,
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.inkMuted,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  const JustWatchBadge(),
+                ],
               ),
             ],
             const SizedBox(height: AppSpacing.sm),
@@ -147,86 +160,6 @@ class WhereToWatchSection extends StatelessWidget {
               style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// The small "JustWatch" badge at the card's top right.
-class _JustWatchBadge extends StatelessWidget {
-  const _JustWatchBadge();
-
-  static const double _height = 28;
-  static const double _iconSize = 12;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: _height,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 2),
-      decoration: BoxDecoration(
-        color: AppColors.ink.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(AppIcons.play, size: _iconSize, color: AppColors.inkMuted),
-          const SizedBox(width: AppSpacing.xs + 2),
-          Text(
-            'JustWatch', // l10n-exempt: brand-name
-            style: AppTextStyles.captionStrong.copyWith(
-              color: AppColors.inkMuted,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// The tappable country pill: globe, name and a chevron, so it reads as a
-/// control (opens H6).
-class _RegionButton extends StatelessWidget {
-  const _RegionButton({required this.name, required this.onTap});
-
-  final String name;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Semantics(
-        button: true,
-        label: context.l10n.whereToWatchChangeRegion(name),
-        excludeSemantics: true,
-        child: GestureDetector(
-          onTap: onTap,
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 36),
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-              border: Border.all(color: AppColors.lineStrong),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(AppIcons.globe, size: 16, color: AppColors.inkMuted),
-                const SizedBox(width: AppSpacing.xs + 2),
-                Flexible(child: Text(name, style: AppTextStyles.bodySmStrong)),
-                const SizedBox(width: AppSpacing.xs),
-                const Icon(
-                  AppIcons.chevronDown,
-                  size: 16,
-                  color: AppColors.inkMuted,
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
