@@ -34,7 +34,7 @@ class SeasonsHeader extends StatelessWidget {
           title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: AppTextStyles.display,
+          style: AppTextStyles.displayTitle,
         ),
         const SizedBox(height: AppSpacing.sm),
         Row(

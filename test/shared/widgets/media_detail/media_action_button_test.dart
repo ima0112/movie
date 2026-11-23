@@ -69,4 +69,35 @@ void main() {
     await tester.pumpWidget(_host(active: true, textScale: 2));
     expect(tester.getSize(find.byType(MediaActionButton)), const Size(44, 44));
   });
+
+  testWidgets('wide: a rounded rectangle that fills its width, same states', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 120,
+            child: MediaActionButton(
+              iconOutline: AppIcons.favorite,
+              iconFill: AppIcons.favoriteFill,
+              label: 'Favorite',
+              isActive: true,
+              onTap: () {},
+              wide: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getSize(find.byType(MediaActionButton)),
+      const Size(120, MediaActionButton.wideHeight),
+    );
+    final decoration = _decoration(tester);
+    expect(decoration.shape, BoxShape.rectangle);
+    expect(decoration.borderRadius, isNotNull);
+    expect(decoration.color, AppColors.accent);
+  });
 }

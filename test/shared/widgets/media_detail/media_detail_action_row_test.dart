@@ -337,8 +337,8 @@ void main() {
       expect(taps, 1);
     });
 
-    testWidgets('nothing to jump to: no primary button, the three circles '
-        'spread over the row', (tester) async {
+    testWidgets('nothing to jump to: no primary button, the three toggles '
+        'become equal rounded rectangles across the row', (tester) async {
       tester.view.physicalSize = const Size(390, 640);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -346,10 +346,30 @@ void main() {
       expect(find.byType(PrimaryButton), findsNothing);
       expect(find.text('See similar'), findsNothing);
       expect(find.byType(MediaActionButton), findsNWidgets(3));
-      final first = tester.getRect(find.byType(MediaActionButton).first);
-      final last = tester.getRect(find.byType(MediaActionButton).last);
-      expect(first.left, moreOrLessEquals(0, epsilon: 0.5));
-      expect(last.right, moreOrLessEquals(390, epsilon: 0.5));
+
+      final rects = [
+        for (var i = 0; i < 3; i++)
+          tester.getRect(find.byType(MediaActionButton).at(i)),
+      ];
+      // Flush with both edges, the same width and height, side by side.
+      expect(rects.first.left, moreOrLessEquals(0, epsilon: 0.5));
+      expect(rects.last.right, moreOrLessEquals(390, epsilon: 0.5));
+      for (final r in rects) {
+        expect(r.width, moreOrLessEquals(rects.first.width, epsilon: 0.5));
+        expect(r.height, MediaActionButton.wideHeight);
+        expect(r.width, greaterThan(MediaActionButton.size)); // not circles
+      }
+      expect(rects[1].left, greaterThan(rects[0].right));
+      expect(rects[2].left, greaterThan(rects[1].right));
+      final box = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byType(MediaActionButton).first,
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      expect((box.decoration! as BoxDecoration).shape, BoxShape.rectangle);
     });
   });
 }

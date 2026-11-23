@@ -139,8 +139,9 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
       PrimaryAction.similar => widget.onSeeSimilar,
       _ => widget.onSeeWhereToWatch,
     };
-    final toggles = [
+    List<Widget> toggles({required bool wide}) => [
       _ToggleActionButton(
+        wide: wide,
         entryStream: _entryStream,
         select: (entry) => entry?.isFavorite ?? false,
         iconOutline: AppIcons.favorite,
@@ -148,9 +149,10 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
         label: l10n.mediaDetailActionFavorite,
         onTap: () => _toggle((e) => e.copyWith(isFavorite: !e.isFavorite)),
       ),
-      _watchLater(l10n),
+      _watchLater(l10n, wide: wide),
       if (!upcoming)
         _ToggleActionButton(
+          wide: wide,
           entryStream: _entryStream,
           select: (entry) => entry?.isWatched ?? false,
           iconOutline: AppIcons.watched,
@@ -182,36 +184,46 @@ class _MediaDetailActionRowState extends State<MediaDetailActionRow> {
           const SizedBox(height: AppSpacing.md),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: toggles,
+            children: toggles(wide: false),
           ),
         ],
       );
     }
-    return Row(
-      // With no pill the toggles spread over the whole row.
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        if (button != null) ...[
-          Expanded(child: button),
-          const SizedBox(width: AppSpacing.md),
-          for (var i = 0; i < toggles.length; i++) ...[
-            if (i > 0) const SizedBox(width: AppSpacing.sm),
-            toggles[i],
+    if (button == null) {
+      // No pill: the toggles are equal rounded rectangles across the row.
+      final wide = toggles(wide: true);
+      return Row(
+        children: [
+          for (var i = 0; i < wide.length; i++) ...[
+            if (i > 0) const SizedBox(width: AppSpacing.md),
+            Expanded(child: wide[i]),
           ],
-        ] else
-          ...toggles,
+        ],
+      );
+    }
+    final circles = toggles(wide: false);
+    return Row(
+      children: [
+        Expanded(child: button),
+        const SizedBox(width: AppSpacing.md),
+        for (var i = 0; i < circles.length; i++) ...[
+          if (i > 0) const SizedBox(width: AppSpacing.sm),
+          circles[i],
+        ],
       ],
     );
   }
 
-  Widget _watchLater(AppLocalizations l10n) => _ToggleActionButton(
-    entryStream: _entryStream,
-    select: (entry) => entry?.isWatchLater ?? false,
-    iconOutline: AppIcons.watchLater,
-    iconFill: AppIcons.watchLaterFill,
-    label: LibraryTab.watchLater.localizedLabel(l10n),
-    onTap: () => _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
-  );
+  Widget _watchLater(AppLocalizations l10n, {required bool wide}) =>
+      _ToggleActionButton(
+        wide: wide,
+        entryStream: _entryStream,
+        select: (entry) => entry?.isWatchLater ?? false,
+        iconOutline: AppIcons.watchLater,
+        iconFill: AppIcons.watchLaterFill,
+        label: LibraryTab.watchLater.localizedLabel(l10n),
+        onTap: () => _toggle((e) => e.copyWith(isWatchLater: !e.isWatchLater)),
+      );
 
   void _toggle(UserMediaEntry Function(UserMediaEntry) transform) {
     // Always re-stamps the catalog snapshot from what's already loaded
@@ -271,6 +283,7 @@ class _ToggleActionButton extends StatelessWidget {
     required this.iconFill,
     required this.label,
     required this.onTap,
+    required this.wide,
   });
 
   final Stream<UserMediaEntry?> entryStream;
@@ -279,6 +292,9 @@ class _ToggleActionButton extends StatelessWidget {
   final IconData iconFill;
   final String label;
   final VoidCallback onTap;
+
+  /// A rounded rectangle for the no-trailer-button row, else a circle.
+  final bool wide;
 
   @override
   Widget build(BuildContext context) {
@@ -291,6 +307,7 @@ class _ToggleActionButton extends StatelessWidget {
           label: label,
           isActive: snapshot.data ?? false,
           onTap: onTap,
+          wide: wide,
         );
       },
     );

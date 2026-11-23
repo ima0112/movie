@@ -53,7 +53,8 @@ Familia única: **Manrope** (Google Fonts), pesos 400 (regular) y 600
 
 | Estilo | Tamaño / línea | Peso | Uso |
 |---|---|---|---|
-| `display` | 32 / 1.15 | 600 | Título de detalle (película/serie) |
+| `display` | 32 / 1.15 | 600 | Cifras y titulares grandes de una línea |
+| `displayTitle` | 32 / 1.3 | 600 | Título de detalle (película/serie) y de D2b, que puede ocupar dos líneas y terminar en puntos suspensivos: la línea más alta evita que las colas (g, y, p) se corten |
 | `h1` | 26–28 / 1.15 | 600 | Titulares de flujo (onboarding, resultado, portada) |
 | `h1Strong` | 26 / 1.15 | 800 | Titular de flujo con más peso (E1) |
 | `surpriseQuestion` | 64 / 1 | 600 | El "?" ámbar de las cartas de Sorpréndeme (E3a) |
