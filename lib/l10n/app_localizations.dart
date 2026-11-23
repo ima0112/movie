@@ -296,12 +296,6 @@ abstract class AppLocalizations {
   /// **'Monster'**
   String get vibeMonster;
 
-  /// No description provided for @vibeDetective.
-  ///
-  /// In en, this message translates to:
-  /// **'Detective'**
-  String get vibeDetective;
-
   /// No description provided for @vibeClassic.
   ///
   /// In en, this message translates to:
@@ -332,18 +326,6 @@ abstract class AppLocalizations {
   /// **'Date Night'**
   String get vibeDateNight;
 
-  /// No description provided for @vibeFuture.
-  ///
-  /// In en, this message translates to:
-  /// **'Future'**
-  String get vibeFuture;
-
-  /// No description provided for @vibeExplosive.
-  ///
-  /// In en, this message translates to:
-  /// **'Explosive'**
-  String get vibeExplosive;
-
   /// No description provided for @vibeGritty.
   ///
   /// In en, this message translates to:
@@ -368,11 +350,47 @@ abstract class AppLocalizations {
   /// **'Musical'**
   String get vibeMusical;
 
-  /// No description provided for @vibeFantasy.
+  /// No description provided for @vibeTimeTravel.
   ///
   /// In en, this message translates to:
-  /// **'Fantasy'**
-  String get vibeFantasy;
+  /// **'Time Travel'**
+  String get vibeTimeTravel;
+
+  /// No description provided for @vibeComingOfAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming of Age'**
+  String get vibeComingOfAge;
+
+  /// No description provided for @vibeDystopia.
+  ///
+  /// In en, this message translates to:
+  /// **'Dystopia'**
+  String get vibeDystopia;
+
+  /// No description provided for @vibeSurvival.
+  ///
+  /// In en, this message translates to:
+  /// **'Survival'**
+  String get vibeSurvival;
+
+  /// No description provided for @vibeRevenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenge'**
+  String get vibeRevenge;
+
+  /// No description provided for @vibeMartialArts.
+  ///
+  /// In en, this message translates to:
+  /// **'Martial Arts'**
+  String get vibeMartialArts;
+
+  /// No description provided for @vibeHeist.
+  ///
+  /// In en, this message translates to:
+  /// **'Heist'**
+  String get vibeHeist;
 
   /// D2's Status stat card label above Airing / Ended / Cancelled (docs/SCREENS.md D2).
   ///

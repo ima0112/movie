@@ -122,9 +122,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get vibeMonster => 'Monstruos';
 
   @override
-  String get vibeDetective => 'Detectives';
-
-  @override
   String get vibeClassic => 'Clásico';
 
   @override
@@ -140,12 +137,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get vibeDateNight => 'Noche romántica';
 
   @override
-  String get vibeFuture => 'Futuro';
-
-  @override
-  String get vibeExplosive => 'Explosivo';
-
-  @override
   String get vibeGritty => 'Crudo';
 
   @override
@@ -158,7 +149,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get vibeMusical => 'Musical';
 
   @override
-  String get vibeFantasy => 'Fantasía';
+  String get vibeTimeTravel => 'Viajes en el tiempo';
+
+  @override
+  String get vibeComingOfAge => 'Crecer';
+
+  @override
+  String get vibeDystopia => 'Distopía';
+
+  @override
+  String get vibeSurvival => 'Supervivencia';
+
+  @override
+  String get vibeRevenge => 'Venganza';
+
+  @override
+  String get vibeMartialArts => 'Artes marciales';
+
+  @override
+  String get vibeHeist => 'Atracos';
 
   @override
   String get tvStatusCardLabel => 'Estado';

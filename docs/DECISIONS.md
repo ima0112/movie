@@ -252,16 +252,20 @@ Returns `MatchResult { winner, alternatives[3–4], satisfaction {participant �
 There is always a result; the screen states what was relaxed.
 
 ### Vibe catalog
-- `assets/vibes.json`. **16 vibes on movie, 11 of them also on TV** (5
-  are movie-only by design: `indie`, `tearjerker`, `gangster`,
-  `musical`, `fantasy` — their TV rule is deliberately empty, either
-  because they never had one or because real `/discover` pool
-  measurements showed under ~30 titles at `vote_count.gte=200`, too
-  thin to ever meaningfully surface; `Vibe.isMeaningfulFor(type)` is
-  `false` for an empty rule, so the engine skips it for that type
-  entirely rather than returning a near-empty pool). Each vibe has an
-  icon, a name, and a rule per media type: a genre set, a keyword-id
-  set, and (one case) a year/rating filter.
+- `assets/vibes.json`. **19 vibes on movies, 15 on TV.** Two kinds: the two
+  **ambientes** — Feel Good (comedy or family) and Date Night (romance or
+  comedy; comedy alone on TV) — are defined by genres, and are meant to be
+  pruned by the user's vetoes; every other vibe is a keyword **theme**.
+  Themes on both types (12): Superhero, Monster, Gangster, Sports, True
+  Story, Gritty, Time Travel, Coming of Age, Dystopia, Survival, Revenge,
+  Martial Arts — plus Classic (year ≤1999, rating ≥7.5) = 15 on TV. Movie-only
+  (4): Tearjerker, Musical, Indie and Heist, whose TV rule is deliberately
+  empty (24, 23, 0 and 21 titles with 100+ votes there); `Vibe.isMeaningfulFor
+  (type)` is `false` for an empty rule, so the engine skips it for that type.
+  **Fantasy, Future, Explosive and Detective were removed**: each was just a
+  genre under another name (Fantasy, Sci-Fi, Action, Mystery/Crime), and
+  offering one after vetoing its genre was a contradiction. Each vibe has an
+  icon, a name, and a rule per media type.
 - **Combination rule**: within a rule, genres are OR'd together and
   keyword ids are OR'd together; the genre group and the keyword group
   are then AND'd (`MatchEngine._filterForVibe` → `DiscoverFilter`, sent

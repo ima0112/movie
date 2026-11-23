@@ -46,8 +46,8 @@ TasteProfile _profile({
 void main() {
   final catalog = VibeCatalog([
     const Vibe(
-      id: 'explosive',
-      icon: 'vibeExplosive',
+      id: 'revenge',
+      icon: 'vibeRevenge',
       movie: VibeRule(genreIds: ['action'], keywordIds: []),
       tv: VibeRule(genreIds: ['action'], keywordIds: []),
     ),
@@ -184,7 +184,7 @@ void main() {
         type: null,
         profile: _profile(
           genres: {_action, _drama, _comedy},
-          vibes: {'explosive', 'classic'},
+          vibes: {'revenge', 'classic'},
           vetoed: {_horror},
         ),
         library: const [],
@@ -195,7 +195,7 @@ void main() {
         _drama,
         _comedy,
       }, contains((plan.becauseLike as GenreSeed).genre));
-      expect(plan.becauseWant!.vibe.id, anyOf('explosive', 'classic'));
+      expect(plan.becauseWant!.vibe.id, anyOf('revenge', 'classic'));
       expect(plan.forYou!.withoutGenres, {_horror});
       expect(plan.forYou!.type, isNull);
       expect(plan.forYou!.excludeTalkAndNews, isTrue);
@@ -204,12 +204,12 @@ void main() {
     test('a profile with only vibes still gives a For you and a want', () {
       final plan = planner.plan(
         type: null,
-        profile: _profile(vibes: {'explosive'}),
+        profile: _profile(vibes: {'revenge'}),
         library: const [],
         today: today,
       );
       expect(plan.becauseLike, isNull); // no liked genre to name
-      expect(plan.becauseWant!.vibe.id, 'explosive');
+      expect(plan.becauseWant!.vibe.id, 'revenge');
       expect(plan.forYou!.withGenres, {_action});
     });
 
