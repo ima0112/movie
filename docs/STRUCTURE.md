@@ -246,6 +246,7 @@ lib/
 
 assets/
   vibes.json
+  collections.json          the 13 collections (country/language/format rules)
   tmdb_attribution/
 docs/
   DECISIONS.md

@@ -1,0 +1,236 @@
+{
+  "collections": [
+    {
+      "id": "turkish_series",
+      "group": "world",
+      "tv": {
+        "queries": [
+          {
+            "originCountries": [
+              "TR"
+            ],
+            "withoutGenres": [
+              10767,
+              10763
+            ],
+            "minVoteCount": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "spanish_series",
+      "group": "world",
+      "tv": {
+        "queries": [
+          {
+            "originCountries": [
+              "ES"
+            ],
+            "withoutGenres": [
+              10767,
+              10763
+            ],
+            "minVoteCount": 50
+          }
+        ]
+      }
+    },
+    {
+      "id": "latin_american_series",
+      "group": "world",
+      "tv": {
+        "queries": [
+          {
+            "originCountries": [
+              "MX",
+              "CO",
+              "AR",
+              "CL",
+              "PE",
+              "VE",
+              "UY",
+              "EC",
+              "BO",
+              "PY",
+              "CR",
+              "PA",
+              "DO",
+              "GT"
+            ],
+            "withoutGenres": [
+              10767,
+              10763
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "k_dramas",
+      "group": "world",
+      "tv": {
+        "queries": [
+          {
+            "originCountries": [
+              "KR"
+            ],
+            "withoutGenres": [
+              10767,
+              10763,
+              10764
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "british_series",
+      "group": "world",
+      "tv": {
+        "queries": [
+          {
+            "originCountries": [
+              "GB"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "spanish_cinema",
+      "group": "world",
+      "movie": {
+        "queries": [
+          {
+            "originalLanguage": "es"
+          }
+        ]
+      }
+    },
+    {
+      "id": "korean_cinema",
+      "group": "world",
+      "movie": {
+        "queries": [
+          {
+            "originalLanguage": "ko"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bollywood",
+      "group": "world",
+      "movie": {
+        "queries": [
+          {
+            "originalLanguage": "hi"
+          }
+        ]
+      }
+    },
+    {
+      "id": "indian_cinema",
+      "group": "world",
+      "movie": {
+        "queries": [
+          {
+            "originCountries": [
+              "IN"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "soaps",
+      "group": "format",
+      "tv": {
+        "queries": [
+          {
+            "withKeywords": [
+              199262
+            ],
+            "minVoteCount": 30
+          },
+          {
+            "withGenres": [
+              10766
+            ],
+            "minVoteCount": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "anime",
+      "group": "format",
+      "movie": {
+        "queries": [
+          {
+            "withGenres": [
+              16
+            ],
+            "originCountries": [
+              "JP"
+            ]
+          }
+        ]
+      },
+      "tv": {
+        "queries": [
+          {
+            "withGenres": [
+              16
+            ],
+            "originCountries": [
+              "JP"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "reality_shows",
+      "group": "format",
+      "tv": {
+        "queries": [
+          {
+            "tvType": 3,
+            "minVoteCount": 50
+          }
+        ]
+      }
+    },
+    {
+      "id": "kids",
+      "group": "occasion",
+      "movie": {
+        "queries": [
+          {
+            "withGenres": [
+              10751,
+              16
+            ],
+            "withoutGenres": [
+              27,
+              53,
+              80
+            ]
+          }
+        ]
+      },
+      "tv": {
+        "queries": [
+          {
+            "withGenres": [
+              10762
+            ]
+          }
+        ]
+      },
+      "inTastes": false
+    }
+  ]
+}
