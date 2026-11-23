@@ -71,6 +71,8 @@ class _SeasonView extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      // The sheet draws its own handle, over its still.
+      showDragHandle: false,
       builder: (_) => EpisodeSheet(
         seasonNumber: seasonSummary.seasonNumber,
         episode: episode,
