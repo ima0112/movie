@@ -31,6 +31,18 @@ class AppTextStyles {
     color: AppColors.ink,
   );
 
+  /// A [display] title that can run to two lines and end in an ellipsis (a
+  /// detail's title, D2b's show name): 32 / 1.3, semibold. The taller line keeps
+  /// the descenders (the "g" of "Ring") inside the box — a paragraph that is cut
+  /// by its line limit is clipped at its edge, and [display]'s 1.15 left the
+  /// tails of the last line outside it.
+  static final TextStyle displayTitle = GoogleFonts.manrope(
+    fontSize: 32,
+    height: 1.3,
+    fontWeight: _semibold,
+    color: AppColors.ink,
+  );
+
   /// Flow headlines (onboarding, result, cover). 26 / 1.15, semibold.
   static final TextStyle h1 = GoogleFonts.manrope(
     fontSize: 26,

@@ -5,15 +5,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../core/domain/entities/country.dart';
-import '../../../core/domain/entities/discover_filter.dart';
 import '../../../core/domain/entities/media_detail.dart';
 import '../../../core/domain/entities/media_key.dart';
 import '../../../core/domain/entities/release_status.dart';
 import '../../../core/domain/repositories/user_library_repository.dart';
 import '../../../core/launch/launch_external_link.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../l10n/genre_localization.dart';
-import '../../../l10n/l10n_extension.dart';
 import '../region_sheet.dart';
 import '../tmdb_footer.dart';
 import 'media_cast_row.dart';
@@ -140,16 +137,6 @@ class _MediaDetailScrollViewState extends State<MediaDetailScrollView> {
             voteAverage: detail.item.voteAverage,
             // Not out yet: TMDB reports 0.0, so there is no ring.
             showRating: detail.releaseStatus?.stage != ReleaseStage.upcoming,
-            onGenreTap: (genre) => context.push(
-              AppRoutes.filteredList,
-              extra: FilteredListRouteArgs(
-                filter: DiscoverFilter(
-                  type: detail.item.type,
-                  withGenres: {genre},
-                ),
-                title: genre.localizedName(context.l10n),
-              ),
-            ),
           ),
         ),
         SliverPadding(

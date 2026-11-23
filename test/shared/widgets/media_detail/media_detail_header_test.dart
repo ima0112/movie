@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/genre.dart';
+import 'package:movies/core/theme/app_text_styles.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/core/domain/entities/release_status.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_header.dart';
@@ -103,7 +104,6 @@ void main() {
   group('the header rating and meta line', () {
     testWidgets('the ring sits at the right of the title and the meta line '
         'closes the block, language last', (tester) async {
-      Genre? tapped;
       await tester.pumpWidget(
         _app(
           MediaDetailHeader(
@@ -114,7 +114,6 @@ void main() {
             genres: const [_action, _drama],
             language: 'English',
             voteAverage: 8.9,
-            onGenreTap: (g) => tapped = g,
           ),
         ),
       );
@@ -136,8 +135,14 @@ void main() {
         lessThan(tester.getRect(find.text('English')).left),
       );
 
-      await tester.tap(find.text('Action'));
-      expect(tapped, _action);
+      // The genres are plain information: nothing to tap.
+      expect(
+        find.ancestor(
+          of: find.text('Action'),
+          matching: find.byType(GestureDetector),
+        ),
+        findsNothing,
+      );
     });
 
     testWidgets('showRating false (not out yet): no ring', (tester) async {
@@ -174,6 +179,30 @@ void main() {
       );
 
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a long title that ends in an ellipsis uses the taller title '
+        'line, so its descenders are not cut', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          const MediaDetailHeader(
+            imageUrl: null,
+            title:
+                'The Lord of the Rings: The Rings of Power and a much longer '
+                'name that cannot fit',
+            voteAverage: 7.2,
+          ),
+          size: const Size(390, 844),
+        ),
+      );
+
+      final title = tester.widget<Text>(
+        find.textContaining('The Lord of the Rings'),
+      );
+      expect(title.maxLines, 2);
+      expect(title.overflow, TextOverflow.ellipsis);
+      expect(title.style, AppTextStyles.displayTitle);
+      expect(AppTextStyles.displayTitle.height, greaterThanOrEqualTo(1.25));
     });
   });
 }

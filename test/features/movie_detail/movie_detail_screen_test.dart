@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/shared/widgets/media_detail/media_detail_scroll_view.dart';
 import 'package:movies/app/app.dart';
 import 'package:movies/app/di.dart';
 import 'package:movies/app/environments.dart';
@@ -225,22 +226,19 @@ void main() {
     expect(find.textContaining('(Writer)'), findsNothing);
   });
 
-  testWidgets('tapping a genre pushes the real C1 (filtered listing) for that '
-      'genre and type', (tester) async {
+  testWidgets('the genres under the title are plain text: tapping one goes '
+      'nowhere', (tester) async {
     await openDuneDetail(tester);
 
-    // Dune: Part Two's genres (FakeMediaRepository): Science Fiction,
-    // Drama.
+    // Dune: Part Two's genres (FakeMediaRepository): Science Fiction, Drama.
+    expect(find.text('Science Fiction'), findsOneWidget);
     await tester.tap(find.text('Science Fiction'));
     await tester.pumpAndSettle();
 
-    // C1's own top bar title is the genre's name (same convention as
-    // B2's genre tiles — see explore_content.dart). The grid lists Dune:
-    // Part Two, Furiosa and Untitled Sci-Fi Project: FakeMediaRepository's
-    // only three *movies* carrying Science Fiction.
-    expect(find.text('Science Fiction'), findsWidgets);
-    // Exactly the three sci-fi movies are listed.
-    expect(find.byType(MediaCard), findsNWidgets(3));
+    // Still on D1: no listing was pushed.
+    expect(find.byType(MediaCard), findsNothing);
+    expect(find.text('Science Fiction'), findsOneWidget);
+    expect(find.byType(MediaDetailScrollView), findsOneWidget);
   });
 
   testWidgets(

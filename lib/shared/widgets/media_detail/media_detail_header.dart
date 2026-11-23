@@ -34,7 +34,6 @@ class MediaDetailHeader extends StatelessWidget {
     this.language,
     this.voteAverage = 0,
     this.showRating = true,
-    this.onGenreTap,
   });
 
   /// Backdrop URL, or the poster's when TMDB has no backdrop; `null` shows
@@ -47,12 +46,11 @@ class MediaDetailHeader extends StatelessWidget {
   /// an ordinary released title.
   final ReleaseStatus? releaseStatus;
 
-  /// The meta line: year(s) and country, then the (tappable) genres, then the
-  /// original language's name.
+  /// The meta line: year(s) and country, then the genres, then the original
+  /// language's name (plain text, no links).
   final String metaPrefix;
   final List<Genre> genres;
   final String? language;
-  final void Function(Genre genre)? onGenreTap;
 
   /// TMDB's vote average for the ring; [showRating] is `false` for a title
   /// that isn't out yet (TMDB reports 0.0), which has no ring.
@@ -70,7 +68,7 @@ class MediaDetailHeader extends StatelessWidget {
     final tagline = this.tagline;
     final titleText = Text(
       title,
-      style: AppTextStyles.display,
+      style: AppTextStyles.displayTitle,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
@@ -143,7 +141,6 @@ class MediaDetailHeader extends StatelessWidget {
                   prefix: metaPrefix,
                   genres: genres,
                   language: language,
-                  onGenreTap: onGenreTap,
                 ),
               ],
             ),

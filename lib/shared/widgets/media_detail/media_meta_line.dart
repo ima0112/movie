@@ -7,8 +7,8 @@ import '../../../l10n/genre_localization.dart';
 import '../../../l10n/l10n_extension.dart';
 
 /// D1/D2's meta line, under the title and tagline: "2008 – 2013 · United
-/// States · Drama · Crime · English" in muted text. [prefix] is the year(s) and
-/// country, each genre in [genres] is tappable (→ C1 with that genre), and
+/// States · Drama · Crime · English" in muted text, all of it informational (no
+/// links). [prefix] is the year(s) and country, [genres] the genres, and
 /// [language] — the original language's name — closes the line.
 class MediaMetaLine extends StatelessWidget {
   const MediaMetaLine({
@@ -16,13 +16,11 @@ class MediaMetaLine extends StatelessWidget {
     required this.prefix,
     required this.genres,
     this.language,
-    this.onGenreTap,
   });
 
   final String prefix;
   final List<Genre> genres;
   final String? language;
-  final void Function(Genre genre)? onGenreTap;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +29,7 @@ class MediaMetaLine extends StatelessWidget {
     final parts = <Widget>[
       if (prefix.isNotEmpty) Text(prefix, style: style),
       for (final genre in genres)
-        GestureDetector(
-          onTap: () => onGenreTap?.call(genre),
-          behavior: HitTestBehavior.opaque,
-          child: Text(genre.localizedName(context.l10n), style: style),
-        ),
+        Text(genre.localizedName(context.l10n), style: style),
       if (language != null && language.isNotEmpty) Text(language, style: style),
     ];
     return Wrap(
