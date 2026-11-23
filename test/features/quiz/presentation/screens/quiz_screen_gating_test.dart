@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/shared/widgets/app_buttons.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/quiz/presentation/screens/quiz_screen.dart';
@@ -25,6 +26,15 @@ void main() {
     const step1 = 'What are you NOT in the mood for today?';
     const step2 = 'Which vibes are you in the mood for today?';
     expect(find.text(step0), findsOneWidget);
+
+    // The flow's call-to-action is the amber button, on every step.
+    expect(
+      find.ancestor(
+        of: find.text('Continue'),
+        matching: find.byType(AccentButton),
+      ),
+      findsOneWidget,
+    );
 
     // Continue is on from the start, on every step.
     await tester.tap(find.text('Continue'));
