@@ -1261,12 +1261,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get statsEstimatedTvHoursLabel => 'Horas estimadas de series';
 
   @override
-  String get myTastesTypeTitle => '¿Qué sueles ver?';
-
-  @override
-  String get myTastesTypeHint => 'Define qué catálogo mostramos primero.';
-
-  @override
   String get myTastesCollectionsTitle => 'Colecciones que te gustan';
 
   @override
@@ -1706,6 +1700,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get quizStatusAny => 'Cualquiera';
+
+  @override
+  String get quizStatusNotCanceled => 'No canceladas';
 
   @override
   String get quizStatusFinished => 'Finalizada';

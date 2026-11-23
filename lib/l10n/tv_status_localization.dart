@@ -9,5 +9,6 @@ extension DiscoverTvStatusLocalization on DiscoverTvStatus {
   String localizedLabel(AppLocalizations l10n) => switch (this) {
     DiscoverTvStatus.airing => l10n.tvStatusAiring,
     DiscoverTvStatus.ended => l10n.tvStatusEnded,
+    DiscoverTvStatus.notCanceled => l10n.quizStatusNotCanceled,
   };
 }

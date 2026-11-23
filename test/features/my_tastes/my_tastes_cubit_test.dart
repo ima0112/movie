@@ -5,7 +5,6 @@ import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/domain/entities/genre.dart';
-import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/my_tastes/presentation/cubit/my_tastes_cubit.dart';
 import 'package:movies/features/my_tastes/presentation/cubit/my_tastes_state.dart';
@@ -160,18 +159,6 @@ void main() {
     });
   });
 
-  test('preferred type: a type, then back to both', () async {
-    final c = _build();
-
-    c.tastes.setPreferredType(MediaType.tvShow);
-    await _settle();
-    expect(c.profile.state!.preferredType, MediaType.tvShow);
-
-    c.tastes.setPreferredType(null);
-    await _settle();
-    expect(c.profile.state!.preferredType, isNull);
-  });
-
   test('platforms toggle on and off', () async {
     final c = _build();
 
@@ -186,7 +173,6 @@ void main() {
   test('reset clears every selection, the new ones too', () async {
     final c = _build();
     c.tastes.toggleLikedGenre(_drama);
-    c.tastes.setPreferredType(MediaType.movie);
     c.tastes.togglePlatform(8);
     c.tastes.setYearRange(1960, 2000, latestYear: 2026);
 
@@ -195,7 +181,6 @@ void main() {
 
     final s = c.tastes.state;
     expect(s.likedGenres, isEmpty);
-    expect(s.preferredType, isNull);
     expect(s.platformIds, isEmpty);
     expect(s.yearTo, isNull);
     expect(s.yearFrom, MyTastesState.defaultYearFrom);

@@ -160,6 +160,7 @@ class MatchQuery {
     var yearFrom = answers.first.yearFrom;
     int? maxRuntimeMinutes;
     var anyoneWantsFinished = false;
+    var anyoneWantsNotCanceled = false;
     int? maxSeasons;
     final excludedWatchedKeys = <MediaKey>{};
     final watchedByAnyone = <MediaKey>{};
@@ -185,6 +186,8 @@ class MatchQuery {
 
       if (answer.tvStatus == DiscoverTvStatus.ended) {
         anyoneWantsFinished = true;
+      } else if (answer.tvStatus == DiscoverTvStatus.notCanceled) {
+        anyoneWantsNotCanceled = true;
       }
 
       final seasons = answer.maxSeasons;
@@ -207,7 +210,12 @@ class MatchQuery {
       vibeIdsByParticipant: vibeIdsByParticipant,
       yearFrom: yearFrom,
       maxRuntimeMinutes: maxRuntimeMinutes,
-      tvStatus: anyoneWantsFinished ? DiscoverTvStatus.ended : null,
+      // The most restrictive wins: finished, then not cancelled.
+      tvStatus: anyoneWantsFinished
+          ? DiscoverTvStatus.ended
+          : anyoneWantsNotCanceled
+          ? DiscoverTvStatus.notCanceled
+          : null,
       maxSeasons: maxSeasons,
       excludedWatchedKeys: excludedWatchedKeys,
       watchedByAnyone: watchedByAnyone,

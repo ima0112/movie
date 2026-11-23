@@ -4,6 +4,7 @@ import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/l10n/runtime_format.dart';
+import 'package:movies/features/quiz/presentation/widgets/quiz_limits_card.dart';
 import 'package:movies/features/quiz/presentation/widgets/quiz_year_limits_step.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/app_segmented_control.dart';
@@ -178,27 +179,48 @@ void main() {
     expect(calls.watched, [true]);
   });
 
-  testWidgets('TV: Status Any | Finished instead of the duration', (
+  testWidgets(
+    'TV: Status Any | Not cancelled | Finished instead of the duration',
+    (tester) async {
+      final calls = _Calls();
+      await tester.pumpWidget(_host(calls, type: MediaType.tvShow));
+
+      expect(find.text('Max duration'), findsNothing);
+      expect(find.byType(Slider), findsNothing);
+      expect(find.text('Status'), findsOneWidget);
+      expect(
+        find.byType(AppSegmentedControl<DiscoverTvStatus?>),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('Not cancelled'));
+      await tester.pump();
+      await tester.tap(find.text('Finished'));
+      await tester.pump();
+      expect(calls.statuses, [
+        DiscoverTvStatus.notCanceled,
+        DiscoverTvStatus.ended,
+      ]);
+
+      await tester.pumpWidget(
+        _host(calls, type: MediaType.tvShow, status: DiscoverTvStatus.ended),
+      );
+      await tester.tap(find.text('Any'));
+      await tester.pump();
+      expect(calls.statuses.last, isNull);
+    },
+  );
+
+  testWidgets('the "Limits" heading lines up with the card under it (the '
+      'screen already pads its content, so the heading adds no margin)', (
     tester,
   ) async {
-    final calls = _Calls();
-    await tester.pumpWidget(_host(calls, type: MediaType.tvShow));
+    await tester.pumpWidget(_host(_Calls(), runtime: 150));
 
-    expect(find.text('Max duration'), findsNothing);
-    expect(find.byType(Slider), findsNothing);
-    expect(find.text('Status'), findsOneWidget);
-    expect(find.byType(AppSegmentedControl<bool>), findsOneWidget);
-
-    await tester.tap(find.text('Finished'));
-    await tester.pump();
-    expect(calls.statuses, [DiscoverTvStatus.ended]);
-
-    await tester.pumpWidget(
-      _host(calls, type: MediaType.tvShow, status: DiscoverTvStatus.ended),
+    expect(
+      tester.getTopLeft(find.text('Limits')).dx,
+      tester.getTopLeft(find.byType(QuizLimitsCard)).dx,
     );
-    await tester.tap(find.text('Any'));
-    await tester.pump();
-    expect(calls.statuses.last, isNull);
   });
 
   testWidgets('the Spanish copy', (tester) async {

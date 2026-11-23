@@ -16,7 +16,8 @@ import 'overline_label.dart';
 /// hides itself (renders nothing) leaves no hole.
 ///
 /// [inset] — `true` (default) pads [child] with the screen margin; `false`
-/// for content that scrolls edge to edge and pads its own rows.
+/// for content that scrolls edge to edge and pads its own rows. [titleInset]
+/// does the same for the heading.
 class AppSection extends StatelessWidget {
   const AppSection({
     super.key,
@@ -25,6 +26,7 @@ class AppSection extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.inset = true,
+    this.titleInset = true,
     this.subtitle,
   }) : _overline = false;
 
@@ -35,7 +37,8 @@ class AppSection extends StatelessWidget {
     required this.child,
     required String this.title,
     this.inset = true,
-  }) : actionLabel = null,
+  }) : titleInset = true,
+       actionLabel = null,
        onAction = null,
        subtitle = null,
        _overline = true;
@@ -55,6 +58,11 @@ class AppSection extends StatelessWidget {
   final VoidCallback? onAction;
   final bool inset;
 
+  /// Whether the heading is padded with the screen margin — `false` where the
+  /// screen already pads its whole content (the quiz), so the heading lines up
+  /// with the cards under it instead of sitting one margin further in.
+  final bool titleInset;
+
   @override
   Widget build(BuildContext context) {
     final title = this.title;
@@ -66,8 +74,8 @@ class AppSection extends StatelessWidget {
         children: [
           if (title != null) ...[
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.screenMargin,
+              padding: EdgeInsets.symmetric(
+                horizontal: titleInset ? AppSpacing.screenMargin : 0,
               ),
               child: _overline
                   ? OverlineLabel(title)

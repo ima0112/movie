@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/app/cubits/taste_profile_cubit.dart';
 import 'package:movies/core/data/local/in_memory_taste_profile_repository.dart';
 import 'package:movies/core/data/local/in_memory_user_library_repository.dart';
-import 'package:movies/core/domain/entities/media_type.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/features/match_engine/domain/vibe_catalog.dart';
 import 'package:movies/features/my_tastes/presentation/cubit/my_tastes_cubit.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_avoided_genres_section.dart';
@@ -12,7 +12,6 @@ import 'package:movies/features/my_tastes/presentation/widgets/taste_eras_sectio
 import 'package:movies/features/my_tastes/presentation/widgets/taste_footer.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_vibes_section.dart';
 import 'package:movies/features/my_tastes/presentation/widgets/taste_liked_genres_section.dart';
-import 'package:movies/features/my_tastes/presentation/widgets/taste_type_section.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
 final Map<String, dynamic> _vibes = {
@@ -55,7 +54,6 @@ Future<({MyTastesCubit tastes, TasteProfileCubit profile})> _pump(
           body: SingleChildScrollView(
             child: Column(
               children: [
-                const TasteTypeSection(),
                 const TasteLikedGenresSection(),
                 const TasteAvoidedGenresSection(),
                 const TasteVibesSection(),
@@ -78,33 +76,6 @@ Future<void> _letSavedFade(WidgetTester tester) =>
     tester.pump(const Duration(seconds: 3));
 
 void main() {
-  testWidgets('"What do you usually watch?": the same All · Movies · TV Shows '
-      'as Home, in that order; All is no preference', (tester) async {
-    final c = await _pump(tester);
-    expect(find.text('What do you usually watch?'), findsOneWidget);
-    expect(
-      tester.getTopLeft(find.text('All').first).dx,
-      lessThan(tester.getTopLeft(find.text('Movies')).dx),
-    );
-    expect(
-      tester.getTopLeft(find.text('Movies')).dx,
-      lessThan(tester.getTopLeft(find.text('TV Shows')).dx),
-    );
-
-    await tester.tap(find.text('TV Shows'));
-    await tester.pump();
-    expect(c.tastes.state.preferredType, MediaType.tvShow);
-
-    await tester.tap(find.text('Movies'));
-    await tester.pump();
-    expect(c.tastes.state.preferredType, MediaType.movie);
-
-    await tester.tap(find.text('All').first);
-    await tester.pump();
-    expect(c.tastes.state.preferredType, isNull);
-    await _letSavedFade(tester);
-  });
-
   testWidgets('liked genres: tapping one picks it', (tester) async {
     final c = await _pump(tester);
 
@@ -172,7 +143,7 @@ void main() {
         .opacity;
     expect(opacity(), 0);
 
-    c.tastes.setPreferredType(MediaType.movie);
+    c.tastes.toggleLikedGenre(const Genre(id: 'drama'));
     await tester.pump(); // the stream event
     await tester.pump(); // the rebuild it asks for
     expect(opacity(), 1);
@@ -184,7 +155,7 @@ void main() {
   testWidgets('Spanish titles', (tester) async {
     await _pump(tester, locale: const Locale('es'));
 
-    expect(find.text('¿Qué sueles ver?'), findsOneWidget);
+    expect(find.text('¿Qué sueles ver?'), findsNothing); // gone
     expect(find.text('Géneros que me gustan'), findsOneWidget);
     expect(find.text('Géneros que evito'), findsOneWidget);
   });

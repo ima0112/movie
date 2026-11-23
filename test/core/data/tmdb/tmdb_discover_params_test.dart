@@ -409,6 +409,16 @@ void main() {
       expect(params['with_status'], '3');
     });
 
+    test('notCanceled -> with_status 0|2|3: returning, in production or '
+        'ended, never cancelled (4)', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(tvStatus: DiscoverTvStatus.notCanceled),
+        type: MediaType.tvShow,
+      );
+
+      expect(params['with_status'], '0|2|3');
+    });
+
     test('never set for a movie, even if present on the filter', () {
       final params = discoverQueryParams(
         const DiscoverFilter(tvStatus: DiscoverTvStatus.airing),

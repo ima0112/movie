@@ -77,7 +77,8 @@ class QuizState {
   final int? maxRuntimeMinutes;
 
   /// Step 4, TV sessions only — "Finished | Either" toggle. `null` =
-  /// "Either"; [DiscoverTvStatus.ended] = "Finished". Reuses
+  /// "Any"; [DiscoverTvStatus.notCanceled] = "Not cancelled";
+  /// [DiscoverTvStatus.ended] = "Finished". Reuses
   /// `DiscoverTvStatus` rather than a near-duplicate type — the same
   /// call `ParticipantAnswers.tvStatus`'s own doc comment already makes;
   /// this quiz never produces [DiscoverTvStatus.airing] either.

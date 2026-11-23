@@ -87,13 +87,13 @@ class QuizYearLimitsStep extends StatelessWidget {
         AppSection(
           title: l10n.quizLimitsTitle,
           inset: false,
+          titleInset: false,
           child: QuizLimitsCard(
             mediaType: mediaType,
             maxRuntimeMinutes: maxRuntimeMinutes,
             onMaxRuntimeChanged: onMaxRuntimeChanged,
-            finishedOnly: tvStatus == DiscoverTvStatus.ended,
-            onFinishedOnlyChanged: (finished) =>
-                onTvStatusChanged(finished ? DiscoverTvStatus.ended : null),
+            tvStatus: tvStatus,
+            onTvStatusChanged: onTvStatusChanged,
             excludeWatched: excludeWatched,
             onExcludeWatchedChanged: onExcludeWatchedChanged,
           ),

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/cubits/taste_profile_cubit.dart';
 import '../../../../core/domain/entities/genre.dart';
-import '../../../../core/domain/entities/media_type.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
 import '../../../../core/data/tmdb/tmdb_genre_mapper.dart';
 import '../../../../core/domain/entities/collection.dart';
@@ -168,13 +167,6 @@ class MyTastesCubit extends Cubit<MyTastesState> {
           : state.copyWith(yearFrom: from, yearTo: to),
     );
   }
-
-  /// "What do you usually watch?": a type, or `null` for both.
-  void setPreferredType(MediaType? type) => _apply(
-    type == null
-        ? state.copyWith(clearPreferredType: true)
-        : state.copyWith(preferredType: type),
-  );
 
   /// "My platforms": a streaming service on or off (TMDB provider id).
   void togglePlatform(int providerId) {
