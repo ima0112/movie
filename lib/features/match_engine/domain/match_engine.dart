@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:injectable/injectable.dart';
 
+import '../../../core/domain/entities/collection.dart';
+import '../../../core/domain/entities/collection_catalog.dart';
 import '../../../core/domain/entities/discover_filter.dart';
 import '../../../core/domain/entities/media_item.dart';
 import '../../../core/domain/entities/media_key.dart';
@@ -19,6 +21,7 @@ import 'vibe_catalog.dart';
 class MatchOptions {
   const MatchOptions({
     required this.vibeCatalog,
+    this.collectionCatalog = const CollectionCatalog([]),
     this.alternativesCount = 3,
     this.randomizeTop,
   });
@@ -29,6 +32,9 @@ class MatchOptions {
   /// .loadFromAssets`) is async and nothing wires it through `get_it`
   /// yet — whoever calls [MatchEngine.resolve] is already holding one.
   final VibeCatalog vibeCatalog;
+
+  /// Resolves each `MatchQuery.collectionIds` id back to a `Collection`.
+  final CollectionCatalog collectionCatalog;
 
   /// `docs/DECISIONS.md`'s own "alternatives[3–4]" — a range, not a
   /// fixed count; this picks the low end as the default. Ignored when
@@ -146,7 +152,7 @@ class MatchEngineImpl implements MatchEngine {
     var currentQuery = query;
     final relaxationsApplied = <Relaxation>[];
 
-    var scored = await _fetchAndScore(currentQuery, options.vibeCatalog);
+    var scored = await _fetchAndScore(currentQuery, options);
 
     for (final step in Relaxation.values) {
       if (scored.isNotEmpty) break;
@@ -156,7 +162,7 @@ class MatchEngineImpl implements MatchEngine {
 
       currentQuery = relaxedQuery;
       relaxationsApplied.add(step);
-      scored = await _fetchAndScore(currentQuery, options.vibeCatalog);
+      scored = await _fetchAndScore(currentQuery, options);
     }
 
     if (scored.isEmpty) return null;
@@ -172,29 +178,40 @@ class MatchEngineImpl implements MatchEngine {
 
   Future<List<_ScoredCandidate>> _fetchAndScore(
     MatchQuery query,
-    VibeCatalog vibeCatalog,
+    MatchOptions options,
   ) async {
     final candidatesById = <int, MediaItem>{};
     final matchedVibesById = <int, Set<String>>{};
 
+    // The collections the group chose that exist for this kind of title; each
+    // is its own set of queries, none chosen is one unrestricted set.
+    final collections = [
+      for (final id in query.collectionIds)
+        if (options.collectionCatalog.byId(id) case final Collection c
+            when c.isAvailableFor(query.mediaType))
+          c,
+    ];
+
     for (final vibeId in query.vibeWeights.keys) {
-      final vibe = vibeCatalog.byId(vibeId);
+      final vibe = options.vibeCatalog.byId(vibeId);
       if (vibe == null || !vibe.isMeaningfulFor(query.mediaType)) continue;
 
-      final result = await _mediaRepository.discover(
-        _filterForVibe(vibe, query),
-      );
-      final items = switch (result) {
-        Success<List<MediaItem>>(:final value) => value,
-        Failure<List<MediaItem>>() => const <MediaItem>[],
-      };
+      for (final collection in collections.isEmpty ? [null] : collections) {
+        final result = await _mediaRepository.discover(
+          _filterForVibe(vibe, query, collection),
+        );
+        final items = switch (result) {
+          Success<List<MediaItem>>(:final value) => value,
+          Failure<List<MediaItem>>() => const <MediaItem>[],
+        };
 
-      for (final item in items) {
-        final key = MediaKey(type: item.type, tmdbId: item.id);
-        if (query.excludedWatchedKeys.contains(key)) continue;
+        for (final item in items) {
+          final key = MediaKey(type: item.type, tmdbId: item.id);
+          if (query.excludedWatchedKeys.contains(key)) continue;
 
-        candidatesById[item.id] = item;
-        (matchedVibesById[item.id] ??= {}).add(vibeId);
+          candidatesById[item.id] = item;
+          (matchedVibesById[item.id] ??= {}).add(vibeId);
+        }
       }
     }
 
@@ -212,8 +229,13 @@ class MatchEngineImpl implements MatchEngine {
     return scored;
   }
 
-  DiscoverFilter _filterForVibe(Vibe vibe, MatchQuery query) {
+  DiscoverFilter _filterForVibe(
+    Vibe vibe,
+    MatchQuery query,
+    Collection? collection,
+  ) {
     return DiscoverFilter(
+      collection: collection,
       type: query.mediaType,
       withGenres: vibe.genresFor(query.mediaType),
       withoutGenres: query.excludedGenres,
@@ -227,7 +249,14 @@ class MatchEngineImpl implements MatchEngine {
           : null,
       tvStatus: query.mediaType == MediaType.tvShow ? query.tvStatus : null,
       sortBy: DiscoverSortBy.popularity,
-      minVoteCount: query.voteCountGte,
+      // A collection's catalog can be small (Turkish series): its own lower
+      // vote floor applies.
+      minVoteCount: collection == null
+          ? query.voteCountGte
+          : min(
+              query.voteCountGte,
+              collection.ruleFor(query.mediaType)!.minVoteCount,
+            ),
     );
   }
 

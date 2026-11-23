@@ -26,9 +26,16 @@ class MatchQuery {
     required this.excludedWatchedKeys,
     required this.watchedByAnyone,
     this.voteCountGte = 200,
+    this.collectionIds = const {},
   });
 
   final MediaType mediaType;
+
+  /// Union of the collections (`Collection.id`) the participants chose — the
+  /// pool every candidate must come from, a hard filter the relaxation ladder
+  /// never touches. A participant who chose none adds nothing: the group
+  /// restricts itself only as far as someone asked it to. Empty = anything.
+  final Set<String> collectionIds;
 
   /// Union of every participant's [ParticipantAnswers.excludedGenres] —
   /// `docs/DECISIONS.md`: "Genres I do NOT want... Union" → maps to
@@ -118,6 +125,7 @@ class MatchQuery {
     Set<MediaKey>? excludedWatchedKeys,
     Set<MediaKey>? watchedByAnyone,
     int? voteCountGte,
+    Set<String>? collectionIds,
   }) {
     return MatchQuery(
       mediaType: mediaType ?? this.mediaType,
@@ -133,6 +141,7 @@ class MatchQuery {
       excludedWatchedKeys: excludedWatchedKeys ?? this.excludedWatchedKeys,
       watchedByAnyone: watchedByAnyone ?? this.watchedByAnyone,
       voteCountGte: voteCountGte ?? this.voteCountGte,
+      collectionIds: collectionIds ?? this.collectionIds,
     );
   }
 
@@ -154,9 +163,11 @@ class MatchQuery {
     int? maxSeasons;
     final excludedWatchedKeys = <MediaKey>{};
     final watchedByAnyone = <MediaKey>{};
+    final collectionIds = <String>{};
 
     for (final answer in answers) {
       excludedGenres.addAll(answer.excludedGenres);
+      collectionIds.addAll(answer.collectionIds);
 
       for (final vibeId in answer.vibeIds) {
         vibeWeights[vibeId] = (vibeWeights[vibeId] ?? 0) + 1;
@@ -200,6 +211,7 @@ class MatchQuery {
       maxSeasons: maxSeasons,
       excludedWatchedKeys: excludedWatchedKeys,
       watchedByAnyone: watchedByAnyone,
+      collectionIds: collectionIds,
     );
   }
 
@@ -216,7 +228,8 @@ class MatchQuery {
       other.maxSeasons == maxSeasons &&
       _setEquals(other.excludedWatchedKeys, excludedWatchedKeys) &&
       _setEquals(other.watchedByAnyone, watchedByAnyone) &&
-      other.voteCountGte == voteCountGte;
+      other.voteCountGte == voteCountGte &&
+      _setEquals(other.collectionIds, collectionIds);
 
   @override
   int get hashCode => Object.hash(
@@ -235,6 +248,7 @@ class MatchQuery {
     Object.hashAllUnordered(excludedWatchedKeys),
     Object.hashAllUnordered(watchedByAnyone),
     voteCountGte,
+    Object.hashAllUnordered(collectionIds),
   );
 
   @override
@@ -244,7 +258,8 @@ class MatchQuery {
       'vibeIdsByParticipant: $vibeIdsByParticipant, yearFrom: $yearFrom, '
       'maxRuntimeMinutes: $maxRuntimeMinutes, tvStatus: $tvStatus, '
       'maxSeasons: $maxSeasons, excludedWatchedKeys: $excludedWatchedKeys, '
-      'watchedByAnyone: $watchedByAnyone, voteCountGte: $voteCountGte)';
+      'watchedByAnyone: $watchedByAnyone, voteCountGte: $voteCountGte, '
+      'collectionIds: $collectionIds)';
 }
 
 /// Order-independent set content equality — same local stand-in used
