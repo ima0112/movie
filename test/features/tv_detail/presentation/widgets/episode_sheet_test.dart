@@ -4,6 +4,7 @@ import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/theme/app_icons.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/episode_sheet.dart';
+import 'package:movies/features/tv_detail/presentation/widgets/episode_sheet_header.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
 final _episode = Episode(
@@ -46,8 +47,8 @@ void _usePhoneScreen(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('shows the S1 · E4 caption, name, date and runtime chips and '
-      'the full synopsis', (tester) async {
+  testWidgets('shows the S1 · E4 pill, name, one meta line and the full '
+      'synopsis', (tester) async {
     _usePhoneScreen(tester);
     await tester.pumpWidget(
       _wrap(EpisodeSheet(seasonNumber: 1, episode: _episode)),
@@ -55,8 +56,8 @@ void main() {
 
     expect(find.text('S1 · E4'), findsOneWidget);
     expect(find.text('Hands'), findsOneWidget);
-    expect(find.text('23 Jun, 2022'), findsOneWidget);
-    expect(find.text('32 min'), findsOneWidget);
+    // One plain line, no chips.
+    expect(find.textContaining('23 Jun, 2022 · 32 min'), findsOneWidget);
     final overview = tester.widget<Text>(find.textContaining('Carmy'));
     expect(overview.maxLines, isNull);
   });
@@ -67,10 +68,10 @@ void main() {
       _wrap(EpisodeSheet(seasonNumber: 0, episode: _episode)),
     );
 
-    expect(find.text('SPECIALS · E4'), findsOneWidget);
+    expect(find.text('Specials · E4'), findsOneWidget);
   });
 
-  testWidgets('an unaired date-less episode shows TBA and no runtime chip', (
+  testWidgets('an unaired date-less episode shows TBA and no runtime', (
     tester,
   ) async {
     _usePhoneScreen(tester);
@@ -88,7 +89,7 @@ void main() {
     expect(find.textContaining('min'), findsNothing);
   });
 
-  testWidgets('shows a rating chip and the guest stars, and tapping a guest '
+  testWidgets('shows the rating and the guest stars, and tapping a guest '
       'calls onPersonTap', (tester) async {
     _usePhoneScreen(tester);
     Person? tapped;
@@ -123,7 +124,7 @@ void main() {
       ),
     );
 
-    expect(find.text('8.5'), findsOneWidget);
+    expect(find.textContaining('8.5'), findsOneWidget);
     expect(find.byIcon(AppIcons.starFill), findsOneWidget);
     expect(find.text('GUEST STARS'), findsOneWidget);
     expect(find.text('Dr. Vega'), findsOneWidget);
@@ -132,7 +133,7 @@ void main() {
     expect(tapped?.id, 11);
   });
 
-  testWidgets('no rating chip and no guest-stars section when there is '
+  testWidgets('no rating and no guest-stars section when there is '
       'neither', (tester) async {
     _usePhoneScreen(tester);
     await tester.pumpWidget(
@@ -157,5 +158,39 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('T1 · E4'), findsOneWidget);
+  });
+
+  testWidgets('the still is edge to edge with the code pill over it and the '
+      'sheet\'s own handle', (tester) async {
+    _usePhoneScreen(tester);
+    await tester.pumpWidget(
+      _wrap(EpisodeSheet(seasonNumber: 1, episode: _episode)),
+    );
+
+    final header = tester.getRect(find.byType(EpisodeSheetHeader));
+    expect(header.width, 390); // no side margin
+    expect(header.top, 0);
+    final pill = tester.getRect(find.text('S1 · E4'));
+    expect(header.contains(pill.center), isTrue);
+    // The pill is at the lower left, and the title is under the still.
+    expect(pill.left, lessThan(60));
+    expect(
+      tester.getRect(find.text('Hands')).top,
+      greaterThanOrEqualTo(header.bottom),
+    );
+  });
+
+  testWidgets('a really small phone at 200% text: no overflow', (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      _wrap(
+        EpisodeSheet(seasonNumber: 1, episode: _episode),
+        locale: const Locale('es'),
+        textScale: 2,
+      ),
+    );
+    expect(tester.takeException(), isNull);
   });
 }
