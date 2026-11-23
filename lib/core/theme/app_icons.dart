@@ -126,6 +126,8 @@ class AppIcons {
   static const IconData genreRomance = RemixIcons.hearts_line;
   static const IconData genreSciFi = RemixIcons.aliens_line;
   static const IconData genreThriller = RemixIcons.timer_flash_line;
+  static const IconData genreWar = RemixIcons.sword_line;
+  static const IconData genreWestern = RemixIcons.cactus_line;
 
   /// E2's "Max seasons" stepper (`docs/DESIGN_SYSTEM.md` section 5's own
   /// "9. Stepper (seasons) and toggle").

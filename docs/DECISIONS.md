@@ -81,8 +81,10 @@ What actually shipped, and where it diverges from the table above:
   planned, not yet started.
 - **Genres**: `/genre/movie/list`/`/genre/tv/list` were **not
   implemented** — this app's genre system is served entirely by the
-  static `GenreCatalog` (16 normalized genres, including `fantasy`,
-  added in the `vibe-keywords-curated` branch) plus
+  static `GenreCatalog` (18 normalized genres: TMDB's movie list plus `war`
+  and `western`, which it used to drop; `availableFor(type)` says which ones
+  a kind of title can use — TV folds `adventure` into `action` and `fantasy`
+  into `sci-fi`, as TMDB does, and `tvMembers` names those groups) plus
   `core/data/tmdb/tmdb_genre_mapper.dart`'s hand-maintained TMDB-id
   tables (both directions: id→Genre for mapping API responses, Genre→id
   for building `/discover`'s `with_genres`/`without_genres`). No live

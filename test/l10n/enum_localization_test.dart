@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
+import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/genre_catalog.dart';
 import 'package:movies/core/domain/entities/media_segment.dart';
 import 'package:movies/core/domain/entities/media_type.dart';
@@ -52,6 +53,32 @@ void main() {
         expectLocalized((l10n) => genre.localizedName(l10n));
       });
     }
+  });
+
+  group('Genre on TV', () {
+    test('the genres TMDB combines on TV carry the combined names', () {
+      const action = Genre(id: 'action');
+      const sciFi = Genre(id: 'sci-fi');
+      const war = Genre(id: 'war');
+      const comedy = Genre(id: 'comedy');
+
+      expectLocalized(
+        (l10n) => action.localizedName(l10n, type: MediaType.tvShow),
+      );
+      expect(
+        action.localizedName(en, type: MediaType.tvShow),
+        'Action & Adventure',
+      );
+      expect(
+        sciFi.localizedName(es, type: MediaType.tvShow),
+        'Ciencia ficción y fantasía',
+      );
+      expect(war.localizedName(en, type: MediaType.tvShow), 'War & Politics');
+      // Movies, no type and every other genre keep their own name.
+      expect(action.localizedName(en), 'Action');
+      expect(war.localizedName(en, type: MediaType.movie), 'War');
+      expect(comedy.localizedName(en, type: MediaType.tvShow), 'Comedy');
+    });
   });
 
   group('Vibe', () {

@@ -1,4 +1,5 @@
 import 'genre.dart';
+import 'media_type.dart';
 
 /// The full set of normalized genres PakoTV works with — a fixed,
 /// hand-maintained list, not fetched from TMDB at runtime (the raw
@@ -35,7 +36,46 @@ class GenreCatalog {
     Genre(id: 'romance'),
     Genre(id: 'sci-fi'),
     Genre(id: 'thriller'),
+    Genre(id: 'war'),
+    Genre(id: 'western'),
   ];
+
+  /// The genres a kind of title can be liked, vetoed or browsed by — what a
+  /// screen should list. **Movies: every genre.** **TV shows: all but
+  /// `adventure` and `fantasy`**: TMDB's TV list has one "Action & Adventure"
+  /// and one "Sci-Fi & Fantasy", so on TV `action` and `sci-fi` are those
+  /// combined chips (see [tvMembers]) and the other two have no chip of their
+  /// own. (A TV genre TMDB lacks — horror, romance, thriller, history, music —
+  /// stays: the data layer stands in for it with keywords.)
+  static List<Genre> availableFor(MediaType type) => switch (type) {
+    MediaType.movie => all,
+    MediaType.tvShow => [
+      for (final genre in all)
+        if (!_tvFoldedInto.containsKey(genre.id)) genre,
+    ],
+  };
+
+  /// The genres that are **one genre on TV**: `action`+`adventure` (TMDB's
+  /// "Action & Adventure") and `sci-fi`+`fantasy` ("Sci-Fi & Fantasy"). For any
+  /// other genre, just itself. A TV chip for [genre] stands for all of these, so
+  /// picking it to veto vetoes every member, and vetoing only one member
+  /// (Fantasy alone, say) leaves the combined TV genre alone.
+  static Set<Genre> tvMembers(Genre genre) {
+    final primary = _tvFoldedInto[genre.id] ?? genre.id;
+    return {
+      for (final g in all)
+        if (g.id == primary || _tvFoldedInto[g.id] == primary) g,
+    };
+  }
+
+  /// Whether [genre] is shown on TV under another genre's chip (`adventure`
+  /// under `action`, `fantasy` under `sci-fi`).
+  static bool isFoldedOnTv(Genre genre) => _tvFoldedInto.containsKey(genre.id);
+
+  static const Map<String, String> _tvFoldedInto = {
+    'adventure': 'action',
+    'fantasy': 'sci-fi',
+  };
 
   /// Reconstructs a [Genre] from a persisted [id] — local storage only
   /// ever keeps the id (CLAUDE.md rule 15), never a display name, so
