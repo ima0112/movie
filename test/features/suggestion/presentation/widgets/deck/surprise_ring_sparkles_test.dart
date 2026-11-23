@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/shared/widgets/progress_ring.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_affinity_ring.dart';
 import 'package:movies/features/suggestion/presentation/widgets/deck/surprise_sparkles.dart';
 
@@ -19,7 +20,7 @@ double _fraction(WidgetTester tester) {
       matching: find.byType(CustomPaint),
     ),
   );
-  return (paint.painter! as SurpriseRingPainter).fraction;
+  return (paint.painter! as ProgressRingPainter).fraction;
 }
 
 void main() {

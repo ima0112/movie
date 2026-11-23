@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_detail/rating_ring.dart';
+import 'package:movies/shared/widgets/progress_ring.dart';
 
 Widget _host(
   double rating, {
@@ -60,7 +61,7 @@ void main() {
         matching: find.byType(CustomPaint),
       ),
     );
-    return (paint.painter! as dynamic).fraction as double;
+    return (paint.painter! as ProgressRingPainter).fraction;
   }
 
   testWidgets('the arc fills from empty to the rating, the number already '
@@ -69,7 +70,7 @@ void main() {
     expect(find.text('8.0'), findsOneWidget);
     expect(sweep(tester), 0);
 
-    await tester.pump(RatingRing.duration * 0.6);
+    await tester.pump(ProgressRing.duration * 0.6);
     final mid = sweep(tester);
     expect(mid, greaterThan(0));
     expect(mid, lessThan(0.8));
