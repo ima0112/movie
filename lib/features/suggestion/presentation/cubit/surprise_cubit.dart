@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_initializing_formals
+import '../../../../core/domain/repositories/surprise_session_repository.dart';
+import '../../../../core/domain/entities/surprise_session.dart';
 import 'dart:async';
 import 'dart:math';
 
@@ -39,10 +41,12 @@ class SurpriseCubit extends Cubit<SurpriseState> {
     this._userLibraryRepository, {
     this.participantId = 'me',
     SurpriseHistoryRepository? history,
+    SurpriseSessionRepository? sessions,
     String Function()? region,
     Random? random,
     DateTime Function()? clock,
   }) : _history = history,
+       _sessions = sessions,
        _region = region ?? (() => 'US'),
        _random = random ?? Random(),
        _clock = clock ?? DateTime.now,
@@ -56,6 +60,9 @@ class SurpriseCubit extends Cubit<SurpriseState> {
   /// What Surprise me has shown, kept on the device (`null` = not kept:
   /// only this session's own titles are skipped).
   final SurpriseHistoryRepository? _history;
+
+  /// What each session asked for, kept beside the history (`null` = not kept).
+  final SurpriseSessionRepository? _sessions;
 
   /// The user's region (Settings → Region), read at each search.
   final String Function() _region;
@@ -593,6 +600,32 @@ class SurpriseCubit extends Cubit<SurpriseState> {
                 genres: s.item.genres,
               ),
           ]) ??
+          Future<void>.value(),
+    );
+
+    // What this session asked for, kept beside what it showed: the first batch
+    // records the answers, a later one only adds the relaxations it needed.
+    unawaited(
+      _sessions?.recordBatch(
+            SurpriseSession(
+              sessionId: _sessionId,
+              startedAt: now,
+              mediaType: mediaType,
+              source: switch (source) {
+                SuggestionSource.profile => SurpriseSessionSource.profile,
+                SuggestionSource.inferredList =>
+                  SurpriseSessionSource.inferredList,
+                SuggestionSource.quiz => SurpriseSessionSource.quiz,
+              },
+              yearFrom: answers.yearFrom,
+              yearTo: answers.yearTo,
+              collectionIds: answers.collectionIds,
+              vibeIds: answers.vibeIds,
+              excludedGenres: answers.excludedGenres,
+              platformIds: answers.platformIds,
+              relaxations: {for (final r in batch.relaxations) r.name},
+            ),
+          ) ??
           Future<void>.value(),
     );
 

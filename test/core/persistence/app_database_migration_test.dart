@@ -140,7 +140,7 @@ void main() {
         (await db.customSelect('PRAGMA user_version').getSingle()).read<int>(
           'user_version',
         ),
-        14,
+        15,
       );
     });
 
@@ -237,6 +237,17 @@ void main() {
         columns.map((c) => c.read<String>('name')),
         contains('liked_collections'),
       );
+    });
+
+    test('upgrading from schema v14 creates the Surprise-me sessions table, '
+        'empty', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      raw.execute('PRAGMA user_version = 14;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      expect(await db.select(db.surpriseSessionTable).get(), isEmpty);
     });
   });
 }

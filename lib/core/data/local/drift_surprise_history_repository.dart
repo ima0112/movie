@@ -159,7 +159,9 @@ class DriftSurpriseHistoryRepository implements SurpriseHistoryRepository {
   @override
   Future<Result<void>> clear() async {
     try {
+      // The sessions' answers go with what they showed.
       await _db.delete(_db.surpriseHistoryTable).go();
+      await _db.delete(_db.surpriseSessionTable).go();
       return const Success(null);
     } catch (_) {
       return Failure(FailureReason.storage);
