@@ -1513,6 +1513,16 @@
   "@quizSearchButton": {
     "description": "E2's final-step button, replacing commonNext (docs/SCREENS.md E2: \"Final button 'Search'\")."
   },
+  "quizCollectionHeadlineBefore": "Where should it ",
+  "@quizCollectionHeadlineBefore": {
+    "description": "E2 step 1's headline, three parts so one word can be coloured (amber): before + accent + after = \"Where should it come from?\" — the collection (Turkish series, Anime, For kids…) the results come from."
+  },
+  "quizCollectionHeadlineAccent": "come from",
+  "quizCollectionHeadlineAfter": "?",
+  "quizCollectionSubtitle": "Pick up to 2, or skip to see everything",
+  "quizCollectionGroupWorld": "From the world",
+  "quizCollectionGroupFormat": "Formats",
+  "quizCollectionGroupOccasion": "For everyone",
   "quizVibeHeadlineBefore": "Which ",
   "@quizVibeHeadlineBefore": {
     "description": "E2 step 2's headline, three parts so \"vibes\" can be coloured (amber): before + accent + after."

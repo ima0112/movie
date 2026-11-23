@@ -79,5 +79,9 @@ const List<Country> countryCatalog = [
 /// Falls back to the bare code itself rather than throwing, so an
 /// unrecognized `AppSettings.regionCode` degrades to showing "US"
 /// instead of crashing the screen that reads it.
-String countryName(String code) =>
-    countryCatalog.firstWhere((c) => c.code == code, orElse: () => Country(code: code, name: code)).name;
+String countryName(String code) => countryCatalog
+    .firstWhere(
+      (c) => c.code == code,
+      orElse: () => Country(code: code, name: code),
+    )
+    .name;

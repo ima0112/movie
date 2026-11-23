@@ -1623,6 +1623,28 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizSearchButton => 'Buscar';
 
   @override
+  String get quizCollectionHeadlineBefore => '¿De dónde la ';
+
+  @override
+  String get quizCollectionHeadlineAccent => 'quieres';
+
+  @override
+  String get quizCollectionHeadlineAfter => '?';
+
+  @override
+  String get quizCollectionSubtitle =>
+      'Elige hasta 2, o sáltalo para verlo todo';
+
+  @override
+  String get quizCollectionGroupWorld => 'Del mundo';
+
+  @override
+  String get quizCollectionGroupFormat => 'Formatos';
+
+  @override
+  String get quizCollectionGroupOccasion => 'Para quién';
+
+  @override
   String get quizVibeHeadlineBefore => '¿Qué ';
 
   @override

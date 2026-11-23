@@ -10,7 +10,9 @@ import 'package:movies/core/persistence/app_database.dart';
 /// A fresh repository over an in-memory database — see
 /// `drift_onboarding_repository_test.dart`'s own version of this helper
 /// for why (never touches disk or `path_provider`).
-DriftSettingsRepository _repository({Locale systemLocale = const Locale('en', 'US')}) {
+DriftSettingsRepository _repository({
+  Locale systemLocale = const Locale('en', 'US'),
+}) {
   final db = AppDatabase.forTesting(NativeDatabase.memory());
   addTearDown(db.close);
   return DriftSettingsRepository.withSystemLocale(db, () => systemLocale);
@@ -31,9 +33,7 @@ void main() {
       'load() on a first launch (nothing saved) derives the language from '
       'a Spanish system locale and the region from its country code',
       () async {
-        final repository = _repository(
-          systemLocale: const Locale('es', 'MX'),
-        );
+        final repository = _repository(systemLocale: const Locale('es', 'MX'));
 
         await repository.load();
 
@@ -44,72 +44,58 @@ void main() {
       },
     );
 
-    test(
-      'load() falls back to en for any non-Spanish system locale',
-      () async {
-        final repository = _repository(
-          systemLocale: const Locale('fr', 'FR'),
-        );
+    test('load() falls back to en for any non-Spanish system locale', () async {
+      final repository = _repository(systemLocale: const Locale('fr', 'FR'));
 
-        await repository.load();
+      await repository.load();
 
-        expect(repository.current.languageCode, 'en');
-      },
-    );
+      expect(repository.current.languageCode, 'en');
+    });
 
-    test(
-      'load() falls back to region US when the system locale has no '
-      'country code',
-      () async {
-        final repository = _repository(systemLocale: const Locale('es'));
+    test('load() falls back to region US when the system locale has no '
+        'country code', () async {
+      final repository = _repository(systemLocale: const Locale('es'));
 
-        await repository.load();
+      await repository.load();
 
-        expect(
-          repository.current,
-          const AppSettings(languageCode: 'es', regionCode: 'US'),
-        );
-      },
-    );
+      expect(
+        repository.current,
+        const AppSettings(languageCode: 'es', regionCode: 'US'),
+      );
+    });
 
-    test(
-      'load() persists the first-launch default, so a second instance over '
-      'the same database loads it back instead of recomputing it from a '
-      'now-different system locale',
-      () async {
-        final db = AppDatabase.forTesting(NativeDatabase.memory());
-        addTearDown(db.close);
-        await DriftSettingsRepository.withSystemLocale(
-          db,
-          () => const Locale('es', 'MX'),
-        ).load();
+    test('load() persists the first-launch default, so a second instance over '
+        'the same database loads it back instead of recomputing it from a '
+        'now-different system locale', () async {
+      final db = AppDatabase.forTesting(NativeDatabase.memory());
+      addTearDown(db.close);
+      await DriftSettingsRepository.withSystemLocale(
+        db,
+        () => const Locale('es', 'MX'),
+      ).load();
 
-        final reloaded = DriftSettingsRepository.withSystemLocale(
-          db,
-          () => const Locale('fr', 'FR'),
-        );
-        await reloaded.load();
+      final reloaded = DriftSettingsRepository.withSystemLocale(
+        db,
+        () => const Locale('fr', 'FR'),
+      );
+      await reloaded.load();
 
-        expect(
-          reloaded.current,
-          const AppSettings(languageCode: 'es', regionCode: 'MX'),
-        );
-      },
-    );
+      expect(
+        reloaded.current,
+        const AppSettings(languageCode: 'es', regionCode: 'MX'),
+      );
+    });
 
-    test(
-      'save() persists immediately and is reflected by current with no '
-      'load() needed',
-      () async {
-        final repository = _repository();
-        const settings = AppSettings(languageCode: 'es', regionCode: 'ES');
+    test('save() persists immediately and is reflected by current with no '
+        'load() needed', () async {
+      final repository = _repository();
+      const settings = AppSettings(languageCode: 'es', regionCode: 'ES');
 
-        final result = await repository.save(settings);
+      final result = await repository.save(settings);
 
-        expect(result, isA<Success<void>>());
-        expect(repository.current, settings);
-      },
-    );
+      expect(result, isA<Success<void>>());
+      expect(repository.current, settings);
+    });
 
     test(
       'load() picks up a previously saved AppSettings from a fresh '
@@ -135,23 +121,26 @@ void main() {
       },
     );
 
-    test('watch() emits the current settings, and again after save()', () async {
-      final repository = _repository(systemLocale: const Locale('en', 'US'));
-      await repository.load();
+    test(
+      'watch() emits the current settings, and again after save()',
+      () async {
+        final repository = _repository(systemLocale: const Locale('en', 'US'));
+        await repository.load();
 
-      final emitted = <AppSettings>[];
-      final subscription = repository.watch().listen(emitted.add);
-      addTearDown(subscription.cancel);
+        final emitted = <AppSettings>[];
+        final subscription = repository.watch().listen(emitted.add);
+        addTearDown(subscription.cancel);
 
-      await repository.save(
-        const AppSettings(languageCode: 'es', regionCode: 'ES'),
-      );
-      await pumpEventQueue();
+        await repository.save(
+          const AppSettings(languageCode: 'es', regionCode: 'ES'),
+        );
+        await pumpEventQueue();
 
-      expect(emitted, [
-        const AppSettings(languageCode: 'en', regionCode: 'US'),
-        const AppSettings(languageCode: 'es', regionCode: 'ES'),
-      ]);
-    });
+        expect(emitted, [
+          const AppSettings(languageCode: 'en', regionCode: 'US'),
+          const AppSettings(languageCode: 'es', regionCode: 'ES'),
+        ]);
+      },
+    );
   });
 }

@@ -2762,6 +2762,48 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get quizSearchButton;
 
+  /// E2 step 1's headline, three parts so one word can be coloured (amber): before + accent + after = "Where should it come from?" — the collection (Turkish series, Anime, For kids…) the results come from.
+  ///
+  /// In en, this message translates to:
+  /// **'Where should it '**
+  String get quizCollectionHeadlineBefore;
+
+  /// No description provided for @quizCollectionHeadlineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'come from'**
+  String get quizCollectionHeadlineAccent;
+
+  /// No description provided for @quizCollectionHeadlineAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'?'**
+  String get quizCollectionHeadlineAfter;
+
+  /// No description provided for @quizCollectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to 2, or skip to see everything'**
+  String get quizCollectionSubtitle;
+
+  /// No description provided for @quizCollectionGroupWorld.
+  ///
+  /// In en, this message translates to:
+  /// **'From the world'**
+  String get quizCollectionGroupWorld;
+
+  /// No description provided for @quizCollectionGroupFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Formats'**
+  String get quizCollectionGroupFormat;
+
+  /// No description provided for @quizCollectionGroupOccasion.
+  ///
+  /// In en, this message translates to:
+  /// **'For everyone'**
+  String get quizCollectionGroupOccasion;
+
   /// E2 step 2's headline, three parts so "vibes" can be coloured (amber): before + accent + after.
   ///
   /// In en, this message translates to:
