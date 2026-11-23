@@ -129,13 +129,21 @@ abstract interface class MediaRepository {
     int page = 1,
   });
 
-  /// B2's "Platform" pills: the streaming services available in the user's
-  /// region (Settings), most relevant first, capped to a short list. [type]
-  /// picks movies or TV shows; `null` (All) merges both without repeats.
+  /// The platform lists' services: those available in the user's region
+  /// (Settings), most relevant first, capped to [limit] ([defaultServiceLimit],
+  /// 12: Explore, H8 and the quiz). [type] picks movies or TV shows; `null`
+  /// (All) merges both without repeats. The [preferredIds] — the user's own
+  /// services (My Tastes) — come first whatever their rank in the region, so
+  /// one ranked 17th still shows. [all] ignores the cap.
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
     bool all = false,
+    Set<int> preferredIds = const {},
+    int limit = defaultServiceLimit,
   });
+
+  /// How many services a platform list shows.
+  static const int defaultServiceLimit = 12;
 
   /// B1's "Latest trailers": up to [limit] current and upcoming movies, each
   /// with its trailer (titles with no YouTube video are skipped). Needs one

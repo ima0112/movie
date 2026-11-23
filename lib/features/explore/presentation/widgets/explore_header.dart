@@ -1,3 +1,4 @@
+import '../../../../shared/preferred_platforms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -84,6 +85,7 @@ void _openFilterSheet(BuildContext context) {
     context,
     initialFilter: DiscoverFilter(type: cubit.state.segment.mediaType),
     mediaRepository: getIt<MediaRepository>(),
+    preferredPlatformIds: preferredPlatformIds(context),
     regionName: countryName(getIt<SettingsRepository>().current.regionCode),
     onApply: (filter) => cubit.openListing(filter: filter, title: title),
   );

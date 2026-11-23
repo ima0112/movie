@@ -122,13 +122,14 @@ SearchResult? searchResultFromJson(
 /// `/watch/providers/{type}` entries as [StreamingService]s: duplicates across
 /// movie and TV merged by id, most relevant first (TMDB's `display_priorities`
 /// for [regionCode], else its `display_priority`,
-/// then name), at most [limit]. The logo uses the same `w92` size as D1/D2's
+/// then name), with the [preferredIds] first, at most [limit]. The logo uses the same `w92` size as D1/D2's
 /// own provider logos.
 List<StreamingService> streamingServicesFromJson(
   List<Map<String, dynamic>> raw, {
   required TmdbImagesConfig imagesConfig,
   int? limit,
   String? regionCode,
+  Set<int> preferredIds = const {},
 }) {
   final byId = <int, ({StreamingService service, int priority})>{};
   for (final json in raw) {
@@ -167,8 +168,16 @@ List<StreamingService> streamingServicesFromJson(
           ? byPriority
           : a.service.name.compareTo(b.service.name);
     });
+  // The user's own services go first (each group in the region's order), then
+  // the cap: so one ranked 17th still makes a short list.
+  final ordered = preferredIds.isEmpty
+      ? sorted
+      : [
+          ...sorted.where((e) => preferredIds.contains(e.service.id)),
+          ...sorted.where((e) => !preferredIds.contains(e.service.id)),
+        ];
   return [
-    for (final e in (limit == null ? sorted : sorted.take(limit))) e.service,
+    for (final e in (limit == null ? ordered : ordered.take(limit))) e.service,
   ];
 }
 

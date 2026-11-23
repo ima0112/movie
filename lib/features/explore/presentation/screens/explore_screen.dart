@@ -1,5 +1,8 @@
+import '../../../../core/domain/entities/taste_profile.dart';
+import '../../../../app/cubits/taste_profile_cubit.dart';
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show setEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -61,10 +64,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
         ),
         // Browsing (pills + sections) and searching share only the segment.
         BlocProvider(
-          create: (_) => ExploreBrowseCubit(
-            getIt<MediaRepository>(),
-            getIt<SettingsRepository>(),
-          )..start(MediaSegment.all),
+          create: (context) {
+            final taste = context.read<TasteProfileCubit>();
+            return ExploreBrowseCubit(
+              getIt<MediaRepository>(),
+              getIt<SettingsRepository>(),
+              preferredPlatformIds: () => taste.state?.platformIds ?? const {},
+            )..start(MediaSegment.all);
+          },
         ),
       ],
       child: _ExploreView(
@@ -95,6 +102,14 @@ class _ExploreView extends StatelessWidget {
             if (state.segment == MediaSegment.person) return;
             context.read<ExploreBrowseCubit>().setSegment(state.segment);
           },
+        ),
+        // The user's own services (My Tastes) lead the platform pills: ask
+        // again when they change.
+        BlocListener<TasteProfileCubit, TasteProfile?>(
+          listenWhen: (previous, current) =>
+              !setEquals(previous?.platformIds, current?.platformIds),
+          listener: (context, _) =>
+              unawaited(context.read<ExploreBrowseCubit>().reloadServices()),
         ),
         BlocListener<ExploreCubit, ExploreState>(
           listenWhen: (previous, current) => current is ExploreListing,

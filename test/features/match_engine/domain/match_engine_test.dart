@@ -92,6 +92,8 @@ class _RecordingMediaRepository implements MediaRepository {
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
     bool all = false,
+    Set<int> preferredIds = const {},
+    int limit = 12,
   }) => throw UnimplementedError();
 }
 

@@ -136,7 +136,12 @@ class FilteredListCubit extends Cubit<FilteredListState> {
       (id) => !_providerNames.containsKey(id),
     );
     if (missing.isEmpty) return;
-    final result = await _mediaRepository.streamingServices(type: filter.type);
+    // All of them: the chip of a picked service ranked past the short list
+    // still needs its name.
+    final result = await _mediaRepository.streamingServices(
+      type: filter.type,
+      all: true,
+    );
     if (result case Success(:final value)) {
       _providerNames = {
         ..._providerNames,

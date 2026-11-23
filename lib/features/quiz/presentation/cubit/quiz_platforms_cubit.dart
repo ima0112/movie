@@ -32,13 +32,19 @@ final class QuizPlatformsError extends QuizPlatformsState {
 /// catalogues differ), in TMDB's own order there. Screen-local (CLAUDE.md
 /// rule 10): created where the step's `BlocProvider` sits.
 class QuizPlatformsCubit extends Cubit<QuizPlatformsState> {
-  QuizPlatformsCubit(this._mediaRepository, this._mediaType)
-    : super(const QuizPlatformsLoading()) {
+  QuizPlatformsCubit(
+    this._mediaRepository,
+    this._mediaType, [
+    this._preferredIds = const {},
+  ]) : super(const QuizPlatformsLoading()) {
     load();
   }
 
   final MediaRepository _mediaRepository;
   final MediaType _mediaType;
+
+  /// The user's own services (My Tastes): listed first.
+  final Set<int> _preferredIds;
 
   /// A 3×4 grid.
   static const int maxServices = 12;
@@ -47,13 +53,12 @@ class QuizPlatformsCubit extends Cubit<QuizPlatformsState> {
     emit(const QuizPlatformsLoading());
     final result = await _mediaRepository.streamingServices(
       type: _mediaType,
-      all: true,
+      preferredIds: _preferredIds,
+      limit: maxServices,
     );
     if (isClosed) return;
     emit(switch (result) {
-      Success(:final value) => QuizPlatformsLoaded(
-        value.take(maxServices).toList(),
-      ),
+      Success(:final value) => QuizPlatformsLoaded(value),
       Failure(:final reason) => QuizPlatformsError(reason),
     });
   }

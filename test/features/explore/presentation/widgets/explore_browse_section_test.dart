@@ -31,6 +31,8 @@ class _Repo extends FakeMediaRepository {
   Future<Result<List<StreamingService>>> streamingServices({
     type,
     bool all = false,
+    Set<int> preferredIds = const {},
+    int limit = 12,
   }) async => const Success([_netflix]);
 }
 

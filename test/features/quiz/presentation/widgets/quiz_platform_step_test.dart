@@ -17,14 +17,17 @@ class _FakeRepo implements MediaRepository {
   _FakeRepo(this.next);
 
   Future<Result<List<StreamingService>>> Function() next;
-  final requests = <({MediaType? type, bool all})>[];
+  final requests =
+      <({MediaType? type, bool all, Set<int> preferred, int limit})>[];
 
   @override
   Future<Result<List<StreamingService>>> streamingServices({
     MediaType? type,
     bool all = false,
+    Set<int> preferredIds = const {},
+    int limit = 12,
   }) {
-    requests.add((type: type, all: all));
+    requests.add((type: type, all: all, preferred: preferredIds, limit: limit));
     return next();
   }
 
@@ -72,19 +75,17 @@ Future<_FakeRepo> _register(
 }
 
 void main() {
-  testWidgets('shows the first 12 services of the region for this kind of '
-      'title, with the headline and the "All platforms" switch', (
-    tester,
-  ) async {
-    final repo = await _register(() async => Success(_services(15)));
+  testWidgets('asks for 12 services of the region for this kind of title, '
+      'with the headline and the "All platforms" switch', (tester) async {
+    final repo = await _register(() async => Success(_services(12)));
 
     await tester.pumpWidget(_host());
     await tester.pumpAndSettle();
 
-    expect(repo.requests.single, (type: MediaType.movie, all: true));
+    expect(repo.requests.single.type, MediaType.movie);
+    expect(repo.requests.single.limit, 12);
+    expect(repo.requests.single.all, isFalse);
     expect(find.byType(QuizPlatformTile), findsNWidgets(12));
-    expect(find.text('Service 12'), findsOneWidget);
-    expect(find.text('Service 13'), findsNothing);
     expect(find.text('Which platforms shall we search?'), findsOneWidget);
     expect(find.text('All platforms'), findsOneWidget);
     expect(find.text('Include rent and buy'), findsOneWidget);
@@ -245,13 +246,16 @@ void main() {
     expect(find.byType(QuizPlatformTile), findsNWidgets(12));
   });
 
-  test('QuizPlatformsCubit caps the list at 12', () async {
-    final repo = _FakeRepo(() async => Success(_services(30)));
-    final cubit = QuizPlatformsCubit(repo, MediaType.tvShow);
+  test('QuizPlatformsCubit asks for 12, with the user\'s own services to '
+      'lead', () async {
+    final repo = _FakeRepo(() async => Success(_services(12)));
+    final cubit = QuizPlatformsCubit(repo, MediaType.tvShow, const {17, 8});
     await Future<void>.delayed(Duration.zero);
 
     expect((cubit.state as QuizPlatformsLoaded).services, hasLength(12));
     expect(repo.requests.single.type, MediaType.tvShow);
+    expect(repo.requests.single.limit, 12);
+    expect(repo.requests.single.preferred, {17, 8});
     await cubit.close();
   });
 }
