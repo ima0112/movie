@@ -49,6 +49,7 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
               yearTo: Value(profile.yearTo),
               preferredType: Value(profile.preferredType?.name),
               platformIds: Value(profile.platformIds.join(',')),
+              likedCollections: Value(profile.likedCollections.join(',')),
               updatedAt: DateTime.now(),
             ),
           );
@@ -85,6 +86,9 @@ class DriftTasteProfileRepository implements TasteProfileRepository {
       platformIds: row.platformIds.isEmpty
           ? const {}
           : row.platformIds.split(',').map(int.parse).toSet(),
+      likedCollections: row.likedCollections.isEmpty
+          ? const {}
+          : row.likedCollections.split(',').toSet(),
       updatedAt: row.updatedAt,
     );
   }
