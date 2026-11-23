@@ -968,17 +968,23 @@ abstract class AppLocalizations {
   /// **'Because you like {genre}'**
   String carouselSectionBecauseYouLikeGenre(String genre);
 
-  /// B1's All tab: 'Because you want X' where X is one of the vibes in the user's taste profile (docs/SCREENS.md B1).
+  /// B1's All tab: 'Because you like X' where X is one of the vibes in the user's taste profile (docs/SCREENS.md B1).
   ///
   /// In en, this message translates to:
-  /// **'Because you want {vibe}'**
-  String carouselSectionBecauseYouWantVibe(String vibe);
+  /// **'Because you like {vibe}'**
+  String carouselSectionBecauseYouLikeVibe(String vibe);
 
-  /// B1's "Because you like X" carousel header (docs/SCREENS.md B1) — X is RecommendationBuilder's own deterministic seed title, a real UserMediaEntry.title, never a genre.
+  /// B1's Movies tab: 'Because you like X' where X is a person (actor, director…) the user saved from D3 and appears in the movies of the carousel.
   ///
   /// In en, this message translates to:
-  /// **'Because you like {title}'**
-  String carouselSectionBecauseYouLike(String title);
+  /// **'Because you like {person}'**
+  String carouselSectionBecauseYouLikePerson(String person);
+
+  /// B1's Movies/TV Shows 'Because you saved X' carousel header (docs/SCREENS.md B1) — X is the day's seed title, a real UserMediaEntry.title the user saved (a favorite, a well-rated watch, or in Watch later), never a genre.
+  ///
+  /// In en, this message translates to:
+  /// **'Because you saved {title}'**
+  String carouselSectionBecauseYouSaved(String title);
 
   /// No description provided for @carouselSectionInTheaters.
   ///

@@ -1,3 +1,4 @@
+import '../../../core/domain/entities/person.dart';
 import '../../../core/domain/entities/collection.dart';
 import '../../../core/domain/entities/collection_catalog.dart';
 import '../../../core/domain/entities/discover_filter.dart';
@@ -28,6 +29,14 @@ final class GenreSeed extends BecauseSeed {
   final Genre genre;
 }
 
+/// A person the user saved ("Because you like {person}") → `/discover/movie`
+/// with `with_people`: the movies they take part in. Movies tab only.
+final class PersonSeed extends BecauseSeed {
+  const PersonSeed(this.person);
+
+  final Person person;
+}
+
 /// A liked collection ("Because you like {collection}") → `/discover`.
 final class CollectionSeed extends BecauseSeed {
   const CollectionSeed(this.collection);
@@ -46,7 +55,13 @@ final class VibeSeed extends BecauseSeed {
 /// the seeds of the "Because you…" sections. A `null` field = that section
 /// doesn't exist today (no signal).
 class RecommendationPlan {
-  const RecommendationPlan({this.forYou, this.becauseLike, this.becauseWant});
+  const RecommendationPlan({
+    this.forYou,
+    this.becauseLike,
+    this.becauseWant,
+    this.becauseLikePerson,
+    this.becauseLikePersonFilter,
+  });
 
   static const empty = RecommendationPlan();
 
@@ -56,8 +71,13 @@ class RecommendationPlan {
   /// collection (All).
   final BecauseSeed? becauseLike;
 
-  /// "Because you want {vibe}" — the All tab only.
+  /// "Because you like {vibe}" — the All tab only.
   final VibeSeed? becauseWant;
+
+  /// "Because you like {person}" — the Movies tab only: a saved person and the
+  /// filter for the movies they are in.
+  final PersonSeed? becauseLikePerson;
+  final DiscoverFilter? becauseLikePersonFilter;
 }
 
 /// Decides, per segment and per day, what B1's recommendation sections are
@@ -98,11 +118,12 @@ class RecommendationPlanner {
     required TasteProfile? profile,
     required List<UserMediaEntry> library,
     required DateTime today,
+    List<Person> people = const [],
   }) {
     final picker = DailyPicker(today);
     return type == null
         ? _fromTastes(profile, picker)
-        : _fromLibrary(type, library, picker);
+        : _fromLibrary(type, library, picker, people);
   }
 
   // --- All: the taste profile ---------------------------------------------
@@ -207,6 +228,9 @@ class RecommendationPlanner {
           yearFrom: profile?.yearFrom,
           yearTo: profile?.yearTo,
         ),
+        PersonSeed() => throw ArgumentError(
+          'a person seed carries its own filter (RecommendationPlan)',
+        ),
         TitleSeed() => throw ArgumentError(
           'a title seed uses /recommendations',
         ),
@@ -218,6 +242,7 @@ class RecommendationPlanner {
     MediaType type,
     List<UserMediaEntry> library,
     DailyPicker picker,
+    List<Person> people,
   ) {
     final entries = library.where((e) => e.key.type == type).toList()
       ..sort((a, b) => a.key.tmdbId.compareTo(b.key.tmdbId));
@@ -227,6 +252,12 @@ class RecommendationPlanner {
         if (seedWeight(e) case final w when w > 0) (e, w),
     ];
     final title = picker.pick(seeds, salt: 'title-$type');
+    final sortedPeople = [...people]..sort((a, b) => a.id.compareTo(b.id));
+    final person = type == MediaType.movie
+        ? picker.pick([
+            for (final p in sortedPeople) (p, 1),
+          ], salt: 'person-movie')
+        : null;
 
     final affinity = genreAffinityFrom(entries);
     final liked = <(Genre, int)>[
@@ -249,6 +280,18 @@ class RecommendationPlanner {
               excludeTalkAndNews: true,
             ),
       becauseLike: title == null ? null : TitleSeed(title),
+      // The movies of a saved person: movies only (TMDB's TV discover can't
+      // filter by person), rotated day by day like every other seed, and with
+      // what the user rated badly left out like "For you".
+      becauseLikePerson: person == null ? null : PersonSeed(person),
+      becauseLikePersonFilter: person == null
+          ? null
+          : DiscoverFilter(
+              type: MediaType.movie,
+              withPeople: {person.id},
+              withoutGenres: disliked,
+              excludeTalkAndNews: true,
+            ),
     );
   }
 

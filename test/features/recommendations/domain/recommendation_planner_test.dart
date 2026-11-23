@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:movies/core/domain/entities/person.dart';
 import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_key.dart';
@@ -157,6 +158,75 @@ void main() {
       expect(seed(today), seed(DateTime(2026, 5, 4, 20)));
       final seen = {for (var d = 1; d <= 20; d++) seed(DateTime(2026, 5, d))};
       expect(seen.length, greaterThan(2));
+    });
+  });
+
+  group('Movies: a saved person', () {
+    const nolan = Person(id: 525, name: 'Nolan', profilePath: null);
+    const scorsese = Person(id: 1032, name: 'Scorsese', profilePath: null);
+
+    RecommendationPlan planFor(MediaType? type, DateTime day) => planner.plan(
+      type: type,
+      profile: null,
+      library: [
+        _entry(1, favorite: true, genres: [_action]),
+      ],
+      today: day,
+      people: [scorsese, nolan],
+    );
+
+    test('Movies only: a saved person seeds it, with a filter for their '
+        'movies; TV Shows and All have none', () {
+      final plan = planFor(MediaType.movie, today);
+      expect(plan.becauseLikePerson, isNotNull);
+      final filter = plan.becauseLikePersonFilter!;
+      expect(filter.type, MediaType.movie);
+      expect(filter.withPeople, {plan.becauseLikePerson!.person.id});
+      expect(filter.excludeTalkAndNews, isTrue);
+
+      expect(planFor(MediaType.tvShow, today).becauseLikePerson, isNull);
+      expect(planFor(null, today).becauseLikePerson, isNull);
+    });
+
+    test('rotates day by day like every other seed, and is stable within a '
+        'day', () {
+      final seen = {
+        for (var d = 1; d <= 10; d++)
+          planFor(
+            MediaType.movie,
+            DateTime(2026, 5, d),
+          ).becauseLikePerson!.person.id,
+      };
+      expect(seen, {525, 1032});
+      expect(
+        planFor(MediaType.movie, DateTime(2026, 5, 4)).becauseLikePerson,
+        planFor(MediaType.movie, DateTime(2026, 5, 4)).becauseLikePerson,
+        skip: 'seeds are not value-equal; the id is what is stable',
+      );
+      expect(
+        planFor(
+          MediaType.movie,
+          DateTime(2026, 5, 4),
+        ).becauseLikePerson!.person.id,
+        planFor(
+          MediaType.movie,
+          DateTime(2026, 5, 4),
+        ).becauseLikePerson!.person.id,
+      );
+    });
+
+    test('nobody saved: no section', () {
+      expect(
+        planner
+            .plan(
+              type: MediaType.movie,
+              profile: null,
+              library: const [],
+              today: today,
+            )
+            .becauseLikePerson,
+        isNull,
+      );
     });
   });
 

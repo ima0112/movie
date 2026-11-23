@@ -79,17 +79,20 @@ class RecommendationSectionView extends StatelessWidget {
     // the loaded state); "For you" never does.
     return switch (seed) {
       null => l10n.carouselSectionForYou,
-      TitleSeed(:final entry) => l10n.carouselSectionBecauseYouLike(
+      TitleSeed(:final entry) => l10n.carouselSectionBecauseYouSaved(
         entry.title,
       ),
       GenreSeed(:final genre) => l10n.carouselSectionBecauseYouLikeGenre(
         genre.localizedName(l10n),
       ),
+      PersonSeed(:final person) => l10n.carouselSectionBecauseYouLikePerson(
+        person.name,
+      ),
       CollectionSeed(:final collection) =>
         l10n.carouselSectionBecauseYouLikeCollection(
           collection.localizedName(l10n),
         ),
-      VibeSeed(:final vibe) => l10n.carouselSectionBecauseYouWantVibe(
+      VibeSeed(:final vibe) => l10n.carouselSectionBecauseYouLikeVibe(
         vibe.localizedName(l10n),
       ),
     };

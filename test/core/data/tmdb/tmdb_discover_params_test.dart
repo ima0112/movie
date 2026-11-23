@@ -295,6 +295,33 @@ void main() {
     });
   });
 
+  group('discoverQueryParams — withPeople (movies only)', () {
+    test('with_people is any of them, joined by a pipe', () {
+      final params = discoverQueryParams(
+        const DiscoverFilter(withPeople: {525, 1032}),
+        type: MediaType.movie,
+      );
+      expect((params['with_people'] as String).split('|').toSet(), {
+        '525',
+        '1032',
+      });
+    });
+
+    test('never sent for TV, which has no such filter; none, none', () {
+      expect(
+        discoverQueryParams(
+          const DiscoverFilter(withPeople: {525}),
+          type: MediaType.tvShow,
+        ),
+        isNot(contains('with_people')),
+      );
+      expect(
+        discoverQueryParams(const DiscoverFilter(), type: MediaType.movie),
+        isNot(contains('with_people')),
+      );
+    });
+  });
+
   group('discoverQueryParams — withKeywords', () {
     test('OR semantics -> pipe-separated ids, several of them', () {
       final params = discoverQueryParams(

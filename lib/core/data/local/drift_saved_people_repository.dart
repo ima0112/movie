@@ -18,6 +18,13 @@ class DriftSavedPeopleRepository implements SavedPeopleRepository {
   final AppDatabase _db;
 
   @override
+  Future<List<Person>> all() async {
+    final rows = await _db.select(_db.savedPeopleTable).get();
+    return rows.map(_toPerson).toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  }
+
+  @override
   Stream<List<Person>> watchAll() {
     return _db
         .select(_db.savedPeopleTable)

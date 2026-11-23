@@ -1,3 +1,5 @@
+import '../../../../core/domain/repositories/saved_people_repository.dart';
+import '../../../../core/domain/entities/person.dart';
 import '../../../../core/domain/entities/collection_catalog.dart';
 import 'dart:async';
 
@@ -19,7 +21,12 @@ import '../../domain/recommendation_planner.dart';
 /// Which of [RecommendationsState]'s three independent slots a call
 /// targets — CLAUDE.md rule 9: loading/retrying one never touches the
 /// other.
-enum RecommendationSlot { forYou, becauseYouLike, becauseYouWant }
+enum RecommendationSlot {
+  forYou,
+  becauseYouLike,
+  becauseYouWant,
+  becauseYouLikePerson,
+}
 
 /// One slot's own load state.
 sealed class RecommendationSectionState {
@@ -67,30 +74,37 @@ class RecommendationsState {
     required this.forYou,
     required this.becauseYouLike,
     required this.becauseYouWant,
+    this.becauseYouLikePerson = const RecommendationSectionLoading(),
   });
 
   final MediaSegment segment;
   final RecommendationSectionState forYou;
   final RecommendationSectionState becauseYouLike;
 
-  /// The All tab's "Because you want {vibe}" — hidden in the other tabs.
+  /// The All tab's "Because you like {vibe}" — hidden in the other tabs.
   final RecommendationSectionState becauseYouWant;
+
+  /// The Movies tab's "Because you like {person}" — hidden in the others.
+  final RecommendationSectionState becauseYouLikePerson;
 
   RecommendationsState copyWith({
     RecommendationSectionState? forYou,
     RecommendationSectionState? becauseYouLike,
     RecommendationSectionState? becauseYouWant,
+    RecommendationSectionState? becauseYouLikePerson,
   }) => RecommendationsState(
     segment: segment,
     forYou: forYou ?? this.forYou,
     becauseYouLike: becauseYouLike ?? this.becauseYouLike,
     becauseYouWant: becauseYouWant ?? this.becauseYouWant,
+    becauseYouLikePerson: becauseYouLikePerson ?? this.becauseYouLikePerson,
   );
 
   RecommendationSectionState slot(RecommendationSlot slot) => switch (slot) {
     RecommendationSlot.forYou => forYou,
     RecommendationSlot.becauseYouLike => becauseYouLike,
     RecommendationSlot.becauseYouWant => becauseYouWant,
+    RecommendationSlot.becauseYouLikePerson => becauseYouLikePerson,
   };
 }
 
@@ -124,8 +138,11 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
     this._settingsRepository,
     FutureOr<VibeCatalog> vibeCatalog, {
     FutureOr<CollectionCatalog> collectionCatalog = const CollectionCatalog([]),
+    SavedPeopleRepository? savedPeopleRepository,
     DateTime Function()? clock,
-  }) : _vibeCatalog = Future.value(vibeCatalog),
+    // ignore: prefer_initializing_formals
+  }) : _savedPeopleRepository = savedPeopleRepository,
+       _vibeCatalog = Future.value(vibeCatalog),
        _collectionCatalog = Future.value(collectionCatalog),
        _clock = clock ?? DateTime.now,
        super(
@@ -147,6 +164,7 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
   final UserLibraryRepository _userLibraryRepository;
   final TasteProfileRepository _tasteProfileRepository;
   final SettingsRepository _settingsRepository;
+  final SavedPeopleRepository? _savedPeopleRepository;
   final Future<VibeCatalog> _vibeCatalog;
   final Future<CollectionCatalog> _collectionCatalog;
   final DateTime Function() _clock;
@@ -165,6 +183,11 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
       _cachedPlanner ??= RecommendationPlanner(catalog, collections),
     );
   }
+
+  /// The people the user saved (D3's heart) — what "Because you like {person}"
+  /// draws from; none without the repository.
+  Future<List<Person>> _savedPeople() async =>
+      await _savedPeopleRepository?.all() ?? const [];
 
   /// What each slot last fetched with, for the "skip if nothing changed"
   /// check: a `DiscoverFilter` or a seed key. Reset by [load].
@@ -200,6 +223,9 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
     RecommendationSlot.forYou => state.copyWith(forYou: value),
     RecommendationSlot.becauseYouLike => state.copyWith(becauseYouLike: value),
     RecommendationSlot.becauseYouWant => state.copyWith(becauseYouWant: value),
+    RecommendationSlot.becauseYouLikePerson => state.copyWith(
+      becauseYouLikePerson: value,
+    ),
   };
 
   void _put(RecommendationSlot slot, RecommendationSectionState value) {
@@ -219,6 +245,7 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
       profile: profile,
       library: library,
       today: _clock(),
+      people: segment == MediaSegment.movie ? await _savedPeople() : const [],
     );
     final libraryKeys = library.map((e) => e.key).toSet();
 
@@ -255,6 +282,7 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
 
     final like = plan.becauseLike;
     final want = plan.becauseWant;
+    final person = plan.becauseLikePerson;
     await Future.wait([
       run(
         RecommendationSlot.forYou,
@@ -279,6 +307,12 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
         () => _mediaRepository.discover(planner.filterForSeed(want!, profile)),
         want,
       ),
+      run(
+        RecommendationSlot.becauseYouLikePerson,
+        person == null ? null : _seedKey(person),
+        () => _mediaRepository.discover(plan.becauseLikePersonFilter!),
+        person,
+      ),
     ]);
   }
 
@@ -289,6 +323,7 @@ class RecommendationsCubit extends Cubit<RecommendationsState> {
     GenreSeed(:final genre) => 'genre:${genre.id}',
     VibeSeed(:final vibe) => 'vibe:${vibe.id}',
     CollectionSeed(:final collection) => 'collection:${collection.id}',
+    PersonSeed(:final person) => 'person:${person.id}',
   };
 
   @override
