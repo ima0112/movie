@@ -353,7 +353,7 @@ void main() {
       final cubit = build(MediaType.movie);
       expect(cubit.vetoOptions, hasLength(18));
       cubit.toggleCollection('kids');
-      expect(cubit.vetoOptions, hasLength(14));
+      expect(cubit.vetoOptions, hasLength(12));
     });
 
     test('choosing a collection silently drops a veto and a vibe it makes '

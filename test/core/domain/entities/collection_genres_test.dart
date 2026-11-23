@@ -14,7 +14,7 @@ void main() {
   const genreOf = TmdbGenreMapper.fromTmdbId;
 
   test('Anime requires Animation on both kinds; Kids requires Family on '
-      'movies and excludes Horror, Thriller and Crime', () {
+      'movies and excludes Horror, Thriller, Crime, War and Western', () {
     final anime = catalog.byId('anime')!;
     for (final type in MediaType.values) {
       expect(CollectionGenres.required(anime, type, genreOf), {
@@ -29,6 +29,8 @@ void main() {
       const Genre(id: 'horror'),
       const Genre(id: 'thriller'),
       const Genre(id: 'crime'),
+      const Genre(id: 'war'),
+      const Genre(id: 'western'),
     });
   });
 
@@ -52,13 +54,15 @@ void main() {
 
   test(
     'with All, what the collection excludes on any kind: For kids leaves '
-    'out Horror, Thriller and Crime even though its TV side excludes none',
+    'out Horror, Thriller, Crime, War and Western even though its TV side excludes none',
     () {
       final kids = catalog.byId('kids')!;
       expect(CollectionGenres.excludedFor(kids, null, genreOf), {
         const Genre(id: 'horror'),
         const Genre(id: 'thriller'),
         const Genre(id: 'crime'),
+        const Genre(id: 'war'),
+        const Genre(id: 'western'),
       });
       expect(
         CollectionGenres.excludedFor(kids, MediaType.tvShow, genreOf),
