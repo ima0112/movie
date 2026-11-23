@@ -172,7 +172,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(TvSeasonsScreen), findsOneWidget);
 
-    await tester.tap(find.text('Season 1').first);
+    await tester.tap(find.text('S1').first);
     await tester.pumpAndSettle();
     expect(find.byType(SeasonScreen), findsOneWidget);
     expect(find.byType(BottomSheet), findsNothing);
