@@ -17,9 +17,9 @@ import '../cubit/surprise_state.dart';
 ///
 /// "Find something to watch"; a subtitle that names the user's liked genres
 /// when the source is the profile (nothing under the title for a list the
-/// app inferred); "Use my tastes" (primary) / "Answer the quiz instead"
-/// (secondary); and, for the profile, the note that the quiz leaves the
-/// saved tastes alone.
+/// app inferred); "Answer the quiz instead" (primary, first) / "Use my tastes"
+/// (outlined); and, for the profile, the note that the quiz leaves the saved
+/// tastes alone.
 ///
 /// CLAUDE.md rule 9: this widget only ever reads the one [ChooseSource]
 /// value its caller hands it — it never subscribes to [SurpriseCubit]
@@ -55,18 +55,20 @@ class ChooseSourceSheet extends StatelessWidget {
               ),
             ],
             const SizedBox(height: AppSpacing.xl),
+            // The quiz leads: a fresh answer for today is the main path; "use my
+            // tastes" is the shortcut under it.
             PrimaryButton(
-              label: l10n.surpriseUseMyTastes,
+              label: l10n.surpriseAnswerQuizInstead,
               onTap: () {
-                cubit.useMyTastes();
+                cubit.answerQuizInstead();
                 Navigator.of(context).pop();
               },
             ),
             const SizedBox(height: AppSpacing.md),
             SecondaryButton(
-              label: l10n.surpriseAnswerQuizInstead,
+              label: l10n.surpriseUseMyTastes,
               onTap: () {
-                cubit.answerQuizInstead();
+                cubit.useMyTastes();
                 Navigator.of(context).pop();
               },
             ),
