@@ -5,6 +5,8 @@ import 'package:movies/app/environments.dart';
 import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/features/tv_detail/presentation/screens/season_screen.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/season_header.dart';
+import 'package:movies/features/tv_detail/presentation/widgets/episode_nav_button.dart';
+import 'package:movies/features/tv_detail/presentation/widgets/episode_sheet.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/poster_image.dart';
 
@@ -34,6 +36,31 @@ void main() {
   setUpAll(() => configureDependencies(fake.name));
 
   group('SeasonScreen', () {
+    testWidgets('an episode opens as a sheet that moves on to the next one '
+        'without closing', (tester) async {
+      tester.view.physicalSize = const Size(390, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SeasonScreen(tvId: 101, seasonSummary: _theBearSeason1),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('System'));
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsOneWidget);
+      expect(find.byType(EpisodeNavButton), findsNWidgets(2));
+
+      await tester.tap(find.textContaining('Next · E'));
+      await tester.pumpAndSettle();
+      expect(find.byType(EpisodeSheet), findsOneWidget); // still the same sheet
+      expect(find.text('Hands'), findsWidgets);
+    });
+
     testWidgets('the header is the big title and one line: year, episode '
         'count and rating, no card and no poster', (tester) async {
       final dated = SeasonSummary(
