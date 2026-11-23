@@ -1397,10 +1397,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tvNextEpisodeCaption => 'Next episode';
+  String get tvTimelineNext => 'Next';
 
   @override
-  String get tvLastAiredEpisodeCaption => 'Last aired episode';
+  String get tvTimelineLast => 'Last aired';
 
   @override
   String get tvNoNextEpisodeTitle => 'No next episode';
@@ -1408,6 +1408,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tvNoNextEpisodeUnknown =>
       'No upcoming episode has been announced yet.';
+
+  @override
+  String get tvNoNextEpisodeEnded => 'This series has ended.';
+
+  @override
+  String get tvNoNextEpisodeCancelled => 'This series was cancelled.';
 
   @override
   String tvEpisodeCodeAndName(int season, int episode, String name) {

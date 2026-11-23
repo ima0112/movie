@@ -7,6 +7,7 @@ import 'package:movies/core/domain/entities/watch_providers.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/tv_detail/presentation/screens/tv_seasons_screen.dart';
 import 'package:movies/features/tv_detail/presentation/widgets/seasons_header.dart';
+import 'package:movies/features/tv_detail/presentation/widgets/seasons_timeline_card.dart';
 import 'package:movies/shared/widgets/media_detail/info_chip.dart';
 import 'package:movies/l10n/app_localizations.dart';
 
@@ -94,7 +95,6 @@ void main() {
 
       expect(find.text('Breaking Bad'), findsOneWidget);
       expect(find.text('Ended · 1 season · 62 episodes'), findsOneWidget);
-      expect(find.byType(InfoChip), findsWidgets); // the episode cards' chips
       expect(
         find.descendant(
           of: find.byType(SeasonsHeader),
@@ -133,48 +133,37 @@ void main() {
       }
     });
 
-    testWidgets('last aired episode: code and name, rating chip', (
-      tester,
-    ) async {
+    testWidgets('one timeline card: NEXT on top, LAST AIRED under it with its '
+        'code, name and rating', (tester) async {
       _phone(tester);
       await tester.pumpWidget(
         _app(TvSeasonsScreen(detail: _show(last: _felina))),
       );
 
-      expect(find.text('LAST AIRED EPISODE'), findsOneWidget);
+      expect(find.byType(SeasonsTimelineCard), findsOneWidget);
+      expect(find.text('NEXT'), findsOneWidget);
+      expect(find.text('LAST AIRED'), findsOneWidget);
+      expect(
+        tester.getRect(find.text('NEXT')).top,
+        lessThan(tester.getRect(find.text('LAST AIRED')).top),
+      );
       expect(find.text('S5 · E16 · Felina'), findsOneWidget);
-      expect(find.text('9.9'), findsOneWidget);
+      expect(find.textContaining('9.9'), findsOneWidget);
     });
 
-    testWidgets('an ended or cancelled show has no Next episode section at '
-        'all', (tester) async {
-      _phone(tester);
-      for (final status in ['Ended', 'Canceled']) {
-        await tester.pumpWidget(
-          _app(TvSeasonsScreen(detail: _show(status: status))),
-        );
-        expect(find.text('NEXT EPISODE'), findsNothing, reason: status);
-        expect(find.text('No next episode'), findsNothing, reason: status);
-        // The rest of the page is still there.
-        expect(find.text('SEASONS'), findsOneWidget, reason: status);
-      }
-    });
-
-    testWidgets('every card on the page is as wide as the others', (
-      tester,
-    ) async {
+    testWidgets('an ended or cancelled show still shows the Next node, saying '
+        'why', (tester) async {
       _phone(tester);
       await tester.pumpWidget(
-        _app(TvSeasonsScreen(detail: _show(status: 'Returning Series'))),
+        _app(TvSeasonsScreen(detail: _show(status: 'Ended'))),
       );
+      expect(find.text('No next episode'), findsOneWidget);
+      expect(find.text('This series has ended.'), findsOneWidget);
 
-      // The "No next episode" card used to shrink to its text.
-      final cards = find.ancestor(
-        of: find.text('No next episode'),
-        matching: find.byType(Container),
+      await tester.pumpWidget(
+        _app(TvSeasonsScreen(detail: _show(status: 'Canceled'))),
       );
-      final width = tester.getSize(cards.first).width;
-      expect(width, 390 - 2 * 20);
+      expect(find.text('This series was cancelled.'), findsOneWidget);
     });
 
     testWidgets('a returning show with no next episode says none has been '
@@ -190,7 +179,7 @@ void main() {
       );
     });
 
-    testWidgets('a scheduled next episode shows its card instead', (
+    testWidgets('a scheduled next episode shows like the last one', (
       tester,
     ) async {
       _phone(tester);
@@ -211,7 +200,32 @@ void main() {
       );
 
       expect(find.text('S2 · E6 · Reboot'), findsOneWidget);
+      expect(find.text('TBA'), findsOneWidget);
       expect(find.text('No next episode'), findsNothing);
+    });
+
+    testWidgets('with no last aired episode only the Next node is drawn', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(TvSeasonsScreen(detail: _show(status: 'Returning Series'))),
+      );
+      expect(find.text('NEXT'), findsOneWidget);
+      expect(find.text('LAST AIRED'), findsNothing);
+    });
+
+    testWidgets('the timeline card is as wide as the page content', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(TvSeasonsScreen(detail: _show(status: 'Returning Series'))),
+      );
+      expect(
+        tester.getSize(find.byType(SeasonsTimelineCard)).width,
+        390 - 2 * 20,
+      );
     });
 
     testWidgets('lists the seasons under a SEASONS caption', (tester) async {
@@ -236,5 +250,36 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets(
+      'the timeline survives a really small phone at 200% text (es)',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          _app(
+            TvSeasonsScreen(
+              detail: _show(
+                status: 'Returning Series',
+                last: _felina,
+                next: const EpisodeRef(
+                  seasonNumber: 6,
+                  episodeNumber: 1,
+                  name: 'Un nombre de episodio bastante largo',
+                  airDate: null,
+                  stillPath: null,
+                  voteAverage: 8.1,
+                ),
+              ),
+            ),
+            locale: const Locale('es'),
+            textScale: 2,
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 }

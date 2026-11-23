@@ -9,7 +9,7 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_section.dart';
-import '../widgets/episode_ref_card.dart';
+import '../widgets/seasons_timeline_card.dart';
 import '../widgets/seasons_header.dart';
 import '../widgets/tv_seasons_section.dart';
 import '../widgets/tv_status.dart';
@@ -37,7 +37,6 @@ class TvSeasonsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final seasonCount = detail.seasons.where((s) => s.seasonNumber != 0).length;
-    final finished = tvStatusIsFinished(detail.status);
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -72,26 +71,19 @@ class TvSeasonsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // A show that has ended or been cancelled has no next episode to
-            // announce, so the section isn't drawn at all.
-            if (!finished)
-              AppSection.overline(
-                title: l10n.tvNextEpisodeCaption,
-                child: EpisodeRefCard(
-                  episode: detail.nextEpisode,
-                  emptyTitle: l10n.tvNoNextEpisodeTitle,
-                  emptyBody: l10n.tvNoNextEpisodeUnknown,
-                ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenMargin,
+                AppSpacing.sectionGap,
+                AppSpacing.screenMargin,
+                0,
               ),
-            if (detail.lastEpisode != null)
-              AppSection.overline(
-                title: l10n.tvLastAiredEpisodeCaption,
-                child: EpisodeRefCard(
-                  episode: detail.lastEpisode,
-                  emptyTitle: '',
-                  emptyBody: '',
-                ),
+              child: SeasonsTimelineCard(
+                status: detail.status,
+                nextEpisode: detail.nextEpisode,
+                lastEpisode: detail.lastEpisode,
               ),
+            ),
             AppSection.overline(
               title: l10n.tvSeasonsSectionTitle,
               child: TvSeasonsSection(

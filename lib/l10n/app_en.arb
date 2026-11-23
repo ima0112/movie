@@ -1299,10 +1299,18 @@
       }
     }
   },
-  "tvNextEpisodeCaption": "Next episode",
-  "tvLastAiredEpisodeCaption": "Last aired episode",
+  "tvTimelineNext": "Next",
+  "@tvTimelineNext": {
+    "description": "D2b's timeline card: the label of the next-episode node (shown in capitals)."
+  },
+  "tvTimelineLast": "Last aired",
+  "@tvTimelineLast": {
+    "description": "D2b's timeline card: the label of the last-aired-episode node (shown in capitals)."
+  },
   "tvNoNextEpisodeTitle": "No next episode",
   "tvNoNextEpisodeUnknown": "No upcoming episode has been announced yet.",
+  "tvNoNextEpisodeEnded": "This series has ended.",
+  "tvNoNextEpisodeCancelled": "This series was cancelled.",
   "tvEpisodeCodeAndName": "S{season} · E{episode} · {name}",
   "@tvEpisodeCodeAndName": {
     "description": "D2b's episode card title, e.g. \"S5 · E16 · Felina\".",
