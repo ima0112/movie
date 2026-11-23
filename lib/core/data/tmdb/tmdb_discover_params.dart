@@ -51,7 +51,10 @@ Map<String, dynamic> discoverQueryParams(
             .map((g) => TmdbGenreMapper.toTmdbId(g, type))
             .nonNulls
             .toList()
-      : TmdbGenreMapper.tvVetoGenreIds(filter.withoutGenres).toList();
+      : {
+          ...TmdbGenreMapper.tvVetoGenreIds(filter.withoutGenres),
+          if (filter.excludeTalkAndNews) ..._tvTalkAndNewsGenreIds,
+        }.toList();
   if (withoutGenreIds.isNotEmpty) {
     params['without_genres'] = withoutGenreIds.join(',');
   }
@@ -211,6 +214,9 @@ List<Map<String, dynamic>> discoverQueryParamSets(
       },
   ];
 }
+
+/// TMDB's TV "Talk" (10767) and "News" (10763) genres.
+const Set<int> _tvTalkAndNewsGenreIds = {10767, 10763};
 
 Set<int>? _ids(Object? commaSeparated) => commaSeparated == null
     ? null

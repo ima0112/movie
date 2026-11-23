@@ -198,6 +198,7 @@ void main() {
       expect(plan.becauseWant!.vibe.id, anyOf('explosive', 'classic'));
       expect(plan.forYou!.withoutGenres, {_horror});
       expect(plan.forYou!.type, isNull);
+      expect(plan.forYou!.excludeTalkAndNews, isTrue);
     });
 
     test('a profile with only vibes still gives a For you and a want', () {
