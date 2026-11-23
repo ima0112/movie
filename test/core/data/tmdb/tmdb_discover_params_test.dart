@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/tmdb/tmdb_discover_params.dart';
+import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/genre_catalog.dart';
@@ -130,6 +133,126 @@ void main() {
         );
       },
     );
+  });
+
+  group('discoverQueryParamSets — collections', () {
+    final catalog = CollectionCatalog.fromJsonString(
+      File('assets/collections.json').readAsStringSync(),
+    );
+    DiscoverFilter of(
+      String id, {
+      Set<Genre> genres = const {},
+      int votes = 100,
+    }) => DiscoverFilter(
+      collection: catalog.byId(id),
+      withGenres: genres,
+      minVoteCount: votes,
+    );
+    List<Map<String, dynamic>> tv(DiscoverFilter f) =>
+        discoverQueryParamSets(f, type: MediaType.tvShow);
+    List<Map<String, dynamic>> movie(DiscoverFilter f) =>
+        discoverQueryParamSets(f, type: MediaType.movie);
+
+    test('a country collection: origin country, no talk or news, its own '
+        'vote floor', () {
+      final params = tv(of('turkish_series')).single;
+      expect(params['with_origin_country'], 'TR');
+      expect(params['without_genres'], '10767,10763');
+      expect(params['vote_count.gte'], 30);
+    });
+
+    test('a section\'s own higher vote floor (Top rated) wins over the '
+        'collection\'s', () {
+      expect(
+        tv(of('turkish_series', votes: 300)).single['vote_count.gte'],
+        300,
+      );
+    });
+
+    test('several countries are OR-ed with a pipe; a language is single', () {
+      expect(
+        (tv(of('latin_american_series')).single['with_origin_country']
+                as String)
+            .split('|'),
+        containsAll(['MX', 'CO', 'AR']),
+      );
+      expect(movie(of('bollywood')).single['with_original_language'], 'hi');
+    });
+
+    test('Reality is a TV type; the type means nothing on movies', () {
+      expect(tv(of('reality_shows')).single['with_type'], 3);
+    });
+
+    test('a collection missing for the type has no queries at all', () {
+      expect(movie(of('turkish_series')), isEmpty);
+      expect(tv(of('bollywood')), isEmpty);
+    });
+
+    test('Soaps are two queries: the keyword, and the Soap genre', () {
+      final sets = tv(of('soaps'));
+      expect(sets, hasLength(2));
+      expect(sets[0]['with_keywords'], '199262');
+      expect(sets[0], isNot(contains('with_genres')));
+      expect(sets[1]['with_genres'], '10766');
+    });
+
+    test('Anime and a picked genre are ANDed: with_genres=16,35', () {
+      final params = movie(
+        of('anime', genres: {const Genre(id: 'comedy')}),
+      ).single;
+      expect(params['with_genres'], '16,35');
+      expect(params['with_origin_country'], 'JP');
+    });
+
+    test(
+      'two picked genres make one query each — any of them, with Animation',
+      () {
+        final sets = movie(
+          of(
+            'anime',
+            genres: {
+              const Genre(id: 'comedy'),
+              const Genre(id: 'drama'),
+            },
+          ),
+        );
+        expect(sets.map((s) => s['with_genres']).toSet(), {'16,35', '16,18'});
+      },
+    );
+
+    test('Kids on movies: Family or Animation, so one query per genre when '
+        'one is picked too', () {
+      expect(movie(of('kids')).single['with_genres'], '10751|16');
+      final sets = movie(of('kids', genres: {const Genre(id: 'comedy')}));
+      expect(sets.map((s) => s['with_genres']).toSet(), {'10751,35', '16,35'});
+      expect(sets.first['without_genres'], '27,53,80');
+    });
+
+    test('the user\'s own vetoes join the collection\'s exclusions', () {
+      final params = tv(
+        DiscoverFilter(
+          collection: catalog.byId('k_dramas'),
+          withoutGenres: {const Genre(id: 'comedy')},
+        ),
+      ).single;
+      expect((params['without_genres'] as String).split(',').toSet(), {
+        '35',
+        '10767',
+        '10763',
+        '10764',
+      });
+    });
+
+    test('a collection keyword and a stand-in genre\'s keyword cannot share '
+        'a request: that query drops, the genre one stays', () {
+      final sets = tv(of('soaps', genres: {const Genre(id: 'horror')}));
+      expect(sets.every((s) => s['with_keywords'] != '199262'), isTrue);
+      expect(sets, isNotEmpty);
+    });
+
+    test('a collection counts as one active filter', () {
+      expect(of('anime').activeFilterCount, 1);
+    });
   });
 
   group('discoverQueryParams — withKeywords', () {
