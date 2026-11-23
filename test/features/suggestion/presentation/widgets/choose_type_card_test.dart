@@ -143,4 +143,41 @@ void main() {
     expect(topColor(full), const Color(0xFF5A3A10));
     expect(topColor(soft), isNot(topColor(full)));
   });
+
+  testWidgets('"01" and "02" take the same column: both cards\' titles start '
+      'at the same x', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              ChooseTypeCard(
+                number: 1,
+                icon: AppIcons.movie,
+                label: 'A movie',
+                subtitle: 'One',
+                onTap: () {},
+              ),
+              ChooseTypeCard(
+                number: 2,
+                icon: AppIcons.tvShow,
+                label: 'A TV show',
+                subtitle: 'Two',
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getTopLeft(find.text('A movie')).dx,
+      tester.getTopLeft(find.text('A TV show')).dx,
+    );
+    expect(
+      tester.getTopLeft(find.text('One')).dx,
+      tester.getTopLeft(find.text('Two')).dx,
+    );
+  });
 }
