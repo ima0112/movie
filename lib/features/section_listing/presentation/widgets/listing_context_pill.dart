@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/collection_localization.dart';
 import '../../../../l10n/genre_localization.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/media_segment_localization.dart';
@@ -27,9 +28,15 @@ class ListingContextPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final c = listingContext;
+    final genre = c.genre?.localizedName(l10n, type: c.segment.mediaType);
+    final collection = c.collection?.localizedName(l10n);
     final label = c.showsFilters
-        ? c.genre?.localizedName(l10n, type: c.segment.mediaType) ??
-              l10n.sectionListingAllGenres
+        ? switch ((collection, genre)) {
+            (final a?, final b?) => '$a · $b',
+            (final a?, null) => a,
+            (null, final b?) => b,
+            (null, null) => l10n.sectionListingAllGenres,
+          }
         : c.segment.localizedLabel(l10n);
     final platform = c.showsFilters ? c.platform : null;
     return Container(

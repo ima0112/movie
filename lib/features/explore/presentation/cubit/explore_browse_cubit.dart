@@ -1,3 +1,4 @@
+import '../../../../core/domain/entities/collection.dart';
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,10 +74,17 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
     final remapped = picked == null
         ? null
         : GenreCatalog.chipsOf(segment.mediaType, [picked]).first;
+    // A collection that doesn't exist for the new kind (Turkish series among
+    // movies) is dropped; in "All" any collection exists somewhere.
+    final collection = state.collection;
+    final type = segment.mediaType;
+    final keepCollection =
+        collection == null || type == null || collection.isAvailableFor(type);
     _clearSections(
       segment: segment,
       services: const ExploreServicesLoading(),
       genre: () => remapped,
+      collection: () => keepCollection ? collection : null,
     );
     await _loadServices();
   }
@@ -85,6 +93,12 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
   Future<void> selectGenre(Genre? genre) async {
     if (genre == state.genre) return;
     _clearSections(genre: () => genre);
+  }
+
+  /// A Collection pill: `null` = "All".
+  Future<void> selectCollection(Collection? collection) async {
+    if (collection == state.collection) return;
+    _clearSections(collection: () => collection);
   }
 
   /// A Platform pill: `null` = "All".
@@ -142,6 +156,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
     MediaSegment? segment,
     ExploreServicesState? services,
     Genre? Function()? genre,
+    Collection? Function()? collection,
     StreamingService? Function()? service,
   }) {
     _sectionsGeneration++;
@@ -150,6 +165,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
         segment: segment,
         services: services,
         genre: genre,
+        collection: collection,
         service: service,
         sections: const {},
         revision: state.revision + 1,
@@ -164,6 +180,7 @@ class ExploreBrowseCubit extends Cubit<ExploreBrowseState> {
       type: state.segment.mediaType,
       providerId: state.service?.id,
       genre: state.genre,
+      collection: state.collection,
     );
     final result = await _mediaRepository.discover(filter);
     if (generation != _sectionsGeneration || isClosed) return;
