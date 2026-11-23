@@ -9,6 +9,7 @@ import '../../../l10n/l10n_extension.dart';
 import '../../../l10n/release_status_localization.dart';
 import 'justwatch_badge.dart';
 import 'provider_group_box.dart';
+import 'where_to_watch_footer.dart';
 import 'where_to_watch_header.dart';
 
 /// D1/D2's "Where to watch" card — Streaming / Rent / Buy groups (the
@@ -16,8 +17,8 @@ import 'where_to_watch_header.dart';
 /// row when it fits, the region pill (→ H6, so the country can be changed even when it has
 /// no data — then the card says so instead of disappearing); the Streaming box
 /// (56 px logos with names), Rent and Buy side by side underneath (36 px
-/// logos), a footer with the hint line and the amber [JustWatchBadge], and the
-/// mandatory attribution last. Tapping any service opens TMDB's `link`.
+/// logos), and a footer with the hint line, the mandatory attribution under it
+/// as its subtitle, and the amber [JustWatchBadge] at the right. Tapping any service opens TMDB's `link`.
 ///
 /// Pure presentation — [providers] arrives as a plain value (CLAUDE.md rule
 /// 9 — the assembling screen already knows it's loaded).
@@ -126,29 +127,14 @@ class WhereToWatchSection extends StatelessWidget {
                 ],
               ),
             ],
-            if (providers.hasAny) ...[
-              const SizedBox(height: AppSpacing.md),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      l10n.whereToWatchTapHint,
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.inkMuted,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  const JustWatchBadge(),
-                ],
-              ),
-            ],
-            const SizedBox(height: AppSpacing.sm),
-            // Mandatory attribution.
-            Text(
-              l10n.whereToWatchJustWatchAttribution,
-              style: AppTextStyles.caption.copyWith(color: AppColors.inkDim),
-            ),
+            const SizedBox(height: AppSpacing.md),
+            // With services: the hint, the mandatory attribution under it as
+            // its subtitle, and the badge at the right. Without: the
+            // attribution alone, as its own last line.
+            if (providers.hasAny)
+              const WhereToWatchFooter()
+            else
+              const WhereToWatchAttribution(),
           ],
         ),
       ),

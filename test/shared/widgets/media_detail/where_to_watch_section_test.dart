@@ -260,8 +260,8 @@ void main() {
       });
 
       testWidgets('the footer has the hint on the left and the amber, '
-          'non-tappable JustWatch badge on the right; the attribution '
-          'comes last', (tester) async {
+          'non-tappable JustWatch badge on the right; the attribution is '
+          'the hint\'s subtitle', (tester) async {
         await tester.pumpWidget(wrap(all));
 
         final hint = tester.getRect(
@@ -273,7 +273,12 @@ void main() {
         expect(badge.center.dy, moreOrLessEquals(hint.center.dy, epsilon: 12));
         expect(badge.left, greaterThan(hint.right));
         expect(hint.top, greaterThan(boxes.bottom));
-        expect(attribution.top, greaterThanOrEqualTo(badge.bottom));
+        // The attribution is the hint's subtitle: under it, at its left edge,
+        // and left of the badge (which stays level with the hint).
+        expect(attribution.top, greaterThanOrEqualTo(hint.bottom));
+        expect(attribution.left, moreOrLessEquals(hint.left, epsilon: 0.5));
+        expect(attribution.right, lessThanOrEqualTo(badge.left));
+        expect(badge.top, lessThan(attribution.top));
         expect(
           find.descendant(
             of: find.byType(JustWatchBadge),
