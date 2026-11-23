@@ -131,6 +131,24 @@ void main() {
     expect(applied!.withGenres, {const Genre(id: 'comedy')});
   });
 
+  testWidgets('with All too: For kids leaves out Horror (the movie side '
+      'does), and the picked one is dropped', (tester) async {
+    DiscoverFilter? applied;
+    await _pump(
+      tester,
+      filter: DiscoverFilter(withGenres: {const Genre(id: 'horror')}),
+      onApply: (f) => applied = f,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('For kids'));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.text('See results'));
+
+    expect(applied!.collection?.id, 'kids');
+    expect(applied!.withGenres, isEmpty);
+  });
+
   testWidgets('a collection missing for the new kind is dropped; the badge '
       'counts it', (tester) async {
     DiscoverFilter? applied;
