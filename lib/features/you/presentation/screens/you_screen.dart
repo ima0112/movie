@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/di.dart';
 import '../../../../app/router.dart';
+import '../../../../core/domain/repositories/surprise_history_repository.dart';
+import '../../../../core/domain/repositories/surprise_session_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -11,6 +13,7 @@ import '../../../../shared/widgets/edit_profile_sheet.dart';
 import '../../../../shared/widgets/app_tab_bar.dart';
 import '../../../../shared/widgets/page_margin.dart';
 import '../cubit/you_stats_cubit.dart';
+import '../cubit/you_surprise_cubit.dart';
 import '../widgets/my_tastes_card.dart';
 import '../widgets/you_header.dart';
 import '../widgets/you_recently_watched.dart';
@@ -50,8 +53,18 @@ class YouScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => YouStatsCubit(getIt<UserLibraryRepository>()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => YouStatsCubit(getIt<UserLibraryRepository>()),
+        ),
+        BlocProvider(
+          create: (_) => YouSurpriseCubit(
+            getIt<SurpriseSessionRepository>(),
+            getIt<SurpriseHistoryRepository>(),
+          ),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.surface,
         body: SafeArea(
@@ -74,7 +87,8 @@ class YouScreen extends StatelessWidget {
                   onOpenSettings: () => context.push(AppRoutes.settings),
                 ),
               ),
-              const SizedBox(height: AppSpacing.sectionGap),
+              // Owns its own gap above, and hides itself (gap included) until
+              // something has been watched or Surprise me has been used.
               PageMargin(
                 child: YouStatsCard(
                   onSeeStats: () => context.push(AppRoutes.stats),

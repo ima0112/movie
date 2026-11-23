@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../domain/entities/media_key.dart';
 import '../../domain/entities/media_type.dart';
 import '../../domain/entities/result.dart';
@@ -9,6 +11,10 @@ import '../../domain/repositories/surprise_history_repository.dart';
 /// one: one row per title per session (the first wins), newest first.
 class InMemorySurpriseHistoryRepository implements SurpriseHistoryRepository {
   final List<SurpriseHistoryEntry> _entries = [];
+  final StreamController<void> _changes = StreamController<void>.broadcast();
+
+  List<SurpriseHistoryEntry> _sorted() =>
+      _entries.toList()..sort((a, b) => b.shownAt.compareTo(a.shownAt));
 
   @override
   Future<Result<void>> recordShown(List<SurpriseHistoryEntry> entries) async {
@@ -18,6 +24,7 @@ class InMemorySurpriseHistoryRepository implements SurpriseHistoryRepository {
       );
       if (!exists) _entries.add(entry);
     }
+    _changes.add(null);
     return const Success(null);
   }
 
@@ -35,6 +42,7 @@ class InMemorySurpriseHistoryRepository implements SurpriseHistoryRepository {
         _entries[i] = e.withOutcome(outcome);
       }
     }
+    _changes.add(null);
     return const Success(null);
   }
 
@@ -55,6 +63,7 @@ class InMemorySurpriseHistoryRepository implements SurpriseHistoryRepository {
         _entries[i] = e.withOutcome(SurpriseOutcome.rerolled);
       }
     }
+    _changes.add(null);
     return const Success(null);
   }
 
@@ -72,13 +81,28 @@ class InMemorySurpriseHistoryRepository implements SurpriseHistoryRepository {
   });
 
   @override
-  Future<Result<List<SurpriseHistoryEntry>>> all() async => Success(
-    _entries.toList()..sort((a, b) => b.shownAt.compareTo(a.shownAt)),
-  );
+  Future<Result<List<SurpriseHistoryEntry>>> all() async => Success(_sorted());
+
+  @override
+  Stream<List<SurpriseHistoryEntry>> watchAll() {
+    // Not `async*`: cancelling a generator parked on a broadcast stream never
+    // completes.
+    late final StreamController<List<SurpriseHistoryEntry>> controller;
+    StreamSubscription<void>? changes;
+    controller = StreamController<List<SurpriseHistoryEntry>>(
+      onListen: () {
+        controller.add(_sorted());
+        changes = _changes.stream.listen((_) => controller.add(_sorted()));
+      },
+      onCancel: () => changes?.cancel(),
+    );
+    return controller.stream;
+  }
 
   @override
   Future<Result<void>> clear() async {
     _entries.clear();
+    _changes.add(null);
     return const Success(null);
   }
 }

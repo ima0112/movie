@@ -18,6 +18,10 @@ import 'package:movies/features/you/presentation/screens/you_screen.dart';
 import 'package:movies/features/you/presentation/widgets/my_tastes_card.dart';
 import 'package:movies/features/you/presentation/widgets/you_recently_watched.dart';
 import 'package:movies/features/you/presentation/widgets/you_stats_card.dart';
+import 'package:movies/core/data/local/in_memory_surprise_history_repository.dart';
+import 'package:movies/core/data/local/in_memory_surprise_session_repository.dart';
+import 'package:movies/core/domain/repositories/surprise_history_repository.dart';
+import 'package:movies/core/domain/repositories/surprise_session_repository.dart';
 import 'package:movies/l10n/app_localizations.dart';
 import 'package:movies/shared/widgets/media_card.dart';
 
@@ -37,6 +41,15 @@ void main() {
     }
     getIt.unregister<UserLibraryRepository>();
     getIt.registerSingleton<UserLibraryRepository>(library);
+    // Surprise me's records in memory (the drift ones keep timers alive).
+    getIt.unregister<SurpriseSessionRepository>();
+    getIt.registerSingleton<SurpriseSessionRepository>(
+      InMemorySurpriseSessionRepository(),
+    );
+    getIt.unregister<SurpriseHistoryRepository>();
+    getIt.registerSingleton<SurpriseHistoryRepository>(
+      InMemorySurpriseHistoryRepository(),
+    );
     tester.view.physicalSize = const Size(390, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

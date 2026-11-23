@@ -72,6 +72,13 @@ class DriftSurpriseSessionRepository implements SurpriseSessionRepository {
   }
 
   @override
+  Stream<List<SurpriseSession>> watchAll() =>
+      (_db.select(_db.surpriseSessionTable)
+            ..orderBy([(r) => OrderingTerm.desc(r.startedAt)]))
+          .watch()
+          .map((rows) => [for (final r in rows) _toSession(r)]);
+
+  @override
   Future<Result<void>> clear() async {
     try {
       await _db.delete(_db.surpriseSessionTable).go();

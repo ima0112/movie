@@ -993,6 +993,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get youStatsSurpriseTitle => 'Surprise me';
+
+  @override
+  String get youStatsSurpriseSessions => 'Sessions';
+
+  @override
+  String get youStatsSurprisePicks => 'Picks';
+
+  @override
   String get youStatsLast12Months => 'Last 12 months';
 
   @override
@@ -1227,7 +1236,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get statsEmptyTitle => 'Mark something as watched to see your stats';
+  String get statsEmptyTitle =>
+      'Mark something as watched or try Surprise me to see your stats';
 
   @override
   String get statsEmptyBody => 'Your numbers will show up here once you do.';

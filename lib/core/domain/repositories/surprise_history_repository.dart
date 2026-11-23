@@ -41,6 +41,10 @@ abstract interface class SurpriseHistoryRepository {
   /// Every row, newest first — the engine's taste signal.
   Future<Result<List<SurpriseHistoryEntry>>> all();
 
+  /// Every entry, newest first, again whenever one is recorded, changes
+  /// outcome or the history is cleared.
+  Stream<List<SurpriseHistoryEntry>> watchAll();
+
   /// Forgets everything (Settings' "clear my data").
   Future<Result<void>> clear();
 }

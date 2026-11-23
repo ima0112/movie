@@ -1009,6 +1009,15 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get youStatsSurpriseTitle => 'Sorpréndeme';
+
+  @override
+  String get youStatsSurpriseSessions => 'Sesiones';
+
+  @override
+  String get youStatsSurprisePicks => 'Elecciones';
+
+  @override
   String get youStatsLast12Months => 'Últimos 12 meses';
 
   @override
@@ -1244,7 +1253,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get statsEmptyTitle =>
-      'Marca algo como visto para ver tus estadísticas';
+      'Marca algo como visto o prueba Sorpréndeme para ver tus estadísticas';
 
   @override
   String get statsEmptyBody =>

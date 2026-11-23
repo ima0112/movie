@@ -141,7 +141,7 @@ void main() {
     await pump(tester, const []);
 
     expect(
-      find.text('Mark something as watched to see your stats'),
+      find.text('Mark something as watched or try Surprise me to see your stats'),
       findsOneWidget,
     );
   });
@@ -183,7 +183,7 @@ void main() {
     expect(find.text('Surprise me'), findsOneWidget);
     expect(find.text('100%'), findsOneWidget);
     expect(
-      find.text('Mark something as watched to see your stats'),
+      find.text('Mark something as watched or try Surprise me to see your stats'),
       findsNothing,
     );
   });
