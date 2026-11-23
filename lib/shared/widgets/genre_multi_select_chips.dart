@@ -24,6 +24,7 @@ class GenreMultiSelectChips extends StatelessWidget {
     this.disabled = const {},
     this.alignment = WrapAlignment.start,
     this.type,
+    this.compact = false,
   });
 
   final List<Genre> genres;
@@ -44,6 +45,9 @@ class GenreMultiSelectChips extends StatelessWidget {
   /// The kind of title the genres are for: names TV's combined genres.
   final MediaType? type;
 
+  /// The small chips (onboarding); the regular size elsewhere.
+  final bool compact;
+
   static const double disabledOpacity = 0.3;
 
   @override
@@ -61,6 +65,7 @@ class GenreMultiSelectChips extends StatelessWidget {
                     child: Semantics(
                       enabled: false,
                       child: AppChip(
+                        compact: compact,
                         label: genre.localizedName(context.l10n, type: type),
                         state: ChipState.normal,
                       ),
@@ -68,6 +73,7 @@ class GenreMultiSelectChips extends StatelessWidget {
                   ),
                 )
               : AppChip(
+                  compact: compact,
                   label: genre.localizedName(context.l10n, type: type),
                   state: selected.contains(genre)
                       ? selectedState
