@@ -60,6 +60,21 @@ class AppChip extends StatelessWidget {
   static const double _iconSize = 20;
   static const double _vetoedTint = 0.16;
 
+  /// The widest the label may be: the page's width less its margins, the
+  /// chip's own padding and whatever sits beside the label.
+  double _labelMaxWidth(BuildContext context) {
+    final beside =
+        (leading == null ? 0 : _iconSize + AppSpacing.sm) +
+        (icon == null ? 0 : _iconSize + AppSpacing.xs) +
+        (trailingIcon == null ? 0 : _iconSize + AppSpacing.xs);
+    final width =
+        MediaQuery.sizeOf(context).width -
+        2 * AppSpacing.screenMargin -
+        2 * AppSpacing.md -
+        beside;
+    return width < 0 ? 0 : width;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isSelected = state == ChipState.selected;
@@ -85,15 +100,27 @@ class AppChip extends StatelessWidget {
             Icon(icon, size: _iconSize, color: textColor),
             const SizedBox(width: AppSpacing.xs),
           ],
-          Text(
-            label,
-            style:
-                (isVetoed ? AppTextStyles.captionStrong : AppTextStyles.caption)
-                    .copyWith(
-                      color: textColor,
-                      decoration: isVetoed ? TextDecoration.lineThrough : null,
-                      decorationColor: textColor,
-                    ),
+          // A long label (a long language, 200% text) wraps to a second line
+          // instead of overflowing: capped to the page's width, which also
+          // holds in a horizontal list of chips where the width is unbounded.
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: _labelMaxWidth(context)),
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style:
+                  (isVetoed
+                          ? AppTextStyles.captionStrong
+                          : AppTextStyles.caption)
+                      .copyWith(
+                        color: textColor,
+                        decoration: isVetoed
+                            ? TextDecoration.lineThrough
+                            : null,
+                        decorationColor: textColor,
+                      ),
+            ),
           ),
           if (trailingIcon != null) ...[
             const SizedBox(width: AppSpacing.xs),

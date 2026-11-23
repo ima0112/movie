@@ -219,6 +219,32 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final count = _liveCount;
+    // At a large text size the title and the kind tabs would leave the filters
+    // no room: they scroll with the rest instead of staying put.
+    final largeText = MediaQuery.textScalerOf(context).scale(16) / 16 > 1.5;
+    final chrome = <Widget>[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(child: Text(l10n.filterSheetTitle, style: AppTextStyles.h1)),
+          if (_draft != _cleared)
+            TextLinkButton(
+              label: l10n.filterSheetClear,
+              fullWidth: false,
+              onTap: () => _setDraft(_cleared),
+            ),
+        ],
+      ),
+
+      const SizedBox(height: AppSpacing.lg),
+      MediaSegmentedControl(
+        segment: _segmentOf(_draft.type),
+        onSelected: (segment) => _setType(segment.mediaType),
+        padding: EdgeInsets.zero,
+        onSheet: true,
+      ),
+      const SizedBox(height: AppSpacing.sectionGap),
+    ];
 
     return SafeArea(
       child: Padding(
@@ -234,33 +260,16 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // The header and the kind tabs stay put...
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.filterSheetTitle, style: AppTextStyles.h1),
-                if (_draft != _cleared)
-                  TextLinkButton(
-                    label: l10n.filterSheetClear,
-                    fullWidth: false,
-                    onTap: () => _setDraft(_cleared),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            MediaSegmentedControl(
-              segment: _segmentOf(_draft.type),
-              onSelected: (segment) => _setType(segment.mediaType),
-              padding: EdgeInsets.zero,
-              onSheet: true,
-            ),
-            const SizedBox(height: AppSpacing.sectionGap),
+            // The header and the kind tabs stay put (but scroll at a large text
+            // size)...
+            if (!largeText) ...chrome,
             // ...the filters scroll...
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (largeText) ...chrome,
                     FilterSectionHeader(l10n.filterSheetSectionSortBy),
                     DiscoverSortChips(
                       type: _draft.type,
