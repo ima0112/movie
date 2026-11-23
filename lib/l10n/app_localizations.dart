@@ -2366,12 +2366,6 @@ abstract class AppLocalizations {
   /// **'Directed by '**
   String get mediaDirectedByLabel;
 
-  /// No description provided for @tvEpisodesSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Episodes'**
-  String get tvEpisodesSectionTitle;
-
   /// H4b's caption over the episode name (e.g. "S1 · E4").
   ///
   /// In en, this message translates to:
