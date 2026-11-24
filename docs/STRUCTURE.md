@@ -248,6 +248,7 @@ assets/
   vibes.json
   collections.json          the 13 collections (country/language/format rules)
   tmdb_attribution/
+  icon/                     launcher icon masters (SVGs, 1024/512 PNGs); NOT in the bundle — see DESIGN_SYSTEM "App icon"
 docs/
   DECISIONS.md
   STRUCTURE.md
