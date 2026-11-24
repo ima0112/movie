@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
-/// The "P" monogram: PakoTV's brand mark now that the app has no mascot
+/// The "P" monogram: PickMe's brand mark now that the app has no mascot
 /// (see the "Marca sin Pako" design). An amber rounded square with a
 /// Manrope "P", proportional at any [size].
 class AppMonogram extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
 /// Fixed amber halo — `docs/DESIGN_SYSTEM.md` section 1 ("Halo"), used
-/// behind Discover's header/hero (B1) and the Match hub's own Pako (B3).
+/// behind Discover's header/hero (B1) and the Match hub (B3).
 /// `const`, built once: it never depends on load state (CLAUDE.md rule
 /// 9).
 ///

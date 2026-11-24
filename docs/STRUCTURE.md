@@ -23,7 +23,7 @@ lib/
     splash_gate.dart               A1 — the real runApp() root. Shows
                                    splash_screen.dart, waits for the
                                    preload main() already started, then
-                                   swaps to app.dart's PakoTvApp. A
+                                   swaps to app.dart's PickMeApp. A
                                    different MaterialApp, not a go_router
                                    route — never reachable again once
                                    swapped.
@@ -294,7 +294,7 @@ Name the subfolder `cubit/` (not `bloc/`) when the feature uses a plain
 | Navigation | go_router | Needed for Matcher deep links (`app://room/K7PM3Q`) and sharing. |
 | HTTP | Dio | One `ApiClient` (`core/network/api_client.dart`), `@real`-only. Interceptors for bearer auth, `language`/`region` (read fresh per request from `SettingsRepository.current`, via `tmdbLanguageTag` — not hardcoded), and debug-only logging. `core/network/dio_failure_mapper.dart` is the one place a `DioException` becomes a `Failure`. |
 | Persistence | drift (SQLite), backed by the `sqlite3` package | Typed, migrations, queries for Stats. Use `sqlite3` (≥ 3.6.0) directly — `sqlite3_flutter_libs` is deprecated, do not add it. |
-| Localization | `flutter_localizations` (SDK) + `intl`, via `flutter gen-l10n` (`l10n.yaml`, repo root; ARBs in `lib/l10n/`) | CLAUDE.md rule 15. One `languageCode` (`AppSettings`, F11's Settings row) drives both TMDB's own content and the app's own UI `Locale` (`app/app.dart`'s `PakoTvApp` — the only widget that subscribes to `SettingsRepository.watch` for this, `.distinct()`-ed, per rule 9). `context.l10n` (`lib/l10n/l10n_extension.dart`) is the one way to read a message. |
+| Localization | `flutter_localizations` (SDK) + `intl`, via `flutter gen-l10n` (`l10n.yaml`, repo root; ARBs in `lib/l10n/`) | CLAUDE.md rule 15. One `languageCode` (`AppSettings`, F11's Settings row) drives both TMDB's own content and the app's own UI `Locale` (`app/app.dart`'s `PickMeApp` — the only widget that subscribes to `SettingsRepository.watch` for this, `.distinct()`-ed, per rule 9). `context.l10n` (`lib/l10n/l10n_extension.dart`) is the one way to read a message. |
 | Splash | `flutter_native_splash` | Generates the native splash — **only the page's dark color, no logo** (Android `launch_background.xml`/v31 styles with a transparent icon from `assets/splash/transparent.png`, iOS `LaunchScreen.storyboard`) — from `flutter_native_splash.yaml` (repo root); re-run `dart run flutter_native_splash:create` after editing that config. A regular dependency, not dev-only: `FlutterNativeSplash.preserve`/`.remove()` are called at runtime (`main.dart`, `app/splash_gate.dart`). |
 | Models | Hand-written immutable classes in `domain`; `freezed` optional for DTOs | Keeping the domain free of codegen makes it readable in review. |
 | Serialization | `json_serializable` only in `data/` | `createToJson: false` on every TMDB DTO — this app never sends one back. |

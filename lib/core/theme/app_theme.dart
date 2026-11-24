@@ -4,7 +4,7 @@ import 'app_colors.dart';
 import 'app_spacing.dart';
 import 'app_text_styles.dart';
 
-/// Builds the single `ThemeData` for PakoTV.
+/// Builds the single `ThemeData` for PickMe.
 ///
 /// Source of truth: `docs/DESIGN_SYSTEM.md`. Light mode is a later
 /// iteration (see `docs/DECISIONS.md`) — do not implement it yet.

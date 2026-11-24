@@ -1,7 +1,7 @@
 import 'genre.dart';
 import 'media_type.dart';
 
-/// The full set of normalized genres PakoTV works with — a fixed,
+/// The full set of normalized genres PickMe works with — a fixed,
 /// hand-maintained list, not fetched from TMDB at runtime (the raw
 /// TMDB-id mapping still lives in `data/tmdb/`, per `genre.dart`'s own
 /// doc comment; this is the normalized side of that mapping).

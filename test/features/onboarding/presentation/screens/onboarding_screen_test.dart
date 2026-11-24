@@ -138,7 +138,7 @@ void main() {
   testWidgets('picking a genre then finishing shows the "Tastes saved" '
       'snackbar and actually persists a TasteProfile', (tester) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -178,7 +178,7 @@ void main() {
     tester,
   ) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -194,7 +194,7 @@ void main() {
     tester,
   ) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -211,7 +211,7 @@ void main() {
   testWidgets('right after the welcome comes the required name step: no Skip, '
       'Continue disabled until the name is valid', (tester) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -245,7 +245,7 @@ void main() {
   testWidgets('the pagination dots run through the five steps after the '
       'welcome: name, two slides, the genres', (tester) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -299,7 +299,7 @@ void main() {
             create: (_) => TasteProfileCubit(getIt<TasteProfileRepository>()),
           ),
         ],
-        child: const PakoTvApp(),
+        child: const PickMeApp(),
       ),
     );
     await tester.pump();

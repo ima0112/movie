@@ -59,7 +59,7 @@ void main() {
 
   Future<void> openTheBoys(WidgetTester tester) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
     unawaited(appRouter.push(AppRoutes.tvDetail(106)));
     await tester.pumpAndSettle();

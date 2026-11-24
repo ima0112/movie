@@ -9,7 +9,7 @@ import '../entities/user_profile.dart';
 /// and anywhere a room shows "You'll join as Daniel · Host" (E2/E3b) all
 /// read the same [watch] stream rather than each holding their own copy.
 abstract interface class UserProfileRepository {
-  /// `null` = no profile saved yet — B5 renders Pako's silhouette and
+  /// `null` = no profile saved yet — B5 renders a neutral silhouette and
   /// "Tap to set your name" for that case, not an empty [UserProfile].
   Stream<UserProfile?> watch();
 

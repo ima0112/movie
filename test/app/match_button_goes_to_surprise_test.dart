@@ -47,7 +47,7 @@ void main() {
     tester,
   ) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(MatchFab));
@@ -62,7 +62,7 @@ void main() {
       'the hub is off', (tester) async {
     appRouter.go('/');
     final handle = tester.ensureSemantics();
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
 
     expect(find.bySemanticsLabel('Surprise me'), findsWidgets);
@@ -74,7 +74,7 @@ void main() {
     tester,
   ) async {
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(MatchFab));

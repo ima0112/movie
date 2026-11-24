@@ -548,7 +548,7 @@ String? _idOrHome(BuildContext context, GoRouterState state) =>
 String? _onboardingRedirect(BuildContext context, GoRouterState state) {
   final isCompleted = getIt<OnboardingRepository>().isCompleted;
   final isWelcome = state.matchedLocation == AppRoutes.welcome;
-  // A link that opens a title in this app (`pakotv://app/movie/603`): it opens
+  // A link that opens a title in this app (`pickme://app/movie/603`): it opens
   // the title over Home, so going back lands on Home.
   final linked = mediaKeyFromAppLink(state.uri);
   final linkedLocation = linked == null ? null : AppRoutes.homeDetail(linked);

@@ -7,10 +7,8 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/app_buttons.dart';
 
 /// Compact inline error, matching `docs/SCREENS.md` B1's per-section
-/// error style literally ("90 px row 'Couldn't load · Retry'") — no Pako
-/// here, that's reserved for empty/cold-start states elsewhere on this
-/// screen (see B1: "This is the only place in Home where Pako appears",
-/// referring to the cold-start invitation card, not a load error).
+/// error style literally ("90 px row 'Couldn't load · Retry'") — no
+/// illustration here, that's reserved for empty/cold-start states elsewhere.
 ///
 /// Used today for the *whole* content area, because `DiscoverCubit` loads
 /// hero+sections atomically — a real failure fails everything at once.

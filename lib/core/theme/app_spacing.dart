@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-/// Spacing and radius tokens for PakoTV.
+/// Spacing and radius tokens for PickMe.
 ///
 /// Source of truth: `docs/DESIGN_SYSTEM.md`, section 3 ("Espaciado").
 /// Always use the named token, never a bare number.

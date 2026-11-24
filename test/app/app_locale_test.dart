@@ -50,7 +50,7 @@ class _FakeSettingsRepository implements SettingsRepository {
   }
 }
 
-/// `PakoTvApp`'s own locale wiring — CLAUDE.md rule 9 applied to the
+/// `PickMeApp`'s own locale wiring — CLAUDE.md rule 9 applied to the
 /// root: only this one widget subscribes to `SettingsRepository.watch`
 /// for `MaterialApp.router`'s `locale`, `.distinct()`-ed over the
 /// derived `Locale` itself (not the whole `AppSettings`), so a
@@ -86,14 +86,14 @@ void main() {
 
   // `find.byType(MaterialApp)`'s own element sits *outside* the
   // Localizations widget MaterialApp itself inserts as a child — the
-  // "PakoTV" wordmark (discover_screen_test.dart's own anchor) is a
+  // "PickMe" wordmark (discover_screen_test.dart's own anchor) is a
   // reliable descendant actually inside it.
   Locale rootLocale(WidgetTester tester) =>
-      Localizations.localeOf(tester.element(find.text('PakoTV')));
+      Localizations.localeOf(tester.element(find.text('PickMe')));
 
   testWidgets("switching the stored language updates MaterialApp.router's own "
       'locale, with no restart', (tester) async {
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
     expect(rootLocale(tester), const Locale('en'));
 
@@ -108,7 +108,7 @@ void main() {
   testWidgets(
     'a region-only settings change leaves the resolved locale untouched',
     (tester) async {
-      await tester.pumpWidget(const PakoTvApp());
+      await tester.pumpWidget(const PickMeApp());
       await tester.pumpAndSettle();
       expect(rootLocale(tester), const Locale('en'));
 

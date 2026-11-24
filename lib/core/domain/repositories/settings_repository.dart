@@ -5,7 +5,7 @@ import '../entities/result.dart';
 /// contract only, per CLAUDE.md rule 2. There is no global preferences
 /// Cubit on top of this: `SettingsCubit` (Settings screen only) is the
 /// single screen-local subscriber that *writes*; both real readers —
-/// `ApiClient`'s `LocaleInterceptor` and `PakoTvApp`'s own
+/// `ApiClient`'s `LocaleInterceptor` and `PickMeApp`'s own
 /// `MaterialApp.router.locale` — read [current] or [watch] directly
 /// instead, per CLAUDE.md rule 15 (the UI's own language is this same
 /// value, not a second preference).

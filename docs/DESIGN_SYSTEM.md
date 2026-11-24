@@ -1,4 +1,4 @@
-# Sistema de diseño — PakoTV
+# Sistema de diseño — PickMe
 
 Fuente de verdad para `core/theme/`. Todo valor aquí es literal: cópialo,
 no lo redondees ni lo aproximes. Si necesitas un valor que no está, añádelo
@@ -297,7 +297,7 @@ The launcher icon is the "P" monogram — the same one the in-app splash shows �
 - **Masters** (`assets/icon/`, **not** in the app bundle: they aren't listed in `pubspec.yaml`): `sources/icon_full.svg` (background + glyph), `sources/icon_foreground.svg` and `sources/icon_monochrome.svg` (the glyph alone), `ios_app_icon_1024.png` (iOS), `play_store_512.png` (Google Play's listing, uploaded by hand) and `preview_adaptive_masks.png` (the adaptive icon under a circle, a squircle and a rounded square, and themed).
 - **Android** (`android/app/src/main/res/`): an adaptive icon in `mipmap-anydpi-v26/ic_launcher.xml` = `@color/ic_launcher_background` (`values/ic_launcher_background.xml`) + the **vector** glyph (`drawable/ic_launcher_foreground.xml`) + the same glyph as `drawable/ic_launcher_monochrome.xml` for Android 13's themed icons; and the legacy `mipmap-{m,h,xh,xxh,xxxh}dpi/ic_launcher.png` (48–192 px) for Android 7 and older. The glyph sits well inside the adaptive icon's 66 dp safe zone of the 108 dp canvas (its farthest point is ~29 dp from the center, the safe circle's radius is 33), so no launcher mask crops it. No `roundIcon`: Android 8+ masks the adaptive icon itself.
 - **iOS** (`ios/Runner/Assets.xcassets/AppIcon.appiconset/`): the **single-size** kind (Xcode 14+): one 1024 px RGB PNG **with no alpha channel** (the App Store rejects transparency) and a `Contents.json` that says so; Xcode generates every other size. iOS draws the rounded mask, so the artwork is full-bleed. No dark/tinted variants (iOS 18 treats the icon itself if none is given).
-- **Name under the icon**: "PakoTV" (`android:label`, `CFBundleDisplayName`/`CFBundleName`).
+- **Name under the icon**: "PickMe" (`android:label`, `CFBundleDisplayName`/`CFBundleName`).
 - **Changing it**: edit the SVGs, export the 1024 PNG, replace `assets/icon/ios_app_icon_1024.png` and the iOS copy, update the Android vector paths (`pathData` of both drawables) and the five legacy PNGs; the test fails if the glyph, the colours or the sizes drift.
 
 ## 6. iOS vs Android — qué se adapta y qué no

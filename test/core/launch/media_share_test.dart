@@ -11,11 +11,11 @@ void main() {
       'line', () {
     expect(
       mediaShareText(title: 'Inception', key: movie),
-      'Inception\npakotv://app/movie/27205',
+      'Inception\npickme://app/movie/27205',
     );
     expect(
       mediaShareText(title: 'Breaking Bad', key: show),
-      'Breaking Bad\npakotv://app/tv/1396',
+      'Breaking Bad\npickme://app/tv/1396',
     );
   });
 

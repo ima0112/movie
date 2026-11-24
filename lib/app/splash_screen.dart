@@ -7,7 +7,7 @@ import '../shared/widgets/app_wordmark.dart';
 import '../shared/widgets/app_monogram.dart';
 
 /// A1 (Splash) — `docs/SCREENS.md`: the "P" monogram fades in over an
-/// amber halo, the "PakoTV" wordmark unfurls, then the wordmark slides
+/// amber halo, the "PickMe" wordmark unfurls, then the wordmark slides
 /// into its spot on Home. It is the **only** splash the user sees: the native
 /// one (`flutter_native_splash.yaml`) is just the page's dark color, so this
 /// starts on the same background with nothing to jump from.

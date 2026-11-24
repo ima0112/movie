@@ -9,8 +9,8 @@ void main() {
 
   group('appLinkFor', () {
     test('a movie and a show', () {
-      expect(appLinkFor(movie).toString(), 'pakotv://app/movie/603');
-      expect(appLinkFor(show).toString(), 'pakotv://app/tv/1396');
+      expect(appLinkFor(movie).toString(), 'pickme://app/movie/603');
+      expect(appLinkFor(show).toString(), 'pickme://app/tv/1396');
     });
 
     test('the path is the app\'s own route, behind a placeholder host', () {
@@ -28,7 +28,7 @@ void main() {
 
     test('a link typed by hand', () {
       expect(
-        mediaKeyFromAppLink(Uri.parse('pakotv://app/movie/27205')),
+        mediaKeyFromAppLink(Uri.parse('pickme://app/movie/27205')),
         const MediaKey(type: MediaType.movie, tmdbId: 27205),
       );
     });
@@ -36,16 +36,16 @@ void main() {
     test('anything that is not ours or not whole is not a link', () {
       for (final bad in [
         'https://app/movie/603', // another scheme
-        'pakotv://other/movie/603', // another host
-        'pakotv://movie/603', // the kind of title taken for the host
-        'pakotv://app/person/603', // not a title
-        'pakotv://app/movie', // no id
-        'pakotv://app/movie/abc', // not a number
-        'pakotv://app/movie/0', // not an id
-        'pakotv://app/movie/-3',
-        'pakotv://app/movie/603/extra', // more than a title
-        'pakotv://app/',
-        'pakotv://app',
+        'pickme://other/movie/603', // another host
+        'pickme://movie/603', // the kind of title taken for the host
+        'pickme://app/person/603', // not a title
+        'pickme://app/movie', // no id
+        'pickme://app/movie/abc', // not a number
+        'pickme://app/movie/0', // not an id
+        'pickme://app/movie/-3',
+        'pickme://app/movie/603/extra', // more than a title
+        'pickme://app/',
+        'pickme://app',
         '/movie/603', // an in-app route, not a link
       ]) {
         expect(mediaKeyFromAppLink(Uri.parse(bad)), isNull, reason: bad);

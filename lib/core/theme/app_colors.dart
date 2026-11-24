@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-/// Color tokens for PakoTV.
+/// Color tokens for PickMe.
 ///
 /// Source of truth: `docs/DESIGN_SYSTEM.md`, section 1 ("Color"). Never
 /// hardcode a hex literal outside this file — reference these tokens

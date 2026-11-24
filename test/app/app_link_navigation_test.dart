@@ -20,7 +20,7 @@ import 'package:movies/features/movie_detail/presentation/screens/movie_detail_s
 import 'package:movies/features/tv_detail/presentation/screens/tv_detail_screen.dart';
 import 'package:movies/shared/widgets/media_detail/media_detail_compact_bar.dart';
 
-/// A link into the app (`pakotv://app/movie/1`), as the system delivers it:
+/// A link into the app (`pickme://app/movie/1`), as the system delivers it:
 /// opens the title over Home; before the onboarding is done it waits for it;
 /// a garbled one lands on Home.
 void main() {
@@ -60,7 +60,7 @@ void main() {
   Future<void> startOnHome(WidgetTester tester) async {
     onboarding.isCompleted = true;
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
     expect(find.text('Dune: Part Two'), findsOneWidget);
   }
@@ -87,7 +87,7 @@ void main() {
   testWidgets('a TV link opens a show\'s detail', (tester) async {
     await startOnHome(tester);
 
-    await receive(tester, 'pakotv://app/tv/101');
+    await receive(tester, 'pickme://app/tv/101');
     await tester.pumpAndSettle();
 
     expect(find.byType(TvDetailScreen), findsOneWidget);
@@ -97,11 +97,11 @@ void main() {
     tester,
   ) async {
     for (final link in [
-      'pakotv://app/foo',
-      'pakotv://app/movie/abc',
-      'pakotv://app/movie',
-      'pakotv://movie/603',
-      'pakotv://app/',
+      'pickme://app/foo',
+      'pickme://app/movie/abc',
+      'pickme://app/movie',
+      'pickme://movie/603',
+      'pickme://app/',
     ]) {
       await startOnHome(tester);
       await receive(tester, link);
@@ -128,12 +128,12 @@ void main() {
       'title when it ends', (tester) async {
     onboarding.isCompleted = false;
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('Get started'), findsOneWidget);
 
-    await receive(tester, 'pakotv://app/movie/1');
+    await receive(tester, 'pickme://app/movie/1');
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     // Still the onboarding, the link kept on the welcome route.

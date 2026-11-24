@@ -67,7 +67,7 @@ void main() {
     // pushed (which would start a doomed async `loadDetail` on a
     // `MovieDetailCubit` this reset is about to dispose).
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
     await tester.tap(find.text('Dune: Part Two').first);
     await tester.pumpAndSettle();
@@ -170,7 +170,7 @@ void main() {
       'no primary button (it would lead nowhere)', (tester) async {
     // Movie 4 has no sample detail, so the fake gives it a bare one.
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
     unawaited(appRouter.push(AppRoutes.movieDetail(4)));
     await tester.pumpAndSettle();

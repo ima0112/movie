@@ -5,8 +5,8 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../shared/widgets/state_views.dart';
 
 /// C4's empty state — "empty ('Mark something as watched to see your
-/// stats' + CTA)" (`docs/SCREENS.md` C4). Reuses [EmptyStateView] (Pako
-/// asleep + title + body + CTA), the same shared widget `MyListEmptyState`
+/// stats' + CTA)" (`docs/SCREENS.md` C4). Reuses [EmptyStateView] (icon
+/// badge + title + body + CTA), the same shared widget `MyListEmptyState`
 /// already wraps for B4's own empty tabs.
 ///
 /// SCREENS.md gives only that one title line and "+ CTA" with no label

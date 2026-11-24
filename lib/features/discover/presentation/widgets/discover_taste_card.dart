@@ -19,7 +19,7 @@ import 'discover_taste_card_body.dart';
 /// for the tastes themselves.
 ///
 /// Screen-local subscription to the taste profile (CLAUDE.md rule 10): nothing
-/// global holds a copy of it. No Pako here — it is a card, not a mascot moment.
+/// global holds a copy of it. No illustration here — it is a card.
 class DiscoverTasteCard extends StatefulWidget {
   const DiscoverTasteCard({super.key});
 

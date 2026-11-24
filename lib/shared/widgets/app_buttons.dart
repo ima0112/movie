@@ -1,4 +1,4 @@
-// PakoTV's four button styles.
+// PickMe's four button styles.
 //
 // Source of truth: `docs/DESIGN_SYSTEM.md` section 5.4 and
 // `docs/DECISIONS.md` section 9 ("Primary: white pill with black text.

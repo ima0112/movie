@@ -1,7 +1,7 @@
-# PakoTV — guide for Claude Code
+# PickMe — guide for Claude Code
 
 Movie and TV show catalog app (Flutter, iOS + Android) with a group
-recommendation engine (the "Matcher"). (The Pako mascot was dropped; the name stays.)
+recommendation engine (the "Matcher"). (The Pako mascot was dropped, and the app was renamed PickMe: see `docs/DECISIONS.md`.)
 Portfolio project, public repo.
 
 **Before writing code for a new screen or feature, read the matching

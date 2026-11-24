@@ -10,7 +10,7 @@ import '../../../../shared/widgets/app_wordmark.dart';
 import 'poster_wall.dart';
 
 /// Step 0 — `docs/SCREENS.md` A2: poster wall under a dark overlay that
-/// goes solid by 78% of the height, the 48 px "PakoTV" wordmark with a
+/// goes solid by 78% of the height, the 48 px "PickMe" wordmark with a
 /// spaced-out tagline, TMDB's attribution line, and "Get started"
 /// (the "Onboarding 0 · Bienvenida" design — no mascot).
 ///

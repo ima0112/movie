@@ -216,7 +216,7 @@ class _TextStylesSection extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Text('PakoTV — Aa 0123', style: styleBuilder()),
+                  child: Text('PickMe — Aa 0123', style: styleBuilder()),
                 ),
               ],
             ),

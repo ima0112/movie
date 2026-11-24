@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="PakoTV"
+        android:label="PickMe"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -24,7 +24,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Links into the app: pakotv://app/movie/603, pakotv://app/tv/1396
+            <!-- Links into the app: pickme://app/movie/603, pickme://app/tv/1396
                  (what D1/D2's Share sends — lib/core/launch/app_link.dart; keep the
                  scheme and host in sync with it). Flutter hands them to go_router. -->
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
@@ -32,7 +32,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="pakotv" android:host="app"/>
+                <data android:scheme="pickme" android:host="app"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

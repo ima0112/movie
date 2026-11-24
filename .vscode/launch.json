@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "PakoTV (dev, TMDB real)",
+      "name": "PickMe (dev, TMDB real)",
       "request": "launch",
       "type": "dart",
       "args": [
@@ -13,7 +13,7 @@
       ]
     },
     {
-      "name": "PakoTV (fake data)",
+      "name": "PickMe (fake data)",
       "request": "launch",
       "type": "dart",
       "args": [

@@ -49,7 +49,7 @@ void main() {
   ) async {
     onboardingRepository.isCompleted = false;
     appRouter.go('/explore');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     // Not pumpAndSettle: the welcome step's poster wall drifts on an
     // endlessly repeating AnimationController by design, which never
     // settles.
@@ -66,7 +66,7 @@ void main() {
     (tester) async {
       onboardingRepository.isCompleted = true;
       appRouter.go('/welcome');
-      await tester.pumpWidget(const PakoTvApp());
+      await tester.pumpWidget(const PickMeApp());
       await tester.pumpAndSettle();
 
       expect(find.text('Dune: Part Two'), findsOneWidget);
@@ -77,7 +77,7 @@ void main() {
   testWidgets('with the flag, a normal route is left alone', (tester) async {
     onboardingRepository.isCompleted = true;
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Dune: Part Two'), findsOneWidget);
@@ -87,7 +87,7 @@ void main() {
       'onboarding completed and reaches Discover', (tester) async {
     onboardingRepository.isCompleted = false;
     appRouter.go('/');
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     // Not pumpAndSettle here either — see the first test's own note.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));

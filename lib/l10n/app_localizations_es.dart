@@ -2045,7 +2045,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attributionFooter =>
-      'PakoTV es un proyecto personal gratuito. Todas las marcas pertenecen a sus respectivos dueños.';
+      'PickMe es un proyecto personal gratuito. Todas las marcas pertenecen a sus respectivos dueños.';
 
   @override
   String get settingsLicensesLabel => 'Licencias';

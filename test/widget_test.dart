@@ -38,10 +38,10 @@ void main() {
   testWidgets('App boots into Discover (/) via the router', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('PakoTV'), findsOneWidget);
+    expect(find.text('PickMe'), findsOneWidget);
     expect(find.text('All'), findsOneWidget);
   });
 }
