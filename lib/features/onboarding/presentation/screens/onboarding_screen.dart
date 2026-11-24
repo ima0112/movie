@@ -17,7 +17,11 @@ import '../widgets/onboarding_flow.dart';
 /// already does, and [OnboardingRepository] via `getIt` like every
 /// other repository/service this app resolves.
 class OnboardingScreen extends StatelessWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, this.openAfter});
+
+  /// A title's detail (`AppRoutes.homeDetail`) to open instead of Home when the
+  /// onboarding ends: a link into the app that arrived on the first launch.
+  final String? openAfter;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class OnboardingScreen extends StatelessWidget {
         context.read<TasteProfileCubit>(),
         getIt<OnboardingRepository>(),
       ),
-      child: const OnboardingFlow(),
+      child: OnboardingFlow(openAfter: openAfter),
     );
   }
 }

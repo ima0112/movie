@@ -7,18 +7,19 @@ void main() {
   const movie = MediaKey(type: MediaType.movie, tmdbId: 27205);
   const show = MediaKey(type: MediaType.tvShow, tmdbId: 1396);
 
-  test('a movie shares its /movie/{id} TMDB page', () {
-    expect(tmdbShareUrl(movie), 'https://www.themoviedb.org/movie/27205');
-  });
-
-  test('a TV show shares its /tv/{id} TMDB page', () {
-    expect(tmdbShareUrl(show), 'https://www.themoviedb.org/tv/1396');
-  });
-
-  test('the share text is the title, then the link on its own line', () {
+  test('the share text is the title, then the link into the app on its own '
+      'line', () {
     expect(
       mediaShareText(title: 'Inception', key: movie),
-      'Inception\nhttps://www.themoviedb.org/movie/27205',
+      'Inception\npakotv://app/movie/27205',
     );
+    expect(
+      mediaShareText(title: 'Breaking Bad', key: show),
+      'Breaking Bad\npakotv://app/tv/1396',
+    );
+  });
+
+  test('what is shared is no longer the TMDB page', () {
+    expect(mediaShareText(title: 'X', key: movie), isNot(contains('tmdb')));
   });
 }
