@@ -94,6 +94,47 @@ void main() {
     });
   });
 
+  group('iOS', () {
+    const set = 'ios/Runner/Assets.xcassets/AppIcon.appiconset';
+
+    test('one 1024 px icon with no alpha channel (what the App Store asks '
+        'for); iOS draws the mask', () {
+      final (w, h, colorType) = _png('$set/Icon-App-1024x1024@1x.png');
+      expect((w, h), (1024, 1024));
+      expect(colorType, 2, reason: 'PNG colour type 2 = RGB, no alpha');
+    });
+
+    test('the icon set is the single-size kind: only that image', () {
+      final contents = _read('$set/Contents.json');
+      expect(contents, contains('"size" : "1024x1024"'));
+      expect(contents, contains('"idiom" : "universal"'));
+      expect(contents, contains('"platform" : "ios"'));
+      final pngs = Directory(set)
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.png'))
+          .toList();
+      expect(pngs, hasLength(1));
+    });
+
+    test('the home screen name is PakoTV', () {
+      final plist = _read('ios/Runner/Info.plist');
+      expect(
+        RegExp(
+          r'CFBundleDisplayName</key>\s*<string>PakoTV</string>',
+        ).hasMatch(plist),
+        isTrue,
+      );
+    });
+
+    test('it is the same artwork as the master kept in assets/icon', () {
+      expect(
+        File('$set/Icon-App-1024x1024@1x.png').readAsBytesSync(),
+        File('assets/icon/ios_app_icon_1024.png').readAsBytesSync(),
+      );
+    });
+  });
+
   group('sources', () {
     test('the masters are kept, at the sizes the stores ask for', () {
       expect(_png('assets/icon/ios_app_icon_1024.png').$1, 1024);
