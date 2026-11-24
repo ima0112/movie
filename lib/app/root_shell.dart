@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/config/feature_flags.dart';
 import '../core/theme/app_colors.dart';
 import '../features/match_hub/presentation/widgets/match_hub_sheet.dart';
 import '../shared/widgets/app_tab_bar.dart';
 import '../shared/widgets/match_fab.dart';
+import 'router.dart';
 
 /// Wraps the four root tabs (in `AppTab.values` order — see `router.dart`'s
 /// branches) with the tab bar + Match FAB, per `docs/SCREENS.md` section B.
@@ -46,13 +48,19 @@ class RootShell extends StatelessWidget {
             onTabSelected: (tab) =>
                 navigationShell.goBranch(AppTab.values.indexOf(tab)),
           ),
-          MatchFab(onTap: () => _openMatchHub(context)),
+          MatchFab(onTap: () => _onMatchTap(context)),
         ],
       ),
     );
   }
 
-  void _openMatchHub(BuildContext context) {
+  /// The Match button: while the hub is off (`matchHubEnabled`) it goes straight
+  /// to Surprise me's first screen; otherwise it opens the hub (B3).
+  void _onMatchTap(BuildContext context) {
+    if (!matchHubEnabled) {
+      context.push(AppRoutes.surprise);
+      return;
+    }
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

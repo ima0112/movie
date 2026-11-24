@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../core/config/feature_flags.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_icons.dart';
 import '../../l10n/l10n_extension.dart';
 
 /// The Match button: an amber circle with a sparkle, centered on the
-/// floating tab bar. Tapping it opens the Match hub (B3) as a modal.
+/// floating tab bar. Tapping it opens the Match hub (B3) as a modal — or, while
+/// the hub is off (`matchHubEnabled`), goes straight to Surprise me (E1).
 ///
 /// Source of truth: the "Barra inferior flotante" design (56 px amber
 /// circle, sparkle icon, soft amber glow) and `docs/SCREENS.md` section B.
@@ -30,7 +32,10 @@ class MatchFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: context.l10n.navMatchButton,
+      // With the hub hidden the button is just "Surprise me".
+      label: matchHubEnabled
+          ? context.l10n.navMatchButton
+          : context.l10n.matchHubSurpriseMeTitle,
       child: GestureDetector(
         onTap: onTap,
         child: SizedBox(
