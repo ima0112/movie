@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
-import '../core/theme/app_spacing.dart';
 import '../shared/widgets/app_halo.dart';
+import '../shared/widgets/app_logo_mark.dart';
 import '../shared/widgets/app_wordmark.dart';
-import '../shared/widgets/app_monogram.dart';
 
-/// A1 (Splash) — `docs/SCREENS.md`: the "P" monogram fades in over an
-/// amber halo, the "PickMe" wordmark unfurls, then the wordmark slides
-/// into its spot on Home. It is the **only** splash the user sees: the native
-/// one (`flutter_native_splash.yaml`) is just the page's dark color, so this
-/// starts on the same background with nothing to jump from.
+/// A1 (Splash) — `docs/SCREENS.md`: PickMe's mark sits over an amber halo, the
+/// "PickMe" wordmark unfurls under it, then the wordmark slides into its spot on
+/// Home. The native splash (`flutter_native_splash.yaml`) already shows the same
+/// mark, centered and at the same size, so this one **starts with the mark in
+/// place** — it doesn't fade in — and only the halo and the wordmark are new:
+/// nothing jumps between the two.
 ///
 /// [preload] returns A1's preload, which `main()` already started before the
 /// first frame (so it is usually part-way done); it is awaited when this
@@ -29,7 +29,6 @@ class SplashScreen extends StatefulWidget {
   final Future<void> Function() preload;
   final VoidCallback onFinished;
 
-  static const Duration powerOnDelay = Duration(milliseconds: 200);
   static const Duration wordmarkDelay = Duration(milliseconds: 500);
   static const Duration powerOffDelay = Duration(milliseconds: 900);
   static const Duration exitDuration = Duration(milliseconds: 400);
@@ -40,7 +39,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  bool _markVisible = false;
   bool _wordmarkVisible = false;
   bool _exiting = false;
 
@@ -58,7 +56,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _run() async {
     final preloadFuture = widget.preload();
-    _after(SplashScreen.powerOnDelay, () => _markVisible = true);
     _after(SplashScreen.wordmarkDelay, () => _wordmarkVisible = true);
     _after(SplashScreen.powerOffDelay, () {
       _exiting = true;
@@ -88,27 +85,35 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: [
           const Align(alignment: Alignment.topCenter, child: AppHalo()),
+          // The mark exactly centered, where the native splash drew it; the
+          // wordmark hangs under it.
           Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: _markVisible ? 1 : 0,
-                  child: const AppMonogram(),
-                ),
-                const SizedBox(height: AppSpacing.xxl),
-                AnimatedSlide(
-                  duration: SplashScreen.exitDuration,
-                  curve: Curves.easeIn,
-                  offset: _exiting ? const Offset(0, -0.6) : Offset.zero,
-                  child: AnimatedOpacity(
-                    duration: SplashScreen.exitDuration,
-                    opacity: _wordmarkVisible && !_exiting ? 1 : 0,
-                    child: const AppWordmark(),
+            child: SizedBox(
+              width: AppLogoMark.defaultSize,
+              height: AppLogoMark.defaultSize,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const AppLogoMark(),
+                  Positioned(
+                    top: AppLogoMark.defaultSize,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: AnimatedSlide(
+                        duration: SplashScreen.exitDuration,
+                        curve: Curves.easeIn,
+                        offset: _exiting ? const Offset(0, -0.6) : Offset.zero,
+                        child: AnimatedOpacity(
+                          duration: SplashScreen.exitDuration,
+                          opacity: _wordmarkVisible && !_exiting ? 1 : 0,
+                          child: const AppWordmark(),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
