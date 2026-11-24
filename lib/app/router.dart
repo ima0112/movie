@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../core/domain/entities/discover_filter.dart';
 import '../core/domain/entities/media_detail.dart';
 import '../core/domain/entities/media_key.dart';
+import '../core/launch/app_link.dart';
 import '../core/domain/entities/media_type.dart';
 import '../core/domain/entities/person.dart';
 import '../core/domain/entities/season_summary.dart';
@@ -52,6 +53,33 @@ class AppRoutes {
     MediaType.movie => '/detail/movie/${key.tmdbId}',
     MediaType.tvShow => '/detail/tv/${key.tmdbId}',
   };
+
+  /// The title [location] opens when it is a `homeDetail` path (`/detail/movie/
+  /// 603`), else `null` — what the welcome route may open after the onboarding,
+  /// and nothing else.
+  static MediaKey? mediaKeyOfHomeDetail(String location) {
+    final uri = Uri.tryParse(location);
+    // An in-app path only: nothing with a scheme or a host in front of it.
+    if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
+    final segments = uri.pathSegments;
+    if (segments.length != 3 || segments[0] != 'detail') return null;
+    final id = int.tryParse(segments[2]);
+    if (id == null || id <= 0) return null;
+    return switch (segments[1]) {
+      'movie' => MediaKey(type: MediaType.movie, tmdbId: id),
+      'tv' => MediaKey(type: MediaType.tvShow, tmdbId: id),
+      _ => null,
+    };
+  }
+
+  /// The welcome route that, once the onboarding is done, opens [location] (a
+  /// `homeDetail` path) instead of plain Home: a link into the app that arrived
+  /// on the first launch.
+  static String welcomeThen(String location) =>
+      '$welcome?$welcomeNextParam=${Uri.encodeQueryComponent(location)}';
+
+  /// The query parameter of [welcomeThen].
+  static const String welcomeNextParam = 'next';
 
   static String personDetail(int id) => '/person/$id';
 
@@ -268,6 +296,8 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   redirect: _onboardingRedirect,
+  // A location no route matches (a garbled link, a stale one) opens Home.
+  onException: (context, state, router) => router.go('/'),
   observers: [discoverRouteObserver],
   routes: [
     StatefulShellRoute.indexedStack(
@@ -286,6 +316,7 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'detail/movie/:id',
                   parentNavigatorKey: _rootNavigatorKey,
+                  redirect: _idOrHome,
                   builder: (context, state) => MovieDetailScreen(
                     movieId: int.parse(state.pathParameters['id']!),
                   ),
@@ -293,6 +324,7 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'detail/tv/:id',
                   parentNavigatorKey: _rootNavigatorKey,
+                  redirect: _idOrHome,
                   builder: (context, state) => TvDetailScreen(
                     tvId: int.parse(state.pathParameters['id']!),
                   ),
@@ -333,6 +365,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/movie/:id',
       parentNavigatorKey: _rootNavigatorKey,
+      redirect: _idOrHome,
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return MovieDetailScreen(movieId: id);
@@ -341,6 +374,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/tv/:id',
       parentNavigatorKey: _rootNavigatorKey,
+      redirect: _idOrHome,
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return TvDetailScreen(tvId: id);
@@ -349,6 +383,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/person/:id',
       parentNavigatorKey: _rootNavigatorKey,
+      redirect: _idOrHome,
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return PersonDetailScreen(personId: id);
@@ -464,10 +499,24 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.welcome,
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const OnboardingScreen(),
+      builder: (context, state) {
+        // A link into the app that arrived before the onboarding was done
+        // (`AppRoutes.welcomeThen`): only a title's detail over Home is taken.
+        final next = state.uri.queryParameters[AppRoutes.welcomeNextParam];
+        final openAfter =
+            next != null && AppRoutes.mediaKeyOfHomeDetail(next) != null
+            ? next
+            : null;
+        return OnboardingScreen(openAfter: openAfter);
+      },
     ),
   ],
 );
+
+/// A route whose `:id` isn't a whole number (a hand-made or garbled link) goes
+/// to Home instead of throwing while its screen is built.
+String? _idOrHome(BuildContext context, GoRouterState state) =>
+    int.tryParse(state.pathParameters['id'] ?? '') == null ? '/' : null;
 
 /// This app's own "where should the user be" gate (`docs/SCREENS.md`
 /// A2's own access rule: "first launch only"). Evaluated by `GoRouter`
@@ -477,6 +526,9 @@ final GoRouter appRouter = GoRouter(
 /// - Completed, and headed to [AppRoutes.welcome] (e.g. a stale deep
 ///   link, or just landing there again after finishing it): redirect
 ///   to Discover instead of showing it a second time.
+/// - A link into the app (`core/launch/app_link.dart`) is turned into the
+///   title's detail over Home; before the onboarding is done it waits on the
+///   welcome route (`AppRoutes.welcomeThen`).
 /// - Otherwise: no redirect.
 ///
 /// Reads [OnboardingRepository] through `getIt` rather than taking it
@@ -496,8 +548,18 @@ final GoRouter appRouter = GoRouter(
 String? _onboardingRedirect(BuildContext context, GoRouterState state) {
   final isCompleted = getIt<OnboardingRepository>().isCompleted;
   final isWelcome = state.matchedLocation == AppRoutes.welcome;
+  // A link that opens a title in this app (`pakotv://app/movie/603`): it opens
+  // the title over Home, so going back lands on Home.
+  final linked = mediaKeyFromAppLink(state.uri);
+  final linkedLocation = linked == null ? null : AppRoutes.homeDetail(linked);
 
-  if (!isCompleted && !isWelcome) return AppRoutes.welcome;
+  if (!isCompleted && !isWelcome) {
+    // The onboarding comes first, but the link isn't lost: the welcome route
+    // carries it and opens the title once the onboarding is done.
+    return linkedLocation == null
+        ? AppRoutes.welcome
+        : AppRoutes.welcomeThen(linkedLocation);
+  }
   if (isCompleted && isWelcome) return '/';
-  return null;
+  return linkedLocation;
 }

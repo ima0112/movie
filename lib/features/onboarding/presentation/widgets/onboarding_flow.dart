@@ -26,7 +26,11 @@ import 'onboarding_welcome_step.dart';
 /// screens, so none is built here — `OnboardingCubit.back()` stays
 /// available for whenever that's actually asked for.
 class OnboardingFlow extends StatefulWidget {
-  const OnboardingFlow({super.key});
+  const OnboardingFlow({super.key, this.openAfter});
+
+  /// Where to go when the flow ends instead of Home (a title's detail over
+  /// Home, from a link into the app that arrived first); `null` = Home.
+  final String? openAfter;
 
   @override
   State<OnboardingFlow> createState() => _OnboardingFlowState();
@@ -57,7 +61,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     if (pickedAGenre) {
       AppSnackBar.show(context, context.l10n.onboardingTastesSavedSnackbar);
     }
-    context.go('/');
+    // A link into the app that came first opens its title over Home.
+    context.go(widget.openAfter ?? '/');
   }
 
   @override
