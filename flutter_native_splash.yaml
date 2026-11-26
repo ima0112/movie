@@ -1,22 +1,20 @@
-# docs/SCREENS.md A1 / docs/DECISIONS.md: the native splash is **only the page's
-# color** (#0B0B0D) — no image. The one splash the user sees is the in-app one
-# (`lib/app/splash_screen.dart`: the "P" monogram over the amber halo, then the
-# wordmark), which starts on that same dark color, so nothing flashes or jumps
-# between the two. (It used to show the old mascot's "off" logo, which didn't
-# match the monogram: two different logos in a row looked like two splashes.)
+# The native splash is the page's color (#0B0B0D) with the **PickMe mark** (the
+# amber card over the fan of two cards) in the middle — the same mark the in-app
+# splash (`lib/app/splash_screen.dart`) then draws at the same spot, so nothing
+# flashes or jumps between the two (docs/SCREENS.md A1, docs/DECISIONS.md).
+# Masters: `assets/icon/splash_glyph.png` (iOS and Android 11 and older) and
+# `assets/icon/splash_android12.png` (1152 px, the artwork inside the central
+# circle Android 12+ keeps: that system splash masks the icon to a circle of 2/3
+# of its width).
 #
-# Generated via `dart run flutter_native_splash:create`. Without an `image`
-# Android 12+ gets a transparent icon on the colored background (the system
-# splash itself can't be removed).
+# Generated via `dart run flutter_native_splash:create`.
 flutter_native_splash:
   color: "0B0B0D"
+  image: assets/icon/splash_glyph.png
 
   android_12:
     color: "0B0B0D"
-    # A fully transparent 288x288 PNG: Android 12+ always draws an icon on its system
-    # splash (the app's launcher icon when none is set), so we give it an
-    # invisible one. The file is only read by the generator.
-    image: assets/splash/transparent.png
+    image: assets/icon/splash_android12.png
 
   android: true
   ios: true
