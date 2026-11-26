@@ -19,6 +19,9 @@ a este documento primero y luego a código — nunca al revés.
 | `accentSoft` / `accentLine` | `#F2B441` 16% · `#F2B441` 40% | Relleno y borde del chip/pill seleccionado o activo (texto e icono en `accent`). Es el único look de «seleccionado» de chips y pills. |
 | `glass` / `glassBorder` / `shadow` | `#1C1C20` 62% · `#F5F5F7` 12% · `#000000` 45% | Barra de tabs flotante (relleno, borde, sombra). Solo sobre un desenfoque de fondo. |
 | `sheetHandle` | `#F5F5F7` 24% | Asa de arrastre de las hojas inferiores (40×4) |
+| `logoAmberLight` / `logoAmberDark` | `#FFD684` · `#D98B10` | Solo el logo: extremos del degradado de la carta ámbar (el centro es `accent`) |
+| `logoVioletLight` / `logoVioletDark` | `#7A5AA6` · `#2A2140` | Solo el logo: la carta violeta de atrás |
+| `logoTealLight` / `logoTealDark` | `#3F8A9C` · `#173A45` | Solo el logo: la carta turquesa de atrás |
 | `inkMuted` | `#A1A1A8` | Texto secundario, metadatos, iconos inactivos |
 | `inkDim` | `#5F5E5A` | Texto terciario (atribuciones, pies de página) |
 | `accent` | `#F2B441` | Único acento. Ver "Dónde va el acento" abajo |
@@ -289,6 +292,15 @@ depuración (`/debug/components`) que los liste todos:
    CTA), error (+ Reintentar), banner sin conexión.
 
 ---
+
+## Logo
+
+PickMe's mark is **an amber card with three sparkles over a fan of two cards (violet and teal)**. The wordmark is **"PickMe"** — a capital P and a capital M, always — in Manrope 600: "Pick" in `ink`, "Me" in `accent` (`AppWordmark`).
+
+- **In the app** the mark is `AppLogoMark`, drawn in code by `LogoMarkPainter` (`lib/shared/widgets/`), not an image: it is sharp at any size, it paints in the first frame (it is the splash's logo: nothing to decode, nothing to flash), it takes its colours from the `logo*` and `accent`/`onAccent` tokens, and it adds no dependency (an SVG would need `flutter_svg`). Platform files (the launcher icon, the native splash) are images because the OS reads them before Flutter exists.
+- **One source**: `assets/icon/sources/pickme-glyph.svg`. The painter keeps its numbers (card rectangles, radii, tilts, the sparkles' path data) and `test/shared/widgets/app_logo_mark_test.dart` compares them with that file and its gradient stops with the tokens, so a change to the artwork can't leave the app behind.
+- **Size**: `AppLogoMark(size)` is the side of the design's 160-unit square; the artwork fills ~73% of it. The splash uses 110 dp so the artwork matches the native splash's.
+- **Not**: an `AppIcons` entry (it is the brand, not a glyph) or a button icon — the trailer's play icon stays `AppIcons.play`.
 
 ## App icon
 

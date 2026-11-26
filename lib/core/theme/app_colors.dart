@@ -112,4 +112,23 @@ class AppColors {
     profileLilac,
     profileWhite,
   ];
+
+  // --- PickMe's mark (the launcher icon, the splash, `AppLogoMark`) -----------
+  // The brand artwork's own gradients: the amber card runs from [logoAmberLight]
+  // through [accent] to [logoAmberDark]; the two cards behind it are violet and
+  // teal. Only the mark uses them.
+
+  /// The amber card's highlight (top left).
+  static const Color logoAmberLight = Color(0xFFFFD684);
+
+  /// The amber card's shade (bottom right).
+  static const Color logoAmberDark = Color(0xFFD98B10);
+
+  /// The violet card, light to dark.
+  static const Color logoVioletLight = Color(0xFF7A5AA6);
+  static const Color logoVioletDark = Color(0xFF2A2140);
+
+  /// The teal card, light to dark.
+  static const Color logoTealLight = Color(0xFF3F8A9C);
+  static const Color logoTealDark = Color(0xFF173A45);
 }
