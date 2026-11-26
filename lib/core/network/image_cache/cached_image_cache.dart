@@ -39,7 +39,12 @@ class CachedImageCache implements AppImageCache {
     int? cacheWidth,
   }) async {
     try {
-      await precacheImage(provider(url, cacheWidth: cacheWidth), context);
+      // `onError`: without it a failed warm-up is reported as an unhandled error.
+      await precacheImage(
+        provider(url, cacheWidth: cacheWidth),
+        context,
+        onError: (error, stackTrace) {},
+      );
     } catch (_) {}
   }
 

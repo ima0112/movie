@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'focus_zoom_list.dart';
 import 'media_card.dart';
+import 'poster_precache.dart';
 import 'ranked_poster.dart';
 
 /// A horizontal row of poster cards — the section carousels (the Discover
@@ -111,58 +112,62 @@ class MediaCarousel extends StatelessWidget {
 
   Widget _buildStandard(BuildContext context) {
     final hasCaption = captionBuilder != null;
-    return SizedBox(
-      height: size.height + (hasCaption ? _captionHeight(context) : 0),
-      child: _list(
-        itemBuilder: (context, index) {
-          final item = items[index];
-          final onTap = onItemTap;
-          final overlay = overlayBuilder?.call(item);
-          final caption = captionBuilder?.call(item);
-          final card = RankedPoster(
-            rank: ranked ? index + 1 : null,
-            child: MediaCard(
-              size: size,
-              title: item.title,
-              posterUrl: item.posterUrl,
-              showTypeTag: showTypeTag && item.type == MediaType.tvShow,
-              onTap: onTap == null ? null : () => onTap(item),
-            ),
-          );
-          return Padding(
-            padding: EdgeInsets.only(left: index == 0 ? 0 : AppSpacing.md),
-            child: SizedBox(
-              width: size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      card,
-                      if (overlay != null)
-                        Positioned(
-                          left: AppSpacing.xs,
-                          top: overlayAtBottom ? null : AppSpacing.xs,
-                          bottom: overlayAtBottom ? AppSpacing.xs : null,
-                          child: IgnorePointer(child: overlay),
-                        ),
-                    ],
-                  ),
-                  if (hasCaption)
-                    Padding(
-                      padding: const EdgeInsets.only(top: AppSpacing.xs),
-                      child: Text(
-                        caption ?? '',
-                        style: captionStyle ?? _defaultCaption,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                ],
+    return PosterPrecache(
+      urls: [for (final item in items) item.posterUrl],
+      logicalWidth: size.width,
+      child: SizedBox(
+        height: size.height + (hasCaption ? _captionHeight(context) : 0),
+        child: _list(
+          itemBuilder: (context, index) {
+            final item = items[index];
+            final onTap = onItemTap;
+            final overlay = overlayBuilder?.call(item);
+            final caption = captionBuilder?.call(item);
+            final card = RankedPoster(
+              rank: ranked ? index + 1 : null,
+              child: MediaCard(
+                size: size,
+                title: item.title,
+                posterUrl: item.posterUrl,
+                showTypeTag: showTypeTag && item.type == MediaType.tvShow,
+                onTap: onTap == null ? null : () => onTap(item),
               ),
-            ),
-          );
-        },
+            );
+            return Padding(
+              padding: EdgeInsets.only(left: index == 0 ? 0 : AppSpacing.md),
+              child: SizedBox(
+                width: size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        card,
+                        if (overlay != null)
+                          Positioned(
+                            left: AppSpacing.xs,
+                            top: overlayAtBottom ? null : AppSpacing.xs,
+                            bottom: overlayAtBottom ? AppSpacing.xs : null,
+                            child: IgnorePointer(child: overlay),
+                          ),
+                      ],
+                    ),
+                    if (hasCaption)
+                      Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.xs),
+                        child: Text(
+                          caption ?? '',
+                          style: captionStyle ?? _defaultCaption,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
