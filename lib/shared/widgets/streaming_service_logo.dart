@@ -4,6 +4,8 @@ import '../../core/domain/entities/streaming_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import 'app_network_image.dart';
+import 'image_use.dart';
 
 /// A streaming service's rounded logo, or the name's first letter on a flat
 /// tile when TMDB has no logo (or it fails to load). Shared by B2's Platform
@@ -37,12 +39,12 @@ class StreamingServiceLogo extends StatelessWidget {
     if (url == null) return letter;
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-      child: Image.network(
-        url,
+      child: AppNetworkImage(
+        url: url,
+        use: ImageUse.logo,
         width: size,
         height: size,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => letter,
+        fallback: (context) => letter,
       ),
     );
   }

@@ -7,6 +7,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'media_backdrop_carousel.dart';
+import 'app_network_image.dart';
+import 'image_use.dart';
 
 /// B1's "Latest trailers": the same wide cards as B2's "Top rated"
 /// ([MediaBackdropCarousel]'s size), but each is a still of the film under a
@@ -154,13 +156,12 @@ class _FallbackImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (sources.isEmpty) {
-      return const ColoredBox(color: AppColors.surfaceRaised2);
+      return const AppNetworkImage(url: null, use: ImageUse.other);
     }
-    return Image.network(
-      sources.first,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) =>
-          _FallbackImage(sources: sources.sublist(1)),
+    return AppNetworkImage(
+      url: sources.first,
+      use: ImageUse.other,
+      fallback: (context) => _FallbackImage(sources: sources.sublist(1)),
     );
   }
 }

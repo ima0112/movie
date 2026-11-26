@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../app_network_image.dart';
+import '../image_use.dart';
 
 /// One streaming service as a rounded logo square. [size] is its edge;
 /// [showName] adds the service name under it (the Streaming group does,
@@ -58,14 +60,11 @@ class ProviderLogoTile extends StatelessWidget {
                 child: SizedBox(
                   width: size,
                   height: size,
-                  child: url == null
-                      ? fallback
-                      : Image.network(
-                          url,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              fallback,
-                        ),
+                  child: AppNetworkImage(
+                    url: url,
+                    use: ImageUse.logo,
+                    fallback: (context) => fallback,
+                  ),
                 ),
               ),
               if (showName) ...[

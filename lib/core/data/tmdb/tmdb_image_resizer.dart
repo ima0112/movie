@@ -18,8 +18,8 @@ import 'tmdb_image_urls.dart';
 /// ```
 ///
 /// A URL that isn't a TMDB image URL (a YouTube thumbnail, a bundled asset path)
-/// comes back unchanged, and so does one whose wanted size TMDB doesn't list for
-/// [kind].
+/// comes back unchanged, and so does one whose **current** size isn't one TMDB
+/// lists for [kind] (a poster used where a backdrop is expected).
 abstract final class TmdbImageResizer {
   /// How much of [neededPixels] a size may fall short by and still count: a
   /// 64 dp avatar on a 3× screen needs 192 px, and `w185` (96%) is close enough.
@@ -45,6 +45,10 @@ abstract final class TmdbImageResizer {
       TmdbImageKind.profile => config.profileSizes,
       TmdbImageKind.still => config.stillSizes,
     };
+    // The size the URL has now must be one of this kind's: a poster URL passed
+    // off as a backdrop (D1's header falls back to the poster) would otherwise be
+    // switched to a size only backdrops have, and TMDB would answer 404.
+    if (!sizes.contains(match.group(2))) return url;
     final cap = _pixels(maxSize) ?? double.infinity;
     // Real, sized options up to the cap, smallest first ("original" is never
     // one: it can weigh several MB).

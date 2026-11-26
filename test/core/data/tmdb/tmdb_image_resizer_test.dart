@@ -121,7 +121,7 @@ void main() {
       );
       expect(
         TmdbImageResizer.resize(
-          url: '${_base}w342/abc.jpg',
+          url: '${_base}w200/abc.jpg',
           kind: TmdbImageKind.poster,
           neededPixels: 300,
           maxSize: 'w780',
@@ -141,6 +141,20 @@ void main() {
           config: _config,
         ),
         '${_base}w342/abc.jpg',
+      );
+    });
+
+    test('a poster URL passed off as a backdrop is left alone: its w500 is not '
+        'a backdrop size, and w1280 would be a 404 for a poster', () {
+      expect(
+        TmdbImageResizer.resize(
+          url: '${_base}w500/poster.jpg',
+          kind: TmdbImageKind.backdrop,
+          neededPixels: 1170,
+          maxSize: 'w1280',
+          config: _config,
+        ),
+        '${_base}w500/poster.jpg',
       );
     });
   });

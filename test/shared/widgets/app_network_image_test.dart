@@ -189,7 +189,7 @@ void main() {
           width: 64,
           height: 64,
           child: AppNetworkImage(
-            url: 'https://image.tmdb.org/t/p/w342/face.jpg',
+            url: 'https://image.tmdb.org/t/p/h632/face.jpg',
             use: ImageUse.profile,
           ),
         ),
