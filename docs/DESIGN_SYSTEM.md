@@ -234,6 +234,17 @@ icono a ojo, para que quede consistente entre pantallas.
 
 ## 5. Componentes base (hoja de componentes)
 
+**Imágenes de red — `AppNetworkImage`** (`shared/widgets/app_network_image.dart`):
+la única forma de mostrar una imagen de red (ningún otro widget construye un
+`Image.network`; un test de guarda lo comprueba). Recibe la URL y un `ImageUse`
+(`poster`, `backdrop`, `profile`, `still`, `logo`, `other`). Con el ancho al que se
+dibuja × el ratio de píxeles pide a TMDB el tamaño más pequeño que lo cubra
+(`TmdbImageResizer`, con tope por uso: pósters `w780`, fondos `w1280`, nunca
+`original`) y la decodifica a ese tamaño (`cacheWidth`). Mientras carga y si falla
+muestra un bloque plano `imagePlaceholder`, sin spinner; la imagen aparece con un
+fundido de 150 ms (ninguno con «reducir movimiento» ni si ya estaba en memoria).
+Sin URL, el mismo bloque. Disco: `AppImageCache` (500 archivos, 30 días).
+
 **Carga bajo demanda — `LazyLoad`** (`shared/widgets/lazy_load.dart`): envuelve
 un bloque de una página larga y llama a `onNear` una sola vez cuando el
 bloque está a menos de ~400 px del área visible (antes o después), en
