@@ -6,6 +6,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'poster_badge.dart';
+import 'app_network_image.dart';
+import 'image_use.dart';
 
 /// The poster card sizes used across PickMe.
 ///
@@ -189,17 +191,7 @@ class _Poster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = posterUrl;
-    if (url == null) {
-      return const ColoredBox(color: AppColors.surfaceRaised2);
-    }
-    return Image.network(
-      url,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return const ColoredBox(color: AppColors.surfaceRaised2);
-      },
-    );
+    return AppNetworkImage(url: posterUrl, use: ImageUse.poster);
   }
 }
 

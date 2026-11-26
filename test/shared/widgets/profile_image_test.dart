@@ -8,13 +8,27 @@ void main() {
         'painted into Image.network as-is', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: ProfileImage(profilePath: '/chalamet.jpg', name: 'Timothée'),
+          home: Center(
+            child: SizedBox(
+              width: 64,
+              height: 64,
+              child: ProfileImage(
+                profilePath: '/chalamet.jpg',
+                name: 'Timothée',
+              ),
+            ),
+          ),
         ),
       );
 
       final image = tester.widget<Image>(find.byType(Image));
-      final provider = image.image as NetworkImage;
-      expect(provider.url, 'https://image.tmdb.org/t/p/w185/chalamet.jpg');
+      // A 64 dp circle on a 3x screen: w185, decoded at 192 px.
+      final provider = image.image as ResizeImage;
+      expect(provider.width, 192);
+      expect(
+        (provider.imageProvider as NetworkImage).url,
+        'https://image.tmdb.org/t/p/w185/chalamet.jpg',
+      );
     });
 
     testWidgets('no profile_path shows the name\'s initial over '
