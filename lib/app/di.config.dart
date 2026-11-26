@@ -61,6 +61,9 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart'
 import 'package:movies/core/domain/repositories/user_profile_repository.dart'
     as _i824;
 import 'package:movies/core/network/api_client.dart' as _i152;
+import 'package:movies/core/network/image_cache/app_image_cache.dart' as _i767;
+import 'package:movies/core/network/image_cache/cached_image_cache.dart'
+    as _i1031;
 import 'package:movies/core/network/network_status.dart' as _i320;
 import 'package:movies/core/persistence/app_database.dart' as _i231;
 import 'package:movies/features/discover/data/repositories/fake_media_repository.dart'
@@ -121,6 +124,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i546.SurpriseSessionRepository>(
       () => _i466.DriftSurpriseSessionRepository(gh<_i231.AppDatabase>()),
+    );
+    gh.lazySingleton<_i767.AppImageCache>(
+      () => _i1031.CachedImageCache(),
+      registerFor: {_real},
+    );
+    gh.lazySingleton<_i767.AppImageCache>(
+      () => const _i1031.FakeImageCache(),
+      registerFor: {_fake},
     );
     gh.lazySingleton<_i152.ApiClient>(
       () => _i152.ApiClient(

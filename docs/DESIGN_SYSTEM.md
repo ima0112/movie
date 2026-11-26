@@ -11,6 +11,7 @@ a este documento primero y luego a código — nunca al revés.
 | Token | Hex | Uso |
 |---|---|---|
 | `surface` | `#0B0B0D` | Fondo de página, modo oscuro (por defecto) |
+| `imagePlaceholder` | `#121215` | Lo que muestra una imagen de red mientras carga o si falla (`AppNetworkImage`): un bloque plano, sin spinner |
 | `surfaceRaised` | `#161618` | Tarjetas, campos, hojas, chips sin seleccionar |
 | `surfaceRaised2` | `#1E1E22` | Un nivel por encima de `surfaceRaised` (tarjetas dentro de hojas) |
 | `line` | `#1E1E22` | Separadores finos entre filas del mismo grupo |
