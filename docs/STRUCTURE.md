@@ -48,6 +48,7 @@ lib/
     network/
       api_client.dart             single HTTP exit point; injected base URL
       interceptors/               bearer auth, language/region, logging
+      image_cache/                AppImageCache: the one disk cache + decode policy for every network image
     persistence/
       app_database.dart           SQLite (drift) — user_media, taste_profile, search_history, cache
     theme/
