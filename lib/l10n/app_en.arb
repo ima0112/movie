@@ -1861,6 +1861,12 @@
   },
   "settingsDataHeader": "Data",
   "settingsExportMyList": "Export My List",
+  "settingsClearCacheLabel": "Clear cache",
+  "@settingsClearCacheLabel": {
+    "description": "C6's Data row that empties what the app saved to load faster and work offline: the saved TMDB answers (memory and disk) and the downloaded images. Never touches My List, My Tastes or the settings."
+  },
+  "settingsCacheClearedSnackbar": "Cache cleared",
+  "settingsClearCacheFailedSnackbar": "Couldn't clear the cache",
   "settingsDeleteMyListLabel": "Delete My List",
   "settingsDeleteSurpriseHistoryLabel": "Delete Surprise me history",
   "@settingsDeleteSurpriseHistoryLabel": {

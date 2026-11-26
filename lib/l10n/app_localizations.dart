@@ -3291,6 +3291,24 @@ abstract class AppLocalizations {
   /// **'Export My List'**
   String get settingsExportMyList;
 
+  /// C6's Data row that empties what the app saved to load faster and work offline: the saved TMDB answers (memory and disk) and the downloaded images. Never touches My List, My Tastes or the settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cache'**
+  String get settingsClearCacheLabel;
+
+  /// No description provided for @settingsCacheClearedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared'**
+  String get settingsCacheClearedSnackbar;
+
+  /// No description provided for @settingsClearCacheFailedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t clear the cache'**
+  String get settingsClearCacheFailedSnackbar;
+
   /// No description provided for @settingsDeleteMyListLabel.
   ///
   /// In en, this message translates to:
