@@ -31,17 +31,19 @@ class PosterWall extends StatelessWidget {
   final List<String?> posterUrls;
 
   static const double _opacity = 0.55;
-  static const int _columnCount = 4;
+
+  /// How many columns the wall has.
+  static const int columnCount = 4;
 
   // The only stagger mechanism. Odd columns (index 0, 2) drift up; even
   // columns (index 1, 3) drift down — docs/SCREENS.md A2 just says
   // "staggered", these specific values/directions are this task's own.
-  static const List<double> _startPhases = [0, 0.35, 0.15, 0.6];
-  static const List<bool> _goesUp = [true, false, true, false];
+  static const List<double> startPhases = [0, 0.35, 0.15, 0.6];
+  static const List<bool> columnGoesUp = [true, false, true, false];
 
   @override
   Widget build(BuildContext context) {
-    final columns = _distribute(posterUrls, _columnCount);
+    final columns = distribute(posterUrls, columnCount);
 
     return Opacity(
       opacity: _opacity,
@@ -56,8 +58,8 @@ class PosterWall extends StatelessWidget {
             Expanded(
               child: PosterWallColumn(
                 urls: columns[i],
-                startPhase: _startPhases[i],
-                goesUp: _goesUp[i],
+                startPhase: startPhases[i],
+                goesUp: columnGoesUp[i],
                 speed: PosterWallConfig.columnSpeeds[i],
               ),
             ),
@@ -73,7 +75,9 @@ class PosterWall extends StatelessWidget {
   // padded with `null`s (placeholder tiles); `PosterWallColumn` itself
   // pads further if a column's own share is still too small to satisfy
   // its own "loop height >= screen height" guarantee.
-  static List<List<String?>> _distribute(List<String?> urls, int columnCount) {
+  /// The columns' disjoint poster lists, exactly as the wall draws them (the
+  /// splash's warm-up needs the same split to know which tiles show first).
+  static List<List<String?>> distribute(List<String?> urls, int columnCount) {
     final source = urls.isEmpty
         ? List<String?>.filled(columnCount * 3, null)
         : urls;
