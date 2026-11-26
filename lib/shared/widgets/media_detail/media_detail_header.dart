@@ -10,6 +10,8 @@ import '../../../l10n/release_status_localization.dart';
 import '../poster_badge.dart';
 import 'media_meta_line.dart';
 import 'rating_ring.dart';
+import '../app_network_image.dart';
+import '../image_use.dart';
 
 /// D1/D2's header — `docs/SCREENS.md` D1: a 420 px backdrop (TMDB's 16:9
 /// backdrop, or the poster when there isn't one) that fades into the page,
@@ -158,14 +160,10 @@ class _Backdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = imageUrl;
-    if (url == null) return const ColoredBox(color: AppColors.surfaceRaised2);
-    return Image.network(
-      url,
-      fit: BoxFit.cover,
+    return AppNetworkImage(
+      url: imageUrl,
+      use: ImageUse.backdrop,
       alignment: Alignment.topCenter,
-      errorBuilder: (context, error, stackTrace) =>
-          const ColoredBox(color: AppColors.surfaceRaised2),
     );
   }
 }

@@ -7,6 +7,8 @@ import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import '../../l10n/number_format_extension.dart';
 import 'poster_badge.dart';
+import 'app_network_image.dart';
+import 'image_use.dart';
 
 /// The big wide cards of B2's "Top rated" — the section that gets the most
 /// weight: each is a 16:9 backdrop (the poster when TMDB has none) under a
@@ -84,15 +86,7 @@ class _BackdropCard extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                if (image == null)
-                  const ColoredBox(color: AppColors.surfaceRaised2)
-                else
-                  Image.network(
-                    image,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const ColoredBox(color: AppColors.surfaceRaised2),
-                  ),
+                AppNetworkImage(url: image, use: ImageUse.backdrop),
                 DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
