@@ -333,6 +333,53 @@ class LocalFlagsTable extends Table {
   Set<Column> get primaryKey => {flag};
 }
 
+/// One saved TMDB response (`DriftCacheStore`, `docs/DECISIONS.md` "Caching",
+/// Phase 3): what lets lists and details open with no network. Only
+/// allow-listed routes are ever stored (`CacheTtl.rules`), never search, and no
+/// header of the request — so no bearer token — is kept.
+@DataClassName('ApiResponseCacheRow')
+class ApiResponseCacheTable extends Table {
+  /// The package's cache key (a hash of the final URL, language and region
+  /// included).
+  TextColumn get key => text()();
+
+  TextColumn get url => text()();
+  IntColumn get statusCode => integer()();
+
+  /// The response body, as the package hands it over.
+  BlobColumn get content => blob().nullable()();
+
+  /// The response headers, JSON-encoded as the package does.
+  BlobColumn get headers => blob().nullable()();
+
+  /// The response's `Cache-Control`, as the header text.
+  TextColumn get cacheControl => text().withDefault(const Constant(''))();
+
+  TextColumn get eTag => text().nullable()();
+  TextColumn get lastModified => text().nullable()();
+  DateTimeColumn get date => dateTime().nullable()();
+  DateTimeColumn get expires => dateTime().nullable()();
+  DateTimeColumn get maxStale => dateTime().nullable()();
+
+  /// `CachePriority`'s index.
+  IntColumn get priority => integer().withDefault(const Constant(1))();
+
+  DateTimeColumn get requestDate => dateTime()();
+
+  /// When the app received it: what every TTL and window is measured from.
+  DateTimeColumn get responseDate => dateTime()();
+
+  /// Last time it was read or written: the least recently used entries go first
+  /// when the table is over its cap.
+  DateTimeColumn get lastAccessedAt => dateTime()();
+
+  /// Body size, to keep the table under its byte cap without summing blobs.
+  IntColumn get sizeBytes => integer()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
 /// The app's single SQLite (drift) database.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/persistence/
@@ -355,6 +402,7 @@ class LocalFlagsTable extends Table {
     SurpriseHistoryTable,
     SurpriseSessionTable,
     LocalFlagsTable,
+    ApiResponseCacheTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -371,12 +419,12 @@ class AppDatabase extends _$AppDatabase {
   /// [UserMediaEntries] grew its `runtimeMinutes`/`episodeCount`/
   /// `episodeRuntimeMinutes` columns, to 4 when [SearchHistoryTable]
   /// was added, to 5 when [OnboardingTable] was, and to 6 when
-  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, to 12 when it gained its batch number and genres and its outcomes were renamed, to 13 when [LocalFlagsTable] was added, to 14 when the taste profile gained its liked collections, and to 15 when [SurpriseSessionTable] was added — [onUpgrade] below adds each version's own
+  /// [SettingsTable] was, to 7 when [RecentlyViewedTable] was, and to 8 when [SavedPeopleTable] was, to 9 when the favorite/watch-later dates were, to 10 when the taste profile gained its type, eras and platforms, to 11 when [SurpriseHistoryTable] was added, to 12 when it gained its batch number and genres and its outcomes were renamed, to 13 when [LocalFlagsTable] was added, to 14 when the taste profile gained its liked collections, to 15 when [SurpriseSessionTable] was added, and to 16 when [ApiResponseCacheTable] was — [onUpgrade] below adds each version's own
   /// change in order, never a destructive drop/recreate, so nobody's
   /// existing My List/profile/tastes/search/onboarding data is lost on
   /// update.
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -450,6 +498,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 15) {
         await m.createTable(surpriseSessionTable);
+      }
+      if (from < 16) {
+        await m.createTable(apiResponseCacheTable);
       }
     },
   );
