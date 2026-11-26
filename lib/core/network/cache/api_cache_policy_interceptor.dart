@@ -19,7 +19,8 @@ import 'cache_ttl.dart';
 /// | route not in [CacheTtl.rules], or `FetchMode.live` | — | `noCache` (never read, never saved) |
 /// | `FetchMode.refresh` | any | `refreshForceCache`: ask the network, save the answer |
 /// | `FetchMode.cached` | younger than the TTL | `forceCache`: use it, no request |
-/// | `FetchMode.cached` | none, or past the TTL | `refreshForceCache`: ask, save |
+/// | `FetchMode.cached` | past the TTL, inside the rule's SWR window | `forceCache` **and** a background refresh |
+/// | `FetchMode.cached` | none, or past the window | `refreshForceCache`: ask, save |
 ///
 /// Every cached route also gets `hitCacheOnNetworkFailure`: if the network can't
 /// be reached, an old saved answer (up to [CacheTtl.staleHorizon]) is handed back
@@ -34,12 +35,18 @@ class ApiCachePolicyInterceptor extends Interceptor {
   ApiCachePolicyInterceptor({
     required this.store,
     required this.stats,
+    this.revalidate,
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now;
 
   final CacheStore store;
   final ApiCacheStats stats;
   final DateTime Function() _now;
+
+  /// Refreshes [RequestOptions]' answer in the background (stale-while-
+  /// revalidate); returns `false` when it can't (no client yet), and then an
+  /// old answer just asks.
+  final bool Function(RequestOptions options)? revalidate;
 
   /// The `RequestOptions.extra` key the data layer puts the [FetchMode] under.
   static const String modeKey = 'pickme_fetch_mode';
@@ -64,15 +71,22 @@ class ApiCachePolicyInterceptor extends Interceptor {
       policy = CachePolicy.refreshForceCache;
     } else {
       final saved = await store.get(_keyOf(options));
-      final current =
-          saved != null && _now().difference(saved.responseDate) < rule.ttl;
-      if (current) {
+      final age = saved == null ? null : _now().difference(saved.responseDate);
+      if (age != null && age < rule.ttl) {
         stats.hits++;
         if (kDebugMode) debugPrint('⚡ cache ${options.uri}');
+        policy = CachePolicy.forceCache;
+      } else if (age != null &&
+          age < rule.swrWindow &&
+          (revalidate?.call(options) ?? false)) {
+        // Old, but still a good first screen: shown now, refreshed behind it.
+        stats.revalidations++;
+        if (kDebugMode) debugPrint('⚡ cache (revalidating) ${options.uri}');
+        policy = CachePolicy.forceCache;
       } else {
         stats.misses++;
+        policy = CachePolicy.refreshForceCache;
       }
-      policy = current ? CachePolicy.forceCache : CachePolicy.refreshForceCache;
     }
 
     options.extra.addAll(

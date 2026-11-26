@@ -1,6 +1,11 @@
 /// What may be cached, and for how long — the one place both are decided
 /// (`docs/DECISIONS.md`, "Caching").
 ///
+/// **SWR window** (stale-while-revalidate) is how long past the TTL a saved
+/// answer is still handed back **at once** — the screen opens instantly with it —
+/// while a fresh one is fetched behind it for the next time. Past the window the
+/// network is waited for. A rule without a window has none: past its TTL it asks.
+///
 /// **TTL** (time to live) is how long a saved response counts as current: within
 /// it the saved answer is used without a request; past it the network is asked
 /// again. The values are the app's own, kept close to what TMDB itself announces
@@ -12,11 +17,16 @@
 /// long its answer may live. `/search/multi` is deliberately absent (it depends on
 /// what the user types).
 class CacheRule {
-  const CacheRule(this.pattern, this.ttl);
+  const CacheRule(this.pattern, this.ttl, {Duration? swrWindow})
+    : swrWindow = swrWindow ?? ttl;
 
   /// Matched against the request's path (`/movie/603`, no host, no query).
   final RegExp pattern;
   final Duration ttl;
+
+  /// How long (counted from when it was received) an old answer may be shown
+  /// while it is refreshed; never less than [ttl] (equal to it: no window).
+  final Duration swrWindow;
 }
 
 abstract final class CacheTtl {
@@ -36,6 +46,13 @@ abstract final class CacheTtl {
   /// A person, the streaming-service lists, TMDB's own configuration.
   static const Duration slowChanging = Duration(hours: 24);
 
+  /// Home's lists and `discover` change slowly enough that yesterday's order is a
+  /// good first screen.
+  static const Duration listsSwrWindow = Duration(hours: 24);
+
+  /// A title's detail barely changes in a week.
+  static const Duration detailSwrWindow = Duration(days: 7);
+
   /// How long an **old** saved response may still be handed back when the network
   /// fails (and so how long it is kept at all). Well under the six months TMDB's
   /// terms allow caching its data for.
@@ -48,14 +65,20 @@ abstract final class CacheTtl {
         r'|tv/(on_the_air|top_rated|popular))$',
       ),
       homeLists,
+      swrWindow: listsSwrWindow,
     ),
-    CacheRule(RegExp(r'^/discover/(movie|tv)$'), discover),
+    CacheRule(
+      RegExp(r'^/discover/(movie|tv)$'),
+      discover,
+      swrWindow: listsSwrWindow,
+    ),
     CacheRule(RegExp(r'^/(movie|tv)/\d+/recommendations$'), recommendations),
     CacheRule(
       RegExp(
         r'^/(movie|tv)/\d+(/videos|/watch/providers)?$|^/tv/\d+/season/\d+$',
       ),
       detail,
+      swrWindow: detailSwrWindow,
     ),
     CacheRule(
       RegExp(r'^/person/\d+$|^/watch/providers/(movie|tv)$|^/configuration$'),

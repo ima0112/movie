@@ -13,10 +13,14 @@ class ApiCacheStats {
   /// Not cached at all: a route outside the list, or `FetchMode.live`.
   int bypasses = 0;
 
-  void reset() => hits = misses = refreshes = bypasses = 0;
+  /// An old-but-usable answer was handed back at once and refreshed behind it
+  /// (stale-while-revalidate).
+  int revalidations = 0;
+
+  void reset() => hits = misses = refreshes = bypasses = revalidations = 0;
 
   @override
   String toString() =>
       'ApiCacheStats(hits: $hits, misses: $misses, refreshes: $refreshes, '
-      'bypasses: $bypasses)';
+      'bypasses: $bypasses, revalidations: $revalidations)';
 }

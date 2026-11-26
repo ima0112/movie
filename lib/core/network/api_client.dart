@@ -44,6 +44,7 @@ class ApiClient {
       // answer is served.
       ...cache.interceptors,
     ]);
+    cache.attach(dio);
   }
 
   /// Exposed (not hidden behind `get`/`post` wrappers) so callers can use

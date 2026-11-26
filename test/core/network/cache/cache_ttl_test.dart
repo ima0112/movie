@@ -78,4 +78,22 @@ void main() {
     expect(CacheTtl.staleHorizon, const Duration(days: 30));
     expect(CacheTtl.staleHorizon, lessThan(const Duration(days: 180)));
   });
+
+  test(
+    'SWR windows: lists and discover 24 h, detail 7 days, the rest none',
+    () {
+      Duration? window(String path) => CacheTtl.ruleFor(path)?.swrWindow;
+      expect(window('/trending/all/week'), const Duration(hours: 24));
+      expect(window('/discover/movie'), const Duration(hours: 24));
+      expect(window('/movie/603'), const Duration(days: 7));
+      expect(window('/tv/1396/season/2'), const Duration(days: 7));
+      // No window: it equals the TTL, so past it the network is waited for.
+      expect(window('/movie/603/recommendations'), const Duration(hours: 1));
+      expect(window('/person/287'), const Duration(hours: 24));
+      for (final rule in CacheTtl.rules) {
+        expect(rule.swrWindow >= rule.ttl, isTrue);
+        expect(rule.swrWindow <= CacheTtl.staleHorizon, isTrue);
+      }
+    },
+  );
 }
