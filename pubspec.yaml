@@ -65,6 +65,9 @@ dependencies:
   # through `shared/widgets/app_network_image.dart`).
   cached_network_image: ^4.0.7
   flutter_cache_manager: ^3.5.0 # its CacheManager and Config (the disk limits)
+  # In-memory (later also drift-backed) cache for TMDB responses: the policy and
+  # TTL table live in `core/network/cache/`.
+  dio_cache_interceptor: ^4.0.7
 
 dev_dependencies:
   flutter_test:
