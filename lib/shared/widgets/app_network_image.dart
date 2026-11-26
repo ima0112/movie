@@ -33,6 +33,7 @@ class AppNetworkImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.alignment = Alignment.center,
     this.fallback,
+    this.fade,
   });
 
   /// The image's address, or `null` for none.
@@ -49,7 +50,13 @@ class AppNetworkImage extends StatelessWidget {
   /// the flat tile (a cast photo's monogram, the next thumbnail to try).
   final WidgetBuilder? fallback;
 
+  /// How long a loaded image takes to fade in over the placeholder, when the
+  /// image doesn't say otherwise ([fade]).
   static const Duration fadeDuration = Duration(milliseconds: 150);
+
+  /// This image's own fade-in, instead of [fadeDuration] (the onboarding's
+  /// poster wall, which loads a dozen at once, uses a shorter one).
+  final Duration? fade;
 
   /// Loads [url] into the cache now — what is about to be shown (the next
   /// posters of a carousel, the title about to be opened) — with the same size
@@ -80,9 +87,9 @@ class AppNetworkImage extends StatelessWidget {
             width ??
             (constraints.hasBoundedWidth ? constraints.maxWidth : null);
         final source = _source(context, url, use, drawnWidth);
-        final fade = MediaQuery.disableAnimationsOf(context)
+        final fadeFor = MediaQuery.disableAnimationsOf(context)
             ? Duration.zero
-            : fadeDuration;
+            : fade ?? fadeDuration;
         return ColoredBox(
           color: AppColors.imagePlaceholder,
           child: Image(
@@ -92,10 +99,10 @@ class AppNetworkImage extends StatelessWidget {
             fit: fit,
             alignment: alignment,
             frameBuilder: (context, child, frame, loadedSynchronously) {
-              if (loadedSynchronously || fade == Duration.zero) return child;
+              if (loadedSynchronously || fadeFor == Duration.zero) return child;
               return AnimatedOpacity(
                 opacity: frame == null ? 0 : 1,
-                duration: fade,
+                duration: fadeFor,
                 child: child,
               );
             },

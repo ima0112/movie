@@ -13,6 +13,7 @@ import '../cubit/onboarding_state.dart';
 import 'onboarding_genre_step.dart';
 import 'onboarding_intro_step.dart';
 import 'onboarding_name_step.dart';
+import '../poster_wall_warmup.dart';
 import 'onboarding_welcome_step.dart';
 
 /// A2's own screen switch, once `OnboardingCubit` is already provided
@@ -42,7 +43,10 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   @override
   void initState() {
     super.initState();
-    _postersFuture = getIt<MediaRepository>().getPosterWallItems();
+    // The splash may already have asked (and warmed the posters).
+    _postersFuture =
+        PosterWallWarmup.takePosters() ??
+        getIt<MediaRepository>().getPosterWallItems();
   }
 
   Future<void> _finish(BuildContext context) async {

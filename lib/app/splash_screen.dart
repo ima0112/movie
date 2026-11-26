@@ -23,10 +23,17 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({
     super.key,
     required this.preload,
+    this.warmUp,
     required this.onFinished,
   });
 
   final Future<void> Function() preload;
+
+  /// What to prepare once the preload is done and the first screen is known,
+  /// still under the splash (the onboarding's poster wall): it gets this
+  /// screen's context, for the size and pixel density. Part of the same wait,
+  /// so the [maxDuration] ceiling covers it.
+  final Future<void> Function(BuildContext context)? warmUp;
   final VoidCallback onFinished;
 
   static const Duration wordmarkDelay = Duration(milliseconds: 500);
@@ -64,8 +71,13 @@ class _SplashScreenState extends State<SplashScreen> {
     final fullAnimation = Future.delayed(
       SplashScreen.powerOffDelay + SplashScreen.exitDuration,
     );
+    final warmed = preloadFuture
+        .then<void>((_) async {
+          if (mounted) await widget.warmUp?.call(context);
+        })
+        .catchError((Object _) {});
     await Future.any([
-      Future.wait([preloadFuture, fullAnimation]),
+      Future.wait([warmed, fullAnimation]),
       Future.delayed(SplashScreen.maxDuration),
     ]);
     widget.onFinished();

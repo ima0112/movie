@@ -122,6 +122,33 @@ void main() {
       expect(finished, isTrue);
     });
 
+    testWidgets('the warm-up runs after the preload, under the same ceiling: '
+        'one that never ends does not hold the splash past 1.5 s', (
+      tester,
+    ) async {
+      var finished = false;
+      final order = <String>[];
+      final never = Completer<void>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SplashScreen(
+            preload: () async => order.add('preload'),
+            warmUp: (context) {
+              order.add('warmUp');
+              return never.future;
+            },
+            onFinished: () => finished = true,
+          ),
+        ),
+      );
+
+      await tester.pump(const Duration(milliseconds: 1400));
+      expect(order, ['preload', 'warmUp']);
+      expect(finished, isFalse);
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(finished, isTrue);
+    });
+
     testWidgets('it asks for the preload once, when it mounts', (tester) async {
       var asked = 0;
       await pump(

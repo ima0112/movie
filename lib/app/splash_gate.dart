@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import '../core/theme/app_colors.dart';
+import '../features/onboarding/presentation/poster_wall_warmup.dart';
 import 'app.dart';
 import 'splash_screen.dart';
 
@@ -45,6 +46,7 @@ class _SplashGateState extends State<SplashGate> {
       color: AppColors.surface,
       home: SplashScreen(
         preload: () => widget.preload,
+        warmUp: PosterWallWarmup.run,
         onFinished: () => setState(() => _ready = true),
       ),
     );

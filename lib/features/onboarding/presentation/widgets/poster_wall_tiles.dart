@@ -29,6 +29,11 @@ class PosterWallTiles extends StatelessWidget {
   final int copies;
   final double cardHeight;
 
+  /// The wall loads a dozen posters at once, so each fades in faster than the
+  /// app's usual 150 ms: whatever the splash couldn't warm still doesn't read
+  /// as a second splash.
+  static const Duration fade = Duration(milliseconds: 80);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -42,7 +47,11 @@ class PosterWallTiles extends StatelessWidget {
                 height: cardHeight,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  child: AppNetworkImage(url: url, use: ImageUse.poster),
+                  child: AppNetworkImage(
+                    url: url,
+                    use: ImageUse.poster,
+                    fade: fade,
+                  ),
                 ),
               ),
             ),
