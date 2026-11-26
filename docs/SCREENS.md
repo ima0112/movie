@@ -177,7 +177,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - Access: gear icon in B5. Back button, no bottom bar.
 - Elements (grouped list: each group is a `surfaceRaised` card (radius 16) with hairline dividers; 56 px row, 16 px white label, gray value, chevron; no icons; small spaced-out uppercase gray group header):
   - Preferences: Language ("Español" → H5) — one setting for both the app's own interface and TMDB's content, not two separate preferences — Region ("Spain" → H6, with search). No Theme row and no Family mode in v1.0 — see `docs/decisions/family-mode-not-in-v1.md` for why Family mode specifically was dropped rather than built partially.
-  - Data: "Export My List" (JSON → the system share sheet); "Delete My List", "Delete My Tastes", "Delete Surprise me history" (every title Surprise me has shown, kept on the device so it doesn't repeat itself) in red → I1 (the dialog states how many items it deletes).
+  - Data: "Export My List" (JSON → the system share sheet); "Clear cache" (white, no confirmation: empties the saved TMDB answers — memory and, once persisted, disk — and the downloaded images, then a snackbar "Cache cleared"; it never touches My List, My Tastes, Surprise me history or the settings, and the next screens simply load again); "Delete My List", "Delete My Tastes", "Delete Surprise me history" (every title Surprise me has shown, kept on the device so it doesn't repeat itself) in red → I1 (the dialog states how many items it deletes).
   - About: "Attribution and credits" (→ C7), Version (long-press copies the build number), Source code (GitHub, external link), Licenses (`showLicensePage`).
 - Sheets H5–H6 are lists with an amber check on the active option; tapping applies and closes.
 - No Pako.

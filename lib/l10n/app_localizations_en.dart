@@ -1926,6 +1926,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsExportMyList => 'Export My List';
 
   @override
+  String get settingsClearCacheLabel => 'Clear cache';
+
+  @override
+  String get settingsCacheClearedSnackbar => 'Cache cleared';
+
+  @override
+  String get settingsClearCacheFailedSnackbar => 'Couldn\'t clear the cache';
+
+  @override
   String get settingsDeleteMyListLabel => 'Delete My List';
 
   @override

@@ -29,11 +29,15 @@ class SettingsDataSection extends StatelessWidget {
     required this.userLibraryRepository,
     required this.tasteProfileRepository,
     required this.surpriseHistoryRepository,
+    required this.clearCache,
   });
 
   final UserLibraryRepository userLibraryRepository;
   final TasteProfileRepository tasteProfileRepository;
   final SurpriseHistoryRepository surpriseHistoryRepository;
+
+  /// Empties the response and image caches (never the user's own data).
+  final Future<void> Function() clearCache;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,11 @@ class SettingsDataSection extends StatelessWidget {
           label: context.l10n.settingsExportMyList,
           showChevron: false,
           onTap: () => _exportLibrary(context),
+        ),
+        SettingsRow(
+          label: context.l10n.settingsClearCacheLabel,
+          showChevron: false,
+          onTap: () => _clearCache(context),
         ),
         SettingsRow(
           label: context.l10n.settingsDeleteMyListLabel,
@@ -88,6 +97,17 @@ class SettingsDataSection extends StatelessWidget {
       );
     } catch (_) {
       AppSnackBar.showOn(messenger, l10n.settingsExportFailedSnackbar);
+    }
+  }
+
+  Future<void> _clearCache(BuildContext context) async {
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await clearCache();
+      AppSnackBar.showOn(messenger, l10n.settingsCacheClearedSnackbar);
+    } catch (_) {
+      AppSnackBar.showOn(messenger, l10n.settingsClearCacheFailedSnackbar);
     }
   }
 

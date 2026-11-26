@@ -1945,6 +1945,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsExportMyList => 'Exportar mi lista';
 
   @override
+  String get settingsClearCacheLabel => 'Borrar caché';
+
+  @override
+  String get settingsCacheClearedSnackbar => 'Caché borrada';
+
+  @override
+  String get settingsClearCacheFailedSnackbar => 'No se pudo borrar la caché';
+
+  @override
   String get settingsDeleteMyListLabel => 'Eliminar mi lista';
 
   @override

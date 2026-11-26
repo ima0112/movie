@@ -35,6 +35,7 @@ Future<InMemorySurpriseHistoryRepository> _pump(
             userLibraryRepository: InMemoryUserLibraryRepository(),
             tasteProfileRepository: InMemoryTasteProfileRepository(),
             surpriseHistoryRepository: history,
+            clearCache: () async {},
           ),
         ),
       ),

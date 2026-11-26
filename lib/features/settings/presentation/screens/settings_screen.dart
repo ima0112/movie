@@ -7,6 +7,8 @@ import '../../../../core/domain/repositories/settings_repository.dart';
 import '../../../../core/domain/repositories/surprise_history_repository.dart';
 import '../../../../core/domain/repositories/taste_profile_repository.dart';
 import '../../../../core/domain/repositories/user_library_repository.dart';
+import '../../../../core/network/cache/api_cache.dart';
+import '../../../../core/network/image_cache/app_image_cache.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -64,6 +66,7 @@ class _SettingsView extends StatelessWidget {
               userLibraryRepository: getIt<UserLibraryRepository>(),
               tasteProfileRepository: getIt<TasteProfileRepository>(),
               surpriseHistoryRepository: getIt<SurpriseHistoryRepository>(),
+              clearCache: _clearCaches,
             ),
             const SettingsAboutSection(),
           ],
@@ -71,4 +74,11 @@ class _SettingsView extends StatelessWidget {
       ),
     );
   }
+}
+
+/// C6's "Clear cache": the saved TMDB answers (the fake environment has none)
+/// and the downloaded images.
+Future<void> _clearCaches() async {
+  if (getIt.isRegistered<ApiCache>()) await getIt<ApiCache>().clear();
+  await getIt<AppImageCache>().clear();
 }
