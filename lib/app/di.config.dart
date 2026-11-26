@@ -114,10 +114,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i608.RecentlyViewedRepository>(
       () => _i433.DriftRecentlyViewedRepository(gh<_i231.AppDatabase>()),
     );
-    gh.lazySingleton<_i243.ApiCache>(
-      () => _i243.ApiCache(),
-      registerFor: {_real},
-    );
     gh.lazySingleton<_i332.SurpriseHistoryRepository>(
       () => _i130.DriftSurpriseHistoryRepository(gh<_i231.AppDatabase>()),
     );
@@ -133,6 +129,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i767.AppImageCache>(
       () => _i1031.CachedImageCache(),
       registerFor: {_real},
+    );
+    gh.lazySingleton<_i767.AppImageCache>(
+      () => const _i1031.FakeImageCache(),
+      registerFor: {_fake},
+    );
+    gh.lazySingleton<_i263.PersonRepository>(
+      () => _i849.FakePersonRepository(),
+      registerFor: {_fake},
+    );
+    gh.lazySingleton<_i243.ApiCache>(
+      () => _i243.ApiCache(gh<_i231.AppDatabase>()),
+      registerFor: {_real},
+    );
+    gh.lazySingleton<_i245.MediaRepository>(
+      () => _i661.FakeMediaRepository(),
+      registerFor: {_fake},
     );
     gh.lazySingleton<_i152.ApiClient>(
       () => _i152.ApiClient(
@@ -157,18 +169,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i780.SettingsRepository>(),
       ),
       registerFor: {_real},
-    );
-    gh.lazySingleton<_i767.AppImageCache>(
-      () => const _i1031.FakeImageCache(),
-      registerFor: {_fake},
-    );
-    gh.lazySingleton<_i263.PersonRepository>(
-      () => _i849.FakePersonRepository(),
-      registerFor: {_fake},
-    );
-    gh.lazySingleton<_i245.MediaRepository>(
-      () => _i661.FakeMediaRepository(),
-      registerFor: {_fake},
     );
     gh.lazySingleton<_i487.SurpriseEngine>(
       () => _i55.SurpriseEngineImpl(gh<_i245.MediaRepository>()),
