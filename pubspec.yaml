@@ -65,7 +65,6 @@ dependencies:
   # through `shared/widgets/app_network_image.dart`).
   cached_network_image: ^4.0.7
   flutter_cache_manager: ^3.5.0 # its CacheManager and Config (the disk limits)
-  flutter_cache_manager: ^3.5.0
 
 dev_dependencies:
   flutter_test:
