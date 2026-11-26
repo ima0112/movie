@@ -91,7 +91,7 @@ void main() {
     // Loaded: the fake repository's first "All" segment movie shows up
     // as the hero's title.
     expect(find.text('Dune: Part Two'), findsOneWidget);
-    expect(find.text('PakoTV'), findsOneWidget);
+    expect(find.text('PickMe'), findsOneWidget);
     expect(find.text('All'), findsOneWidget);
     expect(find.text('Movies'), findsOneWidget);
     expect(find.text('TV Shows'), findsOneWidget);

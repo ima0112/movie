@@ -15,11 +15,11 @@ const double _avatarSize = 48;
 const double _badgeSize = 20;
 const double _badgeIconSize = 11;
 
-/// B5 ("You")'s header row: the user's initial + name, or Pako's
+/// B5 ("You")'s header row: the user's initial + name, or a neutral
 /// silhouette + "Tap to set your name" if no profile has been saved yet.
 ///
 /// Source of truth: `docs/SCREENS.md` B5 — "Header: initial in a circle
-/// with the chosen color (36 px), 'Hi, Daniel' 24/500 (no name: Pako's
+/// with the chosen color (36 px), 'Hi, Daniel' 24/500 (no name: a
 /// silhouette in the circle, 'Hi' and subtitle 'Tap to set your name');
 /// tapping the header edits name and color in a sheet (H10). Gear icon
 /// top right → C6." [onEditProfile] opens H10 (`EditProfileSheet`,

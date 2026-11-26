@@ -12,7 +12,7 @@ import '../../l10n/l10n_extension.dart';
 /// [explore] and [myList] is a separate widget — see `match_fab.dart`.
 ///
 /// Source of truth: `docs/SCREENS.md` section B ("Discover · Explore ·
-/// [Pako button] · My List · You. Four tabs (icon only, as in the "Barra
+/// [Match button] · My List · You. Four tabs (icon only, as in the "Barra
 /// inferior flotante" design; active in white with an amber dot, inactive in gray)... Visible on the 4 roots; hidden in
 /// details, quiz, rooms, and inside the Match modal.").
 enum AppTab {

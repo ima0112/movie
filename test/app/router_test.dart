@@ -55,7 +55,7 @@ void main() {
       'keeps its already-loaded state instead of reloading from scratch', (
     tester,
   ) async {
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
 
     // Discover (/) loaded.
@@ -89,7 +89,7 @@ void main() {
 
   testWidgets('tapping the hero card pushes /movie/:id with the right id; '
       'back returns to Discover', (tester) async {
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await tester.pumpAndSettle();
 
     // FakeMediaRepository's "Dune: Part Two" has id 1, with full D1
@@ -112,7 +112,7 @@ void main() {
     'tapping a section-carousel card pushes the detail too; back returns '
     "to Discover with its scroll position intact (push, not go)",
     (tester) async {
-      await tester.pumpWidget(const PakoTvApp());
+      await tester.pumpWidget(const PickMeApp());
       await settleHome(tester);
 
       final scrollable = find.byType(Scrollable).first;

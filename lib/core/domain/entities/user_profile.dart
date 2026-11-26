@@ -9,7 +9,7 @@
 /// "What's your name?"), editable later from B5 ("You") via H10.
 ///
 /// [UserProfileRepository.watch] returning `null` (no row saved yet) is
-/// what B5 reads as "no name: Pako's silhouette... 'Tap to set your
+/// what B5 reads as "no name: a silhouette... 'Tap to set your
 /// name'" — this class itself always has both fields set, since H10's
 /// "Name and initial color" sheet asks for both together.
 class UserProfile {

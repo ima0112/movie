@@ -66,7 +66,7 @@ class _SettingsAboutSectionState extends State<SettingsAboutSection> {
         SettingsRow(
           label: l10n.settingsLicensesLabel,
           onTap: () =>
-              showLicensePage(context: context, applicationName: 'PakoTV'),
+              showLicensePage(context: context, applicationName: 'PickMe'),
         ),
       ],
     );

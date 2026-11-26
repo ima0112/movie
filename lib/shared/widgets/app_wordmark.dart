@@ -3,7 +3,8 @@ import 'package:flutter/widgets.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
-/// "PakoTV", "Pako" in [AppColors.ink] + "TV" in [AppColors.accent].
+/// "PickMe": "Pick" in [AppColors.ink] + "Me" in [AppColors.accent]. The P and
+/// the M are always capitals.
 ///
 /// Promoted from `discover_top_bar.dart` (B1's own top bar) once
 /// `splash_screen.dart` (A1, "the wordmark slides into its spot on
@@ -15,7 +16,7 @@ class AppWordmark extends StatelessWidget {
 
   final double size;
 
-  // docs/SCREENS.md B1: "'PakoTV' wordmark at 24 px" — a one-off literal
+  // docs/SCREENS.md B1: "'PickMe' wordmark at 24 px" — a one-off literal
   // for this specific brand mark (reuses h2's family/weight/line-height,
   // only the size is different), not a new entry in the general type
   // scale.
@@ -28,13 +29,13 @@ class AppWordmark extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: [
-          // CLAUDE.md: never translate "PakoTV"/"Pako"/"TMDB".
+          // CLAUDE.md: never translate "PickMe"/"TMDB".
           TextSpan(
-            text: 'Pako', // l10n-exempt: brand-name
+            text: 'Pick', // l10n-exempt: brand-name
             style: style.copyWith(color: AppColors.ink),
           ),
           TextSpan(
-            text: 'TV', // l10n-exempt: brand-name
+            text: 'Me', // l10n-exempt: brand-name
             style: style.copyWith(color: AppColors.accent),
           ),
         ],

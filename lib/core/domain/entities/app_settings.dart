@@ -1,7 +1,7 @@
 /// The user's own content and interface preferences — F11 ("Language
 /// (es/en), region..."). [languageCode] is a single, unified value:
 /// both `LocaleInterceptor`'s TMDB `language` parameter (via
-/// `tmdbLanguageTag`) and `PakoTvApp`'s own `MaterialApp.router.locale`
+/// `tmdbLanguageTag`) and `PickMeApp`'s own `MaterialApp.router.locale`
 /// read the same field — one Settings row, not two separate
 /// "content language"/"app language" preferences.
 class AppSettings {

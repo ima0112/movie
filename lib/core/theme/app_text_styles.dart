@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'app_colors.dart';
 
-/// Text style tokens for PakoTV.
+/// Text style tokens for PickMe.
 ///
 /// Source of truth: `docs/DESIGN_SYSTEM.md`, section 2 ("Tipografía").
 /// Single family: Manrope, weights 400 (regular) and 600 (semibold — used

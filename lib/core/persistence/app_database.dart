@@ -456,7 +456,7 @@ class AppDatabase extends _$AppDatabase {
 }
 
 QueryExecutor _openConnection() {
-  return driftDatabase(name: 'pako_tv');
+  return driftDatabase(name: 'pick_me');
 }
 
 /// `Migrator.addColumn`, but a column that is already there is not an error.

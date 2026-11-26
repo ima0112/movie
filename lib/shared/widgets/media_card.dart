@@ -7,7 +7,7 @@ import '../../core/theme/app_text_styles.dart';
 import '../../l10n/l10n_extension.dart';
 import 'poster_badge.dart';
 
-/// The poster card sizes used across PakoTV.
+/// The poster card sizes used across PickMe.
 ///
 /// Source of truth: `docs/DESIGN_SYSTEM.md` section 5.1 and
 /// `docs/SCREENS.md` B1 (Discover). The pixel dimensions are literal

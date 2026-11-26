@@ -2023,7 +2023,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attributionFooter =>
-      'PakoTV is a free personal project. All trademarks belong to their respective owners.';
+      'PickMe is a free personal project. All trademarks belong to their respective owners.';
 
   @override
   String get settingsLicensesLabel => 'Licenses';

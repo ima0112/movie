@@ -87,9 +87,9 @@ void main() {
       });
     });
 
-    test('the manifest names the app PakoTV and uses the launcher icon', () {
+    test('the manifest names the app PickMe and uses the launcher icon', () {
       final manifest = _read('android/app/src/main/AndroidManifest.xml');
-      expect(manifest, contains('android:label="PakoTV"'));
+      expect(manifest, contains('android:label="PickMe"'));
       expect(manifest, contains('android:icon="@mipmap/ic_launcher"'));
     });
   });
@@ -117,11 +117,11 @@ void main() {
       expect(pngs, hasLength(1));
     });
 
-    test('the home screen name is PakoTV', () {
+    test('the home screen name is PickMe', () {
       final plist = _read('ios/Runner/Info.plist');
       expect(
         RegExp(
-          r'CFBundleDisplayName</key>\s*<string>PakoTV</string>',
+          r'CFBundleDisplayName</key>\s*<string>PickMe</string>',
         ).hasMatch(plist),
         isTrue,
       );

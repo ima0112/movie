@@ -13,7 +13,7 @@ import '../cubit/settings_cubit.dart';
 /// → H5), Region ('Spain' → H6, with search)". Back to plain
 /// "Language", not "Content language": the stored value is now the
 /// single source for both TMDB's own content language *and* the app's
-/// own UI language (`PakoTvApp`'s own `locale`, in `app/app.dart`) —
+/// own UI language (`PickMeApp`'s own `locale`, in `app/app.dart`) —
 /// there's only one language preference to name, not two. No Theme row
 /// (no light theme in v1.0 — see `core/theme/app_theme.dart`'s own
 /// `// TODO(light-theme)`) and no Family mode — see

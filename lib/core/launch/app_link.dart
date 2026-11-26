@@ -3,10 +3,10 @@ import '../domain/entities/media_type.dart';
 
 /// The links that open **this app** on a title, as D1/D2's Share sends them.
 ///
-/// Today they use the app's own URL scheme — `pakotv://app/movie/603`,
-/// `pakotv://app/tv/1396` — which works on a device that has the app and needs
+/// Today they use the app's own URL scheme — `pickme://app/movie/603`,
+/// `pickme://app/tv/1396` — which works on a device that has the app and needs
 /// no server. The host is a placeholder (`app`) on purpose: Flutter hands the
-/// router only the URI's **path**, so `pakotv://movie/603` would reach it as
+/// router only the URI's **path**, so `pickme://movie/603` would reach it as
 /// `/603` and lose the kind of title. The path part (`/movie/603`) is the app's
 /// own route, so the day the links become `https://<domain>/movie/603` only
 /// [appLinkScheme] and [appLinkHost] change.
@@ -14,7 +14,7 @@ import '../domain/entities/media_type.dart';
 /// Pure — no Flutter, no platform code. The Android intent filter and the iOS
 /// `CFBundleURLTypes` entry that make the system deliver these links live in the
 /// platform projects and must use the same [appLinkScheme] and [appLinkHost].
-const String appLinkScheme = 'pakotv';
+const String appLinkScheme = 'pickme';
 const String appLinkHost = 'app';
 
 const String _movieSegment = 'movie';

@@ -1,14 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:remixicon/remixicon.dart';
 
-/// Icon tokens for PakoTV.
+/// Icon tokens for PickMe.
 ///
 /// Source of truth: `docs/DESIGN_SYSTEM.md`, section 4 ("Iconografía").
 /// Every icon comes from `remixicon`, the `_line` variant by default and
 /// `_fill` for active states — never mix with Material's `Icons.*` or
-/// `CupertinoIcons.*`. Pako's icon (the Match FAB) is a custom SVG, not
-/// RemixIcons, so it is not part of this class (see `docs/DECISIONS.md`
-/// section 9).
+/// `CupertinoIcons.*`. The brand mark (`AppLogoMark`) is drawn in code, not an icon, so it is not
+/// part of this class (see `docs/DESIGN_SYSTEM.md`, "Logo").
 class AppIcons {
   const AppIcons._();
 
@@ -65,7 +64,7 @@ class AppIcons {
   static const IconData hourglass = RemixIcons.hourglass_line;
   static const IconData group = RemixIcons.team_line;
 
-  /// The Match button's sparkle (replaces Pako's face there).
+  /// The Match button's sparkle (it replaced the old mascot's face there).
   static const IconData match = RemixIcons.sparkling_2_fill;
 
   /// "Next" — the right edge bubble of Surprise me's deck.

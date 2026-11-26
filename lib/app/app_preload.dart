@@ -11,7 +11,7 @@ import 'di.dart';
 ///
 /// Theme is already synchronous (`AppTheme.dark`), so three real waits remain:
 /// [OnboardingRepository] and [SettingsRepository] (both needed before
-/// `PakoTvApp`'s router redirect, or any TMDB request, reads them) and one
+/// `PickMeApp`'s router redirect, or any TMDB request, reads them) and one
 /// [MediaRepository] call, which also warms `/configuration` as a side effect
 /// (`TmdbMediaRepository`'s own `_imagesConfig` getter calls
 /// `TmdbConfigurationService.load()` on every access, so there is no need to

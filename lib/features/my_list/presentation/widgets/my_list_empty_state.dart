@@ -7,7 +7,7 @@ import '../../../../l10n/library_tab_localization.dart';
 import '../../../../shared/widgets/state_views.dart';
 
 /// B4's empty state: no entries at all for a tab (`docs/SCREENS.md` B4:
-/// "empty with sleeping Pako..., per-tab headline..., a line mentioning
+/// "empty with an icon badge, per-tab headline..., a line mentioning
 /// what does exist in other tabs, 'Explore' CTA").
 ///
 /// [otherTabsNote] is the "line mentioning what does exist in other

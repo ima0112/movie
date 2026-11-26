@@ -32,14 +32,14 @@ import 'router.dart';
 /// one `LocaleInterceptor` sends to TMDB (`SettingsRepository`'s own
 /// doc comment, and `tmdbLanguageTag`) — one Settings row controls
 /// both halves, not two independent preferences.
-class PakoTvApp extends StatefulWidget {
-  const PakoTvApp({super.key});
+class PickMeApp extends StatefulWidget {
+  const PickMeApp({super.key});
 
   @override
-  State<PakoTvApp> createState() => _PakoTvAppState();
+  State<PickMeApp> createState() => _PickMeAppState();
 }
 
-class _PakoTvAppState extends State<PakoTvApp> {
+class _PickMeAppState extends State<PickMeApp> {
   late final SettingsRepository _settingsRepository =
       getIt<SettingsRepository>();
   late Locale _locale = _localeFrom(_settingsRepository.current);
@@ -77,7 +77,7 @@ class _PakoTvAppState extends State<PakoTvApp> {
         BlocProvider(create: (_) => ConnectivityCubit(getIt<NetworkStatus>())),
       ],
       child: MaterialApp.router(
-        title: 'PakoTV',
+        title: 'PickMe',
         themeMode: AppTheme.themeMode,
         darkTheme: AppTheme.dark,
         theme: AppTheme.dark,

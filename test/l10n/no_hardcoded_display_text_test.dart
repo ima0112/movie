@@ -24,7 +24,7 @@ import 'package:flutter_test/flutter_test.dart';
 ///   TMDB row — see `settings_about_section.dart`'s own doc comment),
 ///   so there's no live example to point at, only the convention
 ///   that'll apply once it's added.
-/// - A brand name ("PakoTV"/"Pako"/"TMDB" — CLAUDE.md: never translate
+/// - A brand name ("PickMe"/"TMDB" — CLAUDE.md: never translate
 ///   these). `app_wordmark.dart`'s two `TextSpan.text` literals are the
 ///   one real example today.
 /// - Debug-only output never shown to a real user. In practice this

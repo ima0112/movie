@@ -27,7 +27,7 @@ import 'package:movies/shared/widgets/media_card.dart';
 /// End-to-end coverage for the flows this branch's own task asked to be
 /// manually verified: typing in Explore's search field with its 400 ms
 /// debounce, tapping a genre tile into C1, and applying a filter from H8
-/// while C1 is open — all through the real `PakoTvApp`/router/DI, the
+/// while C1 is open — all through the real `PickMeApp`/router/DI, the
 /// same style `router_test.dart` already uses for Discover's own flows.
 ///
 /// `appRouter` is a module-level singleton (see `app/router.dart`), so
@@ -76,7 +76,7 @@ void main() {
       '(keyboard up), every time', (tester) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
 
     // Discover: the look-alike field.
@@ -105,7 +105,7 @@ void main() {
       'keyboard', (tester) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
 
     await tester.tap(_exploreTab());
@@ -117,7 +117,7 @@ void main() {
       'Person" that opens D3; the Movies segment hides them', (tester) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
 
     await tester.tap(_exploreTab());
@@ -156,7 +156,7 @@ void main() {
   ) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
@@ -199,7 +199,7 @@ void main() {
     addTearDown(tester.view.reset);
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
@@ -284,7 +284,7 @@ void main() {
       'button that clears the search', (tester) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
     await tester.tap(_exploreTab());
     await tester.pumpAndSettle();
@@ -353,7 +353,7 @@ void main() {
   testWidgets('typing in Explore debounces, then shows search results', (
     tester,
   ) async {
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
 
     await tester.tap(_exploreTab());
@@ -376,7 +376,7 @@ void main() {
       'set, and the grid (no sort icon for now)', (tester) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
 
     await tester.tap(_exploreTab());
@@ -402,7 +402,7 @@ void main() {
       'in the pill and no genre or platform', (tester) async {
     appRouter.go('/');
     addTearDown(() => appRouter.go('/'));
-    await tester.pumpWidget(const PakoTvApp());
+    await tester.pumpWidget(const PickMeApp());
     await settleHome(tester);
 
     final seeAll = find.text('See all');

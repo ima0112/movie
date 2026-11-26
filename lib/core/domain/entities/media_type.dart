@@ -1,4 +1,4 @@
-/// The two catalog kinds PakoTV works with.
+/// The two catalog kinds PickMe works with.
 ///
 /// Source of truth: `docs/STRUCTURE.md` (`core/domain/entities/`) and
 /// `docs/DECISIONS.md` section 7 (domain model). Every list or detail

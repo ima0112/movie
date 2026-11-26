@@ -6,11 +6,11 @@ import 'app.dart';
 import 'splash_screen.dart';
 
 /// The app's real root widget — `runApp(SplashGate(preload: …))`, not
-/// [PakoTvApp] directly. Owns A1's own boot sequence: show
+/// [PickMeApp] directly. Owns A1's own boot sequence: show
 /// [SplashScreen] (the only splash the user sees: the native one is just the
 /// page's dark color), wait for the preload `main.dart` already started (A1),
-/// then swap to the real [PakoTvApp] — a different `MaterialApp`
-/// entirely, not a route inside [PakoTvApp]'s own `go_router`, so the
+/// then swap to the real [PickMeApp] — a different `MaterialApp`
+/// entirely, not a route inside [PickMeApp]'s own `go_router`, so the
 /// splash can never be reached again by navigating (satisfies A1's "not
 /// shown on warm starts" with no extra bookkeeping: once swapped, it's
 /// gone from the widget tree for the rest of the process).
@@ -39,7 +39,7 @@ class _SplashGateState extends State<SplashGate> {
 
   @override
   Widget build(BuildContext context) {
-    if (_ready) return const PakoTvApp();
+    if (_ready) return const PickMeApp();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       color: AppColors.surface,

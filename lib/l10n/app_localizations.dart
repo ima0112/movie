@@ -908,7 +908,7 @@ abstract class AppLocalizations {
   /// **'Get started'**
   String get onboardingWelcomeGetStarted;
 
-  /// TMDB attribution caption — used as the footer of the movie, TV and person detail screens (it began on the welcome step). "TMDB" stays untranslated in every locale, same as PakoTV's own name.
+  /// TMDB attribution caption — used as the footer of the movie, TV and person detail screens (it began on the welcome step). "TMDB" stays untranslated in every locale, same as PickMe's own name.
   ///
   /// In en, this message translates to:
   /// **'Data from TMDB'**
@@ -2720,7 +2720,7 @@ abstract class AppLocalizations {
   /// **'Buy'**
   String get whereToWatchBuy;
 
-  /// D1/D2's mandatory footer (docs/SCREENS.md D1) — "JustWatch" stays untranslated in every locale, same as "TMDB"/"PakoTV".
+  /// D1/D2's mandatory footer (docs/SCREENS.md D1) — "JustWatch" stays untranslated in every locale, same as "TMDB"/"PickMe".
   ///
   /// In en, this message translates to:
   /// **'Data from JustWatch'**
@@ -3213,7 +3213,7 @@ abstract class AppLocalizations {
   /// **'Answer the quiz instead'**
   String get surpriseAnswerQuizInstead;
 
-  /// B3's own title (docs/SCREENS.md B3) — "Match" is this app's own feature name, left untranslated in every locale, same class of exception as "PakoTV".
+  /// B3's own title (docs/SCREENS.md B3) — "Match" is this app's own feature name, left untranslated in every locale, same class of exception as "PickMe".
   ///
   /// In en, this message translates to:
   /// **'Match'**
@@ -3450,7 +3450,7 @@ abstract class AppLocalizations {
   /// No description provided for @attributionFooter.
   ///
   /// In en, this message translates to:
-  /// **'PakoTV is a free personal project. All trademarks belong to their respective owners.'**
+  /// **'PickMe is a free personal project. All trademarks belong to their respective owners.'**
   String get attributionFooter;
 
   /// No description provided for @settingsLicensesLabel.
