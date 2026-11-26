@@ -23,7 +23,7 @@ class TastePlatformTile extends StatelessWidget {
   final StreamingService service;
   final VoidCallback onRemove;
 
-  static const double _logoSize = 36;
+  static const double logoSize = 36;
   static const double _badgeSize = 18;
   static const double _badgeIcon = 12;
 
@@ -46,10 +46,7 @@ class TastePlatformTile extends StatelessWidget {
                   border: Border.all(color: AppColors.lineStrong),
                 ),
                 child: Center(
-                  child: StreamingServiceLogo(
-                    service: service,
-                    size: _logoSize,
-                  ),
+                  child: StreamingServiceLogo(service: service, size: logoSize),
                 ),
               ),
             ),

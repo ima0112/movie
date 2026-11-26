@@ -7,6 +7,8 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/number_format_extension.dart';
+import '../../../../shared/widgets/app_network_image.dart';
+import '../../../../shared/widgets/image_use.dart';
 
 /// D3b's filmography row (`docs/SCREENS.md` D3b, the "Filmografía"
 /// design): the poster, the title, a muted "role · year" line ("Coming soon"
@@ -54,14 +56,10 @@ class PersonFilmographyRow extends StatelessWidget {
                 // MediaItem.posterUrl is already a built URL (unlike
                 // PosterImage's own raw-path convention), same as
                 // media_card.dart's own poster.
-                child: credit.item.posterUrl == null
-                    ? const ColoredBox(color: AppColors.surfaceRaised2)
-                    : Image.network(
-                        credit.item.posterUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const ColoredBox(color: AppColors.surfaceRaised2),
-                      ),
+                child: AppNetworkImage(
+                  url: credit.item.posterUrl,
+                  use: ImageUse.poster,
+                ),
               ),
             ),
             const SizedBox(width: AppSpacing.md),

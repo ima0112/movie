@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
+import '../../../../shared/widgets/image_use.dart';
 
 /// `PosterWallColumn`'s own rendered content: [copies] consecutive
 /// repetitions of [slots], stacked top to bottom — split out so that
@@ -41,14 +42,7 @@ class PosterWallTiles extends StatelessWidget {
                 height: cardHeight,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  child: url == null
-                      ? const ColoredBox(color: AppColors.surfaceRaised)
-                      : Image.network(
-                          url,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const ColoredBox(color: AppColors.surfaceRaised),
-                        ),
+                  child: AppNetworkImage(url: url, use: ImageUse.poster),
                 ),
               ),
             ),

@@ -5,6 +5,9 @@ import '../../../../core/domain/entities/result.dart';
 import '../../../../core/domain/entities/streaming_service.dart';
 import '../../../../core/domain/entities/taste_profile.dart';
 import '../../../../core/domain/repositories/media_repository.dart';
+import '../../../../shared/widgets/app_network_image.dart';
+import '../../../../shared/widgets/image_use.dart';
+import 'taste_platform_tile.dart';
 
 /// Asks for the region's streaming services as C5 opens and decodes the logos
 /// of the user's saved ones, so "My platforms" — the last section, below the
@@ -19,10 +22,13 @@ Future<void> warmPlatforms(BuildContext context, TasteProfile? profile) async {
     final url = service.logoUrl;
     if (!mine.contains(service.id) || url == null) continue;
     if (!context.mounted) return;
-    try {
-      await precacheImage(NetworkImage(url), context);
-    } catch (_) {
-      // A logo that fails to load shows the name's letter later; nothing to do.
-    }
+    // Same use and width as the tile that will show it, so the decoded image is
+    // the one it finds (a failure just shows the name's letter later).
+    await AppNetworkImage.precache(
+      context,
+      url,
+      use: ImageUse.logo,
+      logicalWidth: TastePlatformTile.logoSize,
+    );
   }
 }

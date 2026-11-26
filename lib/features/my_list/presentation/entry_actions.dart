@@ -16,6 +16,8 @@ import '../../../shared/widgets/actions_sheet.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/mark_as_watched_sheet.dart';
 import '../domain/entry_action.dart';
+import '../../../shared/widgets/app_network_image.dart';
+import '../../../shared/widgets/image_use.dart';
 
 /// Everything a My List row can do to its entry, shared by the row's swipe,
 /// its three-dot button and its long-press so they can't drift apart
@@ -35,10 +37,10 @@ Future<void> showEntryActions(
     leading: ActionsSheet.posterSlot(
       entry.posterUrl == null
           ? null
-          : Image.network(
-              entry.posterUrl!,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => const SizedBox.shrink(),
+          : AppNetworkImage(
+              url: entry.posterUrl,
+              use: ImageUse.poster,
+              fallback: (_) => const SizedBox.shrink(),
             ),
     ),
     title: entry.title,

@@ -4,6 +4,8 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_icons.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../l10n/l10n_extension.dart';
+import '../../../../../shared/widgets/app_network_image.dart';
+import '../../../../../shared/widgets/image_use.dart';
 
 /// How a thumbnail of the strip looks.
 enum SurpriseThumbnailState {
@@ -153,16 +155,10 @@ class _Thumbnail extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(AppSpacing.xs),
-                        child: url == null || url.isEmpty
-                            ? const ColoredBox(color: AppColors.surfaceRaised2)
-                            : Image.network(
-                                url,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const ColoredBox(
-                                      color: AppColors.surfaceRaised2,
-                                    ),
-                              ),
+                        child: AppNetworkImage(
+                          url: url == null || url.isEmpty ? null : url,
+                          use: ImageUse.poster,
+                        ),
                       ),
                     ),
                   ),
