@@ -11,6 +11,10 @@ class AppColors {
   /// Page background, dark mode (default).
   static const Color surface = Color(0xFF0B0B0D);
 
+  /// What an image shows while it loads and when it can't (`AppNetworkImage`):
+  /// a flat tile a touch lighter than [surface], no spinner.
+  static const Color imagePlaceholder = Color(0xFF121215);
+
   /// Cards, fields, sheets, unselected chips.
   static const Color surfaceRaised = Color(0xFF161618);
 

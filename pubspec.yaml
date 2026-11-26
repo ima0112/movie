@@ -61,6 +61,11 @@ dependencies:
   intl: ^0.20.3
   flutter_localized_locales: ^2.0.5
   flutter_card_swiper: ^7.2.0
+  # Disk cache for TMDB images (`core/network/image_cache/`; every image goes
+  # through `shared/widgets/app_network_image.dart`).
+  cached_network_image: ^4.0.7
+  flutter_cache_manager: ^3.5.0 # its CacheManager and Config (the disk limits)
+  flutter_cache_manager: ^3.5.0
 
 dev_dependencies:
   flutter_test:
