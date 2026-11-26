@@ -61,6 +61,7 @@ import 'package:movies/core/domain/repositories/user_library_repository.dart'
 import 'package:movies/core/domain/repositories/user_profile_repository.dart'
     as _i824;
 import 'package:movies/core/network/api_client.dart' as _i152;
+import 'package:movies/core/network/cache/api_cache.dart' as _i243;
 import 'package:movies/core/network/image_cache/app_image_cache.dart' as _i767;
 import 'package:movies/core/network/image_cache/cached_image_cache.dart'
     as _i1031;
@@ -113,6 +114,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i608.RecentlyViewedRepository>(
       () => _i433.DriftRecentlyViewedRepository(gh<_i231.AppDatabase>()),
     );
+    gh.lazySingleton<_i243.ApiCache>(
+      () => _i243.ApiCache(),
+      registerFor: {_real},
+    );
     gh.lazySingleton<_i332.SurpriseHistoryRepository>(
       () => _i130.DriftSurpriseHistoryRepository(gh<_i231.AppDatabase>()),
     );
@@ -129,24 +134,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1031.CachedImageCache(),
       registerFor: {_real},
     );
-    gh.lazySingleton<_i767.AppImageCache>(
-      () => const _i1031.FakeImageCache(),
-      registerFor: {_fake},
-    );
     gh.lazySingleton<_i152.ApiClient>(
       () => _i152.ApiClient(
         gh<_i780.SettingsRepository>(),
         gh<_i320.NetworkStatus>(),
+        gh<_i243.ApiCache>(),
       ),
       registerFor: {_real},
-    );
-    gh.lazySingleton<_i263.PersonRepository>(
-      () => _i849.FakePersonRepository(),
-      registerFor: {_fake},
-    );
-    gh.lazySingleton<_i245.MediaRepository>(
-      () => _i661.FakeMediaRepository(),
-      registerFor: {_fake},
     );
     gh.lazySingleton<_i294.TmdbConfigurationService>(
       () => _i294.TmdbConfigurationService(gh<_i152.ApiClient>()),
@@ -163,6 +157,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i780.SettingsRepository>(),
       ),
       registerFor: {_real},
+    );
+    gh.lazySingleton<_i767.AppImageCache>(
+      () => const _i1031.FakeImageCache(),
+      registerFor: {_fake},
+    );
+    gh.lazySingleton<_i263.PersonRepository>(
+      () => _i849.FakePersonRepository(),
+      registerFor: {_fake},
+    );
+    gh.lazySingleton<_i245.MediaRepository>(
+      () => _i661.FakeMediaRepository(),
+      registerFor: {_fake},
     );
     gh.lazySingleton<_i487.SurpriseEngine>(
       () => _i55.SurpriseEngineImpl(gh<_i245.MediaRepository>()),

@@ -24,6 +24,7 @@ import 'package:movies/core/domain/entities/season_summary.dart';
 import 'package:movies/core/domain/repositories/media_repository.dart';
 import 'package:movies/core/domain/repositories/settings_repository.dart';
 import 'package:movies/core/network/api_client.dart';
+import 'package:movies/core/network/cache/api_cache.dart';
 import 'package:movies/core/network/network_status.dart';
 import 'package:movies/core/persistence/app_database.dart';
 
@@ -98,7 +99,11 @@ void main() {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
     settingsRepository = DriftSettingsRepository(db);
-    final apiClient = ApiClient(settingsRepository, NetworkStatus());
+    final apiClient = ApiClient(
+      settingsRepository,
+      NetworkStatus(),
+      ApiCache.off(),
+    );
     adapter = _FixtureRoutedAdapter();
     apiClient.dio.httpClientAdapter = adapter;
     datasource = TmdbMediaDatasource(apiClient);

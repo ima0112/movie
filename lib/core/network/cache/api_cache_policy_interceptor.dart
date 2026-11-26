@@ -50,9 +50,10 @@ class ApiCachePolicyInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final rule = CacheTtl.ruleFor(options.path);
+    // An explicit `extra` wins; otherwise the caller's `FetchMode.run` zone.
     final mode = options.extra[modeKey] is FetchMode
         ? options.extra[modeKey] as FetchMode
-        : FetchMode.cached;
+        : FetchMode.current;
 
     final CachePolicy policy;
     if (rule == null || mode == FetchMode.live) {
