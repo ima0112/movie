@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/domain/entities/collection_catalog.dart';
 import 'package:movies/core/domain/entities/discover_filter.dart';
 import 'package:movies/core/domain/entities/discover_page.dart';
+import 'package:movies/core/domain/entities/fetch_mode.dart';
 import 'package:movies/core/domain/entities/genre.dart';
 import 'package:movies/core/domain/entities/media_detail.dart';
 import 'package:movies/core/domain/entities/media_item.dart';
@@ -86,6 +87,8 @@ class _FakeRepository implements MediaRepository {
 
   final List<MediaItem> catalog;
   final calls = <({DiscoverFilter filter, int page})>[];
+  final discoverModes = <FetchMode>[];
+  final detailModes = <FetchMode>[];
   bool failDiscover = false;
   Set<int> failDetailIds = {};
   bool failAllDetails = false;
@@ -97,6 +100,7 @@ class _FakeRepository implements MediaRepository {
     int page = 1,
   }) async {
     calls.add((filter: filter, page: page));
+    discoverModes.add(FetchMode.current);
     if (failDiscover) return Failure(FailureReason.network);
     var items = catalog.where((m) {
       if (filter.type != null && m.type != filter.type) return false;
@@ -138,6 +142,7 @@ class _FakeRepository implements MediaRepository {
 
   @override
   Future<Result<MediaDetail>> detail(MediaKey key, {String? regionCode}) async {
+    detailModes.add(FetchMode.current);
     if (failAllDetails || failDetailIds.contains(key.tmdbId)) {
       return Failure(FailureReason.network);
     }
@@ -233,6 +238,20 @@ String _mainGenre(SurpriseSuggestion s) =>
     s.item.genres.firstOrNull?.id ?? '_none';
 
 void main() {
+  test(
+    'discover pages are asked live (never cached); details are not',
+    () async {
+      final repo = _FakeRepository(_catalog(200));
+
+      await _resolve(repo, _request());
+
+      expect(repo.discoverModes, isNotEmpty);
+      expect(repo.discoverModes.toSet(), {FetchMode.live});
+      expect(repo.detailModes, isNotEmpty);
+      expect(repo.detailModes.toSet(), {FetchMode.cached});
+    },
+  );
+
   group('a batch', () {
     test(
       'has five suggestions with details and a "% for you" of 60–98',

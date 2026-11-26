@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/domain/entities/media_segment.dart';
+import '../../../../core/domain/entities/fetch_mode.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../recommendations/presentation/cubit/recommendations_cubit.dart';
 import '../../../recommendations/presentation/widgets/recommendation_section_view.dart';
@@ -45,10 +46,13 @@ class DiscoverContentLoaded extends StatelessWidget {
       // Content scrolling up under the title and tabs dissolves instead of
       // being cut by a hard line.
       child: RefreshIndicator(
-        onRefresh: () => Future.wait([
-          context.read<DiscoverCubit>().loadDiscover(segment),
-          context.read<RecommendationsCubit>().refresh(),
-        ]),
+        // The user asked for fresh data: skip the saved answers.
+        onRefresh: () => FetchMode.refresh.run(
+          () => Future.wait([
+            context.read<DiscoverCubit>().loadDiscover(segment),
+            context.read<RecommendationsCubit>().refresh(),
+          ]),
+        ),
         child: ListView(
           padding: EdgeInsets.only(
             top: AppSpacing.md,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/domain/entities/fetch_mode.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -41,7 +42,7 @@ class ListingGrid extends StatelessWidget {
     final cubit = context.read<SectionListingCubit>();
     final dressing = listingStyleFor(state.sort, style);
     return RefreshIndicator(
-      onRefresh: cubit.refresh,
+      onRefresh: () => FetchMode.refresh.run(cubit.refresh),
       child: LayoutBuilder(
         builder: (context, constraints) => CustomScrollView(
           slivers: [

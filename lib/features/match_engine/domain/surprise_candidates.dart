@@ -3,6 +3,7 @@ import 'dart:math';
 import '../../../core/domain/entities/collection.dart';
 import '../../../core/domain/entities/discover_filter.dart';
 import '../../../core/domain/entities/discover_page.dart';
+import '../../../core/domain/entities/fetch_mode.dart';
 import '../../../core/domain/entities/media_item.dart';
 import '../../../core/domain/entities/media_key.dart';
 import '../../../core/domain/entities/media_type.dart';
@@ -66,6 +67,11 @@ class SurpriseCandidateSource {
 
   final MediaRepository _repository;
 
+  /// Surprise me's `discover` pages are random and almost never asked twice, so
+  /// they neither read nor fill the response cache (`docs/DECISIONS.md`
+  /// "Caching"); the `detail` reads that follow stay cached.
+  Future<T> _live<T>(Future<T> Function() read) => FetchMode.live.run(read);
+
   /// The quality floor on TMDB's own average, always sent.
   static const double minVoteAverage = 6.0;
 
@@ -118,7 +124,7 @@ class SurpriseCandidateSource {
 
     // Phase A: the first page of every query, in parallel.
     final firstPages = await Future.wait([
-      for (final q in queries) _repository.discoverPage(q.filter),
+      for (final q in queries) _live(() => _repository.discoverPage(q.filter)),
     ]);
 
     final pending = <Future<void>>[];
@@ -135,7 +141,9 @@ class SurpriseCandidateSource {
           for (final page in pickPages(value.totalPages, rng)) {
             calls++;
             pending.add(
-              _repository.discoverPage(queries[i].filter, page: page).then((r) {
+              _live(
+                () => _repository.discoverPage(queries[i].filter, page: page),
+              ).then((r) {
                 switch (r) {
                   case Failure<DiscoverPage>(:final reason):
                     failures++;
