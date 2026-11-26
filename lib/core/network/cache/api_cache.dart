@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../app/environments.dart';
 import 'api_cache_policy_interceptor.dart';
+import '../../domain/entities/fetch_mode.dart';
 import '../../persistence/app_database.dart';
 import 'api_cache_stats.dart';
 import 'cache_ttl.dart';
@@ -56,10 +57,15 @@ class ApiCache {
   /// interceptor, so the key holds the language and the region, and after
   /// `NetworkStatus`, which a cache hit therefore can't reach (it must not mark
   /// the network reachable).
-  List<Interceptor> get interceptors => !_enabled
+  late final List<Interceptor> interceptors = !_enabled
       ? const []
       : [
-          ApiCachePolicyInterceptor(store: store, stats: stats, now: now),
+          ApiCachePolicyInterceptor(
+            store: store,
+            stats: stats,
+            now: now,
+            revalidate: _revalidate,
+          ),
           DioCacheInterceptor(
             options: CacheOptions(
               store: store,
@@ -68,6 +74,36 @@ class ApiCache {
             ),
           ),
         ];
+
+  Dio? _dio;
+  final Set<String> _revalidating = {};
+
+  /// Gives the cache the client it refreshes old answers with (`ApiClient`
+  /// calls this once it has built its `Dio`).
+  void attach(Dio dio) => _dio = dio;
+
+  /// Stale-while-revalidate: asks the network again for [options]' answer and
+  /// saves it, without anyone waiting and without the UI hearing of it. One
+  /// refresh per URL at a time; a failure is swallowed (the old answer stays).
+  bool _revalidate(RequestOptions options) {
+    final dio = _dio;
+    if (dio == null) return false;
+    final id = options.uri.toString();
+    if (!_revalidating.add(id)) return true; // already on its way
+    final request = options.copyWith(
+      extra: {
+        ...options.extra,
+        ApiCachePolicyInterceptor.modeKey: FetchMode.refresh,
+      },
+    );
+    unawaited(
+      dio
+          .fetch<dynamic>(request)
+          .then<void>((_) {}, onError: (Object _) {})
+          .whenComplete(() => _revalidating.remove(id)),
+    );
+    return true;
+  }
 
   /// Forgets every saved response ("Clear cache").
   Future<void> clear() => store.clean();
