@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:movies/core/data/local/drift_settings_repository.dart';
 import 'package:movies/core/data/tmdb/tmdb_configuration_service.dart';
 import 'package:movies/core/network/api_client.dart';
+import 'package:movies/core/network/cache/api_cache.dart';
 import 'package:movies/core/network/network_status.dart';
 import 'package:movies/core/persistence/app_database.dart';
 
@@ -39,7 +40,11 @@ class _FakeAdapter implements HttpClientAdapter {
 ApiClient _apiClient() {
   final db = AppDatabase.forTesting(NativeDatabase.memory());
   addTearDown(db.close);
-  return ApiClient(DriftSettingsRepository(db), NetworkStatus());
+  return ApiClient(
+    DriftSettingsRepository(db),
+    NetworkStatus(),
+    ApiCache.off(),
+  );
 }
 
 void main() {

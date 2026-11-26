@@ -5,6 +5,7 @@ import '../../app/environments.dart';
 import '../config/env.dart';
 import '../data/tmdb/tmdb_language_tag.dart';
 import '../domain/repositories/settings_repository.dart';
+import 'cache/api_cache.dart';
 import 'interceptors/bearer_interceptor.dart';
 import 'interceptors/locale_interceptor.dart';
 import 'interceptors/network_status_interceptor.dart';
@@ -22,8 +23,11 @@ import 'network_status.dart';
 @real
 @LazySingleton()
 class ApiClient {
-  ApiClient(SettingsRepository settingsRepository, NetworkStatus networkStatus)
-    : dio = Dio(BaseOptions(baseUrl: Env.tmdbBaseUrl)) {
+  ApiClient(
+    SettingsRepository settingsRepository,
+    NetworkStatus networkStatus,
+    ApiCache cache,
+  ) : dio = Dio(BaseOptions(baseUrl: Env.tmdbBaseUrl)) {
     dio.interceptors.addAll([
       BearerInterceptor(Env.tmdbToken),
       LocaleInterceptor(
@@ -35,6 +39,10 @@ class ApiClient {
       ),
       NetworkStatusInterceptor(networkStatus),
       TmdbLoggingInterceptor(),
+      // Last: a cache hit never reaches the network, so it must not count as
+      // "online"; a failure still reaches NetworkStatus before an old saved
+      // answer is served.
+      ...cache.interceptors,
     ]);
   }
 
