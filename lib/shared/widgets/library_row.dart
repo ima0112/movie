@@ -6,6 +6,8 @@ import '../../core/theme/app_text_styles.dart';
 import 'library_row_status.dart';
 import 'row_more_button.dart';
 import 'swipe_to_delete.dart';
+import 'app_network_image.dart';
+import 'image_use.dart';
 
 /// A library row: a 56×84 poster, the title, a gray metadata line, a
 /// [status] line (the rating and when it was added, or the user's stars and
@@ -64,14 +66,7 @@ class LibraryRow extends StatelessWidget {
               child: SizedBox(
                 width: _posterWidth,
                 height: _posterHeight,
-                child: posterUrl == null
-                    ? const ColoredBox(color: AppColors.surfaceRaised2)
-                    : Image.network(
-                        posterUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const ColoredBox(color: AppColors.surfaceRaised2),
-                      ),
+                child: AppNetworkImage(url: posterUrl, use: ImageUse.poster),
               ),
             ),
             const SizedBox(width: AppSpacing.md),

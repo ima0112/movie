@@ -5,6 +5,8 @@ import '../../core/data/tmdb/tmdb_configuration_service.dart';
 import '../../core/data/tmdb/tmdb_image_urls.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import 'app_network_image.dart';
+import 'image_use.dart';
 
 /// A person's profile photo, resolved from TMDB's own raw `profile_path`
 /// (e.g. `/abc123.jpg`), never a pre-built URL — same "`/configuration`
@@ -52,10 +54,10 @@ class ProfileImage extends StatelessWidget {
     );
     if (url == null) return _Placeholder(name: name);
 
-    return Image.network(
-      url,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => _Placeholder(name: name),
+    return AppNetworkImage(
+      url: url,
+      use: ImageUse.profile,
+      fallback: (context) => _Placeholder(name: name),
     );
   }
 

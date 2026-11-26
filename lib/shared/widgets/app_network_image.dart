@@ -22,7 +22,7 @@ import 'image_use.dart';
 /// - **Loading and failure.** A flat `AppColors.imagePlaceholder` tile: no
 ///   spinner. A loaded image fades in over it (briefly; not at all with "reduce
 ///   motion", nor when it was already in memory).
-/// - **No URL.** The same tile.
+/// - **No URL.** The same tile (or [fallback], when given, here and on failure).
 class AppNetworkImage extends StatelessWidget {
   const AppNetworkImage({
     super.key,
@@ -32,6 +32,7 @@ class AppNetworkImage extends StatelessWidget {
     this.height,
     this.fit = BoxFit.cover,
     this.alignment = Alignment.center,
+    this.fallback,
   });
 
   /// The image's address, or `null` for none.
@@ -43,6 +44,10 @@ class AppNetworkImage extends StatelessWidget {
   final double? height;
   final BoxFit fit;
   final AlignmentGeometry alignment;
+
+  /// What to show when there is no URL or the image can't be loaded, instead of
+  /// the flat tile (a cast photo's monogram, the next thumbnail to try).
+  final WidgetBuilder? fallback;
 
   static const Duration fadeDuration = Duration(milliseconds: 150);
 
@@ -68,7 +73,7 @@ class AppNetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final url = this.url;
-    if (url == null) return const ColoredBox(color: AppColors.imagePlaceholder);
+    if (url == null) return _fallback(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         final drawnWidth =
@@ -94,13 +99,16 @@ class AppNetworkImage extends StatelessWidget {
                 child: child,
               );
             },
-            errorBuilder: (context, error, stackTrace) =>
-                const ColoredBox(color: AppColors.imagePlaceholder),
+            errorBuilder: (context, error, stackTrace) => _fallback(context),
           ),
         );
       },
     );
   }
+
+  Widget _fallback(BuildContext context) =>
+      fallback?.call(context) ??
+      const ColoredBox(color: AppColors.imagePlaceholder);
 
   static ({String url, int? cacheWidth}) _source(
     BuildContext context,

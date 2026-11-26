@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import '../../app/di.dart';
 import '../../core/data/tmdb/tmdb_configuration_service.dart';
 import '../../core/data/tmdb/tmdb_image_urls.dart';
-import '../../core/theme/app_colors.dart';
+import 'app_network_image.dart';
+import 'image_use.dart';
 
 /// A poster, resolved from TMDB's own raw `poster_path` (e.g.
 /// `/abc123.jpg`), never a pre-built URL — `docs/STRUCTURE.md`:
 /// "`poster_image.dart` uses `/configuration` for sizes."
 ///
-/// Shows [AppColors.surfaceRaised2] when [posterPath] is `null` (no
-/// poster for this item) and as the `Image.network` fallback if the
-/// resolved URL ever fails to load.
+/// Shows `AppNetworkImage`'s flat placeholder when [posterPath] is `null` (no
+/// poster for this item) and if the resolved URL ever fails to load.
 class PosterImage extends StatelessWidget {
   const PosterImage({
     super.key,
@@ -26,12 +26,12 @@ class PosterImage extends StatelessWidget {
   /// need the same resolution as a hero card).
   final String size;
 
-  static const _placeholder = ColoredBox(color: AppColors.surfaceRaised2);
-
   @override
   Widget build(BuildContext context) {
     final path = posterPath;
-    if (path == null) return _placeholder;
+    if (path == null) {
+      return const AppNetworkImage(url: null, use: ImageUse.poster);
+    }
 
     // TmdbConfigurationService only exists in the `real` environment (it
     // needs ApiClient, which the `fake` environment never registers —
@@ -48,13 +48,7 @@ class PosterImage extends StatelessWidget {
       path: path,
       size: size,
     );
-    if (url == null) return _placeholder;
-
-    return Image.network(
-      url,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => _placeholder,
-    );
+    return AppNetworkImage(url: url, use: ImageUse.poster);
   }
 
   /// Fire-and-forget: memoized internally, so `load()` is a no-op after
