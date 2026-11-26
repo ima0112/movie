@@ -4970,6 +4970,945 @@ class LocalFlagsTableCompanion extends UpdateCompanion<LocalFlagRow> {
   }
 }
 
+class $ApiResponseCacheTableTable extends ApiResponseCacheTable
+    with TableInfo<$ApiResponseCacheTableTable, ApiResponseCacheRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ApiResponseCacheTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+    'key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+    'url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusCodeMeta = const VerificationMeta(
+    'statusCode',
+  );
+  @override
+  late final GeneratedColumn<int> statusCode = GeneratedColumn<int>(
+    'status_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> content = GeneratedColumn<Uint8List>(
+    'content',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _headersMeta = const VerificationMeta(
+    'headers',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> headers = GeneratedColumn<Uint8List>(
+    'headers',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cacheControlMeta = const VerificationMeta(
+    'cacheControl',
+  );
+  @override
+  late final GeneratedColumn<String> cacheControl = GeneratedColumn<String>(
+    'cache_control',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _eTagMeta = const VerificationMeta('eTag');
+  @override
+  late final GeneratedColumn<String> eTag = GeneratedColumn<String>(
+    'e_tag',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastModifiedMeta = const VerificationMeta(
+    'lastModified',
+  );
+  @override
+  late final GeneratedColumn<String> lastModified = GeneratedColumn<String>(
+    'last_modified',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _expiresMeta = const VerificationMeta(
+    'expires',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expires = GeneratedColumn<DateTime>(
+    'expires',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _maxStaleMeta = const VerificationMeta(
+    'maxStale',
+  );
+  @override
+  late final GeneratedColumn<DateTime> maxStale = GeneratedColumn<DateTime>(
+    'max_stale',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _priorityMeta = const VerificationMeta(
+    'priority',
+  );
+  @override
+  late final GeneratedColumn<int> priority = GeneratedColumn<int>(
+    'priority',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _requestDateMeta = const VerificationMeta(
+    'requestDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> requestDate = GeneratedColumn<DateTime>(
+    'request_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _responseDateMeta = const VerificationMeta(
+    'responseDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> responseDate = GeneratedColumn<DateTime>(
+    'response_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastAccessedAtMeta = const VerificationMeta(
+    'lastAccessedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastAccessedAt =
+      GeneratedColumn<DateTime>(
+        'last_accessed_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _sizeBytesMeta = const VerificationMeta(
+    'sizeBytes',
+  );
+  @override
+  late final GeneratedColumn<int> sizeBytes = GeneratedColumn<int>(
+    'size_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    key,
+    url,
+    statusCode,
+    content,
+    headers,
+    cacheControl,
+    eTag,
+    lastModified,
+    date,
+    expires,
+    maxStale,
+    priority,
+    requestDate,
+    responseDate,
+    lastAccessedAt,
+    sizeBytes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'api_response_cache_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ApiResponseCacheRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('key')) {
+      context.handle(
+        _keyMeta,
+        key.isAcceptableOrUnknown(data['key']!, _keyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+        _urlMeta,
+        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_urlMeta);
+    }
+    if (data.containsKey('status_code')) {
+      context.handle(
+        _statusCodeMeta,
+        statusCode.isAcceptableOrUnknown(data['status_code']!, _statusCodeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusCodeMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    }
+    if (data.containsKey('headers')) {
+      context.handle(
+        _headersMeta,
+        headers.isAcceptableOrUnknown(data['headers']!, _headersMeta),
+      );
+    }
+    if (data.containsKey('cache_control')) {
+      context.handle(
+        _cacheControlMeta,
+        cacheControl.isAcceptableOrUnknown(
+          data['cache_control']!,
+          _cacheControlMeta,
+        ),
+      );
+    }
+    if (data.containsKey('e_tag')) {
+      context.handle(
+        _eTagMeta,
+        eTag.isAcceptableOrUnknown(data['e_tag']!, _eTagMeta),
+      );
+    }
+    if (data.containsKey('last_modified')) {
+      context.handle(
+        _lastModifiedMeta,
+        lastModified.isAcceptableOrUnknown(
+          data['last_modified']!,
+          _lastModifiedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    }
+    if (data.containsKey('expires')) {
+      context.handle(
+        _expiresMeta,
+        expires.isAcceptableOrUnknown(data['expires']!, _expiresMeta),
+      );
+    }
+    if (data.containsKey('max_stale')) {
+      context.handle(
+        _maxStaleMeta,
+        maxStale.isAcceptableOrUnknown(data['max_stale']!, _maxStaleMeta),
+      );
+    }
+    if (data.containsKey('priority')) {
+      context.handle(
+        _priorityMeta,
+        priority.isAcceptableOrUnknown(data['priority']!, _priorityMeta),
+      );
+    }
+    if (data.containsKey('request_date')) {
+      context.handle(
+        _requestDateMeta,
+        requestDate.isAcceptableOrUnknown(
+          data['request_date']!,
+          _requestDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_requestDateMeta);
+    }
+    if (data.containsKey('response_date')) {
+      context.handle(
+        _responseDateMeta,
+        responseDate.isAcceptableOrUnknown(
+          data['response_date']!,
+          _responseDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_responseDateMeta);
+    }
+    if (data.containsKey('last_accessed_at')) {
+      context.handle(
+        _lastAccessedAtMeta,
+        lastAccessedAt.isAcceptableOrUnknown(
+          data['last_accessed_at']!,
+          _lastAccessedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastAccessedAtMeta);
+    }
+    if (data.containsKey('size_bytes')) {
+      context.handle(
+        _sizeBytesMeta,
+        sizeBytes.isAcceptableOrUnknown(data['size_bytes']!, _sizeBytesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sizeBytesMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {key};
+  @override
+  ApiResponseCacheRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ApiResponseCacheRow(
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      url: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}url'],
+      )!,
+      statusCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}status_code'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}content'],
+      ),
+      headers: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}headers'],
+      ),
+      cacheControl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cache_control'],
+      )!,
+      eTag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}e_tag'],
+      ),
+      lastModified: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_modified'],
+      ),
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      ),
+      expires: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires'],
+      ),
+      maxStale: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}max_stale'],
+      ),
+      priority: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}priority'],
+      )!,
+      requestDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}request_date'],
+      )!,
+      responseDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}response_date'],
+      )!,
+      lastAccessedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_accessed_at'],
+      )!,
+      sizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}size_bytes'],
+      )!,
+    );
+  }
+
+  @override
+  $ApiResponseCacheTableTable createAlias(String alias) {
+    return $ApiResponseCacheTableTable(attachedDatabase, alias);
+  }
+}
+
+class ApiResponseCacheRow extends DataClass
+    implements Insertable<ApiResponseCacheRow> {
+  /// The package's cache key (a hash of the final URL, language and region
+  /// included).
+  final String key;
+  final String url;
+  final int statusCode;
+
+  /// The response body, as the package hands it over.
+  final Uint8List? content;
+
+  /// The response headers, JSON-encoded as the package does.
+  final Uint8List? headers;
+
+  /// The response's `Cache-Control`, as the header text.
+  final String cacheControl;
+  final String? eTag;
+  final String? lastModified;
+  final DateTime? date;
+  final DateTime? expires;
+  final DateTime? maxStale;
+
+  /// `CachePriority`'s index.
+  final int priority;
+  final DateTime requestDate;
+
+  /// When the app received it: what every TTL and window is measured from.
+  final DateTime responseDate;
+
+  /// Last time it was read or written: the least recently used entries go first
+  /// when the table is over its cap.
+  final DateTime lastAccessedAt;
+
+  /// Body size, to keep the table under its byte cap without summing blobs.
+  final int sizeBytes;
+  const ApiResponseCacheRow({
+    required this.key,
+    required this.url,
+    required this.statusCode,
+    this.content,
+    this.headers,
+    required this.cacheControl,
+    this.eTag,
+    this.lastModified,
+    this.date,
+    this.expires,
+    this.maxStale,
+    required this.priority,
+    required this.requestDate,
+    required this.responseDate,
+    required this.lastAccessedAt,
+    required this.sizeBytes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['url'] = Variable<String>(url);
+    map['status_code'] = Variable<int>(statusCode);
+    if (!nullToAbsent || content != null) {
+      map['content'] = Variable<Uint8List>(content);
+    }
+    if (!nullToAbsent || headers != null) {
+      map['headers'] = Variable<Uint8List>(headers);
+    }
+    map['cache_control'] = Variable<String>(cacheControl);
+    if (!nullToAbsent || eTag != null) {
+      map['e_tag'] = Variable<String>(eTag);
+    }
+    if (!nullToAbsent || lastModified != null) {
+      map['last_modified'] = Variable<String>(lastModified);
+    }
+    if (!nullToAbsent || date != null) {
+      map['date'] = Variable<DateTime>(date);
+    }
+    if (!nullToAbsent || expires != null) {
+      map['expires'] = Variable<DateTime>(expires);
+    }
+    if (!nullToAbsent || maxStale != null) {
+      map['max_stale'] = Variable<DateTime>(maxStale);
+    }
+    map['priority'] = Variable<int>(priority);
+    map['request_date'] = Variable<DateTime>(requestDate);
+    map['response_date'] = Variable<DateTime>(responseDate);
+    map['last_accessed_at'] = Variable<DateTime>(lastAccessedAt);
+    map['size_bytes'] = Variable<int>(sizeBytes);
+    return map;
+  }
+
+  ApiResponseCacheTableCompanion toCompanion(bool nullToAbsent) {
+    return ApiResponseCacheTableCompanion(
+      key: Value(key),
+      url: Value(url),
+      statusCode: Value(statusCode),
+      content: content == null && nullToAbsent
+          ? const Value.absent()
+          : Value(content),
+      headers: headers == null && nullToAbsent
+          ? const Value.absent()
+          : Value(headers),
+      cacheControl: Value(cacheControl),
+      eTag: eTag == null && nullToAbsent ? const Value.absent() : Value(eTag),
+      lastModified: lastModified == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastModified),
+      date: date == null && nullToAbsent ? const Value.absent() : Value(date),
+      expires: expires == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expires),
+      maxStale: maxStale == null && nullToAbsent
+          ? const Value.absent()
+          : Value(maxStale),
+      priority: Value(priority),
+      requestDate: Value(requestDate),
+      responseDate: Value(responseDate),
+      lastAccessedAt: Value(lastAccessedAt),
+      sizeBytes: Value(sizeBytes),
+    );
+  }
+
+  factory ApiResponseCacheRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ApiResponseCacheRow(
+      key: serializer.fromJson<String>(json['key']),
+      url: serializer.fromJson<String>(json['url']),
+      statusCode: serializer.fromJson<int>(json['statusCode']),
+      content: serializer.fromJson<Uint8List?>(json['content']),
+      headers: serializer.fromJson<Uint8List?>(json['headers']),
+      cacheControl: serializer.fromJson<String>(json['cacheControl']),
+      eTag: serializer.fromJson<String?>(json['eTag']),
+      lastModified: serializer.fromJson<String?>(json['lastModified']),
+      date: serializer.fromJson<DateTime?>(json['date']),
+      expires: serializer.fromJson<DateTime?>(json['expires']),
+      maxStale: serializer.fromJson<DateTime?>(json['maxStale']),
+      priority: serializer.fromJson<int>(json['priority']),
+      requestDate: serializer.fromJson<DateTime>(json['requestDate']),
+      responseDate: serializer.fromJson<DateTime>(json['responseDate']),
+      lastAccessedAt: serializer.fromJson<DateTime>(json['lastAccessedAt']),
+      sizeBytes: serializer.fromJson<int>(json['sizeBytes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'url': serializer.toJson<String>(url),
+      'statusCode': serializer.toJson<int>(statusCode),
+      'content': serializer.toJson<Uint8List?>(content),
+      'headers': serializer.toJson<Uint8List?>(headers),
+      'cacheControl': serializer.toJson<String>(cacheControl),
+      'eTag': serializer.toJson<String?>(eTag),
+      'lastModified': serializer.toJson<String?>(lastModified),
+      'date': serializer.toJson<DateTime?>(date),
+      'expires': serializer.toJson<DateTime?>(expires),
+      'maxStale': serializer.toJson<DateTime?>(maxStale),
+      'priority': serializer.toJson<int>(priority),
+      'requestDate': serializer.toJson<DateTime>(requestDate),
+      'responseDate': serializer.toJson<DateTime>(responseDate),
+      'lastAccessedAt': serializer.toJson<DateTime>(lastAccessedAt),
+      'sizeBytes': serializer.toJson<int>(sizeBytes),
+    };
+  }
+
+  ApiResponseCacheRow copyWith({
+    String? key,
+    String? url,
+    int? statusCode,
+    Value<Uint8List?> content = const Value.absent(),
+    Value<Uint8List?> headers = const Value.absent(),
+    String? cacheControl,
+    Value<String?> eTag = const Value.absent(),
+    Value<String?> lastModified = const Value.absent(),
+    Value<DateTime?> date = const Value.absent(),
+    Value<DateTime?> expires = const Value.absent(),
+    Value<DateTime?> maxStale = const Value.absent(),
+    int? priority,
+    DateTime? requestDate,
+    DateTime? responseDate,
+    DateTime? lastAccessedAt,
+    int? sizeBytes,
+  }) => ApiResponseCacheRow(
+    key: key ?? this.key,
+    url: url ?? this.url,
+    statusCode: statusCode ?? this.statusCode,
+    content: content.present ? content.value : this.content,
+    headers: headers.present ? headers.value : this.headers,
+    cacheControl: cacheControl ?? this.cacheControl,
+    eTag: eTag.present ? eTag.value : this.eTag,
+    lastModified: lastModified.present ? lastModified.value : this.lastModified,
+    date: date.present ? date.value : this.date,
+    expires: expires.present ? expires.value : this.expires,
+    maxStale: maxStale.present ? maxStale.value : this.maxStale,
+    priority: priority ?? this.priority,
+    requestDate: requestDate ?? this.requestDate,
+    responseDate: responseDate ?? this.responseDate,
+    lastAccessedAt: lastAccessedAt ?? this.lastAccessedAt,
+    sizeBytes: sizeBytes ?? this.sizeBytes,
+  );
+  ApiResponseCacheRow copyWithCompanion(ApiResponseCacheTableCompanion data) {
+    return ApiResponseCacheRow(
+      key: data.key.present ? data.key.value : this.key,
+      url: data.url.present ? data.url.value : this.url,
+      statusCode: data.statusCode.present
+          ? data.statusCode.value
+          : this.statusCode,
+      content: data.content.present ? data.content.value : this.content,
+      headers: data.headers.present ? data.headers.value : this.headers,
+      cacheControl: data.cacheControl.present
+          ? data.cacheControl.value
+          : this.cacheControl,
+      eTag: data.eTag.present ? data.eTag.value : this.eTag,
+      lastModified: data.lastModified.present
+          ? data.lastModified.value
+          : this.lastModified,
+      date: data.date.present ? data.date.value : this.date,
+      expires: data.expires.present ? data.expires.value : this.expires,
+      maxStale: data.maxStale.present ? data.maxStale.value : this.maxStale,
+      priority: data.priority.present ? data.priority.value : this.priority,
+      requestDate: data.requestDate.present
+          ? data.requestDate.value
+          : this.requestDate,
+      responseDate: data.responseDate.present
+          ? data.responseDate.value
+          : this.responseDate,
+      lastAccessedAt: data.lastAccessedAt.present
+          ? data.lastAccessedAt.value
+          : this.lastAccessedAt,
+      sizeBytes: data.sizeBytes.present ? data.sizeBytes.value : this.sizeBytes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ApiResponseCacheRow(')
+          ..write('key: $key, ')
+          ..write('url: $url, ')
+          ..write('statusCode: $statusCode, ')
+          ..write('content: $content, ')
+          ..write('headers: $headers, ')
+          ..write('cacheControl: $cacheControl, ')
+          ..write('eTag: $eTag, ')
+          ..write('lastModified: $lastModified, ')
+          ..write('date: $date, ')
+          ..write('expires: $expires, ')
+          ..write('maxStale: $maxStale, ')
+          ..write('priority: $priority, ')
+          ..write('requestDate: $requestDate, ')
+          ..write('responseDate: $responseDate, ')
+          ..write('lastAccessedAt: $lastAccessedAt, ')
+          ..write('sizeBytes: $sizeBytes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    key,
+    url,
+    statusCode,
+    $driftBlobEquality.hash(content),
+    $driftBlobEquality.hash(headers),
+    cacheControl,
+    eTag,
+    lastModified,
+    date,
+    expires,
+    maxStale,
+    priority,
+    requestDate,
+    responseDate,
+    lastAccessedAt,
+    sizeBytes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ApiResponseCacheRow &&
+          other.key == this.key &&
+          other.url == this.url &&
+          other.statusCode == this.statusCode &&
+          $driftBlobEquality.equals(other.content, this.content) &&
+          $driftBlobEquality.equals(other.headers, this.headers) &&
+          other.cacheControl == this.cacheControl &&
+          other.eTag == this.eTag &&
+          other.lastModified == this.lastModified &&
+          other.date == this.date &&
+          other.expires == this.expires &&
+          other.maxStale == this.maxStale &&
+          other.priority == this.priority &&
+          other.requestDate == this.requestDate &&
+          other.responseDate == this.responseDate &&
+          other.lastAccessedAt == this.lastAccessedAt &&
+          other.sizeBytes == this.sizeBytes);
+}
+
+class ApiResponseCacheTableCompanion
+    extends UpdateCompanion<ApiResponseCacheRow> {
+  final Value<String> key;
+  final Value<String> url;
+  final Value<int> statusCode;
+  final Value<Uint8List?> content;
+  final Value<Uint8List?> headers;
+  final Value<String> cacheControl;
+  final Value<String?> eTag;
+  final Value<String?> lastModified;
+  final Value<DateTime?> date;
+  final Value<DateTime?> expires;
+  final Value<DateTime?> maxStale;
+  final Value<int> priority;
+  final Value<DateTime> requestDate;
+  final Value<DateTime> responseDate;
+  final Value<DateTime> lastAccessedAt;
+  final Value<int> sizeBytes;
+  final Value<int> rowid;
+  const ApiResponseCacheTableCompanion({
+    this.key = const Value.absent(),
+    this.url = const Value.absent(),
+    this.statusCode = const Value.absent(),
+    this.content = const Value.absent(),
+    this.headers = const Value.absent(),
+    this.cacheControl = const Value.absent(),
+    this.eTag = const Value.absent(),
+    this.lastModified = const Value.absent(),
+    this.date = const Value.absent(),
+    this.expires = const Value.absent(),
+    this.maxStale = const Value.absent(),
+    this.priority = const Value.absent(),
+    this.requestDate = const Value.absent(),
+    this.responseDate = const Value.absent(),
+    this.lastAccessedAt = const Value.absent(),
+    this.sizeBytes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ApiResponseCacheTableCompanion.insert({
+    required String key,
+    required String url,
+    required int statusCode,
+    this.content = const Value.absent(),
+    this.headers = const Value.absent(),
+    this.cacheControl = const Value.absent(),
+    this.eTag = const Value.absent(),
+    this.lastModified = const Value.absent(),
+    this.date = const Value.absent(),
+    this.expires = const Value.absent(),
+    this.maxStale = const Value.absent(),
+    this.priority = const Value.absent(),
+    required DateTime requestDate,
+    required DateTime responseDate,
+    required DateTime lastAccessedAt,
+    required int sizeBytes,
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       url = Value(url),
+       statusCode = Value(statusCode),
+       requestDate = Value(requestDate),
+       responseDate = Value(responseDate),
+       lastAccessedAt = Value(lastAccessedAt),
+       sizeBytes = Value(sizeBytes);
+  static Insertable<ApiResponseCacheRow> custom({
+    Expression<String>? key,
+    Expression<String>? url,
+    Expression<int>? statusCode,
+    Expression<Uint8List>? content,
+    Expression<Uint8List>? headers,
+    Expression<String>? cacheControl,
+    Expression<String>? eTag,
+    Expression<String>? lastModified,
+    Expression<DateTime>? date,
+    Expression<DateTime>? expires,
+    Expression<DateTime>? maxStale,
+    Expression<int>? priority,
+    Expression<DateTime>? requestDate,
+    Expression<DateTime>? responseDate,
+    Expression<DateTime>? lastAccessedAt,
+    Expression<int>? sizeBytes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (url != null) 'url': url,
+      if (statusCode != null) 'status_code': statusCode,
+      if (content != null) 'content': content,
+      if (headers != null) 'headers': headers,
+      if (cacheControl != null) 'cache_control': cacheControl,
+      if (eTag != null) 'e_tag': eTag,
+      if (lastModified != null) 'last_modified': lastModified,
+      if (date != null) 'date': date,
+      if (expires != null) 'expires': expires,
+      if (maxStale != null) 'max_stale': maxStale,
+      if (priority != null) 'priority': priority,
+      if (requestDate != null) 'request_date': requestDate,
+      if (responseDate != null) 'response_date': responseDate,
+      if (lastAccessedAt != null) 'last_accessed_at': lastAccessedAt,
+      if (sizeBytes != null) 'size_bytes': sizeBytes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ApiResponseCacheTableCompanion copyWith({
+    Value<String>? key,
+    Value<String>? url,
+    Value<int>? statusCode,
+    Value<Uint8List?>? content,
+    Value<Uint8List?>? headers,
+    Value<String>? cacheControl,
+    Value<String?>? eTag,
+    Value<String?>? lastModified,
+    Value<DateTime?>? date,
+    Value<DateTime?>? expires,
+    Value<DateTime?>? maxStale,
+    Value<int>? priority,
+    Value<DateTime>? requestDate,
+    Value<DateTime>? responseDate,
+    Value<DateTime>? lastAccessedAt,
+    Value<int>? sizeBytes,
+    Value<int>? rowid,
+  }) {
+    return ApiResponseCacheTableCompanion(
+      key: key ?? this.key,
+      url: url ?? this.url,
+      statusCode: statusCode ?? this.statusCode,
+      content: content ?? this.content,
+      headers: headers ?? this.headers,
+      cacheControl: cacheControl ?? this.cacheControl,
+      eTag: eTag ?? this.eTag,
+      lastModified: lastModified ?? this.lastModified,
+      date: date ?? this.date,
+      expires: expires ?? this.expires,
+      maxStale: maxStale ?? this.maxStale,
+      priority: priority ?? this.priority,
+      requestDate: requestDate ?? this.requestDate,
+      responseDate: responseDate ?? this.responseDate,
+      lastAccessedAt: lastAccessedAt ?? this.lastAccessedAt,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (statusCode.present) {
+      map['status_code'] = Variable<int>(statusCode.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<Uint8List>(content.value);
+    }
+    if (headers.present) {
+      map['headers'] = Variable<Uint8List>(headers.value);
+    }
+    if (cacheControl.present) {
+      map['cache_control'] = Variable<String>(cacheControl.value);
+    }
+    if (eTag.present) {
+      map['e_tag'] = Variable<String>(eTag.value);
+    }
+    if (lastModified.present) {
+      map['last_modified'] = Variable<String>(lastModified.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (expires.present) {
+      map['expires'] = Variable<DateTime>(expires.value);
+    }
+    if (maxStale.present) {
+      map['max_stale'] = Variable<DateTime>(maxStale.value);
+    }
+    if (priority.present) {
+      map['priority'] = Variable<int>(priority.value);
+    }
+    if (requestDate.present) {
+      map['request_date'] = Variable<DateTime>(requestDate.value);
+    }
+    if (responseDate.present) {
+      map['response_date'] = Variable<DateTime>(responseDate.value);
+    }
+    if (lastAccessedAt.present) {
+      map['last_accessed_at'] = Variable<DateTime>(lastAccessedAt.value);
+    }
+    if (sizeBytes.present) {
+      map['size_bytes'] = Variable<int>(sizeBytes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ApiResponseCacheTableCompanion(')
+          ..write('key: $key, ')
+          ..write('url: $url, ')
+          ..write('statusCode: $statusCode, ')
+          ..write('content: $content, ')
+          ..write('headers: $headers, ')
+          ..write('cacheControl: $cacheControl, ')
+          ..write('eTag: $eTag, ')
+          ..write('lastModified: $lastModified, ')
+          ..write('date: $date, ')
+          ..write('expires: $expires, ')
+          ..write('maxStale: $maxStale, ')
+          ..write('priority: $priority, ')
+          ..write('requestDate: $requestDate, ')
+          ..write('responseDate: $responseDate, ')
+          ..write('lastAccessedAt: $lastAccessedAt, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4999,6 +5938,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $LocalFlagsTableTable localFlagsTable = $LocalFlagsTableTable(
     this,
   );
+  late final $ApiResponseCacheTableTable apiResponseCacheTable =
+      $ApiResponseCacheTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5015,6 +5956,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     surpriseHistoryTable,
     surpriseSessionTable,
     localFlagsTable,
+    apiResponseCacheTable,
   ];
 }
 
@@ -7744,6 +8686,457 @@ typedef $$LocalFlagsTableTableProcessedTableManager =
       LocalFlagRow,
       PrefetchHooks Function()
     >;
+typedef $$ApiResponseCacheTableTableCreateCompanionBuilder =
+    ApiResponseCacheTableCompanion Function({
+      required String key,
+      required String url,
+      required int statusCode,
+      Value<Uint8List?> content,
+      Value<Uint8List?> headers,
+      Value<String> cacheControl,
+      Value<String?> eTag,
+      Value<String?> lastModified,
+      Value<DateTime?> date,
+      Value<DateTime?> expires,
+      Value<DateTime?> maxStale,
+      Value<int> priority,
+      required DateTime requestDate,
+      required DateTime responseDate,
+      required DateTime lastAccessedAt,
+      required int sizeBytes,
+      Value<int> rowid,
+    });
+typedef $$ApiResponseCacheTableTableUpdateCompanionBuilder =
+    ApiResponseCacheTableCompanion Function({
+      Value<String> key,
+      Value<String> url,
+      Value<int> statusCode,
+      Value<Uint8List?> content,
+      Value<Uint8List?> headers,
+      Value<String> cacheControl,
+      Value<String?> eTag,
+      Value<String?> lastModified,
+      Value<DateTime?> date,
+      Value<DateTime?> expires,
+      Value<DateTime?> maxStale,
+      Value<int> priority,
+      Value<DateTime> requestDate,
+      Value<DateTime> responseDate,
+      Value<DateTime> lastAccessedAt,
+      Value<int> sizeBytes,
+      Value<int> rowid,
+    });
+
+class $$ApiResponseCacheTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ApiResponseCacheTableTable> {
+  $$ApiResponseCacheTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get statusCode => $composableBuilder(
+    column: $table.statusCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get headers => $composableBuilder(
+    column: $table.headers,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cacheControl => $composableBuilder(
+    column: $table.cacheControl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get eTag => $composableBuilder(
+    column: $table.eTag,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastModified => $composableBuilder(
+    column: $table.lastModified,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expires => $composableBuilder(
+    column: $table.expires,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get maxStale => $composableBuilder(
+    column: $table.maxStale,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get priority => $composableBuilder(
+    column: $table.priority,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get requestDate => $composableBuilder(
+    column: $table.requestDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get responseDate => $composableBuilder(
+    column: $table.responseDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastAccessedAt => $composableBuilder(
+    column: $table.lastAccessedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ApiResponseCacheTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ApiResponseCacheTableTable> {
+  $$ApiResponseCacheTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get statusCode => $composableBuilder(
+    column: $table.statusCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get headers => $composableBuilder(
+    column: $table.headers,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cacheControl => $composableBuilder(
+    column: $table.cacheControl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get eTag => $composableBuilder(
+    column: $table.eTag,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastModified => $composableBuilder(
+    column: $table.lastModified,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expires => $composableBuilder(
+    column: $table.expires,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get maxStale => $composableBuilder(
+    column: $table.maxStale,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get priority => $composableBuilder(
+    column: $table.priority,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get requestDate => $composableBuilder(
+    column: $table.requestDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get responseDate => $composableBuilder(
+    column: $table.responseDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastAccessedAt => $composableBuilder(
+    column: $table.lastAccessedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ApiResponseCacheTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ApiResponseCacheTableTable> {
+  $$ApiResponseCacheTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<int> get statusCode => $composableBuilder(
+    column: $table.statusCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<Uint8List> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get headers =>
+      $composableBuilder(column: $table.headers, builder: (column) => column);
+
+  GeneratedColumn<String> get cacheControl => $composableBuilder(
+    column: $table.cacheControl,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get eTag =>
+      $composableBuilder(column: $table.eTag, builder: (column) => column);
+
+  GeneratedColumn<String> get lastModified => $composableBuilder(
+    column: $table.lastModified,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get expires =>
+      $composableBuilder(column: $table.expires, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get maxStale =>
+      $composableBuilder(column: $table.maxStale, builder: (column) => column);
+
+  GeneratedColumn<int> get priority =>
+      $composableBuilder(column: $table.priority, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get requestDate => $composableBuilder(
+    column: $table.requestDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get responseDate => $composableBuilder(
+    column: $table.responseDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastAccessedAt => $composableBuilder(
+    column: $table.lastAccessedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get sizeBytes =>
+      $composableBuilder(column: $table.sizeBytes, builder: (column) => column);
+}
+
+class $$ApiResponseCacheTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ApiResponseCacheTableTable,
+          ApiResponseCacheRow,
+          $$ApiResponseCacheTableTableFilterComposer,
+          $$ApiResponseCacheTableTableOrderingComposer,
+          $$ApiResponseCacheTableTableAnnotationComposer,
+          $$ApiResponseCacheTableTableCreateCompanionBuilder,
+          $$ApiResponseCacheTableTableUpdateCompanionBuilder,
+          (
+            ApiResponseCacheRow,
+            BaseReferences<
+              _$AppDatabase,
+              $ApiResponseCacheTableTable,
+              ApiResponseCacheRow
+            >,
+          ),
+          ApiResponseCacheRow,
+          PrefetchHooks Function()
+        > {
+  $$ApiResponseCacheTableTableTableManager(
+    _$AppDatabase db,
+    $ApiResponseCacheTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ApiResponseCacheTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ApiResponseCacheTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ApiResponseCacheTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> url = const Value.absent(),
+                Value<int> statusCode = const Value.absent(),
+                Value<Uint8List?> content = const Value.absent(),
+                Value<Uint8List?> headers = const Value.absent(),
+                Value<String> cacheControl = const Value.absent(),
+                Value<String?> eTag = const Value.absent(),
+                Value<String?> lastModified = const Value.absent(),
+                Value<DateTime?> date = const Value.absent(),
+                Value<DateTime?> expires = const Value.absent(),
+                Value<DateTime?> maxStale = const Value.absent(),
+                Value<int> priority = const Value.absent(),
+                Value<DateTime> requestDate = const Value.absent(),
+                Value<DateTime> responseDate = const Value.absent(),
+                Value<DateTime> lastAccessedAt = const Value.absent(),
+                Value<int> sizeBytes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ApiResponseCacheTableCompanion(
+                key: key,
+                url: url,
+                statusCode: statusCode,
+                content: content,
+                headers: headers,
+                cacheControl: cacheControl,
+                eTag: eTag,
+                lastModified: lastModified,
+                date: date,
+                expires: expires,
+                maxStale: maxStale,
+                priority: priority,
+                requestDate: requestDate,
+                responseDate: responseDate,
+                lastAccessedAt: lastAccessedAt,
+                sizeBytes: sizeBytes,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String url,
+                required int statusCode,
+                Value<Uint8List?> content = const Value.absent(),
+                Value<Uint8List?> headers = const Value.absent(),
+                Value<String> cacheControl = const Value.absent(),
+                Value<String?> eTag = const Value.absent(),
+                Value<String?> lastModified = const Value.absent(),
+                Value<DateTime?> date = const Value.absent(),
+                Value<DateTime?> expires = const Value.absent(),
+                Value<DateTime?> maxStale = const Value.absent(),
+                Value<int> priority = const Value.absent(),
+                required DateTime requestDate,
+                required DateTime responseDate,
+                required DateTime lastAccessedAt,
+                required int sizeBytes,
+                Value<int> rowid = const Value.absent(),
+              }) => ApiResponseCacheTableCompanion.insert(
+                key: key,
+                url: url,
+                statusCode: statusCode,
+                content: content,
+                headers: headers,
+                cacheControl: cacheControl,
+                eTag: eTag,
+                lastModified: lastModified,
+                date: date,
+                expires: expires,
+                maxStale: maxStale,
+                priority: priority,
+                requestDate: requestDate,
+                responseDate: responseDate,
+                lastAccessedAt: lastAccessedAt,
+                sizeBytes: sizeBytes,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ApiResponseCacheTableTable, ApiResponseCacheRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ApiResponseCacheTableTable,
+                    ApiResponseCacheRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ApiResponseCacheTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ApiResponseCacheTableTable,
+      ApiResponseCacheRow,
+      $$ApiResponseCacheTableTableFilterComposer,
+      $$ApiResponseCacheTableTableOrderingComposer,
+      $$ApiResponseCacheTableTableAnnotationComposer,
+      $$ApiResponseCacheTableTableCreateCompanionBuilder,
+      $$ApiResponseCacheTableTableUpdateCompanionBuilder,
+      (
+        ApiResponseCacheRow,
+        BaseReferences<
+          _$AppDatabase,
+          $ApiResponseCacheTableTable,
+          ApiResponseCacheRow
+        >,
+      ),
+      ApiResponseCacheRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7770,4 +9163,6 @@ class $AppDatabaseManager {
       $$SurpriseSessionTableTableTableManager(_db, _db.surpriseSessionTable);
   $$LocalFlagsTableTableTableManager get localFlagsTable =>
       $$LocalFlagsTableTableTableManager(_db, _db.localFlagsTable);
+  $$ApiResponseCacheTableTableTableManager get apiResponseCacheTable =>
+      $$ApiResponseCacheTableTableTableManager(_db, _db.apiResponseCacheTable);
 }

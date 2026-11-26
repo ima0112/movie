@@ -140,7 +140,7 @@ void main() {
         (await db.customSelect('PRAGMA user_version').getSingle()).read<int>(
           'user_version',
         ),
-        15,
+        16,
       );
     });
 
@@ -248,6 +248,17 @@ void main() {
       addTearDown(db.close);
 
       expect(await db.select(db.surpriseSessionTable).get(), isEmpty);
+    });
+
+    test('upgrading from schema v15 creates the saved-responses table, '
+        'empty', () async {
+      final raw = sqlite3.sqlite3.openInMemory();
+      raw.execute('PRAGMA user_version = 15;');
+
+      final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+      addTearDown(db.close);
+
+      expect(await db.select(db.apiResponseCacheTable).get(), isEmpty);
     });
   });
 }
