@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/app_network_image.dart';
+import '../../../../shared/widgets/image_use.dart';
 
 /// One card of C4's "Highlights": a [leading] (a poster, or an icon on a
 /// circle), a small muted [label], the [value] in semibold (a title, a number)
@@ -126,14 +128,7 @@ class StatsHighlightPoster extends StatelessWidget {
       child: SizedBox(
         width: StatsHighlightCard.leadingWidth,
         height: StatsHighlightCard.leadingHeight,
-        child: url == null
-            ? const ColoredBox(color: AppColors.surfaceRaised2)
-            : Image.network(
-                url,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) =>
-                    const ColoredBox(color: AppColors.surfaceRaised2),
-              ),
+        child: AppNetworkImage(url: url, use: ImageUse.poster),
       ),
     );
   }

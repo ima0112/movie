@@ -11,6 +11,8 @@ import '../../../../l10n/l10n_extension.dart';
 import '../../../../l10n/media_type_localization.dart';
 import '../../../../l10n/number_format_extension.dart';
 import '../../../../shared/widgets/search_result_tile.dart';
+import '../../../../shared/widgets/app_network_image.dart';
+import '../../../../shared/widgets/image_use.dart';
 
 /// A title's result row: its poster; the title; "year · Movie/TV Show · genre"
 /// (one genre, the first, which is what identifies it best); and the ★ rating
@@ -50,14 +52,7 @@ class MediaResultRow extends StatelessWidget {
           : null,
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-        child: url == null
-            ? const ColoredBox(color: AppColors.surfaceRaised2)
-            : Image.network(
-                url,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const ColoredBox(color: AppColors.surfaceRaised2),
-              ),
+        child: AppNetworkImage(url: url, use: ImageUse.poster),
       ),
     );
   }

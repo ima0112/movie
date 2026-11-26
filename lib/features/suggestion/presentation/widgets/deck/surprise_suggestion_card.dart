@@ -12,6 +12,8 @@ import 'surprise_card_meta.dart';
 import 'surprise_card_number.dart';
 import 'surprise_card_platforms.dart';
 import 'surprise_card_tags.dart';
+import '../../../../../shared/widgets/app_network_image.dart';
+import '../../../../../shared/widgets/image_use.dart';
 
 /// One card of Surprise me's deck (`docs/SCREENS.md` E3): the title's poster
 /// over the whole card with a dark fade up the lower third so the text reads,
@@ -268,10 +270,10 @@ class _Poster extends StatelessWidget {
   Widget build(BuildContext context) {
     final u = url;
     if (u == null || u.isEmpty) return const SizedBox.shrink();
-    return Image.network(
-      u,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+    return AppNetworkImage(
+      url: u,
+      use: ImageUse.poster,
+      fallback: (_) => const SizedBox.shrink(),
     );
   }
 }
