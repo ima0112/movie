@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 import '../dio_failure_mapper.dart';
 import '../network_status.dart';
 
 /// Tells [NetworkStatus] what each request did: an answer — success or an
 /// HTTP error — means the network is fine; a connection error or timeout
-/// ([isUnreachable]) means it isn't. A cancelled request says nothing.
+/// ([isUnreachable]) means it isn't. A cancelled request says nothing, and
+/// neither does an answer served from the response cache.
 class NetworkStatusInterceptor extends Interceptor {
   NetworkStatusInterceptor(this._status);
 
@@ -16,7 +18,10 @@ class NetworkStatusInterceptor extends Interceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
-    _status.reportReachable();
+    // An answer the response cache handed back says nothing about the network.
+    if (response.extra[extraFromNetworkKey] != false) {
+      _status.reportReachable();
+    }
     handler.next(response);
   }
 
