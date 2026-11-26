@@ -76,6 +76,7 @@ Bottom bar: Discover · Explore (a **search** icon) · [Match button] · My List
 - Exits: D1/D2/D3, C1.
 
 ### B3. Match (hub, modal)
+- **Hidden in the first version** (`matchHubEnabled = false`, `core/config/feature_flags.dart`): the Match button goes **straight to E1** (Surprise me's first screen, pushed — back returns to where the user was), and its accessible label reads "Surprise me". The sheet and its two cards (`MatchHubSheet`) stay in the code, unreachable, for when the Matcher (v1.1) arrives: turning the flag on brings it back as described below.
 - Access: Match button in the bottom bar. A compact bottom sheet — as tall as its content, under the theme's drag handle; swipe down to close.
 - Elements:
   - Title "Match" (left-aligned).
